@@ -1,0 +1,6 @@
+[submodule "amboso"]
+	path = amboso
+	url = git@github.com:jgabaut/amboso.git
+[submodule "sprites4curses"]
+	path = sprites4curses
+	url = git@github.com:jgabaut/sprites4curses.git

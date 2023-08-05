@@ -1,0 +1,215 @@
+#!/bin/bash
+
+usage() {
+  echo -e "\n  Usage: installer [-i/u] [VERSION] [TARGET-DIR] [SOURCE-DIR] [STATIC-DIR-NAME] [LOG-FILE]"
+}
+
+install_flag=0
+uninstall_flag=0
+help_flag=0
+while getopts "iu" opt; do
+  case $opt in
+    i )
+      install_flag=1
+      ;;
+    u )
+      uninstall_flag=1
+      ;;
+    h )
+      help_flag=1
+      ;;
+    \? )
+      echo "Invalid option: -$OPTARG. Run with -h for help." >&2
+      exit 1
+      ;;
+    : )
+      echo "Option -$OPTARG requires an argument. Run with -h for help." >&2
+      exit 1
+      ;;
+  esac
+tot_opts=$OPTIND
+done
+
+if [[ $install_flag -eq 0 && $uninstall_flag -eq 0 ]] ; then {
+   usage
+   echo -e "\n  Missing operation, -i or -u."
+   exit 1
+}
+fi
+
+#
+
+if [[ $# -ne 6 ]] ; then {
+  usage
+  exit 1
+}
+fi
+
+INSTALLER_VERSION="0.1.0"
+VERSION="$2"
+TARGET_INSTALL_DIR="$3"
+SOURCE_INSTALL_DIR="$4"
+STATIC_DIR_NAME="$5"
+LOG_FILE="$6"
+
+
+truncate_log() {
+  echo "" > $LOG_FILE
+}
+
+log_msg() {
+  echo -e "$1" >> $LOG_FILE
+}
+
+echo -e "\n    helapordo installer version [$INSTALLER_VERSION]"
+echo -e "      args:  ["$@"]"
+echo -e "      will install helapordo version [$VERSION] to [$TARGET_INSTALL_DIR]"
+
+# Function for each installation step
+verscheck() {
+	[[ -f $SOURCE_INSTALL_DIR/helapordo ]] || {
+	log_msg "\n  Can't find helapordo in source dir : [$SOURCE_INSTALL_DIR]"
+	exit 1
+    }
+
+    readVersion=$($SOURCE_INSTALL_DIR/helapordo -v)
+    [[ $readVersion != $VERSION ]] && {
+	log_msg "\n  Unexpected helapordo version [$readVersion], expected [$VERSION]"
+	exit 1
+    }
+    log_msg "\n  helapordo version $readVersion detected in source dir : [$SOURCE_INSTALL_DIR]."
+}
+
+depcheck() {
+	deps=("$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME" "$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations" "$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore")
+    totalDeps=${#deps[@]}  # Total number of deps tasks
+    currentDepTask=0  # Current dep task being executed
+    for depstep in "${deps[@]}"; do
+	[[ -d $depstep ]] || {
+	    log_msg "\n  Can't find: ($depstep)"
+	    exit 1
+	}
+	if [[ $depstep != "$SOURCE_INSTALL_DIR/static" ]] ; then { #We don't show contents of ./static as they are not all installed
+		log_msg "\n  Will install files inside dir [$depstep] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/$(basename $depstep )].\n"
+
+		for FILE_NAME in $(ls $depstep); do {
+	    		log_msg "    [$FILE_NAME]"
+		}
+		done
+        }
+	fi
+        ((currentDepTask++))  # Increment current task count
+    done
+
+    log_msg "\n  Done checking local files."
+
+
+}
+
+mkdirs() {
+    dirs=("$TARGET_INSTALL_DIR" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore")
+    totalDirs=${#dirs[@]}  # Total number of dirs to make
+    currentDirTask=0  # Current dir task being executed
+    log_msg "\n  Creating directories."
+    for dirstep in "${dirs[@]}"; do
+	if [[ ! -d $dirstep ]] ; then {
+	    log_msg "  Can't find: ($dirstep)"
+	    log_msg "  Creating [$dirstep] dir at: [$dirstep]."
+	    mkdir "$dirstep"
+	    if [[ ! $? -eq 0 ]] ; then {
+		log_msg "\n  Failed creating dir [$dirstep]."
+		exit 1;
+	    }
+	    fi
+	}
+	fi
+        ((currentDirTask++))  # Increment current task count
+    done
+
+    log_msg "\n  Done Creating directories."
+
+}
+
+installgame() {
+	install $SOURCE_INSTALL_DIR/helapordo $TARGET_INSTALL_DIR/helapordo
+    log_msg "\n  Installing game to [$TARGET_INSTALL_DIR/helapordo]."
+}
+
+installstatics() {
+    log_msg "\n  Installing game statics to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
+    for A in $(ls $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations) ; do {
+        log_msg "  Installing animation file [$A] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations]."
+
+	install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations/$A $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations
+	if [[ ! $? -eq 0 ]] ; then {
+            log_msg "  \nFailed installing animation file [$A] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations]."
+	    exit 1;
+	}
+	fi
+    }
+    done
+    for L in $(ls $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore) ; do {
+        log_msg "  Installing lore file [$L] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore]."
+
+	install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore/$L $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore
+	if [[ ! $? -eq 0 ]] ; then {
+            log_msg "\n  Failed installing lore file [$L] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore]."
+	    exit 1;
+	}
+	fi
+    }
+    done
+    install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/palette.gpl $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/
+    if [[ ! $? -eq 0 ]] ; then {
+	log_msg "\n  Failed installing palette file to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
+	exit 1;
+    }
+    fi
+    log_msg "\n  Installed palette file to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
+
+    log_msg "\n  Installed game static deps from [$STATIC_DIR_NAME] dir to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
+}
+
+# Array of installation steps
+installSteps=("verscheck" "depcheck" "mkdirs" "installstatics" "installgame")
+totalTasks=${#installSteps[@]}  # Total number of installation tasks
+currentTask=0  # Current task being executed
+PROGRESS_BAR_WIDTH=40  # Width of the progress bar
+
+# Function to perform the installation tasks
+installGame() {
+    for step in "${installSteps[@]}"; do
+        "$step"  # Execute each installation step
+        ((currentTask++))  # Increment current task count
+
+        # Update progress bar
+        progress=$((currentTask * 100 / totalTasks))
+        filledWidth=$((progress * PROGRESS_BAR_WIDTH / 100))
+        emptyWidth=$((PROGRESS_BAR_WIDTH - filledWidth))
+
+        printf "\033[1;35m  Installing...    ["
+
+        # Draw filled portion of the progress bar
+        for ((i = 0; i < filledWidth; ++i)); do
+            printf "#"
+        done
+
+        # Draw empty portion of the progress bar
+        for ((i = 0; i < emptyWidth; ++i)); do
+            printf " "
+        done
+
+        printf "]    %d%%\r\e[0m" $progress
+
+        sleep 0.2  # Delay to visualize the progress
+    done
+}
+
+truncate_log
+
+printf "  Starting installation.\n"
+
+# Install the game
+installGame
+
+printf "\n\n  Installation complete.\n"

@@ -1,0 +1,20 @@
+GIMP Palette
+Name: 0.2-15bit
+Columns: 0
+#
+  0   0   0	Black-1
+255   0   0	Red-2
+  0 255   0	BrightGreen-3
+255 255   0	BrightYellow-4
+  0   0 255	Blue-5
+255   0 255	Magenta-6
+  0 255 255	Cyan-7
+255 255 255	White-8
+242  90  29	Orange-9
+123  66  40	LightBrown-10
+ 81  41  24	DarkBrown-11
+ 54  36 129	Purple-12
+ 22  82  12 DarkGreen-13
+ 90  81  81	Grey-14
+242 245  77	LightYellow-15
+ 39 140 226	LightBlue-16
