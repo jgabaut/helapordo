@@ -3344,15 +3344,12 @@ void handleStats(Fighter* f){
 	WINDOW *history_win; /**< Second window, used for lifetime stats.*/
 
 	/* Initialize curses */
-	//setlocale(LC_CTYPE, "it_IT.UTF-8");
-	//initscr();
 	clear();
 	refresh();
 	start_color();
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
-
 
 	/* Initialize all the colors */
 	init_pair(1, COLOR_RED, COLOR_BLACK);
@@ -3587,6 +3584,10 @@ void handleStats(Fighter* f){
 				break;
 		        }
 	}
+	clear();
+	refresh();
+	delwin(win);
+	delwin(history_win);
 	endwin();
 	log_tag("debug_log.txt","[DEBUG]","Ended window mode for handleStats()");
 }

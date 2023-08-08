@@ -7868,9 +7868,7 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
  */
 void death(Fighter* player, loadInfo* load_info) {
 
-	lightRed();
 	handleStats(player);
-	white();
 
 	char msg[500];
 
@@ -8030,7 +8028,7 @@ void b_death(Boss* b) {
  */
 int retry(void) {
 	lightGreen();
-	printf("\n\nWant to try again?\n\n\t\t0 - No\t\t\t1 - Yes\n\n");
+	printf("\n\nYou died. Want to try again?\n\n\t\t0 - No\t\t\t1 - Yes\n\n");
 	white();
 
 	char c[25];
@@ -10757,7 +10755,6 @@ void gameloop(int argc, char** argv){
 					 int clrres = system("clear");
 					 sprintf(msg,"gameloop() 3 system(\"clear\") res was (%i)",clrres);
 					 log_tag("debug_log.txt","[DEBUG]",msg);
-					 handleStats(player);
 					 printf("\n\n\tYOU DIED.\n\n");
 					 log_tag("debug_log.txt","[DEBUG]","Game lost.\n");
 				 }
