@@ -49,9 +49,24 @@ extern int G_DEBUG_ENEMYTYPE_ON;
 extern int GS_AUTOSAVE_ON;
 
 /**
- * Current version identifier.
+ * Current major release.
  */
-#define VERSION "1.0.0"
+#define HELAPORDO_MAJOR_VERSION 1
+
+/**
+ * Current minor release.
+ */
+#define HELAPORDO_MINOR_VERSION 0
+
+/**
+ * Current patch release.
+ */
+#define HELAPORDO_PATCH_VERSION 1
+
+/**
+ * Current version string identifier, with MAJOR.MINOR.PATCH format.
+ */
+#define VERSION "1.0.1"
 
 /**
  * Ceiling for Fighter luck.
