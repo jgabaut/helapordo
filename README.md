@@ -65,5 +65,5 @@
   make
   ```
 
-  📦 Latest Release v1.0.0 05/07/2023
+  📦 Latest Release v1.0.1 08/07/2023
   https://github.com/jgabaut/helapordo/releases
