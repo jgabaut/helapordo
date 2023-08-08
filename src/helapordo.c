@@ -1,5 +1,16 @@
 #include "helapordo.h"
 
+/**
+ * Takes a turnOption_OP and a pointer to a turnOP_args struct.
+ * Logs a warning for any NULL field in the struct.
+ * Performs the defined turn operation, before returning an OP_res.
+ * @param op The kind of operation to do.
+ * @param args Struct containing needed args for current operation. Can have some fields uninitialised, if not relevant to requested turnOP.
+ * @return An OP_res representing result of turn option operation.
+ * @see turnOP_args
+ * @see turnOption_OP
+ * @see OP_res
+ */
 OP_res turnOP(turnOption_OP op, turnOP_args* args) {
 
 	char msg[500];
@@ -3328,7 +3339,8 @@ int getBoost(int lvl, int luck) {
  */
 void unlockSpecial(Fighter* f) {
 
-	ITEM **my_items;
+	//Thanks to u/skeeto for the suggestions.
+	ITEM *my_items[SPECIALSMAX+2] = {0};
 	MENU *my_menu;
         WINDOW *my_menu_win;
 	WINDOW *display_win;
@@ -3351,26 +3363,15 @@ void unlockSpecial(Fighter* f) {
 
 	init_game_color_pairs();
 
+	/* Create menu items */
 	for (int i = 0; i < SPECIALSMAX + 1; i++) {
 		if (! (f->specials[i]->enabled) ) {
-			n_choices++;
+			my_items[n_choices++] = new_item(nameStringFromSpecial(f->class,i), "  ");
 		}
 	}
-
-
-	/* Create menu items */
-	int tot = 0;
-      	my_items = (ITEM **)calloc(n_choices,sizeof(ITEM *));
-	for (int i = 0; i < SPECIALSMAX +1; i++) {
-		if (! (f->specials[i]->enabled) ) {
-        		my_items[tot] = new_item(nameStringFromSpecial(f->class,i), "  ");
-			tot++;
-		}
-	}
-        my_items[tot] = (ITEM*) NULL;
 
 	/* Create menu */
-	my_menu = new_menu((ITEM **)my_items);
+	my_menu = new_menu(my_items);
 
 	/* Set description off */
 	menu_opts_off(my_menu,O_SHOWDESC);
@@ -3505,10 +3506,10 @@ void unlockSpecial(Fighter* f) {
 	}
 	/* Unpost and free all the memory taken up */
         unpost_menu(my_menu);
-        for(int k = 0; k <= n_choices; k++) {
-        	free_item(my_items[k]);
-	}
         free_menu(my_menu);
+	for(int k = 0; k <= n_choices; k++) {
+		free_item(my_items[k]);
+        }
 	delwin(my_menu_win);
 	delwin(display_win);
 	endwin();
@@ -7867,9 +7868,7 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
  */
 void death(Fighter* player, loadInfo* load_info) {
 
-	lightRed();
 	handleStats(player);
-	white();
 
 	char msg[500];
 
@@ -8029,7 +8028,7 @@ void b_death(Boss* b) {
  */
 int retry(void) {
 	lightGreen();
-	printf("\n\nWant to try again?\n\n\t\t0 - No\t\t\t1 - Yes\n\n");
+	printf("\n\nYou died. Want to try again?\n\n\t\t0 - No\t\t\t1 - Yes\n\n");
 	white();
 
 	char c[25];
@@ -10756,7 +10755,6 @@ void gameloop(int argc, char** argv){
 					 int clrres = system("clear");
 					 sprintf(msg,"gameloop() 3 system(\"clear\") res was (%i)",clrres);
 					 log_tag("debug_log.txt","[DEBUG]",msg);
-					 handleStats(player);
 					 printf("\n\n\tYOU DIED.\n\n");
 					 log_tag("debug_log.txt","[DEBUG]","Game lost.\n");
 				 }

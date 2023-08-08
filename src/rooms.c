@@ -930,15 +930,17 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					}
 
 					e_death(e);
+					int player_luck = player->luck;
+					sprintf(msg,"Player luck was [%i]",player_luck);
+					log_tag("debug_log.txt","[DEBUG]",msg);
 					death(player, load_info);
 					free(room->foes);
 					endwin();
 
-
-					printf("\t\tLuck:  %i Path luck:  %i\n",player->luck,p->luck);
-					red();
-					printf("\n\n\tYOU DIED.\n");
-					white();
+					//printf("\t\tLuck:  %i Path luck:  %i\n",player_luck,p->luck);
+					//red();
+					//printf("\n\n\tYOU DIED.\n");
+					//white();
 					free(args);
 					log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 
