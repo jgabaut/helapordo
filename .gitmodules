@@ -4,3 +4,6 @@
 [submodule "sprites4curses"]
 	path = sprites4curses
 	url = git@github.com:jgabaut/sprites4curses.git
+[submodule "koliseo"]
+	path = koliseo
+	url = git@github.com:jgabaut/koliseo.git
