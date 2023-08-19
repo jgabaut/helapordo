@@ -6,9 +6,9 @@
 
   It uses ncurses to provide text interface.
 
-  Here's a gif of the game "Enemy" screen.
+  Here's a gif of a new game being started.
 
-  ![Gif of turn screen](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExamM4YWk2ZmdnNWtjY2EzMDV6MHhvcWQxNzVvaTVhbHg3Zjdhb3Y0MiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/n4yI1b7bChwaqe6b6u/giphy.gif)
+  ![Gif of game screen](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHF0Y2ZkdnYzY3Y3MmxhYzQ2Y25tenA0ajgzMmRscTRobDU5YzcyZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/OxQAY7H9UwiXBUMt4h/giphy.gif);
 
 
 ## Dependencies
