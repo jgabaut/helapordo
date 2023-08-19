@@ -9318,8 +9318,12 @@ Path* randomise_path(int seed){
 void gameloop(int argc, char** argv){
 
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
+  Koliseo* default_kls = kls_new(KLS_DEFAULT_SIZE);
 
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
+
+  char* kls_progname = (char*) KLS_PUSH(default_kls, char*, sizeof(whoami));
+  strcpy(kls_progname,whoami);
 
 	do {
 		char msg[1000]; //This has a big scope.
@@ -9342,12 +9346,7 @@ void gameloop(int argc, char** argv){
 			switch (option) {
 				case 'd': {
 					G_DEBUG_ON += 1;
-					sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
-					log_tag("debug_log.txt","[DEBUG]",msg);
 					G_LOG_ON = 1;
-					sprintf(msg,"G_LOG_ON == (%i)",G_LOG_ON);
-					log_tag("debug_log.txt","[DEBUG]",msg);
-					log_tag("debug_log.txt","[DEBUG]","small DEBUG FLAG ASSERTED");
 				}
 				break;
 				case 'r': {
@@ -9520,7 +9519,21 @@ void gameloop(int argc, char** argv){
 				exit(EXIT_FAILURE);
 			}
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
+  			print_kls_2file(debug_file,default_kls);
+			fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
 			fclose(debug_file);
+
+			//Lay debug info
+			sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			sprintf(msg,"kls_progname == (%s)",kls_progname);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			sprintf(msg,"G_LOG_ON == (%i)",G_LOG_ON);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","small DEBUG FLAG ASSERTED");
+  			sprintf(msg,"[Current position in default_kls] [pos: %li]\n",kls_get_pos(default_kls));
+			log_tag("debug_log.txt","[DEBUG]",msg);
 
 			//Truncate OPS_LOGFILE
 			sprintf(path_to_OPS_debug_file,"%s/%s",static_path,OPS_LOGFILE);
