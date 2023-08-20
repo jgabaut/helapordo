@@ -8,7 +8,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.0.0") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.0.3") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (TURNOP_MAX == 15) ) {
