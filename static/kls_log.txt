@@ -1,5 +1,0 @@
-
-[KLS] Size: [131072]
-[KLS] Offset: [16152]
-[KLS] Prev_Offset: [32]
-

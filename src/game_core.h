@@ -1,6 +1,7 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
 #include <panel.h>
+#include "../koliseo/src/koliseo.h"
 
 /**
  * Global variable for default Koliseo.
