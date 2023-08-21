@@ -938,12 +938,14 @@ boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s) {
  * @param kls The Koliseo used for allocation.
  */
 void initPerks(Fighter* f, Koliseo* kls) {
-
+	char msg[200];
 	f->perksCount = 0;
 	//Ordering of i corresponds to perksClass enum
 	int total = (PERKSMAX+1);
 	for (int i = 0; i < total; i++) {
   		Perk* p = (Perk*) KLS_PUSH(kls, Perk, 1);
+		sprintf(msg,"Prepping Perk (%i)",i);
+		kls_log("DEBUG",msg);
 		p->class = i;
 		char* name = nameStringFromPerk(i);
 		char* desc = descStringFromPerk(i);
@@ -1115,6 +1117,7 @@ void initCounters(Fighter* f, Koliseo* kls){
   		Turncounter* c = (Turncounter*) KLS_PUSH(kls, Turncounter, 1);
 		sprintf(msg,"Prepping counter %i",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
+		kls_log("DEBUG",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
@@ -1665,11 +1668,13 @@ void setCounter(Turncounter* c,int turns) {
  * @param f The Fighter pointer whose special slots will be initialised.
  */
 void setSpecials(Fighter* f, Koliseo* kls){
-
+	char movename[80];
+	char movedesc[80];
+	char msg[200];
 	for (int i = 0; i <= SPECIALSMAX ; i++) {
-		char movename[80];
-		char movedesc[80];
 		Specialslot* s = (Specialslot*) KLS_PUSH(kls,Specialslot,1);
+		sprintf(msg,"Prepping Specialslot (%i)",i);
+		kls_log("DEBUG",msg);
 		s->enabled = 0;
 		s->move = i + ( f->class  * (SPECIALSMAX + 1) ) ; // Assign the i-th move offsetting by classNum * specialsMax
 		s->cost = costFromSpecial(f->class,i);
@@ -1827,8 +1832,11 @@ void applyArtifacts(Fighter* f, Enemy* e, Boss* b, int isBoss){
  * @param kls The Koliseo used for allocations.
  */
 void initEquipSlots(Fighter* f, Koliseo* kls){
+	char msg[200];
 	for (int i = 0; i <= EQUIPZONES ; i++) {
 		Equipslot* s = (Equipslot*) KLS_PUSH(kls,Equipslot,1);
+		sprintf(msg,"Prepping Equipslot (%i)",i);
+		kls_log("DEBUG",msg);
 		s->active = 0;
 		s->type = i;
 		setEquipslotSprite(s);
@@ -1846,9 +1854,12 @@ void initEquipSlots(Fighter* f, Koliseo* kls){
  * @param kls The Koliseo to do allocations.
  */
 void initConsumableBag(Fighter* f, Koliseo* kls) {
+	char msg[200];
 
 	for (int i = 0; i < CONSUMABLESMAX +1; i++) {
 		Consumable* c = (Consumable*) KLS_PUSH(kls, Consumable, 1);
+		sprintf(msg,"Prepping Consumable (%i)",i);
+		kls_log("DEBUG",msg);
 		c->class = i;
 
 		Consumable* base = &consumablesBase[i];
@@ -1875,8 +1886,11 @@ void initConsumableBag(Fighter* f, Koliseo* kls) {
  * @param f The Fighter pointer whose artifactsBag field will be initialised.
  */
 void initArtifactsBag(Fighter* f, Koliseo* kls) {
+	char msg[200];
 	for (int i = 0; i < ARTIFACTSMAX +1; i++) {
 		Artifact* a = (Artifact*) KLS_PUSH(kls,Artifact,1);
+		sprintf(msg,"Prepping Artifact (%i)",i);
+		kls_log("DEBUG",msg);
 		a->class = i;
 
 		Artifact* base = &artifactsBase[i];
@@ -1919,6 +1933,7 @@ void initArtifactsBag(Fighter* f, Koliseo* kls) {
  * @param kls The Koliseo used for allocation.
  */
 void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
+	char msg[200];
 
 	//player luck : MAXPLAYERLUCK = path luck : MAXLUCK
 
@@ -1927,6 +1942,8 @@ void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
 	BaseStats* base = &basestats[player->class];
 
 	countStats* s = (countStats*) KLS_PUSH(kls,countStats,1);
+	sprintf(msg,"Prepping countStats");
+	kls_log("DEBUG",msg);
 
 	s->enemieskilled=0;
 	s->criticalhits=0;
@@ -3176,12 +3193,15 @@ void initWincon(Wincon* w, Path* p, winconClass class) {
  * @param kls The Koliseo used for allocation.
  */
 void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, Koliseo* kls) {
+	char msg[200];
 
 	int argTot = argc - optTot;
 	if (argTot == 0) {
 		pickName(player);
 		pickClass(player);
   		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
+		sprintf(msg,"Prepping Wincon");
+		kls_log("DEBUG",msg);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3213,6 +3233,8 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 	if ( argTot == 1 ) {
 		pickClass(player);
   		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
+		sprintf(msg,"Prepping Wincon");
+		kls_log("DEBUG",msg);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3240,6 +3262,8 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 			pickClass(player);
 		}
   		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
+		sprintf(msg,"Prepping Wincon");
+		kls_log("DEBUG",msg);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -7879,16 +7903,18 @@ void death(Fighter* player, loadInfo* load_info) {
 	//dropping out of the Koliseo scope might render stat pointer invalid.
 	//handleStats(player);
 
-	char msg[500];
-
+	//Free default kls
+	kls_free(default_kls);
+	kls_log("DEBUG","Freed default KLS");
+	log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
 	/*
 	free(load_info);
 	sprintf(msg,"Freed loadInfo.\n");
 	log_tag("debug_log.txt","[FREE]",msg);
 	*/
 
-	emptyConsumables(player);
-	emptyArtifacts(player);
+	//emptyConsumables(player);
+	//emptyArtifacts(player);
 	/*
 	//Free player special slots
 	for (int i=0; i < (SPECIALSMAX + 1) ; i++) {
@@ -7899,6 +7925,7 @@ void death(Fighter* player, loadInfo* load_info) {
 	log_tag("debug_log.txt","[FREE]","Done.\n");
 	*/
 
+	/*
 	//Free player equipbag
 	int total = player->equipsBagOccupiedSlots;
 	for (int i=0; i < (total ) ; i++) {
@@ -7916,6 +7943,7 @@ void death(Fighter* player, loadInfo* load_info) {
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
 	log_tag("debug_log.txt","[FREE]","Done.\n");
+	*/
 
 	/*
 	//Free player consumablebag
@@ -9031,8 +9059,9 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
  */
 void quit(Fighter* p, Room* room, loadInfo* load_info) {
 	char msg[500];
-	int res = system("clear");
-	sprintf(msg,"quit() system(\"clear\") res was (%i)",res);
+	endwin();
+	int res = system("reset");
+	sprintf(msg,"quit() system(\"reset\") res was (%i)",res);
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	//printf("\n\n\tTHANKS 4 PLAYING\n");
 	//FIXME
@@ -9043,7 +9072,6 @@ void quit(Fighter* p, Room* room, loadInfo* load_info) {
 	death(p,load_info);
 	freeRoom(room);
 	log_tag("debug_log.txt","[DEBUG]","Quitting program.");
-	endwin();
 	exit(EXIT_SUCCESS);
 }
 
@@ -9326,7 +9354,10 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
  * @return A Path pointer with stats.
  */
 Path* randomise_path(int seed, Koliseo* kls){
+	char msg[200];
 	Path* p = (Path*) KLS_PUSH(kls, Path, 1);
+	sprintf(msg,"Prepping Path");
+	kls_log("DEBUG",msg);
 	srand(seed);
 
 	switch(GAMEMODE) {
@@ -9376,7 +9407,8 @@ Path* randomise_path(int seed, Koliseo* kls){
 void gameloop(int argc, char** argv){
 
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
-  Koliseo* default_kls = kls_new(KLS_DEFAULT_SIZE*8);
+  //Init default_kls
+  default_kls = kls_new(KLS_DEFAULT_SIZE*8);
 
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 
@@ -10070,6 +10102,8 @@ void gameloop(int argc, char** argv){
 			path->loreCounter = -1;
 
   			player = (Fighter*) KLS_PUSH(default_kls, Fighter, 1);
+			sprintf(msg,"Prepping Fighter");
+			kls_log("DEBUG",msg);
 
 			int optTot = optind;
 
@@ -10131,6 +10165,8 @@ void gameloop(int argc, char** argv){
 
 			path = randomise_path(rand(), default_kls);
   			player = (Fighter*) KLS_PUSH(default_kls, Fighter, 1);
+			sprintf(msg,"Prepping Loady Fighter");
+			kls_log("DEBUG",msg);
 			player->class = Knight;
 
 			strcpy(player->name,"Loady");
@@ -10141,6 +10177,8 @@ void gameloop(int argc, char** argv){
 			log_tag("debug_log.txt","[TURNOP]",msg);
 
 			Wincon* w = (Wincon*) KLS_PUSH(default_kls, Wincon, 1);
+			sprintf(msg,"Prepping Loady Wincon");
+			kls_log("DEBUG",msg);
 			w->class = FULL_PATH;
 			initWincon(w,path,w->class);
 			initPlayerStats(player,path,default_kls);
@@ -10204,6 +10242,8 @@ void gameloop(int argc, char** argv){
 		char* lore_strings[6];
 		for (int i=0; i<5; i++) {
 			lore_strings[i] = (char*) KLS_PUSH(default_kls, char, 300);
+			sprintf(msg,"Prepping lores");
+			kls_log("DEBUG",msg);
 		}
 
 		int* loreCounter = &(path->loreCounter);

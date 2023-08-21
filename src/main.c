@@ -14,6 +14,7 @@ int G_DEBUG_ENEMYTYPE_ON = 0;
 
 int GS_AUTOSAVE_ON = 1;
 Gamemode GAMEMODE = Rogue;
+Koliseo* default_kls = NULL;
 
 int main(int argc, char** argv) {
 	//Randomise seed
@@ -23,9 +24,7 @@ int main(int argc, char** argv) {
 	// 	Branches?
 	//
 	setlocale(LC_ALL, "");
-
 	//test_floors();
-
 	gameloop(argc, argv);
 
 	// 	Monsters
