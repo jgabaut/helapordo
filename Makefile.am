@@ -29,10 +29,10 @@ helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_cu
 LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
 
 # Linker flag to strip symbols
-AM_LDFLAGS =
+AM_LDFLAGS = -s
 
 # Compiler flags
-AM_CFLAGS = $(HELAPORDO_CFLAGS) -O2 -Werror -Wpedantic -Wall -ggdb
+AM_CFLAGS = $(HELAPORDO_CFLAGS) -O2 -Werror -Wpedantic -Wall
 
 # Build rule for object files
 %.o: %.c
