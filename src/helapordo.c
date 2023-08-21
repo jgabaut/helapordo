@@ -9034,12 +9034,16 @@ void quit(Fighter* p, Room* room, loadInfo* load_info) {
 	int res = system("clear");
 	sprintf(msg,"quit() system(\"clear\") res was (%i)",res);
 	log_tag("debug_log.txt","[DEBUG]",msg);
-	printf("\n\n\tTHANKS 4 PLAYING\n");
-	printStats(p);
-	printf("\n");
+	//printf("\n\n\tTHANKS 4 PLAYING\n");
+	//FIXME
+	//dropping out of the Koliseo scope might render stat pointer invalid.
+	//Can't we print stats and clear the kls?
+	//printStats(p);
+	//printf("\n");
 	death(p,load_info);
 	freeRoom(room);
 	log_tag("debug_log.txt","[DEBUG]","Quitting program.");
+	endwin();
 	exit(EXIT_SUCCESS);
 }
 
@@ -9558,7 +9562,9 @@ void gameloop(int argc, char** argv){
 		}
 		// Open log file if log flag is set and reset it
 		if (G_LOG_ON == 1) {
+			KOLISEO_DEBUG = 1;
 			char path_to_debug_file[600];
+			char path_to_kls_debug_file[600];
 			char path_to_OPS_debug_file[600];
 			char static_path[500];
 			// Set static_path value to the correct static dir path
@@ -9571,6 +9577,16 @@ void gameloop(int argc, char** argv){
 				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
 				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n", static_path);
 				exit(EXIT_FAILURE);
+			}
+			if (KOLISEO_DEBUG == 1) {
+				sprintf(path_to_kls_debug_file,"%s/%s",static_path,"kls_debug_log.txt");
+				KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
+				if (!KOLISEO_DEBUG_FP) {
+					endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
+					fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
+					exit(EXIT_FAILURE);
+				}
+				fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
 			}
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
 			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
