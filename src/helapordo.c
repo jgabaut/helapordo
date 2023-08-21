@@ -174,7 +174,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls) {
 					sprintf(msg,"Setting enemy_index to (%i) (OP_FIGHT), isBoss == 0", enemy->index);
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					isBoss = 0;
-					res = OP_res_from_fightResult(fight(actor, enemy, notify_win));
+					res = OP_res_from_fightResult(fight(actor, enemy, notify_win, kls));
 				}
 				break;
 				case BOSS: {
@@ -182,7 +182,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls) {
 					sprintf(msg,"Setting enemy_index to (0) (OP_FIGHT), isBoss == 1");
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					isBoss = 1;
-					res = OP_res_from_fightResult(boss_fight(actor, boss, path, notify_win));
+					res = OP_res_from_fightResult(boss_fight(actor, boss, path, notify_win, kls));
 				}
 				break;
 				default: {
@@ -943,9 +943,9 @@ void initPerks(Fighter* f, Koliseo* kls) {
 	//Ordering of i corresponds to perksClass enum
 	int total = (PERKSMAX+1);
 	for (int i = 0; i < total; i++) {
-  		Perk* p = (Perk*) KLS_PUSH(kls, Perk, 1);
 		sprintf(msg,"Prepping Perk (%i)",i);
 		kls_log("DEBUG",msg);
+  		Perk* p = (Perk*) KLS_PUSH(kls, Perk, 1);
 		p->class = i;
 		char* name = nameStringFromPerk(i);
 		char* desc = descStringFromPerk(i);
@@ -1114,17 +1114,18 @@ void initCounters(Fighter* f, Koliseo* kls){
 	int total = (COUNTERSMAX+1);
 	char msg[500];
 	for (int i = 0; i < total; i++) {
-  		Turncounter* c = (Turncounter*) KLS_PUSH(kls, Turncounter, 1);
-		sprintf(msg,"Prepping counter %i",i);
+		sprintf(msg,"Prepping Turncounter (%i)",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
+  		Turncounter* c = (Turncounter*) KLS_PUSH(kls, Turncounter, 1);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
-			c->desc = (char*)malloc(sizeof(stringFromStatus(i)));
+			c->desc = (char*) KLS_PUSH(kls, char*, sizeof(stringFromStatus(i)));
 			strcpy(c->desc,stringFromStatus(i));
 			sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
 
 			c->effect_fun = getStatusCounterFun(i);
 			//sprintf(msg,"Status function pointer is: (%i)", (int) *(c->effect_fun));
@@ -1143,10 +1144,11 @@ void initCounters(Fighter* f, Koliseo* kls){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*)malloc(sizeof("ATK boost"));
+					c->desc = (char*) KLS_PUSH(kls,char*,sizeof("ATK boost"));
 					strcpy(c->desc,"ATK boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_fun = getStatBoostCounterFun(ATK);
 					c->type = CNT_ATKBOOST;
@@ -1155,10 +1157,11 @@ void initCounters(Fighter* f, Koliseo* kls){
 				}
 				break;
 				case TURNBOOST_DEF: {
-					c->desc = (char*)malloc(sizeof("DEF boost"));
+					c->desc = (char*) KLS_PUSH(kls,char*,sizeof("DEF boost"));
 					strcpy(c->desc,"DEF boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_fun = getStatBoostCounterFun(DEF);
 					c->type = CNT_DEFBOOST;
@@ -1167,10 +1170,11 @@ void initCounters(Fighter* f, Koliseo* kls){
 				}
 				break;
 				case TURNBOOST_VEL: {
-					c->desc = (char*)malloc(sizeof("VEL boost"));
+					c->desc = (char*) KLS_PUSH(kls,char*,sizeof("VEL boost"));
 					strcpy(c->desc,"VEL boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_fun = getStatBoostCounterFun(VEL);
 					c->type = CNT_VELBOOST;
@@ -1179,10 +1183,11 @@ void initCounters(Fighter* f, Koliseo* kls){
 				}
 				break;
 				case TURNBOOST_ENR: {
-					c->desc = (char*)malloc(sizeof("ENR boost"));
+					c->desc = (char*) KLS_PUSH(kls,char*,sizeof("ENR boost"));
 					strcpy(c->desc,"ENR boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_fun = getStatBoostCounterFun(ENR);
 					c->type = CNT_ENRBOOST;
@@ -1672,9 +1677,9 @@ void setSpecials(Fighter* f, Koliseo* kls){
 	char movedesc[80];
 	char msg[200];
 	for (int i = 0; i <= SPECIALSMAX ; i++) {
-		Specialslot* s = (Specialslot*) KLS_PUSH(kls,Specialslot,1);
 		sprintf(msg,"Prepping Specialslot (%i)",i);
 		kls_log("DEBUG",msg);
+		Specialslot* s = (Specialslot*) KLS_PUSH(kls,Specialslot,1);
 		s->enabled = 0;
 		s->move = i + ( f->class  * (SPECIALSMAX + 1) ) ; // Assign the i-th move offsetting by classNum * specialsMax
 		s->cost = costFromSpecial(f->class,i);
@@ -1834,9 +1839,9 @@ void applyArtifacts(Fighter* f, Enemy* e, Boss* b, int isBoss){
 void initEquipSlots(Fighter* f, Koliseo* kls){
 	char msg[200];
 	for (int i = 0; i <= EQUIPZONES ; i++) {
-		Equipslot* s = (Equipslot*) KLS_PUSH(kls,Equipslot,1);
 		sprintf(msg,"Prepping Equipslot (%i)",i);
 		kls_log("DEBUG",msg);
+		Equipslot* s = (Equipslot*) KLS_PUSH(kls,Equipslot,1);
 		s->active = 0;
 		s->type = i;
 		setEquipslotSprite(s);
@@ -1857,9 +1862,9 @@ void initConsumableBag(Fighter* f, Koliseo* kls) {
 	char msg[200];
 
 	for (int i = 0; i < CONSUMABLESMAX +1; i++) {
-		Consumable* c = (Consumable*) KLS_PUSH(kls, Consumable, 1);
 		sprintf(msg,"Prepping Consumable (%i)",i);
 		kls_log("DEBUG",msg);
+		Consumable* c = (Consumable*) KLS_PUSH(kls, Consumable, 1);
 		c->class = i;
 
 		Consumable* base = &consumablesBase[i];
@@ -1888,9 +1893,9 @@ void initConsumableBag(Fighter* f, Koliseo* kls) {
 void initArtifactsBag(Fighter* f, Koliseo* kls) {
 	char msg[200];
 	for (int i = 0; i < ARTIFACTSMAX +1; i++) {
-		Artifact* a = (Artifact*) KLS_PUSH(kls,Artifact,1);
 		sprintf(msg,"Prepping Artifact (%i)",i);
 		kls_log("DEBUG",msg);
+		Artifact* a = (Artifact*) KLS_PUSH(kls,Artifact,1);
 		a->class = i;
 
 		Artifact* base = &artifactsBase[i];
@@ -1941,9 +1946,9 @@ void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
 
 	BaseStats* base = &basestats[player->class];
 
-	countStats* s = (countStats*) KLS_PUSH(kls,countStats,1);
 	sprintf(msg,"Prepping countStats");
 	kls_log("DEBUG",msg);
+	countStats* s = (countStats*) KLS_PUSH(kls,countStats,1);
 
 	s->enemieskilled=0;
 	s->criticalhits=0;
@@ -3199,9 +3204,9 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 	if (argTot == 0) {
 		pickName(player);
 		pickClass(player);
-  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
 		sprintf(msg,"Prepping Wincon");
 		kls_log("DEBUG",msg);
+  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3232,9 +3237,9 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 	}
 	if ( argTot == 1 ) {
 		pickClass(player);
-  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
 		sprintf(msg,"Prepping Wincon");
 		kls_log("DEBUG",msg);
+  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3261,9 +3266,9 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 		if (c < 0 ) {
 			pickClass(player);
 		}
-  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
 		sprintf(msg,"Prepping Wincon");
 		kls_log("DEBUG",msg);
+  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3763,8 +3768,11 @@ int dropConsumable(Fighter* player) {
  * @param player The Fighter pointer at hand.
  * @param beast The integer for drops coming from a beast kill if true.
  * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
  */
-void dropEquip(Fighter* player, int beast, WINDOW* notify_win) {
+void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
+
+	char msg[200];
 
 	//Select a basic item from the list
 	int drop = rand() % (EQUIPSMAX + 1);
@@ -3772,7 +3780,9 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win) {
 	quality q = rand() % (QUALITIESMAX + 1);
 
 	//Prepare the item
-	Equip* e = (Equip*)malloc(sizeof(Equip));
+	sprintf(msg,"Prepping dropped Equip");
+	kls_log("DEBUG",msg);
+	Equip* e = (Equip*) KLS_PUSH(kls,Equip,1);
 
 	//Get the base item and copy the stats to the drop
 	Equip* base = &equips[drop];
@@ -3873,7 +3883,6 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win) {
 
 	e->cost = floor(cost);
 
-	char msg[200];
 	wattron(notify_win,COLOR_PAIR(6));
 	sprintf(msg,"You found %s %s!",stringFromQuality(q),stringFromEquips(drop));
 	display_notification(notify_win,msg,800);
@@ -4014,9 +4023,10 @@ int dropArtifact(Fighter* player) {
  * @param player The Fighter pointer at hand.
  * @param e The Enemy pointer at hand.
  * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
  * @see display_notification()
  */
-int fight(Fighter* player, Enemy* e, WINDOW* notify_win){
+int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 
 	fightResult res = FIGHTRES_NO_DMG;
 	char msg[200];
@@ -4278,7 +4288,7 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win){
 
 	//Equip drop, guaranteed on killing a beast
 	if (res == FIGHTRES_KILL_DONE && (e->beast || ( (rand() % 15)  - (player->luck/10)  <= 0 ))) {
-		dropEquip(player,e->beast,notify_win);
+		dropEquip(player,e->beast,notify_win,kls);
 	}
 	return res;
 }
@@ -4299,9 +4309,10 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win){
  * @param b The Enemy pointer at hand.
  * @param p The Path pointer for the game.
  * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
  * @see display_notification()
  */
-int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win){
+int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* kls){
 
 	fightResult res = FIGHTRES_NO_DMG;
 	//Stat comparisons
@@ -4571,7 +4582,7 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win){
 	//Equip drop
 	if (res == FIGHTRES_KILL_DONE) {
 		//We give 1 to obtain the better equip generation used for beasts
-		dropEquip(player,1,notify_win);
+		dropEquip(player,1,notify_win,kls);
 	}
 
 	return res;
@@ -9355,9 +9366,9 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
  */
 Path* randomise_path(int seed, Koliseo* kls){
 	char msg[200];
-	Path* p = (Path*) KLS_PUSH(kls, Path, 1);
 	sprintf(msg,"Prepping Path");
 	kls_log("DEBUG",msg);
+	Path* p = (Path*) KLS_PUSH(kls, Path, 1);
 	srand(seed);
 
 	switch(GAMEMODE) {
@@ -10101,9 +10112,9 @@ void gameloop(int argc, char** argv){
 			path = randomise_path(rand(), default_kls);
 			path->loreCounter = -1;
 
-  			player = (Fighter*) KLS_PUSH(default_kls, Fighter, 1);
 			sprintf(msg,"Prepping Fighter");
 			kls_log("DEBUG",msg);
+  			player = (Fighter*) KLS_PUSH(default_kls, Fighter, 1);
 
 			int optTot = optind;
 
@@ -10164,9 +10175,9 @@ void gameloop(int argc, char** argv){
 
 
 			path = randomise_path(rand(), default_kls);
-  			player = (Fighter*) KLS_PUSH(default_kls, Fighter, 1);
 			sprintf(msg,"Prepping Loady Fighter");
 			kls_log("DEBUG",msg);
+  			player = (Fighter*) KLS_PUSH(default_kls, Fighter, 1);
 			player->class = Knight;
 
 			strcpy(player->name,"Loady");
@@ -10176,9 +10187,9 @@ void gameloop(int argc, char** argv){
 			sprintf(msg,"Assigned Fighter [%s]. loading_room_turn_args->actor->name: [%s]",player->name, loading_room_turn_args->actor->name);
 			log_tag("debug_log.txt","[TURNOP]",msg);
 
-			Wincon* w = (Wincon*) KLS_PUSH(default_kls, Wincon, 1);
 			sprintf(msg,"Prepping Loady Wincon");
 			kls_log("DEBUG",msg);
+			Wincon* w = (Wincon*) KLS_PUSH(default_kls, Wincon, 1);
 			w->class = FULL_PATH;
 			initWincon(w,path,w->class);
 			initPlayerStats(player,path,default_kls);
@@ -10241,9 +10252,9 @@ void gameloop(int argc, char** argv){
 
 		char* lore_strings[6];
 		for (int i=0; i<5; i++) {
-			lore_strings[i] = (char*) KLS_PUSH(default_kls, char, 300);
 			sprintf(msg,"Prepping lores");
 			kls_log("DEBUG",msg);
+			lore_strings[i] = (char*) KLS_PUSH(default_kls, char, 300);
 		}
 
 		int* loreCounter = &(path->loreCounter);

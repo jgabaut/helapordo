@@ -705,7 +705,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 
 				//Equip drop, guaranteed on killing a beast
 				if (e->beast ||  ((rand() % 15)  - (player->luck/10)  <= 0) )  {
-					dropEquip(player,e->beast,notifications_win);
+					dropEquip(player,e->beast,notifications_win,kls);
 				}
 
 				//Get xp and free memory from enemy
@@ -1525,7 +1525,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 			}
 
 			//Equip drop
-			dropEquip(player,b->beast, notifications_win);
+			dropEquip(player,b->beast, notifications_win,kls);
 
 			//Account for harvester perk
 			int harvester_perks = player->perks[HARVESTER]->innerValue;

@@ -66,12 +66,12 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 3
+#define HELAPORDO_PATCH_VERSION 4
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.0.3"
+#define VERSION "1.0.4"
 
 /**
  * Ceiling for Fighter luck.
