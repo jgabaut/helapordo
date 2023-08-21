@@ -32,8 +32,9 @@
  * Call function associated with the passed turnOption_OP.
  * @param op The turnOption_OP to execute.
  * @param args Pointer to turnOP_args object.
+ * @param kls The Koliseo used for allocations.
  */
-OP_res turnOP(turnOption_OP op, turnOP_args* args);
+OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls);
 
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 
@@ -76,12 +77,12 @@ boost_e_fun getStatBoostCounterEnemyFun(Stat s);
 boost_b_fun getStatBoostCounterBossFun(Stat s);
 boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s);
 
-void initPerks(Fighter* f);
+void initPerks(Fighter* f, Koliseo* kls);
 void applyEquipPerks(Equip* e, Fighter* f);
 void removeEquipPerks(Equip* e, Fighter* f);
 void printActivePerks(Fighter* f);
 
-void initCounters(Fighter* f);
+void initCounters(Fighter* f, Koliseo* kls);
 
 void initECounters(Enemy* e);
 
@@ -95,7 +96,7 @@ void updateCounters(Turncounter* counters[], int isEnemy, Fighter* f, Enemy* e);
 void updateCounters_Boss(Turncounter* counters[], int isBoss, Fighter* f, Boss* b);
 void setCounter(Turncounter* c,int turns);
 
-void setSpecials(Fighter* f);
+void setSpecials(Fighter* f, Koliseo* kls);
 
 void resetPermboosts(Fighter* f);
 void applyPermboosts(Fighter* f);
@@ -103,14 +104,14 @@ void applyPermboosts(Fighter* f);
 void resetArtifactsState(Fighter* f);
 void applyArtifacts(Fighter* f, Enemy* e, Boss* b, int isBoss);
 
-void initEquipSlots(Fighter* f);
+void initEquipSlots(Fighter* f, Koliseo* kls);
 
-void initConsumableBag(Fighter* f);
-void initArtifactsBag(Fighter* f);
+void initConsumableBag(Fighter* f, Koliseo* kls);
+void initArtifactsBag(Fighter* f, Koliseo* kls);
 
 void initWincon(Wincon* w, Path* p, winconClass class);
 
-void initPlayerStats(Fighter* player, Path* path);
+void initPlayerStats(Fighter* player, Path* path, Koliseo* kls);
 
 void initEnemyStats(Enemy* e);
 
@@ -159,7 +160,7 @@ void printEquipStats(Equip* e);
 
 void printSpawnMessage(Enemy* e, int roomIndex, int enemyIndex);
 
-void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot);
+void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, Koliseo* kls);
 
 turnOption getTurnChoice(char* ch);
 
@@ -199,8 +200,8 @@ void emptyEquips(Fighter* player);
 OP_res handleSave_Enemies(FILE* file, Fighter* f, Path*p, Enemy* e, int enemyIndex, int roomTotalEnemies, int roomIndex);
 OP_res handleSave_Home(FILE* file, Fighter* f, Path*p, int roomIndex);
 
-OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* enemyIndex, int* roomTotalEnemies, int* roomIndex, int* total_foes, int* done_loading);
-OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int* done_loading);
+OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* enemyIndex, int* roomTotalEnemies, int* roomIndex, int* total_foes, int* done_loading, Koliseo* kls);
+OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int* done_loading, Koliseo* kls);
 saveType read_saveType(FILE* file);
 
 void death(Fighter* player, loadInfo* load_info);
@@ -211,7 +212,7 @@ void b_death(Boss* b);
 
 int retry(void);
 
-void debug_generic(Fighter* player, Path* p, int roomIndex);
+void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls);
 void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int roomIndex,int currentEnemyNum);
 
 void quit(Fighter* p, Room* room, loadInfo* load_info);
@@ -220,7 +221,7 @@ void sell_all_equips(Fighter* f);
 
 void open_chest(WINDOW* w, Chest * c, Fighter* f);
 
-Path* randomise_path(int seed);
+Path* randomise_path(int seed, Koliseo* kls);
 
 void gameloop(int argc, char** argv);
 

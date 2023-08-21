@@ -15,11 +15,12 @@
  * @param p The Path pointer.
  * @param player The Fighter pointer at hand.
  * @param load_info A pointer to loadInfo struct containing stuff for loading a game.
+ * @param kls The Koliseo used for allocations.
  * @param fighter_sprites The sprites array for all fighter classes.
  * @see gameloop()
  * @return When exiting room, should return NO_DMG.
  */
-int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS]) {
+int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls) {
 	Enemy* dummy_enemy = NULL;
 	Boss* dummy_boss = NULL;
 	FILE* dummy_savefile = NULL;
@@ -73,7 +74,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 			log_tag("debug_log.txt","[TURNOP]",msg);
 			args->save_file = autosave_file;
 		}
-		turnOP(turnOP_from_turnOption(SAVE),args);
+		turnOP(turnOP_from_turnOption(SAVE),args,kls);
 		fclose(autosave_file);
 		log_tag("debug_log.txt","[DEBUG]","Closed autosave_file pointer.");
 		log_tag("debug_log.txt","[DEBUG]","Done autosave.");
@@ -286,7 +287,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 					args->save_file = save_file;
 				}
 			}
-			turnOP(turnOP_from_turnOption(choice),args);
+			turnOP(turnOP_from_turnOption(choice),args,kls);
 			if (choice == SAVE) {
 				fclose(save_file);
 				log_tag("debug_log.txt","[DEBUG]","Closed save_file pointer.");
@@ -362,12 +363,13 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @param load_info A pointer to loadInfo struct containing stuff for loading a game.
  * @param enemy_sprites The sprites array for all enemies.
  * @param fighter_sprites The sprites array for all fighter classes.
+ * @param kls The Koliseo used for allocations.
  * @see gameloop()
  * @see turnOP()
  * @see enemyClass
  * @return When room is cleared, should return KILL_DONE.
  */
-int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS]) {
+int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls) {
 
 	Boss* dummy_boss = NULL;
 	Enemy* args_enemy = NULL;
@@ -889,7 +891,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 			if (choice == FIGHT) {
 				//TODO:
 				//Handle FIGHT as turnOP(OP_FIGHT)
-				fightStatus = turnOP(OP_FIGHT,args);
+				fightStatus = turnOP(OP_FIGHT,args,kls);
 				refresh();
 				//Lost battle
 				if (fightStatus == OP_RES_DEATH) {
@@ -1032,7 +1034,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				endwin();
 				//FIXME
 				//Should we ensure death of foe is correctly handled before OP ends?
-				turnOP(OP_SPECIAL,args);
+				turnOP(OP_SPECIAL,args,kls);
 			} else if (choice == CONSUMABLE) {
 				// Unpost menu and free all the memory taken up
 				unpost_menu(my_menu);
@@ -1049,7 +1051,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				log_tag("debug_log.txt","[ANIMATE]","Ending fighter animation.");
 
 				endwin();
-				turnOP(OP_CONSUMABLE,args);
+				turnOP(OP_CONSUMABLE,args,kls);
 			} else if (choice == EQUIPS) {
 				// Unpost menu and free all the memory taken up
 				unpost_menu(my_menu);
@@ -1066,7 +1068,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				log_tag("debug_log.txt","[ANIMATE]","Ending fighter animation.");
 
 				endwin();
-				turnOP(OP_EQUIPS,args);
+				turnOP(OP_EQUIPS,args,kls);
 			} else if (choice == PERKS) {
 				// Unpost menu and free all the memory taken up
 				unpost_menu(my_menu);
@@ -1083,7 +1085,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 
 				endwin();
 
-				turnOP(OP_PERKS,args);
+				turnOP(OP_PERKS,args,kls);
 			} else if (choice == STATS) {
 				// Unpost menu and free all the memory taken up
 				unpost_menu(my_menu);
@@ -1099,7 +1101,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				log_tag("debug_log.txt","[ANIMATE]","Ending fighter animation.");
 
 				endwin();
-				turnOP(OP_STATS,args);
+				turnOP(OP_STATS,args,kls);
 			} else if (choice == SAVE) {
 				FILE* save_file;
 				char path_to_savefile[600];
@@ -1121,7 +1123,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					args->save_file = save_file;
 				}
-				turnOP(OP_SAVE,args);
+				turnOP(OP_SAVE,args,kls);
 				fclose(save_file);
 			} else if (choice == DEBUG) {
 				// Unpost menu and free all the memory taken up
@@ -1139,7 +1141,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				log_tag("debug_log.txt","[ANIMATE]","Ending fighter animation.");
 
 				endwin();
-				turnOP(OP_DEBUG,args);
+				turnOP(OP_DEBUG,args,kls);
 			} else if (choice == ARTIFACTS) {
 				// Unpost menu and free all the memory taken up
 				unpost_menu(my_menu);
@@ -1156,7 +1158,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				log_tag("debug_log.txt","[ANIMATE]","Ending fighter animation.");
 
 				endwin();
-				turnOP(OP_ARTIFACTS,args);
+				turnOP(OP_ARTIFACTS,args,kls);
 			} else if (choice == QUIT) {
 				// Unpost menu and free all the memory taken up
 				unpost_menu(my_menu);
@@ -1179,7 +1181,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				delwin(my_wins[2]);
 				free(room->foes);
 				endwin();
-				turnOP(OP_QUIT,args);
+				turnOP(OP_QUIT,args,kls);
 			}
 
 			//Update all the player counters
@@ -1241,10 +1243,11 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
  * @param index The index of current room.
  * @param p The Path pointer.
  * @param player The Fighter pointer at hand.
+ * @param kls The Koliseo used for allocations.
  * @see turnOP()
  * @return When room is cleared, should return KILL_DONE.
  */
-int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char boss_sprites[BOSSCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS]) {
+int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char boss_sprites[BOSSCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls) {
 
 	Boss* args_boss = NULL;
 	Enemy* dummy_enemy = NULL;
@@ -1671,7 +1674,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 		if (choice == FIGHT) {
 			//TODO:
 			//Handle FIGHT as turnOP(OP_FIGHT)
-			fightStatus = turnOP(OP_FIGHT,args);
+			fightStatus = turnOP(OP_FIGHT,args,kls);
 			refresh();
 			//Lost battle
 			if (fightStatus == OP_RES_DEATH) {
@@ -1772,7 +1775,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				free_item(my_items[k]);
 			}
 			endwin();
-			turnOP(OP_SPECIAL,args);
+			turnOP(OP_SPECIAL,args,kls);
 		} else if (choice == CONSUMABLE) {
 			/* Unpost and free all the memory taken up */
 			unpost_menu(my_menu);
@@ -1781,7 +1784,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				free_item(my_items[k]);
 			}
 			endwin();
-			turnOP(OP_CONSUMABLE,args);
+			turnOP(OP_CONSUMABLE,args,kls);
 		} else if (choice == EQUIPS) {
 			/* Unpost and free all the memory taken up */
 			unpost_menu(my_menu);
@@ -1790,7 +1793,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				free_item(my_items[k]);
 			}
 			endwin();
-			turnOP(OP_EQUIPS,args);
+			turnOP(OP_EQUIPS,args,kls);
 		} else if (choice == PERKS) {
 			/* Unpost and free all the memory taken up */
 			unpost_menu(my_menu);
@@ -1799,7 +1802,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				free_item(my_items[k]);
 			}
 			endwin();
-			turnOP(OP_PERKS,args);
+			turnOP(OP_PERKS,args,kls);
 		} else if (choice == STATS) {
 			/* Unpost and free all the memory taken up */
 			unpost_menu(my_menu);
@@ -1808,7 +1811,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				free_item(my_items[k]);
 			}
 			endwin();
-			turnOP(OP_STATS,args);
+			turnOP(OP_STATS,args,kls);
 		} else if (choice == DEBUG) {
 			// Unpost menu and free all the memory taken up
 			unpost_menu(my_menu);
@@ -1821,7 +1824,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				free_item(my_items[k]);
 			}
 			endwin();
-			turnOP(OP_DEBUG,args);
+			turnOP(OP_DEBUG,args,kls);
 		} else if (choice == ARTIFACTS) {
 			/* Unpost and free all the memory taken up */
 			unpost_menu(my_menu);
@@ -1830,7 +1833,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				free_item(my_items[k]);
 			}
 			endwin();
-			turnOP(OP_ARTIFACTS,args);
+			turnOP(OP_ARTIFACTS,args,kls);
 		} else if (choice == QUIT) {
 			/* Unpost and free all the memory taken up */
 			unpost_menu(my_menu);
@@ -1839,7 +1842,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				free_item(my_items[k]);
 			}
 			endwin();
-			turnOP(OP_QUIT,args);
+			turnOP(OP_QUIT,args,kls);
 		}
 
 		//Update all the player counters

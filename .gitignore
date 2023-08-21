@@ -14,6 +14,10 @@ helapordo_debug
 debug_log.txt
 # ignore ops log file
 OPS_log.txt
+# ignore kls debug log file
+kls_debug_log.txt
+# ignore kls log file
+kls_log.txt
 # ignore floor log file
 floor_debug_log.txt
 

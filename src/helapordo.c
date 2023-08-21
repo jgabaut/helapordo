@@ -6,12 +6,13 @@
  * Performs the defined turn operation, before returning an OP_res.
  * @param op The kind of operation to do.
  * @param args Struct containing needed args for current operation. Can have some fields uninitialised, if not relevant to requested turnOP.
+ * @param kls The Koliseo used for allocations.
  * @return An OP_res representing result of turn option operation.
  * @see turnOP_args
  * @see turnOption_OP
  * @see OP_res
  */
-OP_res turnOP(turnOption_OP op, turnOP_args* args) {
+OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls) {
 
 	char msg[500];
 	OP_res res = INVALID_OP;
@@ -96,7 +97,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args) {
 			int* ptr_to_done_loading = &(load_info->done_loading);
 			sprintf(msg,"*(done_loading) == [%i]",*ptr_to_done_loading);
 			log_tag("debug_log.txt","[TURNOP]",msg);
-			res = handleLoadgame_Enemies(save_file, actor, path, load_info->loaded_enemy, ptr_to_loaded_enemy_index, ptr_to_loaded_roomtotalenemies, ptr_to_loaded_roomindex, tot_foes, ptr_to_done_loading);
+			res = handleLoadgame_Enemies(save_file, actor, path, load_info->loaded_enemy, ptr_to_loaded_enemy_index, ptr_to_loaded_roomtotalenemies, ptr_to_loaded_roomindex, tot_foes, ptr_to_done_loading, kls);
 			//Log end of operation
 			sprintf(msg,"Done operation: [%s] res: [%s (%i)]",stringFromTurnOP(op), stringFrom_OP_res(res), res);
 			log_tag("debug_log.txt","[TURNOP]",msg);
@@ -135,7 +136,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args) {
 			int* ptr_to_done_loading = &(load_info->done_loading);
 			sprintf(msg,"*(done_loading) == [%i]",*ptr_to_done_loading);
 			log_tag("debug_log.txt","[TURNOP]",msg);
-			res = handleLoadgame_Home(save_file, actor, path, ptr_to_loaded_roomindex, ptr_to_done_loading);
+			res = handleLoadgame_Home(save_file, actor, path, ptr_to_loaded_roomindex, ptr_to_done_loading, kls);
 			//Log end of operation
 			sprintf(msg,"Done operation: [%s] res: [%s (%i)]",stringFromTurnOP(op), stringFrom_OP_res(res), res);
 			log_tag("debug_log.txt","[TURNOP]",msg);
@@ -389,7 +390,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args) {
 					isBoss = -1;
 					log_tag("debug_log.txt","[TURNOP]","Doing endwin() before debug_generic()");
 					endwin();
-					debug_generic(actor,path,room_index);
+					debug_generic(actor,path,room_index,kls);
 					res = OP_OK;
 				}
 				break;
@@ -409,7 +410,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args) {
 					isBoss = 1;
 					log_tag("debug_log.txt","[TURNOP]","Doing endwin() before debug_generic()");
 					endwin();
-					debug_generic(actor,path,room_index);
+					debug_generic(actor,path,room_index,kls);
 					res = OP_OK;
 				}
 				break;
@@ -934,14 +935,17 @@ boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s) {
  * @see perkClass
  * @see PERKSMAX
  * @param f The Fighter pointer whose perks field will be initialised.
+ * @param kls The Koliseo used for allocation.
  */
-void initPerks(Fighter* f) {
-
+void initPerks(Fighter* f, Koliseo* kls) {
+	char msg[200];
 	f->perksCount = 0;
 	//Ordering of i corresponds to perksClass enum
 	int total = (PERKSMAX+1);
 	for (int i = 0; i < total; i++) {
-		Perk *p = (Perk*) malloc(sizeof(Perk));
+  		Perk* p = (Perk*) KLS_PUSH(kls, Perk, 1);
+		sprintf(msg,"Prepping Perk (%i)",i);
+		kls_log("DEBUG",msg);
 		p->class = i;
 		char* name = nameStringFromPerk(i);
 		char* desc = descStringFromPerk(i);
@@ -1103,15 +1107,17 @@ void printActivePerks(Fighter* f) {
  * @see getStatBoostCounterFun()
  * @see getStatusCounterFun()
  * @param f The Fighter pointer whose counters field will be initialised.
+ * @param kls The Koliseo used for allocation.
  */
-void initCounters(Fighter* f){
+void initCounters(Fighter* f, Koliseo* kls){
 	//Ordering of i corresponds to counterIndexes enum
 	int total = (COUNTERSMAX+1);
 	char msg[500];
 	for (int i = 0; i < total; i++) {
-		Turncounter* c = (Turncounter*)malloc(sizeof(Turncounter));
+  		Turncounter* c = (Turncounter*) KLS_PUSH(kls, Turncounter, 1);
 		sprintf(msg,"Prepping counter %i",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
+		kls_log("DEBUG",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
@@ -1658,14 +1664,17 @@ void setCounter(Turncounter* c,int turns) {
  * @see REGISTER_CALLBACK()
  * @see costFromSpecial()
  * @see stringFromSpecial()
+ * @param kls The Koliseo used for allocations.
  * @param f The Fighter pointer whose special slots will be initialised.
  */
-void setSpecials(Fighter* f){
-
+void setSpecials(Fighter* f, Koliseo* kls){
+	char movename[80];
+	char movedesc[80];
+	char msg[200];
 	for (int i = 0; i <= SPECIALSMAX ; i++) {
-		char movename[80];
-		char movedesc[80];
-		Specialslot* s = (Specialslot*)malloc(sizeof(Specialslot));
+		Specialslot* s = (Specialslot*) KLS_PUSH(kls,Specialslot,1);
+		sprintf(msg,"Prepping Specialslot (%i)",i);
+		kls_log("DEBUG",msg);
 		s->enabled = 0;
 		s->move = i + ( f->class  * (SPECIALSMAX + 1) ) ; // Assign the i-th move offsetting by classNum * specialsMax
 		s->cost = costFromSpecial(f->class,i);
@@ -1676,7 +1685,6 @@ void setSpecials(Fighter* f){
 		strcpy(s->desc, movedesc);
 		f->specials[i] = s;
 	};
-
 }
 
 /**
@@ -1821,11 +1829,14 @@ void applyArtifacts(Fighter* f, Enemy* e, Boss* b, int isBoss){
  * @see counterIndexes
  * @see EQUIPZONES
  * @param f The Fighter pointer whose equipslots field will be initialised.
+ * @param kls The Koliseo used for allocations.
  */
-void initEquipSlots(Fighter* f){
-
+void initEquipSlots(Fighter* f, Koliseo* kls){
+	char msg[200];
 	for (int i = 0; i <= EQUIPZONES ; i++) {
-		Equipslot* s = (Equipslot*)malloc(sizeof(Equipslot));
+		Equipslot* s = (Equipslot*) KLS_PUSH(kls,Equipslot,1);
+		sprintf(msg,"Prepping Equipslot (%i)",i);
+		kls_log("DEBUG",msg);
 		s->active = 0;
 		s->type = i;
 		setEquipslotSprite(s);
@@ -1840,11 +1851,15 @@ void initEquipSlots(Fighter* f){
  * @see consumableClass
  * @see CONSUMABLESMAX
  * @param f The Fighter pointer whose consumablesBag field will be initialised.
+ * @param kls The Koliseo to do allocations.
  */
-void initConsumableBag(Fighter* f) {
+void initConsumableBag(Fighter* f, Koliseo* kls) {
+	char msg[200];
 
 	for (int i = 0; i < CONSUMABLESMAX +1; i++) {
-		Consumable* c = (Consumable*)malloc(sizeof(Consumable));
+		Consumable* c = (Consumable*) KLS_PUSH(kls, Consumable, 1);
+		sprintf(msg,"Prepping Consumable (%i)",i);
+		kls_log("DEBUG",msg);
 		c->class = i;
 
 		Consumable* base = &consumablesBase[i];
@@ -1867,12 +1882,15 @@ void initConsumableBag(Fighter* f) {
  * @see Artifact
  * @see artifactClass
  * @see ARTIFACTSMAX
+ * @param kls The Koliseo used for allocations.
  * @param f The Fighter pointer whose artifactsBag field will be initialised.
  */
-void initArtifactsBag(Fighter* f) {
-
+void initArtifactsBag(Fighter* f, Koliseo* kls) {
+	char msg[200];
 	for (int i = 0; i < ARTIFACTSMAX +1; i++) {
-		Artifact* a = (Artifact*)malloc(sizeof(Artifact));
+		Artifact* a = (Artifact*) KLS_PUSH(kls,Artifact,1);
+		sprintf(msg,"Prepping Artifact (%i)",i);
+		kls_log("DEBUG",msg);
 		a->class = i;
 
 		Artifact* base = &artifactsBase[i];
@@ -1886,7 +1904,6 @@ void initArtifactsBag(Fighter* f) {
 
 		f->artifactsBag[i] = (struct Artifact*) a;
 	}
-
 }
 
 /**
@@ -1913,8 +1930,10 @@ void initArtifactsBag(Fighter* f) {
  * @see fighterStatus
  * @param player The Fighter whose fields will be initialised.
  * @param path The Path pointer of the current game.
+ * @param kls The Koliseo used for allocation.
  */
-void initPlayerStats(Fighter* player, Path* path) {
+void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
+	char msg[200];
 
 	//player luck : MAXPLAYERLUCK = path luck : MAXLUCK
 
@@ -1922,7 +1941,9 @@ void initPlayerStats(Fighter* player, Path* path) {
 
 	BaseStats* base = &basestats[player->class];
 
-	countStats* s = (countStats*)malloc(sizeof(countStats));
+	countStats* s = (countStats*) KLS_PUSH(kls,countStats,1);
+	sprintf(msg,"Prepping countStats");
+	kls_log("DEBUG",msg);
 
 	s->enemieskilled=0;
 	s->criticalhits=0;
@@ -1940,14 +1961,14 @@ void initPlayerStats(Fighter* player, Path* path) {
 	}
 	s->keysfound=0;
 
-	setSpecials(player);
-	initCounters(player);
-	initPerks(player);
+	setSpecials(player,kls);
+	initCounters(player,kls);
+	initPerks(player,kls);
 
-	initConsumableBag(player);
-	initArtifactsBag(player);
+	initConsumableBag(player,kls);
+	initArtifactsBag(player,kls);
 
-	initEquipSlots(player);
+	initEquipSlots(player,kls);
 	player->equipsBagOccupiedSlots = 0; //Keeps track of how many slots are occupied.
 	player->earliestBagSlot = 0; //To alwasy use the array efficiently (???) I sense linked lists may be better
 
@@ -3169,14 +3190,18 @@ void initWincon(Wincon* w, Path* p, winconClass class) {
  * @param argv Array of strings with argc - 1 values.
  * @param player The Fighter of which we set name and class.
  * @param path The Path pointer used for the game.
+ * @param kls The Koliseo used for allocation.
  */
-void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot){
+void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, Koliseo* kls) {
+	char msg[200];
 
 	int argTot = argc - optTot;
 	if (argTot == 0) {
 		pickName(player);
 		pickClass(player);
-		Wincon* w = (Wincon*) malloc(sizeof(Wincon));
+  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
+		sprintf(msg,"Prepping Wincon");
+		kls_log("DEBUG",msg);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3207,7 +3232,9 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot){
 	}
 	if ( argTot == 1 ) {
 		pickClass(player);
-		Wincon* w = (Wincon*) malloc(sizeof(Wincon));
+  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
+		sprintf(msg,"Prepping Wincon");
+		kls_log("DEBUG",msg);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3234,7 +3261,9 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot){
 		if (c < 0 ) {
 			pickClass(player);
 		}
-		Wincon* w = (Wincon*) malloc(sizeof(Wincon));
+  		Wincon* w = (Wincon*) KLS_PUSH(kls, Wincon, 1);
+		sprintf(msg,"Prepping Wincon");
+		kls_log("DEBUG",msg);
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -5135,9 +5164,10 @@ saveType read_saveType(FILE* file) {
  * @param p The path struct.
  * @param roomIndex Current room index.
  * @param done_loading Flag to check if loading ended.
+ * @param kls The Koliseo used for allocations.
  * @return The OP_res corresponding to loading result.
  */
-OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int* done_loading) {
+OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int* done_loading, Koliseo* kls) {
 
 	//printf("\nLoading game...\n");
 	log_tag("debug_log.txt","[LOAD]","Starting loading from text file.");
@@ -5245,7 +5275,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	};
 
 	//We have to reload the specials callbacks after setting fighter class
-	setSpecials(f);
+	setSpecials(f,kls);
 
 	//HP
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
@@ -6285,7 +6315,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	initConsumableBag(f);
+	initConsumableBag(f, kls);
 	for (int i = 0; i < CONSUMABLESMAX +1; i++) {
 		Consumable * cn = (Consumable*) f->consumablesBag[i];
 		//qty
@@ -6374,9 +6404,10 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
  * @param roomIndex Current room index.
  * @param total_foes Total foes in current room.
  * @param done_loading Flag to check if loading ended.
+ * @param kls The Koliseo used for allocations.
  * @return The OP_res corresponding to loading result.
  */
-OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* enemyIndex, int* roomTotalEnemies, int* roomIndex, int* total_foes, int* done_loading) {
+OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* enemyIndex, int* roomTotalEnemies, int* roomIndex, int* total_foes, int* done_loading, Koliseo* kls) {
 
 	//printf("\nLoading game...\n");
 	log_tag("debug_log.txt","[LOAD]","Starting loading from text file.");
@@ -6484,7 +6515,7 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 	};
 
 	//We have to reload the specials callbacks after setting fighter class
-	setSpecials(f);
+	setSpecials(f,kls);
 
 	//HP
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
@@ -7784,7 +7815,7 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	initConsumableBag(f);
+	initConsumableBag(f, kls);
 	for (int i = 0; i < CONSUMABLESMAX +1; i++) {
 		Consumable * cn = (Consumable*) f->consumablesBag[i];
 		//qty
@@ -7868,16 +7899,23 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
  */
 void death(Fighter* player, loadInfo* load_info) {
 
-	handleStats(player);
+	//FIXME:
+	//dropping out of the Koliseo scope might render stat pointer invalid.
+	//handleStats(player);
 
-	char msg[500];
-
+	//Free default kls
+	kls_free(default_kls);
+	kls_log("DEBUG","Freed default KLS");
+	log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
+	/*
 	free(load_info);
 	sprintf(msg,"Freed loadInfo.\n");
 	log_tag("debug_log.txt","[FREE]",msg);
+	*/
 
-	emptyConsumables(player);
-	emptyArtifacts(player);
+	//emptyConsumables(player);
+	//emptyArtifacts(player);
+	/*
 	//Free player special slots
 	for (int i=0; i < (SPECIALSMAX + 1) ; i++) {
 		free(player->specials[i]);
@@ -7885,6 +7923,9 @@ void death(Fighter* player, loadInfo* load_info) {
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
 	log_tag("debug_log.txt","[FREE]","Done.\n");
+	*/
+
+	/*
 	//Free player equipbag
 	int total = player->equipsBagOccupiedSlots;
 	for (int i=0; i < (total ) ; i++) {
@@ -7902,6 +7943,9 @@ void death(Fighter* player, loadInfo* load_info) {
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
 	log_tag("debug_log.txt","[FREE]","Done.\n");
+	*/
+
+	/*
 	//Free player consumablebag
 	int cons_total = CONSUMABLESMAX+1;
 	for (int i=0; i < cons_total ; i++) {
@@ -7911,10 +7955,14 @@ void death(Fighter* player, loadInfo* load_info) {
 		free(c);
 	}
 	log_tag("debug_log.txt","[FREE]","Done.\n");
+	*/
+
+	/*
 	//Free player equip slots
 	for (int i=0; i < (EQUIPZONES + 1) ; i++) {
 		Equipslot* s = (Equipslot*) player->equipslots[i];
-		/*int perkscount = -1;
+
+		 int perkscount = -1;
 
 		if (s->active) { perkscount = s->item->perksCount;};
 		if (perkscount > 0) {
@@ -7922,12 +7970,16 @@ void death(Fighter* player, loadInfo* load_info) {
 				free(s->item->perks[i]);
 			}
 			free(s->item);
-		}*/
+		}
+
 		free(s);
 		sprintf(msg,"Freed equipslot %i.", i);
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
 	log_tag("debug_log.txt","[FREE]","Done.\n");
+	*/
+
+	/*
 	//Free player artifactsbag
 	int art_total = CONSUMABLESMAX+1;
 	for (int i=0; i < art_total ; i++) {
@@ -7937,6 +7989,9 @@ void death(Fighter* player, loadInfo* load_info) {
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
 	log_tag("debug_log.txt","[FREE]","Done.\n");
+	*/
+
+	/*
 	//Free player turnCounters
 	for (int i=0; i < (COUNTERSMAX + 1) ; i++) {
 		Turncounter* c = (Turncounter*) player->counters[i];
@@ -7948,6 +8003,9 @@ void death(Fighter* player, loadInfo* load_info) {
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
 	log_tag("debug_log.txt","[FREE]","Done.\n");
+	*/
+
+	/*
 	//Free player perks
 	for (int i=0; i < (PERKSMAX + 1) ; i++) {
 		free(player->perks[i]);
@@ -7955,10 +8013,10 @@ void death(Fighter* player, loadInfo* load_info) {
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
 	log_tag("debug_log.txt","[FREE]","Done.\n");
-	free(player->stats);
-	log_tag("debug_log.txt","[FREE]","Freed player stats.\n");
-	free(player);
-	log_tag("debug_log.txt","[DEBUG-FREE]","Freed player.\n\n");
+	*/
+
+	//free(player->stats);
+	//log_tag("debug_log.txt","[FREE]","Freed player stats.\n");
 }
 
 /**
@@ -8064,8 +8122,9 @@ int retry(void) {
  * @param player The Fighter pointer at hand.
  * @param p The Path pointer of the current game.
  * @param roomIndex The index of current room.
+ * @param The Koliseo to debug.
  */
-void debug_generic(Fighter* player, Path* p, int roomIndex) {
+void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls) {
 
 	char msg[200];
 	char ch[25];
@@ -8103,8 +8162,8 @@ void debug_generic(Fighter* player, Path* p, int roomIndex) {
 			's':  Sprites slideshow\t'd':  Dump debug symbols\n\
 			'g':  Toggle godmode\t'A':  Toggle autosave\n\
 			'L':  Toggle logging\t'F':  Try Floor functionality\n\
-			'Q':  Toggle fast quit\t	{Return}  Process your input line.\n\
-			'q':  Quit\n\
+			'Q':  Toggle fast quit\t'K': Log default_kls state to debug log file.\n\
+			{Return}  Process your input line.\t'q':  Quit\n\
 		]\n\n\
 	[%s@debug-func]$ ",player->name);
 
@@ -8290,6 +8349,28 @@ void debug_generic(Fighter* player, Path* p, int roomIndex) {
 			GS_AUTOSAVE_ON = (GS_AUTOSAVE_ON == 1 ? 0 : 1);
 			sprintf(msg,"Toggled G_AUTOSAVE_ON, new value: (%i)", GS_AUTOSAVE_ON);
 			log_tag("debug_log.txt","[DEBUG]",msg);
+		}
+		break;
+		case 'K': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
+			print_kls_2file(kls_file,kls);
+			fclose(kls_file);
 		}
 		break;
 		case 'Q': {
@@ -8978,12 +9059,16 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
  */
 void quit(Fighter* p, Room* room, loadInfo* load_info) {
 	char msg[500];
-	int res = system("clear");
-	sprintf(msg,"quit() system(\"clear\") res was (%i)",res);
+	endwin();
+	int res = system("reset");
+	sprintf(msg,"quit() system(\"reset\") res was (%i)",res);
 	log_tag("debug_log.txt","[DEBUG]",msg);
-	printf("\n\n\tTHANKS 4 PLAYING\n");
-	printStats(p);
-	printf("\n");
+	//printf("\n\n\tTHANKS 4 PLAYING\n");
+	//FIXME
+	//dropping out of the Koliseo scope might render stat pointer invalid.
+	//Can't we print stats and clear the kls?
+	//printStats(p);
+	//printf("\n");
 	death(p,load_info);
 	freeRoom(room);
 	log_tag("debug_log.txt","[DEBUG]","Quitting program.");
@@ -9265,10 +9350,14 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
  * @see MAXLENGTH
  * @see MAXLUCK
  * @param seed An integer seed.
+ * @param kls The Koliseo used for allocation.
  * @return A Path pointer with stats.
  */
-Path* randomise_path(int seed){
-	Path* p = (Path*) malloc(sizeof(Path));
+Path* randomise_path(int seed, Koliseo* kls){
+	char msg[200];
+	Path* p = (Path*) KLS_PUSH(kls, Path, 1);
+	sprintf(msg,"Prepping Path");
+	kls_log("DEBUG",msg);
 	srand(seed);
 
 	switch(GAMEMODE) {
@@ -9318,7 +9407,8 @@ Path* randomise_path(int seed){
 void gameloop(int argc, char** argv){
 
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
-  Koliseo* default_kls = kls_new(KLS_DEFAULT_SIZE);
+  //Init default_kls
+  default_kls = kls_new(KLS_DEFAULT_SIZE*8);
 
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 
@@ -9331,7 +9421,7 @@ void gameloop(int argc, char** argv){
 		FILE *OPS_debug_file = NULL;
 		// Parse command-line options
 		int option;
-		loadInfo* load_info = (loadInfo*) malloc(sizeof(loadInfo));
+		loadInfo* load_info = (loadInfo*) KLS_PUSH(default_kls, loadInfo*, 1);
 
 		load_info->is_new_game = 1; //By default we do a new game
 		load_info->enemy_index = -1;
@@ -9504,7 +9594,9 @@ void gameloop(int argc, char** argv){
 		}
 		// Open log file if log flag is set and reset it
 		if (G_LOG_ON == 1) {
+			KOLISEO_DEBUG = 1;
 			char path_to_debug_file[600];
+			char path_to_kls_debug_file[600];
 			char path_to_OPS_debug_file[600];
 			char static_path[500];
 			// Set static_path value to the correct static dir path
@@ -9517,6 +9609,16 @@ void gameloop(int argc, char** argv){
 				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
 				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n", static_path);
 				exit(EXIT_FAILURE);
+			}
+			if (KOLISEO_DEBUG == 1) {
+				sprintf(path_to_kls_debug_file,"%s/%s",static_path,"kls_debug_log.txt");
+				KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
+				if (!KOLISEO_DEBUG_FP) {
+					endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
+					fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
+					exit(EXIT_FAILURE);
+				}
+				fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
 			}
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
 			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
@@ -9840,6 +9942,7 @@ void gameloop(int argc, char** argv){
 		scrollok(savepick_side_win,TRUE);
 		wprintw(savepick_side_win,"  \nhelapordo v%s",VERSION);
 		wprintw(savepick_side_win,"  \n  using: s4c-animate v%s",S4C_ANIMATE_VERSION);
+		wprintw(savepick_side_win,"  \n  using: koliseo v%s",KOLISEO_API_VERSION_STRING);
 		wrefresh(savepick_side_win);
 		refresh();
 
@@ -9933,21 +10036,19 @@ void gameloop(int argc, char** argv){
 				//TODO
 				//By default we expect the user to press new game, no action needed?
 				log_tag("debug_log.txt","[DEBUG]","Running new game from savepick menu");
-				turnOP(OP_NEW_GAME,savepick_turn_args);
+				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls);
 			} else if (savepick_choice == LOAD_GAME) {
 				//ATM we expect a single save.
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
 				sprintf(msg,"Set load value: load_info->is_new_game == (%i)", load_info->is_new_game);
 				log_tag("debug_log.txt","[DEBUG]",msg);
-				turnOP(OP_LOAD_GAME,savepick_turn_args);
+				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls);
 				//TODO
 				//Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
 			} else if (savepick_choice == QUIT) {
 				//TODO
 				//We can quit, I guess.
-				//Do we have to free load_info?
-				//Can we actually just exit here and cause no memory leaks?
 				sprintf(msg,"Savepick menu: doing exit(%i)",EXIT_SUCCESS);
 				log_tag("debug_log.txt","[DEBUG]",msg);
 				// Unpost menu and free all the memory taken up
@@ -9997,15 +10098,17 @@ void gameloop(int argc, char** argv){
 		log_tag("debug_log.txt","[DEBUG]",msg);
 
 		if (load_info->is_new_game) {// We prepare path and fighter
-			path = randomise_path(rand());
+			path = randomise_path(rand(), default_kls);
 			path->loreCounter = -1;
 
-			player = (Fighter *) malloc(sizeof(Fighter));
+  			player = (Fighter*) KLS_PUSH(default_kls, Fighter, 1);
+			sprintf(msg,"Prepping Fighter");
+			kls_log("DEBUG",msg);
 
 			int optTot = optind;
 
-			getParams(argc, argv, player, path, optTot);
-			initPlayerStats(player,path);
+			getParams(argc, argv, player, path, optTot, default_kls);
+			initPlayerStats(player,path,default_kls);
 		} else { //Handle loading of gamestate
 
 			//Declar turnOP_args
@@ -10060,8 +10163,10 @@ void gameloop(int argc, char** argv){
 			log_tag("debug_log.txt","[TURNOP]",msg);
 
 
-			path = randomise_path(rand());
-			player = (Fighter *) malloc(sizeof(Fighter));
+			path = randomise_path(rand(), default_kls);
+  			player = (Fighter*) KLS_PUSH(default_kls, Fighter, 1);
+			sprintf(msg,"Prepping Loady Fighter");
+			kls_log("DEBUG",msg);
 			player->class = Knight;
 
 			strcpy(player->name,"Loady");
@@ -10071,10 +10176,12 @@ void gameloop(int argc, char** argv){
 			sprintf(msg,"Assigned Fighter [%s]. loading_room_turn_args->actor->name: [%s]",player->name, loading_room_turn_args->actor->name);
 			log_tag("debug_log.txt","[TURNOP]",msg);
 
-			Wincon* w = (Wincon*) malloc(sizeof(Wincon));
+			Wincon* w = (Wincon*) KLS_PUSH(default_kls, Wincon, 1);
+			sprintf(msg,"Prepping Loady Wincon");
+			kls_log("DEBUG",msg);
 			w->class = FULL_PATH;
 			initWincon(w,path,w->class);
-			initPlayerStats(player,path);
+			initPlayerStats(player,path,default_kls);
 			path->win_condition = w;
 
 			if (load_info->save_type == ENEMIES_SAVE) {
@@ -10097,7 +10204,7 @@ void gameloop(int argc, char** argv){
 				case ENEMIES_SAVE: {
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_ENEMYROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
-					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args);
+					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls);
 					sprintf(msg,"OP_LOAD_ENEMYROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
@@ -10108,7 +10215,7 @@ void gameloop(int argc, char** argv){
 				case HOME_SAVE: {
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_HOMEROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
-					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args);
+					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls);
 					sprintf(msg,"OP_LOAD_HOMEROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
@@ -10134,7 +10241,9 @@ void gameloop(int argc, char** argv){
 
 		char* lore_strings[6];
 		for (int i=0; i<5; i++) {
-			lore_strings[i] = (char*) malloc(sizeof(char)*500);
+			lore_strings[i] = (char*) KLS_PUSH(default_kls, char, 300);
+			sprintf(msg,"Prepping lores");
+			kls_log("DEBUG",msg);
 		}
 
 		int* loreCounter = &(path->loreCounter);
@@ -10357,13 +10466,13 @@ void gameloop(int argc, char** argv){
 				endwin();
 
 				if (current_room->class == HOME) {
-					res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites);
+					res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls);
 				} else if (current_room->class == ENEMIES) {
-					res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites);
+					res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls);
 				} else if (current_room->class == SHOP) {
 					res = handleRoom_Shop(current_room, roomsDone, path, player);
 				} else if (current_room->class == BOSS) {
-					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites);
+					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls);
 				} else if (current_room->class == TREASURE) {
 					res = handleRoom_Treasure(current_room, roomsDone, path, player);
 				} else if (current_room->class == ROADFORK) {
@@ -10410,6 +10519,8 @@ void gameloop(int argc, char** argv){
 				}
 			}// Win condition loop
 
+			// Clear default_kls
+			kls_clear(default_kls);
 
 			//Got out of the loop with res not being DEATH; so i won
 			if (res != OP_RES_DEATH) { //I guess player and enemy were freed already?
@@ -10421,6 +10532,7 @@ void gameloop(int argc, char** argv){
 				log_tag("debug_log.txt","[DEBUG]","Game won.\n");
 			}
 
+			/*
 			//Free lore strings if they were loaded
 			if (GAMEMODE == Story) {
 				for (int i=0; i<5; i++) {
@@ -10432,8 +10544,9 @@ void gameloop(int argc, char** argv){
 					free(lore_strings[i]);
 				}
 			}
-			free(path->win_condition);
-			free(path);
+			*/
+			//free(path->win_condition);
+			//free(path);
 			log_tag("debug_log.txt","[DEBUG]","End of wincon loop.\n");
 
 		} else {
@@ -10638,13 +10751,13 @@ void gameloop(int argc, char** argv){
 						endwin();
 
 						if (current_room->class == HOME) {
-							res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites);
+							res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls);
 						} else if (current_room->class == ENEMIES) {
-							res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites);
+							res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls);
 						} else if (current_room->class == SHOP) {
 							res = handleRoom_Shop(current_room, roomsDone, path, player);
 						} else if (current_room->class == BOSS) {
-							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites);
+							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls);
 						} else if (current_room->class == TREASURE) {
 							res = handleRoom_Treasure(current_room, roomsDone, path, player);
 						} else if (current_room->class == ROADFORK) {
@@ -10756,6 +10869,9 @@ void gameloop(int argc, char** argv){
 					move_update(current_floor, &current_x, &current_y, floor_win);
 				}// Win condition loop
 
+				// Clear default_kls
+				kls_clear(default_kls);
+
 				 //Got out of the loop with res not being DEATH; so i won
 				 if (res != OP_RES_DEATH) { //I guess player and enemy were freed already?
 					 int clrres = system("clear");
@@ -10791,6 +10907,7 @@ void gameloop(int argc, char** argv){
 
 				endwin();
 			} else {
+				log_tag("debug_log.txt","[ERROR]","Error in gameloop().");
 				exit(EXIT_FAILURE);
 			}
 		}
