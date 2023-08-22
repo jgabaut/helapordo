@@ -9975,6 +9975,7 @@ void gameloop(int argc, char** argv){
 		wprintw(savepick_side_win,"  \nhelapordo v%s",VERSION);
 		wprintw(savepick_side_win,"  \n  using: s4c-animate v%s",S4C_ANIMATE_VERSION);
 		wprintw(savepick_side_win,"  \n  using: koliseo v%s",KOLISEO_API_VERSION_STRING);
+		wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
 		wrefresh(savepick_side_win);
 		refresh();
 

@@ -27,6 +27,7 @@
 #include "game_curses.h"
 #include "sprites.h"
 #include "floors.h"
+#include "anvil__helapordo.h"
 
 /**
  * Call function associated with the passed turnOption_OP.

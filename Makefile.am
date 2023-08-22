@@ -23,7 +23,7 @@ MACHINE := $$(uname -m)
 PACK_NAME = $(TARGET)-$(VERSION)-$(OS)-$(MACHINE)
 
 # Source files
-helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c
+helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c
 
 # Linking rule
 LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
@@ -33,6 +33,11 @@ AM_LDFLAGS = -s
 
 # Compiler flags
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -O2 -Werror -Wpedantic -Wall
+
+./src/anvil__helapordo.c:
+	@echo -en "Generating C anvil__helapordo for $(VERSION):\n"
+	-./anvil -G ./src $(VERSION)
+	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for object files
 %.o: %.c
@@ -133,17 +138,19 @@ uninstall:
 
 clean:
 	@echo -en "Cleaning build artifacts:  "
-	rm $(TARGET)
-	rm src/*.o
+	-rm $(TARGET)
+	-rm src/*.o
+	-rm ./*.o
+	-rm src/anvil__helapordo.*
 	@echo -e "\033[1;33mDone.\e[0m"
 
 cleanob:
 	@echo -en "Cleaning object build artifacts:  "
-	rm src/*.o
+	-rm src/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)
-all: $(TARGET)
+all: ./src/anvil__helapordo.c $(TARGET)
 
 # Target to clean and rebuild
 rebuild: clean all
