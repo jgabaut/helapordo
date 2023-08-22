@@ -179,13 +179,13 @@ void statReset(Fighter* player, int force);
 
 int dropConsumable(Fighter* player);
 
-void dropEquip(Fighter* player, int beast, WINDOW* notify_win);
+void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls);
 
 int dropArtifact(Fighter* player);
 
-int fight(Fighter* player, Enemy* e, WINDOW* notify_win);
+int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls);
 
-int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win);
+int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* kls);
 
 void useConsumable(Fighter* f, Enemy* e, Boss* b, char* string, int isBoss);
 

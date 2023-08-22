@@ -13,3 +13,4 @@ kazoj# tests folder name
 1.0.1# First patch release
 1.0.2# Bump s4c to 0.2.7, introduce default_kls
 1.0.3# First usage of Koliseo
+1.0.4# Bump amboso to 1.6.1, Koliseo to 0.1.5

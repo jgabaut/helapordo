@@ -2,7 +2,7 @@ name: Build CI with make
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master" , "devel" ]
   pull_request:
     branches: [ "master" , "devel"]
   # Allows you to run this workflow manually from the Actions tab

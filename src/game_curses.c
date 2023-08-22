@@ -1388,7 +1388,6 @@ void setBossSprite(Boss* b) {
  * @param f The Fighter pointer whose sprite field will be initialised.
  */
 void setFighterSprite(Fighter* f) {
-
 	//TODO: this sprite is also present in misc_sprites, defined in sprites.h
 	//Should follow suit as the other setter functions and grab from there, not from this local copy.
 	switch(f->class) {
@@ -1405,7 +1404,6 @@ void setFighterSprite(Fighter* f) {
 		break;
 
 	};
-
 }
 
 /**
