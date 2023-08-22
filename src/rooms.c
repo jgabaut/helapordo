@@ -2713,7 +2713,7 @@ void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info) {
  * @param load_info Contains values used to handle loading a gme.
  * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_info, Koliseo_Temp t_kls) {
+void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	char msg[500];
 	r->desc = (char*) malloc(sizeof("Enemies"));
 	strcpy(r->desc,"Enemies");
@@ -2859,7 +2859,7 @@ void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f) {
  * @param load_info Contains values used to handle loading a gme.
  * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initRoom(Room* r, Fighter* f, int index, roomClass type, int enemyTotal, loadInfo* load_info, Koliseo_Temp t_kls) {
+void initRoom(Room* r, Fighter* f, int index, roomClass type, int enemyTotal, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	//Init room
 	if (load_info->is_new_game || load_info->done_loading ) {
 		enemyTotal = (rand() % (ROOM_ENEMIES_MAX)) +1;

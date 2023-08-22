@@ -1222,19 +1222,20 @@ void initCounters(Fighter* f, Koliseo* kls){
  * @param e The Enemy pointer whose counters field will be initialised.
  * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initECounters(Enemy* e, Koliseo_Temp t_kls){
+void initECounters(Enemy* e, Koliseo_Temp* t_kls){
+	Koliseo_Temp tkls = *t_kls;
 	//Ordering of i corresponds to counterIndexes enum
 	int total = (COUNTERSMAX+1);
 	char msg[500];
 	for (int i = 0; i < total; i++) {
-		Turncounter* c = (Turncounter*) KLS_PUSH_T(t_kls, Turncounter, 1);
+		Turncounter* c = (Turncounter*) KLS_PUSH_T(tkls, Turncounter, 1);
 		sprintf(msg,"Prepping enemy Turncounter (%i)",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
-			c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof(stringFromStatus(i)));
+			c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof(stringFromStatus(i)));
 			strcpy(c->desc,stringFromStatus(i));
 			sprintf(msg,"Allocated size %lu for enemy status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
@@ -1249,7 +1250,7 @@ void initECounters(Enemy* e, Koliseo_Temp t_kls){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof("ATK boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ATK boost"));
 					strcpy(c->desc,"ATK boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
@@ -1262,7 +1263,7 @@ void initECounters(Enemy* e, Koliseo_Temp t_kls){
 				}
 				break;
 				case TURNBOOST_DEF: {
-					c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof("DEF boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("DEF boost"));
 					strcpy(c->desc,"DEF boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
@@ -1275,7 +1276,7 @@ void initECounters(Enemy* e, Koliseo_Temp t_kls){
 				}
 				break;
 				case TURNBOOST_VEL: {
-					c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof("VEL boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("VEL boost"));
 					strcpy(c->desc,"VEL boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
@@ -1288,7 +1289,7 @@ void initECounters(Enemy* e, Koliseo_Temp t_kls){
 				}
 				break;
 				case TURNBOOST_ENR: {
-					c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof("ENR boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ENR boost"));
 					strcpy(c->desc,"ENR boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
@@ -2030,7 +2031,7 @@ void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
  * @param e The Enemy whose fields will be initialised.
  * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initEnemyStats(Enemy* e, Koliseo_Temp t_kls) {
+void initEnemyStats(Enemy* e, Koliseo_Temp* t_kls) {
 	EnemyBaseStats* base = &baseenemystats[e->class];
 	char msg[200];
 	sprintf(msg,"Init stats for enemy (%s)",stringFromEClass(e->class));
@@ -2407,14 +2408,14 @@ void statResetEnemy(Enemy* e, int force) {
  * @param enemyindex The index of current enemy.
  * @param t_kls The Koliseo_Temp used for allocations.
  */
-void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex, Koliseo_Temp t_kls) {
+void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex, Koliseo_Temp* t_kls) {
 		char msg[500];
 
 		//Randomise enemy class
 		e->class = rand() % (ENEMYCLASSESMAX + 1);
 
 		if (G_DEBUG_ENEMYTYPE_ON && ! (GAMEMODE == Story) ){ //Debug flag has a fixed enemy class when used outside of story gamemode
-							   		sprintf(msg,"prepareRoomEnemy(): Enemy debug flag was asserted outside of story mode, will always spawn a G_DEBUG_ENEMYTYPE (%s).\n",stringFromEClass(G_DEBUG_ENEMYTYPE));
+			sprintf(msg,"prepareRoomEnemy(): Enemy debug flag was asserted outside of story mode, will always spawn a G_DEBUG_ENEMYTYPE (%s).\n",stringFromEClass(G_DEBUG_ENEMYTYPE));
 			log_tag("debug_log.txt","\n[DEBUG]",msg);
 			e->class = G_DEBUG_ENEMYTYPE;
 		}
@@ -10218,7 +10219,7 @@ void gameloop(int argc, char** argv){
 			if (load_info->save_type == ENEMIES_SAVE) {
 
 				load_info->loaded_enemy = (Enemy*) malloc(sizeof(Enemy));
-				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, temp_kls);
+				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, &temp_kls);
 
 				//Update loading_room_turn_args->enemy pointer
 				loading_room_turn_args->enemy = load_info->loaded_enemy;
@@ -10390,7 +10391,7 @@ void gameloop(int argc, char** argv){
 				sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 				log_tag("debug_log.txt","[ROOM]",msg);
 
-				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, temp_kls);
+				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &temp_kls);
 				sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 				log_tag("debug_log.txt","[ROOM]",msg);
 
@@ -10710,7 +10711,7 @@ void gameloop(int argc, char** argv){
 						sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 						log_tag("debug_log.txt","[ROOM]",msg);
 
-						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, temp_kls);
+						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &temp_kls);
 						sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 						log_tag("debug_log.txt","[ROOM]",msg);
 

@@ -84,7 +84,7 @@ void printActivePerks(Fighter* f);
 
 void initCounters(Fighter* f, Koliseo* kls);
 
-void initECounters(Enemy* e, Koliseo_Temp t_kls);
+void initECounters(Enemy* e, Koliseo_Temp* t_kls);
 
 void initBCounters(Boss* b);
 
@@ -113,7 +113,7 @@ void initWincon(Wincon* w, Path* p, winconClass class);
 
 void initPlayerStats(Fighter* player, Path* path, Koliseo* kls);
 
-void initEnemyStats(Enemy* e, Koliseo_Temp t_kls);
+void initEnemyStats(Enemy* e, Koliseo_Temp* t_kls);
 
 int getBossBoost(int lvl, bossClass bclass);
 
@@ -129,7 +129,7 @@ int getEnemyBoost(int lvl, enemyClass eclass);
 
 void statResetEnemy(Enemy* e, int force);
 
-void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex, Koliseo_Temp t_kls);
+void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex, Koliseo_Temp* t_kls);
 
 void setEquipPrices(int size, int* equipPrices, Equip* equips[]);
 void setConsumablePrices(int size, int* consumablePrices, Consumable** consumables);
