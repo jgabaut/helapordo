@@ -7,12 +7,13 @@
  * @param op The kind of operation to do.
  * @param args Struct containing needed args for current operation. Can have some fields uninitialised, if not relevant to requested turnOP.
  * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
  * @return An OP_res representing result of turn option operation.
  * @see turnOP_args
  * @see turnOption_OP
  * @see OP_res
  */
-OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls) {
+OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t_kls) {
 
 	char msg[500];
 	OP_res res = INVALID_OP;
@@ -474,7 +475,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls) {
 		}
 		break;
 		case OP_QUIT: {
-			quit(actor,room,load_info);
+			quit(actor,room,load_info,t_kls);
 			//FIXME
 			//We can't free the turnOP_args, can we?
 			free(args);
@@ -1219,22 +1220,25 @@ void initCounters(Fighter* f, Koliseo* kls){
  * @see getStatBoostCounterEnemyFun()
  * @see getStatusCounterEnemyFun()
  * @param e The Enemy pointer whose counters field will be initialised.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initECounters(Enemy* e){
+void initECounters(Enemy* e, Koliseo_Temp t_kls){
 	//Ordering of i corresponds to counterIndexes enum
 	int total = (COUNTERSMAX+1);
 	char msg[500];
 	for (int i = 0; i < total; i++) {
-		Turncounter* c = (Turncounter*)malloc(sizeof(Turncounter));
-		sprintf(msg,"Prepping enemy counter %i",i);
+		Turncounter* c = (Turncounter*) KLS_PUSH_T(t_kls, Turncounter, 1);
+		sprintf(msg,"Prepping enemy Turncounter (%i)",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
+		kls_log("DEBUG",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
-			c->desc = (char*)malloc(sizeof(stringFromStatus(i)));
+			c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof(stringFromStatus(i)));
 			strcpy(c->desc,stringFromStatus(i));
 			sprintf(msg,"Allocated size %lu for enemy status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
 
 			c->effect_e_fun = getStatusCounterEnemyFun(i);
 			//sprintf(msg,"[DEBUG]    Enemy status function pointer is: (%i)", *(c->effect_e_fun));
@@ -1245,10 +1249,11 @@ void initECounters(Enemy* e){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*)malloc(sizeof("ATK boost"));
+					c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof("ATK boost"));
 					strcpy(c->desc,"ATK boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_e_fun = getStatBoostCounterEnemyFun(ATK);
 					c->type = CNT_ATKBOOST;
@@ -1257,10 +1262,11 @@ void initECounters(Enemy* e){
 				}
 				break;
 				case TURNBOOST_DEF: {
-					c->desc = (char*)malloc(sizeof("DEF boost"));
+					c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof("DEF boost"));
 					strcpy(c->desc,"DEF boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_e_fun = getStatBoostCounterEnemyFun(DEF);
 					c->type = CNT_DEFBOOST;
@@ -1269,10 +1275,11 @@ void initECounters(Enemy* e){
 				}
 				break;
 				case TURNBOOST_VEL: {
-					c->desc = (char*)malloc(sizeof("VEL boost"));
+					c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof("VEL boost"));
 					strcpy(c->desc,"VEL boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_e_fun = getStatBoostCounterEnemyFun(VEL);
 					c->type = CNT_VELBOOST;
@@ -1281,10 +1288,11 @@ void initECounters(Enemy* e){
 				}
 				break;
 				case TURNBOOST_ENR: {
-					c->desc = (char*)malloc(sizeof("ENR boost"));
+					c->desc = (char*) KLS_PUSH_T(t_kls, char*, sizeof("ENR boost"));
 					strcpy(c->desc,"ENR boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_e_fun = getStatBoostCounterEnemyFun(ENR);
 					c->type = CNT_ENRBOOST;
@@ -1293,9 +1301,8 @@ void initECounters(Enemy* e){
 				}
 				break;
 				default: {
-					c->desc = (char*)malloc(sizeof("ERROR INITIALISING TURNCOUNTER"));
-					strcpy(c->desc,"ERROR INITIALISING TURNCOUNTER");
 					log_tag("debug_log.txt","[ERROR]","ERROR INITALISING TURNCOUNTER in initECounters()\n");
+					exit(EXIT_FAILURE);
 				}
 			}
 		} //End else
@@ -2021,8 +2028,9 @@ void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
  * @see initECounters()
  * @see fighterStatus
  * @param e The Enemy whose fields will be initialised.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initEnemyStats(Enemy* e) {
+void initEnemyStats(Enemy* e, Koliseo_Temp t_kls) {
 	EnemyBaseStats* base = &baseenemystats[e->class];
 	char msg[200];
 	sprintf(msg,"Init stats for enemy (%s)",stringFromEClass(e->class));
@@ -2052,7 +2060,7 @@ void initEnemyStats(Enemy* e) {
 
 	e->prize = floor((e->beast) ? 2 * prize : prize);
 
-	initECounters(e);
+	initECounters(e,t_kls);
 
 	//Triple xp for beasts
 	e->xp = (e->beast) ? 3 * base->xp : base->xp;
@@ -2397,8 +2405,9 @@ void statResetEnemy(Enemy* e, int force) {
  * @param roomindex The index of current room.
  * @param enemiesInRoom The number of enemies in current room.
  * @param enemyindex The index of current enemy.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex) {
+void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex, Koliseo_Temp t_kls) {
 		char msg[500];
 
 		//Randomise enemy class
@@ -2434,7 +2443,7 @@ void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex
 		e->index = enemyindex;
 
 		//Load enemy stats
-		initEnemyStats(e);
+		initEnemyStats(e,t_kls);
 
 		//Force load of level bonuses
 		statResetEnemy(e,1);
@@ -8044,6 +8053,8 @@ void e_death(Enemy* e) {
 	//for (int i=0; i < SPECIALSMAX + 1 ; i++) {
 	//	free(player->specials[i]);
 	//}
+
+	/*
 	//Free enemy turnCounters
 	for (int i=0; i < (COUNTERSMAX + 1) ; i++) {
 		Turncounter* c = (Turncounter*) e->counters[i];
@@ -8059,6 +8070,8 @@ void e_death(Enemy* e) {
 		sprintf(msg,"Freed enemy turncounter %i.\n",i);
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
+	*/
+
 	sprintf(msg,"Freeing enemy %s\n",stringFromEClass(e->class));
 	log_tag("debug_log.txt","[FREE]",msg);
 	free(e);
@@ -9067,8 +9080,9 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
  * @param p The Fighter pointer at hand.
  * @param room The Room pointer at hand.
  * @param load_info The loadInfo pointer at hand.
+ * @param t_kls The Koliseo_Temp to end if possible.
  */
-void quit(Fighter* p, Room* room, loadInfo* load_info) {
+void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	char msg[500];
 	endwin();
 	int res = system("reset");
@@ -9080,6 +9094,11 @@ void quit(Fighter* p, Room* room, loadInfo* load_info) {
 	//Can't we print stats and clear the kls?
 	//printStats(p);
 	//printf("\n");
+	sprintf(msg,"Resetting Koliseo_Temp from: (%li)",t_kls->kls->offset);
+	kls_log("DEBUG",msg);
+	kls_temp_end(*t_kls);
+	sprintf(msg,"Koliseo now at: (%li)",t_kls->kls->offset);
+	kls_log("DEBUG",msg);
 	death(p,load_info);
 	freeRoom(room);
 	log_tag("debug_log.txt","[DEBUG]","Quitting program.");
@@ -9432,6 +9451,7 @@ void gameloop(int argc, char** argv){
 		FILE *OPS_debug_file = NULL;
 		// Parse command-line options
 		int option;
+		Koliseo_Temp temp_kls = kls_temp_start(default_kls);
 		loadInfo* load_info = (loadInfo*) KLS_PUSH(default_kls, loadInfo*, 1);
 
 		load_info->is_new_game = 1; //By default we do a new game
@@ -10047,14 +10067,14 @@ void gameloop(int argc, char** argv){
 				//TODO
 				//By default we expect the user to press new game, no action needed?
 				log_tag("debug_log.txt","[DEBUG]","Running new game from savepick menu");
-				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls);
+				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &temp_kls);
 			} else if (savepick_choice == LOAD_GAME) {
 				//ATM we expect a single save.
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
 				sprintf(msg,"Set load value: load_info->is_new_game == (%i)", load_info->is_new_game);
 				log_tag("debug_log.txt","[DEBUG]",msg);
-				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls);
+				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls, &temp_kls);
 				//TODO
 				//Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
 			} else if (savepick_choice == QUIT) {
@@ -10198,7 +10218,7 @@ void gameloop(int argc, char** argv){
 			if (load_info->save_type == ENEMIES_SAVE) {
 
 				load_info->loaded_enemy = (Enemy*) malloc(sizeof(Enemy));
-				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1);
+				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, temp_kls);
 
 				//Update loading_room_turn_args->enemy pointer
 				loading_room_turn_args->enemy = load_info->loaded_enemy;
@@ -10215,7 +10235,7 @@ void gameloop(int argc, char** argv){
 				case ENEMIES_SAVE: {
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_ENEMYROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
-					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls);
+					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls, &temp_kls);
 					sprintf(msg,"OP_LOAD_ENEMYROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
@@ -10226,7 +10246,7 @@ void gameloop(int argc, char** argv){
 				case HOME_SAVE: {
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_HOMEROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
-					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls);
+					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls, &temp_kls);
 					sprintf(msg,"OP_LOAD_HOMEROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
@@ -10370,7 +10390,7 @@ void gameloop(int argc, char** argv){
 				sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 				log_tag("debug_log.txt","[ROOM]",msg);
 
-				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info);
+				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, temp_kls);
 				sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 				log_tag("debug_log.txt","[ROOM]",msg);
 
@@ -10477,13 +10497,13 @@ void gameloop(int argc, char** argv){
 				endwin();
 
 				if (current_room->class == HOME) {
-					res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls);
+					res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,&temp_kls);
 				} else if (current_room->class == ENEMIES) {
-					res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls);
+					res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls,&temp_kls);
 				} else if (current_room->class == SHOP) {
 					res = handleRoom_Shop(current_room, roomsDone, path, player);
 				} else if (current_room->class == BOSS) {
-					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls);
+					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls,&temp_kls);
 				} else if (current_room->class == TREASURE) {
 					res = handleRoom_Treasure(current_room, roomsDone, path, player);
 				} else if (current_room->class == ROADFORK) {
@@ -10530,6 +10550,8 @@ void gameloop(int argc, char** argv){
 				}
 			}// Win condition loop
 
+			// End temp_kls
+			kls_temp_end(temp_kls);
 			// Clear default_kls
 			kls_clear(default_kls);
 
@@ -10688,7 +10710,7 @@ void gameloop(int argc, char** argv){
 						sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 						log_tag("debug_log.txt","[ROOM]",msg);
 
-						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info);
+						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, temp_kls);
 						sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 						log_tag("debug_log.txt","[ROOM]",msg);
 
@@ -10762,13 +10784,13 @@ void gameloop(int argc, char** argv){
 						endwin();
 
 						if (current_room->class == HOME) {
-							res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls);
+							res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, &temp_kls);
 						} else if (current_room->class == ENEMIES) {
-							res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls);
+							res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls, &temp_kls);
 						} else if (current_room->class == SHOP) {
 							res = handleRoom_Shop(current_room, roomsDone, path, player);
 						} else if (current_room->class == BOSS) {
-							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls);
+							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls, &temp_kls);
 						} else if (current_room->class == TREASURE) {
 							res = handleRoom_Treasure(current_room, roomsDone, path, player);
 						} else if (current_room->class == ROADFORK) {
@@ -10880,6 +10902,8 @@ void gameloop(int argc, char** argv){
 					move_update(current_floor, &current_x, &current_y, floor_win);
 				}// Win condition loop
 
+				// End temp_kls
+				kls_temp_end(temp_kls);
 				// Clear default_kls
 				kls_clear(default_kls);
 

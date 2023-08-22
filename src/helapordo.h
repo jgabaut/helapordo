@@ -34,7 +34,7 @@
  * @param args Pointer to turnOP_args object.
  * @param kls The Koliseo used for allocations.
  */
-OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls);
+OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t_kls);
 
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 
@@ -84,7 +84,7 @@ void printActivePerks(Fighter* f);
 
 void initCounters(Fighter* f, Koliseo* kls);
 
-void initECounters(Enemy* e);
+void initECounters(Enemy* e, Koliseo_Temp t_kls);
 
 void initBCounters(Boss* b);
 
@@ -113,7 +113,7 @@ void initWincon(Wincon* w, Path* p, winconClass class);
 
 void initPlayerStats(Fighter* player, Path* path, Koliseo* kls);
 
-void initEnemyStats(Enemy* e);
+void initEnemyStats(Enemy* e, Koliseo_Temp t_kls);
 
 int getBossBoost(int lvl, bossClass bclass);
 
@@ -129,7 +129,7 @@ int getEnemyBoost(int lvl, enemyClass eclass);
 
 void statResetEnemy(Enemy* e, int force);
 
-void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex);
+void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex, Koliseo_Temp t_kls);
 
 void setEquipPrices(int size, int* equipPrices, Equip* equips[]);
 void setConsumablePrices(int size, int* consumablePrices, Consumable** consumables);
@@ -215,7 +215,7 @@ int retry(void);
 void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls);
 void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int roomIndex,int currentEnemyNum);
 
-void quit(Fighter* p, Room* room, loadInfo* load_info);
+void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls);
 
 void sell_all_equips(Fighter* f);
 
