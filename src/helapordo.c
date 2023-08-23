@@ -478,7 +478,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			quit(actor,room,load_info,t_kls);
 			//FIXME
 			//We can't free the turnOP_args, can we?
-			//free(args);
+			free(args);
 			log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 		}
 		break;
@@ -8149,7 +8149,7 @@ void e_death(Enemy* e) {
 
 	sprintf(msg,"Freeing enemy %s\n",stringFromEClass(e->class));
 	log_tag("debug_log.txt","[FREE]",msg);
-	free(e);
+	//free(e);
 }
 
 /**
@@ -8178,8 +8178,7 @@ void b_death(Boss* b) {
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
 	*/
-	free(b);
-
+	//free(b);
 }
 
 /**

@@ -938,7 +938,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					sprintf(msg,"Player luck was [%i]",player_luck);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					death(player, load_info);
-					free(room->foes);
+					//free(room->foes);
 					endwin();
 
 					//printf("\t\tLuck:  %i Path luck:  %i\n",player_luck,p->luck);
@@ -1181,7 +1181,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				delwin(my_wins[0]);
 				delwin(my_wins[1]);
 				delwin(my_wins[2]);
-				free(room->foes);
+				//free(room->foes);
 				endwin();
 				turnOP(OP_QUIT,args,kls,t_kls);
 			}
