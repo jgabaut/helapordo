@@ -385,6 +385,7 @@ void freeRoom(Room* room) {
         		log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 		} else if (room->treasure->class == TREASURE_CHEST) {
         		log_tag("debug_log.txt","[FIXME]","freeRoom: freeing Treasure room, CHEST");
+			/*
 			//FIXME: freeing Treasure Chest here
 			Chest* chest = room->treasure->chest;
 			for (int eq_i = 0; eq_i < chest->equipsCount; eq_i++) {
@@ -409,6 +410,8 @@ void freeRoom(Room* room) {
 			sprintf(msg,"Freeing %s room (index %i), freed Chest.\n", stringFromRoom(room_type), room->index);
 			//free(chest);
 			log_tag("debug_log.txt","[DEBUG-FREE]",msg);
+			*/
+        		log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 		}
 	} else if (room_type == ROADFORK) {
 		Roadfork* rfk = room->roadfork;

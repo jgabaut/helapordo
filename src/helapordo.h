@@ -135,8 +135,8 @@ void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex
 void setEquipPrices(int size, int* equipPrices, Equip* equips[]);
 void setConsumablePrices(int size, int* consumablePrices, Consumable** consumables);
 void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls);
-void initChest(Chest* c, Fighter* f);
-void prepareChest(Chest* c, Fighter* f);
+void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls);
+void prepareChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls);
 
 void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls);
 void prepareTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls);

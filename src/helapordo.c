@@ -478,7 +478,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			quit(actor,room,load_info,t_kls);
 			//FIXME
 			//We can't free the turnOP_args, can we?
-			free(args);
+			//free(args);
 			log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 		}
 		break;
@@ -2696,8 +2696,12 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
  * @see Chest
  * @param c The allocated Chest pointer with already set class to initialise.
  * @param f The Fighter pointer with stats.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initChest(Chest* c, Fighter* f) {
+void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
+
+	Koliseo_Temp tkls = *t_kls;
+	char msg[200];
 
 	setChestSprite(c);
 
@@ -2717,9 +2721,10 @@ void initChest(Chest* c, Fighter* f) {
 		}
 		break;
 		default: {
-			fprintf(stderr,"%i is not a valid chest class.\n",c->class);
+			sprintf(msg,"%i is not a valid chest class.\n",c->class);
+			log_tag("debug_log.txt","[ERROR]",msg);
 			exit(EXIT_FAILURE);
-			 }
+		}
 		break;
 
 	}
@@ -2729,7 +2734,10 @@ void initChest(Chest* c, Fighter* f) {
 
 	if (c->consumablesCount > 0) {
 		for (int i = 0; i < c->consumablesCount; i++) {
-			Consumable* cns = (Consumable*)malloc(sizeof(Consumable));
+			sprintf(msg,"Prepping Consumable (%i/%i) for Chest", i, c->consumablesCount);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Consumable* cns = (Consumable*) KLS_PUSH_T(tkls,Consumable,1);
 			int drop = rand() % (CONSUMABLESMAX + 1);
 
 			cns->class = drop;
@@ -2756,7 +2764,10 @@ void initChest(Chest* c, Fighter* f) {
 			quality q = rand() % (QUALITIESMAX + 1);
 
 			//Prepare the item
-			Equip* e = (Equip*)malloc(sizeof(Equip));
+			sprintf(msg,"Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Equip* e = (Equip*) KLS_PUSH_T(tkls,Equip,1);
 
 			//Get the base item and copy the stats to the drop
 			Equip* base = &equips[drop];
@@ -2827,7 +2838,10 @@ void initChest(Chest* c, Fighter* f) {
 
 					e->perksCount += 1;
 
-					Perk* p = (Perk*)malloc(sizeof(Perk));
+					sprintf(msg,"Prepping Perk (%i/%i) for Equip (%i/%i) for Chest", j, e->perksCount, i, c->equipsCount);
+					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
+					Perk* p = (Perk*) KLS_PUSH_T(tkls,Perk,1);
 					p->class = rand() % (PERKSMAX +1) ;
 					//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 					strcpy(p->name,nameStringFromPerk(p->class));
@@ -2869,8 +2883,9 @@ void initChest(Chest* c, Fighter* f) {
  * @see initChest()
  * @param c The allocated Chest pointer to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void prepareChest(Chest* c, Fighter* f) {
+void prepareChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 
 	//Init chest class
 	int drop = (rand() % 100 ) +1;
@@ -2882,7 +2897,7 @@ void prepareChest(Chest* c, Fighter* f) {
 	}
 
 	//Load Chest stats
-	initChest(c,f);
+	initChest(c,f,t_kls);
 
 }
 
@@ -2907,7 +2922,7 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 			    log_tag("debug_log.txt","[DEBUG]",msg);
 			    kls_log("DEBUG",msg);
 			    Chest* c = (Chest*) KLS_PUSH_T(tkls,Chest,1);
-			    prepareChest(c,f);
+			    prepareChest(c,f,t_kls);
 			    t->chest = c;
 
 			    }
@@ -3907,7 +3922,10 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 
 			e->perksCount += 1;
 
-			Perk* p = (Perk*)malloc(sizeof(Perk));
+			sprintf(msg,"Prepping Perk (%i) for dropped Equip)", e->perksCount);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Perk* p = (Perk*) KLS_PUSH(kls,Perk,1);
 			p->class = rand() % (PERKSMAX +1) ;
 			//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 			strcpy(p->name,nameStringFromPerk(p->class));
@@ -9166,7 +9184,9 @@ void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	sprintf(msg,"Koliseo now at: (%li)",t_kls->kls->offset);
 	kls_log("DEBUG",msg);
 	death(p,load_info);
-	freeRoom(room);
+	//FIXME:
+	//Calling this segfaults?
+	//freeRoom(room);
 	log_tag("debug_log.txt","[DEBUG]","Quitting program.");
 	exit(EXIT_SUCCESS);
 }
