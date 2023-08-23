@@ -1357,7 +1357,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				case TURNBOOST_ATK: {
 					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ATK boost"));
 					strcpy(c->desc,"ATK boost");
-					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
+					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("[DEBUG]",msg);
 
@@ -1370,7 +1370,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				case TURNBOOST_DEF: {
 					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("DEF boost"));
 					strcpy(c->desc,"DEF boost");
-					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
+					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("[DEBUG]",msg);
 
@@ -1383,7 +1383,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				case TURNBOOST_VEL: {
 					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("VEL boost"));
 					strcpy(c->desc,"VEL boost");
-					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
+					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("[DEBUG]",msg);
 
@@ -1396,7 +1396,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				case TURNBOOST_ENR: {
 					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ENR boost"));
 					strcpy(c->desc,"ENR boost");
-					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
+					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("[DEBUG]",msg);
 
@@ -1407,8 +1407,8 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				}
 				break;
 				default: {
-					c->desc = (char*)malloc(sizeof("ERROR INITIALISING TURNCOUNTER"));
 					strcpy(c->desc,"ERROR INITIALISING TURNCOUNTER");
+					exit(EXIT_FAILURE);
 				}
 			}
 		} //End else
