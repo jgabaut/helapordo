@@ -27,6 +27,7 @@
 #include "game_curses.h"
 #include "sprites.h"
 #include "floors.h"
+#include "anvil__helapordo.h"
 
 /**
  * Call function associated with the passed turnOption_OP.
@@ -86,9 +87,9 @@ void initCounters(Fighter* f, Koliseo* kls);
 
 void initECounters(Enemy* e, Koliseo_Temp* t_kls);
 
-void initBCounters(Boss* b);
+void initBCounters(Boss* b, Koliseo_Temp* t_kls);
 
-void initFoePartyCounters(FoeParty* fp);
+void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls);
 
 void printCounters(Turncounter* counters[]);
 
@@ -119,11 +120,11 @@ int getBossBoost(int lvl, bossClass bclass);
 
 void statResetBoss(Boss* b, int force);
 
-void initBossStats(Boss* b);
-void prepareBoss(Boss* b);
+void initBossStats(Boss* b, Koliseo_Temp* t_kls);
+void prepareBoss(Boss* b, Koliseo_Temp* t_kls);
 
-void initFoePartyStats(FoeParty* fp);
-void prepareFoeParty(FoeParty* fp, int total_foes, int roomindex);
+void initFoePartyStats(FoeParty* fp, Koliseo_Temp* t_kls);
+void prepareFoeParty(FoeParty* fp, int total_foes, int roomindex, Koliseo_Temp* t_kls);
 
 int getEnemyBoost(int lvl, enemyClass eclass);
 
@@ -133,12 +134,12 @@ void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex
 
 void setEquipPrices(int size, int* equipPrices, Equip* equips[]);
 void setConsumablePrices(int size, int* consumablePrices, Consumable** consumables);
-void initShop(Shop* s, int indexWeight, Fighter* player);
-void initChest(Chest* c, Fighter* f);
-void prepareChest(Chest* c, Fighter* f);
+void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls);
+void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls);
+void prepareChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls);
 
-void initTreasure(Treasure* t, Fighter* f);
-void prepareTreasure(Treasure* t, Fighter* f);
+void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls);
+void prepareTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls);
 
 void prepareRoadfork(Roadfork* r);
 
@@ -212,14 +213,14 @@ void b_death(Boss* b);
 
 int retry(void);
 
-void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls);
+void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Koliseo_Temp* t_kls);
 void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int roomIndex,int currentEnemyNum);
 
 void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls);
 
-void sell_all_equips(Fighter* f);
+void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls);
 
-void open_chest(WINDOW* w, Chest * c, Fighter* f);
+void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls);
 
 Path* randomise_path(int seed, Koliseo* kls);
 

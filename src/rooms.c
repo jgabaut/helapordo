@@ -938,7 +938,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					sprintf(msg,"Player luck was [%i]",player_luck);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					death(player, load_info);
-					free(room->foes);
+					//free(room->foes);
 					endwin();
 
 					//printf("\t\tLuck:  %i Path luck:  %i\n",player_luck,p->luck);
@@ -1181,7 +1181,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				delwin(my_wins[0]);
 				delwin(my_wins[1]);
 				delwin(my_wins[2]);
-				free(room->foes);
+				//free(room->foes);
 				endwin();
 				turnOP(OP_QUIT,args,kls,t_kls);
 			}
@@ -1872,9 +1872,11 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @param roomsDone The total of rooms completed.
  * @param path The Path pointer.
  * @param f The Fighter pointer at hand.
+ * @param t_kls The Koliseo_Temp used for allocations.
  * @return When shop is exited, should return NO_DMG.
  */
-int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f) {
+int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
 	//Strings for turn menu choices
  	char *shop_choices[] = {
 			"Buy",
@@ -2051,7 +2053,7 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f) {
 						end_shop = 1;
 					} else if ((check = strcmp("Sell Equips",item_name(cur))) == 0) {
 						end_shop = 1;
-						sell_all_equips(f);
+						sell_all_equips(f,t_kls);
 					} else if ((check = strcmp("View Equips",item_name(cur))) == 0) {
 						equips_index = 0;
 						while(!end_scrolling && (ec = wgetch(wins[1])) != 'q') {
@@ -2154,8 +2156,12 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f) {
 								//We create a deep copy of the equip so we can free the shop without worrying about the memory sharing with the bag.
 							sprintf(msg,"Buying Equip %s, deep copy stuff.\n",stringFromEquips(equipToBuy->class));
 							log_tag("debug_log.txt","[SHOP]",msg);
+								//TODO
 								//Should use a function to avoid refactoring more points when changing Equip generation.
-								Equip* saved = (Equip*) malloc(sizeof(Equip));
+								sprintf(msg,"Prepping Equip for purchase.");
+								log_tag("debug_log.txt","[SHOP]",msg);
+								kls_log("DEBUG",msg);
+								Equip* saved = (Equip*) KLS_PUSH_T(tkls,Equip,1);
 								Equip* to_save = equipToBuy;
 
 								saved->class = to_save->class;
@@ -2175,7 +2181,10 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f) {
 								saved->equip_fun = to_save->equip_fun ;
 
 								for (int j = 0; j < to_save->perksCount; j++) {
-									Perk* save_pk = (Perk*) malloc(sizeof(Perk));
+									sprintf(msg,"Prepping Perk (%i/%i) for Equip purchase.",j,to_save->perksCount);
+									log_tag("debug_log.txt","[SHOP]",msg);
+									kls_log("DEBUG",msg);
+									Perk* save_pk = (Perk*) KLS_PUSH_T(tkls,Perk,1);
 									save_pk->class = to_save->perks[j]->class;
 									strcpy(save_pk->name, to_save->perks[j]->name);
 									strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2246,8 +2255,11 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f) {
  * @param w The window to print results to.
  * @param c The chest to open.
  * @param f The fighter holding the bags to add the items to.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void open_chest(WINDOW* w, Chest * c, Fighter* f) {
+void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
+	char msg[200];
 	wclear(w);
 	wrefresh(w);
 	box(w,0,0);
@@ -2356,8 +2368,12 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f) {
 		for (int i = 0; i < c->equipsCount; i++) {
 			int slotnum = f->equipsBagOccupiedSlots;
 			//We create a deep copy of the equip so we can free the chest without worrying about the memory sharing with the bag.
+			//TODO
 			//Should use a function to avoid refactoring more points when changing Equip generation.
-			Equip* saved = (Equip*) malloc(sizeof(Equip));
+			sprintf(msg,"Prepping Equip for Chest");
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Equip* saved = (Equip*) KLS_PUSH_T(tkls,Equip,1);
 			Equip* to_save = c->equips[i];
 
 			saved->class = to_save->class;
@@ -2377,7 +2393,10 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f) {
 			saved->equip_fun = to_save->equip_fun ;
 
 			for (int j = 0; j < to_save->perksCount; j++) {
-				Perk* save_pk = (Perk*) malloc(sizeof(Perk));
+				sprintf(msg,"Prepping Perk (%i/%i) for Equip for Chest.", j, to_save->perksCount);
+				log_tag("debug_log.txt","[SHOP]",msg);
+				kls_log("DEBUG",msg);
+				Perk* save_pk = (Perk*) KLS_PUSH_T(tkls,Perk,1);
 				save_pk->class = to_save->perks[j]->class;
 				strcpy(save_pk->name, to_save->perks[j]->name);
 				strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2427,9 +2446,10 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f) {
  * @param roomsDone The total of rooms completed.
  * @param path The Path pointer.
  * @param f The Fighter pointer at hand.
+ * @param t_kls The Koliseo_Temp used for allocations.
  * @return When room is exited, should return NO_DMG.
  */
-int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f) {
+int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_Temp* t_kls) {
 	//Strings for turn menu choices
  	char *treasure_choices[] = {
 			"Take Item",
@@ -2642,7 +2662,7 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f) {
 						end_room = 1;
 					} else if ( room->treasure->class == TREASURE_CHEST && (check = strcmp("Open Chest",item_name(cur)) == 0) ) {
 						if (f->keys_balance > 0) {
-							open_chest(win,room->treasure->chest,f);
+							open_chest(win,room->treasure->chest,f,t_kls);
 							sprintf(msg,"Opened chest in Treasure room, index %i.\n", room->index);
 							log_tag("debug_log.txt","[TREASURE]",msg);
 							f->keys_balance--;
@@ -2694,9 +2714,15 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f) {
  * @param roomIndex The index of the room to initialise.
  * @param f The fighter pointer.
  * @param load_info Contains values used to handle loading a gme.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info) {
-	r->desc = (char*) malloc(sizeof("Home"));
+void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
+	char msg[200];
+	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Home"));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("HOME"));
 	strcpy(r->desc,"Home");
 	if (!(load_info->is_new_game)) {
 		log_tag("debug_log.txt","[DEBUG]","initRoom_Home() for a loaded game");
@@ -2714,14 +2740,22 @@ void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info) {
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_info, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
 	char msg[500];
-	r->desc = (char*) malloc(sizeof("Enemies"));
+	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Enemies"));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Enemies"));
 	strcpy(r->desc,"Enemies");
 	if (enemyTotal <= ROOM_ENEMIES_MAX ) {
 		r->index = roomIndex;
 
 		r->enemyTotal = enemyTotal;
-		FoeParty* foes = (FoeParty*) malloc(sizeof(FoeParty));
+		sprintf(msg,"Allocated size %lu for FoeParty:", sizeof(FoeParty));
+		log_tag("debug_log.txt","[DEBUG]",msg);
+		kls_log("DEBUG",msg);
+		FoeParty* foes = (FoeParty*) KLS_PUSH_T(tkls,FoeParty,1);
+
 		//Randomise fp class
 		//foes->class = rand() % (FOEPARTY_CLASS_MAX + 1);
 		foes->class = Enemies;
@@ -2745,14 +2779,17 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		}
 
 		//Reminder: Foes are manipulated when loading
-		prepareFoeParty(foes, total_foes, roomIndex);
+		prepareFoeParty(foes, total_foes, roomIndex, t_kls);
 
 		r->foes = foes;
 		sprintf(msg,"Set (%s) FoeParty for room #%i , size is (%i).", stringFromFoePartyClass(r->foes->class), r->index,r->foes->size);
 		log_tag("debug_log.txt","[DEBUG-LOAD]",msg);
 
 		for (; enemyIndex < enemyTotal; enemyIndex++) {
-			Enemy* e = malloc(sizeof(Enemy)); //&room_enemies[enemyIndex];
+			sprintf(msg,"Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy), enemyIndex, enemyTotal);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Enemy* e = KLS_PUSH_T(tkls,Enemy,1); //&room_enemies[enemyIndex];
 			prepareRoomEnemy(e, r->index, r->enemyTotal, enemyIndex, t_kls);
 			r->enemies[enemyIndex] = e;
 			//Set FoeParty links
@@ -2767,10 +2804,10 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		//}
 		//r->enemies = enemies;
 	} else {
-		fprintf(stderr,"ERROR: Room %i can't have %i enemies (>MAX %i)\n", roomIndex, enemyTotal, ROOM_ENEMIES_MAX);
+		sprintf(msg,"ERROR: Room %i can't have %i enemies (>MAX %i)\n", roomIndex, enemyTotal, ROOM_ENEMIES_MAX);
+		log_tag("debug_log.txt","[FOEPARTY]",msg);
 		exit(EXIT_FAILURE);
 	}
-
 }
 
 
@@ -2782,14 +2819,23 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
  * @param r The Room whose fields will be initialised.
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initRoom_Shop(Room* r, int roomIndex, Fighter* f) {
-	r->desc = (char*) malloc(sizeof("Shop"));
+void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
+	char msg[200];
+	Koliseo_Temp tkls = *t_kls;
+	sprintf(msg,"Allocated size %lu for Room Shop desc:", sizeof("Shop"));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Shop"));
 	strcpy(r->desc,"Shop");
-	Shop* shop = (Shop*) malloc (sizeof(Shop));
+	sprintf(msg,"Allocated size %lu for Room Shop :", sizeof("Shop"));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	Shop* shop = (Shop*) KLS_PUSH_T(tkls,Shop,1);
 
 	int indexWeight = roomIndex;
-	initShop(shop,indexWeight,f);
+	initShop(shop,indexWeight,f,t_kls);
 	r->shop = shop;
 }
 
@@ -2801,13 +2847,22 @@ void initRoom_Shop(Room* r, int roomIndex, Fighter* f) {
  * @param r The Room whose fields will be initialised.
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initRoom_Boss(Room* r, int roomIndex, Fighter* f) {
-	r->desc = (char*) malloc(sizeof("Boss"));
+void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
+	char msg[200];
+	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Boss"));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Boss"));
 	strcpy(r->desc,"Boss");
-	Boss* b = (Boss*) malloc (sizeof(Boss));
+	sprintf(msg,"Allocated size %lu for Room Boss:", sizeof(Boss));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	Boss* b = (Boss*) KLS_PUSH_T(tkls,Boss,1);
 
-	prepareBoss(b);
+	prepareBoss(b, t_kls);
 	r->boss = b;
 }
 
@@ -2819,13 +2874,21 @@ void initRoom_Boss(Room* r, int roomIndex, Fighter* f) {
  * @param r The Room whose fields will be initialised.
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initRoom_Treasure(Room* r, int roomIndex, Fighter* f) {
-	r->desc = (char*) malloc(sizeof("Treasure"));
+void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
+	char msg[200];
+	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Treasure"));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Treasure"));
 	strcpy(r->desc,"Treasure");
-	Treasure* t = (Treasure*) malloc (sizeof(Treasure));
-
-	prepareTreasure(t,f);
+	sprintf(msg,"Allocated size %lu for Room Treasure:", sizeof(Treasure));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	Treasure* t = (Treasure*) KLS_PUSH_T(tkls,Treasure,1);
+	prepareTreasure(t,f,t_kls);
 	r->treasure = t;
 }
 
@@ -2838,10 +2901,19 @@ void initRoom_Treasure(Room* r, int roomIndex, Fighter* f) {
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
  */
-void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f) {
-	r->desc = (char*) malloc(sizeof("Roadfork"));
+void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
+	log_tag("debug_log.txt","[WARN]","Entering legacy path.");
+	Koliseo_Temp tkls = *t_kls;
+	char msg[200];
+	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Roadfork"));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Roadfork"));
 	strcpy(r->desc,"Roadfork");
-	Roadfork* fk = (Roadfork*) malloc (sizeof(Roadfork));
+	sprintf(msg,"Allocated size %lu for Room Roadfork:", sizeof(Roadfork));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	Roadfork* fk = (Roadfork*) KLS_PUSH_T (tkls,Roadfork,1);
 
 	prepareRoadfork(fk);
 	r->roadfork = fk;
@@ -2885,7 +2957,7 @@ void initRoom(Room* r, Fighter* f, int index, roomClass type, int enemyTotal, lo
 		case HOME: {
 			log_tag("debug_log.txt","[DEBUG]","initRoom() for HOME");
 			r->class = type;
-			initRoom_Home(r,index,f,load_info);
+			initRoom_Home(r,index,f,load_info,t_kls);
 		}
 		break;
 		case ENEMIES: {
@@ -2895,22 +2967,22 @@ void initRoom(Room* r, Fighter* f, int index, roomClass type, int enemyTotal, lo
 		break;
 		case SHOP: {
 			r->class = type;
-			initRoom_Shop(r,index,f);
+			initRoom_Shop(r,index,f,t_kls);
 		}
 		break;
 		case BOSS: {
 			r->class = type;
-			initRoom_Boss(r,index,f);
+			initRoom_Boss(r,index,f,t_kls);
 		}
 		break;
 		case TREASURE: {
 			r->class = type;
-			initRoom_Treasure(r,index,f);
+			initRoom_Treasure(r,index,f,t_kls);
 		}
 		break;
 		case ROADFORK: {
 			r->class = type;
-			initRoom_Roadfork(r,index,f);
+			initRoom_Roadfork(r,index,f,t_kls);
 		}
 		break;
 	}

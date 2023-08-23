@@ -337,9 +337,11 @@ void freeRoom(Room* room) {
 	sprintf(msg,"Freeing room desc: (%s).", room->desc);
 	log_tag("debug_log.txt","[DEBUG-FREE]",msg);
 	//Free room memory
-	free(room->desc);
+	//FIXME: do we have all room descs handled ?
+	//free(room->desc);
 
 	if (room_type == SHOP) {
+		/*
 		for (int i = 0 ; i < room->shop->equipsCount; i++) {
 			Equip* e = room->shop->equips[i];
 			if (e->perksCount > 0) {
@@ -361,19 +363,30 @@ void freeRoom(Room* room) {
 			sprintf(msg,"Freeing %s room (index %i), freed Consumable %i.", stringFromRoom(room_type), room->index, i);
         		log_tag("debug_log.txt","[DEBUG-FREE]",msg);
 		}
+		*/
+			//FIXME: remove all the commented out bs
+        		log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 	} else if (room_type == TREASURE) {
 		if (room->treasure->class == TREASURE_CONSUMABLE) {
 
+			/*
 			Consumable* dele = room->treasure->consumable;
 			sprintf(msg,"Freeing %s room (index %i), freed Consumable %s.\n", stringFromRoom(room_type), room->index, stringFromConsumables(dele->class));
 			free(dele);
-        		log_tag("debug_log.txt","[DEBUG-FREE]",msg);
+			*/
+			//FIXME: remove all the commented out bs
+        		log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 		} else if (room->treasure->class == TREASURE_ARTIFACT) {
+			/*
 			Artifact* dele = room->treasure->artifact;
 			sprintf(msg,"Freeing %s room (index %i), freed Artifact %s.\n", stringFromRoom(room_type), room->index, stringFromArtifacts(dele->class));
 			free(dele);
-        		log_tag("debug_log.txt","[DEBUG-FREE]",msg);
+			*/
+        		log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 		} else if (room->treasure->class == TREASURE_CHEST) {
+        		log_tag("debug_log.txt","[FIXME]","freeRoom: freeing Treasure room, CHEST");
+			/*
+			//FIXME: freeing Treasure Chest here
 			Chest* chest = room->treasure->chest;
 			for (int eq_i = 0; eq_i < chest->equipsCount; eq_i++) {
 				Equip* equip = chest->equips[eq_i];
@@ -395,19 +408,25 @@ void freeRoom(Room* room) {
 				log_tag("debug_log.txt","[DEBUG-FREE]",msg);
 			}
 			sprintf(msg,"Freeing %s room (index %i), freed Chest.\n", stringFromRoom(room_type), room->index);
-			free(chest);
+			//free(chest);
 			log_tag("debug_log.txt","[DEBUG-FREE]",msg);
+			*/
+        		log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 		}
 	} else if (room_type == ROADFORK) {
+		/*
 		Roadfork* rfk = room->roadfork;
 		free(rfk);
 		sprintf(msg,"Freeing %s room (index %i), freed Roadfork.\n", stringFromRoom(room_type), room->index);
 		log_tag("debug_log.txt","[DEBUG-FREE]",msg);
+		*/
+        	log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 	}
 
 	sprintf(msg,"Freed %s room, index %i.\n", stringFromRoom(room->class), room->index);
 	log_tag("debug_log.txt","[DEBUG-FREE]",msg);
-	free(room);
+        log_tag("debug_log.txt","[FIXME]","freeRoom(): done fake free().");
+	//free(room);
 }
 
 /**
