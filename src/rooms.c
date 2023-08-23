@@ -2722,10 +2722,10 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		r->index = roomIndex;
 
 		r->enemyTotal = enemyTotal;
-		FoeParty* foes = (FoeParty*) KLS_PUSH_T(tkls,FoeParty,1);
 		sprintf(msg,"Allocated size %lu for FoeParty:", sizeof(FoeParty));
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
+		FoeParty* foes = (FoeParty*) KLS_PUSH_T(tkls,FoeParty,1);
 
 		//Randomise fp class
 		//foes->class = rand() % (FOEPARTY_CLASS_MAX + 1);
