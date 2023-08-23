@@ -218,7 +218,7 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 
 void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls);
 
-void sell_all_equips(Fighter* f);
+void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls);
 
 void open_chest(WINDOW* w, Chest * c, Fighter* f);
 

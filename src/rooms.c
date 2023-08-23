@@ -1872,9 +1872,10 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @param roomsDone The total of rooms completed.
  * @param path The Path pointer.
  * @param f The Fighter pointer at hand.
+ * @param t_kls The Koliseo_Temp used for allocations.
  * @return When shop is exited, should return NO_DMG.
  */
-int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f) {
+int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_Temp* t_kls) {
 	//Strings for turn menu choices
  	char *shop_choices[] = {
 			"Buy",
@@ -2051,7 +2052,7 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f) {
 						end_shop = 1;
 					} else if ((check = strcmp("Sell Equips",item_name(cur))) == 0) {
 						end_shop = 1;
-						sell_all_equips(f);
+						sell_all_equips(f,t_kls);
 					} else if ((check = strcmp("View Equips",item_name(cur))) == 0) {
 						equips_index = 0;
 						while(!end_scrolling && (ec = wgetch(wins[1])) != 'q') {
