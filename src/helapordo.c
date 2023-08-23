@@ -54,7 +54,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 		case OP_LOAD_GAME: {
 			if (load_info == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(load_info) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -65,7 +65,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 		case OP_LOAD_ENEMYROOM: {
 			if (load_info == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(load_info) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -79,7 +79,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 
 			if (save_file == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(save_file) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -112,7 +112,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 		case OP_LOAD_HOMEROOM: {
 			if (load_info == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(load_info) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -126,7 +126,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 
 			if (save_file == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(save_file) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -293,7 +293,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			}
 			if (load_info == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(load_info) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -427,7 +427,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			if (actor == NULL || path == NULL) {
 				if (actor == NULL) log_tag("debug_log.txt","[ERROR]","turnOP_args->(actor) was NULL");
 				if (path == NULL) log_tag("debug_log.txt","[ERROR]","turnOP_args->(path) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -438,7 +438,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 		case OP_PERKS: {
 			if (actor == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(actor) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -449,7 +449,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 		case OP_STATS: {
 			if (actor == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(actor) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -460,7 +460,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 		case OP_ARTIFACTS: {
 			if (actor == NULL) {
 				log_tag("debug_log.txt","[ERROR]","turnOP_args->(actor) was NULL");
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
@@ -478,7 +478,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			quit(actor,room,load_info,t_kls);
 			//FIXME
 			//We can't free the turnOP_args, can we?
-			free(args);
+			//free(args);
 			log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 		}
 		break;
@@ -4013,6 +4013,7 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 
 		if (n != 0) { //Abort deletion, drop will not be awared.
 
+			/*
 			int perkscount = e->perksCount;
 			if (perkscount > 0) {
 				for (int i=0; i < perkscount; i++) {
@@ -4020,20 +4021,25 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 				}
 			}
 			free(e);
+			*/
 			log_tag("debug_log.txt","[DEBUG-EQUIPS]","Equip was not taken.\n");
 			return;
 		};
 
 		Equip* toDelete = (Equip*) player->equipsBag[selected];
 		int perkscount = toDelete->perksCount;
+		/*
 		if (perkscount > 0) {
 			for (int i=0; i < perkscount; i++) {
 				free(toDelete->perks[i]);
 			}
 		}
-		sprintf(msg,"Equip %s was taken by deleting %s.\n", stringFromEquips(e->class), stringFromEquips(toDelete->class));
+		*/
+		sprintf(msg,"Equip %s (%i Perks) was taken by deleting %s.\n", stringFromEquips(e->class), perkscount, stringFromEquips(toDelete->class));
 		log_tag("debug_log.txt","[DEBUG-EQUIPS]",msg);
+		/*
 		free(toDelete);
+		*/
 
 		//Add drop to player bag replacing the one at the selected index
 		player->equipsBag[selected] = (struct Equip*) e;
@@ -4809,7 +4815,9 @@ void emptyEquips(Fighter* player) {
 
 		Equip* e = (Equip*) player->equipsBag[i];
 		if (e->qty > 0 ) {
-			free(e);
+			//free(e);
+			e->qty = 0;
+			log_tag("debug_log.txt","[FIXME]","emptyEquips():  how do I empty them semantically?");
 		}
 	};
 }
@@ -9547,7 +9555,7 @@ void gameloop(int argc, char** argv){
 		FILE *OPS_debug_file = NULL;
 		// Parse command-line options
 		int option;
-		Koliseo_Temp temp_kls = kls_temp_start(default_kls);
+		Koliseo_Temp gameloop_kls = kls_temp_start(default_kls);
 		loadInfo* load_info = (loadInfo*) KLS_PUSH(default_kls, loadInfo*, 1);
 
 		load_info->is_new_game = 1; //By default we do a new game
@@ -10016,7 +10024,7 @@ void gameloop(int argc, char** argv){
 		Boss* fakeboss = NULL;
 		FILE* fakesavefile = NULL;
 		WINDOW* fakenotifywin = NULL;
-		turnOP_args* savepick_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin);
+		turnOP_args* savepick_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gameloop_kls);
  		char *savepick_choices[] = {
 			"New game",
 			"Load save",
@@ -10165,14 +10173,14 @@ void gameloop(int argc, char** argv){
 				//TODO
 				//By default we expect the user to press new game, no action needed?
 				log_tag("debug_log.txt","[DEBUG]","Running new game from savepick menu");
-				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &temp_kls);
+				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &gameloop_kls);
 			} else if (savepick_choice == LOAD_GAME) {
 				//ATM we expect a single save.
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
 				sprintf(msg,"Set load value: load_info->is_new_game == (%i)", load_info->is_new_game);
 				log_tag("debug_log.txt","[DEBUG]",msg);
-				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls, &temp_kls);
+				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls, &gameloop_kls);
 				//TODO
 				//Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
 			} else if (savepick_choice == QUIT) {
@@ -10202,7 +10210,7 @@ void gameloop(int argc, char** argv){
 		}//End while !savepick_picked
 
 		//Free turnOP_args
-		free(savepick_turn_args);
+		//free(savepick_turn_args);
 
 		// Unpost menu and free all the memory taken up
 		unpost_menu(savepick_menu);
@@ -10246,7 +10254,7 @@ void gameloop(int argc, char** argv){
 			Boss* fakeboss = NULL;
 			FILE* fakesavefile = NULL;
 			WINDOW* fakenotifywin = NULL;
-			turnOP_args* loading_room_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin);
+			turnOP_args* loading_room_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gameloop_kls);
 			FILE* save_file;
 			char path_to_savefile[600];
 			char static_path[500];
@@ -10318,7 +10326,8 @@ void gameloop(int argc, char** argv){
 				sprintf(msg,"Prepping Loady Enemy");
 				kls_log("DEBUG",msg);
 				load_info->loaded_enemy = (Enemy*) KLS_PUSH(default_kls, Enemy, 1);
-				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, &temp_kls);
+				//FIXME: the structs related to loaded enemy are not loaded on default_kls
+				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, &gameloop_kls);
 
 				//Update loading_room_turn_args->enemy pointer
 				loading_room_turn_args->enemy = load_info->loaded_enemy;
@@ -10335,7 +10344,8 @@ void gameloop(int argc, char** argv){
 				case ENEMIES_SAVE: {
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_ENEMYROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
-					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls, &temp_kls);
+					//FIXME: the structs related to loaded enemy are not loaded on default_kls
+					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls, &gameloop_kls);
 					sprintf(msg,"OP_LOAD_ENEMYROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
@@ -10346,7 +10356,8 @@ void gameloop(int argc, char** argv){
 				case HOME_SAVE: {
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_HOMEROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
-					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls, &temp_kls);
+					//FIXME: the structs related to loaded enemy are not loaded on default_kls
+					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls, &gameloop_kls);
 					sprintf(msg,"OP_LOAD_HOMEROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
@@ -10369,12 +10380,11 @@ void gameloop(int argc, char** argv){
 			//exit(0);
 		}
 
-
 		char* lore_strings[6];
 		for (int i=0; i<5; i++) {
 			sprintf(msg,"Prepping lores");
 			kls_log("DEBUG",msg);
-			lore_strings[i] = (char*) KLS_PUSH(default_kls, char, 300);
+			lore_strings[i] = (char*) KLS_PUSH_T(gameloop_kls, char, 300);
 		}
 
 		int* loreCounter = &(path->loreCounter);
@@ -10485,14 +10495,15 @@ void gameloop(int argc, char** argv){
 
 				sprintf(msg,"Prepping Room for Story Gamemode. roomsDone=(%i)",roomsDone);
 				kls_log("DEBUG",msg);
-				Room* current_room = (Room*) KLS_PUSH_T(temp_kls,Room,1);
+				Koliseo_Temp room_kls = kls_temp_start(default_kls);
+				Room* current_room = (Room*) KLS_PUSH_T(room_kls,Room,1);
 
 				current_room->index = roomsDone;
 				setRoomType(path, &roadFork_value, &room_type, roomsDone);
 				sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 				log_tag("debug_log.txt","[ROOM]",msg);
 
-				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &temp_kls);
+				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &room_kls);
 				sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 				log_tag("debug_log.txt","[ROOM]",msg);
 
@@ -10599,15 +10610,16 @@ void gameloop(int argc, char** argv){
 				endwin();
 
 				if (current_room->class == HOME) {
-					res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,&temp_kls);
+					res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,&room_kls);
 				} else if (current_room->class == ENEMIES) {
-					res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls,&temp_kls);
+					res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls,&room_kls);
 				} else if (current_room->class == SHOP) {
-					res = handleRoom_Shop(current_room, roomsDone, path, player, &temp_kls);
+					//FIXME: does shop require usage of gameloop kls?
+					res = handleRoom_Shop(current_room, roomsDone, path, player, &room_kls);
 				} else if (current_room->class == BOSS) {
-					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls,&temp_kls);
+					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls,&room_kls);
 				} else if (current_room->class == TREASURE) {
-					res = handleRoom_Treasure(current_room, roomsDone, path, player, &temp_kls);
+					res = handleRoom_Treasure(current_room, roomsDone, path, player, &room_kls);
 				} else if (current_room->class == ROADFORK) {
 					res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 				} else {
@@ -10649,13 +10661,13 @@ void gameloop(int argc, char** argv){
 
 					//Free room memory
 					freeRoom(current_room);
+					// End room_kls
+					kls_temp_end(room_kls);
 				}
 			}// Win condition loop
 
-			// End temp_kls
-			kls_temp_end(temp_kls);
 			// Clear default_kls
-			kls_clear(default_kls);
+			//kls_clear(default_kls);
 
 			//Got out of the loop with res not being DEATH; so i won
 			if (res != OP_RES_DEATH) { //I guess player and enemy were freed already?
@@ -10753,7 +10765,8 @@ void gameloop(int argc, char** argv){
 				sprintf(msg,"Prepping current_floor.");
 				log_tag("debug_log.txt","[DEBUG]",msg);
 				kls_log("DEBUG",msg);
-				Floor* current_floor = (Floor*) KLS_PUSH_T(temp_kls,Floor,1);
+				Koliseo_Temp floor_kls = kls_temp_start(default_kls);
+				Floor* current_floor = (Floor*) KLS_PUSH_T(floor_kls,Floor,1);
 				// Start the random walk from the center of the dungeon
 				int center_x = FLOOR_MAX_COLS / 2;
 				int center_y = FLOOR_MAX_ROWS / 2;
@@ -10808,7 +10821,7 @@ void gameloop(int argc, char** argv){
 					if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
 						sprintf(msg,"Prepping Room for Rogue Gamemode. roomsDone=(%i)",roomsDone);
 						kls_log("DEBUG",msg);
-						Room* current_room = (Room*) KLS_PUSH_T(temp_kls,Room,1);
+						Room* current_room = (Room*) KLS_PUSH_T(floor_kls,Room,1);
 
 						current_room->index = roomsDone;
 						//setRoomType(path, &roadFork_value, &room_type, roomsDone);
@@ -10817,7 +10830,7 @@ void gameloop(int argc, char** argv){
 						sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 						log_tag("debug_log.txt","[ROOM]",msg);
 
-						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &temp_kls);
+						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &floor_kls);
 						sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 						log_tag("debug_log.txt","[ROOM]",msg);
 
@@ -10891,15 +10904,15 @@ void gameloop(int argc, char** argv){
 						endwin();
 
 						if (current_room->class == HOME) {
-							res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, &temp_kls);
+							res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, &floor_kls);
 						} else if (current_room->class == ENEMIES) {
-							res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls, &temp_kls);
+							res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls, &floor_kls);
 						} else if (current_room->class == SHOP) {
-							res = handleRoom_Shop(current_room, roomsDone, path, player, &temp_kls);
+							res = handleRoom_Shop(current_room, roomsDone, path, player, &floor_kls);
 						} else if (current_room->class == BOSS) {
-							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls, &temp_kls);
+							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls, &floor_kls);
 						} else if (current_room->class == TREASURE) {
-							res = handleRoom_Treasure(current_room, roomsDone, path, player, &temp_kls);
+							res = handleRoom_Treasure(current_room, roomsDone, path, player, &floor_kls);
 						} else if (current_room->class == ROADFORK) {
 							res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 						} else {
@@ -11010,9 +11023,9 @@ void gameloop(int argc, char** argv){
 				}// Win condition loop
 
 				// End temp_kls
-				kls_temp_end(temp_kls);
+				kls_temp_end(floor_kls);
 				// Clear default_kls
-				kls_clear(default_kls);
+				//kls_clear(default_kls);
 
 				 //Got out of the loop with res not being DEATH; so i won
 				 if (res != OP_RES_DEATH) { //I guess player and enemy were freed already?
@@ -11038,11 +11051,11 @@ void gameloop(int argc, char** argv){
 						 log_tag("debug_log.txt","[FREE]",msg);
 						 sprintf(msg,"%s",lore_strings[i]);
 						 log_tag("debug_log.txt","[FREE]",msg);
-						 free(lore_strings[i]);
+						 //free(lore_strings[i]);
 					 }
 				 }
-				 free(path->win_condition);
-				 free(path);
+				 //free(path->win_condition);
+				 //free(path);
 				 log_tag("debug_log.txt","[DEBUG]","End of wincon loop.\n");
 
 				//free(current_floor);
@@ -11053,6 +11066,7 @@ void gameloop(int argc, char** argv){
 				exit(EXIT_FAILURE);
 			}
 		}
+		kls_temp_end(gameloop_kls);
 	} while (retry());
 
 	purple();

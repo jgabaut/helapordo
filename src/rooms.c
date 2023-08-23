@@ -29,7 +29,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	FILE* autosave_file;
 	WINDOW* dummy_notify_win = NULL;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win);
+	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -315,7 +315,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 	}
 	//Free turnOP_args
-	free(args);
+	//free(args);
 	log_tag("debug_log.txt","[FREE]","handleRoom_Home():  Freed turnOP_args");
 	sprintf(msg,"Ended handleRoom_Home(), returning fightStatus [%i]",fightStatus);
 	log_tag("debug_log.txt","[DEBUG]",msg);
@@ -379,7 +379,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 	WINDOW* args_notify_win = NULL;
 
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win);
+	turnOP_args* args = init_turnOP_args(player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -945,7 +945,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					//red();
 					//printf("\n\n\tYOU DIED.\n");
 					//white();
-					free(args);
+					//free(args);
 					log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 
 					return OP_RES_DEATH;
@@ -1203,7 +1203,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 	} //End for all enemies
 	sprintf(msg,"End of room %i", room->index);
 	log_tag("debug_log.txt","[ROOM]",msg);
-	free(args);
+	//free(args);
 	log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 	return fightStatus;
 }
@@ -1258,7 +1258,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	WINDOW* args_notify_win = NULL;
 	int isBoss = 1;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win);
+	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -1718,7 +1718,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				delwin(my_wins[0]);
 				delwin(my_wins[1]);
 				delwin(my_wins[2]);
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return OP_RES_DEATH;
 			} else if (fightStatus == OP_RES_KILL_DONE) {
@@ -1859,7 +1859,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 		//update_panels();
 		refresh();
 	} //End while fightStatus
-	free(args);
+	//free(args);
 	log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 	return fightStatus;
 }

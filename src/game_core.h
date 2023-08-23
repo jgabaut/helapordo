@@ -66,12 +66,12 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 6
+#define HELAPORDO_PATCH_VERSION 7
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.0.6"
+#define VERSION "1.0.7"
 
 /**
  * Ceiling for Fighter luck.
@@ -1575,6 +1575,7 @@ typedef struct {
 	Boss* boss; /**< Pointer to Boss for OP*/
 	FILE* save_file; /**< Pointer to savefile for OP*/
 	WINDOW* notify_win; /**< Pointer to notification window for OP*/
+	Koliseo_Temp* t_kls; /**< Pointer to Koliseo_Temp for OP*/
 } turnOP_args;
 
 /**
