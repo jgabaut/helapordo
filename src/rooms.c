@@ -2902,6 +2902,7 @@ void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) 
  * @param f The Fighter pointer to influence item generation.
  */
 void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
+	log_tag("debug_log.txt","[WARN]","Entering legacy path.");
 	Koliseo_Temp tkls = *t_kls;
 	char msg[200];
 	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Roadfork"));
