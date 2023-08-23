@@ -391,7 +391,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 					isBoss = -1;
 					log_tag("debug_log.txt","[TURNOP]","Doing endwin() before debug_generic()");
 					endwin();
-					debug_generic(actor,path,room_index,kls);
+					debug_generic(actor,path,room_index,kls,t_kls);
 					res = OP_OK;
 				}
 				break;
@@ -411,7 +411,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 					isBoss = 1;
 					log_tag("debug_log.txt","[TURNOP]","Doing endwin() before debug_generic()");
 					endwin();
-					debug_generic(actor,path,room_index,kls);
+					debug_generic(actor,path,room_index,kls,t_kls);
 					res = OP_OK;
 				}
 				break;
@@ -8183,8 +8183,11 @@ int retry(void) {
  * @param p The Path pointer of the current game.
  * @param roomIndex The index of current room.
  * @param The Koliseo to debug.
+ * @param The Koliseo_Temp used for allocations.
  */
-void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls) {
+void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Koliseo_Temp* t_kls) {
+
+	Koliseo_Temp tkls = *t_kls;
 
 	char msg[200];
 	char ch[25];
@@ -8373,7 +8376,10 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls) {
 			sprintf(msg,"Trying out Floor functionality.");
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			// Declare dbg_floor
-			Floor* dbg_floor = (Floor*) malloc(sizeof(Floor));
+			sprintf(msg,"Pushing dbg_floor to tkls.");
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Floor* dbg_floor = (Floor*) KLS_PUSH_T(tkls,Floor,1);
 			// Start the random walk from the center of the dungeon
     			int center_x = FLOOR_MAX_COLS / 2;
     			int center_y = FLOOR_MAX_ROWS / 2;
@@ -8402,7 +8408,7 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls) {
 			res = scanf("%*c");
 			sprintf(msg,"debug_generic() 8 scanf() res was (%i)", res);
 			log_tag("debug_log.txt","[DEBUG]",msg);
-			free(dbg_floor);
+			//free(dbg_floor);
 		}
 		break;
 		case 'A': {
@@ -10422,7 +10428,7 @@ void gameloop(int argc, char** argv){
 					enemyTotal = loaded_roomtotalenemies;
 				}
 
-				sprintf(msg,"Prepping Room. roomsDone=(%i)",roomsDone);
+				sprintf(msg,"Prepping Room for Story Gamemode. roomsDone=(%i)",roomsDone);
 				kls_log("DEBUG",msg);
 				Room* current_room = (Room*) KLS_PUSH_T(temp_kls,Room,1);
 
@@ -10689,7 +10695,10 @@ void gameloop(int argc, char** argv){
 				int res = -1;
 				char msg[500];
 
-				Floor* current_floor = (Floor*) malloc(sizeof(Floor));
+				sprintf(msg,"Prepping current_floor.");
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				kls_log("DEBUG",msg);
+				Floor* current_floor = (Floor*) KLS_PUSH_T(temp_kls,Floor,1);
 				// Start the random walk from the center of the dungeon
 				int center_x = FLOOR_MAX_COLS / 2;
 				int center_y = FLOOR_MAX_ROWS / 2;
@@ -10742,7 +10751,9 @@ void gameloop(int argc, char** argv){
 
 					//Check if current room needs to be played
 					if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
-						Room* current_room = (Room*) malloc(sizeof(Room));
+						sprintf(msg,"Prepping Room for Rogue Gamemode. roomsDone=(%i)",roomsDone);
+						kls_log("DEBUG",msg);
+						Room* current_room = (Room*) KLS_PUSH_T(temp_kls,Room,1);
 
 						current_room->index = roomsDone;
 						//setRoomType(path, &roadFork_value, &room_type, roomsDone);
@@ -10979,7 +10990,7 @@ void gameloop(int argc, char** argv){
 				 free(path);
 				 log_tag("debug_log.txt","[DEBUG]","End of wincon loop.\n");
 
-				free(current_floor);
+				//free(current_floor);
 
 				endwin();
 			} else {
