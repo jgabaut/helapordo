@@ -3,7 +3,7 @@
 #include "helapordo.h"
 
 void initRoom(Room* r, Fighter* f, int index, roomClass type, int enemyTotal, loadInfo* load_info, Koliseo_Temp* t_kls);
-void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info);
+void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info, Koliseo_Temp* t_kls);
 void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_info, Koliseo_Temp* t_kls);
 void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls);
 void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls);
