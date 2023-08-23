@@ -2787,14 +2787,15 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
  * @param r The Room whose fields will be initialised.
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initRoom_Shop(Room* r, int roomIndex, Fighter* f) {
+void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
 	r->desc = (char*) malloc(sizeof("Shop"));
 	strcpy(r->desc,"Shop");
 	Shop* shop = (Shop*) malloc (sizeof(Shop));
 
 	int indexWeight = roomIndex;
-	initShop(shop,indexWeight,f);
+	initShop(shop,indexWeight,f,t_kls);
 	r->shop = shop;
 }
 
@@ -2902,7 +2903,7 @@ void initRoom(Room* r, Fighter* f, int index, roomClass type, int enemyTotal, lo
 		break;
 		case SHOP: {
 			r->class = type;
-			initRoom_Shop(r,index,f);
+			initRoom_Shop(r,index,f,t_kls);
 		}
 		break;
 		case BOSS: {

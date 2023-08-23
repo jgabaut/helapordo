@@ -341,6 +341,7 @@ void freeRoom(Room* room) {
 	//free(room->desc);
 
 	if (room_type == SHOP) {
+		/*
 		for (int i = 0 ; i < room->shop->equipsCount; i++) {
 			Equip* e = room->shop->equips[i];
 			if (e->perksCount > 0) {
@@ -362,6 +363,9 @@ void freeRoom(Room* room) {
 			sprintf(msg,"Freeing %s room (index %i), freed Consumable %i.", stringFromRoom(room_type), room->index, i);
         		log_tag("debug_log.txt","[DEBUG-FREE]",msg);
 		}
+		*/
+			//FIXME: remove all the commented out bs
+        		log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 	} else if (room_type == TREASURE) {
 		if (room->treasure->class == TREASURE_CONSUMABLE) {
 

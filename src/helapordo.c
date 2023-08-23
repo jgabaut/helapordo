@@ -2518,8 +2518,12 @@ void setConsumablePrices(int size, int* consumablePrices, Consumable** consumabl
  * @param s The Shop whose fields will be initialised.
  * @param indexWeight The integer for room index weight.
  * @param player The Fighter player to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initShop(Shop* s, int indexWeight, Fighter* player) {
+void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
+
+	Koliseo_Temp tkls = *t_kls;
+	char msg[200];
 
 	int equipsCount = (rand() % EQUIP_SHOP_MAX )+1;
 
@@ -2527,7 +2531,10 @@ void initShop(Shop* s, int indexWeight, Fighter* player) {
 
 		for (int equip_index = 0; equip_index < equipsCount; equip_index++) {
 			int curr = (rand() % (EQUIPSMAX+1));
-			Equip* e = (Equip*) malloc(sizeof(Equip));
+			sprintf(msg,"Prepping Equip (%i/%i) for Shop", equip_index, equipsCount);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Equip* e = (Equip*) KLS_PUSH_T(tkls,Equip,1);
 
 			//Randomise quality
 			quality q = rand() % (QUALITIESMAX + 1);
@@ -2599,8 +2606,10 @@ void initShop(Shop* s, int indexWeight, Fighter* player) {
 				if ( (rand() % 100) < chance ) {
 
 					e->perksCount += 1;
-
-					Perk* p = (Perk*)malloc(sizeof(Perk));
+					sprintf(msg,"Prepping Perk (%i) for Shop Equip (%i/%i)", i, equip_index, equipsCount);
+					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
+					Perk* p = (Perk*) KLS_PUSH_T(tkls,Perk,1);
 					p->class = rand() % (PERKSMAX +1) ;
 					//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 					strcpy(p->name,nameStringFromPerk(p->class));
@@ -2654,7 +2663,10 @@ void initShop(Shop* s, int indexWeight, Fighter* player) {
 				if (cons_prepared < uniqueConsumablesCount) {
 					int curr = rand() % (CONSUMABLESMAX+1);
 					if (!(already_rolled[curr])) {
-						Consumable *cur = (Consumable*) malloc(sizeof(Consumable));
+						sprintf(msg,"Prepping Consumable (%i/%i) for Shop", cons_prepared, uniqueConsumablesCount);
+						log_tag("debug_log.txt","[DEBUG]",msg);
+						kls_log("DEBUG",msg);
+						Consumable *cur = (Consumable*) KLS_PUSH_T(tkls,Consumable,1);
 						cur->class = curr;
 						already_rolled[curr] = 1;
 						if (uniqueConsumablesCount - cons_prepared > 0) {
