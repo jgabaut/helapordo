@@ -10607,7 +10607,7 @@ void gameloop(int argc, char** argv){
 				} else if (current_room->class == BOSS) {
 					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls,&temp_kls);
 				} else if (current_room->class == TREASURE) {
-					res = handleRoom_Treasure(current_room, roomsDone, path, player);
+					res = handleRoom_Treasure(current_room, roomsDone, path, player, &temp_kls);
 				} else if (current_room->class == ROADFORK) {
 					res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 				} else {
@@ -10899,7 +10899,7 @@ void gameloop(int argc, char** argv){
 						} else if (current_room->class == BOSS) {
 							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls, &temp_kls);
 						} else if (current_room->class == TREASURE) {
-							res = handleRoom_Treasure(current_room, roomsDone, path, player);
+							res = handleRoom_Treasure(current_room, roomsDone, path, player, &temp_kls);
 						} else if (current_room->class == ROADFORK) {
 							res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 						} else {
