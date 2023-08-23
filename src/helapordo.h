@@ -220,7 +220,7 @@ void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls);
 
 void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls);
 
-void open_chest(WINDOW* w, Chest * c, Fighter* f);
+void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls);
 
 Path* randomise_path(int seed, Koliseo* kls);
 
