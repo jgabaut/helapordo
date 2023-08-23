@@ -414,10 +414,13 @@ void freeRoom(Room* room) {
         		log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 		}
 	} else if (room_type == ROADFORK) {
+		/*
 		Roadfork* rfk = room->roadfork;
 		free(rfk);
 		sprintf(msg,"Freeing %s room (index %i), freed Roadfork.\n", stringFromRoom(room_type), room->index);
 		log_tag("debug_log.txt","[DEBUG-FREE]",msg);
+		*/
+        	log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 	}
 
 	sprintf(msg,"Freed %s room, index %i.\n", stringFromRoom(room->class), room->index);

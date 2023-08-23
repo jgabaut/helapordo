@@ -8,7 +8,7 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls);
 void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls);
 void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls);
-void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f);
+void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls);
 
 int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls);
 int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls);

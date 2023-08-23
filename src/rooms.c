@@ -2901,10 +2901,18 @@ void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) 
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
  */
-void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f) {
-	r->desc = (char*) malloc(sizeof("Roadfork"));
+void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
+	char msg[200];
+	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Roadfork"));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Roadfork"));
 	strcpy(r->desc,"Roadfork");
-	Roadfork* fk = (Roadfork*) malloc (sizeof(Roadfork));
+	sprintf(msg,"Allocated size %lu for Room Roadfork:", sizeof(Roadfork));
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	kls_log("DEBUG",msg);
+	Roadfork* fk = (Roadfork*) KLS_PUSH_T (tkls,Roadfork,1);
 
 	prepareRoadfork(fk);
 	r->roadfork = fk;
@@ -2973,7 +2981,7 @@ void initRoom(Room* r, Fighter* f, int index, roomClass type, int enemyTotal, lo
 		break;
 		case ROADFORK: {
 			r->class = type;
-			initRoom_Roadfork(r,index,f);
+			initRoom_Roadfork(r,index,f,t_kls);
 		}
 		break;
 	}
