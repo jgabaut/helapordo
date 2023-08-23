@@ -1325,22 +1325,26 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
  * @see getStatBoostCounterBossFun()
  * @see getStatusCounterBossFun()
  * @param b The Boss pointer whose counters field will be initialised.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initBCounters(Boss* b){
+void initBCounters(Boss* b, Koliseo_Temp* t_kls){
+	Koliseo_Temp tkls = *t_kls;
 	//Ordering of i corresponds to counterIndexes enum
 	int total = (COUNTERSMAX+1);
 	char msg[500];
 	for (int i = 0; i < total; i++) {
-		Turncounter* c = (Turncounter*)malloc(sizeof(Turncounter));
+		Turncounter* c = (Turncounter*) KLS_PUSH_T(tkls, Turncounter, 1);
 		sprintf(msg,"Prepping boss counter %i",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
+		kls_log("[DEBUG]",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
-			c->desc = (char*)malloc(sizeof(stringFromStatus(i)));
+			c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof(stringFromStatus(i)));
 			strcpy(c->desc,stringFromStatus(i));
 			sprintf(msg,"Allocated size %lu for boss status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("[DEBUG]",msg);
 
 			c->effect_b_fun = getStatusCounterBossFun(i);
 			//sprintf(msg,"Boss status function pointer is: (%i)", *(c->effect_b_fun));
@@ -1351,10 +1355,11 @@ void initBCounters(Boss* b){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*)malloc(sizeof("ATK boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ATK boost"));
 					strcpy(c->desc,"ATK boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("[DEBUG]",msg);
 
 					c->boost_b_fun = getStatBoostCounterBossFun(ATK);
 					c->type = CNT_ATKBOOST;
@@ -1363,10 +1368,11 @@ void initBCounters(Boss* b){
 				}
 				break;
 				case TURNBOOST_DEF: {
-					c->desc = (char*)malloc(sizeof("DEF boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("DEF boost"));
 					strcpy(c->desc,"DEF boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("[DEBUG]",msg);
 
 					c->boost_b_fun = getStatBoostCounterBossFun(DEF);
 					c->type = CNT_DEFBOOST;
@@ -1375,10 +1381,11 @@ void initBCounters(Boss* b){
 				}
 				break;
 				case TURNBOOST_VEL: {
-					c->desc = (char*)malloc(sizeof("VEL boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("VEL boost"));
 					strcpy(c->desc,"VEL boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("[DEBUG]",msg);
 
 					c->boost_b_fun = getStatBoostCounterBossFun(VEL);
 					c->type = CNT_VELBOOST;
@@ -1387,10 +1394,11 @@ void initBCounters(Boss* b){
 				}
 				break;
 				case TURNBOOST_ENR: {
-					c->desc = (char*)malloc(sizeof("ENR boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ENR boost"));
 					strcpy(c->desc,"ENR boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("[DEBUG]",msg);
 
 					c->boost_b_fun = getStatBoostCounterBossFun(ENR);
 					c->type = CNT_ENRBOOST;
@@ -2083,8 +2091,9 @@ void initEnemyStats(Enemy* e, Koliseo_Temp* t_kls) {
  * @see initBCounters()
  * @see fighterStatus
  * @param b The Boss whose fields will be initialised.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initBossStats(Boss* b) {
+void initBossStats(Boss* b, Koliseo_Temp* t_kls) {
 	//Class should be set by caller
 	BossBaseStats* base = &basebossstats[b->class];
 
@@ -2111,7 +2120,7 @@ void initBossStats(Boss* b) {
 
 	b->prize = (b->beast) ? 2 * prize : prize;
 
-	initBCounters(b);
+	initBCounters(b,t_kls);
 
 	//Triple xp for beasts
 	b->xp = (b->beast) ? 3 * base->xp : base->xp;
@@ -2291,8 +2300,9 @@ void statResetBoss(Boss* b, int force) {
  * @see Boss
  * @see initBossStats()
  * @param b The allocated Boss pointer to initialise.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void prepareBoss(Boss* b) {
+void prepareBoss(Boss* b, Koliseo_Temp* t_kls) {
 
 	//Randomise boss class
 	b->class = rand() % (BOSSCLASSESMAX + 1);
@@ -2306,7 +2316,7 @@ void prepareBoss(Boss* b) {
 	//e->level += floor(roomindex / 2) ;
 
 	//Load boss stats
-	initBossStats(b);
+	initBossStats(b, t_kls);
 
 	//Force load of level bonuses
 	statResetBoss(b,1);
