@@ -2714,6 +2714,7 @@ void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info) {
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_info, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
 	char msg[500];
 	r->desc = (char*) malloc(sizeof("Enemies"));
 	strcpy(r->desc,"Enemies");
@@ -2721,7 +2722,11 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		r->index = roomIndex;
 
 		r->enemyTotal = enemyTotal;
-		FoeParty* foes = (FoeParty*) malloc(sizeof(FoeParty));
+		FoeParty* foes = (FoeParty*) KLS_PUSH_T(tkls,FoeParty,1);
+		sprintf(msg,"Allocated size %lu for FoeParty:", sizeof(FoeParty));
+		log_tag("debug_log.txt","[DEBUG]",msg);
+		kls_log("DEBUG",msg);
+
 		//Randomise fp class
 		//foes->class = rand() % (FOEPARTY_CLASS_MAX + 1);
 		foes->class = Enemies;
@@ -2745,7 +2750,7 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		}
 
 		//Reminder: Foes are manipulated when loading
-		prepareFoeParty(foes, total_foes, roomIndex);
+		prepareFoeParty(foes, total_foes, roomIndex, t_kls);
 
 		r->foes = foes;
 		sprintf(msg,"Set (%s) FoeParty for room #%i , size is (%i).", stringFromFoePartyClass(r->foes->class), r->index,r->foes->size);
@@ -2767,10 +2772,10 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		//}
 		//r->enemies = enemies;
 	} else {
-		fprintf(stderr,"ERROR: Room %i can't have %i enemies (>MAX %i)\n", roomIndex, enemyTotal, ROOM_ENEMIES_MAX);
+		sprintf(msg,"ERROR: Room %i can't have %i enemies (>MAX %i)\n", roomIndex, enemyTotal, ROOM_ENEMIES_MAX);
+		log_tag("debug_log.txt","[FOEPARTY]",msg);
 		exit(EXIT_FAILURE);
 	}
-
 }
 
 

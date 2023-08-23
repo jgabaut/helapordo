@@ -89,7 +89,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls);
 
 void initBCounters(Boss* b, Koliseo_Temp* t_kls);
 
-void initFoePartyCounters(FoeParty* fp);
+void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls);
 
 void printCounters(Turncounter* counters[]);
 
@@ -123,8 +123,8 @@ void statResetBoss(Boss* b, int force);
 void initBossStats(Boss* b, Koliseo_Temp* t_kls);
 void prepareBoss(Boss* b, Koliseo_Temp* t_kls);
 
-void initFoePartyStats(FoeParty* fp);
-void prepareFoeParty(FoeParty* fp, int total_foes, int roomindex);
+void initFoePartyStats(FoeParty* fp, Koliseo_Temp* t_kls);
+void prepareFoeParty(FoeParty* fp, int total_foes, int roomindex, Koliseo_Temp* t_kls);
 
 int getEnemyBoost(int lvl, enemyClass eclass);
 

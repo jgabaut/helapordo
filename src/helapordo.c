@@ -1336,7 +1336,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 		Turncounter* c = (Turncounter*) KLS_PUSH_T(tkls, Turncounter, 1);
 		sprintf(msg,"Prepping boss counter %i",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
-		kls_log("[DEBUG]",msg);
+		kls_log("DEBUG",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
@@ -1344,7 +1344,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 			strcpy(c->desc,stringFromStatus(i));
 			sprintf(msg,"Allocated size %lu for boss status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("[DEBUG]",msg);
+			kls_log("DEBUG",msg);
 
 			c->effect_b_fun = getStatusCounterBossFun(i);
 			//sprintf(msg,"Boss status function pointer is: (%i)", *(c->effect_b_fun));
@@ -1359,7 +1359,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 					strcpy(c->desc,"ATK boost");
 					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
-					kls_log("[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_b_fun = getStatBoostCounterBossFun(ATK);
 					c->type = CNT_ATKBOOST;
@@ -1372,7 +1372,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 					strcpy(c->desc,"DEF boost");
 					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
-					kls_log("[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_b_fun = getStatBoostCounterBossFun(DEF);
 					c->type = CNT_DEFBOOST;
@@ -1385,7 +1385,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 					strcpy(c->desc,"VEL boost");
 					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
-					kls_log("[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_b_fun = getStatBoostCounterBossFun(VEL);
 					c->type = CNT_VELBOOST;
@@ -1398,7 +1398,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 					strcpy(c->desc,"ENR boost");
 					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
-					kls_log("[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_b_fun = getStatBoostCounterBossFun(ENR);
 					c->type = CNT_ENRBOOST;
@@ -1407,7 +1407,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				}
 				break;
 				default: {
-					strcpy(c->desc,"ERROR INITIALISING TURNCOUNTER");
+					log_tag("debug_log.txt","[ERROR]","ERROR INITALISING TURNCOUNTER in initBCounters()\n");
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -1430,22 +1430,26 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
  * @see get_StatBoostCounter_FoeParty_Fun()
  * @see get_StatusCounter_FoeParty_Fun()
  * @param fp The FoeParty pointer whose counters field will be initialised.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initFoePartyCounters(FoeParty* fp){
+void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
+	Koliseo_Temp tkls = *t_kls;
 	//Ordering of i corresponds to counterIndexes enum
 	int total = (COUNTERSMAX+1);
 	char msg[500];
 	for (int i = 0; i < total; i++) {
-		Turncounter* c = (Turncounter*)malloc(sizeof(Turncounter));
+		Turncounter* c = (Turncounter*)KLS_PUSH_T(tkls,Turncounter,1);
 		sprintf(msg,"Prepping foeparty counter %i",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
+		kls_log("DEBUG",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
-			c->desc = (char*)malloc(sizeof(stringFromStatus(i)));
+			c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof(stringFromStatus(i)));
 			strcpy(c->desc,stringFromStatus(i));
 			sprintf(msg,"Allocated size %lu for foeparty status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
 
 			//c->effect_fp_fun = get_StatusCounter_FoeParty_Fun(i);
 			//sprintf(msg,"Foeparty status function pointer is: (%i)", *(c->effect_b_fun));
@@ -1456,7 +1460,7 @@ void initFoePartyCounters(FoeParty* fp){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*)malloc(sizeof("ATK boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ATK boost"));
 					strcpy(c->desc,"ATK boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
@@ -1468,10 +1472,11 @@ void initFoePartyCounters(FoeParty* fp){
 				}
 				break;
 				case TURNBOOST_DEF: {
-					c->desc = (char*)malloc(sizeof("DEF boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("DEF boost"));
 					strcpy(c->desc,"DEF boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(DEF);
 					c->type = CNT_DEFBOOST;
@@ -1480,10 +1485,11 @@ void initFoePartyCounters(FoeParty* fp){
 				}
 				break;
 				case TURNBOOST_VEL: {
-					c->desc = (char*)malloc(sizeof("VEL boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("VEL boost"));
 					strcpy(c->desc,"VEL boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(VEL);
 					c->type = CNT_VELBOOST;
@@ -1492,10 +1498,11 @@ void initFoePartyCounters(FoeParty* fp){
 				}
 				break;
 				case TURNBOOST_ENR: {
-					c->desc = (char*)malloc(sizeof("ENR boost"));
+					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ENR boost"));
 					strcpy(c->desc,"ENR boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
 
 					c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ENR);
 					c->type = CNT_ENRBOOST;
@@ -1504,8 +1511,8 @@ void initFoePartyCounters(FoeParty* fp){
 				}
 				break;
 				default: {
-					c->desc = (char*)malloc(sizeof("ERROR INITIALISING TURNCOUNTER"));
-					strcpy(c->desc,"ERROR INITIALISING TURNCOUNTER");
+					log_tag("debug_log.txt","[ERROR]","Invalid counter in initFoePartyCounters");
+					exit(EXIT_FAILURE);
 				}
 			}
 		} //End else
@@ -2138,8 +2145,9 @@ void initBossStats(Boss* b, Koliseo_Temp* t_kls) {
  * @see FoePartyBaseStats
  * @see initFoePartyCounters()
  * @param fp The FoeParty whose fields will be initialised.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initFoePartyStats(FoeParty* fp) {
+void initFoePartyStats(FoeParty* fp, Koliseo_Temp* t_kls) {
 	//Class should be set by caller
 	//FoePartyBaseStats* base = &basefoepartystats[fp->class];
 	//TODO: add loading of more base stats not expected in prepareFoeParty()
@@ -2191,7 +2199,7 @@ void initFoePartyStats(FoeParty* fp) {
 	};
 
 	//Init party counters
- 	initFoePartyCounters(fp);
+ 	initFoePartyCounters(fp,t_kls);
 }
 
 /**
@@ -2200,8 +2208,9 @@ void initFoePartyStats(FoeParty* fp) {
  * @see FoeParty
  * @see initFoePartyStats()
  * @param fp The allocated FoeParty pointer to initialise.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void prepareFoeParty(FoeParty* fp, int partysize, int roomindex) {
+void prepareFoeParty(FoeParty* fp, int partysize, int roomindex, Koliseo_Temp* t_kls) {
 	char msg[500];
 
 	//Class must be set by caller
@@ -2216,7 +2225,7 @@ void prepareFoeParty(FoeParty* fp, int partysize, int roomindex) {
 	//fp->level += floor(roomindex / 2) ;
 
 	//Load foeparty stats
-	initFoePartyStats(fp);
+	initFoePartyStats(fp, t_kls);
 
 	sprintf(msg,"Prepared FoeParty with size (%i), room #%i.", partysize, roomindex);
 	log_tag("debug_log.txt","[DEBUG]",msg);
@@ -8096,13 +8105,14 @@ void e_death(Enemy* e) {
  */
 void b_death(Boss* b) {
 
-	char msg[200];
+	log_tag("debug_log.txt","[DEBUG]","b_death():  I'm only freeing boss pointer.");
 
 	//Free boss special slots
 	//for (int i=0; i < SPECIALSMAX + 1 ; i++) {
 	//	free(player->specials[i]);
 	//}
 	//Free boss turnCounters
+	/*
 	for (int i=0; i < (COUNTERSMAX + 1) ; i++) {
 		Turncounter* c = (Turncounter*) b->counters[i];
 		sprintf(msg,"Freed boss turncounter %i desc:    %s.",i, c->desc);
@@ -8112,7 +8122,9 @@ void b_death(Boss* b) {
 		sprintf(msg,"Freed boss turncounter %i.\n",i);
 		log_tag("debug_log.txt","[FREE]",msg);
 	}
+	*/
 	free(b);
+
 }
 
 /**

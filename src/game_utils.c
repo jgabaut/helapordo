@@ -337,7 +337,8 @@ void freeRoom(Room* room) {
 	sprintf(msg,"Freeing room desc: (%s).", room->desc);
 	log_tag("debug_log.txt","[DEBUG-FREE]",msg);
 	//Free room memory
-	free(room->desc);
+	//FIXME: do we have all room descs handled ?
+	//free(room->desc);
 
 	if (room_type == SHOP) {
 		for (int i = 0 ; i < room->shop->equipsCount; i++) {
