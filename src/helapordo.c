@@ -10254,7 +10254,9 @@ void gameloop(int argc, char** argv){
 
 			if (load_info->save_type == ENEMIES_SAVE) {
 
-				load_info->loaded_enemy = (Enemy*) malloc(sizeof(Enemy));
+				sprintf(msg,"Prepping Loady Enemy");
+				kls_log("DEBUG",msg);
+				load_info->loaded_enemy = (Enemy*) KLS_PUSH(default_kls, Enemy, 1);
 				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, &temp_kls);
 
 				//Update loading_room_turn_args->enemy pointer
@@ -10420,7 +10422,9 @@ void gameloop(int argc, char** argv){
 					enemyTotal = loaded_roomtotalenemies;
 				}
 
-				Room* current_room = (Room*) malloc(sizeof(Room));
+				sprintf(msg,"Prepping Room. roomsDone=(%i)",roomsDone);
+				kls_log("DEBUG",msg);
+				Room* current_room = (Room*) KLS_PUSH_T(temp_kls,Room,1);
 
 				current_room->index = roomsDone;
 				setRoomType(path, &roadFork_value, &room_type, roomsDone);

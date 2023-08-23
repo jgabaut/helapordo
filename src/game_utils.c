@@ -415,7 +415,8 @@ void freeRoom(Room* room) {
 
 	sprintf(msg,"Freed %s room, index %i.\n", stringFromRoom(room->class), room->index);
 	log_tag("debug_log.txt","[DEBUG-FREE]",msg);
-	free(room);
+        log_tag("debug_log.txt","[FIXME]","freeRoom(): done fake free().");
+	//free(room);
 }
 
 /**
