@@ -2825,13 +2825,14 @@ void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
  * @param r The Room whose fields will be initialised.
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initRoom_Treasure(Room* r, int roomIndex, Fighter* f) {
+void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
 	r->desc = (char*) malloc(sizeof("Treasure"));
 	strcpy(r->desc,"Treasure");
 	Treasure* t = (Treasure*) malloc (sizeof(Treasure));
 
-	prepareTreasure(t,f);
+	prepareTreasure(t,f,t_kls);
 	r->treasure = t;
 }
 
@@ -2911,7 +2912,7 @@ void initRoom(Room* r, Fighter* f, int index, roomClass type, int enemyTotal, lo
 		break;
 		case TREASURE: {
 			r->class = type;
-			initRoom_Treasure(r,index,f);
+			initRoom_Treasure(r,index,f,t_kls);
 		}
 		break;
 		case ROADFORK: {

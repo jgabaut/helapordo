@@ -2879,21 +2879,32 @@ void prepareChest(Chest* c, Fighter* f) {
  * @see Treasure
  * @param t The allocated Treasure pointer with already set class to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void initTreasure(Treasure* t, Fighter* f) {
+void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
+	char msg[200];
+
+	Koliseo_Temp tkls = *t_kls;
 
 	strcpy(t->desc,descStringFromTreasure(t->class));
 
 	switch(t->class) {
 		case TREASURE_CHEST: {
-				    Chest* c = (Chest*) malloc(sizeof(Chest));
-				    prepareChest(c,f);
-				    t->chest = c;
+
+			    sprintf(msg,"Allocated %lu for Treasure [Chest]:",sizeof(Chest));
+			    log_tag("debug_log.txt","[DEBUG]",msg);
+			    kls_log("DEBUG",msg);
+			    Chest* c = (Chest*) KLS_PUSH_T(tkls,Chest,1);
+			    prepareChest(c,f);
+			    t->chest = c;
 
 			    }
 		break;
 		case TREASURE_CONSUMABLE: {
-			Consumable* cns = (Consumable*)malloc(sizeof(Consumable));
+			sprintf(msg,"Allocated %lu for Treasure [Consumable]:",sizeof(Consumable));
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Consumable* cns = (Consumable*) KLS_PUSH_T(tkls,Consumable,1);
 			int drop = rand() % (CONSUMABLESMAX + 1);
 
 			cns->class = drop;
@@ -2911,7 +2922,10 @@ void initTreasure(Treasure* t, Fighter* f) {
 			}
 		break;
 		case TREASURE_ARTIFACT: {
-			Artifact* a = (Artifact*)malloc(sizeof(Artifact));
+			sprintf(msg,"Allocated %lu for Treasure [Artifact]:",sizeof(Artifact));
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			kls_log("DEBUG",msg);
+			Artifact* a = (Artifact*) KLS_PUSH_T(tkls,Artifact,1);
 			int drop = -1;
 			do {
 				drop = rand() % (ARTIFACTSMAX + 1);
@@ -2932,9 +2946,7 @@ void initTreasure(Treasure* t, Fighter* f) {
 
 			    }
 		break;
-
 	}
-
 }
 
 /**
@@ -2944,8 +2956,9 @@ void initTreasure(Treasure* t, Fighter* f) {
  * @see initTreasure()
  * @param t The allocated Treasure pointer to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
  */
-void prepareTreasure(Treasure* t, Fighter* f) {
+void prepareTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 
 	//Init treasure class
 
@@ -2960,7 +2973,7 @@ void prepareTreasure(Treasure* t, Fighter* f) {
 	}
 
 	//Load Treasure stats
-	initTreasure(t,f);
+	initTreasure(t,f, t_kls);
 
 }
 

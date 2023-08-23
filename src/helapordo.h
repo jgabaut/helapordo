@@ -138,8 +138,8 @@ void initShop(Shop* s, int indexWeight, Fighter* player);
 void initChest(Chest* c, Fighter* f);
 void prepareChest(Chest* c, Fighter* f);
 
-void initTreasure(Treasure* t, Fighter* f);
-void prepareTreasure(Treasure* t, Fighter* f);
+void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls);
+void prepareTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls);
 
 void prepareRoadfork(Roadfork* r);
 
