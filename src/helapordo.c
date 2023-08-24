@@ -8488,13 +8488,16 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			}
 			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
 			print_kls_2file(kls_file,default_kls);
-			fprintf(kls_file,"--END debug of default_kls--\n");
+			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			fprintf(kls_file,"--END debug of default_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			print_kls_2file(kls_file,temporary_kls);
-			fprintf(kls_file,"--END debug of temporary_kls--\n");
+			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
-			fprintf(kls_file,"--END debug of passed kls--\n");
+			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			fprintf(kls_file,"--END debug of passed kls--\n\n");
 			fclose(kls_file);
 		}
 		break;
@@ -8972,13 +8975,16 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			}
 			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
 			print_kls_2file(kls_file,default_kls);
-			fprintf(kls_file,"--END debug of default_kls--\n");
+			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			fprintf(kls_file,"--END debug of default_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			print_kls_2file(kls_file,temporary_kls);
-			fprintf(kls_file,"--END debug of temporary_kls--\n");
+			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
-			fprintf(kls_file,"--END debug of passed kls--\n");
+			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			fprintf(kls_file,"--END debug of passed kls--\n\n");
 			fclose(kls_file);
 		}
 		break;
