@@ -400,7 +400,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 					sprintf(msg,"Setting enemy_index to (%i) (OP_DEBUG), isBoss == 0", enemy->index);
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					isBoss = 0;
- 					debug_enemies_room(room,actor,enemy,path,room_index,enemy_index);
+ 					debug_enemies_room(room,actor,enemy,path,room_index,enemy_index,kls,t_kls);
 					res = OP_OK;
 				}
 				break;
@@ -8484,7 +8484,15 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 				fprintf(stderr,"debug_generic():  kls was NULL.\n");
 				exit(EXIT_FAILURE);
 			}
+			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
+			print_kls_2file(kls_file,default_kls);
+			fprintf(kls_file,"--END debug of default_kls--\n");
+			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
+			print_kls_2file(kls_file,temporary_kls);
+			fprintf(kls_file,"--END debug of temporary_kls--\n");
+			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
+			fprintf(kls_file,"--END debug of passed kls--\n");
 			fclose(kls_file);
 		}
 		break;
@@ -8724,8 +8732,10 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
  * @param p The Path pointer of the current game.
  * @param roomIndex The index of current room.
  * @param currentEnemyNum The index of current enemy.
+ * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
  */
-void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int roomIndex,int currentEnemyNum) {
+void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int roomIndex,int currentEnemyNum, Koliseo* kls, Koliseo_Temp* t_kls) {
 
 	char msg[200];
 	char ch[25];
@@ -8764,8 +8774,8 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			's':  Sprites slideshow\t'd': Dump debug symbols\n\
 			'f':  Show foes info\t'g': Toggle godmode\n\
 			'A':  Toggle autosave\t'Q': Toggle fast quit\n\
-			'L':  Toggle logging\t{Return}  Process your input line.\n\
-			'q': Quit\n\
+			'L':  Toggle logging\t'K': Log Koliseo info\n\
+			'q': Quit\t{Return}  Process your input line.\n\
 		]\n\n\
 	[%s@debug-func]$ ",player->name);
 
@@ -8938,6 +8948,36 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			clear();
 			refresh();
 			debug_printFoeParty(room->foes);
+		}
+		break;
+		case 'K': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
+			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
+			print_kls_2file(kls_file,default_kls);
+			fprintf(kls_file,"--END debug of default_kls--\n");
+			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
+			print_kls_2file(kls_file,temporary_kls);
+			fprintf(kls_file,"--END debug of temporary_kls--\n");
+			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
+			print_kls_2file(kls_file,kls);
+			fprintf(kls_file,"--END debug of passed kls--\n");
+			fclose(kls_file);
 		}
 		break;
 		case 'A': {
@@ -9543,6 +9583,7 @@ void gameloop(int argc, char** argv){
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
   //Init default_kls
   default_kls = kls_new(KLS_DEFAULT_SIZE*8);
+  temporary_kls = kls_new(KLS_DEFAULT_SIZE*8);
 
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 
@@ -9555,7 +9596,6 @@ void gameloop(int argc, char** argv){
 		FILE *OPS_debug_file = NULL;
 		// Parse command-line options
 		int option;
-		Koliseo_Temp gameloop_kls = kls_temp_start(default_kls);
 		loadInfo* load_info = (loadInfo*) KLS_PUSH(default_kls, loadInfo*, 1);
 
 		load_info->is_new_game = 1; //By default we do a new game
@@ -10018,13 +10058,15 @@ void gameloop(int argc, char** argv){
         	WINDOW *savepick_menu_win;
         	WINDOW *savepick_side_win;
 
+		Koliseo_Temp savepick_kls = kls_temp_start(temporary_kls);
+
 		//Declare turnOP_args
 		Room* fakeroom = NULL;
 		Enemy* fakeenemy = NULL;
 		Boss* fakeboss = NULL;
 		FILE* fakesavefile = NULL;
 		WINDOW* fakenotifywin = NULL;
-		turnOP_args* savepick_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gameloop_kls);
+		turnOP_args* savepick_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &savepick_kls);
  		char *savepick_choices[] = {
 			"New game",
 			"Load save",
@@ -10173,14 +10215,14 @@ void gameloop(int argc, char** argv){
 				//TODO
 				//By default we expect the user to press new game, no action needed?
 				log_tag("debug_log.txt","[DEBUG]","Running new game from savepick menu");
-				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &gameloop_kls);
+				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &savepick_kls);
 			} else if (savepick_choice == LOAD_GAME) {
 				//ATM we expect a single save.
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
 				sprintf(msg,"Set load value: load_info->is_new_game == (%i)", load_info->is_new_game);
 				log_tag("debug_log.txt","[DEBUG]",msg);
-				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls, &gameloop_kls);
+				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls, &savepick_kls);
 				//TODO
 				//Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
 			} else if (savepick_choice == QUIT) {
@@ -10225,6 +10267,9 @@ void gameloop(int argc, char** argv){
 		delwin(savepick_menu_win);
 		endwin();
 		log_tag("debug_log.txt","[DEBUG]","Ended window mode for savepick menu");
+
+		kls_temp_end(savepick_kls);
+
 		//Flush the terminal
 		int clrres = system("clear");
 		sprintf(msg,"gameloop() system(\"clear\") after savepick res was (%i)",clrres);
@@ -10233,6 +10278,8 @@ void gameloop(int argc, char** argv){
 		//By now, we expect load_info->is_new_game to be set to 0 or 1.
 		sprintf(msg,"  Checking is_new_game:  load_info->is_new_game == (%i)",load_info->is_new_game);
 		log_tag("debug_log.txt","[DEBUG]",msg);
+
+		Koliseo_Temp gamestate_kls = kls_temp_start(temporary_kls);
 
 		if (load_info->is_new_game) {// We prepare path and fighter
 			path = randomise_path(rand(), default_kls);
@@ -10248,13 +10295,14 @@ void gameloop(int argc, char** argv){
 			initPlayerStats(player,path,default_kls);
 		} else { //Handle loading of gamestate
 
+
 			//Declar turnOP_args
 			Room* fakeroom = NULL;
 			Enemy* fakeenemy = NULL;
 			Boss* fakeboss = NULL;
 			FILE* fakesavefile = NULL;
 			WINDOW* fakenotifywin = NULL;
-			turnOP_args* loading_room_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gameloop_kls);
+			turnOP_args* loading_room_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gamestate_kls);
 			FILE* save_file;
 			char path_to_savefile[600];
 			char static_path[500];
@@ -10327,7 +10375,7 @@ void gameloop(int argc, char** argv){
 				kls_log("DEBUG",msg);
 				load_info->loaded_enemy = (Enemy*) KLS_PUSH(default_kls, Enemy, 1);
 				//FIXME: the structs related to loaded enemy are not loaded on default_kls
-				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, &gameloop_kls);
+				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, &gamestate_kls);
 
 				//Update loading_room_turn_args->enemy pointer
 				loading_room_turn_args->enemy = load_info->loaded_enemy;
@@ -10345,7 +10393,7 @@ void gameloop(int argc, char** argv){
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_ENEMYROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
 					//FIXME: the structs related to loaded enemy are not loaded on default_kls
-					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls, &gameloop_kls);
+					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls, &gamestate_kls);
 					sprintf(msg,"OP_LOAD_ENEMYROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
@@ -10357,7 +10405,7 @@ void gameloop(int argc, char** argv){
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_HOMEROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
 					//FIXME: the structs related to loaded enemy are not loaded on default_kls
-					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls, &gameloop_kls);
+					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls, &gamestate_kls);
 					sprintf(msg,"OP_LOAD_HOMEROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[TURNOP]",msg);
 					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
@@ -10384,7 +10432,7 @@ void gameloop(int argc, char** argv){
 		for (int i=0; i<5; i++) {
 			sprintf(msg,"Prepping lores");
 			kls_log("DEBUG",msg);
-			lore_strings[i] = (char*) KLS_PUSH_T(gameloop_kls, char, 300);
+			lore_strings[i] = (char*) KLS_PUSH(default_kls, char, 300);
 		}
 
 		int* loreCounter = &(path->loreCounter);
@@ -10495,15 +10543,14 @@ void gameloop(int argc, char** argv){
 
 				sprintf(msg,"Prepping Room for Story Gamemode. roomsDone=(%i)",roomsDone);
 				kls_log("DEBUG",msg);
-				Koliseo_Temp room_kls = kls_temp_start(default_kls);
-				Room* current_room = (Room*) KLS_PUSH_T(room_kls,Room,1);
+				Room* current_room = (Room*) KLS_PUSH_T(gamestate_kls,Room,1);
 
 				current_room->index = roomsDone;
 				setRoomType(path, &roadFork_value, &room_type, roomsDone);
 				sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 				log_tag("debug_log.txt","[ROOM]",msg);
 
-				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &room_kls);
+				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &gamestate_kls);
 				sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 				log_tag("debug_log.txt","[ROOM]",msg);
 
@@ -10610,16 +10657,16 @@ void gameloop(int argc, char** argv){
 				endwin();
 
 				if (current_room->class == HOME) {
-					res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,&room_kls);
+					res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,&gamestate_kls);
 				} else if (current_room->class == ENEMIES) {
-					res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls,&room_kls);
+					res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls,&gamestate_kls);
 				} else if (current_room->class == SHOP) {
 					//FIXME: does shop require usage of gameloop kls?
-					res = handleRoom_Shop(current_room, roomsDone, path, player, &room_kls);
+					res = handleRoom_Shop(current_room, roomsDone, path, player, default_kls, &gamestate_kls);
 				} else if (current_room->class == BOSS) {
-					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls,&room_kls);
+					res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls,&gamestate_kls);
 				} else if (current_room->class == TREASURE) {
-					res = handleRoom_Treasure(current_room, roomsDone, path, player, &room_kls);
+					res = handleRoom_Treasure(current_room, roomsDone, path, player, default_kls, &gamestate_kls);
 				} else if (current_room->class == ROADFORK) {
 					res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 				} else {
@@ -10661,8 +10708,9 @@ void gameloop(int argc, char** argv){
 
 					//Free room memory
 					freeRoom(current_room);
-					// End room_kls
-					kls_temp_end(room_kls);
+					// Reset gamestate_kls
+					kls_temp_end(gamestate_kls);
+					gamestate_kls = kls_temp_start(temporary_kls);
 				}
 			}// Win condition loop
 
@@ -10696,7 +10744,7 @@ void gameloop(int argc, char** argv){
 			//free(path);
 			log_tag("debug_log.txt","[DEBUG]","End of wincon loop.\n");
 
-		} else {
+		} else { //Gamemode is not Story or Standard
 			sprintf(msg,"Gamemode was [%i]",GAMEMODE);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 
@@ -10765,8 +10813,7 @@ void gameloop(int argc, char** argv){
 				sprintf(msg,"Prepping current_floor.");
 				log_tag("debug_log.txt","[DEBUG]",msg);
 				kls_log("DEBUG",msg);
-				Koliseo_Temp floor_kls = kls_temp_start(default_kls);
-				Floor* current_floor = (Floor*) KLS_PUSH_T(floor_kls,Floor,1);
+				Floor* current_floor = (Floor*) KLS_PUSH_T(gamestate_kls,Floor,1);
 				// Start the random walk from the center of the dungeon
 				int center_x = FLOOR_MAX_COLS / 2;
 				int center_y = FLOOR_MAX_ROWS / 2;
@@ -10821,7 +10868,7 @@ void gameloop(int argc, char** argv){
 					if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
 						sprintf(msg,"Prepping Room for Rogue Gamemode. roomsDone=(%i)",roomsDone);
 						kls_log("DEBUG",msg);
-						Room* current_room = (Room*) KLS_PUSH_T(floor_kls,Room,1);
+						Room* current_room = (Room*) KLS_PUSH_T(gamestate_kls,Room,1);
 
 						current_room->index = roomsDone;
 						//setRoomType(path, &roadFork_value, &room_type, roomsDone);
@@ -10830,7 +10877,7 @@ void gameloop(int argc, char** argv){
 						sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 						log_tag("debug_log.txt","[ROOM]",msg);
 
-						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &floor_kls);
+						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &gamestate_kls);
 						sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 						log_tag("debug_log.txt","[ROOM]",msg);
 
@@ -10904,15 +10951,15 @@ void gameloop(int argc, char** argv){
 						endwin();
 
 						if (current_room->class == HOME) {
-							res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, &floor_kls);
+							res = handleRoom_Home(current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, &gamestate_kls);
 						} else if (current_room->class == ENEMIES) {
-							res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls, &floor_kls);
+							res = handleRoom_Enemies(current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls, &gamestate_kls);
 						} else if (current_room->class == SHOP) {
-							res = handleRoom_Shop(current_room, roomsDone, path, player, &floor_kls);
+							res = handleRoom_Shop(current_room, roomsDone, path, player, default_kls, &gamestate_kls);
 						} else if (current_room->class == BOSS) {
-							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls, &floor_kls);
+							res = handleRoom_Boss(current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls, &gamestate_kls);
 						} else if (current_room->class == TREASURE) {
-							res = handleRoom_Treasure(current_room, roomsDone, path, player, &floor_kls);
+							res = handleRoom_Treasure(current_room, roomsDone, path, player, default_kls, &gamestate_kls);
 						} else if (current_room->class == ROADFORK) {
 							res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 						} else {
@@ -10986,6 +11033,10 @@ void gameloop(int argc, char** argv){
 									current_x = center_x;
 									current_y = center_y;
 
+									// Reset gamestate_kls
+									kls_temp_end(gamestate_kls);
+									gamestate_kls = kls_temp_start(temporary_kls);
+
 									continue; //Check win condition for loop
 
 								}
@@ -11022,8 +11073,7 @@ void gameloop(int argc, char** argv){
 					move_update(current_floor, &current_x, &current_y, floor_win);
 				}// Win condition loop
 
-				// End temp_kls
-				kls_temp_end(floor_kls);
+				kls_temp_end(gamestate_kls);
 				// Clear default_kls
 				//kls_clear(default_kls);
 
@@ -11066,7 +11116,7 @@ void gameloop(int argc, char** argv){
 				exit(EXIT_FAILURE);
 			}
 		}
-		kls_temp_end(gameloop_kls);
+		kls_temp_end(gamestate_kls);
 	} while (retry());
 
 	purple();

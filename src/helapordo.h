@@ -214,13 +214,13 @@ void b_death(Boss* b);
 int retry(void);
 
 void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Koliseo_Temp* t_kls);
-void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int roomIndex,int currentEnemyNum);
+void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int roomIndex,int currentEnemyNum, Koliseo* kls, Koliseo_Temp* t_kls);
 
 void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls);
 
 void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls);
 
-void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls);
+void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls, Koliseo_Temp* t_kls);
 
 Path* randomise_path(int seed, Koliseo* kls);
 

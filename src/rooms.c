@@ -1872,11 +1872,12 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @param roomsDone The total of rooms completed.
  * @param path The Path pointer.
  * @param f The Fighter pointer at hand.
- * @param t_kls The Koliseo_Temp used for allocations.
+ * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
  * @return When shop is exited, should return NO_DMG.
  */
-int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
+int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* kls, Koliseo_Temp* t_kls) {
+	//Koliseo_Temp tkls = *t_kls;
 	//Strings for turn menu choices
  	char *shop_choices[] = {
 			"Buy",
@@ -2158,10 +2159,10 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_T
 							log_tag("debug_log.txt","[SHOP]",msg);
 								//TODO
 								//Should use a function to avoid refactoring more points when changing Equip generation.
-								sprintf(msg,"Prepping Equip for purchase.");
+								sprintf(msg,"Prepping Equip for purchase, push to raw default_kls.");
 								log_tag("debug_log.txt","[SHOP]",msg);
 								kls_log("DEBUG",msg);
-								Equip* saved = (Equip*) KLS_PUSH_T(tkls,Equip,1);
+								Equip* saved = (Equip*) KLS_PUSH(kls,Equip,1);
 								Equip* to_save = equipToBuy;
 
 								saved->class = to_save->class;
@@ -2181,10 +2182,10 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_T
 								saved->equip_fun = to_save->equip_fun ;
 
 								for (int j = 0; j < to_save->perksCount; j++) {
-									sprintf(msg,"Prepping Perk (%i/%i) for Equip purchase.",j,to_save->perksCount);
+									sprintf(msg,"Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",j,to_save->perksCount);
 									log_tag("debug_log.txt","[SHOP]",msg);
 									kls_log("DEBUG",msg);
-									Perk* save_pk = (Perk*) KLS_PUSH_T(tkls,Perk,1);
+									Perk* save_pk = (Perk*) KLS_PUSH(default_kls,Perk,1);
 									save_pk->class = to_save->perks[j]->class;
 									strcpy(save_pk->name, to_save->perks[j]->name);
 									strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2255,9 +2256,10 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_T
  * @param w The window to print results to.
  * @param c The chest to open.
  * @param f The fighter holding the bags to add the items to.
- * @param t_kls The Koliseo_Temp used for allocations.
+ * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temp allocations.
  */
-void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls) {
+void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
 	char msg[200];
 	wclear(w);
@@ -2370,10 +2372,10 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls) {
 			//We create a deep copy of the equip so we can free the chest without worrying about the memory sharing with the bag.
 			//TODO
 			//Should use a function to avoid refactoring more points when changing Equip generation.
-			sprintf(msg,"Prepping Equip for Chest");
+			sprintf(msg,"Prepping Equip for Chest, push to raw default_kls");
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Equip* saved = (Equip*) KLS_PUSH_T(tkls,Equip,1);
+			Equip* saved = (Equip*) KLS_PUSH(kls,Equip,1);
 			Equip* to_save = c->equips[i];
 
 			saved->class = to_save->class;
@@ -2446,10 +2448,11 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls) {
  * @param roomsDone The total of rooms completed.
  * @param path The Path pointer.
  * @param f The Fighter pointer at hand.
- * @param t_kls The Koliseo_Temp used for allocations.
+ * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
  * @return When room is exited, should return NO_DMG.
  */
-int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_Temp* t_kls) {
+int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* kls, Koliseo_Temp* t_kls) {
 	//Strings for turn menu choices
  	char *treasure_choices[] = {
 			"Take Item",
@@ -2662,7 +2665,7 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 						end_room = 1;
 					} else if ( room->treasure->class == TREASURE_CHEST && (check = strcmp("Open Chest",item_name(cur)) == 0) ) {
 						if (f->keys_balance > 0) {
-							open_chest(win,room->treasure->chest,f,t_kls);
+							open_chest(win,room->treasure->chest,f,kls,t_kls);
 							sprintf(msg,"Opened chest in Treasure room, index %i.\n", room->index);
 							log_tag("debug_log.txt","[TREASURE]",msg);
 							f->keys_balance--;

@@ -8,6 +8,10 @@
  */
 extern Koliseo* default_kls;
 /**
+ * Global variable for temporary Koliseo.
+ */
+extern Koliseo* temporary_kls;
+/**
  * Global variable for load animations flag.
  */
 extern int G_PRELOAD_ANIMATIONS_ON;

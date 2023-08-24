@@ -15,6 +15,7 @@ int G_DEBUG_ENEMYTYPE_ON = 0;
 int GS_AUTOSAVE_ON = 1;
 Gamemode GAMEMODE = Rogue;
 Koliseo* default_kls = NULL;
+Koliseo* temporary_kls = NULL;
 
 int main(int argc, char** argv) {
 	//Randomise seed
