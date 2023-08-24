@@ -29,7 +29,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	FILE* autosave_file;
 	WINDOW* dummy_notify_win = NULL;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win);
+	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -260,39 +260,42 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				}
 				break;
 				default: {
-					break;
+						log_tag("debug_log.txt","[DEBUG]","Invalid keystroke in home room menu");
 				}
+				break;
 			}
 			wrefresh(menu_win);
-			if (turnOP_from_turnOption(choice) == OP_EXPLORE) {
-				picked_explore = 1;
-			}
-			if (choice == SAVE) {
-				char path_to_savefile[600];
-				char static_path[500];
-				char savefile_name[50] = "helapordo-save.txt" ;
-
-				// Set static_path value to the correct static dir path
-				resolve_staticPath(static_path);
-
-				sprintf(path_to_savefile,"%s/%s",static_path,savefile_name);
-
-				save_file = fopen(path_to_savefile, "w");
-				if (save_file == NULL)
-				{
-					fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_savefile);
-					exit(EXIT_FAILURE);
-				} else {
-					sprintf(msg,"Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
-					log_tag("debug_log.txt","[TURNOP]",msg);
-					args->save_file = save_file;
+			if (c == 10) { // Player char was enter
+				if (turnOP_from_turnOption(choice) == OP_EXPLORE) {
+					picked_explore = 1;
 				}
-			}
-			turnOP(turnOP_from_turnOption(choice),args,kls,t_kls);
-			if (choice == SAVE) {
-				fclose(save_file);
-				log_tag("debug_log.txt","[DEBUG]","Closed save_file pointer.");
-			}
+				if (choice == SAVE) {
+					char path_to_savefile[600];
+					char static_path[500];
+					char savefile_name[50] = "helapordo-save.txt" ;
+
+					// Set static_path value to the correct static dir path
+					resolve_staticPath(static_path);
+
+					sprintf(path_to_savefile,"%s/%s",static_path,savefile_name);
+
+					save_file = fopen(path_to_savefile, "w");
+					if (save_file == NULL)
+					{
+						fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_savefile);
+						exit(EXIT_FAILURE);
+					} else {
+						sprintf(msg,"Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
+						log_tag("debug_log.txt","[TURNOP]",msg);
+						args->save_file = save_file;
+					}
+				}
+				turnOP(turnOP_from_turnOption(choice),args,kls,t_kls);
+				if (choice == SAVE) {
+					fclose(save_file);
+					log_tag("debug_log.txt","[DEBUG]","Closed save_file pointer.");
+				}
+			} //End if Player char was enter
 		}
 
 		// Unpost menu and free all the memory taken up
@@ -315,7 +318,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 	}
 	//Free turnOP_args
-	free(args);
+	//free(args);
 	log_tag("debug_log.txt","[FREE]","handleRoom_Home():  Freed turnOP_args");
 	sprintf(msg,"Ended handleRoom_Home(), returning fightStatus [%i]",fightStatus);
 	log_tag("debug_log.txt","[DEBUG]",msg);
@@ -379,7 +382,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 	WINDOW* args_notify_win = NULL;
 
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win);
+	turnOP_args* args = init_turnOP_args(player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -875,7 +878,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 						animation_loops_done++;
 						if (animation_loops_done == 1) {
 						sprintf(time_msg,"Got to frame %i, restarting animation.", frame_counter);
-						log_tag("debug_log.txt","\033[1;34m[ANIMATE]",time_msg);
+						log_tag("debug_log.txt","[ANIMATE]",time_msg);
 	}
 						frame_counter = 0; //Reset animation loop on last frame
 					}
@@ -945,7 +948,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					//red();
 					//printf("\n\n\tYOU DIED.\n");
 					//white();
-					free(args);
+					//free(args);
 					log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 
 					return OP_RES_DEATH;
@@ -1203,7 +1206,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 	} //End for all enemies
 	sprintf(msg,"End of room %i", room->index);
 	log_tag("debug_log.txt","[ROOM]",msg);
-	free(args);
+	//free(args);
 	log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 	return fightStatus;
 }
@@ -1258,7 +1261,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	WINDOW* args_notify_win = NULL;
 	int isBoss = 1;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win);
+	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -1718,7 +1721,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				delwin(my_wins[0]);
 				delwin(my_wins[1]);
 				delwin(my_wins[2]);
-				free(args);
+				//free(args);
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return OP_RES_DEATH;
 			} else if (fightStatus == OP_RES_KILL_DONE) {
@@ -1859,7 +1862,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 		//update_panels();
 		refresh();
 	} //End while fightStatus
-	free(args);
+	//free(args);
 	log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 	return fightStatus;
 }
@@ -1872,11 +1875,12 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @param roomsDone The total of rooms completed.
  * @param path The Path pointer.
  * @param f The Fighter pointer at hand.
- * @param t_kls The Koliseo_Temp used for allocations.
+ * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
  * @return When shop is exited, should return NO_DMG.
  */
-int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
+int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* kls, Koliseo_Temp* t_kls) {
+	//Koliseo_Temp tkls = *t_kls;
 	//Strings for turn menu choices
  	char *shop_choices[] = {
 			"Buy",
@@ -2158,10 +2162,10 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_T
 							log_tag("debug_log.txt","[SHOP]",msg);
 								//TODO
 								//Should use a function to avoid refactoring more points when changing Equip generation.
-								sprintf(msg,"Prepping Equip for purchase.");
+								sprintf(msg,"Prepping Equip for purchase, push to raw default_kls.");
 								log_tag("debug_log.txt","[SHOP]",msg);
 								kls_log("DEBUG",msg);
-								Equip* saved = (Equip*) KLS_PUSH_T(tkls,Equip,1);
+								Equip* saved = (Equip*) KLS_PUSH(kls,Equip,1);
 								Equip* to_save = equipToBuy;
 
 								saved->class = to_save->class;
@@ -2181,10 +2185,10 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_T
 								saved->equip_fun = to_save->equip_fun ;
 
 								for (int j = 0; j < to_save->perksCount; j++) {
-									sprintf(msg,"Prepping Perk (%i/%i) for Equip purchase.",j,to_save->perksCount);
+									sprintf(msg,"Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",j,to_save->perksCount);
 									log_tag("debug_log.txt","[SHOP]",msg);
 									kls_log("DEBUG",msg);
-									Perk* save_pk = (Perk*) KLS_PUSH_T(tkls,Perk,1);
+									Perk* save_pk = (Perk*) KLS_PUSH(default_kls,Perk,1);
 									save_pk->class = to_save->perks[j]->class;
 									strcpy(save_pk->name, to_save->perks[j]->name);
 									strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2255,9 +2259,10 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_T
  * @param w The window to print results to.
  * @param c The chest to open.
  * @param f The fighter holding the bags to add the items to.
- * @param t_kls The Koliseo_Temp used for allocations.
+ * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temp allocations.
  */
-void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls) {
+void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
 	char msg[200];
 	wclear(w);
@@ -2370,10 +2375,10 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls) {
 			//We create a deep copy of the equip so we can free the chest without worrying about the memory sharing with the bag.
 			//TODO
 			//Should use a function to avoid refactoring more points when changing Equip generation.
-			sprintf(msg,"Prepping Equip for Chest");
+			sprintf(msg,"Prepping Equip for Chest, push to raw default_kls");
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Equip* saved = (Equip*) KLS_PUSH_T(tkls,Equip,1);
+			Equip* saved = (Equip*) KLS_PUSH(kls,Equip,1);
 			Equip* to_save = c->equips[i];
 
 			saved->class = to_save->class;
@@ -2446,10 +2451,11 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo_Temp* t_kls) {
  * @param roomsDone The total of rooms completed.
  * @param path The Path pointer.
  * @param f The Fighter pointer at hand.
- * @param t_kls The Koliseo_Temp used for allocations.
+ * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
  * @return When room is exited, should return NO_DMG.
  */
-int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo_Temp* t_kls) {
+int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* kls, Koliseo_Temp* t_kls) {
 	//Strings for turn menu choices
  	char *treasure_choices[] = {
 			"Take Item",
@@ -2662,7 +2668,7 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 						end_room = 1;
 					} else if ( room->treasure->class == TREASURE_CHEST && (check = strcmp("Open Chest",item_name(cur)) == 0) ) {
 						if (f->keys_balance > 0) {
-							open_chest(win,room->treasure->chest,f,t_kls);
+							open_chest(win,room->treasure->chest,f,kls,t_kls);
 							sprintf(msg,"Opened chest in Treasure room, index %i.\n", room->index);
 							log_tag("debug_log.txt","[TREASURE]",msg);
 							f->keys_balance--;

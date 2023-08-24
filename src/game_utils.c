@@ -14,12 +14,15 @@
  * @param Boss The Boss pointer to assign to turnOP_args->boss.
  * @param save_file The FILE pointer to assign to turnOP_args->save_file.
  * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
+ * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
  */
-turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win) {
+turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls) {
+	Koliseo_Temp tkls = *t_kls;
 	char msg[500];
-	turnOP_args* res = (turnOP_args*) malloc(sizeof(turnOP_args));
 	sprintf(msg,"Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
 	log_tag("debug_log.txt","[TURNOP]",msg);
+	kls_log("DEBUG",msg);
+	turnOP_args* res = (turnOP_args*) KLS_PUSH_T(tkls,turnOP_args,1);
 
 	res->actor = actor;
 	res->path = path;
@@ -29,6 +32,7 @@ turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* 
 	res->boss = boss;
 	res->save_file = save_file;
 	res->notify_win = notify_win;
+	res->t_kls = t_kls;
 
 	return res;
 }

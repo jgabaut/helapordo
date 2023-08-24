@@ -3640,3 +3640,287 @@ void handleTutorial(void) {
 	delwin(win);
 	endwin();
 }
+
+/**
+ * Takes a Fighter, a Path, and a Room pointers and handles menu for Rogue mode.
+ * It also takes a loadInfo pointer to a struct used for loading a game.
+ * User is asked for turn choice and according to the input, the corresponding action will be called.
+ * @see Fighter
+ * @see Path
+ * @param p The Path pointer.
+ * @param player The Fighter pointer at hand.
+ * @param room The Room pointer for current room.
+ * @param load_info A pointer to loadInfo struct containing stuff for loading a game.
+ * @param kls The Koliseo used for allocations.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
+ */
+int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, Koliseo* kls, Koliseo_Temp* t_kls) {
+	Enemy* dummy_enemy = NULL;
+	Boss* dummy_boss = NULL;
+	FILE* dummy_savefile = NULL;
+	FILE* save_file;
+	WINDOW* dummy_notify_win = NULL;
+	//Declare turnOP_args
+	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
+
+	//Strings for turn menu choices
+ 	char *choices[] = {
+		"Artifacts",
+		"Equips",
+		"Perks",
+		"Save",
+		"Stats",
+		"Quit",
+		"Close",
+		(char *)NULL,
+	};
+
+	char *debug_choices[] = {
+		"Debug",
+		(char*)NULL,
+	};
+
+	char msg[1000];
+
+	turnOption choice = 999;
+
+	ITEM **menu_items;
+	MENU *rogue_menu;
+	WINDOW *menu_win;
+	WINDOW *side_win;
+	int n_choices, c;
+
+	while( (choice != CLOSE_MENU ) ) {
+		choice = 999;
+		log_tag("debug_log.txt","[DEBUG]","Initialising curses for handleRogueMenu()");
+		/* Initialize curses */
+		//setlocale(LC_CTYPE, "it_IT.UTF-8");
+		//initscr();
+		start_color();
+		clear();
+		refresh();
+		cbreak();
+		noecho();
+		keypad(stdscr, TRUE);
+
+		//TODO: clear ambigue color definitions.
+		init_game_color_pairs();
+
+		int cursorCheck = curs_set(0); // We make the cursor invisible or return early with the error
+
+		if (cursorCheck == ERR) {
+			log_tag("debug_log.txt","[ERROR]","Failed curs_set(0) at handleRoom_Home()");
+			return S4C_ERR_CURSOR; //fprintf(stderr,"animate => Terminal does not support cursor visibility state.\n");
+		}
+
+		/* Create turn menu items */
+		n_choices = ARRAY_SIZE(choices);
+		int debug_n_choices = 0;
+		if (G_DEBUG_ON && G_EXPERIMENTAL_ON) { //We have to include debug menu options
+			debug_n_choices = ARRAY_SIZE(debug_choices);
+		}
+		menu_items = (ITEM **)calloc(n_choices + debug_n_choices, sizeof(ITEM *));
+
+		// Prepare menu items
+		for(int k = 0; k < n_choices; k++) {
+		    if (G_DEBUG_ON && G_EXPERIMENTAL_ON && k == n_choices -1) {
+			//We skip adding the null string item
+		    } else {
+			menu_items[k] = new_item(choices[k], choices[k]);
+		    }
+		    /* Set the user pointer */
+		    //set_item_userptr(my_items[i]);
+		}
+		// Prepare debug items
+		if (G_DEBUG_ON && G_EXPERIMENTAL_ON) {
+			for(int k = 0; k < debug_n_choices; k++) {
+				menu_items[k + n_choices-1] = new_item(debug_choices[k],debug_choices[k]);
+			}
+		    /* Set the user pointer */
+		    //set_item_userptr(my_items[i]);
+		}
+
+		/* Create menu */
+		rogue_menu = new_menu((ITEM **)menu_items);
+
+		/* Set description off */
+		menu_opts_off(rogue_menu,O_SHOWDESC);
+
+		/* Create the window to be associated with the menu */
+		menu_win = newwin(9, 11, 5, 35);
+		//nodelay(menu_win,TRUE); //We make getch non-blocking
+		keypad(menu_win, TRUE);
+
+		/* Set main window and sub window */
+		set_menu_win(rogue_menu, menu_win);
+		set_menu_sub(rogue_menu, derwin(menu_win, 8, 10, 1, 1));
+		set_menu_format(rogue_menu, 7, 1);
+
+		/* Set menu mark to the string "" */
+		set_menu_mark(rogue_menu, "");
+
+		/* Print a border around the menu */
+		box(menu_win, 0, 0);
+
+		/* Set menu colors */
+		set_menu_fore(rogue_menu,COLOR_PAIR(5));
+		set_menu_back(rogue_menu,COLOR_PAIR(7));
+
+		//mvprintw(LINES - 1, 0, "Arrow Keys to navigate (F1 to Exit)");
+		//attroff(COLOR_PAIR(2));
+
+		/* Post the menu */
+		post_menu(rogue_menu);
+		wrefresh(menu_win);
+
+		side_win = newwin(12, 24, 2, 5);
+		scrollok(side_win,TRUE);
+		wprintw(side_win,"\nYour menu.");
+		wprintw(side_win,"\nWhat do you want to do?");
+		wrefresh(side_win);
+		refresh();
+
+		int picked = 0;
+		int picked_close = 0;
+		//We set the colors to use s4c's palette file...
+		FILE* palette_file;
+		char path_to_palette[600];
+		char static_path[500];
+		char palette_name[50] = "palette.gpl";
+
+		// Set static_path value to the correct static dir path
+		resolve_staticPath(static_path);
+
+		sprintf(path_to_palette,"%s/%s",static_path,palette_name);
+
+		palette_file = fopen(path_to_palette, "r");
+
+		init_s4c_color_pairs(palette_file);
+
+		while ( !picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_close) {
+			switch(c) {
+				case KEY_DOWN:
+					menu_driver(rogue_menu, REQ_DOWN_ITEM);
+					break;
+				case KEY_UP:
+					menu_driver(rogue_menu, REQ_UP_ITEM);
+					break;
+				case KEY_LEFT: { /*Left option pick*/
+					ITEM *cur;
+					cur = current_item(rogue_menu);
+					choice = getTurnChoice((char*)item_name(cur));
+					sprintf(msg,"Left on choice: [ %s ] value (%i)",item_name(cur),choice);
+					log_tag("debug_log.txt","[DEBUG]",msg);
+					if (choice == EQUIPS) {
+						log_tag("debug_log.txt","[DEBUG]","Should do something");
+					}
+					}
+					break;
+				case KEY_RIGHT: { /*Right option pick*/
+					ITEM *cur;
+					cur = current_item(rogue_menu);
+					choice = getTurnChoice((char*)item_name(cur));
+					sprintf(msg,"Right on choice: [ %s ] value (%i)",item_name(cur),choice);
+					log_tag("debug_log.txt","[DEBUG]",msg);
+					if (choice == EQUIPS) {
+						log_tag("debug_log.txt","[DEBUG]","Should do something");
+					}
+					}
+					break;
+				case KEY_NPAGE:
+					menu_driver(rogue_menu, REQ_SCR_DPAGE);
+					break;
+				case KEY_PPAGE:
+					menu_driver(rogue_menu, REQ_SCR_UPAGE);
+					break;
+				case 10: /* Enter */
+				{
+					picked = 1;
+					ITEM *cur;
+
+					//move(18,47);
+					//clrtoeol();
+					cur = current_item(rogue_menu);
+					//mvprintw(18, 47, "Item selected is : %s", item_name(cur));
+					choice = getTurnChoice((char*)item_name(cur));
+					pos_menu_cursor(rogue_menu);
+					refresh();
+				};
+				break;
+				case 'q':
+				{
+					if (G_FASTQUIT_ON == 1) {
+						log_tag("debug_log.txt","[DEBUG]","Player used q to quit from Rogue menu.");
+						picked = 1;
+						choice = getTurnChoice("Quit");
+						pos_menu_cursor(rogue_menu);
+						refresh();
+					} else {
+						log_tag("debug_log.txt","[DEBUG]","Player used q in Rogue menu, but G_FASTQUIT_ON was not 1.");
+					}
+				}
+				break;
+				default: {
+						log_tag("debug_log.txt","[DEBUG]","Invalid keystroke in Rogue menu");
+				}
+				break;
+			}
+			wrefresh(menu_win);
+			if (c == 10) { // Player char was enter
+				if (choice == CLOSE_MENU) {
+					picked_close = 1;
+				}
+				if (choice == SAVE) {
+					char path_to_savefile[600];
+					char static_path[500];
+					char savefile_name[50] = "helapordo-save.txt" ;
+
+					// Set static_path value to the correct static dir path
+					resolve_staticPath(static_path);
+
+					sprintf(path_to_savefile,"%s/%s",static_path,savefile_name);
+					save_file = fopen(path_to_savefile, "w");
+					if (save_file == NULL)
+					{
+						fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_savefile);
+						exit(EXIT_FAILURE);
+					} else {
+						sprintf(msg,"Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
+						log_tag("debug_log.txt","[TURNOP]",msg);
+						args->save_file = save_file;
+					}
+				}
+				turnOP(turnOP_from_turnOption(choice),args,kls,t_kls);
+				if (choice == SAVE) {
+					fclose(save_file);
+					log_tag("debug_log.txt","[DEBUG]","Closed save_file pointer.");
+				}
+			} //End if Player char was enter
+		}
+
+		// Unpost menu and free all the memory taken up
+		unpost_menu(rogue_menu);
+		free_menu(rogue_menu);
+		log_tag("debug_log.txt","[FREE]","Freed Rogue menu");
+		int totalChoices = n_choices + debug_n_choices;
+		if (G_DEBUG_ON) {
+			totalChoices -= 1; //We subtract 1 to account for the discarded null choice in the base option set.
+		}
+		for(int k = 0; k < totalChoices; k++) {
+			free_item(menu_items[k]);
+			sprintf(msg,"Freed %i Rogue menu item",k);
+			log_tag("debug_log.txt","[FREE]",msg);
+		}
+
+		delwin(side_win);
+		endwin();
+		log_tag("debug_log.txt","[DEBUG]","Ended window mode for handleRogueMenu().");
+
+	}
+	//Free turnOP_args
+	//free(args);
+	log_tag("debug_log.txt","[FREE]","handleRogueMenu():  Freed turnOP_args");
+	sprintf(msg,"Ended handleRogueMenu()");
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	return 0;
+}
