@@ -1478,7 +1478,8 @@ typedef enum turnOption {
 	SAVE=108,
 	EXPLORE=109,
 	DEBUG=1337,
-	TUTORIAL=777
+	TUTORIAL=777,
+	CLOSE_MENU=110,
 } turnOption;
 
 /**

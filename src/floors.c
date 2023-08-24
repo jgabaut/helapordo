@@ -563,6 +563,7 @@ void draw_floor_view(Floor* floor, int current_x, int current_y, WINDOW* win) {
  * @see floorClass
  */
 void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner_x, int drawcorner_y, int x_size, int y_size, int recurse) {
+	char msg[200];
 	if (win == NULL) {
 		log_tag("debug_log.txt","[ERROR]","draw_cell():  win was NULL.");
 		exit(EXIT_FAILURE);
@@ -573,7 +574,13 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 	int xSize = x_size;
 	int ySize = y_size;
 
-	if (floor->floor_layout[cell_x][cell_y] != 1) {
+	if (floor->floor_layout[cell_x][cell_y] == 0) {
+		if (floor->roomclass_layout[cell_x][cell_y] != WALL) {
+			sprintf(msg,"draw_cell(): floor->floor_layout[%i][%i] was (%i).",cell_x,cell_y,floor->floor_layout[cell_x][cell_y]);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			sprintf(msg,"draw_cell(): floor->roomclass_layout[%i][%i] was (%s).",cell_x,cell_y,stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+			log_tag("debug_log.txt","[DEBUG]",msg);
+		}
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				char ch = '?';
@@ -588,7 +595,7 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 				if ( isWall > 0 ) { isWall = -1; ch = '?'; } ;
 			}
 		}
-	} else {
+	} else if (floor->floor_layout[cell_x][cell_y] == 1){
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				char ch = '?';
@@ -630,6 +637,8 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 					}
 					break;
 					default: {
+						sprintf(msg,"draw_cell(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",cell_x,cell_y);
+						log_tag("debug_log.txt","[ERROR]",msg);
 						ch = '?';
 						isColored = S4C_DARK_GREEN;
 					}
@@ -644,15 +653,23 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 		if (recurse > 0 && cell_x > 0) draw_cell(floor,cell_x-1,cell_y,win,drawcorner_x-3,drawcorner_y,x_size,y_size, recurse-1);
 		if (recurse > 0 && cell_y < FLOOR_MAX_ROWS-1) draw_cell(floor,cell_x,cell_y+1,win,drawcorner_x,drawcorner_y+3,x_size,y_size, recurse-1);
 		if (recurse > 0 && cell_y > 0) draw_cell(floor,cell_x,cell_y-1,win,drawcorner_x,drawcorner_y-3,x_size,y_size, recurse-1);
+	} else {
+		sprintf(msg,"draw_cell(): floor->floor_layout[%i][%i] was (%i).",cell_x,cell_y,floor->floor_layout[cell_x][cell_y]);
+		log_tag("debug_log.txt","[ERROR]",msg);
+		sprintf(msg,"draw_cell(): floor->roomclass_layout[%i][%i] was (%s).",cell_x,cell_y,stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+		log_tag("debug_log.txt","[ERROR]",msg);
+		exit(EXIT_FAILURE);
 	}
 }
 
 /**
  * Takes a Floor pointer and cell x and y position. Move one square and update passed WINDOW pointer.
+ * The additional parameters are needed for handleRogueMenu().
+ * @see handleRogueMenu()
  * @see Floor
  * @see floorClass
  */
-void move_update(Floor* floor, int* current_x, int* current_y, WINDOW* win) {
+void move_update(Floor* floor, int* current_x, int* current_y, WINDOW* win, Path* path, Fighter* player, Room* room, loadInfo* load_info, Koliseo* kls, Koliseo_Temp* t_kls) {
 	if (win == NULL) {
 		log_tag("debug_log.txt","[ERROR]","move_update():  win was NULL.");
 		exit(EXIT_FAILURE);
@@ -667,6 +684,14 @@ void move_update(Floor* floor, int* current_x, int* current_y, WINDOW* win) {
 		target_x = *current_x;
 		target_y = *current_y;
 		switch(c) {
+			case 'm': {
+				picked = 0;
+				handleRogueMenu(path,player,room,load_info,kls,t_kls);
+				//Draw current FOV
+				draw_floor_view(floor, *current_x, *current_y, win);
+				continue;
+			}
+			break;
 			case KEY_DOWN: {
 				picked = 1;
 				target_y += 1;
@@ -687,21 +712,27 @@ void move_update(Floor* floor, int* current_x, int* current_y, WINDOW* win) {
 				target_x += 1;
 			}
 			break;
+			default: {
+				sprintf(msg,"move_update():  Player char (%c)was not accounted for. Target (x=%i,y=%i) class (%s).",c,target_x,target_y,stringFromRoom(floor->roomclass_layout[target_x][target_y]));
+				log_tag("debug_log.txt","[FLOOR]",msg);
+				picked = 0;
+				continue;
+			}
 		}
 		if (floor->floor_layout[target_x][target_y] != 1) {
 			picked = 0;
 			continue;
 		} else {
-			if (floor->roomclass_layout[target_x][target_y] != WALL) {
-			  if (floor->explored_matrix[*current_x][*current_y] == 0) {
-				floor->explored_matrix[*current_x][*current_y] = 1;
+			if (floor->roomclass_layout[target_x][target_y] != WALL && floor->floor_layout[target_x][target_y] > 0) {
+			  if (floor->explored_matrix[target_x][target_y] == 0) {
+				floor->explored_matrix[target_x][target_y] = 1;
 				(floor->explored_area)++;
-				sprintf(msg,"move_update():  target x[%i],y[%i] was not walked before. Class: (%s).",*current_x,*current_y,stringFromRoom(floor->roomclass_layout[*current_x][*current_y]));
+				sprintf(msg,"move_update():  target x[%i],y[%i] was not walked before. Class: (%s).",target_x,target_y,stringFromRoom(floor->roomclass_layout[target_x][target_y]));
 				log_tag("debug_log.txt","[FLOOR]",msg);
 				sprintf(msg,"move_update(): explored area [%i].",floor->explored_area);
 				log_tag("debug_log.txt","[FLOOR]",msg);
 			  } else {
-				sprintf(msg,"move_update():  target x[%i],y[%i] was walked before. Class: (%s).",*current_x,*current_y,stringFromRoom(floor->roomclass_layout[*current_x][*current_y]));
+				sprintf(msg,"move_update():  target x[%i],y[%i] was walked before. Class: (%s).",target_x,target_y,stringFromRoom(floor->roomclass_layout[target_x][target_y]));
 				log_tag("debug_log.txt","[FLOOR]",msg);
 				sprintf(msg,"move_update(): explored area [%i], tot area [%i].",floor->explored_area,floor->area);
 				log_tag("debug_log.txt","[FLOOR]",msg);

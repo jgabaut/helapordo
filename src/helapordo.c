@@ -371,7 +371,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 		break;
 		case OP_DEBUG: {
 			if (room == NULL) {
-				log_tag("debug_log.txt","[CRITICAL]","Room pointer was null in turnOP(OP_DEBUG)");
+				log_tag("debug_log.txt","[WARN]","Room pointer was null in turnOP(OP_DEBUG)");
 				exit(EXIT_FAILURE);
 			}
 			room_index = room->index;
@@ -3395,6 +3395,8 @@ turnOption getTurnChoice(char* ch) {
 			pick = EXPLORE;
 		} else if ((comp = strcmp(ch, "Tutorial")) == 0) {
 			pick = TUTORIAL;
+		} else if ((comp = strcmp(ch, "Close")) == 0) {
+			pick = CLOSE_MENU;
 		} else {
 			pick = INVALID;
 		}
@@ -10672,7 +10674,7 @@ void gameloop(int argc, char** argv){
 				} else {
 					sprintf(msg,"Unexpected current_room->class value: [%i] [%s]",current_room->class,stringFromRoom(current_room->class));
 					log_tag("debug_log.txt","[ERROR]",msg);
-					freeRoom(current_room);
+					//freeRoom(current_room);
 					log_tag("debug_log.txt","[ERROR]","Freed current room, quitting program.");
 					exit(EXIT_FAILURE);
 				}
@@ -10680,7 +10682,7 @@ void gameloop(int argc, char** argv){
 				if (res == OP_RES_DEATH) {
 					log_tag("debug_log.txt","[DEBUG]","Room resulted in DEATH.\n");
 					//Free room memory
-					freeRoom(current_room);
+					//freeRoom(current_room);
 					break;
 				}
 				else {
@@ -10707,7 +10709,7 @@ void gameloop(int argc, char** argv){
 					}
 
 					//Free room memory
-					freeRoom(current_room);
+					//freeRoom(current_room);
 					// Reset gamestate_kls
 					kls_temp_end(gamestate_kls);
 					gamestate_kls = kls_temp_start(temporary_kls);
@@ -10864,11 +10866,13 @@ void gameloop(int argc, char** argv){
 						enemyTotal = loaded_roomtotalenemies;
 					}
 
+					Room* current_room = NULL;
+
 					//Check if current room needs to be played
 					if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
 						sprintf(msg,"Prepping Room for Rogue Gamemode. roomsDone=(%i)",roomsDone);
 						kls_log("DEBUG",msg);
-						Room* current_room = (Room*) KLS_PUSH_T(gamestate_kls,Room,1);
+						current_room = (Room*) KLS_PUSH_T(gamestate_kls,Room,1);
 
 						current_room->index = roomsDone;
 						//setRoomType(path, &roadFork_value, &room_type, roomsDone);
@@ -10965,7 +10969,7 @@ void gameloop(int argc, char** argv){
 						} else {
 							sprintf(msg,"Unexpected current_room->class value: [%i] [%s]",current_room->class,stringFromRoom(current_room->class));
 							log_tag("debug_log.txt","[ERROR]",msg);
-							freeRoom(current_room);
+							//freeRoom(current_room);
 							log_tag("debug_log.txt","[ERROR]","Freed current room, quitting program.");
 							exit(EXIT_FAILURE);
 						}
@@ -10973,7 +10977,7 @@ void gameloop(int argc, char** argv){
 						if (res == OP_RES_DEATH) {
 							log_tag("debug_log.txt","[DEBUG]","Room resulted in DEATH.\n");
 							//Free room memory
-							freeRoom(current_room);
+							//freeRoom(current_room);
 							break;
 						} else {
 							//Flush the terminal
@@ -10994,12 +10998,15 @@ void gameloop(int argc, char** argv){
 							player->stats->roomscompleted++;
 
 							//Free room memory
-							freeRoom(current_room);
+							//freeRoom(current_room);
 
 							//Update floor's roomclass layout for finished rooms which should not be replayed
 							switch(current_floor->roomclass_layout[current_x][current_y]) {
 								case ENEMIES: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
+									// Reset gamestate_kls
+									kls_temp_end(gamestate_kls);
+									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								case BOSS: {
@@ -11043,15 +11050,24 @@ void gameloop(int argc, char** argv){
 								break;
 								case SHOP: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
+									// Reset gamestate_kls
+									kls_temp_end(gamestate_kls);
+									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								case TREASURE: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
+									// Reset gamestate_kls
+									kls_temp_end(gamestate_kls);
+									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								case HOME: {
 									//We leave it available
 									log_tag("debug_log.txt","[DEBUG]","Skipping reset of roomclass for HOME room");
+									// Reset gamestate_kls
+									kls_temp_end(gamestate_kls);
+									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								default: {
@@ -11070,7 +11086,7 @@ void gameloop(int argc, char** argv){
 					//Draw current FOV
 					draw_floor_view(current_floor, current_x, current_y, floor_win);
 					//Take a step and update screen
-					move_update(current_floor, &current_x, &current_y, floor_win);
+					move_update(current_floor, &current_x, &current_y, floor_win, path, player, current_room, load_info, default_kls, &gamestate_kls);
 				}// Win condition loop
 
 				kls_temp_end(gamestate_kls);
