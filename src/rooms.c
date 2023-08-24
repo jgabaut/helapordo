@@ -260,39 +260,42 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				}
 				break;
 				default: {
-					break;
+						log_tag("debug_log.txt","[DEBUG]","Invalid keystroke in home room menu");
 				}
+				break;
 			}
 			wrefresh(menu_win);
-			if (turnOP_from_turnOption(choice) == OP_EXPLORE) {
-				picked_explore = 1;
-			}
-			if (choice == SAVE) {
-				char path_to_savefile[600];
-				char static_path[500];
-				char savefile_name[50] = "helapordo-save.txt" ;
-
-				// Set static_path value to the correct static dir path
-				resolve_staticPath(static_path);
-
-				sprintf(path_to_savefile,"%s/%s",static_path,savefile_name);
-
-				save_file = fopen(path_to_savefile, "w");
-				if (save_file == NULL)
-				{
-					fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_savefile);
-					exit(EXIT_FAILURE);
-				} else {
-					sprintf(msg,"Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
-					log_tag("debug_log.txt","[TURNOP]",msg);
-					args->save_file = save_file;
+			if (c == 10) { // Player char was enter
+				if (turnOP_from_turnOption(choice) == OP_EXPLORE) {
+					picked_explore = 1;
 				}
-			}
-			turnOP(turnOP_from_turnOption(choice),args,kls,t_kls);
-			if (choice == SAVE) {
-				fclose(save_file);
-				log_tag("debug_log.txt","[DEBUG]","Closed save_file pointer.");
-			}
+				if (choice == SAVE) {
+					char path_to_savefile[600];
+					char static_path[500];
+					char savefile_name[50] = "helapordo-save.txt" ;
+
+					// Set static_path value to the correct static dir path
+					resolve_staticPath(static_path);
+
+					sprintf(path_to_savefile,"%s/%s",static_path,savefile_name);
+
+					save_file = fopen(path_to_savefile, "w");
+					if (save_file == NULL)
+					{
+						fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_savefile);
+						exit(EXIT_FAILURE);
+					} else {
+						sprintf(msg,"Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
+						log_tag("debug_log.txt","[TURNOP]",msg);
+						args->save_file = save_file;
+					}
+				}
+				turnOP(turnOP_from_turnOption(choice),args,kls,t_kls);
+				if (choice == SAVE) {
+					fclose(save_file);
+					log_tag("debug_log.txt","[DEBUG]","Closed save_file pointer.");
+				}
+			} //End if Player char was enter
 		}
 
 		// Unpost menu and free all the memory taken up
@@ -875,7 +878,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 						animation_loops_done++;
 						if (animation_loops_done == 1) {
 						sprintf(time_msg,"Got to frame %i, restarting animation.", frame_counter);
-						log_tag("debug_log.txt","\033[1;34m[ANIMATE]",time_msg);
+						log_tag("debug_log.txt","[ANIMATE]",time_msg);
 	}
 						frame_counter = 0; //Reset animation loop on last frame
 					}
