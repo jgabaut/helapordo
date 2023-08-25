@@ -8490,14 +8490,17 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
 			print_kls_2file(kls_file,default_kls);
 			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			kls_usageReport_toFile(default_kls,kls_file);
 			fprintf(kls_file,"--END debug of default_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			print_kls_2file(kls_file,temporary_kls);
-			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
+			kls_usageReport_toFile(temporary_kls,kls_file);
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
-			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
+			kls_usageReport_toFile(kls,kls_file);
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
 			fclose(kls_file);
 		}
@@ -8977,14 +8980,17 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
 			print_kls_2file(kls_file,default_kls);
 			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			kls_usageReport_toFile(default_kls,kls_file);
 			fprintf(kls_file,"--END debug of default_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			print_kls_2file(kls_file,temporary_kls);
-			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
+			kls_usageReport_toFile(temporary_kls,kls_file);
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
-			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
+			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
+			kls_usageReport_toFile(kls,kls_file);
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
 			fclose(kls_file);
 		}
