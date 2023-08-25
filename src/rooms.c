@@ -2165,7 +2165,7 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 								sprintf(msg,"Prepping Equip for purchase, push to raw default_kls.");
 								log_tag("debug_log.txt","[SHOP]",msg);
 								kls_log("DEBUG",msg);
-								Equip* saved = (Equip*) KLS_PUSH(kls,Equip,1);
+								Equip* saved = (Equip*) KLS_PUSH_NAMED(kls,Equip,1,"Equip",msg);
 								Equip* to_save = equipToBuy;
 
 								saved->class = to_save->class;
@@ -2188,7 +2188,7 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 									sprintf(msg,"Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",j,to_save->perksCount);
 									log_tag("debug_log.txt","[SHOP]",msg);
 									kls_log("DEBUG",msg);
-									Perk* save_pk = (Perk*) KLS_PUSH(default_kls,Perk,1);
+									Perk* save_pk = (Perk*) KLS_PUSH_NAMED(default_kls,Perk,1,"Perk",msg);
 									save_pk->class = to_save->perks[j]->class;
 									strcpy(save_pk->name, to_save->perks[j]->name);
 									strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2378,7 +2378,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			sprintf(msg,"Prepping Equip for Chest, push to raw default_kls");
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Equip* saved = (Equip*) KLS_PUSH(kls,Equip,1);
+			Equip* saved = (Equip*) KLS_PUSH_NAMED(kls,Equip,1,"Equip",msg);
 			Equip* to_save = c->equips[i];
 
 			saved->class = to_save->class;
@@ -2401,7 +2401,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 				sprintf(msg,"Prepping Perk (%i/%i) for Equip for Chest.", j, to_save->perksCount);
 				log_tag("debug_log.txt","[SHOP]",msg);
 				kls_log("DEBUG",msg);
-				Perk* save_pk = (Perk*) KLS_PUSH_T(tkls,Perk,1);
+				Perk* save_pk = (Perk*) KLS_PUSH_T_NAMED(tkls,Perk,1,"Perk",msg);
 				save_pk->class = to_save->perks[j]->class;
 				strcpy(save_pk->name, to_save->perks[j]->name);
 				strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2728,7 +2728,7 @@ void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info, Kolis
 	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Home"));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("HOME"));
+	r->desc = (char*) KLS_PUSH_T_NAMED(tkls,char*,sizeof("HOME"),"Room desc",msg);
 	strcpy(r->desc,"Home");
 	if (!(load_info->is_new_game)) {
 		log_tag("debug_log.txt","[DEBUG]","initRoom_Home() for a loaded game");
@@ -2751,7 +2751,7 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Enemies"));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Enemies"));
+	r->desc = (char*) KLS_PUSH_T_NAMED(tkls,char*,sizeof("Enemies"),"Room desc",msg);
 	strcpy(r->desc,"Enemies");
 	if (enemyTotal <= ROOM_ENEMIES_MAX ) {
 		r->index = roomIndex;
@@ -2760,7 +2760,7 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		sprintf(msg,"Allocated size %lu for FoeParty:", sizeof(FoeParty));
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
-		FoeParty* foes = (FoeParty*) KLS_PUSH_T(tkls,FoeParty,1);
+		FoeParty* foes = (FoeParty*) KLS_PUSH_T_NAMED(tkls,FoeParty,1,"Foeparty",msg);
 
 		//Randomise fp class
 		//foes->class = rand() % (FOEPARTY_CLASS_MAX + 1);
@@ -2795,7 +2795,7 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 			sprintf(msg,"Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy), enemyIndex, enemyTotal);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Enemy* e = KLS_PUSH_T(tkls,Enemy,1); //&room_enemies[enemyIndex];
+			Enemy* e = KLS_PUSH_T_NAMED(tkls,Enemy,1,"Enemy",msg); //&room_enemies[enemyIndex];
 			prepareRoomEnemy(e, r->index, r->enemyTotal, enemyIndex, t_kls);
 			r->enemies[enemyIndex] = e;
 			//Set FoeParty links
@@ -2833,12 +2833,12 @@ void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
 	sprintf(msg,"Allocated size %lu for Room Shop desc:", sizeof("Shop"));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Shop"));
+	r->desc = (char*) KLS_PUSH_T_NAMED(tkls,char*,sizeof("Shop"),"Room desc",msg);
 	strcpy(r->desc,"Shop");
 	sprintf(msg,"Allocated size %lu for Room Shop :", sizeof("Shop"));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	Shop* shop = (Shop*) KLS_PUSH_T(tkls,Shop,1);
+	Shop* shop = (Shop*) KLS_PUSH_T_NAMED(tkls,Shop,1,"Shop",msg);
 
 	int indexWeight = roomIndex;
 	initShop(shop,indexWeight,f,t_kls);
@@ -2861,12 +2861,12 @@ void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
 	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Boss"));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Boss"));
+	r->desc = (char*) KLS_PUSH_T_NAMED(tkls,char*,sizeof("Boss"),"Room desc",msg);
 	strcpy(r->desc,"Boss");
 	sprintf(msg,"Allocated size %lu for Room Boss:", sizeof(Boss));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	Boss* b = (Boss*) KLS_PUSH_T(tkls,Boss,1);
+	Boss* b = (Boss*) KLS_PUSH_T_NAMED(tkls,Boss,1,"Boss",msg);
 
 	prepareBoss(b, t_kls);
 	r->boss = b;
@@ -2888,12 +2888,12 @@ void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) 
 	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Treasure"));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Treasure"));
+	r->desc = (char*) KLS_PUSH_T_NAMED(tkls,char*,sizeof("Treasure"),"Room desc",msg);
 	strcpy(r->desc,"Treasure");
 	sprintf(msg,"Allocated size %lu for Room Treasure:", sizeof(Treasure));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	Treasure* t = (Treasure*) KLS_PUSH_T(tkls,Treasure,1);
+	Treasure* t = (Treasure*) KLS_PUSH_T_NAMED(tkls,Treasure,1,"Treasure",msg);
 	prepareTreasure(t,f,t_kls);
 	r->treasure = t;
 }
@@ -2914,12 +2914,12 @@ void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) 
 	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Roadfork"));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T(tkls,char*,sizeof("Roadfork"));
+	r->desc = (char*) KLS_PUSH_T_NAMED(tkls,char*,sizeof("Roadfork"),"Room desc",msg);
 	strcpy(r->desc,"Roadfork");
 	sprintf(msg,"Allocated size %lu for Room Roadfork:", sizeof(Roadfork));
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	kls_log("DEBUG",msg);
-	Roadfork* fk = (Roadfork*) KLS_PUSH_T (tkls,Roadfork,1);
+	Roadfork* fk = (Roadfork*) KLS_PUSH_T_NAMED(tkls,Roadfork,1,"Roadfork",msg);
 
 	prepareRoadfork(fk);
 	r->roadfork = fk;
