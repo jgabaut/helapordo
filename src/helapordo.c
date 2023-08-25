@@ -8013,6 +8013,12 @@ void death(Fighter* player, loadInfo* load_info) {
 	kls_free(default_kls);
 	kls_log("DEBUG","Freed default KLS");
 	log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
+
+	//Free temporary kls
+	kls_free(temporary_kls);
+	kls_log("DEBUG","Freed temporary KLS");
+	log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporart KLS");
+
 	/*
 	free(load_info);
 	sprintf(msg,"Freed loadInfo.\n");
@@ -8517,7 +8523,7 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			kls_showList_toWin(kls,win);
 			delwin(win);
 			endwin();
-			
+
 			fclose(kls_file);
 		}
 		break;
