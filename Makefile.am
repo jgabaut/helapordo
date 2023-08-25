@@ -32,11 +32,16 @@ LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
 AM_LDFLAGS = -s
 
 # Compiler flags
-AM_CFLAGS = $(HELAPORDO_CFLAGS) -O2 -Werror -Wpedantic -Wall
+AM_CFLAGS = $(HELAPORDO_CFLAGS) -O2 -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 ./src/anvil__helapordo.c:
 	@echo -en "Generating C anvil__helapordo for $(VERSION):\n"
 	-./anvil -G ./src $(VERSION)
+	@echo -e "\033[1;33mDone.\e[0m"
+
+./koliseo/src/koliseo.o:
+	@echo -en "Building Koliseo with curses:\n"
+	gcc -c ./koliseo/src/koliseo.c -DKOLISEO_HAS_CURSES -o ./koliseo/src/koliseo.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for object files
@@ -150,7 +155,7 @@ cleanob:
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)
-all: ./src/anvil__helapordo.c $(TARGET)
+all: ./src/anvil__helapordo.c ./koliseo/src/koliseo.o $(TARGET)
 
 # Target to clean and rebuild
 rebuild: clean all

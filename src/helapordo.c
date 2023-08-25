@@ -8502,6 +8502,22 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
 			kls_usageReport_toFile(kls,kls_file);
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
+			WINDOW* win = NULL;
+			/* Initialize curses */
+			clear();
+			refresh();
+			start_color();
+			cbreak();
+			noecho();
+			keypad(stdscr, TRUE);
+			win = newwin(20, 50, 1, 2);
+			keypad(win, TRUE);
+			wclear(win);
+			wrefresh(win);
+			kls_showList_toWin(kls,win);
+			delwin(win);
+			endwin();
+			
 			fclose(kls_file);
 		}
 		break;
@@ -8992,6 +9008,21 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
 			kls_usageReport_toFile(kls,kls_file);
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
+			WINDOW* win = NULL;
+			/* Initialize curses */
+			clear();
+			refresh();
+			start_color();
+			cbreak();
+			noecho();
+			keypad(stdscr, TRUE);
+			win = newwin(20, 50, 1, 2);
+			keypad(win, TRUE);
+			wclear(win);
+			wrefresh(win);
+			kls_showList_toWin(kls,win);
+			delwin(win);
+			endwin();
 			fclose(kls_file);
 		}
 		break;
