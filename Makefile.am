@@ -145,6 +145,7 @@ clean:
 	@echo -en "Cleaning build artifacts:  "
 	-rm $(TARGET)
 	-rm src/*.o
+	-rm koliseo/src/*.o
 	-rm ./*.o
 	-rm src/anvil__helapordo.*
 	@echo -e "\033[1;33mDone.\e[0m"
