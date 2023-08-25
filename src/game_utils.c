@@ -22,7 +22,7 @@ turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* 
 	sprintf(msg,"Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
 	log_tag("debug_log.txt","[TURNOP]",msg);
 	kls_log("DEBUG",msg);
-	turnOP_args* res = (turnOP_args*) KLS_PUSH_T(tkls,turnOP_args,1);
+	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_NAMED(tkls,turnOP_args,1,"turnOP_args",msg);
 
 	res->actor = actor;
 	res->path = path;

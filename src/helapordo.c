@@ -1231,14 +1231,14 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 		sprintf(msg,"Prepping enemy Turncounter (%i)",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
-		Turncounter* c = (Turncounter*) KLS_PUSH_T(tkls, Turncounter, 1);
+		Turncounter* c = (Turncounter*) KLS_PUSH_T_NAMED(tkls, Turncounter, 1, "Turncounter",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
 			sprintf(msg,"Allocated size %lu for enemy status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof(stringFromStatus(i)));
+			c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof(stringFromStatus(i)),"Turncounter desc",msg);
 			strcpy(c->desc,stringFromStatus(i));
 
 			c->effect_e_fun = getStatusCounterEnemyFun(i);
@@ -1253,7 +1253,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ATK boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("ATK boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"ATK boost");
 
 					c->boost_e_fun = getStatBoostCounterEnemyFun(ATK);
@@ -1266,7 +1266,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("DEF boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("DEF boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"DEF boost");
 
 					c->boost_e_fun = getStatBoostCounterEnemyFun(DEF);
@@ -1279,7 +1279,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("VEL boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("VEL boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"VEL boost");
 
 					c->boost_e_fun = getStatBoostCounterEnemyFun(VEL);
@@ -1292,7 +1292,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ENR boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("ENR boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"ENR boost");
 
 					c->boost_e_fun = getStatBoostCounterEnemyFun(ENR);
@@ -1336,14 +1336,14 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 		sprintf(msg,"Prepping boss counter %i",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
-		Turncounter* c = (Turncounter*) KLS_PUSH_T(tkls, Turncounter, 1);
+		Turncounter* c = (Turncounter*) KLS_PUSH_T_NAMED(tkls, Turncounter, 1, "Turncounter",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
 			sprintf(msg,"Allocated size %lu for boss status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof(stringFromStatus(i)));
+			c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof(stringFromStatus(i)),"Turncounter desc",msg);
 			strcpy(c->desc,stringFromStatus(i));
 
 			c->effect_b_fun = getStatusCounterBossFun(i);
@@ -1358,7 +1358,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ATK boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("ATK boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"ATK boost");
 
 					c->boost_b_fun = getStatBoostCounterBossFun(ATK);
@@ -1371,7 +1371,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("DEF boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("DEF boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"DEF boost");
 
 					c->boost_b_fun = getStatBoostCounterBossFun(DEF);
@@ -1384,7 +1384,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("VEL boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("VEL boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"VEL boost");
 
 					c->boost_b_fun = getStatBoostCounterBossFun(VEL);
@@ -1397,7 +1397,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for boss stat counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ENR boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("ENR boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"ENR boost");
 
 					c->boost_b_fun = getStatBoostCounterBossFun(ENR);
@@ -1441,14 +1441,14 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 		sprintf(msg,"Prepping foeparty counter %i",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
-		Turncounter* c = (Turncounter*)KLS_PUSH_T(tkls,Turncounter,1);
+		Turncounter* c = (Turncounter*) KLS_PUSH_T_NAMED(tkls, Turncounter, 1, "Turncounter",msg);
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
 			sprintf(msg,"Allocated size %lu for foeparty status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof(stringFromStatus(i)));
+			c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof(stringFromStatus(i)),"Turncounter desc",msg);
 			strcpy(c->desc,stringFromStatus(i));
 
 			//c->effect_fp_fun = get_StatusCounter_FoeParty_Fun(i);
@@ -1460,10 +1460,11 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ATK boost"));
-					strcpy(c->desc,"ATK boost");
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
+					kls_log("DEBUG",msg);
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("ATK boost"),"Turncounter desc",msg);
+					strcpy(c->desc,"ATK boost");
 
 					c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ATK);
 					c->type = CNT_ATKBOOST;
@@ -1475,7 +1476,7 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("DEF boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("DEF boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"DEF boost");
 
 					c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(DEF);
@@ -1488,7 +1489,7 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("VEL boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("VEL boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"VEL boost");
 
 					c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(VEL);
@@ -1501,7 +1502,7 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 					sprintf(msg,"Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					c->desc = (char*) KLS_PUSH_T(tkls, char*, sizeof("ENR boost"));
+					c->desc = (char*) KLS_PUSH_T_NAMED(tkls, char*, sizeof("ENR boost"),"Turncounter desc",msg);
 					strcpy(c->desc,"ENR boost");
 
 					c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ENR);
@@ -2534,7 +2535,7 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 			sprintf(msg,"Prepping Equip (%i/%i) for Shop", equip_index, equipsCount);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Equip* e = (Equip*) KLS_PUSH_T(tkls,Equip,1);
+			Equip* e = (Equip*) KLS_PUSH_T_NAMED(tkls,Equip,1,"Equip",msg);
 
 			//Randomise quality
 			quality q = rand() % (QUALITIESMAX + 1);
@@ -2609,7 +2610,7 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 					sprintf(msg,"Prepping Perk (%i) for Shop Equip (%i/%i)", i, equip_index, equipsCount);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					Perk* p = (Perk*) KLS_PUSH_T(tkls,Perk,1);
+					Perk* p = (Perk*) KLS_PUSH_T_NAMED(tkls,Perk,1,"Perk",msg);
 					p->class = rand() % (PERKSMAX +1) ;
 					//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 					strcpy(p->name,nameStringFromPerk(p->class));
@@ -2666,7 +2667,7 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 						sprintf(msg,"Prepping Consumable (%i/%i) for Shop", cons_prepared, uniqueConsumablesCount);
 						log_tag("debug_log.txt","[DEBUG]",msg);
 						kls_log("DEBUG",msg);
-						Consumable *cur = (Consumable*) KLS_PUSH_T(tkls,Consumable,1);
+						Consumable *cur = (Consumable*) KLS_PUSH_T_NAMED(tkls,Consumable,1,"Consumable",msg);
 						cur->class = curr;
 						already_rolled[curr] = 1;
 						if (uniqueConsumablesCount - cons_prepared > 0) {
@@ -2737,7 +2738,7 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 			sprintf(msg,"Prepping Consumable (%i/%i) for Chest", i, c->consumablesCount);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Consumable* cns = (Consumable*) KLS_PUSH_T(tkls,Consumable,1);
+			Consumable* cns = (Consumable*) KLS_PUSH_T_NAMED(tkls,Consumable,1,"Consumable",msg);
 			int drop = rand() % (CONSUMABLESMAX + 1);
 
 			cns->class = drop;
@@ -2767,7 +2768,7 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 			sprintf(msg,"Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Equip* e = (Equip*) KLS_PUSH_T(tkls,Equip,1);
+			Equip* e = (Equip*) KLS_PUSH_T_NAMED(tkls,Equip,1,"Equip",msg);
 
 			//Get the base item and copy the stats to the drop
 			Equip* base = &equips[drop];
@@ -2841,7 +2842,7 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 					sprintf(msg,"Prepping Perk (%i/%i) for Equip (%i/%i) for Chest", j, e->perksCount, i, c->equipsCount);
 					log_tag("debug_log.txt","[DEBUG]",msg);
 					kls_log("DEBUG",msg);
-					Perk* p = (Perk*) KLS_PUSH_T(tkls,Perk,1);
+					Perk* p = (Perk*) KLS_PUSH_T_NAMED(tkls,Perk,1,"Perk",msg);
 					p->class = rand() % (PERKSMAX +1) ;
 					//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 					strcpy(p->name,nameStringFromPerk(p->class));
@@ -2921,7 +2922,7 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 			    sprintf(msg,"Allocated %lu for Treasure [Chest]:",sizeof(Chest));
 			    log_tag("debug_log.txt","[DEBUG]",msg);
 			    kls_log("DEBUG",msg);
-			    Chest* c = (Chest*) KLS_PUSH_T(tkls,Chest,1);
+			    Chest* c = (Chest*) KLS_PUSH_T_NAMED(tkls,Chest,1,"Chest",msg);
 			    prepareChest(c,f,t_kls);
 			    t->chest = c;
 
@@ -2931,7 +2932,7 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 			sprintf(msg,"Allocated %lu for Treasure [Consumable]:",sizeof(Consumable));
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Consumable* cns = (Consumable*) KLS_PUSH_T(tkls,Consumable,1);
+			Consumable* cns = (Consumable*) KLS_PUSH_T_NAMED(tkls,Consumable,1,"Consumable",msg);
 			int drop = rand() % (CONSUMABLESMAX + 1);
 
 			cns->class = drop;
@@ -2952,7 +2953,7 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 			sprintf(msg,"Allocated %lu for Treasure [Artifact]:",sizeof(Artifact));
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Artifact* a = (Artifact*) KLS_PUSH_T(tkls,Artifact,1);
+			Artifact* a = (Artifact*) KLS_PUSH_T_NAMED(tkls,Artifact,1,"Artifact",msg);
 			int drop = -1;
 			do {
 				drop = rand() % (ARTIFACTSMAX + 1);
@@ -3853,7 +3854,7 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 	//Prepare the item
 	sprintf(msg,"Prepping dropped Equip");
 	kls_log("DEBUG",msg);
-	Equip* e = (Equip*) KLS_PUSH(kls,Equip,1);
+	Equip* e = (Equip*) KLS_PUSH_NAMED(kls,Equip,1,"Equip",msg);
 
 	//Get the base item and copy the stats to the drop
 	Equip* base = &equips[drop];
@@ -3927,7 +3928,7 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 			sprintf(msg,"Prepping Perk (%i) for dropped Equip)", e->perksCount);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Perk* p = (Perk*) KLS_PUSH(kls,Perk,1);
+			Perk* p = (Perk*) KLS_PUSH_NAMED(kls,Perk,1,"Perk",msg);
 			p->class = rand() % (PERKSMAX +1) ;
 			//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 			strcpy(p->name,nameStringFromPerk(p->class));
@@ -5701,7 +5702,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		sprintf(msg,"Loadgame_Home(): Prepping Equip (%i)",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
-		Equip* eq = KLS_PUSH(kls,Equip,1);
+		Equip* eq = KLS_PUSH_NAMED(kls,Equip,1,"Equip",msg);
 		scanres = fscanf(file, "%200s\n", buf); //Skip equip_i heading
 		if (scanres != 1) {
 			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
@@ -5900,7 +5901,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 			sprintf(msg,"Loadgame_Home(): Prepping Perk (%i)",j);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Perk* pk = (Perk*) KLS_PUSH(kls,Perk,1);
+			Perk* pk = (Perk*) KLS_PUSH_NAMED(kls,Perk,1,"Perk",msg);
 			//perkClass
 			scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 			if (scanres != 2) {
@@ -6947,7 +6948,7 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 		sprintf(msg,"Loadgame_Enemies(): Prepping Equip (%i)",i);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 		kls_log("DEBUG",msg);
-		Equip* eq = KLS_PUSH(kls,Equip,1);
+		Equip* eq = KLS_PUSH_NAMED(kls,Equip,1,"Equip",msg);
 		scanres = fscanf(file, "%200s\n", buf); //Skip equip_i heading
 		if (scanres != 1) {
 			sprintf(msg,"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",1,scanres);
@@ -7146,7 +7147,7 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 			sprintf(msg,"Loadgame_Enemies(): Prepping Perk (%i/%i)",j,eq->perksCount);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Perk* pk = KLS_PUSH(kls,Perk,1);
+			Perk* pk = KLS_PUSH_NAMED(kls,Perk,1,"Perk",msg);
 			//perkClass
 			scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 			if (scanres != 2) {
@@ -9265,7 +9266,7 @@ void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls) {
 			sprintf(msg,"sell_all_equips(): Prepping Equip to save f->equipslot[%i]",i);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Equip* saved = (Equip*) KLS_PUSH_T(tkls,Equip,1);
+			Equip* saved = (Equip*) KLS_PUSH_T_NAMED(tkls,Equip,1,"Equip",msg);
 			Equip* to_save = f->equipslots[i]->item;
 
 			saved->class = to_save->class;
@@ -9288,7 +9289,7 @@ void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls) {
 				sprintf(msg,"sell_all_equips(): Prepping Perk (%i) to save f->equipslot[%i]", j, i);
 				log_tag("debug_log.txt","[DEBUG]",msg);
 				kls_log("DEBUG",msg);
-				Perk* save_pk = (Perk*) KLS_PUSH_T(tkls,Perk,1);
+				Perk* save_pk = (Perk*) KLS_PUSH_T_NAMED(tkls,Perk,1,"Perk",msg);
 				save_pk->class = to_save->perks[j]->class;
 				strcpy(save_pk->name, to_save->perks[j]->name);
 				strcpy(save_pk->desc, to_save->perks[j]->desc);
