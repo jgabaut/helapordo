@@ -8013,6 +8013,12 @@ void death(Fighter* player, loadInfo* load_info) {
 	kls_free(default_kls);
 	kls_log("DEBUG","Freed default KLS");
 	log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
+
+	//Free temporary kls
+	kls_free(temporary_kls);
+	kls_log("DEBUG","Freed temporary KLS");
+	log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporart KLS");
+
 	/*
 	free(load_info);
 	sprintf(msg,"Freed loadInfo.\n");
@@ -8502,6 +8508,22 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
 			kls_usageReport_toFile(kls,kls_file);
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
+			WINDOW* win = NULL;
+			/* Initialize curses */
+			clear();
+			refresh();
+			start_color();
+			cbreak();
+			noecho();
+			keypad(stdscr, TRUE);
+			win = newwin(20, 50, 1, 2);
+			keypad(win, TRUE);
+			wclear(win);
+			wrefresh(win);
+			kls_showList_toWin(kls,win);
+			delwin(win);
+			endwin();
+
 			fclose(kls_file);
 		}
 		break;
@@ -8992,6 +9014,21 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
 			kls_usageReport_toFile(kls,kls_file);
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
+			WINDOW* win = NULL;
+			/* Initialize curses */
+			clear();
+			refresh();
+			start_color();
+			cbreak();
+			noecho();
+			keypad(stdscr, TRUE);
+			win = newwin(20, 50, 1, 2);
+			keypad(win, TRUE);
+			wclear(win);
+			wrefresh(win);
+			kls_showList_toWin(kls,win);
+			delwin(win);
+			endwin();
 			fclose(kls_file);
 		}
 		break;
@@ -10321,7 +10358,7 @@ void gameloop(int argc, char** argv){
 			FILE* save_file;
 			char path_to_savefile[600];
 			char static_path[500];
-			char savefile_name[50] = "helapordo-save.txt";
+			char savefile_name[50] = HELAPORDO_SAVEPATH_1;
 
 			// Set static_path value to the correct static dir path
 			resolve_staticPath(static_path);

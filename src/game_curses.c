@@ -160,7 +160,6 @@ void printBattleStats(WINDOW* wins[3], Fighter* f, Enemy* e) {
 
 	PANEL  *my_panels[3];
 	PANEL  *top;
-	log_tag("debug_log.txt","[DEBUG]","printBattleStats():  declared panels");
 
 
 	/* Attach a panel to each window */ 	/* Order is bottom up */
@@ -169,7 +168,6 @@ void printBattleStats(WINDOW* wins[3], Fighter* f, Enemy* e) {
 	my_panels[2] = new_panel(wins[0]); 	/* Push 2, order: stdscr-0-1-2 */
 
 
-	log_tag("debug_log.txt","[DEBUG]","printBattleStats(): set panels");
 	/* Set up the user pointers to the next panel */
 	set_panel_userptr(my_panels[0], my_panels[1]);
 	set_panel_userptr(my_panels[1], my_panels[2]);
@@ -177,11 +175,9 @@ void printBattleStats(WINDOW* wins[3], Fighter* f, Enemy* e) {
 
 	/* Update the stacking order. 3nd panel will be the last one*/
 
-	log_tag("debug_log.txt","[DEBUG]","printBattleStats(): will now call update_panels()");
 
 	update_panels();
 
-	log_tag("debug_log.txt","[DEBUG]","printBattleStats(): update_panels() done");
 
 	/* Show it on the screen */
 	//attron(COLOR_PAIR(4));
@@ -197,7 +193,6 @@ void printBattleStats(WINDOW* wins[3], Fighter* f, Enemy* e) {
 	update_panels();
 	doupdate();
 
-	log_tag("debug_log.txt","[DEBUG]","Ending printBattleStats()");
 }
 
 /**
@@ -3873,7 +3868,7 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 				if (choice == SAVE) {
 					char path_to_savefile[600];
 					char static_path[500];
-					char savefile_name[50] = "helapordo-save.txt" ;
+					char savefile_name[50] = HELAPORDO_SAVEPATH_1 ;
 
 					// Set static_path value to the correct static dir path
 					resolve_staticPath(static_path);

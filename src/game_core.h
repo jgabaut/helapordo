@@ -70,12 +70,36 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 8
+#define HELAPORDO_PATCH_VERSION 9
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.0.8"
+#define VERSION "1.0.9"
+
+/**
+ * Default savepath.
+ * @see handleRoom_Home()
+ * @see handleRoom_Enemies()
+ * @see handleRogue_Menu()
+ * @see handleSave()
+ */
+#define HELAPORDO_SAVEPATH_1 "helapordo-save.txt"
+
+/**
+ * Holds arguments for a saveslot.
+ * @see handleSave()
+ */
+typedef struct {
+	char name[50]; /**< Name string for the saveslot.*/
+	char save_path[255]; /**< Path to savefile*/
+} Saveslot;
+
+/**
+ * Total number of Saveslot for the game.
+ * @see Saveslot
+ */
+#define MAX_SAVESLOTS 3
 
 /**
  * Ceiling for Fighter luck.
