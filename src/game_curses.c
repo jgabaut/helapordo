@@ -3868,7 +3868,7 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 				if (choice == SAVE) {
 					char path_to_savefile[600];
 					char static_path[500];
-					char savefile_name[50] = "helapordo-save.txt" ;
+					char savefile_name[50] = HELAPORDO_SAVEPATH_1 ;
 
 					// Set static_path value to the correct static dir path
 					resolve_staticPath(static_path);
