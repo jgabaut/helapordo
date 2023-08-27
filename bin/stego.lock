@@ -19,3 +19,4 @@ kazoj# tests folder name
 1.0.7# Complete Koliseo support
 1.0.8# Bump Koliseo to 0.1.9
 1.0.9# Use Koliseo with curses
+1.0.10# fix SEGFAULT on game load

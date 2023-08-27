@@ -118,7 +118,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			}
 			load_info = args->load_info;
 			if (load_info == NULL) {
-				sprintf(msg,"load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_ENEMYROOM");
+				sprintf(msg,"load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_HOMEROOM");
 				log_tag("debug_log.txt","[ERROR]",msg);
 				return res;
 			}
@@ -130,7 +130,17 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return res;
 			}
+			if (load_info->ptr_to_roomindex == NULL) {
+				sprintf(msg,"load_info->ptr_to_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
+				log_tag("debug_log.txt","[ERROR]",msg);
+				return res;
+			}
 			int* ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
+			if (ptr_to_loaded_roomindex == NULL) {
+				sprintf(msg,"ptr_to_loaded_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
+				log_tag("debug_log.txt","[ERROR]",msg);
+				return res;
+			}
 			sprintf(msg,"*(ptr_to_loaded_roomindex) == [%i]",*ptr_to_loaded_roomindex);
 			log_tag("debug_log.txt","[TURNOP]",msg);
 
@@ -9648,7 +9658,7 @@ void gameloop(int argc, char** argv){
 		FILE *OPS_debug_file = NULL;
 		// Parse command-line options
 		int option;
-		loadInfo* load_info = (loadInfo*) KLS_PUSH_NAMED(default_kls, loadInfo*, 1, "loadInfo","loadInfo");
+		loadInfo* load_info = (loadInfo*) KLS_PUSH_NAMED(default_kls, loadInfo, 1, "loadInfo","loadInfo");
 
 		load_info->is_new_game = 1; //By default we do a new game
 		load_info->enemy_index = -1;

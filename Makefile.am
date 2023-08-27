@@ -28,11 +28,15 @@ helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_cu
 # Linking rule
 LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
 
+if DEBUG
+AM_LDFLAGS = -ggdb -O0
+else
 # Linker flag to strip symbols
-AM_LDFLAGS = -s
+AM_LDFLAGS = -s -O2
+endif
 
 # Compiler flags
-AM_CFLAGS = $(HELAPORDO_CFLAGS) -O2 -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
+AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 ./src/anvil__helapordo.c:
 	@echo -en "Generating C anvil__helapordo for $(VERSION):\n"
