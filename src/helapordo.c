@@ -9664,7 +9664,7 @@ Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile){
 	srand(seed);
 	sprintf(msg,"Prepping Saveslot");
 	kls_log("DEBUG",msg);
-	sprintf(msg,"%s",path_to_savefile);
+	sprintf(msg,"save_path: [%s]",path_to_savefile);
 	Saveslot* save = (Saveslot*) KLS_PUSH_NAMED(kls, Saveslot, 1, "Saveslot", msg);
 	sprintf(msg,"Seed: %i",seed);
 	strcpy(save->name,msg);
