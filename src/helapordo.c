@@ -9653,14 +9653,27 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
  * @see MAXLUCK
  * @param seed An integer seed.
  * @param kls The Koliseo used for allocation.
+ * @param current_saveslot The Saveslot used to init the Path.
  * @return A Path pointer with stats.
  */
-Path* randomise_path(int seed, Koliseo* kls){
+Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile){
 	char msg[200];
 	sprintf(msg,"Prepping Path");
 	kls_log("DEBUG",msg);
-	Path* p = (Path*) KLS_PUSH_NAMED(kls, Path, 1, "Path",msg);
+	Path* p = (Path*) KLS_PUSH_NAMED(kls, Path, 1, "Path", msg);
 	srand(seed);
+	sprintf(msg,"Prepping Saveslot");
+	kls_log("DEBUG",msg);
+	sprintf(msg,"%s",path_to_savefile);
+	Saveslot* save = (Saveslot*) KLS_PUSH_NAMED(kls, Saveslot, 1, "Saveslot", msg);
+	sprintf(msg,"Seed: %i",seed);
+	strcpy(save->name,msg);
+	sprintf(msg,"%s",path_to_savefile);
+	strcpy(save->save_path,msg);
+	p->current_saveslot = save;
+	sprintf(msg,"Prepped Saveslot:  path->current_saveslot->save_path == [%s]",p->current_saveslot->save_path);
+	kls_log("DEBUG",msg);
+	log_tag("debug_log.txt","[SAVESLOT]",msg);
 
 	switch(GAMEMODE) {
 		case Standard: {
@@ -10192,6 +10205,7 @@ void gameloop(int argc, char** argv){
 		MENU *savepick_menu;
         	WINDOW *savepick_menu_win;
         	WINDOW *savepick_side_win;
+		char current_save_path[500]; //Will hold picked path
 
 		Koliseo_Temp savepick_kls = kls_temp_start(temporary_kls);
 
@@ -10348,10 +10362,20 @@ void gameloop(int argc, char** argv){
 
 			if (savepick_choice == NEW_GAME) {
 				//TODO
+				//Get picked_slot with a curses menu.
+				//int picked_slot = handle_pickSave();
+				//sprintf(current_save_path,default_saveslots[picked_slot].save_path);
+				sprintf(current_save_path,HELAPORDO_SAVEPATH_1); //Update saveslot_path value
+				//TODO
 				//By default we expect the user to press new game, no action needed?
 				log_tag("debug_log.txt","[DEBUG]","Running new game from savepick menu");
 				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &savepick_kls);
 			} else if (savepick_choice == LOAD_GAME) {
+				//TODO
+				//Get picked_slot with a curses menu.
+				//int picked_slot = handle_pickSave();
+				//sprintf(current_save_path,default_saveslots[picked_slot].save_path);
+				sprintf(current_save_path,HELAPORDO_SAVEPATH_1); //Update saveslot_path value
 				//ATM we expect a single save.
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
@@ -10417,7 +10441,7 @@ void gameloop(int argc, char** argv){
 		Koliseo_Temp gamestate_kls = kls_temp_start(temporary_kls);
 
 		if (load_info->is_new_game) {// We prepare path and fighter
-			path = randomise_path(rand(), default_kls);
+			path = randomise_path(rand(), default_kls, current_save_path);
 			path->loreCounter = -1;
 
 			sprintf(msg,"Prepping Fighter");
@@ -10441,7 +10465,10 @@ void gameloop(int argc, char** argv){
 			FILE* save_file;
 			char path_to_savefile[600];
 			char static_path[500];
-			char savefile_name[50] = HELAPORDO_SAVEPATH_1;
+			char savefile_name[50];
+
+			//Copy current_save_path
+			sprintf(savefile_name,current_save_path);
 
 			// Set static_path value to the correct static dir path
 			resolve_staticPath(static_path);
@@ -10483,7 +10510,7 @@ void gameloop(int argc, char** argv){
 			log_tag("debug_log.txt","[TURNOP]",msg);
 
 
-			path = randomise_path(rand(), default_kls);
+			path = randomise_path(rand(), default_kls, current_save_path);
 			sprintf(msg,"Prepping Loady Fighter");
 			kls_log("DEBUG",msg);
   			player = (Fighter*) KLS_PUSH_NAMED(default_kls, Fighter, 1, "Fighter","Loady Fighter");
