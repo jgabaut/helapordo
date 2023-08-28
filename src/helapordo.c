@@ -9732,7 +9732,7 @@ void gameloop(int argc, char** argv){
   strcpy(kls_progname,whoami);
 
 	do {
-		char msg[1000]; //This has a big scope.
+		char msg[1500]; //This has a big scope.
 		FILE *debug_file = NULL;
 		FILE *OPS_debug_file = NULL;
 		// Parse command-line options
@@ -10205,7 +10205,7 @@ void gameloop(int argc, char** argv){
 		MENU *savepick_menu;
         	WINDOW *savepick_menu_win;
         	WINDOW *savepick_side_win;
-		char current_save_path[500]; //Will hold picked path
+		char current_save_path[300]; //Will hold picked path
 
 		Koliseo_Temp savepick_kls = kls_temp_start(temporary_kls);
 
@@ -10463,12 +10463,12 @@ void gameloop(int argc, char** argv){
 			WINDOW* fakenotifywin = NULL;
 			turnOP_args* loading_room_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gamestate_kls);
 			FILE* save_file;
-			char path_to_savefile[600];
+			char path_to_savefile[1000];
 			char static_path[500];
-			char savefile_name[50];
+			char savefile_name[300];
 
 			//Copy current_save_path
-			sprintf(savefile_name,current_save_path);
+			sprintf(savefile_name,"%s",current_save_path);
 
 			// Set static_path value to the correct static dir path
 			resolve_staticPath(static_path);
