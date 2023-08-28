@@ -9744,63 +9744,10 @@ void gameloop(int argc, char** argv){
 				break;
 				case 'r': {
 					G_DEBUG_ROOMTYPE_ON += 1;
-					sprintf(msg,"G_DEBUG_ROOMTYPE_ON == (%i)",G_DEBUG_ROOMTYPE_ON);
-					log_tag("debug_log.txt","[DEBUG]",msg);
-					log_tag("debug_log.txt","[DEBUG]","ROOM DEBUG FLAG ASSERTED");
-					if ((G_DEBUG_ON > 0)) {
-						G_DEBUG_ON += 1;
-						sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						sprintf(msg,"Forcing room type: optarg was (%s)", optarg);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						int setroom_debug = 0;
-						for (int rc=0; (rc<ROOM_CLASS_MAX +1) && (setroom_debug == 0); rc++) {
-								sprintf(msg,"Checking optarg (%s) for -R: (%s)", optarg, stringFromRoom(rc));
-								log_tag("debug_log.txt","[DEBUG]",msg);
-							if ((strcmp(optarg,stringFromRoom(rc)) == 0)) {
-								sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",stringFromRoom(rc),rc);
-								log_tag("debug_log.txt","[DEBUG]",msg);
-								G_DEBUG_ROOMTYPE = rc;
-								setroom_debug=1;
-							}
-						}
-						if (setroom_debug == 0) {
-							log_tag("debug_log.txt","[ERROR]","Invalid optarg for -R flag.\n");
-							fprintf(stderr,"[ERROR]    Incorrect -R \"roomType\" arg.\n");
-							exit(EXIT_FAILURE);
-						};
-					}
 				}
 				break;
 				case 'E': {
-					char msg[200];
 					G_DEBUG_ENEMYTYPE_ON += 1;
-					sprintf(msg,"G_DEBUG_ENEMYTYPE_ON == (%i)",G_DEBUG_ENEMYTYPE_ON);
-					log_tag("debug_log.txt","[DEBUG]",msg);
-					log_tag("debug_log.txt","[DEBUG]","ENEMY DEBUG FLAG ASSERTED");
-					if ((G_DEBUG_ON > 0)) {
-						G_DEBUG_ON += 1;
-						sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						sprintf(msg,"Forcing enemy type: (%s)",optarg);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						int setenemy_debug = 0;
-						for (int ec=0; ec<ENEMYCLASSESMAX && (setenemy_debug == 0); ec++) {
-								sprintf(msg,"Checking optarg for -E: (%s)",stringFromEClass(ec));
-								log_tag("debug_log.txt","[DEBUG]",msg);
-							if ((strcmp(optarg,stringFromEClass(ec)) == 0)) {
-								sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",stringFromEClass(ec),ec);
-								log_tag("debug_log.txt","[DEBUG]",msg);
-								G_DEBUG_ENEMYTYPE = ec;
-								setenemy_debug=1;
-							}
-						}
-						if (setenemy_debug == 0) {
-							log_tag("debug_log.txt","[ERROR]","Invalid optarg for -E flag.\n");
-							fprintf(stderr,"[ERROR]    Incorrect -E \"enemyType\" arg.\n");
-							exit(EXIT_FAILURE);
-						};
-					}
 				}
 				break;
 				case 'L': {
@@ -9926,6 +9873,8 @@ void gameloop(int argc, char** argv){
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
 			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
   			print_kls_2file(debug_file,default_kls);
+			fprintf(debug_file,"[DEBUG]    --Temporary kls debug info:--  \n");
+  			print_kls_2file(debug_file,temporary_kls);
 			fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
 			fclose(debug_file);
 
@@ -9953,6 +9902,64 @@ void gameloop(int argc, char** argv){
 			sprintf(msg,"Truncated [%s]",OPS_LOGFILE);
 			log_tag("debug_log.txt","[DEBUG]",msg);
     		}
+		if (G_DEBUG_ENEMYTYPE_ON == 1) {
+			char msg[200];
+			sprintf(msg,"G_DEBUG_ENEMYTYPE_ON == (%i)",G_DEBUG_ENEMYTYPE_ON);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","ENEMY DEBUG FLAG ASSERTED");
+			if ((G_DEBUG_ON > 0)) {
+				G_DEBUG_ON += 1;
+				sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				sprintf(msg,"Forcing enemy type: (%s)",optarg);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				int setenemy_debug = 0;
+				for (int ec=0; ec<ENEMYCLASSESMAX && (setenemy_debug == 0); ec++) {
+						sprintf(msg,"Checking optarg for -E: (%s)",stringFromEClass(ec));
+						log_tag("debug_log.txt","[DEBUG]",msg);
+					if ((strcmp(optarg,stringFromEClass(ec)) == 0)) {
+						sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",stringFromEClass(ec),ec);
+						log_tag("debug_log.txt","[DEBUG]",msg);
+						G_DEBUG_ENEMYTYPE = ec;
+						setenemy_debug=1;
+					}
+				}
+				if (setenemy_debug == 0) {
+					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -E flag.\n");
+					fprintf(stderr,"[ERROR]    Incorrect -E \"enemyType\" arg.\n");
+					exit(EXIT_FAILURE);
+				};
+			}
+		}
+		if (G_DEBUG_ROOMTYPE_ON == 1) {
+			sprintf(msg,"G_DEBUG_ROOMTYPE_ON == (%i)",G_DEBUG_ROOMTYPE_ON);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","ROOM DEBUG FLAG ASSERTED");
+			if ((G_DEBUG_ON > 0)) {
+				G_DEBUG_ON += 1;
+				sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				sprintf(msg,"Forcing room type: optarg was (%s)", optarg);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				int setroom_debug = 0;
+				for (int rc=0; (rc<ROOM_CLASS_MAX +1) && (setroom_debug == 0); rc++) {
+						sprintf(msg,"Checking optarg (%s) for -R: (%s)", optarg, stringFromRoom(rc));
+						log_tag("debug_log.txt","[DEBUG]",msg);
+					if ((strcmp(optarg,stringFromRoom(rc)) == 0)) {
+						sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",stringFromRoom(rc),rc);
+						log_tag("debug_log.txt","[DEBUG]",msg);
+						G_DEBUG_ROOMTYPE = rc;
+						setroom_debug=1;
+					}
+				}
+				if (setroom_debug == 0) {
+					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -R flag.\n");
+					fprintf(stderr,"[ERROR]    Incorrect -R \"roomType\" arg.\n");
+					exit(EXIT_FAILURE);
+				};
+			}
+
+		}
 		log_tag("debug_log.txt","[DEBUG]","Done getopt.\n");
 
 		// Clear screen and print title, wait for user to press enter
