@@ -8293,7 +8293,8 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			's':  Sprites slideshow\t'd':  Dump debug symbols\n\
 			'g':  Toggle godmode\t'A':  Toggle autosave\n\
 			'L':  Toggle logging\t'F':  Try Floor functionality\n\
-			'Q':  Toggle fast quit\t'K': Log default_kls state to debug log file.\n\
+			'Q':  Toggle fast quit\t'K': Log passed kls state to debug log file.\n\
+			'T': Log global temporary_kls state to debug log file.\n\
 			{Return}  Process your input line.\t'q':  Quit\n\
 		]\n\n\
 	[%s@debug-func]$ ",player->name);
@@ -8485,6 +8486,48 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			log_tag("debug_log.txt","[DEBUG]",msg);
 		}
 		break;
+		case 'T': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
+			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
+			print_kls_2file(kls_file,temporary_kls);
+			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
+			kls_usageReport_toFile(temporary_kls,kls_file);
+			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
+			WINDOW* win = NULL;
+			/* Initialize curses */
+			clear();
+			refresh();
+			start_color();
+			cbreak();
+			noecho();
+			keypad(stdscr, TRUE);
+			win = newwin(20, 50, 1, 2);
+			keypad(win, TRUE);
+			wclear(win);
+			wrefresh(win);
+			kls_showList_toWin(temporary_kls,win);
+			delwin(win);
+			endwin();
+
+			fclose(kls_file);
+		}
+		break;
 		case 'K': {
 			char path_to_kls_file[600];
 			char static_path[500];
@@ -8503,16 +8546,6 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 				fprintf(stderr,"debug_generic():  kls was NULL.\n");
 				exit(EXIT_FAILURE);
 			}
-			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
-			print_kls_2file(kls_file,default_kls);
-			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
-			kls_usageReport_toFile(default_kls,kls_file);
-			fprintf(kls_file,"--END debug of default_kls--\n\n");
-			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
-			print_kls_2file(kls_file,temporary_kls);
-			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
-			kls_usageReport_toFile(temporary_kls,kls_file);
-			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
 			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
@@ -8815,7 +8848,8 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			's':  Sprites slideshow\t'd': Dump debug symbols\n\
 			'f':  Show foes info\t'g': Toggle godmode\n\
 			'A':  Toggle autosave\t'Q': Toggle fast quit\n\
-			'L':  Toggle logging\t'K': Log Koliseo info\n\
+			'L':  Toggle logging\t'K': Log passed Koliseo info\n\
+			'T': Log global temporary_kls Koliseo info\n\
 			'q': Quit\t{Return}  Process your input line.\n\
 		]\n\n\
 	[%s@debug-func]$ ",player->name);
@@ -8991,6 +9025,48 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			debug_printFoeParty(room->foes);
 		}
 		break;
+		case 'T': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
+			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
+			print_kls_2file(kls_file,temporary_kls);
+			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
+			kls_usageReport_toFile(temporary_kls,kls_file);
+			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
+			WINDOW* win = NULL;
+			/* Initialize curses */
+			clear();
+			refresh();
+			start_color();
+			cbreak();
+			noecho();
+			keypad(stdscr, TRUE);
+			win = newwin(20, 50, 1, 2);
+			keypad(win, TRUE);
+			wclear(win);
+			wrefresh(win);
+			kls_showList_toWin(temporary_kls,win);
+			delwin(win);
+			endwin();
+
+			fclose(kls_file);
+		}
+		break;
 		case 'K': {
 			char path_to_kls_file[600];
 			char static_path[500];
@@ -9009,16 +9085,6 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 				fprintf(stderr,"debug_generic():  kls was NULL.\n");
 				exit(EXIT_FAILURE);
 			}
-			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
-			print_kls_2file(kls_file,default_kls);
-			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
-			kls_usageReport_toFile(default_kls,kls_file);
-			fprintf(kls_file,"--END debug of default_kls--\n\n");
-			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
-			print_kls_2file(kls_file,temporary_kls);
-			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
-			kls_usageReport_toFile(temporary_kls,kls_file);
-			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
 			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
