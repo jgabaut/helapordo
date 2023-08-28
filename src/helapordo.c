@@ -8421,6 +8421,7 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			printf("\nOS Version:    %s\n",uts.version);
 			printf("\nMachine:    %s\n",uts.machine);
 			printf("\nGAMEMODE:    %s\n",stringFromGamemode(GAMEMODE));
+			printf("\nPath->current_saveslot->save_path:    %s\n",p->current_saveslot->save_path);
 			printf("\nGS_AUTOSAVE_ON:    %i\n",GS_AUTOSAVE_ON);
 			printf("\nG_FASTQUIT_ON:    %i\n",G_FASTQUIT_ON);
 			printf("\nG_DEBUG_ON:    %i\n",G_DEBUG_ON);
@@ -8999,6 +9000,7 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			printf("\nOS Version:    %s\n",uts.version);
 			printf("\nMachine:    %s\n",uts.machine);
 			printf("\nGAMEMODE:    %s\n",stringFromGamemode(GAMEMODE));
+			printf("\nPath->current_saveslot->save_path:    %s\n",p->current_saveslot->save_path);
 			printf("\nGS_AUTOSAVE_ON:    %i\n",GS_AUTOSAVE_ON);
 			printf("\nG_FASTQUIT_ON:    %i\n",G_FASTQUIT_ON);
 			printf("\nG_DEBUG_ON:    %i\n",G_DEBUG_ON);
