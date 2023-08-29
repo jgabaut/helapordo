@@ -10361,23 +10361,28 @@ void gameloop(int argc, char** argv){
 				}
 			}
 			wrefresh(savepick_menu_win);
-
 			if (savepick_choice == NEW_GAME) {
+				int picked_saveslot_index = get_saveslot_index();
+				sprintf(msg,"Saveslot index picked: [%i]",picked_saveslot_index);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				sprintf(current_save_path,default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
 				//TODO
 				//Get picked_slot with a curses menu.
 				//int picked_slot = handle_pickSave();
 				//sprintf(current_save_path,default_saveslots[picked_slot].save_path);
-				sprintf(current_save_path,HELAPORDO_SAVEPATH_1); //Update saveslot_path value
 				//TODO
 				//By default we expect the user to press new game, no action needed?
 				log_tag("debug_log.txt","[DEBUG]","Running new game from savepick menu");
 				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &savepick_kls);
 			} else if (savepick_choice == LOAD_GAME) {
+				int picked_saveslot_index = get_saveslot_index();
+				sprintf(msg,"Saveslot index picked: [%i]",picked_saveslot_index);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				sprintf(current_save_path,default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
 				//TODO
 				//Get picked_slot with a curses menu.
 				//int picked_slot = handle_pickSave();
 				//sprintf(current_save_path,default_saveslots[picked_slot].save_path);
-				sprintf(current_save_path,HELAPORDO_SAVEPATH_1); //Update saveslot_path value
 				//ATM we expect a single save.
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
@@ -10481,6 +10486,7 @@ void gameloop(int argc, char** argv){
 			if (!save_file) {
 				//User error
 				fprintf(stderr,"[ERROR]    Can't open savefile for loading game.\n");
+				fprintf(stderr,"[ERROR]    Expected at path [%s].\n",path_to_savefile);
 				//Debug error
 				sprintf(msg,"Could not load savefile at (%s)",path_to_savefile);
 				log_tag("debug_log.txt","[ERROR]",msg);
