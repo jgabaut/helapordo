@@ -20,4 +20,4 @@ kazoj# tests folder name
 1.0.8# Bump Koliseo to 0.1.9 - deprecated
 1.0.9# Use Koliseo with curses - deprecated
 1.0.10# fix SEGFAULT on game load
-1.0.11# Bump Koliseo to 0.1.11
+1.0.11# Add saveslot selection
