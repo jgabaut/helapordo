@@ -10365,7 +10365,7 @@ void gameloop(int argc, char** argv){
 				int picked_saveslot_index = get_saveslot_index();
 				sprintf(msg,"Saveslot index picked: [%i]",picked_saveslot_index);
 				log_tag("debug_log.txt","[DEBUG]",msg);
-				sprintf(current_save_path,default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
+				sprintf(current_save_path,"%s",default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
 				//TODO
 				//Get picked_slot with a curses menu.
 				//int picked_slot = handle_pickSave();
@@ -10378,7 +10378,7 @@ void gameloop(int argc, char** argv){
 				int picked_saveslot_index = get_saveslot_index();
 				sprintf(msg,"Saveslot index picked: [%i]",picked_saveslot_index);
 				log_tag("debug_log.txt","[DEBUG]",msg);
-				sprintf(current_save_path,default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
+				sprintf(current_save_path,"%s",default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
 				//TODO
 				//Get picked_slot with a curses menu.
 				//int picked_slot = handle_pickSave();
