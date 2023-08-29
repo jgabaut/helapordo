@@ -278,6 +278,8 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 					// Set static_path value to the correct static dir path
 					resolve_staticPath(static_path);
+					sprintf(msg,"handleRoom_Home:  savefile_name is [%s].",savefile_name);
+					log_tag("debug_log.txt","[DEBUG]",msg);
 
 					sprintf(path_to_savefile,"%s/%s",static_path,savefile_name);
 
@@ -1115,6 +1117,8 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				char static_path[500];
 				char savefile_name[300];
 				sprintf(savefile_name,"%s",p->current_saveslot->save_path);
+				sprintf(msg,"handleRoom_Enemies:  savefile_name is [%s].",savefile_name);
+				log_tag("debug_log.txt","[DEBUG]",msg);
 
 				// Set static_path value to the correct static dir path
 				resolve_staticPath(static_path);
