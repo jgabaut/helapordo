@@ -58,7 +58,8 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 		char path_to_autosave_file[600];
 		char autosave_static_path[500];
-		char autosave_file_name[50] = HELAPORDO_SAVEPATH_1 ;
+		char autosave_file_name[300];
+	        strcpy(autosave_file_name, p->current_saveslot->save_path);
 
 		// Set static_path value to the correct static dir path
 		resolve_staticPath(autosave_static_path);
@@ -270,12 +271,15 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 					picked_explore = 1;
 				}
 				if (choice == SAVE) {
-					char path_to_savefile[600];
+					char path_to_savefile[800];
 					char static_path[500];
-					char savefile_name[50] = HELAPORDO_SAVEPATH_1 ;
+					char savefile_name[300];
+					sprintf(savefile_name,"%s",p->current_saveslot->save_path);
 
 					// Set static_path value to the correct static dir path
 					resolve_staticPath(static_path);
+					sprintf(msg,"handleRoom_Home:  savefile_name is [%s].",savefile_name);
+					log_tag("debug_log.txt","[DEBUG]",msg);
 
 					sprintf(path_to_savefile,"%s/%s",static_path,savefile_name);
 
@@ -1109,9 +1113,12 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				turnOP(OP_STATS,args,kls,t_kls);
 			} else if (choice == SAVE) {
 				FILE* save_file;
-				char path_to_savefile[600];
+				char path_to_savefile[800];
 				char static_path[500];
-				char savefile_name[50] = HELAPORDO_SAVEPATH_1 ;
+				char savefile_name[300];
+				sprintf(savefile_name,"%s",p->current_saveslot->save_path);
+				sprintf(msg,"handleRoom_Enemies:  savefile_name is [%s].",savefile_name);
+				log_tag("debug_log.txt","[DEBUG]",msg);
 
 				// Set static_path value to the correct static dir path
 				resolve_staticPath(static_path);

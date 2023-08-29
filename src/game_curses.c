@@ -79,6 +79,214 @@ void print_encoded_char(WINDOW* w, int y, int x, char c) {
 }
 
 /**
+ * Returns index of saveslot picked by user.
+ * @see Path
+ * @see gameloop()
+ * @return When exiting room, should return NO_DMG.
+ */
+int get_saveslot_index(void) {
+	//Strings for turn menu choices
+ 	char *choices[] = {
+		"1",
+		"2",
+		"3",
+		(char *)NULL,
+	};
+
+	char msg[1000];
+	sprintf(msg,"get_saveslot_index(): getting index from user.");
+	log_tag("debug_log.txt","[DEBUG]",msg);
+
+	int choice = 999;
+	int picked = 0;
+
+	ITEM **menu_items;
+	MENU *saveslots_menu;
+	WINDOW *menu_win;
+	WINDOW *saveslots_win;
+	int n_choices, c;
+
+	log_tag("debug_log.txt","[DEBUG]","Initialising curses for get_saveslots_index()");
+	/* Initialize curses */
+	start_color();
+	clear();
+	refresh();
+	cbreak();
+	noecho();
+	keypad(stdscr, TRUE);
+
+	int cursorCheck = curs_set(0); // We make the cursor invisible or return early with the error
+
+	if (cursorCheck == ERR) {
+		log_tag("debug_log.txt","[ERROR]","Failed curs_set(0) at handleRoom_Home()");
+		return S4C_ERR_CURSOR; //fprintf(stderr,"animate => Terminal does not support cursor visibility state.\n");
+	}
+
+	/* Create turn menu items */
+	n_choices = ARRAY_SIZE(choices);
+	menu_items = (ITEM **)calloc(n_choices, sizeof(ITEM *));
+
+	// Prepare menu items
+	for(int k = 0; k < n_choices; k++) {
+		menu_items[k] = new_item(choices[k], choices[k]);
+	    /* Set the user pointer */
+	    //set_item_userptr(my_items[i]);
+	}
+
+	/* Create menu */
+	saveslots_menu = new_menu((ITEM **)menu_items);
+
+	/* Set description off */
+	menu_opts_off(saveslots_menu,O_SHOWDESC);
+	/* Create the window to be associated with the menu */
+	menu_win = newwin(9, 11, 5, 35);
+	//nodelay(menu_win,TRUE); //We make getch non-blocking
+	keypad(menu_win, TRUE);
+
+	/* Set main window and sub window */
+	set_menu_win(saveslots_menu, menu_win);
+	set_menu_sub(saveslots_menu, derwin(menu_win, 8, 10, 1, 1));
+	set_menu_format(saveslots_menu, 7, 1);
+
+	/* Set menu mark to the string "" */
+	set_menu_mark(saveslots_menu, "");
+
+	/* Print a border around the menu */
+	box(menu_win, 0, 0);
+
+	/* Set menu colors */
+	//set_menu_fore(saveslots_menu,COLOR_PAIR(5));
+	//set_menu_back(saveslots_menu,COLOR_PAIR(7));
+
+	//mvprintw(LINES - 1, 0, "Arrow Keys to navigate (F1 to Exit)");
+	//attroff(COLOR_PAIR(2));
+
+	/* Post the menu */
+	post_menu(saveslots_menu);
+	wrefresh(menu_win);
+
+	saveslots_win = newwin(12, 24, 2, 5);
+	scrollok(saveslots_win,TRUE);
+	wprintw(saveslots_win,"\n  Select your save slot.");
+	wprintw(saveslots_win,"\n  1: %s",default_saveslots[0].name);
+	wprintw(saveslots_win,"\n  2: %s",default_saveslots[1].name);
+	wprintw(saveslots_win,"\n  3: %s",default_saveslots[2].name);
+	wrefresh(saveslots_win);
+	refresh();
+
+	//We set the colors to use s4c's palette file...
+	FILE* palette_file;
+	char path_to_palette[600];
+	char static_path[500];
+	char palette_name[50] = "palette.gpl";
+
+	// Set static_path value to the correct static dir path
+	resolve_staticPath(static_path);
+
+	sprintf(path_to_palette,"%s/%s",static_path,palette_name);
+
+	palette_file = fopen(path_to_palette, "r");
+
+	init_s4c_color_pairs(palette_file);
+
+	while ( !picked && (c = wgetch(menu_win)) != KEY_F(1)) {
+		switch(c) {
+			case KEY_DOWN:
+				menu_driver(saveslots_menu, REQ_DOWN_ITEM);
+				break;
+			case KEY_UP:
+				menu_driver(saveslots_menu, REQ_UP_ITEM);
+				break;
+			case KEY_LEFT: { /*Left option pick*/
+				ITEM *cur;
+				cur = current_item(saveslots_menu);
+				choice = getTurnChoice((char*)item_name(cur));
+				sprintf(msg,"Left on choice: [ %s ] value (%i)",item_name(cur),choice);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				if (choice == EQUIPS) {
+					log_tag("debug_log.txt","[DEBUG]","Should do something");
+				}
+				}
+				break;
+			case KEY_RIGHT: { /*Right option pick*/
+				ITEM *cur;
+				cur = current_item(saveslots_menu);
+				choice = getTurnChoice((char*)item_name(cur));
+				sprintf(msg,"Right on choice: [ %s ] value (%i)",item_name(cur),choice);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				if (choice == EQUIPS) {
+					log_tag("debug_log.txt","[DEBUG]","Should do something");
+				}
+				}
+				break;
+			case KEY_NPAGE:
+				menu_driver(saveslots_menu, REQ_SCR_DPAGE);
+				break;
+			case KEY_PPAGE:
+				menu_driver(saveslots_menu, REQ_SCR_UPAGE);
+				break;
+			case 10: /* Enter */
+			{
+				picked = 1;
+				ITEM *cur;
+				//move(18,47);
+				//clrtoeol();
+				cur = current_item(saveslots_menu);
+				//mvprintw(18, 47, "Item selected is : %s", item_name(cur));
+				choice = atoi(item_name(cur));
+				pos_menu_cursor(saveslots_menu);
+				refresh();
+			};
+			break;
+			case 'q':
+			{
+				if (G_FASTQUIT_ON == 1) {
+					log_tag("debug_log.txt","[DEBUG]","Player used q to quit from home room menu.");
+					picked = 1;
+					choice = getTurnChoice("Quit");
+					pos_menu_cursor(saveslots_menu);
+					refresh();
+				} else {
+					log_tag("debug_log.txt","[DEBUG]","Player used q in home room menu, but G_FASTQUIT_ON was not 1.");
+				}
+			}
+			break;
+			default: {
+					log_tag("debug_log.txt","[DEBUG]","Invalid keystroke in home room menu");
+			}
+			break;
+		}
+		wrefresh(menu_win);
+		refresh();
+
+		if (c == 10) { // Player char was enter
+			if (choice < 0 || choice > 3) {
+				log_tag("debug_log.txt","[ERROR]","Invalid choice in get_saveslot_index().");
+				return -1;
+			}
+		} //End if Player char was enter
+
+	} // end while !picked
+	// Unpost menu and free all the memory taken up
+	unpost_menu(saveslots_menu);
+	free_menu(saveslots_menu);
+	log_tag("debug_log.txt","[FREE]","Freed saveslots menu");
+	int totalChoices = n_choices;
+	for(int k = 0; k < totalChoices; k++) {
+		free_item(menu_items[k]);
+		sprintf(msg,"Freed %i saveslots menu item",k);
+		log_tag("debug_log.txt","[FREE]",msg);
+	}
+
+	delwin(saveslots_win);
+	endwin();
+	log_tag("debug_log.txt","[DEBUG]","Ended window mode for get_saveslot_index()");
+	sprintf(msg,"Ended get_saveslot_index(), returning [%i]",choice);
+	log_tag("debug_log.txt","[DEBUG]",msg);
+	return choice -1;
+}
+
+/**
  * Displays a certain lore string.
  * @param lore_strings The array of strings to display from.
  * @param lore_counter The index of current string.

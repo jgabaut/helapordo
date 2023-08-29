@@ -6,6 +6,12 @@ char* gamemodenamestrings[GAMEMODE_MAX+1] = {
 	"Rogue"
 };
 
+Saveslot default_saveslots[MAX_SAVESLOTS+1] = {
+	{"default_1","helapordo-save.txt"},
+	{"default_2","helapordo-save-2.txt"},
+	{"default_3","helapordo-save-3.txt"},
+};
+
 turnOption_OP turnOP_from_turnOption(turnOption t) {
 	turnOption_OP res = OP_INVALID;
 

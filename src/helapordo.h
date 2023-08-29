@@ -222,7 +222,7 @@ void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls);
 
 void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls, Koliseo_Temp* t_kls);
 
-Path* randomise_path(int seed, Koliseo* kls);
+Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile);
 
 void gameloop(int argc, char** argv);
 

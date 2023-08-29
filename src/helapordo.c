@@ -8293,7 +8293,8 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			's':  Sprites slideshow\t'd':  Dump debug symbols\n\
 			'g':  Toggle godmode\t'A':  Toggle autosave\n\
 			'L':  Toggle logging\t'F':  Try Floor functionality\n\
-			'Q':  Toggle fast quit\t'K': Log default_kls state to debug log file.\n\
+			'Q':  Toggle fast quit\t'K': Log passed kls state to debug log file.\n\
+			'T': Log global temporary_kls state to debug log file.\n\
 			{Return}  Process your input line.\t'q':  Quit\n\
 		]\n\n\
 	[%s@debug-func]$ ",player->name);
@@ -8420,6 +8421,7 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			printf("\nOS Version:    %s\n",uts.version);
 			printf("\nMachine:    %s\n",uts.machine);
 			printf("\nGAMEMODE:    %s\n",stringFromGamemode(GAMEMODE));
+			printf("\nPath->current_saveslot->save_path:    %s\n",p->current_saveslot->save_path);
 			printf("\nGS_AUTOSAVE_ON:    %i\n",GS_AUTOSAVE_ON);
 			printf("\nG_FASTQUIT_ON:    %i\n",G_FASTQUIT_ON);
 			printf("\nG_DEBUG_ON:    %i\n",G_DEBUG_ON);
@@ -8485,6 +8487,48 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			log_tag("debug_log.txt","[DEBUG]",msg);
 		}
 		break;
+		case 'T': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
+			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
+			print_kls_2file(kls_file,temporary_kls);
+			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
+			kls_usageReport_toFile(temporary_kls,kls_file);
+			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
+			WINDOW* win = NULL;
+			/* Initialize curses */
+			clear();
+			refresh();
+			start_color();
+			cbreak();
+			noecho();
+			keypad(stdscr, TRUE);
+			win = newwin(20, 50, 1, 2);
+			keypad(win, TRUE);
+			wclear(win);
+			wrefresh(win);
+			kls_showList_toWin(temporary_kls,win);
+			delwin(win);
+			endwin();
+
+			fclose(kls_file);
+		}
+		break;
 		case 'K': {
 			char path_to_kls_file[600];
 			char static_path[500];
@@ -8503,16 +8547,6 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 				fprintf(stderr,"debug_generic():  kls was NULL.\n");
 				exit(EXIT_FAILURE);
 			}
-			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
-			print_kls_2file(kls_file,default_kls);
-			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
-			kls_usageReport_toFile(default_kls,kls_file);
-			fprintf(kls_file,"--END debug of default_kls--\n\n");
-			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
-			print_kls_2file(kls_file,temporary_kls);
-			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
-			kls_usageReport_toFile(temporary_kls,kls_file);
-			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
 			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
@@ -8815,7 +8849,8 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			's':  Sprites slideshow\t'd': Dump debug symbols\n\
 			'f':  Show foes info\t'g': Toggle godmode\n\
 			'A':  Toggle autosave\t'Q': Toggle fast quit\n\
-			'L':  Toggle logging\t'K': Log Koliseo info\n\
+			'L':  Toggle logging\t'K': Log passed Koliseo info\n\
+			'T': Log global temporary_kls Koliseo info\n\
 			'q': Quit\t{Return}  Process your input line.\n\
 		]\n\n\
 	[%s@debug-func]$ ",player->name);
@@ -8965,6 +9000,7 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			printf("\nOS Version:    %s\n",uts.version);
 			printf("\nMachine:    %s\n",uts.machine);
 			printf("\nGAMEMODE:    %s\n",stringFromGamemode(GAMEMODE));
+			printf("\nPath->current_saveslot->save_path:    %s\n",p->current_saveslot->save_path);
 			printf("\nGS_AUTOSAVE_ON:    %i\n",GS_AUTOSAVE_ON);
 			printf("\nG_FASTQUIT_ON:    %i\n",G_FASTQUIT_ON);
 			printf("\nG_DEBUG_ON:    %i\n",G_DEBUG_ON);
@@ -8991,6 +9027,48 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			debug_printFoeParty(room->foes);
 		}
 		break;
+		case 'T': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
+			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
+			print_kls_2file(kls_file,temporary_kls);
+			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
+			kls_usageReport_toFile(temporary_kls,kls_file);
+			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
+			WINDOW* win = NULL;
+			/* Initialize curses */
+			clear();
+			refresh();
+			start_color();
+			cbreak();
+			noecho();
+			keypad(stdscr, TRUE);
+			win = newwin(20, 50, 1, 2);
+			keypad(win, TRUE);
+			wclear(win);
+			wrefresh(win);
+			kls_showList_toWin(temporary_kls,win);
+			delwin(win);
+			endwin();
+
+			fclose(kls_file);
+		}
+		break;
 		case 'K': {
 			char path_to_kls_file[600];
 			char static_path[500];
@@ -9009,16 +9087,6 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 				fprintf(stderr,"debug_generic():  kls was NULL.\n");
 				exit(EXIT_FAILURE);
 			}
-			fprintf(kls_file,"--BEGIN debug of default_kls--\n");
-			print_kls_2file(kls_file,default_kls);
-			kls_showList_toFile(kls_reverse(default_kls->regs),kls_file);
-			kls_usageReport_toFile(default_kls,kls_file);
-			fprintf(kls_file,"--END debug of default_kls--\n\n");
-			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
-			print_kls_2file(kls_file,temporary_kls);
-			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
-			kls_usageReport_toFile(temporary_kls,kls_file);
-			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
 			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
@@ -9587,14 +9655,27 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
  * @see MAXLUCK
  * @param seed An integer seed.
  * @param kls The Koliseo used for allocation.
+ * @param current_saveslot The Saveslot used to init the Path.
  * @return A Path pointer with stats.
  */
-Path* randomise_path(int seed, Koliseo* kls){
+Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile){
 	char msg[200];
 	sprintf(msg,"Prepping Path");
 	kls_log("DEBUG",msg);
-	Path* p = (Path*) KLS_PUSH_NAMED(kls, Path, 1, "Path",msg);
+	Path* p = (Path*) KLS_PUSH_NAMED(kls, Path, 1, "Path", msg);
 	srand(seed);
+	sprintf(msg,"Prepping Saveslot");
+	kls_log("DEBUG",msg);
+	sprintf(msg,"save_path: [%s]",path_to_savefile);
+	Saveslot* save = (Saveslot*) KLS_PUSH_NAMED(kls, Saveslot, 1, "Saveslot", msg);
+	sprintf(msg,"Seed: %i",seed);
+	strcpy(save->name,msg);
+	sprintf(msg,"%s",path_to_savefile);
+	strcpy(save->save_path,msg);
+	p->current_saveslot = save;
+	sprintf(msg,"Prepped Saveslot:  path->current_saveslot->save_path == [%s]",p->current_saveslot->save_path);
+	kls_log("DEBUG",msg);
+	log_tag("debug_log.txt","[SAVESLOT]",msg);
 
 	switch(GAMEMODE) {
 		case Standard: {
@@ -9653,7 +9734,7 @@ void gameloop(int argc, char** argv){
   strcpy(kls_progname,whoami);
 
 	do {
-		char msg[1000]; //This has a big scope.
+		char msg[1500]; //This has a big scope.
 		FILE *debug_file = NULL;
 		FILE *OPS_debug_file = NULL;
 		// Parse command-line options
@@ -9678,63 +9759,10 @@ void gameloop(int argc, char** argv){
 				break;
 				case 'r': {
 					G_DEBUG_ROOMTYPE_ON += 1;
-					sprintf(msg,"G_DEBUG_ROOMTYPE_ON == (%i)",G_DEBUG_ROOMTYPE_ON);
-					log_tag("debug_log.txt","[DEBUG]",msg);
-					log_tag("debug_log.txt","[DEBUG]","ROOM DEBUG FLAG ASSERTED");
-					if ((G_DEBUG_ON > 0)) {
-						G_DEBUG_ON += 1;
-						sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						sprintf(msg,"Forcing room type: optarg was (%s)", optarg);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						int setroom_debug = 0;
-						for (int rc=0; (rc<ROOM_CLASS_MAX +1) && (setroom_debug == 0); rc++) {
-								sprintf(msg,"Checking optarg (%s) for -R: (%s)", optarg, stringFromRoom(rc));
-								log_tag("debug_log.txt","[DEBUG]",msg);
-							if ((strcmp(optarg,stringFromRoom(rc)) == 0)) {
-								sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",stringFromRoom(rc),rc);
-								log_tag("debug_log.txt","[DEBUG]",msg);
-								G_DEBUG_ROOMTYPE = rc;
-								setroom_debug=1;
-							}
-						}
-						if (setroom_debug == 0) {
-							log_tag("debug_log.txt","[ERROR]","Invalid optarg for -R flag.\n");
-							fprintf(stderr,"[ERROR]    Incorrect -R \"roomType\" arg.\n");
-							exit(EXIT_FAILURE);
-						};
-					}
 				}
 				break;
 				case 'E': {
-					char msg[200];
 					G_DEBUG_ENEMYTYPE_ON += 1;
-					sprintf(msg,"G_DEBUG_ENEMYTYPE_ON == (%i)",G_DEBUG_ENEMYTYPE_ON);
-					log_tag("debug_log.txt","[DEBUG]",msg);
-					log_tag("debug_log.txt","[DEBUG]","ENEMY DEBUG FLAG ASSERTED");
-					if ((G_DEBUG_ON > 0)) {
-						G_DEBUG_ON += 1;
-						sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						sprintf(msg,"Forcing enemy type: (%s)",optarg);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						int setenemy_debug = 0;
-						for (int ec=0; ec<ENEMYCLASSESMAX && (setenemy_debug == 0); ec++) {
-								sprintf(msg,"Checking optarg for -E: (%s)",stringFromEClass(ec));
-								log_tag("debug_log.txt","[DEBUG]",msg);
-							if ((strcmp(optarg,stringFromEClass(ec)) == 0)) {
-								sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",stringFromEClass(ec),ec);
-								log_tag("debug_log.txt","[DEBUG]",msg);
-								G_DEBUG_ENEMYTYPE = ec;
-								setenemy_debug=1;
-							}
-						}
-						if (setenemy_debug == 0) {
-							log_tag("debug_log.txt","[ERROR]","Invalid optarg for -E flag.\n");
-							fprintf(stderr,"[ERROR]    Incorrect -E \"enemyType\" arg.\n");
-							exit(EXIT_FAILURE);
-						};
-					}
 				}
 				break;
 				case 'L': {
@@ -9860,6 +9888,8 @@ void gameloop(int argc, char** argv){
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
 			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
   			print_kls_2file(debug_file,default_kls);
+			fprintf(debug_file,"[DEBUG]    --Temporary kls debug info:--  \n");
+  			print_kls_2file(debug_file,temporary_kls);
 			fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
 			fclose(debug_file);
 
@@ -9887,6 +9917,64 @@ void gameloop(int argc, char** argv){
 			sprintf(msg,"Truncated [%s]",OPS_LOGFILE);
 			log_tag("debug_log.txt","[DEBUG]",msg);
     		}
+		if (G_DEBUG_ENEMYTYPE_ON == 1) {
+			char msg[200];
+			sprintf(msg,"G_DEBUG_ENEMYTYPE_ON == (%i)",G_DEBUG_ENEMYTYPE_ON);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","ENEMY DEBUG FLAG ASSERTED");
+			if ((G_DEBUG_ON > 0)) {
+				G_DEBUG_ON += 1;
+				sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				sprintf(msg,"Forcing enemy type: (%s)",optarg);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				int setenemy_debug = 0;
+				for (int ec=0; ec<ENEMYCLASSESMAX && (setenemy_debug == 0); ec++) {
+						sprintf(msg,"Checking optarg for -E: (%s)",stringFromEClass(ec));
+						log_tag("debug_log.txt","[DEBUG]",msg);
+					if ((strcmp(optarg,stringFromEClass(ec)) == 0)) {
+						sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",stringFromEClass(ec),ec);
+						log_tag("debug_log.txt","[DEBUG]",msg);
+						G_DEBUG_ENEMYTYPE = ec;
+						setenemy_debug=1;
+					}
+				}
+				if (setenemy_debug == 0) {
+					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -E flag.\n");
+					fprintf(stderr,"[ERROR]    Incorrect -E \"enemyType\" arg.\n");
+					exit(EXIT_FAILURE);
+				};
+			}
+		}
+		if (G_DEBUG_ROOMTYPE_ON == 1) {
+			sprintf(msg,"G_DEBUG_ROOMTYPE_ON == (%i)",G_DEBUG_ROOMTYPE_ON);
+			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","ROOM DEBUG FLAG ASSERTED");
+			if ((G_DEBUG_ON > 0)) {
+				G_DEBUG_ON += 1;
+				sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				sprintf(msg,"Forcing room type: optarg was (%s)", optarg);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				int setroom_debug = 0;
+				for (int rc=0; (rc<ROOM_CLASS_MAX +1) && (setroom_debug == 0); rc++) {
+						sprintf(msg,"Checking optarg (%s) for -R: (%s)", optarg, stringFromRoom(rc));
+						log_tag("debug_log.txt","[DEBUG]",msg);
+					if ((strcmp(optarg,stringFromRoom(rc)) == 0)) {
+						sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",stringFromRoom(rc),rc);
+						log_tag("debug_log.txt","[DEBUG]",msg);
+						G_DEBUG_ROOMTYPE = rc;
+						setroom_debug=1;
+					}
+				}
+				if (setroom_debug == 0) {
+					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -R flag.\n");
+					fprintf(stderr,"[ERROR]    Incorrect -R \"roomType\" arg.\n");
+					exit(EXIT_FAILURE);
+				};
+			}
+
+		}
 		log_tag("debug_log.txt","[DEBUG]","Done getopt.\n");
 
 		// Clear screen and print title, wait for user to press enter
@@ -10119,6 +10207,7 @@ void gameloop(int argc, char** argv){
 		MENU *savepick_menu;
         	WINDOW *savepick_menu_win;
         	WINDOW *savepick_side_win;
+		char current_save_path[300]; //Will hold picked path
 
 		Koliseo_Temp savepick_kls = kls_temp_start(temporary_kls);
 
@@ -10272,13 +10361,28 @@ void gameloop(int argc, char** argv){
 				}
 			}
 			wrefresh(savepick_menu_win);
-
 			if (savepick_choice == NEW_GAME) {
+				int picked_saveslot_index = get_saveslot_index();
+				sprintf(msg,"Saveslot index picked: [%i]",picked_saveslot_index);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				sprintf(current_save_path,"%s",default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
+				//TODO
+				//Get picked_slot with a curses menu.
+				//int picked_slot = handle_pickSave();
+				//sprintf(current_save_path,default_saveslots[picked_slot].save_path);
 				//TODO
 				//By default we expect the user to press new game, no action needed?
 				log_tag("debug_log.txt","[DEBUG]","Running new game from savepick menu");
 				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &savepick_kls);
 			} else if (savepick_choice == LOAD_GAME) {
+				int picked_saveslot_index = get_saveslot_index();
+				sprintf(msg,"Saveslot index picked: [%i]",picked_saveslot_index);
+				log_tag("debug_log.txt","[DEBUG]",msg);
+				sprintf(current_save_path,"%s",default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
+				//TODO
+				//Get picked_slot with a curses menu.
+				//int picked_slot = handle_pickSave();
+				//sprintf(current_save_path,default_saveslots[picked_slot].save_path);
 				//ATM we expect a single save.
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
@@ -10344,7 +10448,7 @@ void gameloop(int argc, char** argv){
 		Koliseo_Temp gamestate_kls = kls_temp_start(temporary_kls);
 
 		if (load_info->is_new_game) {// We prepare path and fighter
-			path = randomise_path(rand(), default_kls);
+			path = randomise_path(rand(), default_kls, current_save_path);
 			path->loreCounter = -1;
 
 			sprintf(msg,"Prepping Fighter");
@@ -10366,9 +10470,12 @@ void gameloop(int argc, char** argv){
 			WINDOW* fakenotifywin = NULL;
 			turnOP_args* loading_room_turn_args = init_turnOP_args(player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gamestate_kls);
 			FILE* save_file;
-			char path_to_savefile[600];
+			char path_to_savefile[1000];
 			char static_path[500];
-			char savefile_name[50] = HELAPORDO_SAVEPATH_1;
+			char savefile_name[300];
+
+			//Copy current_save_path
+			sprintf(savefile_name,"%s",current_save_path);
 
 			// Set static_path value to the correct static dir path
 			resolve_staticPath(static_path);
@@ -10379,6 +10486,7 @@ void gameloop(int argc, char** argv){
 			if (!save_file) {
 				//User error
 				fprintf(stderr,"[ERROR]    Can't open savefile for loading game.\n");
+				fprintf(stderr,"[ERROR]    Expected at path [%s].\n",path_to_savefile);
 				//Debug error
 				sprintf(msg,"Could not load savefile at (%s)",path_to_savefile);
 				log_tag("debug_log.txt","[ERROR]",msg);
@@ -10410,7 +10518,7 @@ void gameloop(int argc, char** argv){
 			log_tag("debug_log.txt","[TURNOP]",msg);
 
 
-			path = randomise_path(rand(), default_kls);
+			path = randomise_path(rand(), default_kls, current_save_path);
 			sprintf(msg,"Prepping Loady Fighter");
 			kls_log("DEBUG",msg);
   			player = (Fighter*) KLS_PUSH_NAMED(default_kls, Fighter, 1, "Fighter","Loady Fighter");

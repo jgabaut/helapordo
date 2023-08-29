@@ -70,12 +70,12 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 10
+#define HELAPORDO_PATCH_VERSION 11
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.0.10"
+#define VERSION "1.0.11"
 
 /**
  * Default savepath.
@@ -89,6 +89,8 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Holds arguments for a saveslot.
  * @see handleSave()
+ * @see Path
+ * @see randomise_path()
  */
 typedef struct {
 	char name[50]; /**< Name string for the saveslot.*/
@@ -100,6 +102,13 @@ typedef struct {
  * @see Saveslot
  */
 #define MAX_SAVESLOTS 3
+
+/**
+ * Array with the default saveslots for a game.
+ * @see Saveslot
+ * @see Path
+ */
+extern Saveslot default_saveslots[MAX_SAVESLOTS+1];
 
 /**
  * Ceiling for Fighter luck.
@@ -949,6 +958,8 @@ extern char* winconstrings[WINCON_CLASS_MAX+1];
 
 /**
  * Holds the state of game progression.
+ * @see Wincon
+ * @see Saveslot
  */
 typedef struct Path {
 	int length; /**< Defines how many rooms there are in total.*/
@@ -956,6 +967,7 @@ typedef struct Path {
 	int prize; /**< Defines the reward for getting to length*/
 	int loreCounter; /**< Counts how many lore prompts have been displayed*/
 	Wincon* win_condition; /**> Defines the win condition for the current game.*/
+	Saveslot* current_saveslot; /** Defines current Saveslot for the game.*/
 } Path;
 
 /**

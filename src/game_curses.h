@@ -10,6 +10,7 @@
 
 int display_colorpairs(void);
 void print_encoded_char(WINDOW* w, int y, int x, char c);
+int get_saveslot_index(void);
 void displayLore(char** lore_strings, int lore_counter);
 
 void printBattleStats(WINDOW* wins[3], Fighter* f, Enemy* e);
