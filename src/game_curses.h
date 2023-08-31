@@ -8,6 +8,25 @@
 #include "game_core.h"
 #include "game_utils.h"
 
+#include "knight_tapis.h"
+#include "mage_spark.h"
+#include "archer_drop.h"
+#include "assassin_poof.h"
+
+#include "mummy_shuffle.h"
+#include "ghost_spell.h"
+#include "boar_scream.h"
+#include "troll_club.h"
+#include "goblin_shoot.h"
+#include "zombie_walk.h"
+#include "imp_fireball.h"
+#include "werewolf_transform.h"
+
+#include "crawlingdude_crawl.h"
+#include "srwarthog_square.h"
+#include "headlessninja_throw.h"
+#include "bluetroll_wonder.h"
+
 int display_colorpairs(void);
 void print_encoded_char(WINDOW* w, int y, int x, char c);
 int get_saveslot_index(void);

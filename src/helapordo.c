@@ -10014,37 +10014,50 @@ void gameloop(int argc, char** argv){
 
 		// Prepare the fighter frames
 		char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS];
+
 		char static_path[500];
 
 		// Set static_path value to the correct static dir path
 		resolve_staticPath(static_path);
 
+		/*
+		 * Legacy code for loading animations from an s4c-file.
 		char fighter_filename[600];
 		FILE* fighter_sprite_file;
+		*/
 		for (int i = 0; i< CLASSESMAX+1; i++) {
+
+		      int n_load_frames = 60;
+		      int n_load_rows = 17;
+		      int n_load_cols = 17;
 
 			switch (i) {
 				case Knight: {
-					sprintf(fighter_filename,"%s/animations/knight_tapis.txt",static_path);
+				        copy_animation(knight_tapis,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Mage: {
-					sprintf(fighter_filename,"%s/animations/mage_spark.txt",static_path);
+				        copy_animation(mage_spark,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Archer: {
-					sprintf(fighter_filename,"%s/animations/archer_drop.txt",static_path);
+				        copy_animation(archer_drop,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Assassin: {
-					sprintf(fighter_filename,"%s/animations/assassin_poof.txt",static_path);
+				        copy_animation(assassin_poof,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				default: {
-					sprintf(fighter_filename,"%s/animations/knight_tapis.txt",static_path);
+					sprintf(msg,"Unexpected fighterclass index while loading animation for class (%i): [%s]",i,stringFromClass(i));
+					log_tag("debug_log.txt","[ERROR]",msg);
+					exit(EXIT_FAILURE);
 				}
 				break;
 			}
+
+			/*
+			 * Legacy code for loading animations from an s4c-file
 			fighter_sprite_file = fopen(fighter_filename, "r");
 			if (!fighter_sprite_file) {
 				fprintf(stderr,"Error opening animation file at (%s).\n",fighter_filename);
@@ -10054,6 +10067,10 @@ void gameloop(int argc, char** argv){
 			int fighter_loadCheck = load_sprites(fighter_sprites[i], fighter_sprite_file, 17, 17);
 			sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromClass(i), fighter_loadCheck);
 			log_tag("debug_log.txt","[PREP]",load_msg);
+			*/
+
+		      sprintf(msg,"Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromClass(i),n_load_frames,n_load_rows,n_load_cols);
+		      log_tag("debug_log.txt","[PREP]",msg);
 
 			//Massive log of all loaded lines
 			/*
@@ -10071,6 +10088,7 @@ void gameloop(int argc, char** argv){
                 //Try preloading all enemy animations
 		char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS];
 		for (int i = 0; i < ( ENEMYCLASSESMAX +1); i++) {
+		     /* Legacy code to load animations from an s4c-file
 		      char static_path[500];
 
 		      // Set static_path value to the correct static dir path
@@ -10078,52 +10096,65 @@ void gameloop(int argc, char** argv){
 
 		      char enemy_filename[600];
 		      FILE* enemy_sprite_file;
+		      */
+
+		      int n_load_frames = 60;
+		      int n_load_rows = 17;
+		      int n_load_cols = 17;
 		      // Prepare the enemy frames
 		      switch (i) {
 			      case Imp: {
-				      sprintf(enemy_filename,"%s/animations/imp_fireball.txt",static_path);
+				      copy_animation(imp_fireball,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Zombie: {
-				      sprintf(enemy_filename,"%s/animations/zombie_walk.txt",static_path);
+				      copy_animation(zombie_walk,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Troll: {
-				      sprintf(enemy_filename,"%s/animations/troll_club.txt",static_path);
+				      copy_animation(troll_club,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Ghost: {
-				      sprintf(enemy_filename,"%s/animations/ghost_spell.txt",static_path);
+				      copy_animation(ghost_spell,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Boar: {
-				      sprintf(enemy_filename,"%s/animations/boar_scream.txt",static_path);
+				      copy_animation(boar_scream,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Mummy: {
-				      sprintf(enemy_filename,"%s/animations/mummy_shuffle.txt",static_path);
+				      copy_animation(mummy_shuffle,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Goblin: {
-				      sprintf(enemy_filename,"%s/animations/goblin_shoot.txt",static_path);
+				      copy_animation(goblin_shoot,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Werewolf: {
-				      sprintf(enemy_filename,"%s/animations/werewolf_transform.txt",static_path);
+				      copy_animation(werewolf_transform,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      default: {
-				      sprintf(enemy_filename,"%s/animations/zombie_walk.txt",static_path);
+					sprintf(msg,"Unexpected enemy index while loading animation for enemy (%i): [%s]",i,stringFromEClass(i));
+					log_tag("debug_log.txt","[ERROR]",msg);
+					exit(EXIT_FAILURE);
 			      }
 		      }
-		      enemy_sprite_file = fopen(enemy_filename, "r");
-		      if (!enemy_sprite_file) {
+
+		      /* Legacy code loading the animations from an s4c-file
+			enemy_sprite_file = fopen(enemy_filename, "r");
+			if (!enemy_sprite_file) {
 			      fprintf(stderr,"Error opening animation file at (%s/%s).\n",static_path,enemy_filename);
 			      exit(EXIT_FAILURE);
-		      }
-		      int enemy_loadCheck = load_sprites(enemy_sprites[i], enemy_sprite_file, 17, 17);
-		      sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromEClass(i), enemy_loadCheck);
-		      log_tag("debug_log.txt","[PREP]",load_msg);
+			}
+			int enemy_loadCheck = load_sprites(enemy_sprites[i], enemy_sprite_file, 17, 17);
+			sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromEClass(i), enemy_loadCheck);
+			log_tag("debug_log.txt","[PREP]",load_msg);
+		       */
+
+		      sprintf(msg,"Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromEClass(i),n_load_frames,n_load_rows,n_load_cols);
+		      log_tag("debug_log.txt","[PREP]",msg);
 
 			//Massive log of all loaded lines
 			/*
@@ -10140,6 +10171,12 @@ void gameloop(int argc, char** argv){
                 //Try preloading all boss animations
 		char boss_sprites[BOSSCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS];
 		for (int i = 0; i < ( BOSSCLASSESMAX +1); i++) {
+		      int n_load_frames = 60;
+		      int n_load_rows = 17;
+		      int n_load_cols = 17;
+
+		      /*
+		       * Legacy code for loading animations from an s4c-file.
 		      char static_path[500];
 
 		      // Set static_path value to the correct static dir path
@@ -10147,32 +10184,38 @@ void gameloop(int argc, char** argv){
 
 		      char boss_filename[600];
 		      FILE* boss_sprite_file;
+		      */
+
 		      // Prepare the boss frames
 		      switch (i) {
 			      case Blue_Troll: {
-				      sprintf(boss_filename,"%s/animations/bluetroll_wonder.txt",static_path);
+				      copy_animation(bluetroll_wonder,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Headless_Ninja: {
-				      sprintf(boss_filename,"%s/animations/headlessninja_throw.txt",static_path);
+				      copy_animation(headlessninja_throw,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Crawling_Dude: {
-				      sprintf(boss_filename,"%s/animations/crawlingdude_crawl.txt",static_path);
+				      copy_animation(crawlingdude_crawl,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Sr_Warthog: {
-				      sprintf(boss_filename,"%s/animations/srwarthog_square.txt",static_path);
+				      copy_animation(srwarthog_square,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Doppelganger: {
-				      sprintf(boss_filename,"%s/animations/knight_tapis.txt",static_path);
+				      copy_animation(knight_tapis,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      default: {
-				      sprintf(boss_filename,"%s/animations/zombie_walk.txt",static_path);
+				      sprintf(msg,"Unexpected boss index while loading animation for boss (%i): [%s]",i,stringFromBossClass(i));
+				      log_tag("debug_log.txt","[ERROR]",msg);
+				      exit(EXIT_FAILURE);
 			      }
 		      }
+		      /*
+		       * Legacy code for loading animations from an s4c-file.
 		      boss_sprite_file = fopen(boss_filename, "r");
 		      if (!boss_sprite_file) {
 			      fprintf(stderr,"Error opening animation file at (%s/%s).\n",static_path,boss_filename);
@@ -10181,6 +10224,10 @@ void gameloop(int argc, char** argv){
 		      int boss_loadCheck = load_sprites(boss_sprites[i], boss_sprite_file, 17, 17);
 		      sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromBossClass(i), boss_loadCheck);
 		      log_tag("debug_log.txt","[PREP]",load_msg);
+		      */
+
+		      sprintf(msg,"Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromBossClass(i),n_load_frames,n_load_rows,n_load_cols);
+		      log_tag("debug_log.txt","[PREP]",msg);
 
 			//Massive log of all loaded lines
 			/*
