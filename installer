@@ -137,17 +137,22 @@ installgame() {
 
 installstatics() {
     log_msg "\n  Installing game statics to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
-    for A in $(ls $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations) ; do {
-        log_msg "  Installing animation file [$A] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations]."
 
-	install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations/$A $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations
-	if [[ ! $? -eq 0 ]] ; then {
-            log_msg "  \nFailed installing animation file [$A] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations]."
-	    exit 1;
-	}
-	fi
-    }
-    done
+    #
+    # Legacy code for installing animations to static dir.
+    #for A in $(ls $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations) ; do {
+    #    log_msg "  Installing animation file [$A] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations]."
+    #
+    #	install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations/$A $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations
+    #	if [[ ! $? -eq 0 ]] ; then {
+    #       log_msg "  \nFailed installing animation file [$A] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations]."
+    #       exit 1;
+    #       }
+    #       fi
+    #   }
+    #done
+    #
+
     for L in $(ls $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore) ; do {
         log_msg "  Installing lore file [$L] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore]."
 

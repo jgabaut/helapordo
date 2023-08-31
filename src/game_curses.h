@@ -27,6 +27,9 @@
 #include "headlessninja_throw.h"
 #include "bluetroll_wonder.h"
 
+#include "enter_door.h"
+#include "alt_chest_opening.h"
+
 int display_colorpairs(void);
 void print_encoded_char(WINDOW* w, int y, int x, char c);
 int get_saveslot_index(void);

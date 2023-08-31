@@ -2276,10 +2276,17 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 	wrefresh(w);
 	box(w,0,0);
 	wrefresh(w);
+
 	char static_path[500];
 
 	// Set static_path value to the correct static dir path
 	resolve_staticPath(static_path);
+
+	/*
+	 * TODO
+	 * Remove me
+	 * Legacy code for loading animation from an s4c-file.
+	 *
 	char path_to_chest_animation[600];
 
 	char chest_animation_filename[200] = "animations/alt_chest_opening.txt";
@@ -2293,6 +2300,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
         	fprintf(stderr,"Error opening file %s\n",path_to_chest_animation);
 		exit(EXIT_FAILURE);
     	}
+	*/
 
     	// Open the palette file and read the color values and names
     	FILE* palette_file;
@@ -2324,6 +2332,17 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 
 	// Prepare the frames
 	char sprites[MAXFRAMES][MAXROWS][MAXCOLS];
+
+	copy_animation(alt_chest_opening,sprites,num_frames,frame_height,frame_width);
+
+	sprintf(msg,"Copied animation from matrix vector for alt_chest_opening with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
+	log_tag("debug_log.txt","[PREP]",msg);
+
+	/*
+	 * TODO
+	 * Remove me
+	 * Legacy code for loading animation from an s4c-file.
+	 *
 	int loadCheck = load_sprites(sprites, file, frame_height-1, frame_width-1);
 
 	// Check for loading errors and in this case we return early if we couldn't load
@@ -2340,6 +2359,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 		}
 		exit(EXIT_FAILURE);
 	}
+	*/
 
 	int result = animate_sprites_at_coords(sprites, w, reps, frametime, num_frames, frame_height, frame_width, 2, 2);
 	sleep(1);

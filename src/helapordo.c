@@ -10831,6 +10831,16 @@ void gameloop(int argc, char** argv){
 
 				char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
 
+				copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
+
+				sprintf(msg,"Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
+		      		log_tag("debug_log.txt","[PREP]",msg);
+
+				/*
+				 * TODO
+				 * Remove me
+				 * Legacy code for loading animation from an s4c-file.
+				 *
 				// Set static_path value to the correct static dir path
 				resolve_staticPath(static_path);
 
@@ -10860,6 +10870,7 @@ void gameloop(int argc, char** argv){
 					}
 					exit(loadCheck);
 				}
+				*/
 
 				// We make sure we have the background correcly set up and expect animate_sprites to refresh it
 				wclear(door_win);
@@ -11127,6 +11138,18 @@ void gameloop(int argc, char** argv){
 
 						char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
 
+						copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
+
+						sprintf(msg,"Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
+		      				log_tag("debug_log.txt","[PREP]",msg);
+
+						/*
+						 * TODO
+						 * Remove me
+						 * Legacy code for loading animation from an s4c-file.
+						 *
+						// Set static_path value to the correct static dir path
+
 						// Set static_path value to the correct static dir path
 						resolve_staticPath(static_path);
 
@@ -11156,6 +11179,7 @@ void gameloop(int argc, char** argv){
 							}
 							exit(loadCheck);
 						}
+						*/
 
 						// We make sure we have the background correcly set up and expect animate_sprites to refresh it
 						wclear(door_win);

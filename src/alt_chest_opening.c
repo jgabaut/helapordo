@@ -1,5 +1,6 @@
-0.1.5
-char alt_chest_animation[30][18][18] = {
+#include "alt_chest_opening.h"
+
+char alt_chest_opening[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1, file alt-chest-animation/image1.png
 	{
