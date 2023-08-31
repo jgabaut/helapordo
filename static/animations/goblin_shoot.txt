@@ -1,5 +1,5 @@
-0.1.4
-char sprites[61][18][18] = {
+0.1.5
+char goblin_shoot[61][18][18] = {
 
 	//Frame 1
 	{

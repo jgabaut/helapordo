@@ -1,5 +1,5 @@
-0.1.4
-char sprites[30][18][18] = {
+0.1.5
+char alt_chest_animation[30][18][18] = {
 
 	//Frame 1, file alt-chest-animation/image1.png
 	{

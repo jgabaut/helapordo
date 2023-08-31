@@ -8027,7 +8027,7 @@ void death(Fighter* player, loadInfo* load_info) {
 	//Free temporary kls
 	kls_free(temporary_kls);
 	kls_log("DEBUG","Freed temporary KLS");
-	log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporart KLS");
+	log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporary KLS");
 
 	/*
 	free(load_info);
