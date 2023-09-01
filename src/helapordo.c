@@ -9735,8 +9735,11 @@ void gameloop(int argc, char** argv){
 
 	do {
 		char msg[1500]; //This has a big scope.
+		#ifndef HELAPORDO_DEBUG_LOG
+		#else
 		FILE *debug_file = NULL;
 		FILE *OPS_debug_file = NULL;
+		#endif
 		// Parse command-line options
 		int option;
 		loadInfo* load_info = (loadInfo*) KLS_PUSH_NAMED(default_kls, loadInfo, 1, "loadInfo","loadInfo");
@@ -9857,6 +9860,8 @@ void gameloop(int argc, char** argv){
 				break;
 			}
 		}
+		#ifndef HELAPORDO_DEBUG_LOG
+		#else
 		// Open log file if log flag is set and reset it
 		if (G_LOG_ON == 1) {
 			KOLISEO_DEBUG = 1;
@@ -9917,6 +9922,8 @@ void gameloop(int argc, char** argv){
 			sprintf(msg,"Truncated [%s]",OPS_LOGFILE);
 			log_tag("debug_log.txt","[DEBUG]",msg);
     		}
+		#endif
+
 		if (G_DEBUG_ENEMYTYPE_ON == 1) {
 			char msg[200];
 			sprintf(msg,"G_DEBUG_ENEMYTYPE_ON == (%i)",G_DEBUG_ENEMYTYPE_ON);

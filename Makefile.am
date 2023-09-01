@@ -31,6 +31,7 @@ LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
 
 if DEBUG_BUILD
 AM_LDFLAGS = -ggdb -O0
+HELAPORDO_CFLAGS += -DHELAPORDO_DEBUG_LOG
 else
 # Linker flag to strip symbols
 AM_LDFLAGS = -s -O2

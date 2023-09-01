@@ -494,6 +494,8 @@ void usage(char* progname) {
  * @param msg The string to log.
  */
 void log_tag(char* filename, char* header, char* msg) {
+	#ifndef HELAPORDO_DEBUG_LOG
+	#else
 	// Open log file if log flag is set and append to it
 	if (G_LOG_ON) {
 		char path_to_debug_file[500];
@@ -524,6 +526,7 @@ void log_tag(char* filename, char* header, char* msg) {
 		}
 		fclose(logfile);
 	}
+	#endif
 }
 
 /**
