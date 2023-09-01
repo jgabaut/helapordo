@@ -22,3 +22,4 @@ kazoj# tests folder name
 1.0.10# fix SEGFAULT on game load
 1.0.11# Add saveslot selection
 1.1.0# Animations and lores are compiled
+1.1.1# Palette is compiled

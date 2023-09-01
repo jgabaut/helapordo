@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.1.0], [jgabaut@github.com])
+AC_INIT([helapordo], [1.1.1], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -13,8 +13,8 @@ AC_ARG_ENABLE([debug],
   [AS_HELP_STRING([--enable-debug], [Enable debug build])],
   [enable_debug=$enableval],
   [enable_debug=no])
-# Define the DEBUG conditional based on the --enable-debug option
-AM_CONDITIONAL([DEBUG], [test "$enable_debug" = "yes"])
+# Define the DEBUG_BUILD conditional based on the --enable-debug option
+AM_CONDITIONAL([DEBUG_BUILD], [test "$enable_debug" = "yes"])
 
 # Define the include and library paths based on the host system
 if test "$OS_DARWIN" = "yes"; then
@@ -32,7 +32,7 @@ fi
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.1.0"
+  VERSION="1.1.1"
 fi
 
 # Output variables to the config.h header

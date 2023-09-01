@@ -1,0 +1,5 @@
+#amboso compliant version folder, will ignore everything inside BUT the gitignore, to keep the clean dir
+#we also keep specific dependencies...
+*
+!.gitignore
+!static

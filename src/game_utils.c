@@ -472,9 +472,12 @@ void usage(char* progname) {
 	fprintf(stderr,"\n    -R        Enable rogue mode\n");
 	fprintf(stderr,"\n    -s        Enable story mode. Deprecated.\n");
 	fprintf(stderr,"    -l        Load a game.\n");
+	#ifndef HELAPORDO_DEBUG_ACCESS
+	#else
 	fprintf(stderr,"\n    -d        Enable debug mode\n");
 	fprintf(stderr,"      -dr <roomType>      Enable forced room.\n");
 	fprintf(stderr,"      -dE <enemyType>      Enable forced enemy.\n");
+	#endif
 	fprintf(stderr,"\n    -h        Print this help message\n");
 	fprintf(stderr,"    -T        Show a brief tutorial.\n");
 	fprintf(stderr,"    -G        Enable godmode.\n");
@@ -494,6 +497,8 @@ void usage(char* progname) {
  * @param msg The string to log.
  */
 void log_tag(char* filename, char* header, char* msg) {
+	#ifndef HELAPORDO_DEBUG_LOG
+	#else
 	// Open log file if log flag is set and append to it
 	if (G_LOG_ON) {
 		char path_to_debug_file[500];
@@ -524,6 +529,7 @@ void log_tag(char* filename, char* header, char* msg) {
 		}
 		fclose(logfile);
 	}
+	#endif
 }
 
 /**

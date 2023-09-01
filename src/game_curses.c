@@ -174,6 +174,7 @@ int get_saveslot_index(void) {
 	wrefresh(saveslots_win);
 	refresh();
 
+	/*
 	//We set the colors to use s4c's palette file...
 	FILE* palette_file;
 	char path_to_palette[600];
@@ -188,6 +189,11 @@ int get_saveslot_index(void) {
 	palette_file = fopen(path_to_palette, "r");
 
 	init_s4c_color_pairs(palette_file);
+	*/
+
+	for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+		init_s4c_color_pair(&palette[i],9+i);
+	}
 
 	while ( !picked && (c = wgetch(menu_win)) != KEY_F(1)) {
 		switch(c) {
@@ -3985,6 +3991,8 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 
 		int picked = 0;
 		int picked_close = 0;
+
+		/*
 		//We set the colors to use s4c's palette file...
 		FILE* palette_file;
 		char path_to_palette[600];
@@ -3999,6 +4007,11 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 		palette_file = fopen(path_to_palette, "r");
 
 		init_s4c_color_pairs(palette_file);
+		*/
+
+		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+			init_s4c_color_pair(&palette[i],9+i);
+		}
 
 		while ( !picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_close) {
 			switch(c) {

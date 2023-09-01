@@ -9735,8 +9735,11 @@ void gameloop(int argc, char** argv){
 
 	do {
 		char msg[1500]; //This has a big scope.
+		#ifndef HELAPORDO_DEBUG_LOG
+		#else
 		FILE *debug_file = NULL;
 		FILE *OPS_debug_file = NULL;
+		#endif
 		// Parse command-line options
 		int option;
 		loadInfo* load_info = (loadInfo*) KLS_PUSH_NAMED(default_kls, loadInfo, 1, "loadInfo","loadInfo");
@@ -9753,8 +9756,11 @@ void gameloop(int argc, char** argv){
 		while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsa")) != -1) {
 			switch (option) {
 				case 'd': {
+					#ifndef HELAPORDO_DEBUG_ACCESS
+					#else
 					G_DEBUG_ON += 1;
 					G_LOG_ON = 1;
+					#endif
 				}
 				break;
 				case 'r': {
@@ -9857,6 +9863,8 @@ void gameloop(int argc, char** argv){
 				break;
 			}
 		}
+		#ifndef HELAPORDO_DEBUG_LOG
+		#else
 		// Open log file if log flag is set and reset it
 		if (G_LOG_ON == 1) {
 			KOLISEO_DEBUG = 1;
@@ -9917,6 +9925,8 @@ void gameloop(int argc, char** argv){
 			sprintf(msg,"Truncated [%s]",OPS_LOGFILE);
 			log_tag("debug_log.txt","[DEBUG]",msg);
     		}
+		#endif
+
 		if (G_DEBUG_ENEMYTYPE_ON == 1) {
 			char msg[200];
 			sprintf(msg,"G_DEBUG_ENEMYTYPE_ON == (%i)",G_DEBUG_ENEMYTYPE_ON);
@@ -10324,12 +10334,16 @@ void gameloop(int argc, char** argv){
 		refresh();
 
 		int savepick_picked = 0;
+
+		/*
 		//We set the colors to use s4c's palette file...
 		FILE* palette_file;
 		char path_to_palette[600];
 		char palette_name[50] = "palette.gpl";
+		*/
 		int pickchar = -1;
 
+		/*
 		// Set static_path value to the correct static dir path
 		resolve_staticPath(static_path);
 
@@ -10338,6 +10352,11 @@ void gameloop(int argc, char** argv){
 		palette_file = fopen(path_to_palette, "r");
 
 		init_s4c_color_pairs(palette_file);
+		*/
+
+		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+			init_s4c_color_pair(&palette[i],9+i);
+		}
 
 		while ( !savepick_picked && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1) ) {
 			switch(pickchar) {
@@ -10798,6 +10817,7 @@ void gameloop(int argc, char** argv){
 
 				//Play room animation
 
+				/*
 				FILE* palette_file;
 				char path_to_palette[600];
 				char static_path[500];
@@ -10814,6 +10834,8 @@ void gameloop(int argc, char** argv){
 					fprintf(stderr, "Error: could not open palette file (%s/%s).\n",static_path, palette_name);
 					exit(EXIT_FAILURE);
 				}
+				*/
+
 				WINDOW* door_win;
 				//setlocale(LC_CTYPE, "it_IT.UTF-8");
 				//initscr();
@@ -10838,7 +10860,11 @@ void gameloop(int argc, char** argv){
 				keypad(stdscr, TRUE);
 
 				// Initialize all the colors using the palette file we opened at the start
-				init_s4c_color_pairs(palette_file);
+				//init_s4c_color_pairs(palette_file);
+
+				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+					init_s4c_color_pair(&palette[i],9+i);
+				}
 
 				int reps = 1;
 				int frametime = 27;
@@ -11037,7 +11063,11 @@ void gameloop(int argc, char** argv){
 				keypad(stdscr, TRUE);
 
 				// Initialize all the colors using the palette file we opened at the start
-				init_s4c_color_pairs(palette_file);
+				//init_s4c_color_pairs(palette_file);
+
+				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+					init_s4c_color_pair(&palette[i],9+i);
+				}
 
 				cbreak();
 				noecho();
