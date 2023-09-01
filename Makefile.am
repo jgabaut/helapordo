@@ -23,7 +23,7 @@ MACHINE := $$(uname -m)
 PACK_NAME = $(TARGET)-$(VERSION)-$(OS)-$(MACHINE)
 
 # Source files
-helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/mummy_shuffle.c src/ghost_spell.c src/boar_scream.c src/troll_club.c src/goblin_shoot.c src/zombie_walk.c src/imp_fireball.c src/werewolf_transform.c src/knight_tapis.c src/mage_spark.c src/archer_drop.c src/assassin_poof.c src/crawlingdude_crawl.c src/srwarthog_square.c src/headlessninja_throw.c src/bluetroll_wonder.c src/enter_door.c src/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c
+helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c
 
 # Linking rule
 LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
@@ -147,6 +147,7 @@ clean:
 	@echo -en "Cleaning build artifacts:  "
 	-rm $(TARGET)
 	-rm src/*.o
+	-rm src/animations/*.o
 	-rm koliseo/src/*.o
 	-rm ./*.o
 	-rm src/anvil__helapordo.*
