@@ -27,6 +27,10 @@ typedef enum HLP_Region_Type {
 	HR_Treasure,
 	HR_Shop,
 	HR_Roadfork,
+	HR_Turncounter_desc,
+	HR_Room_desc,
+	HR_countStats,
+	HR_Saveslot,
 	HR_loadInfo,
 } HLP_Region_Type;
 

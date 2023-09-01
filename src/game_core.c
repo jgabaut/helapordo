@@ -29,6 +29,10 @@ char* hlp_regiontype_strings[HLP_MAX_INDEX+1] = {
 	"HLP_Treasure",
 	"HLP_Shop",
 	"HLP_Roadfork",
+	"HLP_Turncounter_desc",
+	"HLP_Room_desc",
+	"HLP_countStats",
+	"HLP_Saveslot",
 	"HLP_loadInfo",
 };
 
