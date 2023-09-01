@@ -10324,12 +10324,16 @@ void gameloop(int argc, char** argv){
 		refresh();
 
 		int savepick_picked = 0;
+
+		/*
 		//We set the colors to use s4c's palette file...
 		FILE* palette_file;
 		char path_to_palette[600];
 		char palette_name[50] = "palette.gpl";
+		*/
 		int pickchar = -1;
 
+		/*
 		// Set static_path value to the correct static dir path
 		resolve_staticPath(static_path);
 
@@ -10338,6 +10342,11 @@ void gameloop(int argc, char** argv){
 		palette_file = fopen(path_to_palette, "r");
 
 		init_s4c_color_pairs(palette_file);
+		*/
+
+		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+			init_s4c_color_pair(&palette[i],9+i);
+		}
 
 		while ( !savepick_picked && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1) ) {
 			switch(pickchar) {
@@ -10798,6 +10807,7 @@ void gameloop(int argc, char** argv){
 
 				//Play room animation
 
+				/*
 				FILE* palette_file;
 				char path_to_palette[600];
 				char static_path[500];
@@ -10814,6 +10824,8 @@ void gameloop(int argc, char** argv){
 					fprintf(stderr, "Error: could not open palette file (%s/%s).\n",static_path, palette_name);
 					exit(EXIT_FAILURE);
 				}
+				*/
+
 				WINDOW* door_win;
 				//setlocale(LC_CTYPE, "it_IT.UTF-8");
 				//initscr();
@@ -10838,7 +10850,11 @@ void gameloop(int argc, char** argv){
 				keypad(stdscr, TRUE);
 
 				// Initialize all the colors using the palette file we opened at the start
-				init_s4c_color_pairs(palette_file);
+				//init_s4c_color_pairs(palette_file);
+
+				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+					init_s4c_color_pair(&palette[i],9+i);
+				}
 
 				int reps = 1;
 				int frametime = 27;
@@ -11037,7 +11053,11 @@ void gameloop(int argc, char** argv){
 				keypad(stdscr, TRUE);
 
 				// Initialize all the colors using the palette file we opened at the start
-				init_s4c_color_pairs(palette_file);
+				//init_s4c_color_pairs(palette_file);
+
+				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+					init_s4c_color_pair(&palette[i],9+i);
+				}
 
 				cbreak();
 				noecho();

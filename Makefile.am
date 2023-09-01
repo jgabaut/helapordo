@@ -21,14 +21,15 @@ SHELL := /bin/bash
 OS := $$(uname -s)
 MACHINE := $$(uname -m)
 PACK_NAME = $(TARGET)-$(VERSION)-$(OS)-$(MACHINE)
+PALETTE_PATH = "./static/palette.gpl"
 
 # Source files
-helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c
+helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c src/palette.c
 
 # Linking rule
 LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
 
-if DEBUG
+if DEBUG_BUILD
 AM_LDFLAGS = -ggdb -O0
 else
 # Linker flag to strip symbols
@@ -47,6 +48,16 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 	@echo -en "Building Koliseo with curses:\n"
 	gcc -c ./koliseo/src/koliseo.c -DKOLISEO_HAS_CURSES -o ./koliseo/src/koliseo.o
 	@echo -e "\033[1;33mDone.\e[0m"
+
+./src/palette.c:
+	@echo -en "Generating palette.c from [$(PALETTE_PATH)]:  "
+	python ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) ../.. > ./src/palette.c
+	@echo -e "Done."
+
+./src/palette.h:
+	@echo -en "Generating palette.h from [$(PALETTE_PATH)]:  "
+	python ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) ../.. > ./src/palette.h
+	@echo -e "Done."
 
 # Build rule for object files
 %.o: %.c
@@ -112,7 +123,6 @@ pack: versioncheck
 	@echo -e "\033[1;35m[PACK] Installing:\e[0m"
 	install ./helapordo ~/helapordo-local/share/$(PACK_NAME)
 
-	install ./static/palette.gpl ~/helapordo-local/share/$(PACK_NAME)/static/
 	@echo -e "\033[1;35m[PACK] Done.\e[0m"
 	@echo -e "\033[1;32m[ZIP] Compressing $(PACK_NAME):\e[0m"
 	cd ~/helapordo-local/share && zip -r $(PACK_NAME).zip ./$(PACK_NAME)
@@ -148,6 +158,7 @@ clean:
 	-rm $(TARGET)
 	-rm src/*.o
 	-rm src/animations/*.o
+	-rm src/palette.*
 	-rm koliseo/src/*.o
 	-rm ./*.o
 	-rm src/anvil__helapordo.*
@@ -159,7 +170,7 @@ cleanob:
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)
-all: ./src/anvil__helapordo.c ./koliseo/src/koliseo.o $(TARGET)
+all: ./src/anvil__helapordo.c ./koliseo/src/koliseo.o ./src/palette.c ./src/palette.h $(TARGET)
 
 # Target to clean and rebuild
 rebuild: clean all

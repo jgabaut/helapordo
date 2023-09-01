@@ -167,13 +167,16 @@ installstatics() {
     #done
     #
 
-    install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/palette.gpl $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/
-    if [[ ! $? -eq 0 ]] ; then {
-	log_msg "\n  Failed installing palette file to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
-	exit 1;
-    }
-    fi
-    log_msg "\n  Installed palette file to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
+    #
+    # Legacy code for installing palette.gpl to static dir.
+    #    install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/palette.gpl $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/
+    #if [[ ! $? -eq 0 ]] ; then {
+    #log_msg "\n  Failed installing palette file to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
+    #exit 1;
+    #}
+    #fi
+    #log_msg "\n  Installed palette file to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
+    #
 
     log_msg "\n  Installed game static deps from [$STATIC_DIR_NAME] dir to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."
 }

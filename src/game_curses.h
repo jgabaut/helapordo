@@ -8,6 +8,8 @@
 #include "game_core.h"
 #include "game_utils.h"
 
+#include "palette.h"
+
 #include "./animations/knight_tapis.h"
 #include "./animations/mage_spark.h"
 #include "./animations/archer_drop.h"

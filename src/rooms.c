@@ -182,6 +182,8 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 		int picked = 0;
 		int picked_explore = 0;
+
+		/*
 		//We set the colors to use s4c's palette file...
 		FILE* palette_file;
 		char path_to_palette[600];
@@ -196,6 +198,11 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 		palette_file = fopen(path_to_palette, "r");
 
 		init_s4c_color_pairs(palette_file);
+		*/
+
+		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+			init_s4c_color_pair(&palette[i],9+i);
+		}
 
 		while ( !picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_explore) {
 			switch(c) {
@@ -778,6 +785,8 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 			clock_t menu_start_time = clock(), menu_diff_time;//, menu_loop_diff_time;
 			int frame_counter = 0;
 			int frame_tot = 60;
+
+			/*
 			//We set the colors to use s4c's palette file...
 			FILE* palette_file;
 			char path_to_palette[600];
@@ -793,6 +802,11 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 			palette_file = fopen(path_to_palette, "r");
 
 			init_s4c_color_pairs(palette_file);
+			*/
+
+			for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+				init_s4c_color_pair(&palette[i],9+i);
+			}
 			int animation_loops_done = 0;
 
 			while(!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
@@ -1593,6 +1607,8 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 		clock_t menu_start_time = clock(), menu_diff_time;//, menu_loop_diff_time;
 		int frame_counter = 0;
 		int frame_tot = 60;
+
+		/*
 		//We set the colors to use s4c's palette file...
 		FILE* palette_file;
 		char path_to_palette[600];
@@ -1608,6 +1624,12 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 		palette_file = fopen(path_to_palette, "r");
 
 		init_s4c_color_pairs(palette_file);
+		*/
+
+		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+			init_s4c_color_pair(&palette[i],9+i);
+		}
+
 		int animation_loops_done = 0;
 
 	        while(!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
@@ -2302,6 +2324,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
     	}
 	*/
 
+	/*
     	// Open the palette file and read the color values and names
     	FILE* palette_file;
 	char path_to_palette[600];
@@ -2319,6 +2342,11 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 
 	// Initialize all the colors
 	init_s4c_color_pairs(palette_file);
+	*/
+
+	for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+		init_s4c_color_pair(&palette[i],9+i);
+	}
 
 	int reps = 1;
 
