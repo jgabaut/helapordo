@@ -28,6 +28,8 @@
 #include "sprites.h"
 #include "floors.h"
 #include "anvil__helapordo.h"
+#include "game_lore.h"
+#include "game_lore_alt.h"
 
 /**
  * Call function associated with the passed turnOption_OP.

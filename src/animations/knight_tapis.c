@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "knight_tapis.h"
+
+char knight_tapis[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

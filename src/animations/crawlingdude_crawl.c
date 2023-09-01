@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "crawlingdude_crawl.h"
+
+char crawlingdude_crawl[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

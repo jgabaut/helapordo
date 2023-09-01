@@ -23,7 +23,7 @@ MACHINE := $$(uname -m)
 PACK_NAME = $(TARGET)-$(VERSION)-$(OS)-$(MACHINE)
 
 # Source files
-helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c
+helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c
 
 # Linking rule
 LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
@@ -104,16 +104,14 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share ]] || mkdir ~/helapordo-local/share
 	[[ -d ~/helapordo-local/share/$(PACK_NAME) ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static
-	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static/animations ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static/animations
-	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static/lore ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static/lore
+
 	@echo -e "\033[1;32m[TREE] Removing '~/helapordo-local/share/$(PACK_NAME).zip':\e[0m"
 	touch ~/helapordo-local/share/$(PACK_NAME).zip
 	rm ~/helapordo-local/share/$(PACK_NAME).zip
 	@echo -e "\033[1;32m[TREE] Done.\e[0m"
 	@echo -e "\033[1;35m[PACK] Installing:\e[0m"
 	install ./helapordo ~/helapordo-local/share/$(PACK_NAME)
-	install ./static/animations/* ~/helapordo-local/share/$(PACK_NAME)/static/animations
-	install ./static/lore/* ~/helapordo-local/share/$(PACK_NAME)/static/lore
+
 	install ./static/palette.gpl ~/helapordo-local/share/$(PACK_NAME)/static/
 	@echo -e "\033[1;35m[PACK] Done.\e[0m"
 	@echo -e "\033[1;32m[ZIP] Compressing $(PACK_NAME):\e[0m"
@@ -149,6 +147,7 @@ clean:
 	@echo -en "Cleaning build artifacts:  "
 	-rm $(TARGET)
 	-rm src/*.o
+	-rm src/animations/*.o
 	-rm koliseo/src/*.o
 	-rm ./*.o
 	-rm src/anvil__helapordo.*

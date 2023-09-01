@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "mage_spark.h"
+
+char mage_spark[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

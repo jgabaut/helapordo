@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "archer_drop.h"
+
+char archer_drop[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

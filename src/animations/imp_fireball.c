@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "imp_fireball.h"
+
+char imp_fireball[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

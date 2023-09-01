@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "srwarthog_square.h"
+
+char srwarthog_square[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

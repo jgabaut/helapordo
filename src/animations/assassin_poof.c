@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "assassin_poof.h"
+
+char assassin_poof[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

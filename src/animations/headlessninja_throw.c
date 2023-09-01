@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "headlessninja_throw.h"
+
+char headlessninja_throw[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

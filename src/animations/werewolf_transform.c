@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "werewolf_transform.h"
+
+char werewolf_transform[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

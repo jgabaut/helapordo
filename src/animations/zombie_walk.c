@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "zombie_walk.h"
+
+char zombie_walk[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

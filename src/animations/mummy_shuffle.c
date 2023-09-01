@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "mummy_shuffle.h"
+
+char mummy_shuffle[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

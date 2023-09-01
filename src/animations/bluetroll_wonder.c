@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "bluetroll_wonder.h"
+
+char bluetroll_wonder[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "ghost_spell.h"
+
+char ghost_spell[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

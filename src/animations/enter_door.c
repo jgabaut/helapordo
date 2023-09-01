@@ -1,5 +1,6 @@
-0.1.3
-char sprites[61][18][18] ={
+#include "enter_door.h"
+
+char enter_door[MAXFRAMES][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{
