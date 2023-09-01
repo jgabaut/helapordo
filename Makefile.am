@@ -104,16 +104,14 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share ]] || mkdir ~/helapordo-local/share
 	[[ -d ~/helapordo-local/share/$(PACK_NAME) ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static
-	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static/animations ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static/animations
-	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static/lore ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static/lore
+
 	@echo -e "\033[1;32m[TREE] Removing '~/helapordo-local/share/$(PACK_NAME).zip':\e[0m"
 	touch ~/helapordo-local/share/$(PACK_NAME).zip
 	rm ~/helapordo-local/share/$(PACK_NAME).zip
 	@echo -e "\033[1;32m[TREE] Done.\e[0m"
 	@echo -e "\033[1;35m[PACK] Installing:\e[0m"
 	install ./helapordo ~/helapordo-local/share/$(PACK_NAME)
-	install ./static/animations/* ~/helapordo-local/share/$(PACK_NAME)/static/animations
-	install ./static/lore/* ~/helapordo-local/share/$(PACK_NAME)/static/lore
+
 	install ./static/palette.gpl ~/helapordo-local/share/$(PACK_NAME)/static/
 	@echo -e "\033[1;35m[PACK] Done.\e[0m"
 	@echo -e "\033[1;32m[ZIP] Compressing $(PACK_NAME):\e[0m"
