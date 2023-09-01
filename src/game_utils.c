@@ -808,6 +808,17 @@ char* stringFromFoePartyClass(foePartyClass fp) {
 }
 
 /**
+ * Takes a integer and returns the corresponding HLP_Region_Type string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see HLP_Region_Type
+ * @param t The HLP type.
+ * @return String corresponding to the HLP_Region_Type name.
+ */
+char* stringFrom_HLP_Region_Type(HLP_Region_Type t) {
+	return hlp_regiontype_strings[t];
+}
+
+/**
  * Takes a integer and returns the corresponding room name string by the inner array position.
  * Correct result is only possible by having the enum values in a consistent order with the string array.
  * @see roomClass
