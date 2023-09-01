@@ -15,6 +15,8 @@
 
   `autoconf` and `automake` are needed to generate the Makefile used to compile the game.
   `ncurses-dev` is needed as a library dependecy.
+  `python` is needed to generate `./src/palette.c` and `./src/palette.h`.
+
 
   I included termios.h to have some of the messages be consistent in ignoring user input, so at the moment the code can't build on Windows.
 
@@ -34,6 +36,10 @@
   Once you have the `Makefile`, you can compile the project by running, in its directory:
 
   ### `make`
+
+  The build chain expects some files to be generated from already given ones.
+
+  If you want to build without using `make`, you can see in the `Makefile.am` how to generate `./src/palette.c`, `./src/palette.h`, `./src/anvil__helapordo.c` and `./src/anvil__helapordo.h`
 
   You can have a look at the CLI syntax with:
 
