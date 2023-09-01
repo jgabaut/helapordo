@@ -50,12 +50,8 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/palette.c:
-	@echo -en "Generating palette.c from [$(PALETTE_PATH)]:  "
+	@echo -en "Generating C palette files from [$(PALETTE_PATH)]:  "
 	python ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) ../.. > ./src/palette.c
-	@echo -e "Done."
-
-./src/palette.h:
-	@echo -en "Generating palette.h from [$(PALETTE_PATH)]:  "
 	python ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) ../.. > ./src/palette.h
 	@echo -e "Done."
 
@@ -170,7 +166,7 @@ cleanob:
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)
-all: ./src/anvil__helapordo.c ./koliseo/src/koliseo.o ./src/palette.c ./src/palette.h $(TARGET)
+all: ./src/anvil__helapordo.c ./koliseo/src/koliseo.o ./src/palette.c $(TARGET)
 
 # Target to clean and rebuild
 rebuild: clean all
