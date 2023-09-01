@@ -81,7 +81,7 @@ verscheck() {
 }
 
 depcheck() {
-	deps=("$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME" "$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations" "$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore")
+	deps=("$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME") #Legacy code for installing animations and lores # "$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/animations" "$SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore")
     totalDeps=${#deps[@]}  # Total number of deps tasks
     currentDepTask=0  # Current dep task being executed
     for depstep in "${deps[@]}"; do
@@ -107,7 +107,7 @@ depcheck() {
 }
 
 mkdirs() {
-    dirs=("$TARGET_INSTALL_DIR" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore")
+	dirs=("$TARGET_INSTALL_DIR" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME") #Legacy code for installing animations and lores # "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore")
     totalDirs=${#dirs[@]}  # Total number of dirs to make
     currentDirTask=0  # Current dir task being executed
     log_msg "\n  Creating directories."
@@ -153,17 +153,20 @@ installstatics() {
     #done
     #
 
-    for L in $(ls $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore) ; do {
-        log_msg "  Installing lore file [$L] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore]."
+    #
+    # Legacy code for installing lores to static dir.
+    #for L in $(ls $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore) ; do {
+    #log_msg "  Installing lore file [$L] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore]."
+    #install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore/$L $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore
+    #if [[ ! $? -eq 0 ]] ; then {
+    #log_msg "\n  Failed installing lore file [$L] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore]."
+    #exit 1;
+    #}
+    #fi
+    #}
+    #done
+    #
 
-	install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/lore/$L $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore
-	if [[ ! $? -eq 0 ]] ; then {
-            log_msg "\n  Failed installing lore file [$L] to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore]."
-	    exit 1;
-	}
-	fi
-    }
-    done
     install $SOURCE_INSTALL_DIR/$STATIC_DIR_NAME/palette.gpl $TARGET_INSTALL_DIR/$STATIC_DIR_NAME/
     if [[ ! $? -eq 0 ]] ; then {
 	log_msg "\n  Failed installing palette file to [$TARGET_INSTALL_DIR/$STATIC_DIR_NAME]."

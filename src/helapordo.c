@@ -10645,19 +10645,30 @@ void gameloop(int argc, char** argv){
 			//exit(0);
 		}
 
-		char* lore_strings[6];
+		/*
+		 * TODO
+		 * Remove me
+		 * Legacy code to load lores from a text file.
 		for (int i=0; i<5; i++) {
 			sprintf(msg,"Prepping lore (%i)",i);
 			kls_log("DEBUG",msg);
 			lore_strings[i] = (char*) KLS_PUSH_NAMED(default_kls, char, 300, "Lore", msg);
 		}
+		 */
 
 		int* loreCounter = &(path->loreCounter);
 		sprintf(msg,"loreCounter == (%i)",*loreCounter);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 
 		if (GAMEMODE == Story) {
+
+			/*
+			 * TODO
+			 * Remove me
+			 * Legacy code to load lores from a text file.
 			int loreKind = 0; //rand() % LORES_MAX;
+			 */
+
 			if (load_info->is_new_game) {
 				sprintf(msg,"loreCounter was (%i), setting it to 0.",*loreCounter);
 				log_tag("debug_log.txt","[FIXME]",msg);
@@ -10665,7 +10676,14 @@ void gameloop(int argc, char** argv){
 				//FIXME:
 				//loreCounter should not start from 0 again.
 			}
-			loadLore(lore_strings,loreKind);
+
+			/*
+			 * TODO
+			 *Remove me
+			 *Legacy code for loading lores from a text file.
+			 loadLore(lore_strings,loreKind);
+			 */
+
 		} else {
 			sprintf(msg,"GAMEMODE is not Story. Value was: (%i)",GAMEMODE);
 			log_tag("debug_log.txt","[WARN]",msg);
