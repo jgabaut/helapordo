@@ -51,8 +51,8 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 ./src/palette.c:
 	@echo -en "Generating C palette files from [$(PALETTE_PATH)]:  "
-	python ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) ../.. > ./src/palette.c
-	python ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) ../.. > ./src/palette.h
+	python ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) .. > ./src/palette.c
+	python ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) .. > ./src/palette.h
 	@echo -e "Done."
 
 # Build rule for object files
