@@ -50,7 +50,7 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/palette.c:
-	@echo -en "Generating C palette files from [$(PALETTE_PATH)]:  "
+	@echo -en "\033[1;34m[Makefile]\e[0m    Using python to generate C palette files from \033[1;35m[$(PALETTE_PATH)]:\e[0m  "
 	python ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) .. > ./src/palette.c
 	python ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) .. > ./src/palette.h
 	@echo -e "Done."
