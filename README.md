@@ -99,11 +99,13 @@
 ## Latest Release <a name = "latest_release"></a>
 
   I try to upload precompiled binaries for:
-    - `linux-x86_64`
-    - `linux-aarch64` (from TERMUX on Android).
+
+  - `linux-x86_64`
+  - `linux-aarch64` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
 
   Some releases may offer a precompiled binary for:
-    - `apple-arm64`
+
+  - `apple-arm64`
 
   📦 v1.1.1 01/09/2023
   https://github.com/jgabaut/helapordo/releases
