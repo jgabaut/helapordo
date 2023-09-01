@@ -472,9 +472,12 @@ void usage(char* progname) {
 	fprintf(stderr,"\n    -R        Enable rogue mode\n");
 	fprintf(stderr,"\n    -s        Enable story mode. Deprecated.\n");
 	fprintf(stderr,"    -l        Load a game.\n");
+	#ifndef HELAPORDO_DEBUG_ACCESS
+	#else
 	fprintf(stderr,"\n    -d        Enable debug mode\n");
 	fprintf(stderr,"      -dr <roomType>      Enable forced room.\n");
 	fprintf(stderr,"      -dE <enemyType>      Enable forced enemy.\n");
+	#endif
 	fprintf(stderr,"\n    -h        Print this help message\n");
 	fprintf(stderr,"    -T        Show a brief tutorial.\n");
 	fprintf(stderr,"    -G        Enable godmode.\n");

@@ -9756,8 +9756,11 @@ void gameloop(int argc, char** argv){
 		while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsa")) != -1) {
 			switch (option) {
 				case 'd': {
+					#ifndef HELAPORDO_DEBUG_ACCESS
+					#else
 					G_DEBUG_ON += 1;
 					G_LOG_ON = 1;
+					#endif
 				}
 				break;
 				case 'r': {
