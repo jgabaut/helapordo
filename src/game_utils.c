@@ -2,6 +2,42 @@
 //Functions useful in many areas
 
 /**
+ * Debugs the passed (preallocated) countStats with log_tag().
+ * @param gmst The allocated countStats to debug.
+ */
+void dbg_countStats(countStats* stats) {
+	char msg[300];
+	sprintf(msg,"Enemies killed:  { %i }",stats->enemieskilled);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Consumables found:  { %i }",stats->consumablesfound);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Equips found:  { %i }",stats->equipsfound);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Artifacts found:  { %i }",stats->artifactsfound);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Critical hits done:  { %i }",stats->criticalhits);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Rooms completed:  { %i }",stats->roomscompleted);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Floors completed:  { %i }",stats->floorscompleted);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Specials unlocked:  { %i }",stats->specialsunlocked);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Coins found:  { %i }",stats->coinsfound);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Bosses killed:  { %i }",stats->bosseskilled);
+	log_tag("debug_log.txt","[countStats]",msg);
+	sprintf(msg,"Unique Boss kills:  { %i }",stats->unique_bosseskilled);
+	log_tag("debug_log.txt","[countStats]",msg);
+	for (int i = 0; i < BOSSCLASSESMAX+1; i++) {
+		sprintf(msg,"Boss [%i] { %s  }:  { %s }", i, stringFromBossClass(i), (stats->killed_bosses[i] == 1 ? "Killed" : "Not Killed"));
+		log_tag("debug_log.txt","[countStats]",msg);
+	}
+	sprintf(msg,"Keys found:  { %i }",stats->keysfound);
+	log_tag("debug_log.txt","[countStats]",msg);
+}
+
+/**
  * Debugs the passed (preallocated) Gamestate with log_tag().
  * @param gmst The allocated Gamestate to debug.
  */
@@ -20,6 +56,7 @@ void dbg_Gamestate(Gamestate* gmst) {
 	log_tag("debug_log.txt","[GAMESTATE]",msg);
 	sprintf(msg,"Current enemy index: { %i }", gmst->current_enemy_index);
 	log_tag("debug_log.txt","[GAMESTATE]",msg);
+	dbg_countStats(gmst->stats);
 	log_tag("debug_log.txt","[GAMESTATE]","}");
 }
 
@@ -95,6 +132,7 @@ void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* pa
  * @see turnOption_OP
  * @see turnOption
  * @see turnOP()
+ * @param gmst The Gamestate pointer to assign to turnOP_args->gmst.
  * @param actor The Fighter pointer to assign to turnOP_args->actor.
  * @param path The Path pointer to assign to turnOP_args->path.
  * @param room The Room pointer to assign to turnOP_args->room.
@@ -104,7 +142,7 @@ void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* pa
  * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
  * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
  */
-turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls) {
+turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
 	char msg[500];
 	sprintf(msg,"Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
@@ -112,6 +150,7 @@ turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* 
 	kls_log("DEBUG",msg);
 	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_TYPED(tkls,turnOP_args,1,HR_turnOP_args,"turnOP_args",msg);
 
+	res->gmst = gmst;
 	res->actor = actor;
 	res->path = path;
 	res->room = room;

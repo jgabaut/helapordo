@@ -10,6 +10,7 @@
  * @see handleEquips()
  * @see handleStats()
  * @see handleArtifacts()
+ * @param gamestate The pointer to Gamestate.
  * @param room The pointer to current room.
  * @param index The index of current room.
  * @param p The Path pointer.
@@ -21,7 +22,7 @@
  * @see gameloop()
  * @return When exiting room, should return NO_DMG.
  */
-int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
+int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
 	Enemy* dummy_enemy = NULL;
 	Boss* dummy_boss = NULL;
 	FILE* dummy_savefile = NULL;
@@ -29,7 +30,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	FILE* autosave_file;
 	WINDOW* dummy_notify_win = NULL;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -371,6 +372,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @see handleArtifacts()
  * @see applyStatus()
  * @see applyEStatus()
+ * @param gamestate The pointer to Gamestate.
  * @param room The pointer to current room.
  * @param index The index of current room.
  * @param p The Path pointer.
@@ -385,7 +387,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @see enemyClass
  * @return When room is cleared, should return KILL_DONE.
  */
-int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
+int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
 
 	Boss* dummy_boss = NULL;
 	Enemy* args_enemy = NULL;
@@ -393,7 +395,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 	WINDOW* args_notify_win = NULL;
 
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -437,6 +439,8 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 	log_tag("debug_log.txt","[ROOM]",msg);
 
 	for (int i = 0; i < enemies ;) {
+
+		update_Gamestate(gamestate, 1, room->class, room->index, i);
 
 		fightStatus = OP_RES_NO_DMG;
 		Enemy* e = room->enemies[i];
@@ -1225,6 +1229,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 			refresh();
 		} //End while current enemy
 	} //End for all enemies
+	update_Gamestate(gamestate, 1, -1, room->index, -1);
 	sprintf(msg,"End of room %i", room->index);
 	log_tag("debug_log.txt","[ROOM]",msg);
 	//free(args);
@@ -1265,6 +1270,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
  * @see handleArtifacts()
  * @see applyStatus()
  * @see applyBStatus()
+ * @param gamestate The pointer to Gamestate.
  * @param room The pointer to current room.
  * @param index The index of current room.
  * @param p The Path pointer.
@@ -1274,7 +1280,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
  * @see turnOP()
  * @return When room is cleared, should return KILL_DONE.
  */
-int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char boss_sprites[BOSSCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
+int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char boss_sprites[BOSSCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
 
 	Boss* args_boss = NULL;
 	Enemy* dummy_enemy = NULL;
@@ -1282,7 +1288,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	WINDOW* args_notify_win = NULL;
 	int isBoss = 1;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -1346,6 +1352,8 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
         int n_choices, c;
 
 	int debug_n_choices = 0;
+
+	update_Gamestate(gamestate, 1, room->class, room->index-1, 1);
 
 	while (!( fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE || choice == QUIT ) ){
 
@@ -1893,6 +1901,8 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	} //End while fightStatus
 	//free(args);
 	log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
+
+	update_Gamestate(gamestate, 1, -1, room->index, -1);
 	return fightStatus;
 }
 

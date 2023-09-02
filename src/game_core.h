@@ -1685,6 +1685,7 @@ typedef struct {
 	FILE* save_file; /**< Pointer to savefile for OP*/
 	WINDOW* notify_win; /**< Pointer to notification window for OP*/
 	Koliseo_Temp* t_kls; /**< Pointer to Koliseo_Temp for OP*/
+	Gamestate* gmst; /**< Pointer to Gamestate for OP*/
 } turnOP_args;
 
 /**

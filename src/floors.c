@@ -669,7 +669,7 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
  * @see Floor
  * @see floorClass
  */
-void move_update(Floor* floor, int* current_x, int* current_y, WINDOW* win, Path* path, Fighter* player, Room* room, loadInfo* load_info, Koliseo* kls, Koliseo_Temp* t_kls) {
+void move_update(Gamestate* gamestate, Floor* floor, int* current_x, int* current_y, WINDOW* win, Path* path, Fighter* player, Room* room, loadInfo* load_info, Koliseo* kls, Koliseo_Temp* t_kls) {
 	if (win == NULL) {
 		log_tag("debug_log.txt","[ERROR]","move_update():  win was NULL.");
 		exit(EXIT_FAILURE);
@@ -686,7 +686,7 @@ void move_update(Floor* floor, int* current_x, int* current_y, WINDOW* win, Path
 		switch(c) {
 			case 'm': {
 				picked = 0;
-				handleRogueMenu(path,player,room,load_info,kls,t_kls);
+				handleRogueMenu(gamestate,path,player,room,load_info,kls,t_kls);
 				//Draw current FOV
 				draw_floor_view(floor, *current_x, *current_y, win);
 				continue;
