@@ -382,6 +382,10 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 		}
 		break;
 		case OP_DEBUG: {
+			if (gmst == NULL) {
+				log_tag("debug_log.txt","[WARN]","Gamestate pointer was null in turnOP(OP_DEBUG)");
+				exit(EXIT_FAILURE);
+			}
 			if (room == NULL) {
 				log_tag("debug_log.txt","[WARN]","Room pointer was null in turnOP(OP_DEBUG)");
 				exit(EXIT_FAILURE);
