@@ -28,9 +28,9 @@
 
 ### Dependencies <a name = "dependencies"></a>
 
-  `autoconf` and `automake` are needed to generate the Makefile used to compile the game.
-  `ncurses-dev` is needed as a library dependecy.
-  `python` is needed to generate `./src/palette.c` and `./src/palette.h`.
+  - `autoconf` and `automake` are needed to generate the Makefile used to compile the game.
+  - `ncurses-dev` is needed as a library dependecy.
+  - `python` is needed to generate `./src/palette.c` and `./src/palette.h`.
 
 
   I included termios.h to have some of the messages be consistent in ignoring user input, so at the moment the code can't build on Windows.
@@ -38,7 +38,8 @@
 ### Initialising submodules <a name = "init_submodules"></a>
 
   You can initialise the submodules by running:
-  ### `git submodule update --init`
+
+    `git submodule update --init`
 
 ### Autoreconf and ./configure <a name = "autotools"></a>
 
@@ -55,6 +56,11 @@
   Which should prepare a `Makefile` with the correct macro definitions to turn on game debug at compile time. To reset the `Makefile` to release state, run:
 
     `./configure --enable-debug=no`
+
+  If you're compiling without using `autotools`, you may want to define the compiler macros:
+
+  - `-DHELAPORDO_DEBUG_LOG`  (Enables debug logging)
+  - `-DHELAPORDO_DEBUG_ACCESS` (Enables the -d flag to turn on debug mode)
 
 ### Compiling and running <a name = "compiling"></a>
 
@@ -107,5 +113,5 @@
 
   - `apple-arm64`
 
-  📦 v1.1.1 01/09/2023
+  📦 v1.1.3 02/09/2023
   https://github.com/jgabaut/helapordo/releases

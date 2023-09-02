@@ -8511,7 +8511,7 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
-				fprintf(kls_file,"Usage for HR_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_Header), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
 			}
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 
@@ -8582,7 +8582,7 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
-				fprintf(kls_file,"Usage for HR_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_Header), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
 			}
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
 
@@ -9111,7 +9111,7 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
-				fprintf(kls_file,"Usage for HR_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_Header), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
 			}
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 
@@ -9182,7 +9182,7 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
-				fprintf(kls_file,"Usage for HR_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_Header), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
 			}
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
 
