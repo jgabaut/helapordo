@@ -32,6 +32,9 @@ void resolve_staticPath(char static_path[500]);
 
 void dbg_Gamestate(Gamestate* gmst);
 void dbg_countStats(countStats* stats);
+void dbg_Wincon(Wincon* wc);
+void dbg_Path(Path* path);
+void dbg_Saveslot(Saveslot* saveslot);
 void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* path, Fighter* player, Gamemode gamemode );
 void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index);
 

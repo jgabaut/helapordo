@@ -2,10 +2,73 @@
 //Functions useful in many areas
 
 /**
+ * Debugs the passed (preallocated) Saveslot with log_tag().
+ * @param saveslot The allocated Saveslot to debug.
+ */
+void dbg_Saveslot(Saveslot* saveslot) {
+	if (saveslot == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Saveslot was NULL in dbg_Saveslot()");
+		exit(EXIT_FAILURE);
+	}
+	char msg[300];
+	sprintf(msg,"Saveslot name: { %s }", saveslot->name);
+	log_tag("debug_log.txt","[SAVESLOT]",msg);
+	sprintf(msg,"Saveslot save_path: { %s }", saveslot->save_path);
+	log_tag("debug_log.txt","[SAVESLOT]",msg);
+}
+
+/**
+ * Debugs the passed (preallocated) Path with log_tag().
+ * @param path The allocated Path to debug.
+ */
+void dbg_Path(Path* path) {
+	if (path == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Path was NULL in dbg_Path()");
+		exit(EXIT_FAILURE);
+	}
+	char msg[500];
+
+	sprintf(msg,"Path length: { %i }", path->length);
+	log_tag("debug_log.txt","[PATH]",msg);
+	sprintf(msg,"Path luck: { %i }", path->luck);
+	log_tag("debug_log.txt","[PATH]",msg);
+	sprintf(msg,"Path prize: { %i }", path->prize);
+	log_tag("debug_log.txt","[PATH]",msg);
+	sprintf(msg,"Path loreCounter: { %i }", path->loreCounter);
+	log_tag("debug_log.txt","[PATH]",msg);
+	sprintf(msg,"Path loreCounter: { %i }", path->loreCounter);
+	log_tag("debug_log.txt","[PATH]",msg);
+	dbg_Wincon(path->win_condition);
+	dbg_Saveslot(path->current_saveslot);
+}
+
+/**
+ * Debugs the passed (preallocated) Wincon with log_tag().
+ * @param gmst The allocated countStats to debug.
+ */
+void dbg_Wincon(Wincon* wc) {
+	if (wc == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Wincon was NULL in dbg_Wincon()");
+		exit(EXIT_FAILURE);
+	}
+	char msg[200];
+	sprintf(msg,"Wincon class: { %s } [ %i ]",stringFromWinconClass(wc->class),wc->class);
+	log_tag("debug_log.txt","[WINCON]",msg);
+	sprintf(msg,"Wincon current value: { %i }",wc->current_val);
+	log_tag("debug_log.txt","[WINCON]",msg);
+	sprintf(msg,"Wincon target value: { %i }",wc->target_val);
+	log_tag("debug_log.txt","[WINCON]",msg);
+}
+
+/**
  * Debugs the passed (preallocated) countStats with log_tag().
  * @param gmst The allocated countStats to debug.
  */
 void dbg_countStats(countStats* stats) {
+	if (stats == NULL) {
+		log_tag("debug_log.txt","[ERROR]","countStats was NULL in dbg_countStats()");
+		exit(EXIT_FAILURE);
+	}
 	char msg[300];
 	sprintf(msg,"Enemies killed:  { %i }",stats->enemieskilled);
 	log_tag("debug_log.txt","[countStats]",msg);
@@ -44,7 +107,7 @@ void dbg_countStats(countStats* stats) {
 void dbg_Gamestate(Gamestate* gmst) {
 	char msg[200];
 	if (gmst == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in print_Gamestate_2file()");
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in dbg_Gamestate()");
 		exit(EXIT_FAILURE);
 	}
 	log_tag("debug_log.txt","[DEBUG]","Gamestate:{");
@@ -57,6 +120,7 @@ void dbg_Gamestate(Gamestate* gmst) {
 	sprintf(msg,"Current enemy index: { %i }", gmst->current_enemy_index);
 	log_tag("debug_log.txt","[GAMESTATE]",msg);
 	dbg_countStats(gmst->stats);
+	dbg_Path(gmst->path);
 	log_tag("debug_log.txt","[GAMESTATE]","}");
 }
 
