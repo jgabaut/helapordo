@@ -33,6 +33,7 @@ char* hlp_regiontype_strings[HLP_MAX_INDEX+1] = {
 	"HLP_Room_desc",
 	"HLP_countStats",
 	"HLP_Saveslot",
+	"HLP_Gamestate",
 	"HLP_loadInfo",
 };
 

@@ -30,6 +30,10 @@ void init_game_color_pairs(void);
 void screenTime(float t);
 void resolve_staticPath(char static_path[500]);
 
+void dbg_Gamestate(Gamestate* gmst);
+void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* path, Fighter* player, Gamemode gamemode );
+void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index);
+
 void loadLore(char** lore_strings, int loreKind);
 
 void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int roomsDone);

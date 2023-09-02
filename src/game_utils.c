@@ -2,6 +2,94 @@
 //Functions useful in many areas
 
 /**
+ * Debugs the passed (preallocated) Gamestate with log_tag().
+ * @param gmst The allocated Gamestate to debug.
+ */
+void dbg_Gamestate(Gamestate* gmst) {
+	char msg[200];
+	if (gmst == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in print_Gamestate_2file()");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[DEBUG]","Gamestate:{");
+	sprintf(msg,"Current fighters: { %i }", gmst->current_fighters);
+	log_tag("debug_log.txt","[GAMESTATE]",msg);
+	sprintf(msg,"Current room index: { %i }", gmst->current_room_index);
+	log_tag("debug_log.txt","[GAMESTATE]",msg);
+	sprintf(msg, "Current room type: { %s } [ %i ]", stringFromRoom(gmst->current_roomtype), gmst->current_roomtype);
+	log_tag("debug_log.txt","[GAMESTATE]",msg);
+	sprintf(msg,"Current enemy index: { %i }", gmst->current_enemy_index);
+	log_tag("debug_log.txt","[GAMESTATE]",msg);
+	log_tag("debug_log.txt","[GAMESTATE]","}");
+}
+
+/**
+ * Updates the passed (preallocated) Gamestate with the passed int values.
+ * @param gmst The allocated Gamestate to update.
+ * @param current_fighters Number of current Fighters.
+ * @param current_roomtype roomClass for current Room.
+ * @param current_room_index Index for current Room.
+ * @param current_enemy_index Index for current Enemy.
+ */
+void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index) {
+	if (gmst == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	gmst->current_fighters = current_fighters;
+	gmst->current_roomtype = current_roomtype;
+	gmst->current_room_index = current_room_index;
+	gmst->current_enemy_index = current_enemy_index;
+}
+
+/**
+ * Inits the passed (preallocated) Gamestate with the passed pointers.
+ * @param gmst The allocated Gamestate to init.
+ * @param stats Game stats.
+ * @param wincon Game Wincon.
+ * @param path Game Path.
+ * @param player Game main player.
+ * @param gamemode Picked gamemode.
+ */
+void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* path, Fighter* player, Gamemode gamemode ) {
+	char msg[200];
+	if (gmst == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (stats == NULL) {
+		log_tag("debug_log.txt","[ERROR]","countStats was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (wincon == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Wincon was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (path == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Path was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (player == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Player was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (gamemode != Story && gamemode != Rogue) {
+		sprintf(msg,"Invalid gamemode requested: [%i]",gamemode);
+		log_tag("debug_log.txt","[ERROR]",msg);
+		exit(EXIT_FAILURE);
+	}
+	gmst->stats = stats;
+	gmst->current_fighters = -1;
+	gmst->current_roomtype = -1;
+	gmst->current_room_index = -1;
+	gmst->current_enemy_index = -1;
+	gmst->wincon = wincon;
+	gmst->path = path;
+	gmst->player = player;
+	gmst->gamemode = gamemode;
+}
+
+/**
  * Allocates and prepares a turnOP_args and returns a pointer to it.
  * @see turnOP_args
  * @see turnOption_OP

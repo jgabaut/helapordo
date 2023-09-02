@@ -10891,6 +10891,12 @@ void gameloop(int argc, char** argv){
 		sprintf(msg,"Prep took %d s, %d ms.\n",time_spent/1000,time_spent%1000);
 		log_tag("debug_log.txt","[DEBUG]",msg);
 
+		Gamestate* gamestate = KLS_PUSH_TYPED(default_kls,Gamestate,1,HR_Gamestate,"Gamestate","Gamestate");
+		init_Gamestate(gamestate, player->stats, path->win_condition, path, player, GAMEMODE);
+		update_Gamestate(gamestate, 1, HOME, roomsDone, -1);
+		log_tag("debug_log.txt","[DEBUG]","Initialised Gamestate.");
+		dbg_Gamestate(gamestate);
+
 		if (GAMEMODE == Story || GAMEMODE == Standard) {
 
 			//Loop till wincon reached
