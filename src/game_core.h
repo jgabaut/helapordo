@@ -7,7 +7,7 @@
  * Defines indexes for all types that are allocated with Koliseo.
  */
 typedef enum HLP_Region_Type {
-	HR_Path=KLS_Header+100, //Start counting from last index of Koliseo's own Region_Type values
+	HR_Path=KLS_REGIONTYPE_MAX+100, //Start counting from last index of Koliseo's own Region_Type values
 	HR_Wincon,
 	HR_Room,
 	HR_Floor,
@@ -37,7 +37,7 @@ typedef enum HLP_Region_Type {
 /**
  * Defines max index for an HLP_Region_Type value.
  */
-#define HLP_MAX_INDEX (HR_loadInfo-100+KLS_Header)
+#define HLP_MAX_INDEX (HR_loadInfo-100+KLS_REGIONTYPE_MAX)
 
 /**
  * Array with the name strings for HLP_Region_Type values.
@@ -112,12 +112,12 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 2
+#define HELAPORDO_PATCH_VERSION 3
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.1.2"
+#define VERSION "1.1.3"
 
 /**
  * Default savepath.

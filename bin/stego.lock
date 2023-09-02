@@ -23,4 +23,5 @@ kazoj# tests folder name
 1.0.11# Add saveslot selection
 1.1.0# Animations and lores are compiled
 1.1.1# Palette is compiled
-1.1.2# Define HLP_Region_Type, bump Koliseo to 0.1.17
+1.1.2# Define HLP_Region_Type, bump Koliseo to 0.1.17 - Deprecated
+1.1.3# Fix enum conversion warn, bump Koliseo to 0.1.18
