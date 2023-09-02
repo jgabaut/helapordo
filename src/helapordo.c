@@ -8293,8 +8293,10 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 			's':  Sprites slideshow\t'd':  Dump debug symbols\n\
 			'g':  Toggle godmode\t'A':  Toggle autosave\n\
 			'L':  Toggle logging\t'F':  Try Floor functionality\n\
-			'Q':  Toggle fast quit\t'K': Log passed kls state to debug log file.\n\
-			'T': Log global temporary_kls state to debug log file.\n\
+			'Q':  Toggle fast quit\t'k': Log passed kls state to debug log file.\n\
+			't': Log global temporary_kls state to debug log file.\n\
+			'K': Log usage stats for passed kls to debug log file.\n\
+			'T': Log usage stats for temporary_kls to debug log file.\n\
 			{Return}  Process your input line.\t'q':  Quit\n\
 		]\n\n\
 	[%s@debug-func]$ ",player->name);
@@ -8505,6 +8507,35 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 				fprintf(stderr,"debug_generic():  kls was NULL.\n");
 				exit(EXIT_FAILURE);
 			}
+
+			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
+			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
+				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
+				fprintf(kls_file,"Usage for HR_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_Header), i, usage);
+			}
+			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
+
+			fclose(kls_file);
+		}
+		break;
+		case 't': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			print_kls_2file(kls_file,temporary_kls);
 			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
@@ -8530,6 +8561,35 @@ void debug_generic(Fighter* player, Path* p, int roomIndex, Koliseo* kls, Kolise
 		}
 		break;
 		case 'K': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
+
+			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
+			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
+				ptrdiff_t usage = kls_type_usage(i,kls);
+				fprintf(kls_file,"Usage for HR_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_Header), i, usage);
+			}
+			fprintf(kls_file,"--END debug of passed kls--\n\n");
+
+			fclose(kls_file);
+		}
+		break;
+		case 'k': {
 			char path_to_kls_file[600];
 			char static_path[500];
 			// Set static_path value to the correct static dir path
@@ -8849,8 +8909,10 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 			's':  Sprites slideshow\t'd': Dump debug symbols\n\
 			'f':  Show foes info\t'g': Toggle godmode\n\
 			'A':  Toggle autosave\t'Q': Toggle fast quit\n\
-			'L':  Toggle logging\t'K': Log passed Koliseo info\n\
-			'T': Log global temporary_kls Koliseo info\n\
+			'L':  Toggle logging\t'k': Log passed Koliseo info\n\
+			't': Log global temporary_kls Koliseo info\n\
+			'K': Log usage stats for passed kls to debug log file.\n\
+			'T': Log usage stats for temporary_kls to debug log file.\n\
 			'q': Quit\t{Return}  Process your input line.\n\
 		]\n\n\
 	[%s@debug-func]$ ",player->name);
@@ -9045,6 +9107,35 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 				fprintf(stderr,"debug_generic():  kls was NULL.\n");
 				exit(EXIT_FAILURE);
 			}
+
+			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
+			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
+				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
+				fprintf(kls_file,"Usage for HR_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_Header), i, usage);
+			}
+			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
+
+			fclose(kls_file);
+		}
+		break;
+		case 't': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			print_kls_2file(kls_file,temporary_kls);
 			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
@@ -9070,6 +9161,35 @@ void debug_enemies_room(Room* room, Fighter* player, Enemy* e, Path* p, int room
 		}
 		break;
 		case 'K': {
+			char path_to_kls_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Append to "kls_log.txt"
+			sprintf(path_to_kls_file,"%s/%s",static_path,"debug_log.txt");
+			FILE* kls_file = NULL;
+			kls_file = fopen(path_to_kls_file, "a");
+			if (kls_file == NULL) {
+				fprintf(stderr,"debug_generic():  failed opening debug logfile.\n");
+				exit(EXIT_FAILURE);
+			}
+			if (kls == NULL) {
+				fprintf(stderr,"debug_generic():  kls was NULL.\n");
+				exit(EXIT_FAILURE);
+			}
+
+			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
+			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
+				ptrdiff_t usage = kls_type_usage(i,kls);
+				fprintf(kls_file,"Usage for HR_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_Header), i, usage);
+			}
+			fprintf(kls_file,"--END debug of passed kls--\n\n");
+
+			fclose(kls_file);
+		}
+		break;
+		case 'k': {
 			char path_to_kls_file[600];
 			char static_path[500];
 			// Set static_path value to the correct static dir path
