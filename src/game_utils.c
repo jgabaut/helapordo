@@ -2,6 +2,99 @@
 //Functions useful in many areas
 
 /**
+ * Debugs the passed (preallocated) Fighter with log_tag().
+ * @param fighter The allocated Fighter to debug.
+ */
+void dbg_Fighter(Fighter* fighter) {
+	if (fighter == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Fighter was NULL in dbg_Fighter()");
+		exit(EXIT_FAILURE);
+	}
+	char msg[300];
+	sprintf(msg,"Fighter name: { %s }", fighter->name);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter class: { %s } [ %i ]", stringFromClass(fighter->class), fighter->class);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter hp: { %i }", fighter->hp);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter atk: { %i }", fighter->atk);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter def: { %i }", fighter->def);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter vel: { %i }", fighter->vel);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter level: { %i }", fighter->level);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter luck: { %i }", fighter->luck);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter totalxp: { %i }", fighter->totalxp);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter currentlevelxp: { %i }", fighter->currentlevelxp);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter totallevelxp: { %i }", fighter->totallevelxp);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter totalhp: { %i }", fighter->totalhp);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter status: { %s } [ %i ]", stringFromStatus(fighter->status), fighter->status);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter energy: { %i }", fighter->energy);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter totalenergy: { %i }", fighter->totalenergy);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+
+	//Specialslot* specials[SPECIALSMAX+1]; /**< Array with all the Specialslot*/
+
+	//struct Turncounter* counters[COUNTERSMAX+1]; /**< Array with all the Turncounter pointers*/
+	sprintf(msg,"Fighter turnboost_atk: { %i }", fighter->turnboost_atk);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter turnboost_def: { %i }", fighter->turnboost_def);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter turnboost_vel: { %i }", fighter->turnboost_vel);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter turnboost_enr: { %i }", fighter->turnboost_enr);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter perksCount: { %i }", fighter->perksCount);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+
+	//Perk* perks[PERKSMAX+1]; /**< Array with all the Perk*/
+
+	//struct Equipslot* equipslots[EQUIPZONES+1]; /**< Array with all the Equipslot*/
+	//struct Equip* equipsBag[EQUIPSBAGSIZE+1]; /**< Array with all the Equip found*/
+	//struct Consumable* consumablesBag[CONSUMABLESMAX+1]; /**< Array with all the Consumables found*/
+	//struct Artifact* artifactsBag[ARTIFACTSMAX+1]; /**< Array with all the Artifacts found*/
+
+	sprintf(msg,"Fighter used equipsBag slots: { %i }", fighter->equipsBagOccupiedSlots);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter earliest equipsBag slot: { %i }", fighter->earliestBagSlot);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+
+	sprintf(msg,"Fighter permboost_atk: { %i }", fighter->permboost_atk);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter permboost_def: { %i }", fighter->permboost_def);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter permboost_vel: { %i }", fighter->permboost_vel);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter permboost_enr: { %i }", fighter->permboost_enr);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+
+	sprintf(msg,"Fighter equipboost_atk: { %i }", fighter->equipboost_atk);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter equipboost_def: { %i }", fighter->equipboost_def);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter equipboost_vel: { %i }", fighter->equipboost_vel);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter equipboost_enr: { %i }", fighter->equipboost_enr);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+
+	//dbg_countStats(fighter->stats);
+
+	sprintf(msg,"Fighter coins balance: { %i }", fighter->balance);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+	sprintf(msg,"Fighter keys balance: { %i }", fighter->keys_balance);
+	log_tag("debug_log.txt","[FIGHTER]",msg);
+}
+
+/**
  * Debugs the passed (preallocated) Saveslot with log_tag().
  * @param saveslot The allocated Saveslot to debug.
  */
@@ -93,7 +186,7 @@ void dbg_countStats(countStats* stats) {
 	sprintf(msg,"Unique Boss kills:  { %i }",stats->unique_bosseskilled);
 	log_tag("debug_log.txt","[countStats]",msg);
 	for (int i = 0; i < BOSSCLASSESMAX+1; i++) {
-		sprintf(msg,"Boss [%i] { %s  }:  { %s }", i, stringFromBossClass(i), (stats->killed_bosses[i] == 1 ? "Killed" : "Not Killed"));
+		sprintf(msg,"Boss [%i] { %s }:  { %s }", i, stringFromBossClass(i), (stats->killed_bosses[i] == 1 ? "Killed" : "Not Killed"));
 		log_tag("debug_log.txt","[countStats]",msg);
 	}
 	sprintf(msg,"Keys found:  { %i }",stats->keysfound);
@@ -111,6 +204,8 @@ void dbg_Gamestate(Gamestate* gmst) {
 		exit(EXIT_FAILURE);
 	}
 	log_tag("debug_log.txt","[DEBUG]","Gamestate:{");
+	sprintf(msg,"Current Gamemode: { %s } [ %i ]", stringFromGamemode(gmst->gamemode), gmst->gamemode);
+	log_tag("debug_log.txt","[GAMESTATE]",msg);
 	sprintf(msg,"Current fighters: { %i }", gmst->current_fighters);
 	log_tag("debug_log.txt","[GAMESTATE]",msg);
 	sprintf(msg,"Current room index: { %i }", gmst->current_room_index);
@@ -121,6 +216,7 @@ void dbg_Gamestate(Gamestate* gmst) {
 	log_tag("debug_log.txt","[GAMESTATE]",msg);
 	dbg_countStats(gmst->stats);
 	dbg_Path(gmst->path);
+	dbg_Fighter(gmst->player);
 	log_tag("debug_log.txt","[GAMESTATE]","}");
 }
 

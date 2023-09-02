@@ -31,6 +31,7 @@ void screenTime(float t);
 void resolve_staticPath(char static_path[500]);
 
 void dbg_Gamestate(Gamestate* gmst);
+void dbg_Fighter(Fighter* fighter);
 void dbg_countStats(countStats* stats);
 void dbg_Wincon(Wincon* wc);
 void dbg_Path(Path* path);
