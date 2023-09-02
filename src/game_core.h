@@ -4,6 +4,48 @@
 #include "../koliseo/src/koliseo.h"
 
 /**
+ * Defines indexes for all types that are allocated with Koliseo.
+ */
+typedef enum HLP_Region_Type {
+	HR_Path=KLS_Header+100, //Start counting from last index of Koliseo's own Region_Type values
+	HR_Wincon,
+	HR_Room,
+	HR_Floor,
+	HR_turnOP_args,
+	HR_Fighter,
+	HR_Enemy,
+	HR_Boss,
+	HR_FoeParty,
+	HR_Equip,
+	HR_Equipslot,
+	HR_Specialslot,
+	HR_Turncounter,
+	HR_Perk,
+	HR_Consumable,
+	HR_Artifact,
+	HR_Chest,
+	HR_Treasure,
+	HR_Shop,
+	HR_Roadfork,
+	HR_Turncounter_desc,
+	HR_Room_desc,
+	HR_countStats,
+	HR_Saveslot,
+	HR_loadInfo,
+} HLP_Region_Type;
+
+/**
+ * Defines max index for an HLP_Region_Type value.
+ */
+#define HLP_MAX_INDEX (HR_loadInfo-100+KLS_Header)
+
+/**
+ * Array with the name strings for HLP_Region_Type values.
+ * @see HLP_Region_Type
+ */
+extern char* hlp_regiontype_strings[HLP_MAX_INDEX+1];
+
+/**
  * Global variable for default Koliseo.
  */
 extern Koliseo* default_kls;
@@ -70,12 +112,12 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 1
+#define HELAPORDO_PATCH_VERSION 2
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.1.1"
+#define VERSION "1.1.2"
 
 /**
  * Default savepath.

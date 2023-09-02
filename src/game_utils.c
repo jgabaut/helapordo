@@ -22,7 +22,7 @@ turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* 
 	sprintf(msg,"Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
 	log_tag("debug_log.txt","[TURNOP]",msg);
 	kls_log("DEBUG",msg);
-	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_NAMED(tkls,turnOP_args,1,"turnOP_args",msg);
+	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_TYPED(tkls,turnOP_args,1,HR_turnOP_args,"turnOP_args",msg);
 
 	res->actor = actor;
 	res->path = path;
@@ -805,6 +805,17 @@ char* descStringFromChest(int c) {
  */
 char* stringFromFoePartyClass(foePartyClass fp) {
 	return foepartystrings[fp];
+}
+
+/**
+ * Takes a integer and returns the corresponding HLP_Region_Type string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see HLP_Region_Type
+ * @param t The HLP type.
+ * @return String corresponding to the HLP_Region_Type name.
+ */
+char* stringFrom_HLP_Region_Type(HLP_Region_Type t) {
+	return hlp_regiontype_strings[t];
 }
 
 /**

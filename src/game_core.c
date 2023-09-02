@@ -6,6 +6,36 @@ char* gamemodenamestrings[GAMEMODE_MAX+1] = {
 	"Rogue"
 };
 
+char* hlp_regiontype_strings[HLP_MAX_INDEX+1] = {
+	"None",
+	"KLS_Header",
+	"HLP_Path",
+	"HLP_Wincon",
+	"HLP_Room",
+	"HLP_Floor",
+	"HLP_turnOP_args",
+	"HLP_Fighter",
+	"HLP_Enemy",
+	"HLP_Boss",
+	"HLP_FoeParty",
+	"HLP_Equip",
+	"HLP_Equipslot",
+	"HLP_Specialslot",
+	"HLP_Turncounter",
+	"HLP_Perk",
+	"HLP_Consumable",
+	"HLP_Artifact",
+	"HLP_Chest",
+	"HLP_Treasure",
+	"HLP_Shop",
+	"HLP_Roadfork",
+	"HLP_Turncounter_desc",
+	"HLP_Room_desc",
+	"HLP_countStats",
+	"HLP_Saveslot",
+	"HLP_loadInfo",
+};
+
 Saveslot default_saveslots[MAX_SAVESLOTS+1] = {
 	{"default_1","helapordo-save.txt"},
 	{"default_2","helapordo-save-2.txt"},
