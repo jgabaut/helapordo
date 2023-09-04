@@ -10127,7 +10127,7 @@ void gameloop(int argc, char** argv){
 			}
 
 		}
-		log_tag("debug_log.txt","[DEBUG]","Done getopt.\n");
+		log_tag("debug_log.txt","[DEBUG]","Done getopt.");
 
 		// Clear screen and print title, wait for user to press enter
 		int clearres = system("clear");
@@ -10396,7 +10396,7 @@ void gameloop(int argc, char** argv){
 		//End of loading animations
 		clock_t animationload_time = clock() - start_time;
 		double time_spent_loading_animations = (double) animationload_time / CLOCKS_PER_SEC;
-		sprintf(load_msg,"Animation loading took %0.7f seconds.\n",time_spent_loading_animations);
+		sprintf(load_msg,"Animation loading took %0.7f seconds.",time_spent_loading_animations);
 		log_tag("debug_log.txt","[DEBUG]",load_msg);
 
 		initscr();

@@ -777,13 +777,13 @@ void usage(char* progname) {
 }
 
 /**
- * Takes a filename string, a string headear and a string message (assumes correctly formed strings).
+ * Takes a filename string, a string headear and a format string.
  * Tries logging the message to the passed file if global var G_DEBUG_ON is set.
  * @param filename The filename to open.
  * @param header The string header for the message to log.
- * @param msg The string to log.
+ * @param format The format string for message.
  */
-void log_tag(char* filename, char* header, char* msg) {
+void log_tag(char* filename, char* header, const char* format, ...) {
 	#ifndef HELAPORDO_DEBUG_LOG
 	#else
 	// Open log file if log flag is set and append to it
@@ -804,16 +804,21 @@ void log_tag(char* filename, char* header, char* msg) {
 		if (!logfile) {
 			fprintf(stderr, "Error opening log file.\n Static path: (%s) Filename : (%s).\n", static_path, filename);
 			fprintf(stderr, "Path to debug file was: (%s).", path_to_debug_file);
-			fprintf(stderr, "Msg was:    %s", msg);
+			fprintf(stderr, "Format was:    %s", format);
 			exit(EXIT_FAILURE);
 		}
+		va_list args;
+		va_start(args, format);
 		time_t now = time(0);
 		struct tm *mytime = localtime(&now);
 		char timeheader[500];
 		if ( strftime(timeheader, sizeof timeheader, "%X", mytime) )
 		{
-			fprintf(logfile,"%s %-12.12s    %s\n", timeheader, header, msg);
+			fprintf(logfile,"[ %s ] [ %-12.12s ] [", timeheader, header);
+			vfprintf(logfile,format,args);
+			fprintf(logfile,"]\n");
 		}
+		va_end(args);
 		fclose(logfile);
 	}
 	#endif
