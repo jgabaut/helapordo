@@ -9876,7 +9876,6 @@ void gameloop(int argc, char** argv){
   strcpy(kls_progname,whoami);
 
 	do {
-		char msg[1500]; //This has a big scope.
 		#ifndef HELAPORDO_DEBUG_LOG
 		#else
 		FILE *debug_file = NULL;
@@ -10044,15 +10043,11 @@ void gameloop(int argc, char** argv){
 			fclose(debug_file);
 
 			//Lay debug info
-			sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			sprintf(msg,"kls_progname == (%s)",kls_progname);
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			sprintf(msg,"G_LOG_ON == (%i)",G_LOG_ON);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","G_DEBUG_ON == (%i)",G_DEBUG_ON);
+			log_tag("debug_log.txt","[DEBUG]","kls_progname == (%s)",kls_progname);
+			log_tag("debug_log.txt","[DEBUG]","G_LOG_ON == (%i)",G_LOG_ON);
 			log_tag("debug_log.txt","[DEBUG]","small DEBUG FLAG ASSERTED");
-  			sprintf(msg,"[Current position in default_kls] [pos: %li]\n",kls_get_pos(default_kls));
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","[Current position in default_kls] [pos: %li]\n",kls_get_pos(default_kls));
 
 			//Truncate OPS_LOGFILE
 			sprintf(path_to_OPS_debug_file,"%s/%s",static_path,OPS_LOGFILE);
@@ -10064,29 +10059,22 @@ void gameloop(int argc, char** argv){
 			}
 			fprintf(OPS_debug_file,"[OPLOG]    --New game--  \n");
 			fclose(OPS_debug_file);
-			sprintf(msg,"Truncated [%s]",OPS_LOGFILE);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Truncated [%s]",OPS_LOGFILE);
     		}
 		#endif
 
 		if (G_DEBUG_ENEMYTYPE_ON == 1) {
-			char msg[200];
-			sprintf(msg,"G_DEBUG_ENEMYTYPE_ON == (%i)",G_DEBUG_ENEMYTYPE_ON);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","G_DEBUG_ENEMYTYPE_ON == (%i)",G_DEBUG_ENEMYTYPE_ON);
 			log_tag("debug_log.txt","[DEBUG]","ENEMY DEBUG FLAG ASSERTED");
 			if ((G_DEBUG_ON > 0)) {
 				G_DEBUG_ON += 1;
-				sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
-				log_tag("debug_log.txt","[DEBUG]",msg);
-				sprintf(msg,"Forcing enemy type: (%s)",optarg);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","G_DEBUG_ON == (%i)",G_DEBUG_ON);
+				log_tag("debug_log.txt","[DEBUG]","Forcing enemy type: (%s)",optarg);
 				int setenemy_debug = 0;
 				for (int ec=0; ec<ENEMYCLASSESMAX && (setenemy_debug == 0); ec++) {
-						sprintf(msg,"Checking optarg for -E: (%s)",stringFromEClass(ec));
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","Checking optarg for -E: (%s)",stringFromEClass(ec));
 					if ((strcmp(optarg,stringFromEClass(ec)) == 0)) {
-						sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",stringFromEClass(ec),ec);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",stringFromEClass(ec),ec);
 						G_DEBUG_ENEMYTYPE = ec;
 						setenemy_debug=1;
 					}
@@ -10099,28 +10087,23 @@ void gameloop(int argc, char** argv){
 			}
 		}
 		if (G_DEBUG_ROOMTYPE_ON == 1) {
-			sprintf(msg,"G_DEBUG_ROOMTYPE_ON == (%i)",G_DEBUG_ROOMTYPE_ON);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","G_DEBUG_ROOMTYPE_ON == (%i)",G_DEBUG_ROOMTYPE_ON);
 			log_tag("debug_log.txt","[DEBUG]","ROOM DEBUG FLAG ASSERTED");
 			if ((G_DEBUG_ON > 0)) {
 				G_DEBUG_ON += 1;
-				sprintf(msg,"G_DEBUG_ON == (%i)",G_DEBUG_ON);
-				log_tag("debug_log.txt","[DEBUG]",msg);
-				sprintf(msg,"Forcing room type: optarg was (%s)", optarg);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","G_DEBUG_ON == (%i)",G_DEBUG_ON);
+				log_tag("debug_log.txt","[DEBUG]","Forcing room type: optarg was (%s)", optarg);
 				int setroom_debug = 0;
 				for (int rc=0; (rc<ROOM_CLASS_MAX +1) && (setroom_debug == 0); rc++) {
-						sprintf(msg,"Checking optarg (%s) for -R: (%s)", optarg, stringFromRoom(rc));
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","Checking optarg (%s) for -R: (%s)", optarg, stringFromRoom(rc));
 					if ((strcmp(optarg,stringFromRoom(rc)) == 0)) {
-						sprintf(msg,"Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",stringFromRoom(rc),rc);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",stringFromRoom(rc),rc);
 						G_DEBUG_ROOMTYPE = rc;
 						setroom_debug=1;
 					}
 				}
 				if (setroom_debug == 0) {
-					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -R flag.\n");
+					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -R flag.");
 					fprintf(stderr,"[ERROR]    Incorrect -R \"roomType\" arg.\n");
 					exit(EXIT_FAILURE);
 				};
@@ -10131,8 +10114,7 @@ void gameloop(int argc, char** argv){
 
 		// Clear screen and print title, wait for user to press enter
 		int clearres = system("clear");
-		sprintf(msg,"gameloop() system(\"clear\") res was (%i)",clearres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","gameloop() system(\"clear\") res was (%i)",clearres);
 		printTitle();
 		char c;
 		yellow();
@@ -10147,13 +10129,7 @@ void gameloop(int argc, char** argv){
 		printf("\t\t\t\t\t\t");
                 printFormattedVersion(whoami);
 		int scanfres = scanf("%c",&c);
-		sprintf(msg,"gameloop() scanf() res was (%i)", scanfres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
-
-
-
-
-
+		log_tag("debug_log.txt","[DEBUG]","gameloop() scanf() res was (%i)", scanfres);
 
 		// Parse positional arguments
 		//for (int i = optind; i < argc; i++) {
@@ -10162,7 +10138,6 @@ void gameloop(int argc, char** argv){
 		Fighter* player = NULL;
 
 		clock_t start_time = clock(), diff_time;
-		char load_msg[100];
 
 		// Prepare the fighter frames
 		char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS];
@@ -10201,8 +10176,7 @@ void gameloop(int argc, char** argv){
 				}
 				break;
 				default: {
-					sprintf(msg,"Unexpected fighterclass index while loading animation for class (%i): [%s]",i,stringFromClass(i));
-					log_tag("debug_log.txt","[ERROR]",msg);
+					log_tag("debug_log.txt","[ERROR]","Unexpected fighterclass index while loading animation for class (%i): [%s]",i,stringFromClass(i));
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -10221,8 +10195,7 @@ void gameloop(int argc, char** argv){
 			log_tag("debug_log.txt","[PREP]",load_msg);
 			*/
 
-		      sprintf(msg,"Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromClass(i),n_load_frames,n_load_rows,n_load_cols);
-		      log_tag("debug_log.txt","[PREP]",msg);
+		      log_tag("debug_log.txt","[PREP]","Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromClass(i),n_load_frames,n_load_rows,n_load_cols);
 
 			//Massive log of all loaded lines
 			/*
@@ -10288,8 +10261,7 @@ void gameloop(int argc, char** argv){
 			      }
 			      break;
 			      default: {
-					sprintf(msg,"Unexpected enemy index while loading animation for enemy (%i): [%s]",i,stringFromEClass(i));
-					log_tag("debug_log.txt","[ERROR]",msg);
+					log_tag("debug_log.txt","[ERROR]","Unexpected enemy index while loading animation for enemy (%i): [%s]",i,stringFromEClass(i));
 					exit(EXIT_FAILURE);
 			      }
 		      }
@@ -10305,8 +10277,7 @@ void gameloop(int argc, char** argv){
 			log_tag("debug_log.txt","[PREP]",load_msg);
 		       */
 
-		      sprintf(msg,"Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromEClass(i),n_load_frames,n_load_rows,n_load_cols);
-		      log_tag("debug_log.txt","[PREP]",msg);
+		      log_tag("debug_log.txt","[PREP]","Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromEClass(i),n_load_frames,n_load_rows,n_load_cols);
 
 			//Massive log of all loaded lines
 			/*
@@ -10361,8 +10332,7 @@ void gameloop(int argc, char** argv){
 			      }
 			      break;
 			      default: {
-				      sprintf(msg,"Unexpected boss index while loading animation for boss (%i): [%s]",i,stringFromBossClass(i));
-				      log_tag("debug_log.txt","[ERROR]",msg);
+				      log_tag("debug_log.txt","[ERROR]","Unexpected boss index while loading animation for boss (%i): [%s]",i,stringFromBossClass(i));
 				      exit(EXIT_FAILURE);
 			      }
 		      }
@@ -10378,8 +10348,7 @@ void gameloop(int argc, char** argv){
 		      log_tag("debug_log.txt","[PREP]",load_msg);
 		      */
 
-		      sprintf(msg,"Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromBossClass(i),n_load_frames,n_load_rows,n_load_cols);
-		      log_tag("debug_log.txt","[PREP]",msg);
+		      log_tag("debug_log.txt","[PREP]","Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",stringFromBossClass(i),n_load_frames,n_load_rows,n_load_cols);
 
 			//Massive log of all loaded lines
 			/*
@@ -10396,8 +10365,7 @@ void gameloop(int argc, char** argv){
 		//End of loading animations
 		clock_t animationload_time = clock() - start_time;
 		double time_spent_loading_animations = (double) animationload_time / CLOCKS_PER_SEC;
-		sprintf(load_msg,"Animation loading took %0.7f seconds.",time_spent_loading_animations);
-		log_tag("debug_log.txt","[DEBUG]",load_msg);
+		log_tag("debug_log.txt","[DEBUG]","Animation loading took %0.7f seconds.",time_spent_loading_animations);
 
 		initscr();
 		// TODO
@@ -10515,8 +10483,7 @@ void gameloop(int argc, char** argv){
 					ITEM *cur;
 					cur = current_item(savepick_menu);
 					savepick_choice = getTurnChoice((char*)item_name(cur));
-					sprintf(msg,"Left on choice: [ %s ] value (%i)",item_name(cur),savepick_choice);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","Left on choice: [ %s ] value (%i)",item_name(cur),savepick_choice);
 					if (savepick_choice == NEW_GAME) {
 						log_tag("debug_log.txt","[DEBUG]","Should do something");
 					}
@@ -10526,8 +10493,7 @@ void gameloop(int argc, char** argv){
 					ITEM *cur;
 					cur = current_item(savepick_menu);
 					savepick_choice = getTurnChoice((char*)item_name(cur));
-					sprintf(msg,"Right on choice: [ %s ] value (%i)",item_name(cur),savepick_choice);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","Right on choice: [ %s ] value (%i)",item_name(cur),savepick_choice);
 					if (savepick_choice == NEW_GAME) {
 						log_tag("debug_log.txt","[DEBUG]","Should do something");
 					}
@@ -10572,8 +10538,7 @@ void gameloop(int argc, char** argv){
 			wrefresh(savepick_menu_win);
 			if (savepick_choice == NEW_GAME) {
 				int picked_saveslot_index = get_saveslot_index();
-				sprintf(msg,"Saveslot index picked: [%i]",picked_saveslot_index);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Saveslot index picked: [%i]",picked_saveslot_index);
 				sprintf(current_save_path,"%s",default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
 				//TODO
 				//Get picked_slot with a curses menu.
@@ -10585,8 +10550,7 @@ void gameloop(int argc, char** argv){
 				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &savepick_kls);
 			} else if (savepick_choice == LOAD_GAME) {
 				int picked_saveslot_index = get_saveslot_index();
-				sprintf(msg,"Saveslot index picked: [%i]",picked_saveslot_index);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Saveslot index picked: [%i]",picked_saveslot_index);
 				sprintf(current_save_path,"%s",default_saveslots[picked_saveslot_index].save_path); //Update saveslot_path value
 				//TODO
 				//Get picked_slot with a curses menu.
@@ -10595,31 +10559,27 @@ void gameloop(int argc, char** argv){
 				//ATM we expect a single save.
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
-				sprintf(msg,"Set load value: load_info->is_new_game == (%i)", load_info->is_new_game);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Set load value: load_info->is_new_game == (%i)", load_info->is_new_game);
 				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls, &savepick_kls);
 				//TODO
 				//Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
 			} else if (savepick_choice == QUIT) {
 				//TODO
 				//We can quit, I guess.
-				sprintf(msg,"Savepick menu: doing exit(%i)",EXIT_SUCCESS);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Savepick menu: doing exit(%i)",EXIT_SUCCESS);
 				// Unpost menu and free all the memory taken up
 				unpost_menu(savepick_menu);
 				free_menu(savepick_menu);
 				log_tag("debug_log.txt","[FREE]","Freed savepick menu");
 				for(int k = 0; k < savepick_n_choices; k++) {
 					free_item(savepick_items[k]);
-					sprintf(msg,"Freed %i savepick menu item",k);
-					log_tag("debug_log.txt","[FREE]",msg);
+					log_tag("debug_log.txt","[FREE]","Freed %i savepick menu item",k);
 				}
 
 				delwin(savepick_menu_win);
 				endwin();
 				exit(EXIT_SUCCESS);
 			} else if (savepick_choice == TUTORIAL) {
-				//TODO: show tutorial
 				log_tag("debug_log.txt","[DEBUG]","Doing tutorial.");
 				handleTutorial();
 				exit(EXIT_SUCCESS);
@@ -10635,8 +10595,7 @@ void gameloop(int argc, char** argv){
 		log_tag("debug_log.txt","[FREE]","Freed savepick menu");
 		for(int k = 0; k < savepick_n_choices; k++) {
 			free_item(savepick_items[k]);
-			sprintf(msg,"Freed %i savepick menu item",k);
-			log_tag("debug_log.txt","[FREE]",msg);
+			log_tag("debug_log.txt","[FREE]","Freed %i savepick menu item",k);
 		}
 
 		delwin(savepick_menu_win);
@@ -10647,12 +10606,10 @@ void gameloop(int argc, char** argv){
 
 		//Flush the terminal
 		int clrres = system("clear");
-		sprintf(msg,"gameloop() system(\"clear\") after savepick res was (%i)",clrres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","gameloop() system(\"clear\") after savepick res was (%i)",clrres);
 
 		//By now, we expect load_info->is_new_game to be set to 0 or 1.
-		sprintf(msg,"  Checking is_new_game:  load_info->is_new_game == (%i)",load_info->is_new_game);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","  Checking is_new_game:  load_info->is_new_game == (%i)",load_info->is_new_game);
 
 		Koliseo_Temp gamestate_kls = kls_temp_start(temporary_kls);
 
@@ -10660,8 +10617,7 @@ void gameloop(int argc, char** argv){
 			path = randomise_path(rand(), default_kls, current_save_path);
 			path->loreCounter = -1;
 
-			sprintf(msg,"Prepping Fighter");
-			kls_log("DEBUG",msg);
+			kls_log("DEBUG","Prepping Fighter");
   			player = (Fighter*) KLS_PUSH_TYPED(default_kls, Fighter, 1, HR_Fighter, "Fighter","Fighter");
 
 			int optTot = optind;
@@ -10698,22 +10654,19 @@ void gameloop(int argc, char** argv){
 				fprintf(stderr,"[ERROR]    Can't open savefile for loading game.\n");
 				fprintf(stderr,"[ERROR]    Expected at path [%s].\n",path_to_savefile);
 				//Debug error
-				sprintf(msg,"Could not load savefile at (%s)",path_to_savefile);
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","Could not load savefile at (%s)",path_to_savefile);
 				exit(EXIT_FAILURE);
 			}
 
 			//Update loading_room_turn_args->save_file pointer
 			loading_room_turn_args->save_file = save_file;
-			sprintf(msg,"Assigned loading_room_turn_args->save_file: path [%s]",path_to_savefile);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Assigned loading_room_turn_args->save_file: path [%s]",path_to_savefile);
 
 			//Read save type
 			//
 			saveType loaded_save_type = -1;
 			loaded_save_type = read_saveType(save_file);
-			sprintf(msg,"Read saveType, was [%s].",stringFrom_saveType(loaded_save_type));
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Read saveType, was [%s].",stringFrom_saveType(loaded_save_type));
 
 			if ( loaded_save_type == -1 ) {
 				log_tag("debug_log.txt","[ERROR]","Failed setting loaded_save_type. Quitting.");
@@ -10724,13 +10677,11 @@ void gameloop(int argc, char** argv){
 
 			load_info->save_type = loaded_save_type;
 
-			sprintf(msg,"Assigned load_info->save_type: [%s]", stringFrom_saveType(load_info->save_type));
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Assigned load_info->save_type: [%s]", stringFrom_saveType(load_info->save_type));
 
 
 			path = randomise_path(rand(), default_kls, current_save_path);
-			sprintf(msg,"Prepping Loady Fighter");
-			kls_log("DEBUG",msg);
+			kls_log("DEBUG","Prepping Loady Fighter");
   			player = (Fighter*) KLS_PUSH_TYPED(default_kls, Fighter, 1, HR_Fighter, "Fighter","Loady Fighter");
 			player->class = Knight;
 
@@ -10738,11 +10689,9 @@ void gameloop(int argc, char** argv){
 
 			//Update loading_room_turn_args->actor pointer
 			loading_room_turn_args->actor = player;
-			sprintf(msg,"Assigned Fighter [%s]. loading_room_turn_args->actor->name: [%s]",player->name, loading_room_turn_args->actor->name);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Assigned Fighter [%s]. loading_room_turn_args->actor->name: [%s]",player->name, loading_room_turn_args->actor->name);
 
-			sprintf(msg,"Prepping Loady Wincon");
-			kls_log("DEBUG",msg);
+			kls_log("DEBUG","Prepping Loady Wincon");
 			Wincon* w = (Wincon*) KLS_PUSH_TYPED(default_kls, Wincon, 1, HR_Wincon, "Wincon","Loady Wincon");
 			w->class = FULL_PATH;
 			initWincon(w,path,w->class);
@@ -10751,21 +10700,18 @@ void gameloop(int argc, char** argv){
 
 			if (load_info->save_type == ENEMIES_SAVE) {
 
-				sprintf(msg,"Prepping Loady Enemy");
-				kls_log("DEBUG",msg);
+				kls_log("DEBUG","Prepping Loady Enemy");
 				load_info->loaded_enemy = (Enemy*) KLS_PUSH_TYPED(default_kls, Enemy, 1, HR_Enemy, "Enemy","Loaded Enemy");
 				//FIXME: the structs related to loaded enemy are not loaded on default_kls
 				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, &gamestate_kls);
 
 				//Update loading_room_turn_args->enemy pointer
 				loading_room_turn_args->enemy = load_info->loaded_enemy;
-				sprintf(msg,"Assigned load_info->loaded_enemy->class == [%s]. loading_room_turn_args->loaded_enemy->class == [%s]",stringFromEClass(load_info->loaded_enemy->class), stringFromEClass(loading_room_turn_args->enemy->class));
-				log_tag("debug_log.txt","[TURNOP]",msg);
+				log_tag("debug_log.txt","[TURNOP]","Assigned load_info->loaded_enemy->class == [%s]. loading_room_turn_args->loaded_enemy->class == [%s]",stringFromEClass(load_info->loaded_enemy->class), stringFromEClass(loading_room_turn_args->enemy->class));
 			}
 			//Update loading_room_turn_args->path pointer
 			loading_room_turn_args->path = path;
-			sprintf(msg,"Assigned loading_room_turn_args->path == [path] (len %i)",path->length);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Assigned loading_room_turn_args->path == [path] (len %i)",path->length);
 
 
 			switch (load_info->save_type) {
@@ -10774,10 +10720,8 @@ void gameloop(int argc, char** argv){
 					//int* loadinfo_totfoes = &(load_info->total_foes);
 					//FIXME: the structs related to loaded enemy are not loaded on default_kls
 					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls, &gamestate_kls);
-					sprintf(msg,"OP_LOAD_ENEMYROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
-					log_tag("debug_log.txt","[TURNOP]",msg);
-					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
-					log_tag("debug_log.txt","[FREE]",msg);
+					log_tag("debug_log.txt","[TURNOP]","OP_LOAD_ENEMYROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
+					log_tag("debug_log.txt","[FREE]","Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
 					//free(loading_room_turn_args);
 				}
 				break;
@@ -10786,18 +10730,15 @@ void gameloop(int argc, char** argv){
 					//int* loadinfo_totfoes = &(load_info->total_foes);
 					//FIXME: the structs related to loaded enemy are not loaded on default_kls
 					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls, &gamestate_kls);
-					sprintf(msg,"OP_LOAD_HOMEROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
-					log_tag("debug_log.txt","[TURNOP]",msg);
-					sprintf(msg,"Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
-					log_tag("debug_log.txt","[FREE]",msg);
+					log_tag("debug_log.txt","[TURNOP]","OP_LOAD_HOMEROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
+					//log_tag("debug_log.txt","[FREE]","Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
 					load_info->done_loading = 1;
 					log_tag("debug_log.txt","[PREP]","Set load_info->done_loading to 1.");
 					//free(loading_room_turn_args);
 				}
 				break;
 				default: {
-					sprintf(msg,"gameloop():  Unexpected save type, value was (%i).",(int) load_info->save_type);
-					log_tag("debug_log.txt","[ERROR]",msg);
+					log_tag("debug_log.txt","[ERROR]","gameloop():  Unexpected save type, value was (%i).",(int) load_info->save_type);
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -10820,8 +10761,7 @@ void gameloop(int argc, char** argv){
 		 */
 
 		int* loreCounter = &(path->loreCounter);
-		sprintf(msg,"loreCounter == (%i)",*loreCounter);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","loreCounter == (%i)",*loreCounter);
 
 		if (GAMEMODE == Story) {
 
@@ -10833,8 +10773,7 @@ void gameloop(int argc, char** argv){
 			 */
 
 			if (load_info->is_new_game) {
-				sprintf(msg,"loreCounter was (%i), setting it to 0.",*loreCounter);
-				log_tag("debug_log.txt","[FIXME]",msg);
+				log_tag("debug_log.txt","[FIXME]","loreCounter was (%i), setting it to 0.",*loreCounter);
 				*loreCounter = 0; //We must set the counter before going forward
 				//FIXME:
 				//loreCounter should not start from 0 again.
@@ -10848,46 +10787,36 @@ void gameloop(int argc, char** argv){
 			 */
 
 		} else {
-			sprintf(msg,"GAMEMODE is not Story. Value was: (%i)",GAMEMODE);
-			log_tag("debug_log.txt","[WARN]",msg);
+			log_tag("debug_log.txt","[WARN]","GAMEMODE is not Story. Value was: (%i)",GAMEMODE);
 		}
 
 		//Set consumables sprites
 		for (int i = 0; i < CONSUMABLESMAX+1; i++) {
 			setConsumableSprite((Consumable*)player->consumablesBag[i]);
-			char msg[100];
-			sprintf(msg,"Set sprite for %s", stringFromConsumables(i));
-			log_tag("debug_log.txt","[PREP]",msg);
+			log_tag("debug_log.txt","[PREP]","Set sprite for %s", stringFromConsumables(i));
 		}
-		log_tag("debug_log.txt","[DEBUG-PREP]","Done setting sprites for Consumables.\n");
+		log_tag("debug_log.txt","[DEBUG-PREP]","Done setting sprites for Consumables.");
 		//Set artifact sprites
 		for (int i = 0; i < ARTIFACTSMAX+1; i++) {
 			setArtifactSprite(player->artifactsBag[i]);
-			char msg[100];
-			sprintf(msg,"Set sprite for %s", stringFromArtifacts(i));
-			log_tag("debug_log.txt","[PREP]",msg);
+			log_tag("debug_log.txt","[PREP]","Set sprite for %s", stringFromArtifacts(i));
 		}
-		log_tag("debug_log.txt","[PREP]","Done setting sprites for Artifacts.\n");
+		log_tag("debug_log.txt","[PREP]","Done setting sprites for Artifacts.");
 		//Set base equips sprites...
 		for (int i = 0; i < EQUIPSMAX+1; i++) {
 			setEquipSprite(&equips[i]);
-			char msg[100];
-			sprintf(msg,"Set sprite for %s", stringFromEquips(i));
-			log_tag("debug_log.txt","[PREP]",msg);
+			log_tag("debug_log.txt","[PREP]","Set sprite for %s", stringFromEquips(i));
 		}
-		log_tag("debug_log.txt","[PREP]","Done setting sprites for Equips.\n");
+		log_tag("debug_log.txt","[PREP]","Done setting sprites for Equips.");
 
 		if (load_info->is_new_game) {
-			log_tag("debug_log.txt","[PREP]","New game from scratch.\n");
+			log_tag("debug_log.txt","[PREP]","New game from scratch.");
 		} else {
-			log_tag("debug_log.txt","[PREP]","New game from loading.\n");
+			log_tag("debug_log.txt","[PREP]","New game from loading.");
 		}
-		sprintf(msg,"Name:    %s",player->name);
-		log_tag("debug_log.txt","[DEBUG]",msg);
-		sprintf(msg,"Class:    %s",stringFromClass(player->class));
-		log_tag("debug_log.txt","[DEBUG]",msg);
-		sprintf(msg,"Gamemode:    %s",stringFromGamemode(GAMEMODE));
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Name:    %s",player->name);
+		log_tag("debug_log.txt","[DEBUG]","Class:    %s",stringFromClass(player->class));
+		log_tag("debug_log.txt","[DEBUG]","Gamemode:    %s",stringFromGamemode(GAMEMODE));
 
 		//purple();
 		//printStats(player);
@@ -10898,8 +10827,7 @@ void gameloop(int argc, char** argv){
 		int roadFork_value = -1; //0 may be used as a value, so
 
 		Wincon* win_con = path->win_condition;
-		sprintf(msg,"Wincon:    %s\n",stringFromWinconClass(win_con->class));
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Wincon:    %s\n",stringFromWinconClass(win_con->class));
 
 		//int refresh_artifact_wincon = 0;
 		if (load_info->save_type == ENEMIES_SAVE) {
@@ -10912,8 +10840,7 @@ void gameloop(int argc, char** argv){
                 diff_time = clock() - start_time;
                 int time_spent = diff_time *1000 / CLOCKS_PER_SEC;
 		//sprintf(msg,"[DEBUG]    Prep took %0.7f seconds.\n",time_spent);
-		sprintf(msg,"Prep took %d s, %d ms.\n",time_spent/1000,time_spent%1000);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Prep took %d s, %d ms.",time_spent/1000,time_spent%1000);
 
 		Gamestate* gamestate = KLS_PUSH_TYPED(default_kls,Gamestate,1,HR_Gamestate,"Gamestate","Gamestate");
 		init_Gamestate(gamestate, player->stats, path->win_condition, path, player, GAMEMODE);
@@ -10929,8 +10856,7 @@ void gameloop(int argc, char** argv){
 
 				//Flush the terminal
 				int loop_clrres = system("clear");
-				sprintf(msg,"gameloop() system(\"clear\") in wincon loop, res: (%i)",loop_clrres);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","gameloop() system(\"clear\") in wincon loop, res: (%i)",loop_clrres);
 
 				//Check if we have to update the wincon value
 				if (path->win_condition->class == ALL_ARTIFACTS) {
@@ -10945,18 +10871,15 @@ void gameloop(int argc, char** argv){
 					enemyTotal = loaded_roomtotalenemies;
 				}
 
-				sprintf(msg,"Prepping Room for Story Gamemode. roomsDone=(%i)",roomsDone);
-				kls_log("DEBUG",msg);
+				kls_log("DEBUG","Prepping Room for Story Gamemode. roomsDone=(%i)",roomsDone);
 				Room* current_room = (Room*) KLS_PUSH_T_TYPED(gamestate_kls,Room,1,HR_Room,"Room","Story Room");
 
 				current_room->index = roomsDone;
 				setRoomType(path, &roadFork_value, &room_type, roomsDone);
-				sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
-				log_tag("debug_log.txt","[ROOM]",msg);
+				log_tag("debug_log.txt","[ROOM]","Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
 				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &gamestate_kls);
-				sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
-				log_tag("debug_log.txt","[ROOM]",msg);
+				log_tag("debug_log.txt","[ROOM]","Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
 
 				//Check if we need to display a story prompt
@@ -11027,8 +10950,7 @@ void gameloop(int argc, char** argv){
 
 				copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
 
-				sprintf(msg,"Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
-		      		log_tag("debug_log.txt","[PREP]",msg);
+		      		log_tag("debug_log.txt","[PREP]","Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
 
 				/*
 				 * TODO
@@ -11071,8 +10993,7 @@ void gameloop(int argc, char** argv){
 				wrefresh(door_win);
 
 				int result = animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
-				sprintf(msg,"animate() result was (%i)", result);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","animate() result was (%i)", result);
 				wclear(door_win);
 				wrefresh(door_win);
 				delwin(door_win);
@@ -11094,8 +11015,7 @@ void gameloop(int argc, char** argv){
 				} else if (current_room->class == ROADFORK) {
 					res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 				} else {
-					sprintf(msg,"Unexpected current_room->class value: [%i] [%s]",current_room->class,stringFromRoom(current_room->class));
-					log_tag("debug_log.txt","[ERROR]",msg);
+					log_tag("debug_log.txt","[ERROR]","Unexpected current_room->class value: [%i] [%s]",current_room->class,stringFromRoom(current_room->class));
 					//freeRoom(current_room);
 					log_tag("debug_log.txt","[ERROR]","Freed current room, quitting program.");
 					exit(EXIT_FAILURE);
@@ -11110,14 +11030,15 @@ void gameloop(int argc, char** argv){
 				else {
 					//Flush the terminal
 					int clrres = system("clear");
-					sprintf(msg,"gameloop() system(\"clear\") res was (%i)",clrres);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","gameloop() system(\"clear\") res was (%i)",clrres);
 
 					if (roadFork_value > 0) {
+						//TODO
+						//What is this?
 						lightYellow();
 						printStats(player);
 						lightGreen();
-						printf("\n\tYou completed room %i.\n",roomsDone);
+						log_tag("debug_log.txt","[ROADFORK?]","You completed room %i.",roomsDone);
 						white();
 					}
 					roomsDone++;
@@ -11144,11 +11065,10 @@ void gameloop(int argc, char** argv){
 			//Got out of the loop with res not being DEATH; so i won
 			if (res != OP_RES_DEATH) { //I guess player and enemy were freed already?
 				int clrres = system("clear");
-				sprintf(msg,"gameloop() 2 system(\"clear\") res was (%i)",clrres);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","gameloop() 2 system(\"clear\") res was (%i)",clrres);
 				handleStats(player);
 				printf("\n\n\tYOU WON!\n\n");
-				log_tag("debug_log.txt","[DEBUG]","Game won.\n");
+				log_tag("debug_log.txt","[DEBUG]","Game won.");
 			}
 
 			/*
@@ -11169,8 +11089,7 @@ void gameloop(int argc, char** argv){
 			log_tag("debug_log.txt","[DEBUG]","End of wincon loop.\n");
 
 		} else { //Gamemode is not Story or Standard
-			sprintf(msg,"Gamemode was [%i]",GAMEMODE);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Gamemode was [%i]",GAMEMODE);
 
 			if (GAMEMODE == Rogue) {
 				log_tag("debug_log.txt","[DEBUG]","Doing a Rogue run.");
@@ -11238,9 +11157,8 @@ void gameloop(int argc, char** argv){
 				int res = -1;
 				char msg[500];
 
-				sprintf(msg,"Prepping current_floor.");
-				log_tag("debug_log.txt","[DEBUG]",msg);
-				kls_log("DEBUG",msg);
+				log_tag("debug_log.txt","[DEBUG]","Prepping current_floor.");
+				kls_log("DEBUG","Prepping current_floor.");
 				Floor* current_floor = (Floor*) KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Floor");
 				// Start the random walk from the center of the dungeon
 				int center_x = FLOOR_MAX_COLS / 2;
@@ -11296,20 +11214,17 @@ void gameloop(int argc, char** argv){
 
 					//Check if current room needs to be played
 					if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
-						sprintf(msg,"Prepping Room for Rogue Gamemode. roomsDone=(%i)",roomsDone);
-						kls_log("DEBUG",msg);
+						kls_log("DEBUG","Prepping Room for Rogue Gamemode. roomsDone=(%i)",roomsDone);
 						current_room = (Room*) KLS_PUSH_T_TYPED(gamestate_kls,Room,1,HR_Room,"Room",msg);
 
 						current_room->index = roomsDone;
 						//setRoomType(path, &roadFork_value, &room_type, roomsDone);
 
 						room_type = current_floor->roomclass_layout[current_x][current_y];
-						sprintf(msg,"Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
-						log_tag("debug_log.txt","[ROOM]",msg);
+						log_tag("debug_log.txt","[ROOM]","Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
 						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &gamestate_kls);
-						sprintf(msg,"Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
-						log_tag("debug_log.txt","[ROOM]",msg);
+						log_tag("debug_log.txt","[ROOM]","Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
 
 						/*
@@ -11340,8 +11255,7 @@ void gameloop(int argc, char** argv){
 
 						copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
 
-						sprintf(msg,"Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
-		      				log_tag("debug_log.txt","[PREP]",msg);
+		      				log_tag("debug_log.txt","[PREP]","Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
 
 						/*
 						 * TODO
@@ -11386,8 +11300,7 @@ void gameloop(int argc, char** argv){
 						wrefresh(door_win);
 
 						int result = animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
-						sprintf(msg,"animate() result was (%i)", result);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","animate() result was (%i)", result);
 						wclear(door_win);
 						wrefresh(door_win);
 						delwin(door_win);
@@ -11416,22 +11329,23 @@ void gameloop(int argc, char** argv){
 						}
 
 						if (res == OP_RES_DEATH) {
-							log_tag("debug_log.txt","[DEBUG]","Room resulted in DEATH.\n");
+							log_tag("debug_log.txt","[DEBUG]","Room resulted in DEATH.");
 							//Free room memory
 							//freeRoom(current_room);
 							break;
 						} else {
 							//Flush the terminal
 							int clrres = system("clear");
-							sprintf(msg,"gameloop() system(\"clear\") res was (%i)",clrres);
-							log_tag("debug_log.txt","[DEBUG]",msg);
+							log_tag("debug_log.txt","[DEBUG]","gameloop() system(\"clear\") res was (%i)",clrres);
 
 							if (roadFork_value > 0) {
-								lightYellow();
+								//lightYellow();
+								//TODO
+								//What is this?
 								printStats(player);
-								lightGreen();
-								printf("\n\tYou completed room %i.\n",roomsDone);
-								white();
+								//lightGreen();
+								log_tag("debug_logx.txt","[ROADFORK?]","You completed room %i.",roomsDone);
+								//white();
 							}
 							roomsDone++;
 
@@ -11453,8 +11367,7 @@ void gameloop(int argc, char** argv){
 								case BOSS: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
 									floors_done++;
-									sprintf(msg,"Floors done: [%i]", floors_done);
-									log_tag("debug_log.txt","[DEBUG]",msg);
+									log_tag("debug_log.txt","[DEBUG]","Floors done: [%i]", floors_done);
 									//Check if we need to update the win condition
 									if (win_con->class == FULL_PATH) {
 										win_con->current_val++;
@@ -11512,16 +11425,14 @@ void gameloop(int argc, char** argv){
 								}
 								break;
 								default: {
-									sprintf(msg,"Unexpected roomclass value in Rogue loop: [%i] [%s]",current_floor->roomclass_layout[current_x][current_y],stringFromRoom(current_floor->roomclass_layout[current_x][current_y]));
-									log_tag("debug_log.txt","[ERROR]",msg);
+									log_tag("debug_log.txt","[ERROR]","Unexpected roomclass value in Rogue loop: [%i] [%s]",current_floor->roomclass_layout[current_x][current_y],stringFromRoom(current_floor->roomclass_layout[current_x][current_y]));
 									exit(EXIT_FAILURE);
 								}
 								break;
 							}
 						}
 					} else {
-						sprintf(msg,"Current room class was [%s] (val: %i), not playable.",stringFromRoom(current_floor->roomclass_layout[current_x][current_y]),current_floor->roomclass_layout[current_x][current_y]);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","Current room class was [%s] (val: %i), not playable.",stringFromRoom(current_floor->roomclass_layout[current_x][current_y]),current_floor->roomclass_layout[current_x][current_y]);
 					}
 
 					//Draw current FOV
@@ -11537,19 +11448,22 @@ void gameloop(int argc, char** argv){
 				 //Got out of the loop with res not being DEATH; so i won
 				 if (res != OP_RES_DEATH) { //I guess player and enemy were freed already?
 					 int clrres = system("clear");
-					 sprintf(msg,"gameloop() 2 system(\"clear\") res was (%i)",clrres);
-					 log_tag("debug_log.txt","[DEBUG]",msg);
+					 //TODO
+					 //What is this?
+					 log_tag("debug_log.txt","[DEBUG]","gameloop() 2 system(\"clear\") res was (%i)",clrres);
 					 handleStats(player);
 					 printf("\n\n\tYOU WON!\n\n");
-					 log_tag("debug_log.txt","[DEBUG]","Game won.\n");
+					 log_tag("debug_log.txt","[DEBUG]","Game won.");
 				 } else {
+					 //TODO
+					 //What is this?
 					 int clrres = system("clear");
-					 sprintf(msg,"gameloop() 3 system(\"clear\") res was (%i)",clrres);
-					 log_tag("debug_log.txt","[DEBUG]",msg);
+					 log_tag("debug_log.txt","[DEBUG]","gameloop() 3 system(\"clear\") res was (%i)",clrres);
 					 printf("\n\n\tYOU DIED.\n\n");
-					 log_tag("debug_log.txt","[DEBUG]","Game lost.\n");
+					 log_tag("debug_log.txt","[DEBUG]","Game lost.");
 				 }
 
+				 /*
 				 //Free lore strings if they were loaded
 				 if (GAMEMODE == Story) {
 					 for (int i=0; i<5; i++) {
@@ -11561,9 +11475,11 @@ void gameloop(int argc, char** argv){
 						 //free(lore_strings[i]);
 					 }
 				 }
+				 */
+
 				 //free(path->win_condition);
 				 //free(path);
-				 log_tag("debug_log.txt","[DEBUG]","End of wincon loop.\n");
+				 log_tag("debug_log.txt","[DEBUG]","End of wincon loop.");
 
 				//free(current_floor);
 
@@ -11576,9 +11492,11 @@ void gameloop(int argc, char** argv){
 		kls_temp_end(gamestate_kls);
 	} while (retry());
 
+	//TODO
+	//What is this?
 	purple();
 	printf("\n\n\t\tTHANKS 4 PLAYING!\n\n");
 	white();
-	log_tag("debug_log.txt","[DEBUG]","End of program.\n");
+	log_tag("debug_log.txt","[DEBUG]","End of program.");
 	exit(0);
 }
