@@ -15,7 +15,6 @@
  */
 OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t_kls) {
 
-	char msg[500];
 	OP_res res = INVALID_OP;
 
 	Gamestate* gmst = args->gmst;
@@ -73,8 +72,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			}
 			load_info = args->load_info;
 			if (load_info == NULL) {
-				sprintf(msg,"load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_ENEMYROOM");
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_ENEMYROOM");
 				return res;
 			}
 			save_file = args->save_file;
@@ -86,27 +84,20 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				return res;
 			}
 			int* ptr_to_loaded_enemy_index = &(load_info->enemy_index);
-			sprintf(msg,"*(ptr_to_loaded_enemy_index) == [%i]",*ptr_to_loaded_enemy_index);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","*(ptr_to_loaded_enemy_index) == [%i]",*ptr_to_loaded_enemy_index);
 			int* ptr_to_loaded_roomtotalenemies = (load_info->ptr_to_roomtotalenemies);
-			sprintf(msg,"*(ptr_to_loaded_roomtotalenemies) == [%i]",*ptr_to_loaded_roomtotalenemies);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","*(ptr_to_loaded_roomtotalenemies) == [%i]",*ptr_to_loaded_roomtotalenemies);
 			int* ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
-			sprintf(msg,"*(ptr_to_loaded_roomindex) == [%i]",*ptr_to_loaded_roomindex);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","*(ptr_to_loaded_roomindex) == [%i]",*ptr_to_loaded_roomindex);
 			int* tot_foes = &(load_info->total_foes);
-			sprintf(msg,"*(tot_foes) == [%i]",*tot_foes);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","*(tot_foes) == [%i]",*tot_foes);
 			int* ptr_to_done_loading = &(load_info->done_loading);
-			sprintf(msg,"*(done_loading) == [%i]",*ptr_to_done_loading);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","*(done_loading) == [%i]",*ptr_to_done_loading);
 			res = handleLoadgame_Enemies(save_file, actor, path, load_info->loaded_enemy, ptr_to_loaded_enemy_index, ptr_to_loaded_roomtotalenemies, ptr_to_loaded_roomindex, tot_foes, ptr_to_done_loading, kls);
 			//Log end of operation
-			sprintf(msg,"Done operation: [%s] res: [%s (%i)]",stringFromTurnOP(op), stringFrom_OP_res(res), res);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Done operation: [%s] res: [%s (%i)]",stringFromTurnOP(op), stringFrom_OP_res(res), res);
 
-			sprintf(msg,"res: [%s (%i)]", stringFrom_OP_res(res),res);
-			log_tag(OPS_LOGFILE,"[RES]",msg);
+			log_tag(OPS_LOGFILE,"[RES]","res: [%s (%i)]", stringFrom_OP_res(res),res);
 
 			return res;
 		}
@@ -120,8 +111,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			}
 			load_info = args->load_info;
 			if (load_info == NULL) {
-				sprintf(msg,"load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_HOMEROOM");
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_HOMEROOM");
 				return res;
 			}
 			save_file = args->save_file;
@@ -133,29 +123,23 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				return res;
 			}
 			if (load_info->ptr_to_roomindex == NULL) {
-				sprintf(msg,"load_info->ptr_to_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","load_info->ptr_to_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
 				return res;
 			}
 			int* ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
 			if (ptr_to_loaded_roomindex == NULL) {
-				sprintf(msg,"ptr_to_loaded_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","ptr_to_loaded_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
 				return res;
 			}
-			sprintf(msg,"*(ptr_to_loaded_roomindex) == [%i]",*ptr_to_loaded_roomindex);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","*(ptr_to_loaded_roomindex) == [%i]",*ptr_to_loaded_roomindex);
 
 			int* ptr_to_done_loading = &(load_info->done_loading);
-			sprintf(msg,"*(done_loading) == [%i]",*ptr_to_done_loading);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","*(done_loading) == [%i]",*ptr_to_done_loading);
 			res = handleLoadgame_Home(save_file, actor, path, ptr_to_loaded_roomindex, ptr_to_done_loading, kls);
 			//Log end of operation
-			sprintf(msg,"Done operation: [%s] res: [%s (%i)]",stringFromTurnOP(op), stringFrom_OP_res(res), res);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Done operation: [%s] res: [%s (%i)]",stringFromTurnOP(op), stringFrom_OP_res(res), res);
 
-			sprintf(msg,"res: [%s (%i)]", stringFrom_OP_res(res),res);
-			log_tag(OPS_LOGFILE,"[RES]",msg);
+			log_tag(OPS_LOGFILE,"[RES]","res: [%s (%i)]", stringFrom_OP_res(res),res);
 
 			return res;
 		}
@@ -177,33 +161,30 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				log_tag("debug_log.txt","[ERROR]","Boss pointer was null in turnOP(OP_FIGHT) for BOSS room.");
 				exit(EXIT_FAILURE);
 			} else if (room->class != ENEMIES && room->class != BOSS) {
-				sprintf(msg,"Invalid room class in turnOP(OP_FIGHT): (%s [%i])",stringFromRoom(room->class), room->class);
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","Invalid room class in turnOP(OP_FIGHT): (%s [%i])",stringFromRoom(room->class), room->class);
 				exit(EXIT_FAILURE);
 			}
 			switch (room->class) {
 				case ENEMIES: {
 					enemy_index = enemy->index;
-					sprintf(msg,"Setting enemy_index to (%i) (OP_FIGHT), isBoss == 0", enemy->index);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (%i) (OP_FIGHT), isBoss == 0", enemy->index);
 					isBoss = 0;
 					res = OP_res_from_fightResult(fight(actor, enemy, notify_win, kls));
 				}
 				break;
 				case BOSS: {
 					enemy_index = 0;
-					sprintf(msg,"Setting enemy_index to (0) (OP_FIGHT), isBoss == 1");
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (0) (OP_FIGHT), isBoss == 1");
 					isBoss = 1;
 					res = OP_res_from_fightResult(boss_fight(actor, boss, path, notify_win, kls));
 				}
 				break;
 				default: {
-					sprintf(msg,"Invalid room value in turnOP(OP_FIGHT): [%s (%i)]",stringFromRoom(room->class), room->class);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Invalid room value in turnOP(OP_FIGHT): [%s (%i)]",stringFromRoom(room->class), room->class);
 					exit(EXIT_FAILURE);
 
 				}
+				break;
 			}
 		}
 		break;
@@ -220,28 +201,24 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				log_tag("debug_log.txt","[ERROR]","Boss pointer was null in turnOP(OP_SPECIAL) for BOSS room.");
 				exit(EXIT_FAILURE);
 			} else if (room->class != ENEMIES && room->class != BOSS) {
-				sprintf(msg,"Invalid room class in turnOP(OP_SPECIAL): (%s [%i])",stringFromRoom(room->class), room->class);
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","Invalid room class in turnOP(OP_SPECIAL): (%s [%i])",stringFromRoom(room->class), room->class);
 				exit(EXIT_FAILURE);
 			}
 			switch (room->class) {
 				case ENEMIES: {
 					enemy_index = enemy->index;
-					sprintf(msg,"Setting enemy_index to (%i) (OP_SPECIAL), isBoss == 0", enemy->index);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (%i) (OP_SPECIAL), isBoss == 0", enemy->index);
 					isBoss = 0;
 				}
 				break;
 				case BOSS: {
 					enemy_index = 0;
-					sprintf(msg,"Setting enemy_index to (0) (OP_SPECIAL), isBoss == 1");
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (0) (OP_SPECIAL), isBoss == 1");
 					isBoss = 1;
 				}
 				break;
 				default: {
-					sprintf(msg,"Invalid room value in turnOP(OP_SPECIAL): [%s (%i)]",stringFromRoom(room->class), room->class);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Invalid room value in turnOP(OP_SPECIAL): [%s (%i)]",stringFromRoom(room->class), room->class);
 					exit(EXIT_FAILURE);
 
 				}
@@ -263,28 +240,24 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				log_tag("debug_log.txt","[ERROR]","Boss pointer was null in turnOP(OP_CONSUMABLE) for BOSS room.");
 				exit(EXIT_FAILURE);
 			} else if (room->class != ENEMIES && room->class != BOSS) {
-				sprintf(msg,"Invalid room class in turnOP(OP_CONSUMABLE): (%s [%i])",stringFromRoom(room->class), room->class);
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","Invalid room class in turnOP(OP_CONSUMABLE): (%s [%i])",stringFromRoom(room->class), room->class);
 				exit(EXIT_FAILURE);
 			}
 			switch (room->class) {
 				case ENEMIES: {
 					enemy_index = enemy->index;
-					sprintf(msg,"Setting enemy_index to (%i) (OP_CONSUMABLE), isBoss == 0", enemy->index);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (%i) (OP_CONSUMABLE), isBoss == 0", enemy->index);
 					isBoss = 0;
 				}
 				break;
 				case BOSS: {
 					enemy_index = 0;
-					sprintf(msg,"Setting enemy_index to (0) (OP_CONSUMABLE), isBoss == 1");
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (0) (OP_CONSUMABLE), isBoss == 1");
 					isBoss = 1;
 				}
 				break;
 				default: {
-					sprintf(msg,"Invalid room value in turnOP(OP_CONSUMABLE): [%s (%i)]",stringFromRoom(room->class), room->class);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Invalid room value in turnOP(OP_CONSUMABLE): [%s (%i)]",stringFromRoom(room->class), room->class);
 					exit(EXIT_FAILURE);
 
 				}
@@ -323,42 +296,35 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			}
 
 			if ((room->class != ENEMIES) && (room->class != HOME)) {
-				sprintf(msg,"Invalid room class in turnOP(OP_SAVE): (%s [%i])",stringFromRoom(room->class), room->class);
-				log_tag("debug_log.txt","[ERROR]",msg);
+				log_tag("debug_log.txt","[ERROR]","Invalid room class in turnOP(OP_SAVE): (%s [%i])",stringFromRoom(room->class), room->class);
 				exit(EXIT_FAILURE);
 			}
 
 			switch (room->class) {
 				case ENEMIES: {
 					enemy_index = enemy->index;
-					sprintf(msg,"Setting enemy_index to (%i) (OP_SAVE), isBoss == 0", enemy->index);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (%i) (OP_SAVE), isBoss == 0", enemy->index);
 					isBoss = 0;
 					load_info->save_type = ENEMIES_SAVE;
-					sprintf(msg,"Setting save_type to ENEMIES_SAVE. [%s]", stringFrom_saveType(load_info->save_type));
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting save_type to ENEMIES_SAVE. [%s]", stringFrom_saveType(load_info->save_type));
 				}
 				break;
 				case BOSS: {
 					enemy_index = 0;
-					sprintf(msg,"Setting enemy_index to (0) (OP_SAVE), isBoss == 1");
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (0) (OP_SAVE), isBoss == 1");
 					isBoss = 1;
 				}
 				break;
 				case HOME: {
 					enemy_index = -1;
-					sprintf(msg,"Setting enemy_index to (-1) (OP_SAVE), isBoss == -1");
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (-1) (OP_SAVE), isBoss == -1");
 					isBoss = -1;
 					load_info->save_type = HOME_SAVE;
-					sprintf(msg,"Setting save_type to HOME_SAVE. [%s]", stringFrom_saveType(load_info->save_type));
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting save_type to HOME_SAVE. [%s]", stringFrom_saveType(load_info->save_type));
 				}
 				break;
 				default: {
-					sprintf(msg,"Invalid room value in turnOP(OP_SAVE): [%s (%i)]",stringFromRoom(room->class), room->class);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Invalid room value in turnOP(OP_SAVE): [%s (%i)]",stringFromRoom(room->class), room->class);
 					exit(EXIT_FAILURE);
 
 				}
@@ -373,8 +339,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				}
 				break;
 				default: {
-					sprintf(msg,"Invalid save_type value in turnOP(OP_SAVE): (%i)", (int) load_info->save_type);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Invalid save_type value in turnOP(OP_SAVE): (%i)", (int) load_info->save_type);
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -402,8 +367,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			switch (room->class) {
 				case HOME: {
 					enemy_index = -1;
-					sprintf(msg,"Setting enemy_index to (%i) (OP_DEBUG), isBoss == -1", enemy_index);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (%i) (OP_DEBUG), isBoss == -1", enemy_index);
 					isBoss = -1;
 					log_tag("debug_log.txt","[TURNOP]","Doing endwin() before debug_generic()");
 					endwin();
@@ -413,8 +377,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				break;
 				case ENEMIES: {
 					enemy_index = enemy->index;
-					sprintf(msg,"Setting enemy_index to (%i) (OP_DEBUG), isBoss == 0", enemy->index);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (%i) (OP_DEBUG), isBoss == 0", enemy->index);
 					isBoss = 0;
  					debug_enemies_room(gmst,room,actor,enemy,path,room_index,enemy_index,kls,t_kls);
 					res = OP_OK;
@@ -422,8 +385,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				break;
 				case BOSS: {
 					enemy_index = 0;
-					sprintf(msg,"Setting enemy_index to (0) (OP_DEBUG), isBoss == 1");
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (0) (OP_DEBUG), isBoss == 1");
 					isBoss = 1;
 					log_tag("debug_log.txt","[TURNOP]","Doing endwin() before debug_generic()");
 					endwin();
@@ -432,8 +394,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				}
 				break;
 				default: {
-					sprintf(msg,"Invalid room value in turnOP(OP_DEBUG): [%s (%i)]",stringFromRoom(room->class), room->class);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Invalid room value in turnOP(OP_DEBUG): [%s (%i)]",stringFromRoom(room->class), room->class);
 					exit(EXIT_FAILURE);
 				}
 			}
@@ -506,11 +467,9 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 	}
 
 	//Log end of operation
-	sprintf(msg,"Done operation: [%s] res: [%s (%i)]",stringFromTurnOP(op), stringFrom_OP_res(res), res);
-	log_tag("debug_log.txt","[TURNOP]",msg);
+	log_tag("debug_log.txt","[TURNOP]","Done operation: [%s] res: [%s (%i)]",stringFromTurnOP(op), stringFrom_OP_res(res), res);
 
-	sprintf(msg,"res: [%s (%i)]", stringFrom_OP_res(res),res);
-	log_tag(OPS_LOGFILE,"[RES]",msg);
+	log_tag(OPS_LOGFILE,"[RES]","res: [%s (%i)]", stringFrom_OP_res(res),res);
 
 	return res;
 }
