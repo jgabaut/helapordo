@@ -93,9 +93,7 @@ int get_saveslot_index(void) {
 		(char *)NULL,
 	};
 
-	char msg[1000];
-	sprintf(msg,"get_saveslot_index(): getting index from user.");
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","get_saveslot_index(): getting index from user.");
 
 	int choice = 999;
 	int picked = 0;
@@ -207,8 +205,7 @@ int get_saveslot_index(void) {
 				ITEM *cur;
 				cur = current_item(saveslots_menu);
 				choice = getTurnChoice((char*)item_name(cur));
-				sprintf(msg,"Left on choice: [ %s ] value (%i)",item_name(cur),choice);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Left on choice: [ %s ] value (%i)",item_name(cur),choice);
 				if (choice == EQUIPS) {
 					log_tag("debug_log.txt","[DEBUG]","Should do something");
 				}
@@ -218,8 +215,7 @@ int get_saveslot_index(void) {
 				ITEM *cur;
 				cur = current_item(saveslots_menu);
 				choice = getTurnChoice((char*)item_name(cur));
-				sprintf(msg,"Right on choice: [ %s ] value (%i)",item_name(cur),choice);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Right on choice: [ %s ] value (%i)",item_name(cur),choice);
 				if (choice == EQUIPS) {
 					log_tag("debug_log.txt","[DEBUG]","Should do something");
 				}
@@ -280,15 +276,16 @@ int get_saveslot_index(void) {
 	int totalChoices = n_choices;
 	for(int k = 0; k < totalChoices; k++) {
 		free_item(menu_items[k]);
-		sprintf(msg,"Freed %i saveslots menu item",k);
-		log_tag("debug_log.txt","[FREE]",msg);
+		log_tag("debug_log.txt","[FREE]","Freed %i saveslots menu item",k);
 	}
+	free(menu_items);
 
 	delwin(saveslots_win);
 	endwin();
 	log_tag("debug_log.txt","[DEBUG]","Ended window mode for get_saveslot_index()");
-	sprintf(msg,"Ended get_saveslot_index(), returning [%i]",choice);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","Ended get_saveslot_index(), returning [%i]",choice);
+	//TODO
+	//Why have the choice misaligned?
 	return choice -1;
 }
 
