@@ -1640,11 +1640,9 @@ void setCounter(Turncounter* c,int turns) {
 void setSpecials(Fighter* f, Koliseo* kls){
 	char movename[80];
 	char movedesc[80];
-	char msg[200];
 	for (int i = 0; i <= SPECIALSMAX ; i++) {
-		sprintf(msg,"Prepping Specialslot (%i)",i);
-		kls_log("DEBUG",msg);
-		Specialslot* s = (Specialslot*) KLS_PUSH_TYPED(kls,Specialslot,1,HR_Specialslot,"Specialslot",msg);
+		kls_log("DEBUG","Prepping Specialslot (%i)",i);
+		Specialslot* s = (Specialslot*) KLS_PUSH_TYPED(kls,Specialslot,1,HR_Specialslot,"Specialslot","Specialslot");
 		s->enabled = 0;
 		s->move = i + ( f->class  * (SPECIALSMAX + 1) ) ; // Assign the i-th move offsetting by classNum * specialsMax
 		s->cost = costFromSpecial(f->class,i);
@@ -1802,11 +1800,9 @@ void applyArtifacts(Fighter* f, Enemy* e, Boss* b, int isBoss){
  * @param kls The Koliseo used for allocations.
  */
 void initEquipSlots(Fighter* f, Koliseo* kls){
-	char msg[200];
 	for (int i = 0; i <= EQUIPZONES ; i++) {
-		sprintf(msg,"Prepping Equipslot (%i)",i);
-		kls_log("DEBUG",msg);
-		Equipslot* s = (Equipslot*) KLS_PUSH_TYPED(kls,Equipslot,1,HR_Equipslot,"Equipslot",msg);
+		kls_log("DEBUG","Prepping Equipslot (%i)",i);
+		Equipslot* s = (Equipslot*) KLS_PUSH_TYPED(kls,Equipslot,1,HR_Equipslot,"Equipslot","Equipslot");
 		s->active = 0;
 		s->type = i;
 		setEquipslotSprite(s);
@@ -1824,12 +1820,10 @@ void initEquipSlots(Fighter* f, Koliseo* kls){
  * @param kls The Koliseo to do allocations.
  */
 void initConsumableBag(Fighter* f, Koliseo* kls) {
-	char msg[200];
 
 	for (int i = 0; i < CONSUMABLESMAX +1; i++) {
-		sprintf(msg,"Prepping Consumable (%i)",i);
-		kls_log("DEBUG",msg);
-		Consumable* c = (Consumable*) KLS_PUSH_TYPED(kls, Consumable, 1,HR_Consumable,"Consumable",msg);
+		kls_log("DEBUG","Prepping Consumable (%i)",i);
+		Consumable* c = (Consumable*) KLS_PUSH_TYPED(kls, Consumable, 1,HR_Consumable,"Consumable","Consumable");
 		c->class = i;
 
 		Consumable* base = &consumablesBase[i];
@@ -1856,11 +1850,9 @@ void initConsumableBag(Fighter* f, Koliseo* kls) {
  * @param f The Fighter pointer whose artifactsBag field will be initialised.
  */
 void initArtifactsBag(Fighter* f, Koliseo* kls) {
-	char msg[200];
 	for (int i = 0; i < ARTIFACTSMAX +1; i++) {
-		sprintf(msg,"Prepping Artifact (%i)",i);
-		kls_log("DEBUG",msg);
-		Artifact* a = (Artifact*) KLS_PUSH_TYPED(kls,Artifact,1,HR_Artifact,"Artifact",msg);
+		kls_log("DEBUG","Prepping Artifact (%i)",i);
+		Artifact* a = (Artifact*) KLS_PUSH_TYPED(kls,Artifact,1,HR_Artifact,"Artifact","Artifact");
 		a->class = i;
 
 		Artifact* base = &artifactsBase[i];
@@ -1903,7 +1895,6 @@ void initArtifactsBag(Fighter* f, Koliseo* kls) {
  * @param kls The Koliseo used for allocation.
  */
 void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
-	char msg[200];
 
 	//player luck : MAXPLAYERLUCK = path luck : MAXLUCK
 
@@ -1911,9 +1902,8 @@ void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
 
 	BaseStats* base = &basestats[player->class];
 
-	sprintf(msg,"Prepping countStats");
-	kls_log("DEBUG",msg);
-	countStats* s = (countStats*) KLS_PUSH_TYPED(kls,countStats,1,HR_countStats,"countStats",msg);
+	kls_log("DEBUG","Prepping countStats");
+	countStats* s = (countStats*) KLS_PUSH_TYPED(kls,countStats,1,HR_countStats,"countStats","countStats");
 
 	s->enemieskilled=0;
 	s->criticalhits=0;
@@ -1990,9 +1980,7 @@ void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
  */
 void initEnemyStats(Enemy* e, Koliseo_Temp* t_kls) {
 	EnemyBaseStats* base = &baseenemystats[e->class];
-	char msg[200];
-	sprintf(msg,"Init stats for enemy (%s)",stringFromEClass(e->class));
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","Init stats for enemy (%s)",stringFromEClass(e->class));
 
 	float beastf = 1;
 
@@ -2153,7 +2141,6 @@ void initFoePartyStats(FoeParty* fp, Koliseo_Temp* t_kls) {
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void prepareFoeParty(FoeParty* fp, int partysize, int roomindex, Koliseo_Temp* t_kls) {
-	char msg[500];
 
 	//Class must be set by caller
 
@@ -2169,8 +2156,7 @@ void prepareFoeParty(FoeParty* fp, int partysize, int roomindex, Koliseo_Temp* t
 	//Load foeparty stats
 	initFoePartyStats(fp, t_kls);
 
-	sprintf(msg,"Prepared FoeParty with size (%i), room #%i.", partysize, roomindex);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","Prepared FoeParty with size (%i), room #%i.", partysize, roomindex);
 }
 
 /**
@@ -2314,9 +2300,7 @@ int getEnemyBoost(int lvl, enemyClass eclass) {
  * @param force The integer to bypass all checks if true.
  */
 void statResetEnemy(Enemy* e, int force) {
-	char msg[200];
-	sprintf(msg,"Call to statResetEnemy() with ($force) == (%i)", force);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","Call to statResetEnemy() with ($force) == (%i)", force);
 	if ( !force && (e->hp >= 0.4 * e->totalhp) && !( e->atk <=0 || e->def <= 0 || e->vel <=0) ) {
 		return;
 	}
@@ -2370,14 +2354,12 @@ void statResetEnemy(Enemy* e, int force) {
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex, Koliseo_Temp* t_kls) {
-		char msg[500];
 
 		//Randomise enemy class
 		e->class = rand() % (ENEMYCLASSESMAX + 1);
 
 		if (G_DEBUG_ENEMYTYPE_ON && ! (GAMEMODE == Story) ){ //Debug flag has a fixed enemy class when used outside of story gamemode
-			sprintf(msg,"prepareRoomEnemy(): Enemy debug flag was asserted outside of story mode, will always spawn a G_DEBUG_ENEMYTYPE (%s).\n",stringFromEClass(G_DEBUG_ENEMYTYPE));
-			log_tag("debug_log.txt","\n[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","prepareRoomEnemy(): Enemy debug flag was asserted outside of story mode, will always spawn a G_DEBUG_ENEMYTYPE (%s).",stringFromEClass(G_DEBUG_ENEMYTYPE));
 			e->class = G_DEBUG_ENEMYTYPE;
 		}
 
@@ -2465,7 +2447,6 @@ void setConsumablePrices(int size, int* consumablePrices, Consumable** consumabl
 void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 
 	Koliseo_Temp tkls = *t_kls;
-	char msg[200];
 
 	int equipsCount = (rand() % EQUIP_SHOP_MAX )+1;
 
@@ -2473,10 +2454,9 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 
 		for (int equip_index = 0; equip_index < equipsCount; equip_index++) {
 			int curr = (rand() % (EQUIPSMAX+1));
-			sprintf(msg,"Prepping Equip (%i/%i) for Shop", equip_index, equipsCount);
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Equip* e = (Equip*) KLS_PUSH_T_TYPED(tkls,Equip,1,HR_Equip,"Equip",msg);
+			log_tag("debug_log.txt","[DEBUG]","Prepping Equip (%i/%i) for Shop", equip_index, equipsCount);
+			kls_log("DEBUG","Prepping Equip (%i/%i) for Shop", equip_index, equipsCount);
+			Equip* e = (Equip*) KLS_PUSH_T_TYPED(tkls,Equip,1,HR_Equip,"Equip","Equip");
 
 			//Randomise quality
 			quality q = rand() % (QUALITIESMAX + 1);
@@ -2548,10 +2528,9 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 				if ( (rand() % 100) < chance ) {
 
 					e->perksCount += 1;
-					sprintf(msg,"Prepping Perk (%i) for Shop Equip (%i/%i)", i, equip_index, equipsCount);
-					log_tag("debug_log.txt","[DEBUG]",msg);
-					kls_log("DEBUG",msg);
-					Perk* p = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk",msg);
+					log_tag("debug_log.txt","[DEBUG]","Prepping Perk (%i) for Shop Equip (%i/%i)", i, equip_index, equipsCount);
+					kls_log("DEBUG","Prepping Perk (%i) for Shop Equip (%i/%i)", i, equip_index, equipsCount);
+					Perk* p = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk","Perk");
 					p->class = rand() % (PERKSMAX +1) ;
 					//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 					strcpy(p->name,nameStringFromPerk(p->class));
@@ -2605,10 +2584,9 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 				if (cons_prepared < uniqueConsumablesCount) {
 					int curr = rand() % (CONSUMABLESMAX+1);
 					if (!(already_rolled[curr])) {
-						sprintf(msg,"Prepping Consumable (%i/%i) for Shop", cons_prepared, uniqueConsumablesCount);
-						log_tag("debug_log.txt","[DEBUG]",msg);
-						kls_log("DEBUG",msg);
-						Consumable *cur = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable",msg);
+						log_tag("debug_log.txt","[DEBUG]","Prepping Consumable (%i/%i) for Shop", cons_prepared, uniqueConsumablesCount);
+						kls_log("DEBUG","Prepping Consumable (%i/%i) for Shop", cons_prepared, uniqueConsumablesCount);
+						Consumable *cur = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable","Consumable");
 						cur->class = curr;
 						already_rolled[curr] = 1;
 						if (uniqueConsumablesCount - cons_prepared > 0) {
@@ -2643,7 +2621,6 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 
 	Koliseo_Temp tkls = *t_kls;
-	char msg[200];
 
 	setChestSprite(c);
 
@@ -2663,8 +2640,7 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 		}
 		break;
 		default: {
-			sprintf(msg,"%i is not a valid chest class.\n",c->class);
-			log_tag("debug_log.txt","[ERROR]",msg);
+			log_tag("debug_log.txt","[ERROR]","%i is not a valid chest class.",c->class);
 			exit(EXIT_FAILURE);
 		}
 		break;
@@ -2676,10 +2652,9 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 
 	if (c->consumablesCount > 0) {
 		for (int i = 0; i < c->consumablesCount; i++) {
-			sprintf(msg,"Prepping Consumable (%i/%i) for Chest", i, c->consumablesCount);
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Consumable* cns = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable",msg);
+			log_tag("debug_log.txt","[DEBUG]","Prepping Consumable (%i/%i) for Chest", i, c->consumablesCount);
+			kls_log("DEBUG","Prepping Consumable (%i/%i) for Chest", i, c->consumablesCount);
+			Consumable* cns = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable","Consumable");
 			int drop = rand() % (CONSUMABLESMAX + 1);
 
 			cns->class = drop;
@@ -2706,10 +2681,9 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 			quality q = rand() % (QUALITIESMAX + 1);
 
 			//Prepare the item
-			sprintf(msg,"Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Equip* e = (Equip*) KLS_PUSH_T_TYPED(tkls,Equip,1,HR_Equip,"Equip",msg);
+			log_tag("debug_log.txt","[DEBUG]","Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
+			kls_log("DEBUG","Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
+			Equip* e = (Equip*) KLS_PUSH_T_TYPED(tkls,Equip,1,HR_Equip,"Equip","Equip");
 
 			//Get the base item and copy the stats to the drop
 			Equip* base = &equips[drop];
@@ -2780,10 +2754,9 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 
 					e->perksCount += 1;
 
-					sprintf(msg,"Prepping Perk (%i/%i) for Equip (%i/%i) for Chest", j, e->perksCount, i, c->equipsCount);
-					log_tag("debug_log.txt","[DEBUG]",msg);
-					kls_log("DEBUG",msg);
-					Perk* p = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk",msg);
+					log_tag("debug_log.txt","[DEBUG]","Prepping Perk (%i/%i) for Equip (%i/%i) for Chest", j, e->perksCount, i, c->equipsCount);
+					kls_log("DEBUG","Prepping Perk (%i/%i) for Equip (%i/%i) for Chest", j, e->perksCount, i, c->equipsCount);
+					Perk* p = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk","Perk");
 					p->class = rand() % (PERKSMAX +1) ;
 					//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 					strcpy(p->name,nameStringFromPerk(p->class));
@@ -2851,7 +2824,6 @@ void prepareChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
-	char msg[200];
 
 	Koliseo_Temp tkls = *t_kls;
 
@@ -2860,20 +2832,18 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 	switch(t->class) {
 		case TREASURE_CHEST: {
 
-			    sprintf(msg,"Allocated %lu for Treasure [Chest]:",sizeof(Chest));
-			    log_tag("debug_log.txt","[DEBUG]",msg);
-			    kls_log("DEBUG",msg);
-			    Chest* c = (Chest*) KLS_PUSH_T_TYPED(tkls,Chest,1,HR_Chest,"Chest",msg);
+			    log_tag("debug_log.txt","[DEBUG]","Allocated %lu for Treasure [Chest]:",sizeof(Chest));
+			    kls_log("DEBUG","Allocated %lu for Treasure [Chest]:",sizeof(Chest));
+			    Chest* c = (Chest*) KLS_PUSH_T_TYPED(tkls,Chest,1,HR_Chest,"Chest","Chest");
 			    prepareChest(c,f,t_kls);
 			    t->chest = c;
 
 			    }
 		break;
 		case TREASURE_CONSUMABLE: {
-			sprintf(msg,"Allocated %lu for Treasure [Consumable]:",sizeof(Consumable));
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Consumable* cns = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable",msg);
+			log_tag("debug_log.txt","[DEBUG]","Allocated %lu for Treasure [Consumable]:",sizeof(Consumable));
+			kls_log("DEBUG","Allocated %lu for Treasure [Consumable]:",sizeof(Consumable));
+			Consumable* cns = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable","Consumable");
 			int drop = rand() % (CONSUMABLESMAX + 1);
 
 			cns->class = drop;
@@ -2891,10 +2861,9 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 			}
 		break;
 		case TREASURE_ARTIFACT: {
-			sprintf(msg,"Allocated %lu for Treasure [Artifact]:",sizeof(Artifact));
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Artifact* a = (Artifact*) KLS_PUSH_T_TYPED(tkls,Artifact,1,HR_Artifact,"Artifact",msg);
+			log_tag("debug_log.txt","[DEBUG]","Allocated %lu for Treasure [Artifact]:",sizeof(Artifact));
+			kls_log("DEBUG","Allocated %lu for Treasure [Artifact]:",sizeof(Artifact));
+			Artifact* a = (Artifact*) KLS_PUSH_T_TYPED(tkls,Artifact,1,HR_Artifact,"Artifact","Artifact");
 			int drop = -1;
 			do {
 				drop = rand() % (ARTIFACTSMAX + 1);
@@ -3136,13 +3105,12 @@ void printEquipStats(Equip* e) {
  * @param enemyIndex The index of current enemy.
  */
 void printSpawnMessage(Enemy* e, int roomIndex, int enemyIndex) {
-	char msg[500];
 	if (!e->beast) {
 		//TODO:
 		//Where to print a windowed spawn message?
-		sprintf(msg, "Room %i)\t\t%s\t\tEnemy #%i",roomIndex,stringFromEClass(e->class),enemyIndex+1);
-		log_tag("debug_log.txt","[ROOM]",msg);
+		log_tag("debug_log.txt","[ROOM]","Room %i)\t\t%s\t\tEnemy #%i",roomIndex,stringFromEClass(e->class),enemyIndex+1);
 	} else {
+		log_tag("debug_log.txt","[ROOM]","Room %i)\t\t%s\t\tEnemy #%i IS BEAST",roomIndex,stringFromEClass(e->class),enemyIndex+1);
 		//lightBlue();
 		//printf("\nYou feel at discomfort.\n\nRoom %i)\t\t",roomIndex);
 		//lightRed();
@@ -3209,15 +3177,13 @@ void initWincon(Wincon* w, Path* p, winconClass class) {
  * @param kls The Koliseo used for allocation.
  */
 void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, Koliseo* kls) {
-	char msg[200];
 
 	int argTot = argc - optTot;
 	if (argTot == 0) {
 		pickName(player);
 		pickClass(player);
-		sprintf(msg,"Prepping Wincon");
-		kls_log("DEBUG",msg);
-  		Wincon* w = (Wincon*) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",msg);
+		kls_log("DEBUG","Prepping Wincon");
+  		Wincon* w = (Wincon*) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon","Wincon");
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3248,9 +3214,8 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 	}
 	if ( argTot == 1 ) {
 		pickClass(player);
-		sprintf(msg,"Prepping Wincon");
-		kls_log("DEBUG",msg);
-  		Wincon* w = (Wincon*) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",msg);
+		kls_log("DEBUG","Prepping Wincon");
+  		Wincon* w = (Wincon*) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon","Wincon");
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3277,9 +3242,8 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 		if (c < 0 ) {
 			pickClass(player);
 		}
-		sprintf(msg,"Prepping Wincon");
-		kls_log("DEBUG",msg);
-  		Wincon* w = (Wincon*) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",msg);
+		kls_log("DEBUG","Prepping Wincon");
+  		Wincon* w = (Wincon*) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon","Wincon");
 		if (GAMEMODE == Story) {
 			//Path length must be already initialised before getting here.
 			initWincon(w,path,FULL_PATH);
@@ -3302,10 +3266,8 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
  */
 turnOption getTurnChoice(char* ch) {
 	int comp = 999;
-	char msg[500];
 
-	sprintf(msg,"Turnchoice string was (%s)",ch);
-	log_tag("debug_log.txt","[TURNCHOICE]",msg);
+	log_tag("debug_log.txt","[TURNCHOICE]","Turnchoice string was (%s)",ch);
 	turnOption pick = INVALID;
 
 	while (pick == INVALID) {
@@ -3344,8 +3306,7 @@ turnOption getTurnChoice(char* ch) {
 		}
 	}
 
-	sprintf(msg,"Pick was: (%i)",pick);
-	log_tag("debug_log.txt","[TURNOPTION]",msg);
+	log_tag("debug_log.txt","[TURNOPTION]","Pick was: (%i)",pick);
 
 	if (pick == INVALID) {
 		fprintf(stderr,"Error: unexpected turn choice value");
@@ -3710,9 +3671,7 @@ void giveXp_Boss(Fighter* player, Boss* b){
  * @param force The integer to bypass all checks if true.
  */
 void statReset(Fighter* player, int force) {
-	char msg[200];
-	sprintf(msg,"Call to statReset() with ($force) == (%i)", force);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","Call to statReset() with ($force) == (%i)", force);
 	if ( !force && (player->hp >= 0.5 * player->totalhp) && !(player->atk <=0 || player->def <=0 || player->vel <= 0) ) {
 		return;
 	}
@@ -3785,17 +3744,14 @@ int dropConsumable(Fighter* player) {
  */
 void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 
-	char msg[200];
-
 	//Select a basic item from the list
 	int drop = rand() % (EQUIPSMAX + 1);
 	//Randomise quality
 	quality q = rand() % (QUALITIESMAX + 1);
 
 	//Prepare the item
-	sprintf(msg,"Prepping dropped Equip");
-	kls_log("DEBUG",msg);
-	Equip* e = (Equip*) KLS_PUSH_TYPED(kls,Equip,1,HR_Equip,"Equip",msg);
+	kls_log("DEBUG","Prepping dropped Equip");
+	Equip* e = (Equip*) KLS_PUSH_TYPED(kls,Equip,1,HR_Equip,"Equip","Equip");
 
 	//Get the base item and copy the stats to the drop
 	Equip* base = &equips[drop];
@@ -3866,10 +3822,9 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 
 			e->perksCount += 1;
 
-			sprintf(msg,"Prepping Perk (%i) for dropped Equip)", e->perksCount);
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Perk* p = (Perk*) KLS_PUSH_TYPED(kls,Perk,1,HR_Perk,"Perk",msg);
+			log_tag("debug_log.txt","[DEBUG]","Prepping Perk (%i) for dropped Equip)", e->perksCount);
+			kls_log("DEBUG","Prepping Perk (%i) for dropped Equip)", e->perksCount);
+			Perk* p = (Perk*) KLS_PUSH_TYPED(kls,Perk,1,HR_Perk,"Perk","Perk");
 			p->class = rand() % (PERKSMAX +1) ;
 			//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 			strcpy(p->name,nameStringFromPerk(p->class));
@@ -3899,12 +3854,13 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 
 	e->cost = floor(cost);
 
+	char msg[500];
+
 	wattron(notify_win,COLOR_PAIR(6));
 	sprintf(msg,"You found %s %s!",stringFromQuality(q),stringFromEquips(drop));
 	display_notification(notify_win,msg,800);
 	wattroff(notify_win,COLOR_PAIR(6));
-	sprintf(msg,"Found Equip:    %s.", stringFromEquips(drop));
-	log_tag("debug_log.txt","[DEBUG-DROPS]",msg);
+	log_tag("debug_log.txt","[DEBUG-DROPS]","Found Equip:    %s.", stringFromEquips(drop));
 
 
 	if (player->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) { //Handle full bag by asking player if we throw something away
@@ -3930,8 +3886,7 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 
 			c = scanf("%i",&selected);
 			int res = scanf("%*c");
-			sprintf(msg,"dropEquip() scanf() res was (%i)",res);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","dropEquip() scanf() res was (%i)",res);
 
 			if (c == 1) {
 				s = (Equip*) player->equipsBag[selected];
@@ -3951,8 +3906,7 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 		while (n < 0 || c != 1) {
 			c = scanf("%i",&n);
 			int res = scanf("%*c");
-			sprintf(msg,"dropEquip() scanf() res was (%i)",res);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","dropEquip() scanf() res was (%i)",res);
 		}
 
 		if (n != 0) { //Abort deletion, drop will not be awared.
@@ -3979,8 +3933,7 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 			}
 		}
 		*/
-		sprintf(msg,"Equip %s (%i Perks) was taken by deleting %s.\n", stringFromEquips(e->class), perkscount, stringFromEquips(toDelete->class));
-		log_tag("debug_log.txt","[DEBUG-EQUIPS]",msg);
+		log_tag("debug_log.txt","[DEBUG-EQUIPS]","Equip %s (%i Perks) was taken by deleting %s.\n", stringFromEquips(e->class), perkscount, stringFromEquips(toDelete->class));
 		/*
 		free(toDelete);
 		*/
