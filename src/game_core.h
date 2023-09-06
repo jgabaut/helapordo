@@ -31,6 +31,7 @@ typedef enum HLP_Region_Type {
 	HR_Room_desc,
 	HR_countStats,
 	HR_Saveslot,
+	HR_Gamestate,
 	HR_loadInfo,
 } HLP_Region_Type;
 
@@ -112,12 +113,12 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 3
+#define HELAPORDO_PATCH_VERSION 4
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.1.3"
+#define VERSION "1.1.4"
 
 /**
  * Default savepath.
@@ -1535,6 +1536,31 @@ typedef struct loadInfo {
 } loadInfo;
 
 /**
+ * Holds arguments for a game.
+ * @see countStats
+ * @see roomClass
+ * @see Wincon
+ * @see Path
+ */
+typedef struct {
+
+	countStats* stats; /**< Keeps track of stats for the game.*/
+
+	int current_fighters; /**< Keeps track of Fighter number for the game.*/
+	roomClass current_roomtype; /**< Keeps track of current room type.*/
+	int current_room_index; /**< Keeps track of current room index.*/
+
+	int current_enemy_index; /**< Keeps track of current enemy index.*/
+	Wincon* wincon; /**< Keeps track of current Wincon.*/
+
+	Path* path; /**< Keeps track of current Path.*/
+
+	Fighter* player; /**< Keeps track of current Player.*/
+
+	Gamemode gamemode; /**< Keeps track of current Gamemode.*/
+} Gamestate;
+
+/**
  * The different kinds of turnOption.
  * @see getTurnChoice()
  * @see fight()
@@ -1659,6 +1685,7 @@ typedef struct {
 	FILE* save_file; /**< Pointer to savefile for OP*/
 	WINDOW* notify_win; /**< Pointer to notification window for OP*/
 	Koliseo_Temp* t_kls; /**< Pointer to Koliseo_Temp for OP*/
+	Gamestate* gmst; /**< Pointer to Gamestate for OP*/
 } turnOP_args;
 
 /**

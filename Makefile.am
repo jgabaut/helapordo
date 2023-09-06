@@ -41,12 +41,12 @@ endif
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 ./src/anvil__helapordo.c:
-	@echo -en "Generating C anvil__helapordo for $(VERSION):\n"
+	@echo -en "Generating C anvil__helapordo for $(VERSION):  "
 	-./anvil -G ./src $(VERSION)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./koliseo/src/koliseo.o:
-	@echo -en "Building Koliseo with curses:\n"
+	@echo -en "Building Koliseo with curses:  "
 	gcc -c ./koliseo/src/koliseo.c -DKOLISEO_HAS_CURSES -o ./koliseo/src/koliseo.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
@@ -54,15 +54,19 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 	@echo -en "\033[1;34m[Makefile]\e[0m    Using python to generate C palette files from \033[1;35m[$(PALETTE_PATH)]:\e[0m  "
 	python ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) .. > ./src/palette.c
 	python ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) .. > ./src/palette.h
-	@echo -e "Done."
+	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for object files
 %.o: %.c
+	@echo -en "[ $< ] ->\033[1;34m [ $@ ]:\e[0m  "
 	$(CC) -c $(CFLAGS) $(AM_CFLAGS) $< -o $@
+	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for the final binary
 $(TARGET): $(helapordo_SOURCES:.c=.o)
+	@echo -en "\033[1;34mBuilding [\033[1;35m $@ \033[1;34m]:\e[0m  "
 	$(CC) $(CFLAGS) $(AM_CFLAGS) $(helapordo_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
+	@echo -e "\033[1;33mDone.\e[0m"
 
 # Targets for additional rules
 versioncheck:

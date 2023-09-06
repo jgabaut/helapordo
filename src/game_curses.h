@@ -96,5 +96,5 @@ void fight_Special(specialMove move, WINDOW* w, Fighter* f, Enemy* e, Boss* b, P
 void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int enemyIndex, int isBoss);
 void handleStats(Fighter* f);
 void handleTutorial(void);
-int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, Koliseo* kls, Koliseo_Temp* t_kls);
+int handleRogueMenu(Gamestate* gmst, Path* p, Fighter* player, Room* room, loadInfo* load_info, Koliseo* kls, Koliseo_Temp* t_kls);
 #endif

@@ -30,6 +30,15 @@ void init_game_color_pairs(void);
 void screenTime(float t);
 void resolve_staticPath(char static_path[500]);
 
+void dbg_Gamestate(Gamestate* gmst);
+void dbg_Fighter(Fighter* fighter);
+void dbg_countStats(countStats* stats);
+void dbg_Wincon(Wincon* wc);
+void dbg_Path(Path* path);
+void dbg_Saveslot(Saveslot* saveslot);
+void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* path, Fighter* player, Gamemode gamemode );
+void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index);
+
 void loadLore(char** lore_strings, int loreKind);
 
 void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int roomsDone);
@@ -41,10 +50,10 @@ void printVersion(void);
 void printFormattedVersion(char* progName);
 
 void usage(char* progname);
-void log_tag(char* filename, char* header, char* msg);
+void log_tag(char* filename, char* header, const char* format, ...);
 void log_OP(turnOption_OP op);
 
-turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls);
+turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls);
 
 saveType saveTypeFrom_string(char* s);
 char* stringFrom_HLP_Region_Type(HLP_Region_Type t);

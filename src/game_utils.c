@@ -2,11 +2,229 @@
 //Functions useful in many areas
 
 /**
+ * Debugs the passed (preallocated) Fighter with log_tag().
+ * @param fighter The allocated Fighter to debug.
+ */
+void dbg_Fighter(Fighter* fighter) {
+	if (fighter == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Fighter was NULL in dbg_Fighter()");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[FIGHTER]","Fighter name: { %s }", fighter->name);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter class: { %s } [ %i ]", stringFromClass(fighter->class), fighter->class);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter hp: { %i }", fighter->hp);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter atk: { %i }", fighter->atk);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter def: { %i }", fighter->def);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter vel: { %i }", fighter->vel);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter level: { %i }", fighter->level);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter luck: { %i }", fighter->luck);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter totalxp: { %i }", fighter->totalxp);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter currentlevelxp: { %i }", fighter->currentlevelxp);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter totallevelxp: { %i }", fighter->totallevelxp);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter totalhp: { %i }", fighter->totalhp);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter status: { %s } [ %i ]", stringFromStatus(fighter->status), fighter->status);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter energy: { %i }", fighter->energy);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter totalenergy: { %i }", fighter->totalenergy);
+
+	//Specialslot* specials[SPECIALSMAX+1]; /**< Array with all the Specialslot*/
+
+	//struct Turncounter* counters[COUNTERSMAX+1]; /**< Array with all the Turncounter pointers*/
+	log_tag("debug_log.txt","[FIGHTER]","Fighter turnboost_atk: { %i }", fighter->turnboost_atk);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter turnboost_def: { %i }", fighter->turnboost_def);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter turnboost_vel: { %i }", fighter->turnboost_vel);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter turnboost_enr: { %i }", fighter->turnboost_enr);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter perksCount: { %i }", fighter->perksCount);
+
+	//Perk* perks[PERKSMAX+1]; /**< Array with all the Perk*/
+
+	//struct Equipslot* equipslots[EQUIPZONES+1]; /**< Array with all the Equipslot*/
+	//struct Equip* equipsBag[EQUIPSBAGSIZE+1]; /**< Array with all the Equip found*/
+	//struct Consumable* consumablesBag[CONSUMABLESMAX+1]; /**< Array with all the Consumables found*/
+	//struct Artifact* artifactsBag[ARTIFACTSMAX+1]; /**< Array with all the Artifacts found*/
+
+	log_tag("debug_log.txt","[FIGHTER]","Fighter used equipsBag slots: { %i }", fighter->equipsBagOccupiedSlots);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter earliest equipsBag slot: { %i }", fighter->earliestBagSlot);
+
+	log_tag("debug_log.txt","[FIGHTER]","Fighter permboost_atk: { %i }", fighter->permboost_atk);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter permboost_def: { %i }", fighter->permboost_def);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter permboost_vel: { %i }", fighter->permboost_vel);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter permboost_enr: { %i }", fighter->permboost_enr);
+
+	log_tag("debug_log.txt","[FIGHTER]","Fighter equipboost_atk: { %i }", fighter->equipboost_atk);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter equipboost_def: { %i }", fighter->equipboost_def);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter equipboost_vel: { %i }", fighter->equipboost_vel);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter equipboost_enr: { %i }", fighter->equipboost_enr);
+
+	//dbg_countStats(fighter->stats);
+
+	log_tag("debug_log.txt","[FIGHTER]","Fighter coins balance: { %i }", fighter->balance);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter keys balance: { %i }", fighter->keys_balance);
+}
+
+/**
+ * Debugs the passed (preallocated) Saveslot with log_tag().
+ * @param saveslot The allocated Saveslot to debug.
+ */
+void dbg_Saveslot(Saveslot* saveslot) {
+	if (saveslot == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Saveslot was NULL in dbg_Saveslot()");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[SAVESLOT]","Saveslot name: { %s }", saveslot->name);
+	log_tag("debug_log.txt","[SAVESLOT]","Saveslot save_path: { %s }", saveslot->save_path);
+}
+
+/**
+ * Debugs the passed (preallocated) Path with log_tag().
+ * @param path The allocated Path to debug.
+ */
+void dbg_Path(Path* path) {
+	if (path == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Path was NULL in dbg_Path()");
+		exit(EXIT_FAILURE);
+	}
+
+	log_tag("debug_log.txt","[PATH]","Path length: { %i }", path->length);
+	log_tag("debug_log.txt","[PATH]","Path luck: { %i }", path->luck);
+	log_tag("debug_log.txt","[PATH]","Path prize: { %i }", path->prize);
+	log_tag("debug_log.txt","[PATH]","Path loreCounter: { %i }", path->loreCounter);
+	log_tag("debug_log.txt","[PATH]","Path loreCounter: { %i }", path->loreCounter);
+	dbg_Wincon(path->win_condition);
+	dbg_Saveslot(path->current_saveslot);
+}
+
+/**
+ * Debugs the passed (preallocated) Wincon with log_tag().
+ * @param gmst The allocated countStats to debug.
+ */
+void dbg_Wincon(Wincon* wc) {
+	if (wc == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Wincon was NULL in dbg_Wincon()");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[WINCON]","Wincon class: { %s } [ %i ]",stringFromWinconClass(wc->class),wc->class);
+	log_tag("debug_log.txt","[WINCON]","Wincon current value: { %i }",wc->current_val);
+	log_tag("debug_log.txt","[WINCON]","Wincon target value: { %i }",wc->target_val);
+}
+
+/**
+ * Debugs the passed (preallocated) countStats with log_tag().
+ * @param gmst The allocated countStats to debug.
+ */
+void dbg_countStats(countStats* stats) {
+	if (stats == NULL) {
+		log_tag("debug_log.txt","[ERROR]","countStats was NULL in dbg_countStats()");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[countStats]","Enemies killed:  { %i }",stats->enemieskilled);
+	log_tag("debug_log.txt","[countStats]","Consumables found:  { %i }",stats->consumablesfound);
+	log_tag("debug_log.txt","[countStats]","Equips found:  { %i }",stats->equipsfound);
+	log_tag("debug_log.txt","[countStats]","Artifacts found:  { %i }",stats->artifactsfound);
+	log_tag("debug_log.txt","[countStats]","Critical hits done:  { %i }",stats->criticalhits);
+	log_tag("debug_log.txt","[countStats]","Rooms completed:  { %i }",stats->roomscompleted);
+	log_tag("debug_log.txt","[countStats]","Floors completed:  { %i }",stats->floorscompleted);
+	log_tag("debug_log.txt","[countStats]","Specials unlocked:  { %i }",stats->specialsunlocked);
+	log_tag("debug_log.txt","[countStats]","Coins found:  { %i }",stats->coinsfound);
+	log_tag("debug_log.txt","[countStats]","Bosses killed:  { %i }",stats->bosseskilled);
+	log_tag("debug_log.txt","[countStats]","Unique Boss kills:  { %i }",stats->unique_bosseskilled);
+	for (int i = 0; i < BOSSCLASSESMAX+1; i++) {
+		log_tag("debug_log.txt","[countStats]","Boss [%i] { %s }:  { %s }", i, stringFromBossClass(i), (stats->killed_bosses[i] == 1 ? "Killed" : "Not Killed"));
+	}
+	log_tag("debug_log.txt","[countStats]","Keys found:  { %i }",stats->keysfound);
+}
+
+/**
+ * Debugs the passed (preallocated) Gamestate with log_tag().
+ * @param gmst The allocated Gamestate to debug.
+ */
+void dbg_Gamestate(Gamestate* gmst) {
+	if (gmst == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in dbg_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[DEBUG]","Gamestate:{");
+	log_tag("debug_log.txt","[GAMESTATE]","Current Gamemode: { %s } [ %i ]", stringFromGamemode(gmst->gamemode), gmst->gamemode);
+	log_tag("debug_log.txt","[GAMESTATE]","Current fighters: { %i }", gmst->current_fighters);
+	log_tag("debug_log.txt","[GAMESTATE]","Current room index: { %i }", gmst->current_room_index);
+	log_tag("debug_log.txt","[GAMESTATE]","Current room type: { %s } [ %i ]", stringFromRoom(gmst->current_roomtype), gmst->current_roomtype);
+	log_tag("debug_log.txt","[GAMESTATE]","Current enemy index: { %i }", gmst->current_enemy_index);
+	dbg_countStats(gmst->stats);
+	dbg_Path(gmst->path);
+	dbg_Fighter(gmst->player);
+	log_tag("debug_log.txt","[GAMESTATE]","}");
+}
+
+/**
+ * Updates the passed (preallocated) Gamestate with the passed int values.
+ * @param gmst The allocated Gamestate to update.
+ * @param current_fighters Number of current Fighters.
+ * @param current_roomtype roomClass for current Room.
+ * @param current_room_index Index for current Room.
+ * @param current_enemy_index Index for current Enemy.
+ */
+void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index) {
+	if (gmst == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	gmst->current_fighters = current_fighters;
+	gmst->current_roomtype = current_roomtype;
+	gmst->current_room_index = current_room_index;
+	gmst->current_enemy_index = current_enemy_index;
+}
+
+/**
+ * Inits the passed (preallocated) Gamestate with the passed pointers.
+ * @param gmst The allocated Gamestate to init.
+ * @param stats Game stats.
+ * @param wincon Game Wincon.
+ * @param path Game Path.
+ * @param player Game main player.
+ * @param gamemode Picked gamemode.
+ */
+void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* path, Fighter* player, Gamemode gamemode ) {
+	if (gmst == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (stats == NULL) {
+		log_tag("debug_log.txt","[ERROR]","countStats was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (wincon == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Wincon was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (path == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Path was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (player == NULL) {
+		log_tag("debug_log.txt","[ERROR]","Player was NULL in init_Gamestate()");
+		exit(EXIT_FAILURE);
+	}
+	if (gamemode != Story && gamemode != Rogue) {
+		log_tag("debug_log.txt","[ERROR]","Invalid gamemode requested: [%i]",gamemode);
+		exit(EXIT_FAILURE);
+	}
+	gmst->stats = stats;
+	gmst->current_fighters = -1;
+	gmst->current_roomtype = -1;
+	gmst->current_room_index = -1;
+	gmst->current_enemy_index = -1;
+	gmst->wincon = wincon;
+	gmst->path = path;
+	gmst->player = player;
+	gmst->gamemode = gamemode;
+}
+
+/**
  * Allocates and prepares a turnOP_args and returns a pointer to it.
  * @see turnOP_args
  * @see turnOption_OP
  * @see turnOption
  * @see turnOP()
+ * @param gmst The Gamestate pointer to assign to turnOP_args->gmst.
  * @param actor The Fighter pointer to assign to turnOP_args->actor.
  * @param path The Path pointer to assign to turnOP_args->path.
  * @param room The Room pointer to assign to turnOP_args->room.
@@ -16,14 +234,13 @@
  * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
  * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
  */
-turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls) {
+turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
-	char msg[500];
-	sprintf(msg,"Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
-	log_tag("debug_log.txt","[TURNOP]",msg);
-	kls_log("DEBUG",msg);
-	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_TYPED(tkls,turnOP_args,1,HR_turnOP_args,"turnOP_args",msg);
+	log_tag("debug_log.txt","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+	kls_log("DEBUG","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_TYPED(tkls,turnOP_args,1,HR_turnOP_args,"turnOP_args","turnOP_args");
 
+	res->gmst = gmst;
 	res->actor = actor;
 	res->path = path;
 	res->room = room;
@@ -44,18 +261,15 @@ turnOP_args* init_turnOP_args(Fighter* actor, Path* path, Room* room, loadInfo* 
  */
 saveType saveTypeFrom_string(char* s) {
 	int check = -1;
-	char msg[500];
 
 	for (int i = 0; i < SAVETYPE_MAX+1; i++) {
 		if ((check = strcmp(s,stringFrom_saveType(i))) == 0) {
-			sprintf(msg,"Matched saveType string [%s] to (%i).", s, i);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Matched saveType string [%s] to (%i).", s, i);
 			return (saveType) i;
 		}
 	}
 
-	sprintf(msg,"No match found for saveType string [%s].", s);
-	log_tag("debug_log.txt","[ERROR]",msg);
+	log_tag("debug_log.txt","[ERROR]","No match found for saveType string [%s].", s);
 	return -1;
 }
 
@@ -64,10 +278,8 @@ saveType saveTypeFrom_string(char* s) {
  * @param op The turnOption_OP to log.
  */
 void log_OP(turnOption_OP op) {
-	char msg[500];
-	sprintf(msg,"[OP_code: %i, value: %s]", op, stringFromTurnOP(op));
-	log_tag(OPS_LOGFILE,"[LOG]",msg);
-	log_tag("debug_log.txt","[LOG_TURNOP]",msg);
+	log_tag(OPS_LOGFILE,"[LOG]","[OP_code: %i, value: %s]", op, stringFromTurnOP(op));
+	log_tag("debug_log.txt","[LOG_TURNOP]","[OP_code: %i, value: %s]", op, stringFromTurnOP(op));
 }
 
 /**
@@ -249,11 +461,8 @@ void loadLore(char** lore_strings, int loreKind) {
     	ssize_t read;
 	int i = 0;
     	while ((read = getline(&line, &len, lorefile)) != -1) {
-		char msg[1000];
-		sprintf(msg,"Retrieved line of length %zu:", read);
-        	log_tag("debug_log.txt","[LORE-LOAD]",msg);
-		sprintf(msg,"%s", line);
-        	log_tag("debug_log.txt","[LORE-LOAD]",msg);
+        	log_tag("debug_log.txt","[LORE-LOAD]","Retrieved line of length %zu:", read);
+        	log_tag("debug_log.txt","[LORE-LOAD]","%s", line);
 		strcpy(lore_strings[i],line);
 		i++;
 	}
@@ -270,9 +479,7 @@ void loadLore(char** lore_strings, int loreKind) {
  * @param roomsDone The total of rooms completed.
  */
 void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int roomsDone) {
-	char msg[500];
-	sprintf(msg,"room type (%i) rooms done (%i)", (int) *room_type, roomsDone);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","setRoomType():  room type (%i) rooms done (%i)", (int) *room_type, roomsDone);
 	switch (GAMEMODE) {
 		case Standard: {
 				if ((*roadFork_value >= 0)) {
@@ -295,8 +502,7 @@ void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int room
 					*room_type = ENEMIES;
 				}
 				if ((G_DEBUG_ROOMTYPE_ON > 0)) {
-					sprintf(msg,"setRoomType(): Room debug flag asserted in standard gamemode, room type will always be equal to G_DEBUG_ROOMTYPE (%s).\n",stringFromRoom(G_DEBUG_ROOMTYPE));
-					log_tag("debug_log.txt","\n[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","setRoomType(): Room debug flag asserted in standard gamemode, room type will always be equal to G_DEBUG_ROOMTYPE (%s).",stringFromRoom(G_DEBUG_ROOMTYPE));
 					*room_type = G_DEBUG_ROOMTYPE;
 				}
 		}
@@ -326,8 +532,7 @@ void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int room
 		}
 		break;
 	}
-	sprintf(msg,"room type (%i) rooms done (%i)", (int) *room_type, roomsDone);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","setRoomType():  room type (%i) rooms done (%i)", (int) *room_type, roomsDone);
 }
 /**
  * Frees the memory allocated for the passed room pointer.
@@ -335,11 +540,9 @@ void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int room
  * @see Room
  */
 void freeRoom(Room* room) {
-	char msg[200];
 	int room_type = room->class;
 
-	sprintf(msg,"Freeing room desc: (%s).", room->desc);
-	log_tag("debug_log.txt","[DEBUG-FREE]",msg);
+	log_tag("debug_log.txt","[DEBUG-FREE]","Freeing room desc: (%s).", room->desc);
 	//Free room memory
 	//FIXME: do we have all room descs handled ?
 	//free(room->desc);
@@ -427,8 +630,7 @@ void freeRoom(Room* room) {
         	log_tag("debug_log.txt","[FIXME]","Empty freeRoom branch");
 	}
 
-	sprintf(msg,"Freed %s room, index %i.\n", stringFromRoom(room->class), room->index);
-	log_tag("debug_log.txt","[DEBUG-FREE]",msg);
+	log_tag("debug_log.txt","[DEBUG-FREE]","Freed %s room, index %i.\n", stringFromRoom(room->class), room->index);
         log_tag("debug_log.txt","[FIXME]","freeRoom(): done fake free().");
 	//free(room);
 }
@@ -490,13 +692,13 @@ void usage(char* progname) {
 }
 
 /**
- * Takes a filename string, a string headear and a string message (assumes correctly formed strings).
+ * Takes a filename string, a string headear and a format string.
  * Tries logging the message to the passed file if global var G_DEBUG_ON is set.
  * @param filename The filename to open.
  * @param header The string header for the message to log.
- * @param msg The string to log.
+ * @param format The format string for message.
  */
-void log_tag(char* filename, char* header, char* msg) {
+void log_tag(char* filename, char* header, const char* format, ...) {
 	#ifndef HELAPORDO_DEBUG_LOG
 	#else
 	// Open log file if log flag is set and append to it
@@ -517,16 +719,21 @@ void log_tag(char* filename, char* header, char* msg) {
 		if (!logfile) {
 			fprintf(stderr, "Error opening log file.\n Static path: (%s) Filename : (%s).\n", static_path, filename);
 			fprintf(stderr, "Path to debug file was: (%s).", path_to_debug_file);
-			fprintf(stderr, "Msg was:    %s", msg);
+			fprintf(stderr, "Format was:    %s", format);
 			exit(EXIT_FAILURE);
 		}
+		va_list args;
+		va_start(args, format);
 		time_t now = time(0);
 		struct tm *mytime = localtime(&now);
 		char timeheader[500];
 		if ( strftime(timeheader, sizeof timeheader, "%X", mytime) )
 		{
-			fprintf(logfile,"%s %-12.12s    %s\n", timeheader, header, msg);
+			fprintf(logfile,"[ %s ] [ %-12.12s ] [", timeheader, header);
+			vfprintf(logfile,format,args);
+			fprintf(logfile,"]\n");
 		}
+		va_end(args);
 		fclose(logfile);
 	}
 	#endif
@@ -876,15 +1083,12 @@ void printClasses(void) {
 int scanClass(void) {
 	int pick=-1;
 	char c;
-	char msg[300];
 	while (pick < 0 || pick > CLASSESMAX ) {
 		printf("\nPick a class: (0-%i)\n",CLASSESMAX);
 		int res = scanf("%1i",&pick);
-		sprintf(msg,"scanClass scanf() res was %i",res);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","scanClass scanf() res was %i",res);
 		res = scanf("%c",&c);
-		sprintf(msg,"scanClass 2 scanf() res was %i",res);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","scanClass 2 scanf() res was %i",res);
 	};
 	return pick;
 }
@@ -897,11 +1101,9 @@ int scanClass(void) {
  */
 void pickClass(Fighter* player) {
 	int pick=-1;
-	char msg[500];
 	do {
 		int res = system("clear");
-		sprintf(msg,"pickClass() system(\"clear\") res was (%i)",res);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","pickClass() system(\"clear\") res was (%i)",res);
 		printf("\nPick a class.\n");
 		printClasses();
 		pick = scanClass();
@@ -935,15 +1137,12 @@ void printWincons(void) {
 int scanWincon(void) {
 	int pick=-1;
 	char c;
-	char msg[500];
 	while (pick < 0 || pick > WINCON_CLASS_MAX ) {
 		printf("\nPick a win condition: (0-%i)\n",WINCON_CLASS_MAX);
 		int res = scanf("%1i",&pick);
-		sprintf(msg,"scanWincon() scanf() res was (%i)",res);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","scanWincon() scanf() res was (%i)",res);
 		res = scanf("%c",&c);
-		sprintf(msg,"scanWincon() 2 scanf() res was (%i)",res);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","scanWincon() 2 scanf() res was (%i)",res);
 	};
 	return pick;
 }
@@ -969,11 +1168,9 @@ void pickName(Fighter* player) {
  */
 void pickWincon(Wincon* w) {
 	int pick=-1;
-	char msg[500];
 	do {
 		int res = system("clear");
-		sprintf(msg,"pickWincon() system(\"clear\") res was (%i)",res);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","pickWincon() system(\"clear\") res was (%i)",res);
 		printf("\nPick a win condition.\n");
 		printWincons();
 		pick = scanWincon();

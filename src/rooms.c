@@ -10,6 +10,7 @@
  * @see handleEquips()
  * @see handleStats()
  * @see handleArtifacts()
+ * @param gamestate The pointer to Gamestate.
  * @param room The pointer to current room.
  * @param index The index of current room.
  * @param p The Path pointer.
@@ -21,7 +22,7 @@
  * @see gameloop()
  * @return When exiting room, should return NO_DMG.
  */
-int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
+int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
 	Enemy* dummy_enemy = NULL;
 	Boss* dummy_boss = NULL;
 	FILE* dummy_savefile = NULL;
@@ -29,7 +30,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	FILE* autosave_file;
 	WINDOW* dummy_notify_win = NULL;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -49,9 +50,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	};
 
 	fightResult fightStatus = FIGHTRES_NO_DMG;
-	char msg[1000];
-	sprintf(msg,"New HOME room, index %i", room->index);
-	log_tag("debug_log.txt","[ROOM]",msg);
+	log_tag("debug_log.txt","[ROOM]","New HOME room, index %i", room->index);
 
 	if (GS_AUTOSAVE_ON == 1 && GAMEMODE != Rogue) {
 		log_tag("debug_log.txt","[DEBUG]","Doing autosave.");
@@ -72,8 +71,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 			fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_autosave_file);
 			exit(EXIT_FAILURE);
 		} else {
-			sprintf(msg,"Assigning autosave_file pointer to args->save_file. Path: [%s]",path_to_autosave_file);
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Assigning autosave_file pointer to args->save_file. Path: [%s]",path_to_autosave_file);
 			args->save_file = autosave_file;
 		}
 		turnOP(turnOP_from_turnOption(SAVE),args,kls,t_kls);
@@ -216,8 +214,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 					ITEM *cur;
 					cur = current_item(home_menu);
 					choice = getTurnChoice((char*)item_name(cur));
-					sprintf(msg,"Left on choice: [ %s ] value (%i)",item_name(cur),choice);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","Left on choice: [ %s ] value (%i)",item_name(cur),choice);
 					if (choice == EQUIPS) {
 						log_tag("debug_log.txt","[DEBUG]","Should do something");
 					}
@@ -227,8 +224,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 					ITEM *cur;
 					cur = current_item(home_menu);
 					choice = getTurnChoice((char*)item_name(cur));
-					sprintf(msg,"Right on choice: [ %s ] value (%i)",item_name(cur),choice);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","Right on choice: [ %s ] value (%i)",item_name(cur),choice);
 					if (choice == EQUIPS) {
 						log_tag("debug_log.txt","[DEBUG]","Should do something");
 					}
@@ -285,8 +281,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 					// Set static_path value to the correct static dir path
 					resolve_staticPath(static_path);
-					sprintf(msg,"handleRoom_Home:  savefile_name is [%s].",savefile_name);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","handleRoom_Home:  savefile_name is [%s].",savefile_name);
 
 					sprintf(path_to_savefile,"%s/%s",static_path,savefile_name);
 
@@ -296,8 +291,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 						fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_savefile);
 						exit(EXIT_FAILURE);
 					} else {
-						sprintf(msg,"Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
-						log_tag("debug_log.txt","[TURNOP]",msg);
+						log_tag("debug_log.txt","[TURNOP]","Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
 						args->save_file = save_file;
 					}
 				}
@@ -319,10 +313,9 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 		}
 		for(int k = 0; k < totalChoices; k++) {
 			free_item(menu_items[k]);
-			sprintf(msg,"Freed %i home menu item",k);
-			log_tag("debug_log.txt","[FREE]",msg);
+			log_tag("debug_log.txt","[FREE]","Freed %i home menu item",k);
 		}
-
+		free(menu_items);
 		delwin(home_win);
 		endwin();
 		log_tag("debug_log.txt","[DEBUG]","Ended window mode for handleRoom_Home()");
@@ -331,8 +324,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	//Free turnOP_args
 	//free(args);
 	log_tag("debug_log.txt","[FREE]","handleRoom_Home():  Freed turnOP_args");
-	sprintf(msg,"Ended handleRoom_Home(), returning fightStatus [%i]",fightStatus);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","Ended handleRoom_Home(), returning fightStatus [%i]",fightStatus);
 	return fightStatus;
 }
 
@@ -371,6 +363,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @see handleArtifacts()
  * @see applyStatus()
  * @see applyEStatus()
+ * @param gamestate The pointer to Gamestate.
  * @param room The pointer to current room.
  * @param index The index of current room.
  * @param p The Path pointer.
@@ -385,7 +378,7 @@ int handleRoom_Home(Room* room, int index, Path* p, Fighter* player, loadInfo* l
  * @see enemyClass
  * @return When room is cleared, should return KILL_DONE.
  */
-int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
+int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
 
 	Boss* dummy_boss = NULL;
 	Enemy* args_enemy = NULL;
@@ -393,7 +386,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 	WINDOW* args_notify_win = NULL;
 
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -432,20 +425,18 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 
 	//system("clear");
 	OP_res fightStatus = OP_RES_NO_DMG;
-	char msg[1000];
-	sprintf(msg,"New room, index %i, %i enemies", room->index, enemies);
-	log_tag("debug_log.txt","[ROOM]",msg);
+	log_tag("debug_log.txt","[ROOM]","New room, index %i, %i enemies", room->index, enemies);
 
 	for (int i = 0; i < enemies ;) {
+
+		update_Gamestate(gamestate, 1, room->class, room->index, i);
 
 		fightStatus = OP_RES_NO_DMG;
 		Enemy* e = room->enemies[i];
 		//Update turnOP_args->enemy pointer
 		args->enemy = e;
-		sprintf(msg,"Assigned enemy %s to turnOP_args: args->enemy == [%s]",stringFromEClass(e->class),stringFromEClass(args->enemy->class));
-		log_tag("debug_log.txt","[TURNOP]",msg);
-		sprintf(msg,"Declared enemy %s",stringFromEClass(e->class));
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[TURNOP]","Assigned enemy %s to turnOP_args: args->enemy == [%s]",stringFromEClass(e->class),stringFromEClass(args->enemy->class));
+		log_tag("debug_log.txt","[DEBUG]","Declared enemy %s",stringFromEClass(e->class));
 		printSpawnMessage(e, index, i);
 
 		//Reset player permboosts... and calc them again...
@@ -598,8 +589,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				scrollok(notifications_win, TRUE);
 				//Update turnOP_args->notify_win pointer
 				args->notify_win = notifications_win;
-				sprintf(msg,"Assigned notifications_wins to turnOP_args: args->notify_win");
-				log_tag("debug_log.txt","[TURNOP]",msg);
+				log_tag("debug_log.txt","[TURNOP]","Assigned notifications_wins to turnOP_args: args->notify_win");
 
 				wrefresh(notifications_win);
 				refresh();
@@ -679,8 +669,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 			}
 
 			if (e->hp <= 0 ) { //Check if enemy hp got below zero during last loop
-				sprintf(msg,"Enemy %s hp is 0 outside of main turn loop...",stringFromEClass(e->class));
-				log_tag("debug_log.txt","[DEBUG-ROOM]",msg);
+				log_tag("debug_log.txt","[DEBUG-ROOM]","Enemy %s hp is 0 outside of main turn loop...",stringFromEClass(e->class));
 				fightStatus = OP_RES_KILL_DONE; //Set the variable that will makes us skip the loop when we continue
 				delwin(enemy_animation_win);
 				delwin(fighter_animation_win);
@@ -707,16 +696,14 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				//Consumable drop, guaranteed on killing a beast
 				if (e->beast ||  ((rand() % 9)  - (player->luck/10)  <= 0) )  {
 					int consDrop = dropConsumable(player);
-					sprintf(msg,"consDrop was (%i)",consDrop);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","consDrop was (%i)",consDrop);
 
 				}
 
 				//Artifact drop (if we don't have all of them), guaranteed on killing a beast
 				if ( (player->stats->artifactsfound != ARTIFACTSMAX + 1)  && (e->beast || ( (rand() % 1001)  - (player->luck/10)  <= 0 ))) {
 					int artifactDrop = dropArtifact(player);
-					sprintf(msg,"artifactDrop was (%i) == [%s]",artifactDrop,stringFromArtifacts(artifactDrop));
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","artifactDrop was (%i) == [%s]",artifactDrop,stringFromArtifacts(artifactDrop));
 				}
 
 				//Equip drop, guaranteed on killing a beast
@@ -766,18 +753,15 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					//TODO
 					//Notification of enemies left in room, if needed?
 					//lightYellow();
-					sprintf(msg,"\n\n\n%i enemies left in room %i.",enemies-i-1,index);
-					log_tag("debug_log.txt","[ROOM]",msg);
+					log_tag("debug_log.txt","[ROOM]","%i enemies left in room %i.",enemies-i-1,index);
 					//white();
 				}
 				if ( enemies - i == 0 ) {
-					sprintf(msg,"\'$i\' got to \'%d\'. \'$enemies\' was: %d\n",i,enemies);
-					log_tag("debug_log.txt","\033[1;34m[DEBUG]",msg);
+					log_tag("debug_log.txt","\033[1;34m[DEBUG]","\'$i\' got to \'%d\'. \'$enemies\' was: %d\n",i,enemies);
 				}
 
 				int res = system("clear");
-				sprintf(msg,"handleRoom_Enemies() system(\"clear\") res was (%i)",res);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","handleRoom_Enemies() system(\"clear\") res was (%i)",res);
 				continue; //Check while condition again...
 			} //End check for deaths
 
@@ -823,8 +807,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 						ITEM *cur;
 						cur = current_item(my_menu);
 						choice = getTurnChoice((char*)item_name(cur));
-						sprintf(msg,"Left on choice: [ %s ] value (%i)",item_name(cur),choice);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","Left on choice: [ %s ] value (%i)",item_name(cur),choice);
 						if (choice == EQUIPS) {
 							log_tag("debug_log.txt","[DEBUG]","Should do something");
 						}
@@ -834,8 +817,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 						ITEM *cur;
 						cur = current_item(my_menu);
 						choice = getTurnChoice((char*)item_name(cur));
-						sprintf(msg,"Right on choice: [ %s ] value (%i)",item_name(cur),choice);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","Right on choice: [ %s ] value (%i)",item_name(cur),choice);
 						if (choice == EQUIPS) {
 							log_tag("debug_log.txt","[DEBUG]","Should do something");
 						}
@@ -885,7 +867,6 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				//log_tag("debug_log.txt","[DEBUG]",msg);
 
 				int menu_time_spent = menu_diff_time *1000 / CLOCKS_PER_SEC;
-				char time_msg[200];
 				//sprintf(time_msg,"[DEBUG-TIME]    Time: %d s %d ms.", menu_time_spent/1000, menu_time_spent%1000);
 				//debug_log("debug_log.txt", time_msg);
 				if (menu_time_spent%1000 > 37 ) {
@@ -895,8 +876,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					if (frame_counter > frame_tot) {
 						animation_loops_done++;
 						if (animation_loops_done == 1) {
-						sprintf(time_msg,"Got to frame %i, restarting animation.", frame_counter);
-						log_tag("debug_log.txt","[ANIMATE]",time_msg);
+						log_tag("debug_log.txt","[ANIMATE]","Got to frame %i, restarting animation.", frame_counter);
 	}
 						frame_counter = 0; //Reset animation loop on last frame
 					}
@@ -937,8 +917,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					int oracle_perks = player->perks[ORACLE_GIFT]->innerValue;
 					if (oracle_perks > 0) {
 						int res = system("clear");
-						sprintf(msg,"handleRoom_Enemies() 2 system(\"clear\") res was (%i)",res);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","handleRoom_Enemies() 2 system(\"clear\") res was (%i)",res);
 						//blue();
 						//printf("\n\n\t\tYou get a second chance, as the prophecy said.\n");
 						//white();
@@ -948,16 +927,14 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 						player->perks[ORACLE_GIFT]->innerValue -= 1;
 
 						e_death(e);
-						sprintf(msg,"Oraclegift proc.\n");
-						log_tag("debug_log.txt","[DEBUG-ROOM-PERKS]",msg);
+						log_tag("debug_log.txt","[DEBUG-ROOM-PERKS]","Oraclegift proc.");
 
 						break; //We go to next enemy
 					}
 
 					e_death(e);
 					int player_luck = player->luck;
-					sprintf(msg,"Player luck was [%i]",player_luck);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","Player luck was [%i]",player_luck);
 					death(player, load_info);
 					//free(room->foes);
 					endwin();
@@ -992,6 +969,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					player->balance += e->prize;
 					player->stats->coinsfound += e->prize;
 
+					char msg[50];
 					sprintf(msg,"You found +%i coins.",e->prize);
 					wattron(notifications_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 					display_notification(notifications_win,msg,500);
@@ -1022,19 +1000,15 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 						//TODO
 						//Notification of enemies left in room, if needed?
 						//lightYellow();
-						sprintf(msg,"\n\n\n%i enemies left in room %i.",enemies-i-1,index);
-						log_tag("debug_log.txt","[ROOM]",msg);
+						log_tag("debug_log.txt","[ROOM]","%i enemies left in room %i.",enemies-i-1,index);
 						//white();
 						int res = system("clear");
-						sprintf(msg,"handleRoom_Enemies() 3 system(\"clear\") res was (%i)",res);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","handleRoom_Enemies() 3 system(\"clear\") res was (%i)",res);
 						fightStatus = OP_RES_NO_DMG;
-						sprintf(msg,"Onto next enemy, %i left.", enemies-i);
-						log_tag("debug_log.txt","[ROOM]",msg);
+						log_tag("debug_log.txt","[ROOM]","Onto next enemy, %i left.", enemies-i);
 					}
 					if ( enemies - i == 0 ) {
-						sprintf(msg,"\'$i\' got to \'%d\'. \'$enemies\' was: %d\n",i,enemies);
-						log_tag("debug_log.txt","[DEBUG]",msg);
+						log_tag("debug_log.txt","[DEBUG]","\'$i\' got to \'%d\'. \'$enemies\' was: %d\n",i,enemies);
 					}
 
 					break;
@@ -1131,8 +1105,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 				char static_path[500];
 				char savefile_name[300];
 				sprintf(savefile_name,"%s",p->current_saveslot->save_path);
-				sprintf(msg,"handleRoom_Enemies:  savefile_name is [%s].",savefile_name);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","handleRoom_Enemies:  savefile_name is [%s].",savefile_name);
 
 				// Set static_path value to the correct static dir path
 				resolve_staticPath(static_path);
@@ -1145,8 +1118,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 					fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_savefile);
 					exit(EXIT_FAILURE);
 				} else {
-					sprintf(msg,"Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
-					log_tag("debug_log.txt","[TURNOP]",msg);
+					log_tag("debug_log.txt","[TURNOP]","Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
 					args->save_file = save_file;
 				}
 				turnOP(OP_SAVE,args,kls,t_kls);
@@ -1225,10 +1197,10 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
 			refresh();
 		} //End while current enemy
 	} //End for all enemies
-	sprintf(msg,"End of room %i", room->index);
-	log_tag("debug_log.txt","[ROOM]",msg);
+	update_Gamestate(gamestate, 1, -1, room->index, -1);
+	log_tag("debug_log.txt","[ROOM]","End of room %i", room->index);
 	//free(args);
-	log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
+	//log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 	return fightStatus;
 }
 
@@ -1265,6 +1237,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
  * @see handleArtifacts()
  * @see applyStatus()
  * @see applyBStatus()
+ * @param gamestate The pointer to Gamestate.
  * @param room The pointer to current room.
  * @param index The index of current room.
  * @param p The Path pointer.
@@ -1274,7 +1247,7 @@ int handleRoom_Enemies(Room* room, int index, Path* p, Fighter* player, loadInfo
  * @see turnOP()
  * @return When room is cleared, should return KILL_DONE.
  */
-int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char boss_sprites[BOSSCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
+int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighter* player, loadInfo* load_info, char boss_sprites[BOSSCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], Koliseo* kls, Koliseo_Temp* t_kls) {
 
 	Boss* args_boss = NULL;
 	Enemy* dummy_enemy = NULL;
@@ -1282,7 +1255,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	WINDOW* args_notify_win = NULL;
 	int isBoss = 1;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -1305,15 +1278,12 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 	//printf("\n\tYou are now in room %i.\n",index);
 
-	char msg[500];
 	OP_res fightStatus = OP_RES_NO_DMG;
 	Boss* b = room->boss;
 	//Update turnOP_args->boss pointer
 	args->boss = b;
-	sprintf(msg,"Assigned boss %s to turnOP_args: args->boss == [%s]",stringFromBossClass(b->class), stringFromBossClass(args->boss->class));
-	log_tag("debug_log.txt","[TURNOP]",msg);
-	sprintf(msg,"New room, index %i, boss: %s", room->index, stringFromBossClass(b->class));
-	log_tag("debug_log.txt","[ROOM]",msg);
+	log_tag("debug_log.txt","[TURNOP]","Assigned boss %s to turnOP_args: args->boss == [%s]",stringFromBossClass(b->class), stringFromBossClass(args->boss->class));
+	log_tag("debug_log.txt","[ROOM]","New room, index %i, boss: %s", room->index, stringFromBossClass(b->class));
 
 	//Reset player permboosts... and calc them again...
 	resetPermboosts(player);
@@ -1346,6 +1316,8 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
         int n_choices, c;
 
 	int debug_n_choices = 0;
+
+	update_Gamestate(gamestate, 1, room->class, room->index-1, 1);
 
 	while (!( fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE || choice == QUIT ) ){
 
@@ -1445,8 +1417,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 			//Update turnOP_args->notify_win pointer
 			args->notify_win = notifications_win;
-			sprintf(msg,"Assigned notifications_wins to turnOP_args: args->notify_win");
-			log_tag("debug_log.txt","[TURNOP]",msg);
+			log_tag("debug_log.txt","[TURNOP]","Assigned notifications_wins to turnOP_args: args->notify_win");
 
 			wrefresh(notifications_win);
 			refresh();
@@ -1502,8 +1473,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 			fightStatus = OP_RES_KILL_DONE; //Set the variable that will makes us skip the loop when we continue
 
-			sprintf(msg,"Boss %s hp is 0 outside of main turn loop...",stringFromBossClass(b->class));
-			log_tag("debug_log.txt","[DEBUG-ROOM]",msg);
+			log_tag("debug_log.txt","[DEBUG-ROOM]","Boss %s hp is 0 outside of main turn loop...",stringFromBossClass(b->class));
 
                         delwin(boss_animation_win);
                         delwin(fighter_animation_win);
@@ -1540,15 +1510,13 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 
 			//Consumable drop
 			int consDrop = dropConsumable(player);
-			sprintf(msg,"consDrop was (%i)",consDrop);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","consDrop was (%i)",consDrop);
 
 
 			//Artifact drop (if we don't have all of them)
 			if ( (player->stats->artifactsfound != ARTIFACTSMAX + 1)) {
 				int artifactDrop = dropArtifact(player);
-				sprintf(msg,"artifactDrop was (%i)",artifactDrop);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","artifactDrop was (%i)",artifactDrop);
 			}
 
 			//Equip drop
@@ -1681,7 +1649,6 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 			//log_tag("debug_log.txt","[DEBUG]",msg);
 
 			int menu_time_spent = menu_diff_time *1000 / CLOCKS_PER_SEC;
-			char time_msg[200];
 			//sprintf(time_msg,"[DEBUG-TIME]    Time: %d s %d ms.", menu_time_spent/1000, menu_time_spent%1000);
 			//debug_log("debug_log.txt", time_msg);
 			if (menu_time_spent%1000 > 37 ) {
@@ -1692,8 +1659,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				if (frame_counter > frame_tot) {
 					animation_loops_done++;
 					if (animation_loops_done == 1) {
-						sprintf(time_msg,"Got to frame %i, restarting animation.", frame_counter);
-						log_tag("debug_log.txt","[ANIMATE]",time_msg);
+						log_tag("debug_log.txt","[ANIMATE]","Got to frame %i, restarting animation.", frame_counter);
 					}
 					frame_counter = 0; //Reset animation loop on last frame
 				}
@@ -1725,14 +1691,13 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				int oracle_perks = player->perks[ORACLE_GIFT]->innerValue;
 				if (oracle_perks > 0) {
 					int res = system("clear");
-					sprintf(msg,"handleRoom_Boss() system(\"clear\") res was (%i)",res);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","handleRoom_Boss() system(\"clear\") res was (%i)",res);
 					//TODO:
 					//Notification for oracle gift
 					//blue();
 					//printf("\n\n\t\tYou get a second chance, as the prophecy said.\n");
 					//white();
-					sprintf(msg,"Fighter [%s] died in room #[%i], Oraclegift activated.",player->name, room->index);
+					log_tag("debug_log.txt","[DEBUG]","Fighter [%s] died in room #[%i], Oraclegift activated.",player->name, room->index);
 					player->hp = round(player->totalhp / 3);
 
 
@@ -1766,6 +1731,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				player->balance += b->prize;
 				player->stats->coinsfound += b->prize;
 
+				char msg[50];
 				sprintf(msg,"You found +%i coins.",b->prize);
 				wattron(notifications_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 				display_notification(notifications_win,msg,500);
@@ -1787,8 +1753,7 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 				b_death(b);
 
 				int res = system("clear");
-				sprintf(msg,"handleRoom_Boss() 2 system(\"clear\") res was (%i)",res);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","handleRoom_Boss() 2 system(\"clear\") res was (%i)",res);
 
 				fightStatus = OP_RES_NO_DMG;
 				//FIXME: is this causing a crash?
@@ -1893,6 +1858,8 @@ int handleRoom_Boss(Room* room, int index, Path* p, Fighter* player, loadInfo* l
 	} //End while fightStatus
 	//free(args);
 	log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
+
+	update_Gamestate(gamestate, 1, -1, room->index, -1);
 	return fightStatus;
 }
 
@@ -1919,7 +1886,6 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
                         "Leave",
                         (char *)NULL,
 	};
-	char msg[200];
 	WINDOW *wins[2];
 	ITEM **my_items;
 	MENU *my_menu;
@@ -2187,14 +2153,12 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 							if (f->balance >= price) {
 								int slotnum = f->equipsBagOccupiedSlots;
 								//We create a deep copy of the equip so we can free the shop without worrying about the memory sharing with the bag.
-							sprintf(msg,"Buying Equip %s, deep copy stuff.\n",stringFromEquips(equipToBuy->class));
-							log_tag("debug_log.txt","[SHOP]",msg);
+							log_tag("debug_log.txt","[SHOP]","Buying Equip %s, deep copy stuff.",stringFromEquips(equipToBuy->class));
 								//TODO
 								//Should use a function to avoid refactoring more points when changing Equip generation.
-								sprintf(msg,"Prepping Equip for purchase, push to raw default_kls.");
-								log_tag("debug_log.txt","[SHOP]",msg);
-								kls_log("DEBUG",msg);
-								Equip* saved = (Equip*) KLS_PUSH_TYPED(kls,Equip,1,HR_Equip,"Equip",msg);
+								log_tag("debug_log.txt","[SHOP]","Prepping Equip for purchase, push to raw default_kls.");
+								kls_log("DEBUG","Prepping Equip for purchase, push to raw default_kls.");
+								Equip* saved = (Equip*) KLS_PUSH_TYPED(kls,Equip,1,HR_Equip,"Equip","Equip");
 								Equip* to_save = equipToBuy;
 
 								saved->class = to_save->class;
@@ -2214,10 +2178,9 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 								saved->equip_fun = to_save->equip_fun ;
 
 								for (int j = 0; j < to_save->perksCount; j++) {
-									sprintf(msg,"Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",j,to_save->perksCount);
-									log_tag("debug_log.txt","[SHOP]",msg);
-									kls_log("DEBUG",msg);
-									Perk* save_pk = (Perk*) KLS_PUSH_TYPED(default_kls,Perk,1,HR_Perk,"Perk",msg);
+									log_tag("debug_log.txt","[SHOP]","Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",j,to_save->perksCount);
+									kls_log("DEBUG","Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",j,to_save->perksCount);
+									Perk* save_pk = (Perk*) KLS_PUSH_TYPED(default_kls,Perk,1,HR_Perk,"Perk","Perk");
 									save_pk->class = to_save->perks[j]->class;
 									strcpy(save_pk->name, to_save->perks[j]->name);
 									strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2238,16 +2201,14 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 							} else {
 								//TODO
 								//PRINT NOT ENOUGH MONEY
-								sprintf(msg,"Buying Equip %s, TODO: Print NOT ENOUGH MONEY.\n",stringFromEquips(equipToBuy->class));
-								log_tag("debug_log.txt","[SHOP]",msg);
+								log_tag("debug_log.txt","[SHOP]","Buying Equip %s, TODO: Print NOT ENOUGH MONEY.\n",stringFromEquips(equipToBuy->class));
 							}
 
 						} else if (buyConsumable) {
 							int price = room->shop->consumablePrices[consumables_index];
 							int qty = consumableToBuy->qty;\
 							if (f->balance >= price*qty) {
-								sprintf(msg,"Buying x%i of Consumable %s.\n",qty,stringFromConsumables(consumableToBuy->class));
-								log_tag("debug_log.txt","[SHOP]",msg);
+								log_tag("debug_log.txt","[SHOP]","Buying x%i of Consumable %s.\n",qty,stringFromConsumables(consumableToBuy->class));
 								Consumable* bagged = (Consumable*) f->consumablesBag[consumableToBuy->class];
 								bagged->qty += qty;
 								f->balance -= (qty * price);
@@ -2255,8 +2216,7 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 							} else {
 								//TODO
 								//PRINT NOT ENOUGH MONEY
-								sprintf(msg,"Buying Consumable %s, TODO: Print NOT ENOUGH MONEY.\n",stringFromConsumables(consumableToBuy->class));
-								log_tag("debug_log.txt","[SHOP]",msg);
+								log_tag("debug_log.txt","[SHOP]","Buying Consumable %s, TODO: Print NOT ENOUGH MONEY.\n",stringFromConsumables(consumableToBuy->class));
 							}
 						}
 					}
@@ -2293,7 +2253,6 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
  */
 void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
-	char msg[200];
 	wclear(w);
 	wrefresh(w);
 	box(w,0,0);
@@ -2363,8 +2322,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 
 	copy_animation(alt_chest_opening,sprites,num_frames,frame_height,frame_width);
 
-	sprintf(msg,"Copied animation from matrix vector for alt_chest_opening with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
-	log_tag("debug_log.txt","[PREP]",msg);
+	log_tag("debug_log.txt","[PREP]","Copied animation from matrix vector for alt_chest_opening with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
 
 	/*
 	 * TODO
@@ -2430,10 +2388,9 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			//We create a deep copy of the equip so we can free the chest without worrying about the memory sharing with the bag.
 			//TODO
 			//Should use a function to avoid refactoring more points when changing Equip generation.
-			sprintf(msg,"Prepping Equip for Chest, push to raw default_kls");
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Equip* saved = (Equip*) KLS_PUSH_TYPED(kls,Equip,1,HR_Equip,"Equip",msg);
+			log_tag("debug_log.txt","[DEBUG]","Prepping Equip for Chest, push to raw default_kls");
+			kls_log("DEBUG","Prepping Equip for Chest, push to raw default_kls");
+			Equip* saved = (Equip*) KLS_PUSH_TYPED(kls,Equip,1,HR_Equip,"Equip","Equip");
 			Equip* to_save = c->equips[i];
 
 			saved->class = to_save->class;
@@ -2453,10 +2410,9 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			saved->equip_fun = to_save->equip_fun ;
 
 			for (int j = 0; j < to_save->perksCount; j++) {
-				sprintf(msg,"Prepping Perk (%i/%i) for Equip for Chest.", j, to_save->perksCount);
-				log_tag("debug_log.txt","[SHOP]",msg);
-				kls_log("DEBUG",msg);
-				Perk* save_pk = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk",msg);
+				log_tag("debug_log.txt","[SHOP]","Prepping Perk (%i/%i) for Equip for Chest.", j, to_save->perksCount);
+				kls_log("DEBUG","Prepping Perk (%i/%i) for Equip for Chest.", j, to_save->perksCount);
+				Perk* save_pk = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk","Perk");
 				save_pk->class = to_save->perks[j]->class;
 				strcpy(save_pk->name, to_save->perks[j]->name);
 				strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2522,7 +2478,6 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 			"Leave",
                         (char *)NULL,
 	};
-	char msg[200];
 	WINDOW *win;
 	ITEM **my_items;
 	MENU *my_menu;
@@ -2724,8 +2679,7 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 					} else if ( room->treasure->class == TREASURE_CHEST && (check = strcmp("Open Chest",item_name(cur)) == 0) ) {
 						if (f->keys_balance > 0) {
 							open_chest(win,room->treasure->chest,f,kls,t_kls);
-							sprintf(msg,"Opened chest in Treasure room, index %i.\n", room->index);
-							log_tag("debug_log.txt","[TREASURE]",msg);
+							log_tag("debug_log.txt","[TREASURE]","Opened chest in Treasure room, index %i.\n", room->index);
 							f->keys_balance--;
 							end_room = 1;
 						} else {
@@ -2733,8 +2687,7 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 							mvwprintw(win,18, 5, "You don't have any key.");
 							wattroff(win,COLOR_PAIR(1));
 							wrefresh(win);
-							sprintf(msg,"Tried Opening a chest in Treasure room with no keys, index %i.\n", room->index);
-							log_tag("debug_log.txt","[TREASURE]",msg);
+							log_tag("debug_log.txt","[TREASURE]","Tried Opening a chest in Treasure room with no keys, index %i.\n", room->index);
 						}
 					} else if ( room->treasure->class == TREASURE_CONSUMABLE && (check = strcmp("Take Item",item_name(cur)) == 0) ) {
 						Consumable* bagged = (Consumable*) f->consumablesBag[room->treasure->consumable->class];
@@ -2779,11 +2732,9 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
  */
 void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
-	char msg[200];
-	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Home"));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("HOME"),HR_Room_desc,"Room desc",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Home"));
+	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Home"));
+	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("HOME"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Home");
 	if (!(load_info->is_new_game)) {
 		log_tag("debug_log.txt","[DEBUG]","initRoom_Home() for a loaded game");
@@ -2802,20 +2753,17 @@ void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info, Kolis
  */
 void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
-	char msg[500];
-	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Enemies"));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Enemies"),HR_Room_desc,"Room desc",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Enemies"));
+	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Enemies"));
+	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Enemies"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Enemies");
 	if (enemyTotal <= ROOM_ENEMIES_MAX ) {
 		r->index = roomIndex;
 
 		r->enemyTotal = enemyTotal;
-		sprintf(msg,"Allocated size %lu for FoeParty:", sizeof(FoeParty));
-		log_tag("debug_log.txt","[DEBUG]",msg);
-		kls_log("DEBUG",msg);
-		FoeParty* foes = (FoeParty*) KLS_PUSH_T_TYPED(tkls,FoeParty,1,HR_FoeParty,"Foeparty",msg);
+		log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for FoeParty:", sizeof(FoeParty));
+		kls_log("DEBUG","Allocated size %lu for FoeParty:", sizeof(FoeParty));
+		FoeParty* foes = (FoeParty*) KLS_PUSH_T_TYPED(tkls,FoeParty,1,HR_FoeParty,"Foeparty","Foeparty");
 
 		//Randomise fp class
 		//foes->class = rand() % (FOEPARTY_CLASS_MAX + 1);
@@ -2826,16 +2774,14 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 			//enemyIndex = load_info->enemy_index;
 			r->enemies[enemyIndex] = load_info->loaded_enemy;
 			total_foes = load_info->total_foes - load_info->enemy_index;
-			sprintf(msg,"Set total_foes to %i, will be used to prepare FoeParty.",total_foes);
-			log_tag("debug_log.txt","[DEBUG-LOAD]",msg);
+			log_tag("debug_log.txt","[DEBUG-LOAD]","Set total_foes to %i, will be used to prepare FoeParty.",total_foes);
 
 			//enemyIndex is the local var used to loop through enemies in a room and needs to be updated here
 			enemyIndex++;
 
 			load_info->done_loading = 1; //Done all loading
 			log_tag("debug_log.txt","[DEBUG-LOAD]","Set done_loading to 1.");
-			sprintf(msg,"Done loading: %s as first enemy, room #%i.",stringFromEClass(r->enemies[0]->class), r->index);
-			log_tag("debug_log.txt","[DEBUG-LOAD]",msg);
+			log_tag("debug_log.txt","[DEBUG-LOAD]","Done loading: %s as first enemy, room #%i.",stringFromEClass(r->enemies[0]->class), r->index);
 
 		}
 
@@ -2843,20 +2789,17 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		prepareFoeParty(foes, total_foes, roomIndex, t_kls);
 
 		r->foes = foes;
-		sprintf(msg,"Set (%s) FoeParty for room #%i , size is (%i).", stringFromFoePartyClass(r->foes->class), r->index,r->foes->size);
-		log_tag("debug_log.txt","[DEBUG-LOAD]",msg);
+		log_tag("debug_log.txt","[DEBUG-LOAD]","Set (%s) FoeParty for room #%i , size is (%i).", stringFromFoePartyClass(r->foes->class), r->index,r->foes->size);
 
 		for (; enemyIndex < enemyTotal; enemyIndex++) {
-			sprintf(msg,"Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy), enemyIndex, enemyTotal);
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Enemy* e = KLS_PUSH_T_TYPED(tkls,Enemy,1,HR_Enemy,"Enemy",msg); //&room_enemies[enemyIndex];
+			log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy), enemyIndex, enemyTotal);
+			kls_log("DEBUG","Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy), enemyIndex, enemyTotal);
+			Enemy* e = KLS_PUSH_T_TYPED(tkls,Enemy,1,HR_Enemy,"Enemy","Enemy"); //&room_enemies[enemyIndex];
 			prepareRoomEnemy(e, r->index, r->enemyTotal, enemyIndex, t_kls);
 			r->enemies[enemyIndex] = e;
 			//Set FoeParty links
 			r->foes->enemy_foes[enemyIndex] = e;
-			sprintf(msg,"Room #(%i):    Set (%s) into room->foes->enemy_foes[%i]).", r->index, stringFromEClass(r->foes->enemy_foes[enemyIndex]->class), enemyIndex);
-			log_tag("debug_log.txt","[FOEPARTY]",msg);
+			log_tag("debug_log.txt","[FOEPARTY]","Room #(%i):    Set (%s) into room->foes->enemy_foes[%i]).", r->index, stringFromEClass(r->foes->enemy_foes[enemyIndex]->class), enemyIndex);
 		} //End for all enemies
 
 		//Set room enemies
@@ -2865,8 +2808,7 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		//}
 		//r->enemies = enemies;
 	} else {
-		sprintf(msg,"ERROR: Room %i can't have %i enemies (>MAX %i)\n", roomIndex, enemyTotal, ROOM_ENEMIES_MAX);
-		log_tag("debug_log.txt","[FOEPARTY]",msg);
+		log_tag("debug_log.txt","[FOEPARTY]","ERROR: Room %i can't have %i enemies (>MAX %i)\n", roomIndex, enemyTotal, ROOM_ENEMIES_MAX);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -2883,17 +2825,14 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
-	char msg[200];
 	Koliseo_Temp tkls = *t_kls;
-	sprintf(msg,"Allocated size %lu for Room Shop desc:", sizeof("Shop"));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Shop"),HR_Room_desc,"Room desc",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Shop desc:", sizeof("Shop"));
+	kls_log("DEBUG","Allocated size %lu for Room Shop desc:", sizeof("Shop"));
+	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Shop"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Shop");
-	sprintf(msg,"Allocated size %lu for Room Shop :", sizeof("Shop"));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	Shop* shop = (Shop*) KLS_PUSH_T_TYPED(tkls,Shop,1,HR_Shop,"Shop",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Shop :", sizeof("Shop"));
+	kls_log("DEBUG","Allocated size %lu for Room Shop :", sizeof("Shop"));
+	Shop* shop = (Shop*) KLS_PUSH_T_TYPED(tkls,Shop,1,HR_Shop,"Shop","Shop");
 
 	int indexWeight = roomIndex;
 	initShop(shop,indexWeight,f,t_kls);
@@ -2912,16 +2851,13 @@ void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
  */
 void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
-	char msg[200];
-	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Boss"));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Boss"),HR_Room_desc,"Room desc",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Boss"));
+	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Boss"));
+	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Boss"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Boss");
-	sprintf(msg,"Allocated size %lu for Room Boss:", sizeof(Boss));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	Boss* b = (Boss*) KLS_PUSH_T_TYPED(tkls,Boss,1,HR_Boss,"Boss",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Boss:", sizeof(Boss));
+	kls_log("DEBUG","Allocated size %lu for Room Boss:", sizeof(Boss));
+	Boss* b = (Boss*) KLS_PUSH_T_TYPED(tkls,Boss,1,HR_Boss,"Boss","Boss");
 
 	prepareBoss(b, t_kls);
 	r->boss = b;
@@ -2939,16 +2875,13 @@ void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
  */
 void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
 	Koliseo_Temp tkls = *t_kls;
-	char msg[200];
-	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Treasure"));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Treasure"),HR_Room_desc,"Room desc",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Treasure"));
+	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Treasure"));
+	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Treasure"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Treasure");
-	sprintf(msg,"Allocated size %lu for Room Treasure:", sizeof(Treasure));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	Treasure* t = (Treasure*) KLS_PUSH_T_TYPED(tkls,Treasure,1,HR_Treasure,"Treasure",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Treasure:", sizeof(Treasure));
+	kls_log("DEBUG","Allocated size %lu for Room Treasure:", sizeof(Treasure));
+	Treasure* t = (Treasure*) KLS_PUSH_T_TYPED(tkls,Treasure,1,HR_Treasure,"Treasure","Treasure");
 	prepareTreasure(t,f,t_kls);
 	r->treasure = t;
 }
@@ -2965,16 +2898,13 @@ void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) 
 void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
 	log_tag("debug_log.txt","[WARN]","Entering legacy path.");
 	Koliseo_Temp tkls = *t_kls;
-	char msg[200];
-	sprintf(msg,"Allocated size %lu for Room desc:", sizeof("Roadfork"));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Roadfork"),HR_Room_desc,"Room desc",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Roadfork"));
+	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Roadfork"));
+	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Roadfork"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Roadfork");
-	sprintf(msg,"Allocated size %lu for Room Roadfork:", sizeof(Roadfork));
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	kls_log("DEBUG",msg);
-	Roadfork* fk = (Roadfork*) KLS_PUSH_T_TYPED(tkls,Roadfork,1,HR_Roadfork,"Roadfork",msg);
+	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Roadfork:", sizeof(Roadfork));
+	kls_log("DEBUG","Allocated size %lu for Room Roadfork:", sizeof(Roadfork));
+	Roadfork* fk = (Roadfork*) KLS_PUSH_T_TYPED(tkls,Roadfork,1,HR_Roadfork,"Roadfork","Roadfork");
 
 	prepareRoadfork(fk);
 	r->roadfork = fk;

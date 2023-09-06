@@ -93,9 +93,7 @@ int get_saveslot_index(void) {
 		(char *)NULL,
 	};
 
-	char msg[1000];
-	sprintf(msg,"get_saveslot_index(): getting index from user.");
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","get_saveslot_index(): getting index from user.");
 
 	int choice = 999;
 	int picked = 0;
@@ -207,8 +205,7 @@ int get_saveslot_index(void) {
 				ITEM *cur;
 				cur = current_item(saveslots_menu);
 				choice = getTurnChoice((char*)item_name(cur));
-				sprintf(msg,"Left on choice: [ %s ] value (%i)",item_name(cur),choice);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Left on choice: [ %s ] value (%i)",item_name(cur),choice);
 				if (choice == EQUIPS) {
 					log_tag("debug_log.txt","[DEBUG]","Should do something");
 				}
@@ -218,8 +215,7 @@ int get_saveslot_index(void) {
 				ITEM *cur;
 				cur = current_item(saveslots_menu);
 				choice = getTurnChoice((char*)item_name(cur));
-				sprintf(msg,"Right on choice: [ %s ] value (%i)",item_name(cur),choice);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Right on choice: [ %s ] value (%i)",item_name(cur),choice);
 				if (choice == EQUIPS) {
 					log_tag("debug_log.txt","[DEBUG]","Should do something");
 				}
@@ -280,15 +276,16 @@ int get_saveslot_index(void) {
 	int totalChoices = n_choices;
 	for(int k = 0; k < totalChoices; k++) {
 		free_item(menu_items[k]);
-		sprintf(msg,"Freed %i saveslots menu item",k);
-		log_tag("debug_log.txt","[FREE]",msg);
+		log_tag("debug_log.txt","[FREE]","Freed %i saveslots menu item",k);
 	}
+	free(menu_items);
 
 	delwin(saveslots_win);
 	endwin();
 	log_tag("debug_log.txt","[DEBUG]","Ended window mode for get_saveslot_index()");
-	sprintf(msg,"Ended get_saveslot_index(), returning [%i]",choice);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","Ended get_saveslot_index(), returning [%i]",choice);
+	//TODO
+	//Why have the choice misaligned?
 	return choice -1;
 }
 
@@ -330,9 +327,7 @@ void displayLore(char** lore_strings, int lore_counter) {
 	mvwhline(win, 2, 1, ACS_HLINE, 68);
 	mvwaddch(win, 2, 69, ACS_RTEE);
 
-	char msg[1000];
-	sprintf(msg,"%s",lore_strings[lore_counter]);
-	log_tag("debug_log.txt","[LORE]",msg);
+	log_tag("debug_log.txt","[LORE]","%s",lore_strings[lore_counter]);
 	wattron(win,COLOR_PAIR(6));
 	mvwprintw(win, 4, 1, "%s", lore_strings[lore_counter]);
 	wattroff(win,COLOR_PAIR(6));
@@ -341,8 +336,7 @@ void displayLore(char** lore_strings, int lore_counter) {
 	screenTime(1.5);
 	char c;
 	int res = scanf("%c",&c);
-	sprintf(msg,"displayLore() scanf() res was (%i)",res);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","displayLore() scanf() res was (%i)",res);
 	delwin(win);
 	endwin();
 }
@@ -361,12 +355,10 @@ void displayLore(char** lore_strings, int lore_counter) {
  * @param e The Enemy pointer with stats to print.
  */
 void printBattleStats(WINDOW* wins[3], Fighter* f, Enemy* e) {
-	char msg[500];
 
 	for (int i=0; i < 3; i++) {
 		if ( wins[i] == NULL ) {
-			sprintf(msg,"printBattleStats():  wins[%i] was NULL",i);
-			log_tag("debug_log.txt","[ERROR]",msg);
+			log_tag("debug_log.txt","[ERROR]","printBattleStats():  wins[%i] was NULL",i);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -483,11 +475,8 @@ void win_show(WINDOW *win, Enemy* e, Fighter* f, int isEnemy, int border)
 	getbegyx(win, starty, startx);
 	getmaxyx(win, height, width);
 
-	char msg[500];
-	sprintf(msg,"Begin y (%i) height (%i)", starty, height);
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	sprintf(msg,"Begin x (%i) width (%i)", startx, width);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","win_show():  Begin y (%i) height (%i)", starty, height);
+	log_tag("debug_log.txt","[DEBUG]","win_show():  Begin x (%i) width (%i)", startx, width);
 
 	box(win, 0, 0);
 	if (border) mvwaddch(win, 2, 0, ACS_LTEE);
@@ -834,12 +823,10 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
  * @param b The Boss pointer with stats to print.
  */
 void printBossBattleStats(WINDOW* wins[3], Fighter* f, Boss* b) {
-	char msg[500];
 
 	for (int i=0; i < 3; i++) {
 		if ( wins[i] == NULL ) {
-			sprintf(msg,"printBossBattleStats():  wins[%i] was NULL",i);
-			log_tag("debug_log.txt","[ERROR]",msg);
+			log_tag("debug_log.txt","[ERROR]","printBossBattleStats():  wins[%i] was NULL",i);
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -950,17 +937,14 @@ void init_boss_wins(WINDOW **wins, Boss* b, Fighter* f)
  */
 void boss_win_show(WINDOW *win, Boss* b, Fighter* f, int isBoss, int border)
 {
-	char msg[500];
 	log_tag("debug_log.txt","[DEBUG]","Doing boss_win_show().");
 
         int startx, starty, height, width;
 
 	getbegyx(win, starty, startx);
 	getmaxyx(win, height, width);
-	sprintf(msg,"Begin y (%i) height (%i)", starty, height);
-	log_tag("debug_log.txt","[DEBUG]",msg);
-	sprintf(msg,"Begin x (%i) width (%i)", startx, width);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","boss_win_show():  Begin y (%i) height (%i)", starty, height);
+	log_tag("debug_log.txt","[DEBUG]","boss_win_show():  Begin x (%i) width (%i)", startx, width);
 
 	box(win, 0, 0);
 	if (border) mvwaddch(win, 2, 0, ACS_LTEE);
@@ -2283,7 +2267,6 @@ void printLoadout(Fighter* f) {
  * @param fp The FoeParty pointer whose layout will be displayed.
  */
 void display_printFoeParty(FoeParty* fp) {
-	char msg[500];
 	WINDOW *wins[4];
 	int cells = -1;
 	int party_size = fp->size;
@@ -2301,10 +2284,8 @@ void display_printFoeParty(FoeParty* fp) {
 	//FIXME: assert error if this is invalid
 	if (cells > 4) cells = 4;
 
-	sprintf(msg,"FP size was: (%i) - iCURR was (%i).", party_size, fp->current_index);
-	log_tag("debug_log.txt","[FOEPARTY]",msg);
-	sprintf(msg,"Set total cells to (%i).", cells);
-	log_tag("debug_log.txt","[FOEPARTY]",msg);
+	log_tag("debug_log.txt","[FOEPARTY]","FP size was: (%i) - iCURR was (%i).", party_size, fp->current_index);
+	log_tag("debug_log.txt","[FOEPARTY]","Set total cells to (%i).", cells);
 
 	/* Initialize curses */
 	//setlocale(LC_CTYPE, "it_IT.UTF-8");
@@ -2343,8 +2324,7 @@ void display_printFoeParty(FoeParty* fp) {
 			}
 			break;
 		}
-		sprintf(msg,"Cell (%i) status was (%i)", i, isalive);
-		log_tag("debug_log.txt","[FOEPARTY]",msg);
+		log_tag("debug_log.txt","[FOEPARTY]","Cell (%i) status was (%i)", i, isalive);
 		if (isalive == 1) {
 			Enemy* curr_foe = fp->enemy_foes[fp->current_index];
 			mvwprintw(wins[i], 2, 2, "%s", stringFromEClass(curr_foe->class));
@@ -2366,8 +2346,7 @@ void display_printFoeParty(FoeParty* fp) {
 	//Free cells
         for (int i=0; i < cells; i++) {
 		delwin(wins[i]);
-		sprintf(msg,"Freed win (%i) for display_printFoeParty().", i);
-		log_tag("debug_log.txt","[FREE]",msg);
+		log_tag("debug_log.txt","[FREE]","Freed win (%i) for display_printFoeParty().", i);
 	}
 	endwin();
 }
@@ -2446,10 +2425,8 @@ void debug_printFoeParty(FoeParty* fp) {
 	mvwprintw(w,10+skip_height,2,"Press [Enter] to return.");
         box(w, 0, 0);
 	wrefresh(w);
-	char msg[500];
 	int res = scanf("%*c");
-	sprintf(msg,"debug_printFoeParty() scanf() res was (%i)",res);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","debug_printFoeParty() scanf() res was (%i)",res);
 	delwin(w);
 	endwin();
 }
@@ -3217,10 +3194,8 @@ void handleEquips(Fighter* f, Path* p) {
 		};
 		break;
 		case -1: {
-			char msg[500];
 			int res = system("clear");
-			sprintf(msg,"handleEquips() system(\"clear\") res was (%i)",res);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","handleEquips() system(\"clear\") res was (%i)",res);
 			return;
 		};
 		break;
@@ -3515,9 +3490,7 @@ void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int e
 
 					//do to the move
 					fight_Special(selected->move,my_wins[0],f,e,b,p,roomIndex,enemyIndex,isBoss);
-					char msg[100];
-					sprintf(msg,"Fighter [%s] used special: [%s].", f->name, nameStringFromSpecial(f->class,selected->move));
-					log_tag("debug_log.txt","[DEBUG-SPECIALS]",msg);
+					log_tag("debug_log.txt","[DEBUG-SPECIALS]","Fighter [%s] used special: [%s].", f->name, nameStringFromSpecial(f->class,selected->move));
 					pos_menu_cursor(my_menu);
 					wrefresh(my_wins[0]);
 					refresh();
@@ -3833,7 +3806,6 @@ void handleTutorial(void) {
 	mvwhline(win, 2, 1, ACS_HLINE, 68);
 	mvwaddch(win, 2, 69, ACS_RTEE);
 
-	char msg[1000];
 	wattron(win,COLOR_PAIR(6));
 	mvwprintw(win, 4, 1, "%s", "You can use the arrow keys and Enter to do everything needed for the game.");
 	mvwprintw(win, 7, 1, "%s", "Buying things from a Shop may be tricky: you have to select one, then choose Buy. To select one, First go up/down to 'View Item', then press Enter, then you can scroll them with left/right. Press Enter to confirm your selection, then go back up to Buy.");
@@ -3844,8 +3816,7 @@ void handleTutorial(void) {
 	wrefresh(win);
 	char c;
 	int res = scanf("%c",&c);
-	sprintf(msg,"handle_Tutorial() scanf() res was (%i)",res);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","handle_Tutorial() scanf() res was (%i)",res);
 	delwin(win);
 	endwin();
 }
@@ -3863,14 +3834,14 @@ void handleTutorial(void) {
  * @param kls The Koliseo used for allocations.
  * @param t_kls The Koliseo_Temp used for temporary allocations.
  */
-int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, Koliseo* kls, Koliseo_Temp* t_kls) {
+int handleRogueMenu(Gamestate* gmst, Path* p, Fighter* player, Room* room, loadInfo* load_info, Koliseo* kls, Koliseo_Temp* t_kls) {
 	Enemy* dummy_enemy = NULL;
 	Boss* dummy_boss = NULL;
 	FILE* dummy_savefile = NULL;
 	FILE* save_file;
 	WINDOW* dummy_notify_win = NULL;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gmst, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -3888,8 +3859,6 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 		"Debug",
 		(char*)NULL,
 	};
-
-	char msg[1000];
 
 	turnOption choice = 999;
 
@@ -4025,8 +3994,7 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 					ITEM *cur;
 					cur = current_item(rogue_menu);
 					choice = getTurnChoice((char*)item_name(cur));
-					sprintf(msg,"Left on choice: [ %s ] value (%i)",item_name(cur),choice);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","Left on choice: [ %s ] value (%i)",item_name(cur),choice);
 					if (choice == EQUIPS) {
 						log_tag("debug_log.txt","[DEBUG]","Should do something");
 					}
@@ -4036,8 +4004,7 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 					ITEM *cur;
 					cur = current_item(rogue_menu);
 					choice = getTurnChoice((char*)item_name(cur));
-					sprintf(msg,"Right on choice: [ %s ] value (%i)",item_name(cur),choice);
-					log_tag("debug_log.txt","[DEBUG]",msg);
+					log_tag("debug_log.txt","[DEBUG]","Right on choice: [ %s ] value (%i)",item_name(cur),choice);
 					if (choice == EQUIPS) {
 						log_tag("debug_log.txt","[DEBUG]","Should do something");
 					}
@@ -4101,8 +4068,7 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 						fprintf(stderr,"[ERROR]    Can't open save file %s!\n",path_to_savefile);
 						exit(EXIT_FAILURE);
 					} else {
-						sprintf(msg,"Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
-						log_tag("debug_log.txt","[TURNOP]",msg);
+						log_tag("debug_log.txt","[TURNOP]","Assigning save_file pointer to args->save_file. Path: [%s]",path_to_savefile);
 						args->save_file = save_file;
 					}
 				}
@@ -4124,9 +4090,9 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 		}
 		for(int k = 0; k < totalChoices; k++) {
 			free_item(menu_items[k]);
-			sprintf(msg,"Freed %i Rogue menu item",k);
-			log_tag("debug_log.txt","[FREE]",msg);
+			log_tag("debug_log.txt","[FREE]","Freed %i Rogue menu item",k);
 		}
+		free(menu_items);
 
 		delwin(side_win);
 		endwin();
@@ -4136,7 +4102,6 @@ int handleRogueMenu(Path* p, Fighter* player, Room* room, loadInfo* load_info, K
 	//Free turnOP_args
 	//free(args);
 	log_tag("debug_log.txt","[FREE]","handleRogueMenu():  Freed turnOP_args");
-	sprintf(msg,"Ended handleRogueMenu()");
-	log_tag("debug_log.txt","[DEBUG]",msg);
+	log_tag("debug_log.txt","[DEBUG]","Ended handleRogueMenu()");
 	return 0;
 }
