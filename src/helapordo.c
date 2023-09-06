@@ -5171,89 +5171,75 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	int num_value = -1;
 	const char version[] = "v0.1.5";
 
-	char msg[1000];
 
 	int scanres = -1;
 	/* File version scanning */
 	scanres = fscanf(file, "%200s\n", buf);
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
 
 	int check = -1;
 	if (!((check = strcmp(buf,version)) == 0)) {
-		sprintf(msg,"Failed save format version check. Was [%s]. Quitting.\n", buf);
-		log_tag("debug_log.txt","[LOAD-ERROR]",msg);
+		log_tag("debug_log.txt","[LOAD-ERROR]","Failed save format version check. Was [%s]. Quitting.\n", buf);
 		fprintf(stderr,"[ERROR]    File version mismatch on load.\n");
 		exit(EXIT_FAILURE);
 	};
-	sprintf(msg,"Loaded save format version: (%s).\n",buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded save format version: (%s).",buf);
 
 	/* Save type scanning */
 	scanres = fscanf(file, "%200s\n", buf);
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
 
 	check = -1;
 	if (!((check = strcmp(buf,stringFrom_saveType(HOME_SAVE))) == 0)) {
-		sprintf(msg,"handleLoadGame_Home():  Failed save type check, was [%s]. Quitting.\n",buf);
-		log_tag("debug_log.txt","[LOAD-ERROR]",msg);
+		log_tag("debug_log.txt","[LOAD-ERROR]","handleLoadGame_Home():  Failed save type check, was [%s]. Quitting.",buf);
 		fprintf(stderr,"[ERROR]    Save type version mismatch on load.\n");
 		exit(EXIT_FAILURE);
 	};
-	sprintf(msg,"Loaded save type: (%s).\n",buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded save type: (%s).",buf);
 
 	/* Gamemode scanning */
 	scanres = fscanf(file, "%200[^#]# %s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.\n", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	GAMEMODE = num_value;
 
 	/* Fighter scanning */
 	scanres = fscanf(file, "%200s\n", buf);
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	strcpy(f->name,buf);
 
 
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	for (int i = 0; i < CLASSESMAX +1; i++) {
 		int check = -1;
 		if ((check = strcmp(buf, stringFromClass(i))) == 0) {
@@ -5268,171 +5254,143 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//HP
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->hp = num_value;
 	//TotalHP
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->totalhp = num_value;
 	//Atk
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->atk = num_value;
 	//Def
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	sscanf(buf, "%3i", &num_value);
 	f->def = num_value;
 	//Vel
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->vel = num_value;
 	//Level
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->level = num_value;
 	//Luck
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->luck = num_value;
 	//Totxp
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%8i", &num_value);
 	f->totalxp = num_value;
 	//Current level xp
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%8i", &num_value);
 	f->currentlevelxp = num_value;
 	//Totallevelxp
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%8i", &num_value);
 	f->totallevelxp = num_value;
 	//Energy
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->energy = num_value;
 	//Totenergy
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->totalenergy = num_value;
 	//Coin balance
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%8i", &num_value);
 	f->balance = num_value;
 
 	//Status
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	for (int i = 0; i < STATUSMAX +1; i++) {
 		int check = -1;
 		if ((check = strcmp(buf,stringFromStatus(i))) == 0) {
@@ -5443,8 +5401,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//Specials
 	scanres = fscanf(file, "%200s\n", buf);
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -5452,21 +5409,18 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//Enabled flag
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		f->specials[i]->enabled = num_value;
 	}
 	scanres = fscanf(file, "%200s\n", buf);
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -5474,8 +5428,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//Fighter counters
 	scanres = fscanf(file, "%200s\n", buf);
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -5483,27 +5436,23 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//innerValue
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		f->counters[i]->innerValue = num_value;
 		//count
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		f->counters[i]->count = num_value;
 	}
@@ -5512,95 +5461,80 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//turnboost_atk
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->turnboost_atk = num_value;
 	//turnboost_def
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->turnboost_def = num_value;
 	//turnboost_vel
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->turnboost_vel = num_value;
 	//turnboost_enr
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->turnboost_enr = num_value;
 
 	//equipsbag occupied slots
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->equipsBagOccupiedSlots = num_value;
 	//equipsbag earliest slot
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->earliestBagSlot = num_value;
 
 	//Equipsbag
 	scanres = fscanf(file, "%200s\n", buf);
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
 
 	for (int i = 0; i < f->equipsBagOccupiedSlots; i++) {
-		sprintf(msg,"Loadgame_Home(): Prepping Equip (%i)",i);
-		log_tag("debug_log.txt","[DEBUG]",msg);
-		kls_log("DEBUG",msg);
-		Equip* eq = KLS_PUSH_TYPED(kls,Equip,1,HR_Equip,"Equip",msg);
+		log_tag("debug_log.txt","[DEBUG]","Loadgame_Home(): Prepping Equip (%i)",i);
+		kls_log("DEBUG","Loadgame_Home(): Prepping Equip (%i)",i);
+		Equip* eq = KLS_PUSH_TYPED(kls,Equip,1,HR_Equip,"Equip","Equip");
 		scanres = fscanf(file, "%200s\n", buf); //Skip equip_i heading
 		if (scanres != 1) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
@@ -5609,14 +5543,12 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//equipClass
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		for (int j = 0; j < EQUIPSMAX +1; j++) {
 			int check = -1;
 			if ((check = strcmp(buf,stringFromEquips(j))) == 0) {
@@ -5627,14 +5559,12 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//equipzoneClass
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		for (int j = 0; j < EQUIPZONES +1; j++) {
 			int check = -1;
 			if ((check = strcmp(buf,stringFromEquipzones(j))) == 0) {
@@ -5646,135 +5576,113 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//qty
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->qty = num_value;
 		//equipped
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->equipped = num_value;
 		//level
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->level = num_value;
 		//atk
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->atk = num_value;
 		//def
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->def = num_value;
 		//vel
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->vel = num_value;
 		//enr
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->enr = num_value;
 		//bonus
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->bonus = num_value;
 		//perksCount
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		eq->perksCount = num_value;
 		//cost
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%8i", &num_value);
 		eq->cost = num_value;
 
 		//Quality
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		for (int j = 0; j < QUALITIESMAX +1; j++) {
 			int check = -1;
 			if ((check = strcmp(buf,stringFromQuality(j))) == 0) {
@@ -5786,27 +5694,23 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//perks
 		scanres = fscanf(file, "%200s\n", buf); //Skip perks heading
 		if (scanres != 1) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 		for (int j = 0; j < eq->perksCount ; j++) {
-			sprintf(msg,"Loadgame_Home(): Prepping Perk (%i)",j);
-			log_tag("debug_log.txt","[DEBUG]",msg);
-			kls_log("DEBUG",msg);
-			Perk* pk = (Perk*) KLS_PUSH_TYPED(kls,Perk,1,HR_Perk,"Perk",msg);
+			log_tag("debug_log.txt","[DEBUG]","Loadgame_Home(): Prepping Perk (%i)",j);
+			kls_log("DEBUG","Loadgame_Home(): Prepping Perk (%i)",j);
+			Perk* pk = (Perk*) KLS_PUSH_TYPED(kls,Perk,1,HR_Perk,"Perk","Perk");
 			//perkClass
 			scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 			if (scanres != 2) {
-				sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 				fprintf(stderr,"Error while loading game.");
 				exit(EXIT_FAILURE);
 			}
 
-			sprintf(msg,"Loaded %s: %s.", comment, buf);
-			log_tag("debug_log.txt","[LOAD]",msg);
+			log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 			sscanf(buf, "%3i", &num_value);
 			pk->class = num_value;
 			char* name = nameStringFromPerk(pk->class);
@@ -5821,30 +5725,26 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 			//innerValue
 			scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 			if (scanres != 2) {
-				sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-				log_tag("debug_log.txt","[DEBUG]",msg);
+				log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 				fprintf(stderr,"Error while loading game.");
 				exit(EXIT_FAILURE);
 			}
 
-			sprintf(msg,"Loaded %s: %s.", comment, buf);
-			log_tag("debug_log.txt","[LOAD]",msg);
+			log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 			sscanf(buf, "%3i", &num_value);
 			pk->innerValue = num_value;
 		}
 
 		scanres = fscanf(file, "%200s\n", buf); //Skip closing perks breacket
 		if (scanres != 1) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
 		scanres = fscanf(file, "%200s\n", buf); //Skip closing current equip bracket
 		if (scanres != 1) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
@@ -5867,8 +5767,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 
 	scanres = fscanf(file,"%200s\n", buf); //Skip closing equipsbag bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -5878,234 +5777,196 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//permboost_atk
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->permboost_atk = num_value;
 	//permboost_def
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->permboost_def = num_value;
 	//permboost_vel
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->permboost_vel = num_value;
 	//permboost_enr
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->permboost_enr = num_value;
 	//equipboost_atk
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->equipboost_atk = num_value;
 	//equipboost_def
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->equipboost_def = num_value;
 	//equipboost_vel
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->equipboost_vel = num_value;
 	//equipboost_enr
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->equipboost_enr = num_value;
 
 	//Stats
 	scanres = fscanf(file, "%200s\n", buf); //Skip Stats bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
 	//enemieskilled
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->enemieskilled = num_value;
 	//consumablesfound
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->consumablesfound = num_value;
 	//equipsfound
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->equipsfound = num_value;
 	//artifactsfound
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->artifactsfound = num_value;
 	//crits
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->criticalhits = num_value;
 	//roomsdone
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->roomscompleted = num_value;
 	//specials unlocked
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->specialsunlocked = num_value;
 	//coinsfound
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%8i", &num_value);
 	f->stats->coinsfound = num_value;
 	//bosseskilled
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->bosseskilled = num_value;
 
 	//Unique boss kills
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->unique_bosseskilled = num_value;
 
 	scanres = fscanf(file, "%200s\n", buf); //Skip unique bosses bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6113,48 +5974,41 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//boss %i was killed
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		f->stats->killed_bosses[boss_index] = num_value;
 	}
 	scanres = fscanf(file, "%200s\n", buf); //Skip unique bosses closing bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
 	//keysfound
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->stats->keysfound = num_value;
 	scanres = fscanf(file, "%200s\n", buf); //Skip Stats closing bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
 
 	scanres = fscanf(file, "%200s\n", buf); //Skip Fighter closing bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6164,8 +6018,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//Path
 	scanres = fscanf(file, "%200s\n", buf); //Skip Path bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6173,49 +6026,41 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//Luck
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	p->luck = num_value;
 	//Length
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	p->length = num_value;
 	//Prize
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%8i", &num_value);
 	p->prize = num_value;
 	//loreCounter
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	p->loreCounter = num_value;
 
@@ -6223,8 +6068,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//Wincon
 	scanres = fscanf(file, "%200s\n", buf); //Skip Wincon bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6232,44 +6076,37 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//winconClass
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	p->win_condition->class = num_value;
 	//current_val
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	p->win_condition->current_val = num_value;
 	//target_val
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	p->win_condition->target_val = num_value;
 
 	scanres = fscanf(file, "%200s\n", buf); //Skip Wincon closing bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6278,8 +6115,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 
 	scanres = fscanf(file, "%200s\n", buf); //Skip Path closing bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6289,13 +6125,11 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//roomindex
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
-	sprintf(msg,"Loaded %s: %s.", comment, buf);
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%8i", &num_value);
 	*roomIndex = num_value;
 
@@ -6304,8 +6138,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//Consumables bag
 	scanres = fscanf(file, "%200s\n", buf); //Skip Consumablebag bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6315,21 +6148,18 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//qty
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		cn->qty = num_value;
 	}
 	scanres = fscanf(file, "%200s\n", buf); //Skip Consumablebag closing bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6339,8 +6169,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	//Artifacts bag
 	scanres = fscanf(file, "%200s\n", buf); //Skip Artifactsbag bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6349,21 +6178,18 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 		//qty
 		scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 		if (scanres != 2) {
-			sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
-			log_tag("debug_log.txt","[DEBUG]",msg);
+			log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
 			fprintf(stderr,"Error while loading game.");
 			exit(EXIT_FAILURE);
 		}
 
-		sprintf(msg,"Loaded %s: %s.", comment, buf);
-		log_tag("debug_log.txt","[LOAD]",msg);
+		log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 		sscanf(buf, "%3i", &num_value);
 		a->qty = num_value;
 	}
 	scanres = fscanf(file, "%200s\n", buf); //Skip Artifactsbag closing bracket
 	if (scanres != 1) {
-		sprintf(msg,"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
-		log_tag("debug_log.txt","[DEBUG]",msg);
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",1,scanres);
 		fprintf(stderr,"Error while loading game.");
 		exit(EXIT_FAILURE);
 	}
@@ -6371,8 +6197,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	log_tag("debug_log.txt","[LOAD]","Done loading Artifacts bag.");
 
 	fclose(file);
-	sprintf(msg,"Done loading from text file!\n");
-	log_tag("debug_log.txt","[LOAD]",msg);
+	log_tag("debug_log.txt","[LOAD]","Done loading from text file!");
 	//printf("[INFO]    Done loading!\n");
 	//TODO:
 	//Notification win for load status
