@@ -41,24 +41,24 @@ endif
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 ./src/anvil__helapordo.c:
-	@echo -en "Generating C anvil__helapordo for $(VERSION):  "
-	-./anvil -G ./src $(VERSION)
+	@echo -en "Generating C \033[1;34manvil__helapordo\e[0m for $(VERSION):  "
+	-./anvil -qG ./src $(VERSION)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./koliseo/src/koliseo.o:
-	@echo -en "Building Koliseo with curses:  "
-	gcc -c ./koliseo/src/koliseo.c -DKOLISEO_HAS_CURSES -o ./koliseo/src/koliseo.o
+	@echo -en "Building \033[1;35mKoliseo\e[0m with curses:  "
+	gcc -c ./koliseo/src/koliseo.c -DKOLISEO_HAS_CURSES -o ./koliseo/src/koliseo.o $(AM_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/palette.c:
-	@echo -en "\033[1;34m[Makefile]\e[0m    Using python to generate C palette files from \033[1;35m[$(PALETTE_PATH)]:\e[0m  "
+	@echo -en "\033[1;34m[Makefile]\e[0m    Using \033[1;33mpython\e[0m to generate C palette files from \033[1;35m[$(PALETTE_PATH)]:\e[0m  "
 	python ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) .. > ./src/palette.c
 	python ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) .. > ./src/palette.h
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for object files
 %.o: %.c
-	@echo -en "[ $< ] ->\033[1;34m [ $@ ]:\e[0m  "
+	@echo -en "[ $< ] -> [ \033[1;34m$@\e[0m ]:  "
 	$(CC) -c $(CFLAGS) $(AM_CFLAGS) $< -o $@
 	@echo -e "\033[1;33mDone.\e[0m"
 

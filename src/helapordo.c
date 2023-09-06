@@ -3274,7 +3274,7 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 turnOption getTurnChoice(char* ch) {
 	int comp = 999;
 
-	log_tag("debug_log.txt","[TURNCHOICE]","Turnchoice string was (%s)",ch);
+	log_tag("debug_log.txt","[TURNPICK]","Turnchoice string was (%s)",ch);
 	turnOption pick = INVALID;
 
 	while (pick == INVALID) {
@@ -3313,7 +3313,7 @@ turnOption getTurnChoice(char* ch) {
 		}
 	}
 
-	log_tag("debug_log.txt","[TURNOPTION]","Pick was: (%i)",pick);
+	log_tag("debug_log.txt","[TURNOPT]","Pick was: (%i)",pick);
 
 	if (pick == INVALID) {
 		fprintf(stderr,"Error: unexpected turn choice value");
