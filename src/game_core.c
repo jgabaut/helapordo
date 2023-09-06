@@ -244,10 +244,10 @@ char* classesstrings[CLASSESMAX+1] = {
 
 BaseStats basestats[CLASSESMAX+1] = {
 
-	{Knight,32,12,22,7,1,0,1,0,32,5},
-	{Archer,24,15,14,11,1,0,1,0,24,5},
-	{Mage,17,19,10,8,1,0,1,0,17,5},
-	{Assassin,20,16,12,10,1,0,1,0,20,5}
+	{Knight,32,12,22,7,1,0,1,0,32,5,5},
+	{Archer,24,15,14,11,1,0,1,0,24,5,5},
+	{Mage,17,19,10,8,1,0,1,0,17,5,5},
+	{Assassin,20,16,12,10,1,0,1,0,20,5,5}
 
 };
 
@@ -264,14 +264,14 @@ char* classenemystrings[ENEMYCLASSESMAX+1] = {
 
 EnemyBaseStats baseenemystats[ENEMYCLASSESMAX+1] = {
 
-	{Mummy,22,11,7,5,1,1,22,0,5},
-	{Ghost,35,5,16,6,1,2,35,0,5},
-	{Zombie,20,6,7,5,1,1,20,0,5},
-	{Goblin,32,10,8,11,1,2,32,0,5},
-	{Imp,24,12,7,10,1,3,24,0,5},
-	{Troll,42,4,17,4,2,3,42,0,5},
-	{Boar,30,9,12,8,2,4,30,0,5},
-	{Werewolf,20,14,5,7,1,3,20,0,5}
+	{Mummy,22,11,7,5,1,1,22,0,5,5},
+	{Ghost,35,5,16,6,1,2,35,0,5,5},
+	{Zombie,20,6,7,5,1,1,20,0,5,5},
+	{Goblin,32,10,8,11,1,2,32,0,5,5},
+	{Imp,24,12,7,10,1,3,24,0,5,5},
+	{Troll,42,4,17,4,2,3,42,0,5,5},
+	{Boar,30,9,12,8,2,4,30,0,5,5},
+	{Werewolf,20,14,5,7,1,3,20,0,5,5}
 };
 
 char* classbossstrings[BOSSCLASSESMAX+1] = {
@@ -284,11 +284,11 @@ char* classbossstrings[BOSSCLASSESMAX+1] = {
 
 BossBaseStats basebossstats[BOSSCLASSESMAX+1] = {
 
-	{Blue_Troll,90,11,26,5,1,18,90,0,8},
-	{Headless_Ninja,65,19,16,9,1,18,65,0,8},
-	{Crawling_Dude,76,13,32,7,1,18,76,0,8},
-	{Sr_Warthog,58,17,21,10,1,18,58,0,8},
-	{Doppelganger,15,10,10,10,1,18,15,0,8}
+	{Blue_Troll,90,11,26,5,1,18,90,0,8,5},
+	{Headless_Ninja,65,19,16,9,1,18,65,0,8,5},
+	{Crawling_Dude,76,13,32,7,1,18,76,0,8,5},
+	{Sr_Warthog,58,17,21,10,1,18,58,0,8,5},
+	{Doppelganger,15,10,10,10,1,18,15,0,8,5}
 };
 
 char* specialsnamestrings[CLASSESMAX+1][SPECIALSMAX+1] = {

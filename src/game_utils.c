@@ -25,6 +25,8 @@ void dbg_Fighter(Fighter* fighter) {
 	log_tag("debug_log.txt","[FIGHTER]","Fighter status: { %s } [ %i ]", stringFromStatus(fighter->status), fighter->status);
 	log_tag("debug_log.txt","[FIGHTER]","Fighter energy: { %i }", fighter->energy);
 	log_tag("debug_log.txt","[FIGHTER]","Fighter totalenergy: { %i }", fighter->totalenergy);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter stamina: { %i }", fighter->stamina);
+	log_tag("debug_log.txt","[FIGHTER]","Fighter totalstamina: { %i }", fighter->totalstamina);
 
 	//Specialslot* specials[SPECIALSMAX+1]; /**< Array with all the Specialslot*/
 

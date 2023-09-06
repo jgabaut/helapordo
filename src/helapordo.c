@@ -1958,6 +1958,8 @@ void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
 	player->status = Normal;
 	player->totalenergy = base->totalenergy;
 	player->energy = player->totalenergy;
+	player->totalstamina = base->totalstamina;
+	player->stamina = player->totalstamina;
 
 	setFighterSprite(player);
 }
@@ -2000,6 +2002,8 @@ void initEnemyStats(Enemy* e, Koliseo_Temp* t_kls) {
 
 	e->totalenergy = base->totalenergy;
 	e->energy = e->totalenergy;
+	e->totalstamina = base->totalstamina;
+	e->stamina = e->totalstamina;
 
 	//Set prize, double for beasts
 	float prize = 2.8 * e->level;
@@ -2051,6 +2055,9 @@ void initBossStats(Boss* b, Koliseo_Temp* t_kls) {
 
 	b->totalenergy = base->totalenergy;
 	b->energy = b->totalenergy;
+
+	b->totalstamina = base->totalstamina;
+	b->stamina = b->totalstamina;
 
 	//Set prize, double for beasts
 	float prize = 4.5 * b->level;
@@ -4732,7 +4739,7 @@ void emptyEquips(Fighter* player) {
  * @param roomIndex Current room index.
  */
 OP_res handleSave_Home(FILE* file, Fighter* f, Path*p, int roomIndex) {
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 	//FILE *file = fopen("save.txt", "w");
 	log_tag("debug_log.txt","[DEBUG]","Saving with version %s", version);
 
@@ -4767,6 +4774,8 @@ OP_res handleSave_Home(FILE* file, Fighter* f, Path*p, int roomIndex) {
 	fprintf(file, "%i# totlevxp\n", f->totallevelxp);
 	fprintf(file, "%i# energy\n", f->energy);
 	fprintf(file, "%i# totenergy\n", f->totalenergy);
+	fprintf(file, "%i# stamina\n", f->stamina);
+	fprintf(file, "%i# totstamina\n", f->totalstamina);
 	fprintf(file, "%i# coinbalance\n", f->balance);
 	fprintf(file, "%s# status\n", stringFromStatus(f->status));
 	fprintf(file, "    Specials{\n");
@@ -4895,7 +4904,7 @@ OP_res handleSave_Home(FILE* file, Fighter* f, Path*p, int roomIndex) {
  * @param roomIndex Current room index.
  */
 OP_res handleSave_Enemies(FILE* file, Fighter* f, Path*p, Enemy* e, int enemyIndex, int roomTotalEnemies, int roomIndex) {
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 	//FILE *file = fopen("save.txt", "w");
 	log_tag("debug_log.txt","[DEBUG]","Saving with version %s", version);
 
@@ -4930,6 +4939,8 @@ OP_res handleSave_Enemies(FILE* file, Fighter* f, Path*p, Enemy* e, int enemyInd
 	fprintf(file, "%i# totlevxp\n", f->totallevelxp);
 	fprintf(file, "%i# energy\n", f->energy);
 	fprintf(file, "%i# totenergy\n", f->totalenergy);
+	fprintf(file, "%i# stamina\n", f->stamina);
+	fprintf(file, "%i# totstamina\n", f->totalstamina);
 	fprintf(file, "%i# coinbalance\n", f->balance);
 	fprintf(file, "%s# status\n", stringFromStatus(f->status));
 	fprintf(file, "    Specials{\n");
@@ -5017,6 +5028,8 @@ OP_res handleSave_Enemies(FILE* file, Fighter* f, Path*p, Enemy* e, int enemyInd
 	fprintf(file, "%i# xp\n", e->xp);
 	fprintf(file, "%i# energy\n", e->energy);
 	fprintf(file, "%i# totenergy\n", e->totalenergy);
+	fprintf(file, "%i# stamina\n", e->stamina);
+	fprintf(file, "%i# totstamina\n", e->totalstamina);
 	fprintf(file, "%i# beast\n", e->beast);
 	fprintf(file, "%i# prize\n", e->prize);
 	fprintf(file, "%s# status\n", stringFromStatus(e->status));
@@ -5083,7 +5096,7 @@ saveType read_saveType(FILE* file) {
 		return -1;
 	}
 	char buf[500];
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 
 	int scanres = -1;
 	/* File version scanning */
@@ -5157,7 +5170,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	char buf[500];
 	char comment[300];
 	int num_value = -1;
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 
 
 	int scanres = -1;
@@ -5360,6 +5373,26 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->totalenergy = num_value;
+	//Stamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	f->stamina = num_value;
+	//Totstamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	f->totalstamina = num_value;
 	//Coin balance
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
@@ -6228,7 +6261,7 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 	char buf[500];
 	char comment[300];
 	int num_value = -1;
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 
 	int scanres = -1;
 	/* File version scanning */
@@ -6430,6 +6463,26 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->totalenergy = num_value;
+	//Stamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	f->stamina = num_value;
+	//Totstamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	f->totalstamina = num_value;
 	//Coin balance
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
@@ -7189,6 +7242,26 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	e->totalenergy = num_value;
+	//Stamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	e->stamina = num_value;
+	//Totstamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	e->totalstamina = num_value;
 	//beast value
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {

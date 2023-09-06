@@ -373,6 +373,7 @@ typedef struct BaseStats {
 	int currentlevelxp; /**< Total xp value for current level*/
 	int totalhp; /**< Total hp value*/
 	int totalenergy; /**< Total energy value*/
+	int totalstamina; /**< Total stamina value*/
 } BaseStats;
 
 /**
@@ -431,6 +432,7 @@ typedef struct EnemyBaseStats {
 	int totalhp; /**< Total hp value*/
 	int beast; /**< Flag used for "beast" enemies*/
 	int totalenergy;/**< Total energy value*/
+	int totalstamina;/**< Total stamina value*/
 } EnemyBaseStats;
 
 /**
@@ -486,6 +488,7 @@ typedef struct BossBaseStats {
 	int totalhp; /**< Total hp value*/
 	int beast; /**< Flag used for "beast" enemies*/
 	int totalenergy;/**< Total energy value*/
+	int totalstamina;/**< Total stamina value*/
 } BossBaseStats;
 
 /**
@@ -773,6 +776,8 @@ typedef struct Fighter {
 
 	int energy; /**< Current energy value*/
 	int totalenergy; /**< Full energy value*/
+	int stamina; /**< Current stamina value*/
+	int totalstamina; /**< Full stamina value*/
 	Specialslot* specials[SPECIALSMAX+1]; /**< Array with all the Specialslot*/
 
 	struct Turncounter* counters[COUNTERSMAX+1]; /**< Array with all the Turncounter pointers*/
@@ -834,6 +839,9 @@ typedef struct Enemy {
 	int energy; /**< Current energy value*/
 	int totalenergy; /**< Full energy value*/
 
+	int stamina; /**< Current stamina value*/
+	int totalstamina; /**< Full stamina value*/
+
 	fighterStatus status; /**< Defines active fighterStatus*/
 	int beast; /**< Flag defining the instance as "beast" if set*/
 
@@ -869,6 +877,9 @@ typedef struct Boss {
 
 	int energy; /**< Current energy value*/
 	int totalenergy; /**< Full energy value*/
+
+	int stamina; /**< Current stamina value*/
+	int totalstamina; /**< Full stamina value*/
 
 	fighterStatus status; /**< Defines active fighterStatus*/
 	int beast; /**< Flag defining the instance as "beast" if set*/
