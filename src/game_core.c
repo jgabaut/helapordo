@@ -213,6 +213,7 @@ char* turnopstrings[TURNOP_MAX+1] = {
 
 char* foeturnopstrings[FOETURNOP_MAX+1] = {
 	"!INVALID!",
+	"Idle",
 	"Fight",
 	"Special",
 };

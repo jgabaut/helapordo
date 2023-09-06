@@ -893,6 +893,12 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 
 			if (choice == FIGHT) {
 				//TODO:
+				//Foe picks its turn
+				//
+				foeTurnOption foePick = enemyTurnPick(e,player);
+				log_tag("debug_log.txt","[FOETURN]","foePick was: [ %s ]",stringFromFoeTurnOP(foePick));
+
+				//TODO:
 				//Handle FIGHT as turnOP(OP_FIGHT)
 				fightStatus = turnOP(OP_FIGHT,args,kls,t_kls);
 				refresh();
@@ -1014,6 +1020,8 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 					break;
 				}
 			} else if (choice == SPECIAL) {
+				//TODO:
+				//Foe picks its turn
 				// Unpost menu and free all the memory taken up
 				unpost_menu(my_menu);
 				free_menu(my_menu);
@@ -1674,6 +1682,13 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 
 		if (choice == FIGHT) {
 			//TODO:
+			//Foe picks its turn
+			//TODO:
+			//Foe picks its turn
+			//
+			foeTurnOption foePick = bossTurnPick(b,player);
+			log_tag("debug_log.txt","[FOETURN]","foePick was: [ %s ]",stringFromFoeTurnOP(foePick));
+			//TODO:
 			//Handle FIGHT as turnOP(OP_FIGHT)
 			fightStatus = turnOP(OP_FIGHT,args,kls,t_kls);
 			refresh();
@@ -1768,6 +1783,8 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 			}
 
 		} else if (choice == SPECIAL) {
+			//TODO:
+			//Foe picks its turn
 			/* Unpost and free all the memory taken up */
 			unpost_menu(my_menu);
 			free_menu(my_menu);

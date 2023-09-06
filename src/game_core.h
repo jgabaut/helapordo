@@ -1646,8 +1646,9 @@ extern char* turnopstrings[TURNOP_MAX+1];
  */
 typedef enum foeTurnOption {
 	FOE_INVALID=0,
-	FOE_FIGHT=1,
-	FOE_SPECIAL=2,
+	FOE_IDLE=1,
+	FOE_FIGHT=2,
+	FOE_SPECIAL=3,
 } foeTurnOption;
 
 /**
@@ -1656,8 +1657,9 @@ typedef enum foeTurnOption {
  */
 typedef enum foeTurnOption_OP {
 	FOE_OP_INVALID=0,
-	FOE_OP_FIGHT=1,
-	FOE_OP_SPECIAL=2,
+	FOE_OP_IDLE=1,
+	FOE_OP_FIGHT=2,
+	FOE_OP_SPECIAL=3,
 } foeTurnOption_OP;
 
 /**
@@ -1673,7 +1675,7 @@ foeTurnOption_OP foeTurnOP_from_forTurnOption(foeTurnOption ft);
  * @see foeTurnOption_OP
  * @see stringFromFoeTurnOP()
  */
-#define FOETURNOP_MAX 2
+#define FOETURNOP_MAX 3
 /**
  * Array with the name strings for foeTurnOption.
  * @see foeTurnOption

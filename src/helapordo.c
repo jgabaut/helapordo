@@ -3324,6 +3324,91 @@ turnOption getTurnChoice(char* ch) {
 }
 
 /**
+ * Returns a randomised pick as foeTurnOption.
+ * @param e Pointer to the enemy to pick for.
+ * @param f Pointer to the target fighter.
+ * @return The chosen foeturnOption value representing turn action.
+ */
+foeTurnOption enemyTurnPick(Enemy* e, Fighter* f) {
+	if (e == NULL ) {
+		log_tag("debug_log.txt","[ERROR]","enemyTurnPick():  Enemy was NULL.");
+		exit(EXIT_FAILURE);
+	}
+	if (f == NULL ) {
+		log_tag("debug_log.txt","[ERROR]","enemyTurnPick():  Fighter was NULL.");
+		exit(EXIT_FAILURE);
+	}
+	foeTurnOption pick = FOE_INVALID;
+
+	while (pick == FOE_INVALID) {
+		int rn = rand() % 100;
+
+		if (rn > 80) {
+			//TODO
+			//pick = FOE_SPECIAL;
+			pick = FOE_IDLE;
+		} else if (rn > 50) {
+			//TODO
+			//pick = FOE_FIGHT;
+			pick = FOE_IDLE;
+		} else {
+			pick = FOE_IDLE;
+		}
+	}
+
+	log_tag("debug_log.txt","[FOETURNOPTION]","Pick was: ( %i ) [ %s ]", pick, stringFromFoeTurnOP(pick));
+
+	if (pick == FOE_INVALID) {
+		fprintf(stderr,"Error: unexpected turn choice value");
+		log_tag("debug_log.txt","[ERROR]","Unexpected turn choice in enemyTurnPick(), quitting");
+		exit(EXIT_FAILURE);
+	}
+	return pick;
+}
+
+/**
+ * Returns a randomised pick as foeTurnOption.
+ * @param b Pointer to the boss to pick for.
+ * @param f Pointer to the target fighter.
+ * @return The chosen foeturnOption value representing turn action.
+ */
+foeTurnOption bossTurnPick(Boss* b, Fighter* f) {
+	if (b == NULL ) {
+		log_tag("debug_log.txt","[ERROR]","bossTurnPick():  Boss was NULL.");
+		exit(EXIT_FAILURE);
+	}
+	if (f == NULL ) {
+		log_tag("debug_log.txt","[ERROR]","bossTurnPick():  Fighter was NULL.");
+		exit(EXIT_FAILURE);
+	}
+	foeTurnOption pick = FOE_INVALID;
+
+	while (pick == FOE_INVALID) {
+		int rn = rand() % 100;
+
+		if (rn > 80) {
+			//TODO
+			//pick = FOE_SPECIAL;
+			pick = FOE_IDLE;
+		} else if (rn > 50) {
+			//TODO
+			//pick = FOE_FIGHT;
+			pick = FOE_IDLE;
+		} else {
+			pick = FOE_IDLE;
+		}
+	}
+
+	log_tag("debug_log.txt","[FOETURNOPTION]","Pick was: ( %i ) [ %s ]", pick, stringFromFoeTurnOP(pick));
+
+	if (pick == FOE_INVALID) {
+		fprintf(stderr,"Error: unexpected turn choice value");
+		log_tag("debug_log.txt","[ERROR]","Unexpected turn choice in enemyTurnPick(), quitting");
+		exit(EXIT_FAILURE);
+	}
+	return pick;
+}
+/**
  * Takes two integers for level to calc against and luck, and returns the boost relative to the level with luck variations, as an integer.
  * At level 1, returns 0.
  * @param lvl The level to check the boost against.
@@ -7742,7 +7827,9 @@ void e_death(Enemy* e) {
  */
 void b_death(Boss* b) {
 
-	log_tag("debug_log.txt","[DEBUG]","b_death():  I'm only freeing boss pointer.");
+	//TODO
+	//Remove this bs
+	log_tag("debug_log.txt","[DEBUG]","b_death():  I'm doing nothing.");
 
 	//Free boss special slots
 	//for (int i=0; i < SPECIALSMAX + 1 ; i++) {
