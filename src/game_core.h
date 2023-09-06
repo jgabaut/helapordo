@@ -1642,6 +1642,46 @@ turnOption_OP turnOP_from_turnOption(turnOption t);
 extern char* turnopstrings[TURNOP_MAX+1];
 
 /**
+ * The different kinds of foeTurnOption.
+ */
+typedef enum foeTurnOption {
+	FOE_INVALID=0,
+	FOE_FIGHT=1,
+	FOE_SPECIAL=2,
+} foeTurnOption;
+
+/**
+ * The different kinds of foeTurnOption_OP.
+ * @see stringFromFoeTurnOP()
+ */
+typedef enum foeTurnOption_OP {
+	FOE_OP_INVALID=0,
+	FOE_OP_FIGHT=1,
+	FOE_OP_SPECIAL=2,
+} foeTurnOption_OP;
+
+/**
+ * Returns a foeTurnOption_OP from a foeTurnOption.
+ * @param ft The foeTurnOption to convert.
+ * @return The corresponding foeTurnOption_OP
+ */
+foeTurnOption_OP foeTurnOP_from_forTurnOption(foeTurnOption ft);
+
+/**
+ * Maximum value for foeTurnOption_OP.
+ * At runtime, not all of them are valid options.
+ * @see foeTurnOption_OP
+ * @see stringFromFoeTurnOP()
+ */
+#define FOETURNOP_MAX 2
+/**
+ * Array with the name strings for foeTurnOption.
+ * @see foeTurnOption
+ * @see stringFromFoeTurnOption()
+ */
+extern char* foeturnopstrings[FOETURNOP_MAX+1];
+
+/**
  * Filename for OPS log.
  * @see turnOP()
  * @see turnOption_OP
@@ -1658,8 +1698,8 @@ typedef enum OP_res {
 	NO_OP=2,
 	OP_CANNOT_OPEN_SAVEFILE=3,
 	OP_RES_KILL_DONE=4, /**< Value of fight status indicating the enemy died.*/
-	OP_RES_DMG_DEALT=5, /**< Value of fight status indicating the enemy was damaded.*/
-	OP_RES_DMG_TAKEN=6, /**< Value of fight status indicating the fighter was damaded.*/
+	OP_RES_DMG_DEALT=5, /**< Value of fight status indicating the enemy was damaged.*/
+	OP_RES_DMG_TAKEN=6, /**< Value of fight status indicating the fighter was damaged.*/
 	OP_RES_DEATH=7, /**< Value of fight status indicating the fighter died.*/
 	OP_RES_NO_DMG=8, /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
 	OP_RES_LOADED_ENEMYROOM=9, /**< Value of OP_res indicating success in loading a enemyroom*/

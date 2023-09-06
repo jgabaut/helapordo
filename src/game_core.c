@@ -112,6 +112,31 @@ turnOption_OP turnOP_from_turnOption(turnOption t) {
 	return res;
 }
 
+foeTurnOption_OP foeTurnOP_from_foeTurnOption(foeTurnOption ft) {
+	foeTurnOption_OP res = FOE_OP_INVALID;
+
+	switch(ft) {
+		case FOE_INVALID: {
+			res = FOE_OP_INVALID;
+		}
+		break;
+		case FOE_FIGHT: {
+			res = FOE_OP_FIGHT;
+		}
+		break;
+		case FOE_SPECIAL: {
+			res = FOE_OP_SPECIAL;
+		}
+		break;
+		default: {
+			//FIXME:
+			//Signal error right here?
+			return FOE_OP_INVALID;
+		}
+	}
+	return res;
+}
+
 OP_res OP_res_from_fightResult(fightResult fr) {
 	OP_res res = INVALID_OP;
 
@@ -184,6 +209,12 @@ char* turnopstrings[TURNOP_MAX+1] = {
 	"Debug",
 	"Load Enemy Room",
 	"Load Home Room",
+};
+
+char* foeturnopstrings[FOETURNOP_MAX+1] = {
+	"!INVALID!",
+	"Fight",
+	"Special",
 };
 
 char* fightresultstrings[FIGHT_RES_TOT+1] = {

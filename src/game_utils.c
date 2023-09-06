@@ -778,6 +778,17 @@ char* stringFromTurnOP(turnOption_OP t) {
 }
 
 /**
+ * Takes a foeTurnOption_OP and returns the corresponding string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see foeTurnOption_OP
+ * @param ft The turn choice.
+ * @return String corresponding to the turn choice.
+ */
+char* stringFromFoeTurnOP(foeTurnOption_OP ft) {
+	return foeturnopstrings[ft];
+}
+
+/**
  * Takes a fightResult fr and returns the corresponding string by the inner array position.
  * Correct result is only possible by having the enum values in a consistent order with the string array.
  * @see fightResult

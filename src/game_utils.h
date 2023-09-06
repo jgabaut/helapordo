@@ -61,6 +61,7 @@ char* stringFrom_OP_res(OP_res r);
 char* stringFrom_saveType(saveType s);
 char* stringFrom_fightResult(fightResult fr);
 char* stringFromTurnOP(turnOption_OP t);
+char* stringFromFoeTurnOP(foeTurnOption_OP ft);
 char* stringFromStatus(fighterStatus s);
 char* stringFromClass(fighterClass f);
 char* stringFromEClass(enemyClass e);
