@@ -26,4 +26,4 @@ kazoj# tests folder name
 1.1.2# Define HLP_Region_Type, bump Koliseo to 0.1.17 - Deprecated
 1.1.3# Fix enum conversion warn, bump Koliseo to 0.1.18
 1.1.4# Add Gamestate, variadic log_tag()
-1.1.5# Add Field
+1.1.5# Add foeTurnOption
