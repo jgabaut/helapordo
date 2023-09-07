@@ -43,13 +43,13 @@ endif
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 ./src/anvil__helapordo.c:
-	@echo -en "\033[1;34m[Makefile]\e[0m    Generating [\033[1;34m./src/anvil__helapordo.c\e[0m and \033[1;34m./src/anvil__helapordo.h\e[0m] for $(VERSION):  "
+	@echo -e "\033[1;34m[Makefile]\e[0m    Using \033[1;33mamboso\e[0m to generate [\033[1;34m./src/anvil__helapordo.c\e[0m and \033[1;34m./src/anvil__helapordo.h\e[0m] for [ \033[1;36m$(VERSION)\e[0m ]:"
 	-./anvil -qG ./src $(VERSION)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./koliseo/src/koliseo.o:
-	@echo -e "\033[1;34m[Makefile]\e[0m    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
-	@echo -e "\033[1;34m[Makefile]\e[0m    \033[1;35mKLS_LDFLAGS\e[0m: [ \"\033[1;34m$(KLS_LDFLAGS)\e[0m\" ]"
+	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
+	@echo -e "    \033[1;35mKLS_LDFLAGS\e[0m: [ \"\033[1;34m$(KLS_LDFLAGS)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./koliseo/src/koliseo.o\e[0m] with curses:  "
 	gcc -c ./koliseo/src/koliseo.c $(AM_CFLAGS) -o ./koliseo/src/koliseo.o $(KLS_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
@@ -62,14 +62,14 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 # Build rule for object files
 %.o: %.c
-	@echo -en "[ $< ] -> [ \033[1;34m$@\e[0m ]:  "
+	@echo -en "    [ $< ] -> [ \033[1;34m$@\e[0m ]:  "
 	$(CC) -c $(CFLAGS) $(AM_CFLAGS) $< -o $@
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for the final binary
 $(TARGET): $(helapordo_SOURCES:.c=.o)
-	@echo -e "\033[1;34m[Makefile]\e[0m    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
-	@echo -e "\033[1;34m[Makefile]\e[0m    \033[1;35mAM_LDFLAGS\e[0m: [ \"\033[1;34m$(AM_LDFLAGS)\e[0m\" ]"
+	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
+	@echo -e "    \033[1;35mAM_LDFLAGS\e[0m: [ \"\033[1;34m$(AM_LDFLAGS)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]    Building [\033[1;35m $@ \033[1;34m]:\e[0m  "
 	$(CC) $(CFLAGS) $(AM_CFLAGS) $(helapordo_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"

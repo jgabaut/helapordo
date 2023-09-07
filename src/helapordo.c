@@ -10705,6 +10705,15 @@ void gameloop(int argc, char** argv){
 				handleStats(player);
 				printf("\n\n\tYOU WON!\n\n");
 				log_tag("debug_log.txt","[DEBUG]","Game won.");
+				//Free default kls
+				kls_free(default_kls);
+				kls_log("DEBUG","Freed default KLS");
+				log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
+
+				//Free temporary kls
+				kls_free(temporary_kls);
+				kls_log("DEBUG","Freed temporary KLS");
+				log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporary KLS");
 			}
 
 			/*
@@ -11073,13 +11082,22 @@ void gameloop(int argc, char** argv){
 
 				 //Got out of the loop with res not being DEATH; so i won
 				 if (res != OP_RES_DEATH) { //I guess player and enemy were freed already?
-					 int clrres = system("clear");
-					 //TODO
-					 //What is this?
-					 log_tag("debug_log.txt","[DEBUG]","gameloop() 2 system(\"clear\") res was (%i)",clrres);
-					 handleStats(player);
-					 printf("\n\n\tYOU WON!\n\n");
-					 log_tag("debug_log.txt","[DEBUG]","Game won.");
+					int clrres = system("clear");
+					//TODO
+					//What is this?
+					log_tag("debug_log.txt","[DEBUG]","gameloop() 2 system(\"clear\") res was (%i)",clrres);
+					handleStats(player);
+					printf("\n\n\tYOU WON!\n\n");
+					log_tag("debug_log.txt","[DEBUG]","Game won.");
+					//Free default kls
+					kls_free(default_kls);
+					kls_log("DEBUG","Freed default KLS");
+					log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
+
+					//Free temporary kls
+					kls_free(temporary_kls);
+					kls_log("DEBUG","Freed temporary KLS");
+					log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporary KLS");
 				 } else {
 					 //TODO
 					 //What is this?
@@ -11117,15 +11135,6 @@ void gameloop(int argc, char** argv){
 		}
 		//kls_temp_end(gamestate_kls);
 	} while (retry());
-	//Free default kls
-	kls_free(default_kls);
-	kls_log("DEBUG","Freed default KLS");
-	log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
-
-	//Free temporary kls
-	kls_free(temporary_kls);
-	kls_log("DEBUG","Freed temporary KLS");
-	log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporary KLS");
 
 	//TODO
 	//What is this?
