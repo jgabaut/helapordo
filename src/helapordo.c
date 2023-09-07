@@ -3356,7 +3356,7 @@ foeTurnOption enemyTurnPick(Enemy* e, Fighter* f) {
 		}
 	}
 
-	log_tag("debug_log.txt","[FOETURNOPTION]","Pick was: ( %i ) [ %s ]", pick, stringFromFoeTurnOP(pick));
+	log_tag("debug_log.txt","[FOETURNOPTION]","Pick was: ( %i ) [ %s ]", pick, stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
 
 	if (pick == FOE_INVALID) {
 		fprintf(stderr,"Error: unexpected turn choice value");
@@ -3399,7 +3399,7 @@ foeTurnOption bossTurnPick(Boss* b, Fighter* f) {
 		}
 	}
 
-	log_tag("debug_log.txt","[FOETURNOPTION]","Pick was: ( %i ) [ %s ]", pick, stringFromFoeTurnOP(pick));
+	log_tag("debug_log.txt","[FOETURNOPTION]","Pick was: ( %i ) [ %s ]", pick, stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
 
 	if (pick == FOE_INVALID) {
 		fprintf(stderr,"Error: unexpected turn choice value");

@@ -1667,7 +1667,7 @@ typedef enum foeTurnOption_OP {
  * @param ft The foeTurnOption to convert.
  * @return The corresponding foeTurnOption_OP
  */
-foeTurnOption_OP foeTurnOP_from_forTurnOption(foeTurnOption ft);
+foeTurnOption_OP foeTurnOP_from_foeTurnOption(foeTurnOption ft);
 
 /**
  * Maximum value for foeTurnOption_OP.
