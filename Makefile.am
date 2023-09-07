@@ -31,10 +31,12 @@ LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
 
 if DEBUG_BUILD
 AM_LDFLAGS = -ggdb -O0
+KLS_LDFLAGS = -ggdb -O0
 HELAPORDO_CFLAGS += -DHELAPORDO_DEBUG_LOG -DHELAPORDO_DEBUG_ACCESS
 else
 # Linker flag to strip symbols
 AM_LDFLAGS = -s -O2
+KLS_LDFLAGS = -O2
 endif
 
 # Compiler flags
@@ -47,8 +49,9 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 ./koliseo/src/koliseo.o:
 	@echo -e "\033[1;34m[Makefile]\e[0m    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
+	@echo -e "\033[1;34m[Makefile]\e[0m    \033[1;35mKLS_LDFLAGS\e[0m: [ \"\033[1;34m$(KLS_LDFLAGS)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./koliseo/src/koliseo.o\e[0m] with curses:  "
-	gcc -c ./koliseo/src/koliseo.c $(AM_CFLAGS) -o ./koliseo/src/koliseo.o
+	gcc -c ./koliseo/src/koliseo.c $(AM_CFLAGS) -o ./koliseo/src/koliseo.o $(KLS_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/palette.c:
