@@ -11115,9 +11115,8 @@ void gameloop(int argc, char** argv){
 				exit(EXIT_FAILURE);
 			}
 		}
-		kls_temp_end(gamestate_kls);
+		//kls_temp_end(gamestate_kls);
 	} while (retry());
-
 	//Free default kls
 	kls_free(default_kls);
 	kls_log("DEBUG","Freed default KLS");
