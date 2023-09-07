@@ -9503,8 +9503,8 @@ void gameloop(int argc, char** argv){
 
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
   //Init default_kls
-  default_kls = kls_new(KLS_DEFAULT_SIZE*8);
-  temporary_kls = kls_new(KLS_DEFAULT_SIZE*16);
+  default_kls = kls_new(KLS_DEFAULT_SIZE*16);
+  temporary_kls = kls_new(KLS_DEFAULT_SIZE*32);
 
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 
