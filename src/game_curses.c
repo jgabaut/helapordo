@@ -570,6 +570,19 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 			resetColor = 0;
 		};
 
+		temp = (width - (e->stamina/10) - (e->totalstamina/10)) / 2 ;
+		x = startx + xShift; //(int) temp;
+		y += 1;
+		if ( (e->stamina / (e->totalstamina / 1.0)) <= 0.25) {
+			wattron(win,COLOR_PAIR(1));
+			resetColor = 1;
+		}
+		mvwprintw(win, y, x, "%i/%i", e->stamina, e->totalstamina);
+		if (resetColor) {
+			wattroff(win,COLOR_PAIR(1));
+			resetColor = 0;
+		};
+
 		temp = (width - (e->atk/10)) / 2 ;
 		x = startx + xShift;
 		y += 1;
@@ -665,6 +678,22 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 				wattroff(win,COLOR_PAIR(1));
 			};
 		}
+
+		temp = (width - (f->stamina/10) - (f->totalstamina/10)) / 2 ;
+		x = startx + 2;
+		y += 1;
+		if ( (f->stamina / (f->totalstamina / 1.0)) <= 0.25) {
+			wattron(win,COLOR_PAIR(1));
+			resetColor = 1;
+		}
+		mvwprintw(win, y, x, "%i/%i", f->stamina, f->totalstamina);
+		if (resetColor) {
+			wattroff(win,COLOR_PAIR(1));
+			resetColor = 0;
+		};
+
+		//TODO
+		//equipboost_sta?
 
 		temp = (width - (f->atk/10)) / 2 ;
 		x = startx + 2;
@@ -768,6 +797,12 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + (int) temp;
 		y += 1;
 		mvwprintw(win, y, x, "Energy");
+
+		l = strlen("Stamina");
+		temp = (width - l) / 2 ;
+		x = startx + (int) temp;
+		y += 1;
+		mvwprintw(win, y, x, "Stamina");
 
 		l = strlen("Atk");
 		temp = (width - l) / 2 ;
@@ -1038,6 +1073,19 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 			resetColor = 0;
 		};
 
+		temp = (width - (b->stamina/10) - (b->totalstamina/10)) / 2 ;
+		x = startx + xShift; //(int) temp;
+		y += 1;
+		if ( (b->stamina / (b->totalstamina / 1.0)) <= 0.25) {
+			wattron(win,COLOR_PAIR(1));
+			resetColor = 1;
+		}
+		mvwprintw(win, y, x, "%i/%i", b->stamina, b->totalstamina);
+		if (resetColor) {
+			wattroff(win,COLOR_PAIR(1));
+			resetColor = 0;
+		};
+
 		temp = (width - (b->atk/10)) / 2 ;
 		x = startx + xShift;
 		y += 1;
@@ -1132,6 +1180,19 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 				wattroff(win,COLOR_PAIR(1));
 			};
 		}
+
+		temp = (width - (f->stamina/10) - (f->totalstamina/10)) / 2 ;
+		x = startx + 2;
+		y += 1;
+		if ( (f->stamina / (f->totalstamina / 1.0)) <= 0.25) {
+			wattron(win,COLOR_PAIR(1));
+			resetColor = 1;
+		}
+		mvwprintw(win, y, x, "%i/%i", f->stamina, f->totalstamina);
+		if (resetColor) {
+			wattroff(win,COLOR_PAIR(1));
+			resetColor = 0;
+		};
 
 		temp = (width - (f->atk/10)) / 2 ;
 		x = startx + 2;
@@ -1235,6 +1296,12 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + (int) temp;
 		y += 1;
 		mvwprintw(win, y, x, "Energy");
+
+		l = strlen("Stamina");
+		temp = (width - l) / 2 ;
+		x = startx + (int) temp;
+		y += 1;
+		mvwprintw(win, y, x, "Stamina");
 
 		l = strlen("Atk");
 		temp = (width - l) / 2 ;

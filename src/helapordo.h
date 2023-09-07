@@ -167,6 +167,10 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 
 turnOption getTurnChoice(char* ch);
 
+foeTurnOption enemyTurnPick(Enemy* e, Fighter* f);
+
+foeTurnOption bossTurnPick(Boss* b, Fighter* f);
+
 int getBoost(int lvl, int luck);
 
 void unlockSpecial(Fighter* f);

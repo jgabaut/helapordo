@@ -1958,6 +1958,8 @@ void initPlayerStats(Fighter* player, Path* path, Koliseo* kls) {
 	player->status = Normal;
 	player->totalenergy = base->totalenergy;
 	player->energy = player->totalenergy;
+	player->totalstamina = base->totalstamina;
+	player->stamina = player->totalstamina;
 
 	setFighterSprite(player);
 }
@@ -2000,6 +2002,8 @@ void initEnemyStats(Enemy* e, Koliseo_Temp* t_kls) {
 
 	e->totalenergy = base->totalenergy;
 	e->energy = e->totalenergy;
+	e->totalstamina = base->totalstamina;
+	e->stamina = e->totalstamina;
 
 	//Set prize, double for beasts
 	float prize = 2.8 * e->level;
@@ -2051,6 +2055,9 @@ void initBossStats(Boss* b, Koliseo_Temp* t_kls) {
 
 	b->totalenergy = base->totalenergy;
 	b->energy = b->totalenergy;
+
+	b->totalstamina = base->totalstamina;
+	b->stamina = b->totalstamina;
 
 	//Set prize, double for beasts
 	float prize = 4.5 * b->level;
@@ -3267,7 +3274,7 @@ void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, K
 turnOption getTurnChoice(char* ch) {
 	int comp = 999;
 
-	log_tag("debug_log.txt","[TURNCHOICE]","Turnchoice string was (%s)",ch);
+	log_tag("debug_log.txt","[TURNPICK]","Turnchoice string was (%s)",ch);
 	turnOption pick = INVALID;
 
 	while (pick == INVALID) {
@@ -3306,7 +3313,7 @@ turnOption getTurnChoice(char* ch) {
 		}
 	}
 
-	log_tag("debug_log.txt","[TURNOPTION]","Pick was: (%i)",pick);
+	log_tag("debug_log.txt","[TURNOPT]","Pick was: (%i)",pick);
 
 	if (pick == INVALID) {
 		fprintf(stderr,"Error: unexpected turn choice value");
@@ -3316,6 +3323,91 @@ turnOption getTurnChoice(char* ch) {
 	return pick;
 }
 
+/**
+ * Returns a randomised pick as foeTurnOption.
+ * @param e Pointer to the enemy to pick for.
+ * @param f Pointer to the target fighter.
+ * @return The chosen foeturnOption value representing turn action.
+ */
+foeTurnOption enemyTurnPick(Enemy* e, Fighter* f) {
+	if (e == NULL ) {
+		log_tag("debug_log.txt","[ERROR]","enemyTurnPick():  Enemy was NULL.");
+		exit(EXIT_FAILURE);
+	}
+	if (f == NULL ) {
+		log_tag("debug_log.txt","[ERROR]","enemyTurnPick():  Fighter was NULL.");
+		exit(EXIT_FAILURE);
+	}
+	foeTurnOption pick = FOE_INVALID;
+
+	while (pick == FOE_INVALID) {
+		int rn = rand() % 100;
+
+		if (rn > 80) {
+			//TODO
+			//pick = FOE_SPECIAL;
+			pick = FOE_IDLE;
+		} else if (rn > 50) {
+			//TODO
+			//pick = FOE_FIGHT;
+			pick = FOE_IDLE;
+		} else {
+			pick = FOE_IDLE;
+		}
+	}
+
+	log_tag("debug_log.txt","[FOETURNOPTION]","Pick was: ( %i ) [ %s ]", pick, stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
+
+	if (pick == FOE_INVALID) {
+		fprintf(stderr,"Error: unexpected turn choice value");
+		log_tag("debug_log.txt","[ERROR]","Unexpected turn choice in enemyTurnPick(), quitting");
+		exit(EXIT_FAILURE);
+	}
+	return pick;
+}
+
+/**
+ * Returns a randomised pick as foeTurnOption.
+ * @param b Pointer to the boss to pick for.
+ * @param f Pointer to the target fighter.
+ * @return The chosen foeturnOption value representing turn action.
+ */
+foeTurnOption bossTurnPick(Boss* b, Fighter* f) {
+	if (b == NULL ) {
+		log_tag("debug_log.txt","[ERROR]","bossTurnPick():  Boss was NULL.");
+		exit(EXIT_FAILURE);
+	}
+	if (f == NULL ) {
+		log_tag("debug_log.txt","[ERROR]","bossTurnPick():  Fighter was NULL.");
+		exit(EXIT_FAILURE);
+	}
+	foeTurnOption pick = FOE_INVALID;
+
+	while (pick == FOE_INVALID) {
+		int rn = rand() % 100;
+
+		if (rn > 80) {
+			//TODO
+			//pick = FOE_SPECIAL;
+			pick = FOE_IDLE;
+		} else if (rn > 50) {
+			//TODO
+			//pick = FOE_FIGHT;
+			pick = FOE_IDLE;
+		} else {
+			pick = FOE_IDLE;
+		}
+	}
+
+	log_tag("debug_log.txt","[FOETURNOPTION]","Pick was: ( %i ) [ %s ]", pick, stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
+
+	if (pick == FOE_INVALID) {
+		fprintf(stderr,"Error: unexpected turn choice value");
+		log_tag("debug_log.txt","[ERROR]","Unexpected turn choice in enemyTurnPick(), quitting");
+		exit(EXIT_FAILURE);
+	}
+	return pick;
+}
 /**
  * Takes two integers for level to calc against and luck, and returns the boost relative to the level with luck variations, as an integer.
  * At level 1, returns 0.
@@ -4732,7 +4824,7 @@ void emptyEquips(Fighter* player) {
  * @param roomIndex Current room index.
  */
 OP_res handleSave_Home(FILE* file, Fighter* f, Path*p, int roomIndex) {
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 	//FILE *file = fopen("save.txt", "w");
 	log_tag("debug_log.txt","[DEBUG]","Saving with version %s", version);
 
@@ -4767,6 +4859,8 @@ OP_res handleSave_Home(FILE* file, Fighter* f, Path*p, int roomIndex) {
 	fprintf(file, "%i# totlevxp\n", f->totallevelxp);
 	fprintf(file, "%i# energy\n", f->energy);
 	fprintf(file, "%i# totenergy\n", f->totalenergy);
+	fprintf(file, "%i# stamina\n", f->stamina);
+	fprintf(file, "%i# totstamina\n", f->totalstamina);
 	fprintf(file, "%i# coinbalance\n", f->balance);
 	fprintf(file, "%s# status\n", stringFromStatus(f->status));
 	fprintf(file, "    Specials{\n");
@@ -4895,7 +4989,7 @@ OP_res handleSave_Home(FILE* file, Fighter* f, Path*p, int roomIndex) {
  * @param roomIndex Current room index.
  */
 OP_res handleSave_Enemies(FILE* file, Fighter* f, Path*p, Enemy* e, int enemyIndex, int roomTotalEnemies, int roomIndex) {
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 	//FILE *file = fopen("save.txt", "w");
 	log_tag("debug_log.txt","[DEBUG]","Saving with version %s", version);
 
@@ -4930,6 +5024,8 @@ OP_res handleSave_Enemies(FILE* file, Fighter* f, Path*p, Enemy* e, int enemyInd
 	fprintf(file, "%i# totlevxp\n", f->totallevelxp);
 	fprintf(file, "%i# energy\n", f->energy);
 	fprintf(file, "%i# totenergy\n", f->totalenergy);
+	fprintf(file, "%i# stamina\n", f->stamina);
+	fprintf(file, "%i# totstamina\n", f->totalstamina);
 	fprintf(file, "%i# coinbalance\n", f->balance);
 	fprintf(file, "%s# status\n", stringFromStatus(f->status));
 	fprintf(file, "    Specials{\n");
@@ -5017,6 +5113,8 @@ OP_res handleSave_Enemies(FILE* file, Fighter* f, Path*p, Enemy* e, int enemyInd
 	fprintf(file, "%i# xp\n", e->xp);
 	fprintf(file, "%i# energy\n", e->energy);
 	fprintf(file, "%i# totenergy\n", e->totalenergy);
+	fprintf(file, "%i# stamina\n", e->stamina);
+	fprintf(file, "%i# totstamina\n", e->totalstamina);
 	fprintf(file, "%i# beast\n", e->beast);
 	fprintf(file, "%i# prize\n", e->prize);
 	fprintf(file, "%s# status\n", stringFromStatus(e->status));
@@ -5083,7 +5181,7 @@ saveType read_saveType(FILE* file) {
 		return -1;
 	}
 	char buf[500];
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 
 	int scanres = -1;
 	/* File version scanning */
@@ -5157,7 +5255,7 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	char buf[500];
 	char comment[300];
 	int num_value = -1;
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 
 
 	int scanres = -1;
@@ -5360,6 +5458,26 @@ OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int*
 	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->totalenergy = num_value;
+	//Stamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	f->stamina = num_value;
+	//Totstamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	f->totalstamina = num_value;
 	//Coin balance
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
@@ -6228,7 +6346,7 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 	char buf[500];
 	char comment[300];
 	int num_value = -1;
-	const char version[] = "v0.1.5";
+	const char version[] = "v0.1.6";
 
 	int scanres = -1;
 	/* File version scanning */
@@ -6430,6 +6548,26 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	f->totalenergy = num_value;
+	//Stamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	f->stamina = num_value;
+	//Totstamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	f->totalstamina = num_value;
 	//Coin balance
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
@@ -7189,6 +7327,26 @@ OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* en
 	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
 	sscanf(buf, "%3i", &num_value);
 	e->totalenergy = num_value;
+	//Stamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	e->stamina = num_value;
+	//Totstamina
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",2,scanres);
+		fprintf(stderr,"Error while loading game.");
+		exit(EXIT_FAILURE);
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	e->totalstamina = num_value;
 	//beast value
 	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
 	if (scanres != 2) {
@@ -7669,7 +7827,9 @@ void e_death(Enemy* e) {
  */
 void b_death(Boss* b) {
 
-	log_tag("debug_log.txt","[DEBUG]","b_death():  I'm only freeing boss pointer.");
+	//TODO
+	//Remove this bs
+	log_tag("debug_log.txt","[DEBUG]","b_death():  I'm doing nothing.");
 
 	//Free boss special slots
 	//for (int i=0; i < SPECIALSMAX + 1 ; i++) {
@@ -9343,8 +9503,8 @@ void gameloop(int argc, char** argv){
 
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
   //Init default_kls
-  default_kls = kls_new(KLS_DEFAULT_SIZE*8);
-  temporary_kls = kls_new(KLS_DEFAULT_SIZE*8);
+  default_kls = kls_new(KLS_DEFAULT_SIZE*16);
+  temporary_kls = kls_new(KLS_DEFAULT_SIZE*32);
 
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 
@@ -10545,6 +10705,15 @@ void gameloop(int argc, char** argv){
 				handleStats(player);
 				printf("\n\n\tYOU WON!\n\n");
 				log_tag("debug_log.txt","[DEBUG]","Game won.");
+				//Free default kls
+				kls_free(default_kls);
+				kls_log("DEBUG","Freed default KLS");
+				log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
+
+				//Free temporary kls
+				kls_free(temporary_kls);
+				kls_log("DEBUG","Freed temporary KLS");
+				log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporary KLS");
 			}
 
 			/*
@@ -10835,9 +11004,6 @@ void gameloop(int argc, char** argv){
 							switch(current_floor->roomclass_layout[current_x][current_y]) {
 								case ENEMIES: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								case BOSS: {
@@ -10849,7 +11015,13 @@ void gameloop(int argc, char** argv){
 										win_con->current_val++;
 									}
 
-									//Regenerate floor
+									// Reset gamestate_kls
+									kls_temp_end(gamestate_kls);
+									gamestate_kls = kls_temp_start(temporary_kls);
+
+									current_floor = (Floor*) KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Floor");
+
+                  							//Regenerate floor
 									log_tag("debug_log.txt","[DEBUG]","Beaten a boss, regenerating current floor.");
 									// Init
 									init_floor_layout(current_floor);
@@ -10869,35 +11041,21 @@ void gameloop(int argc, char** argv){
 									//Center current coords
 									current_x = center_x;
 									current_y = center_y;
-
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
-
 									continue; //Check win condition for loop
 
 								}
 								break;
 								case SHOP: {
-									current_floor->roomclass_layout[current_x][current_y] = BASIC;
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
+								  	current_floor->roomclass_layout[current_x][current_y] = BASIC;
 								}
 								break;
 								case TREASURE: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								case HOME: {
 									//We leave it available
 									log_tag("debug_log.txt","[DEBUG]","Skipping reset of roomclass for HOME room");
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								default: {
@@ -10917,19 +11075,29 @@ void gameloop(int argc, char** argv){
 					move_update(gamestate, current_floor, &current_x, &current_y, floor_win, path, player, current_room, load_info, default_kls, &gamestate_kls);
 				}// Win condition loop
 
-				kls_temp_end(gamestate_kls);
+        			//FIXME: do we need this?
+				//kls_temp_end(gamestate_kls);
 				// Clear default_kls
 				//kls_clear(default_kls);
 
 				 //Got out of the loop with res not being DEATH; so i won
 				 if (res != OP_RES_DEATH) { //I guess player and enemy were freed already?
-					 int clrres = system("clear");
-					 //TODO
-					 //What is this?
-					 log_tag("debug_log.txt","[DEBUG]","gameloop() 2 system(\"clear\") res was (%i)",clrres);
-					 handleStats(player);
-					 printf("\n\n\tYOU WON!\n\n");
-					 log_tag("debug_log.txt","[DEBUG]","Game won.");
+					int clrres = system("clear");
+					//TODO
+					//What is this?
+					log_tag("debug_log.txt","[DEBUG]","gameloop() 2 system(\"clear\") res was (%i)",clrres);
+					handleStats(player);
+					printf("\n\n\tYOU WON!\n\n");
+					log_tag("debug_log.txt","[DEBUG]","Game won.");
+					//Free default kls
+					kls_free(default_kls);
+					kls_log("DEBUG","Freed default KLS");
+					log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
+
+					//Free temporary kls
+					kls_free(temporary_kls);
+					kls_log("DEBUG","Freed temporary KLS");
+					log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporary KLS");
 				 } else {
 					 //TODO
 					 //What is this?
@@ -10965,7 +11133,7 @@ void gameloop(int argc, char** argv){
 				exit(EXIT_FAILURE);
 			}
 		}
-		kls_temp_end(gamestate_kls);
+		//kls_temp_end(gamestate_kls);
 	} while (retry());
 
 	//TODO

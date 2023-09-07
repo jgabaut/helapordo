@@ -893,6 +893,12 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 
 			if (choice == FIGHT) {
 				//TODO:
+				//Foe picks its turn
+				//
+				foeTurnOption foePick = enemyTurnPick(e,player);
+				log_tag("debug_log.txt","[FOETURN]","foePick was: [ %s ]",stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(foePick)));
+
+				//TODO:
 				//Handle FIGHT as turnOP(OP_FIGHT)
 				fightStatus = turnOP(OP_FIGHT,args,kls,t_kls);
 				refresh();
@@ -948,6 +954,14 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 
 					return OP_RES_DEATH;
 				} else if (fightStatus == OP_RES_KILL_DONE) {
+					int dropch;
+					int dropped_chars = 0;
+					while ((dropch = wgetch(my_menu_win)) != ERR) {
+					  // Discard any input characters
+					  dropped_chars++;
+					}
+					log_tag("debug_log.txt","[DEBUG]","Dropped ( %i ) inputs",dropped_chars);
+
 					// Unpost menu and free all the memory taken up
 					unpost_menu(my_menu);
 					free_menu(my_menu);
@@ -1014,6 +1028,8 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 					break;
 				}
 			} else if (choice == SPECIAL) {
+				//TODO:
+				//Foe picks its turn
 				// Unpost menu and free all the memory taken up
 				unpost_menu(my_menu);
 				free_menu(my_menu);
@@ -1674,6 +1690,13 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 
 		if (choice == FIGHT) {
 			//TODO:
+			//Foe picks its turn
+			//TODO:
+			//Foe picks its turn
+			//
+			foeTurnOption foePick = bossTurnPick(b,player);
+			log_tag("debug_log.txt","[FOETURN]","foePick was: [ %s ]",stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(foePick)));
+			//TODO:
 			//Handle FIGHT as turnOP(OP_FIGHT)
 			fightStatus = turnOP(OP_FIGHT,args,kls,t_kls);
 			refresh();
@@ -1719,6 +1742,13 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 				log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 				return OP_RES_DEATH;
 			} else if (fightStatus == OP_RES_KILL_DONE) {
+				int dropch;
+				int dropped_chars = 0;
+				while ((dropch = wgetch(my_menu_win)) != ERR) {
+				  // Discard any input characters
+				  dropped_chars++;
+				}
+				log_tag("debug_log.txt","[DEBUG]","Dropped ( %i ) inputs",dropped_chars);
 				/* Unpost and free all the memory taken up */
 				unpost_menu(my_menu);
 				free_menu(my_menu);
@@ -1768,6 +1798,8 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 			}
 
 		} else if (choice == SPECIAL) {
+			//TODO:
+			//Foe picks its turn
 			/* Unpost and free all the memory taken up */
 			unpost_menu(my_menu);
 			free_menu(my_menu);
