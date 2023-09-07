@@ -47,9 +47,8 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 
 ./koliseo/src/koliseo.o:
 	@echo -e "\033[1;34m[Makefile]\e[0m    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
-	@echo -e "\033[1;34m[Makefile]\e[0m    \033[1;35mAM_LDFLAGS\e[0m: [ \"\033[1;34m$(AM_LDFLAGS)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./koliseo/src/koliseo.o\e[0m] with curses:  "
-	gcc -c ./koliseo/src/koliseo.c $(AM_CFLAGS) -o ./koliseo/src/koliseo.o $(AM_LDFLAGS)
+	gcc -c ./koliseo/src/koliseo.c $(AM_CFLAGS) -o ./koliseo/src/koliseo.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/palette.c:
