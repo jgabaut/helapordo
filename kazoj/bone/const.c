@@ -17,6 +17,9 @@ int main(void) {
  if ( ! (MAX_SAVESLOTS == 3) ) {
    fail("MAX_SAVESLOTS",3,MAX_SAVESLOTS);
  }
+ if ( ! (FOETURNOP_MAX == 3) ) {
+   fail("FOETURNOP_MAX",3,FOETURNOP_MAX);
+ };
  if ( ! (TURNOP_MAX == 15) ) {
    fail("TURNOP_MAX",15,TURNOP_MAX);
  };
