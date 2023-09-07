@@ -9504,7 +9504,7 @@ void gameloop(int argc, char** argv){
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
   //Init default_kls
   default_kls = kls_new(KLS_DEFAULT_SIZE*8);
-  temporary_kls = kls_new(KLS_DEFAULT_SIZE*8);
+  temporary_kls = kls_new(KLS_DEFAULT_SIZE*16);
 
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 
@@ -10995,9 +10995,6 @@ void gameloop(int argc, char** argv){
 							switch(current_floor->roomclass_layout[current_x][current_y]) {
 								case ENEMIES: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								case BOSS: {
@@ -11009,7 +11006,13 @@ void gameloop(int argc, char** argv){
 										win_con->current_val++;
 									}
 
-									//Regenerate floor
+									// Reset gamestate_kls
+									kls_temp_end(gamestate_kls);
+									gamestate_kls = kls_temp_start(temporary_kls);
+
+									current_floor = (Floor*) KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Floor");
+
+                  							//Regenerate floor
 									log_tag("debug_log.txt","[DEBUG]","Beaten a boss, regenerating current floor.");
 									// Init
 									init_floor_layout(current_floor);
@@ -11029,35 +11032,21 @@ void gameloop(int argc, char** argv){
 									//Center current coords
 									current_x = center_x;
 									current_y = center_y;
-
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
-
 									continue; //Check win condition for loop
 
 								}
 								break;
 								case SHOP: {
-									current_floor->roomclass_layout[current_x][current_y] = BASIC;
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
+								  	current_floor->roomclass_layout[current_x][current_y] = BASIC;
 								}
 								break;
 								case TREASURE: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								case HOME: {
 									//We leave it available
 									log_tag("debug_log.txt","[DEBUG]","Skipping reset of roomclass for HOME room");
-									// Reset gamestate_kls
-									kls_temp_end(gamestate_kls);
-									gamestate_kls = kls_temp_start(temporary_kls);
 								}
 								break;
 								default: {
@@ -11077,7 +11066,8 @@ void gameloop(int argc, char** argv){
 					move_update(gamestate, current_floor, &current_x, &current_y, floor_win, path, player, current_room, load_info, default_kls, &gamestate_kls);
 				}// Win condition loop
 
-				kls_temp_end(gamestate_kls);
+        			//FIXME: do we need this?
+				//kls_temp_end(gamestate_kls);
 				// Clear default_kls
 				//kls_clear(default_kls);
 
@@ -11127,6 +11117,16 @@ void gameloop(int argc, char** argv){
 		}
 		kls_temp_end(gamestate_kls);
 	} while (retry());
+
+	//Free default kls
+	kls_free(default_kls);
+	kls_log("DEBUG","Freed default KLS");
+	log_tag("debug_log.txt","[DEBUG-KLS]","Freed default KLS");
+
+	//Free temporary kls
+	kls_free(temporary_kls);
+	kls_log("DEBUG","Freed temporary KLS");
+	log_tag("debug_log.txt","[DEBUG-KLS]","Freed temporary KLS");
 
 	//TODO
 	//What is this?

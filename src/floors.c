@@ -696,7 +696,7 @@ void move_update(Gamestate* gamestate, Floor* floor, int* current_x, int* curren
 			}
 			break;
 			default: {
-				log_tag("debug_log.txt","[FLOOR]","move_update():  Player char (%c)was not accounted for. Target (x=%i,y=%i) class (%s).",c,target_x,target_y,stringFromRoom(floor->roomclass_layout[target_x][target_y]));
+				log_tag("debug_log.txt","[FLOOR]","move_update():  Player char ( %c ) was not accounted for. Target (x=%i,y=%i) class (%s).",c,target_x,target_y,stringFromRoom(floor->roomclass_layout[target_x][target_y]));
 				picked = 0;
 				continue;
 			}
