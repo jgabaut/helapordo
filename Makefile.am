@@ -170,6 +170,7 @@ uninstall:
 clean:
 	@echo -en "Cleaning build artifacts:  "
 	-rm $(TARGET)
+	-rm sprites4curses/s4c-animate/*.o
 	-rm src/*.o
 	-rm src/animations/*.o
 	-rm src/palette.*
@@ -180,6 +181,8 @@ clean:
 
 cleanob:
 	@echo -en "Cleaning object build artifacts:  "
+	-rm sprites4curses/s4c-animate/*.o
+	-rm koliseo/src/*.o
 	-rm src/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
