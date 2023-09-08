@@ -389,18 +389,6 @@ void init_game_color_pairs(void) {
 }
 
 /**
- * Sleeps t seconds and then flushes stdin.
- * The tcflush() function comes from termios and may not be supported on all platforms.
- * @param t A float for how many seconds to sleep.
- */
-void screenTime(float t) {
-	sleep(t);
-
-	//Avoid leftovers from stdin be picked up while sleeping
-	tcflush(0,TCIFLUSH);
-}
-
-/**
  * Sets the passed char array to the expected path for /static/ folder.
  * @param static_path The array that will hold path to static folder.
  */

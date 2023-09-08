@@ -2,7 +2,6 @@
 #define GAME_UTILS_H
 
 #include <stdio.h>
-#include <termios.h>
 #include <panel.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -27,7 +26,6 @@ void cyan(void);
 void lightCyan(void);
 
 void init_game_color_pairs(void);
-void screenTime(float t);
 void resolve_staticPath(char static_path[500]);
 
 void dbg_Gamestate(Gamestate* gmst);

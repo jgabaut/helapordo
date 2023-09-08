@@ -2465,7 +2465,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			wattroff(w,COLOR_PAIR(8));
 			y += 1;
 			wrefresh(w);
-			screenTime(1);
+			napms(800);
 		} //End for all equips
 	} //End if equipsCount > 0
 	if (c->consumablesCount > 0) {
@@ -2479,7 +2479,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			wattroff(w,COLOR_PAIR(2));
 			y += 1;
 			wrefresh(w);
-			screenTime(1);
+			napms(800);
 		} //End for all consumables
 	}
 	wrefresh(w);

@@ -4036,7 +4036,7 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 		//Update stats
 		player->stats->equipsfound++;
 
-		screenTime(1.5);
+		napms(500);
 		return;
 	};//End if bag is full
 
@@ -8488,7 +8488,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			char cmd[50];
 			sprintf(cmd,"\necho \"%c\\n\"\n%c\n\n",ch[0],ch[0]);
 			printf("%s",cmd);
-			screenTime(1);
+			napms(500);
 		}
 		break;
 	} //Close switch on ch[0]
@@ -9102,7 +9102,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			char cmd[50];
 			sprintf(cmd,"\necho \"%c\\n\"\n%c\n\n",ch[0],ch[0]);
 			printf("%s",cmd);
-			screenTime(1);
+			napms(500);
 		}
 		break;
 	} //Close switch on ch[0]
@@ -9602,7 +9602,7 @@ void gameloop(int argc, char** argv){
 					printf("  \'animate\' :\n    s4c/animate.h    ");
 					S4C_ECHOVERSION();
 					printf("[DEBUG]    Testing terminal color capabilities.\n");
-					screenTime(1);
+					napms(800);
 					display_colorpairs();
 					exit(EXIT_SUCCESS);
 				}

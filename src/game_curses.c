@@ -333,7 +333,7 @@ void displayLore(char** lore_strings, int lore_counter) {
 	wattroff(win,COLOR_PAIR(6));
 
 	wrefresh(win);
-	screenTime(1.5);
+	napms(800);
 	char c;
 	int res = scanf("%c",&c);
 	log_tag("debug_log.txt","[DEBUG]","displayLore() scanf() res was (%i)",res);
@@ -2743,7 +2743,7 @@ void handleConsumables(Fighter* f, Enemy* e, Boss* b, int isBoss) {
 		wrefresh(my_menu_win);
 		refresh();
 
-		screenTime(3);
+		napms(1500);
 		endwin();
 		return;
 	}
@@ -2939,7 +2939,7 @@ void handleArtifacts(Fighter* f) {
 		wrefresh(my_menu_win);
 		refresh();
 
-		screenTime(3);
+		napms(1500);
 		endwin();
 		return;
 	}
@@ -3134,7 +3134,7 @@ void handleEquips(Fighter* f, Path* p) {
 		wrefresh(my_menu_win);
 		refresh();
 
-		screenTime(3);
+		napms(1500);
 		endwin();
 		return;
 	}
@@ -3429,7 +3429,7 @@ void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int e
 		wrefresh(my_menu_win);
 		refresh();
 
-		screenTime(1);
+		napms(800);
 		endwin();
 		return;
 	}
@@ -3561,7 +3561,7 @@ void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int e
 					pos_menu_cursor(my_menu);
 					wrefresh(my_wins[0]);
 					refresh();
-					screenTime(2);
+					napms(1000);
 				};
 				break;
 		       } //End case 10 (Enter)

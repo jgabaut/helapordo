@@ -8,7 +8,6 @@
 #include <time.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <termios.h>
 #include <panel.h>
 #include <menu.h>
 #include <locale.h>
