@@ -113,5 +113,5 @@
 
   - `apple-arm64`
 
-  📦 v1.1.4 06/09/2023
+  📦 v1.1.5 07/09/2023
   https://github.com/jgabaut/helapordo/releases

@@ -113,12 +113,12 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 5
+#define HELAPORDO_PATCH_VERSION 6
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.1.5"
+#define VERSION "1.1.6"
 
 /**
  * Default savepath.
