@@ -4,9 +4,7 @@
 AUTOMAKE_OPTIONS = foreign
 
 # Variables
-CC = @CC@
 CFLAGS = @CFLAGS@
-TARGET = helapordo
 TARGET_INSTALL_DIR = $(HOME)/helapordo-local
 SOURCE_INSTALL_DIR = "."
 STATIC_DIR_NAME = "static"
@@ -18,7 +16,6 @@ SHELL := /bin/bash
 # Set the .ONESHELL special target to use a specific shell for all recipes
 .ONESHELL:
 # Check system info
-OS := $$(uname -s)
 MACHINE := $$(uname -m)
 PACK_NAME = $(TARGET)-$(VERSION)-$(OS)-$(MACHINE)
 PALETTE_PATH = "./static/palette.gpl"
@@ -27,31 +24,41 @@ PALETTE_PATH = "./static/palette.gpl"
 helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c src/palette.c
 
 # Linking rule
-LDADD = $(HELAPORDO_LDFLAGS) -lncurses -lmenu -lpanel -lm
+LDADD = $(HELAPORDO_LDFLAGS)
+AM_LDFLAGS = -lm
 
 if DEBUG_BUILD
-AM_LDFLAGS = -ggdb -O0
+AM_LDFLAGS += -ggdb -O0
 KLS_LDFLAGS = -ggdb -O0
 HELAPORDO_CFLAGS += -DHELAPORDO_DEBUG_LOG -DHELAPORDO_DEBUG_ACCESS
 else
 # Linker flag to strip symbols
-AM_LDFLAGS = -s -O2
+AM_LDFLAGS += -s -O2
 KLS_LDFLAGS = -O2
 endif
 
 # Compiler flags
-AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
+AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall
+
 
 ./src/anvil__helapordo.c:
 	@echo -e "\033[1;34m[Makefile]\e[0m    Using \033[1;33mamboso\e[0m to generate [\033[1;34m./src/anvil__helapordo.c\e[0m and \033[1;34m./src/anvil__helapordo.h\e[0m] for [ \033[1;36m$(VERSION)\e[0m ]:"
 	-./anvil -qXG ./src $(VERSION)
 	@echo -e "\033[1;33mDone.\e[0m"
 
+./sprites4curses/s4c-animate/animate.o:
+	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
+	@echo -e "    \033[1;35mAM_LDFLAGS\e[0m: [ \"\033[1;34m$(LDADD)\e[0m\" ]"
+	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./sprites4curses/s4c-animate/animate.o\e[0m]:  "
+	$(CCOMP) -c ./sprites4curses/s4c-animate/animate.c $(AM_CFLAGS) -o ./sprites4curses/s4c-animate/animate.o $(LDADD)
+	@echo -e "\033[1;33mDone.\e[0m"
+
 ./koliseo/src/koliseo.o:
 	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
 	@echo -e "    \033[1;35mKLS_LDFLAGS\e[0m: [ \"\033[1;34m$(KLS_LDFLAGS)\e[0m\" ]"
+	@echo -e "    \033[1;35mAM_LDFLAGS\e[0m: [ \"\033[1;34m$(AM_LDFLAGS)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./koliseo/src/koliseo.o\e[0m] with curses:  "
-	gcc -c ./koliseo/src/koliseo.c $(AM_CFLAGS) -o ./koliseo/src/koliseo.o $(KLS_LDFLAGS)
+	$(CCOMP) -c ./koliseo/src/koliseo.c $(AM_CFLAGS) -o ./koliseo/src/koliseo.o $(AM_LDFLAGS) $(LDADD)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/palette.c:
@@ -63,7 +70,7 @@ AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -DKOLISEO_HAS_CURSES
 # Build rule for object files
 %.o: %.c
 	@echo -en "    [ $< ] -> [ \033[1;34m$@\e[0m ]:  "
-	$(CC) -c $(CFLAGS) $(AM_CFLAGS) $< -o $@
+	$(CCOMP) -c $(CFLAGS) $(AM_CFLAGS) $< -o $@ $(AM_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for the final binary
@@ -71,7 +78,7 @@ $(TARGET): $(helapordo_SOURCES:.c=.o)
 	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
 	@echo -e "    \033[1;35mAM_LDFLAGS\e[0m: [ \"\033[1;34m$(AM_LDFLAGS)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]    Building [\033[1;35m $@ \033[1;34m]:\e[0m  "
-	$(CC) $(CFLAGS) $(AM_CFLAGS) $(helapordo_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
+	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) $(helapordo_SOURCES:.c=.o) -o $@ $(AM_LDFLAGS) $(LDADD)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Targets for additional rules
@@ -82,7 +89,7 @@ versioncheck:
 
 const.k:
 	@echo -en "Building const.k test"
-	$(CC) kazoj/bone/const.c -o kazoj/bone/const.k
+	$(CCOMP) kazoj/bone/const.c -o kazoj/bone/const.k
 	@echo -e "\n\033[1;32mDone.\e[0m"
 
 anviltest: const.k
@@ -177,7 +184,7 @@ cleanob:
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)
-all: ./src/anvil__helapordo.c ./src/palette.c ./koliseo/src/koliseo.o $(TARGET)
+all: ./src/anvil__helapordo.c ./src/palette.c ./koliseo/src/koliseo.o ./sprites4curses/s4c-animate/animate.o $(TARGET)
 
 # Target to clean and rebuild
 rebuild: clean all

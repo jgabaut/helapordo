@@ -1,8 +1,14 @@
 #ifndef SPECIALS_H
 #define SPECIALS_H
 #include "game_core.h"
+
+#ifdef MINGW32_BUILD
+#include <ncursesw/panel.h>
+#include <ncursesw/menu.h>
+#else
 #include <panel.h>
 #include <menu.h>
+#endif
 
 void knightSpecial_Slash(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int enemyIndex, int isBoss);
 void knightSpecial_Cover(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int enemyIndex, int isBoss);

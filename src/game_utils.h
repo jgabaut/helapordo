@@ -1,8 +1,13 @@
 #ifndef GAME_UTILS_H
 #define GAME_UTILS_H
 
-#include <stdio.h>
+#ifdef MINGW32_BUILD
+#include <ncursesw/panel.h>
+#else
 #include <panel.h>
+#endif
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>

@@ -1,6 +1,12 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
+
+#ifdef MINGW32_BUILD
+#include <ncursesw/panel.h>
+#else
 #include <panel.h>
+#endif
+
 #include "../koliseo/src/koliseo.h"
 
 /**

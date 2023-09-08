@@ -447,15 +447,20 @@ void loadLore(char** lore_strings, int loreKind) {
 	}
 
     	char * line = NULL;
-    	size_t len = 0;
-    	ssize_t read;
-	int i = 0;
+    	//size_t len = 0;
+    	//ssize_t read;
+	//int i = 0;
+
+	// FIXME
+	// If we ever need this again, we'd have to not depend on getline() for mingw32
+	/*
     	while ((read = getline(&line, &len, lorefile)) != -1) {
         	log_tag("debug_log.txt","[LORE-LOAD]","Retrieved line of length %zu:", read);
         	log_tag("debug_log.txt","[LORE-LOAD]","%s", line);
 		strcpy(lore_strings[i],line);
 		i++;
 	}
+	*/
     	fclose(lorefile);
     	if (line)
         	free(line);

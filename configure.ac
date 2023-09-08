@@ -15,18 +15,33 @@ AC_ARG_ENABLE([debug],
   [enable_debug=no])
 # Define the DEBUG_BUILD conditional based on the --enable-debug option
 AM_CONDITIONAL([DEBUG_BUILD], [test "$enable_debug" = "yes"])
+AM_CONDITIONAL([MINGW32_BUILD], [test "$host_os" = "mingw32"])
 
 # Define the include and library paths based on the host system
-if test "$OS_DARWIN" = "yes"; then
-  echo "Building for: [$host_cpu-$host_vendor-$host_os]"
+if test "$host_os" = "mingw32"; then
+  echo "Building for mingw32: [$host_cpu-$host_vendor-$host_os]"
+  # mingw32 specific flags
+  AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DMINGW32_BUILD -DKOLISEO_HAS_CURSES -DNCURSES_STATIC"])
+  AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lncursesw -lpanelw -lmenuw -static"])
+  AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
+  AC_SUBST([OS], ["w64-mingw32"])
+  AC_SUBST([TARGET], ["helapordo.exe"])
+fi
+if test "$host_os" = "darwin"; then
+  echo "Building for macos: [$host_cpu-$host_vendor-$host_os]"
   # macOS specific flags
-  AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/local/opt/ncurses/include"])
-  AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/local/opt/ncurses/lib"])
-else
-  echo "Building for: [$host_cpu-$host_vendor-$host_os]"
+  AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/local/opt/ncurses/include -DKOLISEO_HAS_CURSES"])
+  AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/local/opt/ncurses/lib -lncurses -lmenu -lpanel "])
+  AC_SUBST([OS], ["darwin"])
+  AC_SUBST([TARGET], ["helapordo"])
+fi
+if test "$host_os" = "linux-gnu"; then
+  echo "Building for Linux: [$host_cpu-$host_vendor-$host_os]"
   # Linux specific flags
-  AC_SUBST([HELAPORDO_CFLAGS], [""])
-  AC_SUBST([HELAPORDO_LDFLAGS], [""])
+  AC_SUBST([HELAPORDO_CFLAGS], ["-DKOLISEO_HAS_CURSES"])
+  AC_SUBST([HELAPORDO_LDFLAGS], ["-lncurses -lmenu -lpanel "])
+  AC_SUBST([OS], ["Linux"])
+  AC_SUBST([TARGET], ["helapordo"])
 fi
 
 # Set a default version number if not specified externally
@@ -39,7 +54,7 @@ fi
 AC_DEFINE_UNQUOTED([VERSION], ["$VERSION"], [Version number])
 
 
-AC_CHECK_PROGS([CC], [gcc clang])
+AC_CHECK_PROGS([CCOMP], [gcc clang])
 AC_CHECK_HEADERS([stdio.h])
 AC_CHECK_FUNCS([malloc calloc])
 
