@@ -1,6 +1,8 @@
 #ifndef SPECIALS_H
 #define SPECIALS_H
 #include "game_core.h"
+#include <panel.h>
+#include <menu.h>
 
 void knightSpecial_Slash(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int enemyIndex, int isBoss);
 void knightSpecial_Cover(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int enemyIndex, int isBoss);

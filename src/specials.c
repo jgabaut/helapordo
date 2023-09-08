@@ -1,5 +1,3 @@
-#include <panel.h>
-#include <menu.h>
 #include "helapordo.h"
 #include "specials.h"
 //Functions for special moves
