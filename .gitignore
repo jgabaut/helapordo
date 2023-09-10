@@ -11,6 +11,8 @@ docs/docs.pdf
 *.o
 # ignore executable
 helapordo
+# ignore .exe executable
+helapordo.exe
 # ignore debug executable
 helapordo_debug
 # ignore debug log file
