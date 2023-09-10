@@ -3461,8 +3461,6 @@ void unlockSpecial(Fighter* f) {
 	keypad(stdscr, TRUE);
 
 
-	init_game_color_pairs();
-
 	/* Create menu items */
 	for (int i = 0; i < SPECIALSMAX + 1; i++) {
 		if (! (f->specials[i]->enabled) ) {
@@ -3490,7 +3488,7 @@ void unlockSpecial(Fighter* f) {
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 20, "New move unlocked", COLOR_PAIR(3));
+	print_label(my_menu_win, 1, 0, 20, "New move unlocked", COLOR_PAIR(S4C_BLUE));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 26);
 	mvwaddch(my_menu_win, 2, 27, ACS_RTEE);
@@ -4036,7 +4034,7 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 		//Update stats
 		player->stats->equipsfound++;
 
-		screenTime(1.5);
+		napms(500);
 		return;
 	};//End if bag is full
 
@@ -7903,6 +7901,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 	char msg[200];
 	char ch[25];
 	int picked_debug_proc = 0;
+	#ifndef MINGW32_BUILD
 	struct utsname uts;
 	uname(&uts);
 	sprintf(msg,"debug_generic() loaded utsname using uname().\n");
@@ -7915,6 +7914,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	sprintf(msg,"Machine is %s\n",uts.machine);
 	log_tag("debug_log.txt","[DEBUG]",msg);
+	#endif
 
 	int res = system("clear");
 	sprintf(msg,"debug_generic() system(\"clear\") res was (%i)",res);
@@ -8062,10 +8062,12 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 		case 'd': {
 			picked_debug_proc = 1;
 			printf("\nVERSION:    %s\n",VERSION);
+			#ifndef MINGW32_BUILD
 			printf("\nSystem:    %s\n",uts.sysname);
 			printf("\nOS Release:    %s\n",uts.release);
 			printf("\nOS Version:    %s\n",uts.version);
 			printf("\nMachine:    %s\n",uts.machine);
+			#endif
 			printf("\nGAMEMODE:    %s\n",stringFromGamemode(GAMEMODE));
 			printf("\nPath->current_saveslot->save_path:    %s\n",p->current_saveslot->save_path);
 			printf("\nGS_AUTOSAVE_ON:    %i\n",GS_AUTOSAVE_ON);
@@ -8161,7 +8163,11 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
+				#ifndef MINGW32_BUILD
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				#else
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				#endif
 			}
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 
@@ -8232,7 +8238,11 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
+				#ifndef MINGW32_BUILD
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				#else
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				#endif
 			}
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
 
@@ -8488,7 +8498,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			char cmd[50];
 			sprintf(cmd,"\necho \"%c\\n\"\n%c\n\n",ch[0],ch[0]);
 			printf("%s",cmd);
-			screenTime(1);
+			napms(500);
 		}
 		break;
 	} //Close switch on ch[0]
@@ -8526,6 +8536,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 	char msg[200];
 	char ch[25];
 	int picked_debug_proc = 0;
+	#ifndef MINGW32_BUILD
 	struct utsname uts;
 	uname(&uts);
 	sprintf(msg,"debug_enemies_room() loaded utsname using uname().\n");
@@ -8538,6 +8549,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 	log_tag("debug_log.txt","[DEBUG]",msg);
 	sprintf(msg,"Machine is %s\n",uts.machine);
 	log_tag("debug_log.txt","[DEBUG]",msg);
+	#endif
 
 	int res = system("clear");
 	sprintf(msg,"debug_enemies_room() system(\"clear\") res was (%i)",res);
@@ -8709,10 +8721,12 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 		case 'd': {
 			picked_debug_proc = 1;
 			printf("\nVERSION:    %s\n",VERSION);
+			#ifndef MINGW32_BUILD
 			printf("\nSystem:    %s\n",uts.sysname);
 			printf("\nOS Release:    %s\n",uts.release);
 			printf("\nOS Version:    %s\n",uts.version);
 			printf("\nMachine:    %s\n",uts.machine);
+			#endif
 			printf("\nGAMEMODE:    %s\n",stringFromGamemode(GAMEMODE));
 			printf("\nPath->current_saveslot->save_path:    %s\n",p->current_saveslot->save_path);
 			printf("\nGS_AUTOSAVE_ON:    %i\n",GS_AUTOSAVE_ON);
@@ -8769,7 +8783,11 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
+				#ifndef MINGW32_BUILD
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				#else
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				#endif
 			}
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 
@@ -8840,7 +8858,11 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
+				#ifndef MINGW32_BUILD
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				#else
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				#endif
 			}
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
 
@@ -9102,7 +9124,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			char cmd[50];
 			sprintf(cmd,"\necho \"%c\\n\"\n%c\n\n",ch[0],ch[0]);
 			printf("%s",cmd);
-			screenTime(1);
+			napms(500);
 		}
 		break;
 	} //Close switch on ch[0]
@@ -9133,10 +9155,18 @@ void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	//Can't we print stats and clear the kls?
 	//printStats(p);
 	//printf("\n");
+	#ifndef MINGW32_BUILD
 	sprintf(msg,"Resetting Koliseo_Temp from: (%li)",t_kls->kls->offset);
+	#else
+	sprintf(msg,"Resetting Koliseo_Temp from: (%lli)",t_kls->kls->offset);
+	#endif
 	kls_log("DEBUG",msg);
 	kls_temp_end(*t_kls);
+	#ifndef MINGW32_BUILD
 	sprintf(msg,"Koliseo now at: (%li)",t_kls->kls->offset);
+	#else
+	sprintf(msg,"Koliseo now at: (%lli)",t_kls->kls->offset);
+	#endif
 	kls_log("DEBUG",msg);
 	death(p,load_info);
 	//FIXME:
@@ -9306,8 +9336,6 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
 	noecho();
 	keypad(stdscr, TRUE);
 
-	init_game_color_pairs();
-
 	/* Create items */
 	n_choices = ARRAY_SIZE(choices);
 	sprintf(msg,"n_choices size was: (%i)\n", n_choices);
@@ -9342,7 +9370,7 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 28, label, COLOR_PAIR(8));
+	print_label(my_menu_win, 1, 0, 28, label, COLOR_PAIR(S4C_MAGENTA));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 26);
 	mvwaddch(my_menu_win, 2, 27, ACS_RTEE);
@@ -9361,10 +9389,10 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
 	//mvwhline(win, 2, 1, ACS_HLINE, 52);
 	//mvwaddch(win, 2, 53, ACS_RTEE);
 
-	attron(COLOR_PAIR(3));
+	attron(COLOR_PAIR(S4C_BLUE));
 	mvprintw(20, 2, "Arrows to move");
 	mvprintw(21, 2, "(q to Exit)");
-	attroff(COLOR_PAIR(3));
+	attroff(COLOR_PAIR(S4C_BLUE));
 	refresh();
 
 	int end_room = 0;
@@ -9590,6 +9618,7 @@ void gameloop(int argc, char** argv){
 				}
 				break;
 				case 'T': {
+					G_DOTUTORIAL_ON = 1;
 					handleTutorial();
 					usage(whoami);
 					exit(EXIT_SUCCESS);
@@ -9602,7 +9631,7 @@ void gameloop(int argc, char** argv){
 					printf("  \'animate\' :\n    s4c/animate.h    ");
 					S4C_ECHOVERSION();
 					printf("[DEBUG]    Testing terminal color capabilities.\n");
-					screenTime(1);
+					napms(800);
 					display_colorpairs();
 					exit(EXIT_SUCCESS);
 				}
@@ -10518,6 +10547,30 @@ void gameloop(int argc, char** argv){
 				log_tag("debug_log.txt","[ROOM]","Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
 
+				start_color();
+				int colorCheck = has_colors();
+
+				if (colorCheck == FALSE ) {
+					fprintf(stderr,"Terminal can't use colors, abort.\n");
+					exit(S4C_ERR_TERMCOLOR);
+				}
+
+				colorCheck = can_change_color();
+
+				if (colorCheck == FALSE ) {
+					fprintf(stderr,"Terminal can't change colors, abort.\n");
+					exit(S4C_ERR_TERMCHANGECOLOR);
+				}
+				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+					init_s4c_color_pair(&palette[i],9+i);
+				}
+				cbreak();
+				noecho();
+				keypad(stdscr, TRUE);
+
+				// Initialize all the colors using the palette file we opened at the start
+				//init_s4c_color_pairs(palette_file);
+
 				//Check if we need to display a story prompt
 				if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
 					displayLore(lore_strings,*loreCounter);
@@ -10550,30 +10603,6 @@ void gameloop(int argc, char** argv){
 				//initscr();
 				clear();
 				refresh();
-				start_color();
-				int colorCheck = has_colors();
-
-				if (colorCheck == FALSE ) {
-					fprintf(stderr,"Terminal can't use colors, abort.\n");
-					exit(S4C_ERR_TERMCOLOR);
-				}
-
-				colorCheck = can_change_color();
-
-				if (colorCheck == FALSE ) {
-					fprintf(stderr,"Terminal can't change colors, abort.\n");
-					exit(S4C_ERR_TERMCHANGECOLOR);
-				}
-				cbreak();
-				noecho();
-				keypad(stdscr, TRUE);
-
-				// Initialize all the colors using the palette file we opened at the start
-				//init_s4c_color_pairs(palette_file);
-
-				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-					init_s4c_color_pair(&palette[i],9+i);
-				}
 
 				int reps = 1;
 				int frametime = 27;
@@ -10774,6 +10803,9 @@ void gameloop(int argc, char** argv){
 					fprintf(stderr,"Terminal can't change colors, abort.\n");
 					exit(S4C_ERR_TERMCHANGECOLOR);
 				}
+				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+					init_s4c_color_pair(&palette[i],9+i);
+				}
 				cbreak();
 				noecho();
 				keypad(stdscr, TRUE);
@@ -10781,9 +10813,6 @@ void gameloop(int argc, char** argv){
 				// Initialize all the colors using the palette file we opened at the start
 				//init_s4c_color_pairs(palette_file);
 
-				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-					init_s4c_color_pair(&palette[i],9+i);
-				}
 
 				cbreak();
 				noecho();

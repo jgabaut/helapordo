@@ -1,6 +1,12 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
+
+#ifdef MINGW32_BUILD
+#include <ncursesw/panel.h>
+#else
 #include <panel.h>
+#endif
+
 #include "../koliseo/src/koliseo.h"
 
 /**
@@ -99,7 +105,10 @@ extern int G_DEBUG_ENEMYTYPE_ON;
  * Global variable for autosave setting.
  */
 extern int GS_AUTOSAVE_ON;
-
+/**
+ * Global variable for a tutorial launch.
+ */
+extern int G_DOTUTORIAL_ON;
 /**
  * Current major release.
  */
@@ -113,12 +122,12 @@ extern int GS_AUTOSAVE_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 5
+#define HELAPORDO_PATCH_VERSION 6
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.1.5"
+#define VERSION "1.1.6"
 
 /**
  * Default savepath.

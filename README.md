@@ -33,8 +33,6 @@
   - `python` is needed to generate `./src/palette.c` and `./src/palette.h`.
 
 
-  I included termios.h to have some of the messages be consistent in ignoring user input, so at the moment the code can't build on Windows.
-
 ### Initialising submodules <a name = "init_submodules"></a>
 
   You can initialise the submodules by running:
@@ -113,5 +111,5 @@
 
   - `apple-arm64`
 
-  📦 v1.1.4 06/09/2023
+  📦 v1.1.6 10/09/2023
   https://github.com/jgabaut/helapordo/releases

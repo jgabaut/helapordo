@@ -95,14 +95,14 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 		//setlocale(LC_CTYPE, "it_IT.UTF-8");
 		//initscr();
 		start_color();
+		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+			init_s4c_color_pair(&palette[i],9+i);
+		}
 		clear();
 		refresh();
 		cbreak();
 		noecho();
 		keypad(stdscr, TRUE);
-
-		//TODO: clear ambigue color definitions.
-		init_game_color_pairs();
 
 		int cursorCheck = curs_set(0); // We make the cursor invisible or return early with the error
 
@@ -161,8 +161,8 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 		box(menu_win, 0, 0);
 
 		/* Set menu colors */
-		set_menu_fore(home_menu,COLOR_PAIR(5));
-		set_menu_back(home_menu,COLOR_PAIR(7));
+		set_menu_fore(home_menu,COLOR_PAIR(S4C_RED));
+		set_menu_back(home_menu,COLOR_PAIR(S4C_WHITE));
 
 		//mvprintw(LINES - 1, 0, "Arrow Keys to navigate (F1 to Exit)");
 		//attroff(COLOR_PAIR(2));
@@ -197,11 +197,6 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 
 		init_s4c_color_pairs(palette_file);
 		*/
-
-		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-			init_s4c_color_pair(&palette[i],9+i);
-		}
-
 		while ( !picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_explore) {
 			switch(c) {
 				case KEY_DOWN:
@@ -1928,13 +1923,16 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 	//setlocale(LC_CTYPE, "it_IT.UTF-8");
 	//initscr();
 	start_color();
+
+	//TODO: clear ambigue color definitions.
+	init_game_color_pairs();
+
 	clear();
 	refresh();
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
 
-	init_game_color_pairs();
 
 	/* Create items */
         n_choices = ARRAY_SIZE(shop_choices);
@@ -2465,7 +2463,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			wattroff(w,COLOR_PAIR(8));
 			y += 1;
 			wrefresh(w);
-			screenTime(1);
+			napms(800);
 		} //End for all equips
 	} //End if equipsCount > 0
 	if (c->consumablesCount > 0) {
@@ -2479,7 +2477,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			wattroff(w,COLOR_PAIR(2));
 			y += 1;
 			wrefresh(w);
-			screenTime(1);
+			napms(800);
 		} //End for all consumables
 	}
 	wrefresh(w);

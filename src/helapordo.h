@@ -1,6 +1,5 @@
 #ifndef HELAPORDO_H
 #define HELAPORDO_H
-#include <sys/utsname.h>
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -8,9 +7,16 @@
 #include <time.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <termios.h>
+
+#ifdef MINGW32_BUILD
+#include <ncursesw/panel.h>
+#include <ncursesw/menu.h>
+#else
 #include <panel.h>
 #include <menu.h>
+#include <sys/utsname.h>
+#endif
+
 #include <locale.h>
 #include <sys/stat.h>
 #include "../sprites4curses/s4c-animate/animate.h"

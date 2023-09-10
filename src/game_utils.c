@@ -389,18 +389,6 @@ void init_game_color_pairs(void) {
 }
 
 /**
- * Sleeps t seconds and then flushes stdin.
- * The tcflush() function comes from termios and may not be supported on all platforms.
- * @param t A float for how many seconds to sleep.
- */
-void screenTime(float t) {
-	sleep(t);
-
-	//Avoid leftovers from stdin be picked up while sleeping
-	tcflush(0,TCIFLUSH);
-}
-
-/**
  * Sets the passed char array to the expected path for /static/ folder.
  * @param static_path The array that will hold path to static folder.
  */
@@ -459,15 +447,20 @@ void loadLore(char** lore_strings, int loreKind) {
 	}
 
     	char * line = NULL;
-    	size_t len = 0;
-    	ssize_t read;
-	int i = 0;
+    	//size_t len = 0;
+    	//ssize_t read;
+	//int i = 0;
+
+	// FIXME
+	// If we ever need this again, we'd have to not depend on getline() for mingw32
+	/*
     	while ((read = getline(&line, &len, lorefile)) != -1) {
         	log_tag("debug_log.txt","[LORE-LOAD]","Retrieved line of length %zu:", read);
         	log_tag("debug_log.txt","[LORE-LOAD]","%s", line);
 		strcpy(lore_strings[i],line);
 		i++;
 	}
+	*/
     	fclose(lorefile);
     	if (line)
         	free(line);

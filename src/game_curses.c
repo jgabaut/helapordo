@@ -189,10 +189,6 @@ int get_saveslot_index(void) {
 	init_s4c_color_pairs(palette_file);
 	*/
 
-	for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-		init_s4c_color_pair(&palette[i],9+i);
-	}
-
 	while ( !picked && (c = wgetch(menu_win)) != KEY_F(1)) {
 		switch(c) {
 			case KEY_DOWN:
@@ -309,8 +305,6 @@ void displayLore(char** lore_strings, int lore_counter) {
 	noecho();
 	keypad(stdscr, TRUE);
 
-	init_game_color_pairs();
-
 	/* Create the windows for lore */
         win = newwin(20, 70, 1, 2);
         keypad(win, TRUE);
@@ -322,18 +316,18 @@ void displayLore(char** lore_strings, int lore_counter) {
         //box(win, 0, 0);
 	char label[25];
 	sprintf(label,"Chapter %i",lore_counter+1);
-	print_label(win, 1, 0, 70, label, COLOR_PAIR(3));
+	print_label(win, 1, 0, 70, label, COLOR_PAIR(S4C_BLUE));
 	mvwaddch(win, 2, 0, ACS_LTEE);
 	mvwhline(win, 2, 1, ACS_HLINE, 68);
 	mvwaddch(win, 2, 69, ACS_RTEE);
 
 	log_tag("debug_log.txt","[LORE]","%s",lore_strings[lore_counter]);
-	wattron(win,COLOR_PAIR(6));
+	wattron(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(win, 4, 1, "%s", lore_strings[lore_counter]);
-	wattroff(win,COLOR_PAIR(6));
+	wattroff(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
 	wrefresh(win);
-	screenTime(1.5);
+	napms(800);
 	char c;
 	int res = scanf("%c",&c);
 	log_tag("debug_log.txt","[DEBUG]","displayLore() scanf() res was (%i)",res);
@@ -2743,7 +2737,7 @@ void handleConsumables(Fighter* f, Enemy* e, Boss* b, int isBoss) {
 		wrefresh(my_menu_win);
 		refresh();
 
-		screenTime(3);
+		napms(1500);
 		endwin();
 		return;
 	}
@@ -2939,7 +2933,7 @@ void handleArtifacts(Fighter* f) {
 		wrefresh(my_menu_win);
 		refresh();
 
-		screenTime(3);
+		napms(1500);
 		endwin();
 		return;
 	}
@@ -3134,7 +3128,7 @@ void handleEquips(Fighter* f, Path* p) {
 		wrefresh(my_menu_win);
 		refresh();
 
-		screenTime(3);
+		napms(1500);
 		endwin();
 		return;
 	}
@@ -3429,7 +3423,7 @@ void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int e
 		wrefresh(my_menu_win);
 		refresh();
 
-		screenTime(1);
+		napms(800);
 		endwin();
 		return;
 	}
@@ -3561,7 +3555,7 @@ void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int e
 					pos_menu_cursor(my_menu);
 					wrefresh(my_wins[0]);
 					refresh();
-					screenTime(2);
+					napms(1000);
 				};
 				break;
 		       } //End case 10 (Enter)
@@ -3846,16 +3840,23 @@ void handleStats(Fighter* f){
 void handleTutorial(void) {
 	WINDOW *win;
 
+ 	//If we get to this function straight from getopts, we need to do initscr()
+
 	/* Initialize curses */
-	initscr();
+	if (G_DOTUTORIAL_ON == 1) {
+		initscr();
+	}
+
 	clear();
 	refresh();
 	start_color();
+	for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+		init_s4c_color_pair(&palette[i],9+i);
+	}
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
 
-	init_game_color_pairs();
 
 	/* Create the windows for tutorial */
         win = newwin(20, 70, 1, 2);
@@ -3868,17 +3869,17 @@ void handleTutorial(void) {
         //box(win, 0, 0);
 	char label[25];
 	sprintf(label,"Tutorial");
-	print_label(win, 1, 0, 70, label, COLOR_PAIR(3));
+	print_label(win, 1, 0, 70, label, COLOR_PAIR(S4C_BLUE));
 	mvwaddch(win, 2, 0, ACS_LTEE);
 	mvwhline(win, 2, 1, ACS_HLINE, 68);
 	mvwaddch(win, 2, 69, ACS_RTEE);
 
-	wattron(win,COLOR_PAIR(6));
+	wattron(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(win, 4, 1, "%s", "You can use the arrow keys and Enter to do everything needed for the game.");
 	mvwprintw(win, 7, 1, "%s", "Buying things from a Shop may be tricky: you have to select one, then choose Buy. To select one, First go up/down to 'View Item', then press Enter, then you can scroll them with left/right. Press Enter to confirm your selection, then go back up to Buy.");
 	mvwprintw(win, 12, 1, "%s", "When running in Rogue mode, you can change floors by killing a Boss.");
 
-	wattroff(win,COLOR_PAIR(6));
+	wattroff(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
 	wrefresh(win);
 	char c;
@@ -3949,7 +3950,6 @@ int handleRogueMenu(Gamestate* gmst, Path* p, Fighter* player, Room* room, loadI
 		keypad(stdscr, TRUE);
 
 		//TODO: clear ambigue color definitions.
-		init_game_color_pairs();
 
 		int cursorCheck = curs_set(0); // We make the cursor invisible or return early with the error
 
@@ -4008,8 +4008,8 @@ int handleRogueMenu(Gamestate* gmst, Path* p, Fighter* player, Room* room, loadI
 		box(menu_win, 0, 0);
 
 		/* Set menu colors */
-		set_menu_fore(rogue_menu,COLOR_PAIR(5));
-		set_menu_back(rogue_menu,COLOR_PAIR(7));
+		set_menu_fore(rogue_menu,COLOR_PAIR(S4C_RED));
+		set_menu_back(rogue_menu,COLOR_PAIR(S4C_WHITE));
 
 		//mvprintw(LINES - 1, 0, "Arrow Keys to navigate (F1 to Exit)");
 		//attroff(COLOR_PAIR(2));
