@@ -3461,8 +3461,6 @@ void unlockSpecial(Fighter* f) {
 	keypad(stdscr, TRUE);
 
 
-	init_game_color_pairs();
-
 	/* Create menu items */
 	for (int i = 0; i < SPECIALSMAX + 1; i++) {
 		if (! (f->specials[i]->enabled) ) {
@@ -3490,7 +3488,7 @@ void unlockSpecial(Fighter* f) {
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 20, "New move unlocked", COLOR_PAIR(3));
+	print_label(my_menu_win, 1, 0, 20, "New move unlocked", COLOR_PAIR(S4C_BLUE));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 26);
 	mvwaddch(my_menu_win, 2, 27, ACS_RTEE);
@@ -9338,8 +9336,6 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
 	noecho();
 	keypad(stdscr, TRUE);
 
-	init_game_color_pairs();
-
 	/* Create items */
 	n_choices = ARRAY_SIZE(choices);
 	sprintf(msg,"n_choices size was: (%i)\n", n_choices);
@@ -9374,7 +9370,7 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 28, label, COLOR_PAIR(8));
+	print_label(my_menu_win, 1, 0, 28, label, COLOR_PAIR(S4C_MAGENTA));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 26);
 	mvwaddch(my_menu_win, 2, 27, ACS_RTEE);
@@ -9393,10 +9389,10 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
 	//mvwhline(win, 2, 1, ACS_HLINE, 52);
 	//mvwaddch(win, 2, 53, ACS_RTEE);
 
-	attron(COLOR_PAIR(3));
+	attron(COLOR_PAIR(S4C_BLUE));
 	mvprintw(20, 2, "Arrows to move");
 	mvprintw(21, 2, "(q to Exit)");
-	attroff(COLOR_PAIR(3));
+	attroff(COLOR_PAIR(S4C_BLUE));
 	refresh();
 
 	int end_room = 0;
@@ -9622,6 +9618,7 @@ void gameloop(int argc, char** argv){
 				}
 				break;
 				case 'T': {
+					G_DOTUTORIAL_ON = 1;
 					handleTutorial();
 					usage(whoami);
 					exit(EXIT_SUCCESS);
@@ -10550,6 +10547,30 @@ void gameloop(int argc, char** argv){
 				log_tag("debug_log.txt","[ROOM]","Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
 
+				start_color();
+				int colorCheck = has_colors();
+
+				if (colorCheck == FALSE ) {
+					fprintf(stderr,"Terminal can't use colors, abort.\n");
+					exit(S4C_ERR_TERMCOLOR);
+				}
+
+				colorCheck = can_change_color();
+
+				if (colorCheck == FALSE ) {
+					fprintf(stderr,"Terminal can't change colors, abort.\n");
+					exit(S4C_ERR_TERMCHANGECOLOR);
+				}
+				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+					init_s4c_color_pair(&palette[i],9+i);
+				}
+				cbreak();
+				noecho();
+				keypad(stdscr, TRUE);
+
+				// Initialize all the colors using the palette file we opened at the start
+				//init_s4c_color_pairs(palette_file);
+
 				//Check if we need to display a story prompt
 				if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
 					displayLore(lore_strings,*loreCounter);
@@ -10582,30 +10603,6 @@ void gameloop(int argc, char** argv){
 				//initscr();
 				clear();
 				refresh();
-				start_color();
-				int colorCheck = has_colors();
-
-				if (colorCheck == FALSE ) {
-					fprintf(stderr,"Terminal can't use colors, abort.\n");
-					exit(S4C_ERR_TERMCOLOR);
-				}
-
-				colorCheck = can_change_color();
-
-				if (colorCheck == FALSE ) {
-					fprintf(stderr,"Terminal can't change colors, abort.\n");
-					exit(S4C_ERR_TERMCHANGECOLOR);
-				}
-				cbreak();
-				noecho();
-				keypad(stdscr, TRUE);
-
-				// Initialize all the colors using the palette file we opened at the start
-				//init_s4c_color_pairs(palette_file);
-
-				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-					init_s4c_color_pair(&palette[i],9+i);
-				}
 
 				int reps = 1;
 				int frametime = 27;
@@ -10806,6 +10803,9 @@ void gameloop(int argc, char** argv){
 					fprintf(stderr,"Terminal can't change colors, abort.\n");
 					exit(S4C_ERR_TERMCHANGECOLOR);
 				}
+				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+					init_s4c_color_pair(&palette[i],9+i);
+				}
 				cbreak();
 				noecho();
 				keypad(stdscr, TRUE);
@@ -10813,9 +10813,6 @@ void gameloop(int argc, char** argv){
 				// Initialize all the colors using the palette file we opened at the start
 				//init_s4c_color_pairs(palette_file);
 
-				for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-					init_s4c_color_pair(&palette[i],9+i);
-				}
 
 				cbreak();
 				noecho();

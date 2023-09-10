@@ -105,7 +105,10 @@ extern int G_DEBUG_ENEMYTYPE_ON;
  * Global variable for autosave setting.
  */
 extern int GS_AUTOSAVE_ON;
-
+/**
+ * Global variable for a tutorial launch.
+ */
+extern int G_DOTUTORIAL_ON;
 /**
  * Current major release.
  */
