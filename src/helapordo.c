@@ -9479,9 +9479,8 @@ Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile){
 	sprintf(msg,"%s",path_to_savefile);
 	strcpy(save->save_path,msg);
 	p->current_saveslot = save;
-	sprintf(msg,"Prepped Saveslot:  path->current_saveslot->save_path == [%s]",p->current_saveslot->save_path);
-	kls_log("DEBUG",msg);
-	log_tag("debug_log.txt","[SAVESLOT]",msg);
+	kls_log("DEBUG","Prepped Saveslot:  path->current_saveslot->save_path == [%s]",p->current_saveslot->save_path);
+	log_tag("debug_log.txt","[SAVESLOT]","Prepped Saveslot:  path->current_saveslot->save_path == [%s]",p->current_saveslot->save_path);
 
 	switch(GAMEMODE) {
 		case Standard: {

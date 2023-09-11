@@ -55,7 +55,7 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 	if (GS_AUTOSAVE_ON == 1 && GAMEMODE != Rogue) {
 		log_tag("debug_log.txt","[DEBUG]","Doing autosave.");
 
-		char path_to_autosave_file[600];
+		char path_to_autosave_file[800];
 		char autosave_static_path[500];
 		char autosave_file_name[300];
 	        strcpy(autosave_file_name, p->current_saveslot->save_path);
