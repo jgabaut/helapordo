@@ -18,7 +18,9 @@ Gamemode GAMEMODE = Rogue;
 Koliseo* default_kls = NULL;
 Koliseo* temporary_kls = NULL;
 
+
 int main(int argc, char** argv) {
+	KOLISEO_AUTOSET_TEMP_REGIONS = 1; //Enable regions for Koliseo_Temp
 	//Randomise seed
 	srand(time(NULL));
 
