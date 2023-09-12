@@ -1924,9 +1924,6 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 	//initscr();
 	start_color();
 
-	//TODO: clear ambigue color definitions.
-	init_game_color_pairs();
-
 	clear();
 	refresh();
 	cbreak();
@@ -1966,7 +1963,7 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 20, balance_label, COLOR_PAIR(8));
+	print_label(my_menu_win, 1, 0, 20, balance_label, COLOR_PAIR(S4C_MAGENTA));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 18);
 	mvwaddch(my_menu_win, 2, 19, ACS_RTEE);
@@ -1984,18 +1981,18 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
         wins[1] = newwin(18, 30, 0, 0);
         keypad(wins[1], TRUE);
 	box(wins[1], 0, 0);
-	print_label(wins[1], 1, 0, 30, "Selected item", COLOR_PAIR(6));
+	print_label(wins[1], 1, 0, 30, "Selected item", COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwaddch(wins[1], 2, 0, ACS_LTEE);
 	mvwhline(wins[1], 2, 1, ACS_HLINE, 28);
 	mvwaddch(wins[1], 2, 29, ACS_RTEE);
 
 	Equip* firstEq = room->shop->equips[0];
 	updateShopDisplayW_Equip(wins[1],firstEq);
-	attron(COLOR_PAIR(3));
+	attron(COLOR_PAIR(S4C_CYAN));
 	mvprintw(20, 21, "Arrows to");
 	mvprintw(21, 21, "move");
         mvprintw(22, 21, "(q to undo)");
-	attroff(COLOR_PAIR(3));
+	attroff(COLOR_PAIR(S4C_CYAN));
 	refresh();
 
 	int y,x;
@@ -2003,9 +2000,9 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 	//Print all the equips
 	for (int i = 0; i < room->shop->equipsCount; i++) {
 		mvwprintw(wins[0], 1, i * 14 + 3, "%s", stringFromEquips(room->shop->equips[i]->class));
-		wattron(wins[0],COLOR_PAIR(6));
+		wattron(wins[0],COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(wins[0], 2, i * 14 + 5, "$ %i", room->shop->equipPrices[i]);
-		wattroff(wins[0],COLOR_PAIR(6));
+		wattroff(wins[0],COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		char item_sprite_line[80];
 		for (int rows = 0; rows < 8; rows++) {
 
@@ -2023,9 +2020,9 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 	//Print all the consumables
 	for (int i = 0; i < room->shop->consumablesCount; i++) {
 		mvwprintw(wins[0], 13, i * 14 + 3, "%s", stringFromConsumables(room->shop->consumables[i]->class));
-		wattron(wins[0],COLOR_PAIR(6));
+		wattron(wins[0],COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(wins[0], 14, i * 14 + 5, "$ %i", room->shop->consumablePrices[i]);
-		wattroff(wins[0],COLOR_PAIR(6));
+		wattroff(wins[0],COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		char item_sprite_line[80];
 		for (int rows = 0; rows < 8; rows++) {
 

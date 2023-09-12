@@ -29,51 +29,51 @@ int display_colorpairs(void) {
  */
 void print_encoded_char(WINDOW* w, int y, int x, char c) {
 	if (c == ' ') {
-		wattron(w,COLOR_PAIR(7));
+		wattron(w,COLOR_PAIR(S4C_BLACK));
 		//mvwprintw(win, y, x, "%c",s[j]);
 		mvwaddch(w, y, x,' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(7));
+		wattroff(w,COLOR_PAIR(S4C_BLACK));
 	} else if (c == '@') {
-		wattron(w,COLOR_PAIR(7));
+		wattron(w,COLOR_PAIR(S4C_BLACK));
 		//mvwaddch(win, y, x, cBlock);
 		mvwaddch(w, y, x,' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(7));
+		wattroff(w,COLOR_PAIR(S4C_BLACK));
 	} else if (c == 'w') {
-		wattron(w,COLOR_PAIR(5));
+		wattron(w,COLOR_PAIR(S4C_WHITE));
 		mvwaddch(w, y, x, ' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(5));
+		wattroff(w,COLOR_PAIR(S4C_WHITE));
 	} else if (c == '|') {
-		wattron(w,COLOR_PAIR(2));
+		wattron(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwaddch(w, y, x, '|');
-		wattroff(w,COLOR_PAIR(2));
+		wattroff(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else if (c == 'g') {
-		wattron(w,COLOR_PAIR(2));
+		wattron(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwaddch(w, y, x, ' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(2));
+		wattroff(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else if (c == 'b') {
-		wattron(w,COLOR_PAIR(3));
+		wattron(w,COLOR_PAIR(S4C_BLUE));
 		mvwaddch(w, y, x, ' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(3));
+		wattroff(w,COLOR_PAIR(S4C_BLUE));
 	} else if (c == 'y') {
-		wattron(w,COLOR_PAIR(6));
+		wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwaddch(w, y, x, ' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(6));
+		wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	} else if (c == 'r') {
-		wattron(w,COLOR_PAIR(1));
+		wattron(w,COLOR_PAIR(S4C_RED));
 		mvwaddch(w, y, x, ' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(1));
+		wattroff(w,COLOR_PAIR(S4C_RED));
 	} else if (c == 'm') {
-		wattron(w,COLOR_PAIR(8));
+		wattron(w,COLOR_PAIR(S4C_MAGENTA));
 		mvwaddch(w, y, x, ' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(8));
+		wattroff(w,COLOR_PAIR(S4C_MAGENTA));
 	} else if (c == 'c') {
-		wattron(w,COLOR_PAIR(4));
+		wattron(w,COLOR_PAIR(S4C_CYAN));
 		mvwaddch(w, y, x, ' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(4));
+		wattroff(w,COLOR_PAIR(S4C_CYAN));
 	} else if (c == 'I') {
-		wattron(w,COLOR_PAIR(5));
+		wattron(w,COLOR_PAIR(S4C_WHITE));
 		mvwaddch(w, y, x, '|');
-		wattroff(w,COLOR_PAIR(5));
+		wattroff(w,COLOR_PAIR(S4C_WHITE));
 	}
 
 }
