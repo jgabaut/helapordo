@@ -20,7 +20,7 @@ Koliseo* temporary_kls = NULL;
 
 
 int main(int argc, char** argv) {
-	KOLISEO_AUTOSET_TEMP_REGIONS = 1; //Enable regions for Koliseo_Temp
+	KOLISEO_AUTOSET_TEMP_REGIONS = 0; //Disable regions for Koliseo_Temp allocations
 	//Randomise seed
 	srand(time(NULL));
 
