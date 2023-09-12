@@ -8161,12 +8161,12 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			}
 
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
-			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
+			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
 				#ifndef MINGW32_BUILD
-				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
-				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#endif
 			}
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
@@ -8236,12 +8236,12 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			}
 
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
-			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
+			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
 				#ifndef MINGW32_BUILD
-				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
-				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#endif
 			}
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
@@ -8781,12 +8781,12 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			}
 
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
-			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
+			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
 				#ifndef MINGW32_BUILD
-				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
-				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#endif
 			}
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
@@ -8856,12 +8856,12 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			}
 
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
-			for (int i = HR_Path; i < HLP_MAX_INDEX+100; i++) {
+			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
 				#ifndef MINGW32_BUILD
-				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
-				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-100+KLS_REGIONTYPE_MAX), i, usage);
+				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#endif
 			}
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
