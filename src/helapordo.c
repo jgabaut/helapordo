@@ -10567,9 +10567,6 @@ void gameloop(int argc, char** argv){
 				noecho();
 				keypad(stdscr, TRUE);
 
-				// Initialize all the colors using the palette file we opened at the start
-				//init_s4c_color_pairs(palette_file);
-
 				//Check if we need to display a story prompt
 				if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
 					displayLore(lore_strings,*loreCounter);
@@ -10808,10 +10805,6 @@ void gameloop(int argc, char** argv){
 				cbreak();
 				noecho();
 				keypad(stdscr, TRUE);
-
-				// Initialize all the colors using the palette file we opened at the start
-				//init_s4c_color_pairs(palette_file);
-
 
 				cbreak();
 				noecho();

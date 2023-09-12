@@ -95,9 +95,6 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 		//setlocale(LC_CTYPE, "it_IT.UTF-8");
 		//initscr();
 		start_color();
-		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-			init_s4c_color_pair(&palette[i],9+i);
-		}
 		clear();
 		refresh();
 		cbreak();
@@ -181,22 +178,6 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 		int picked = 0;
 		int picked_explore = 0;
 
-		/*
-		//We set the colors to use s4c's palette file...
-		FILE* palette_file;
-		char path_to_palette[600];
-		char static_path[500];
-		char palette_name[50] = "palette.gpl";
-
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
-
-		sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-		palette_file = fopen(path_to_palette, "r");
-
-		init_s4c_color_pairs(palette_file);
-		*/
 		while ( !picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_explore) {
 			switch(c) {
 				case KEY_DOWN:
@@ -763,27 +744,6 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 			int frame_counter = 0;
 			int frame_tot = 60;
 
-			/*
-			//We set the colors to use s4c's palette file...
-			FILE* palette_file;
-			char path_to_palette[600];
-			char static_path[500];
-			char palette_name[50] = "palette.gpl";
-
-			// Set static_path value to the correct static dir path
-			resolve_staticPath(static_path);
-
-
-			sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-			palette_file = fopen(path_to_palette, "r");
-
-			init_s4c_color_pairs(palette_file);
-			*/
-
-			for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-				init_s4c_color_pair(&palette[i],9+i);
-			}
 			int animation_loops_done = 0;
 
 			while(!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
@@ -1583,28 +1543,6 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 		int frame_counter = 0;
 		int frame_tot = 60;
 
-		/*
-		//We set the colors to use s4c's palette file...
-		FILE* palette_file;
-		char path_to_palette[600];
-		char static_path[500];
-		char palette_name[50] = "palette.gpl" ;
-
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
-
-
-		sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-		palette_file = fopen(path_to_palette, "r");
-
-		init_s4c_color_pairs(palette_file);
-		*/
-
-		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-			init_s4c_color_pair(&palette[i],9+i);
-		}
-
 		int animation_loops_done = 0;
 
 	        while(!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
@@ -2305,30 +2243,6 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 		exit(EXIT_FAILURE);
     	}
 	*/
-
-	/*
-    	// Open the palette file and read the color values and names
-    	FILE* palette_file;
-	char path_to_palette[600];
-
-	char palette_name[200] = "palette.gpl";
-
-	sprintf(path_to_palette,"%s/",static_path);
-	strncat(path_to_palette,palette_name,200);
-
-    	palette_file = fopen(path_to_palette, "r");
-    	if (palette_file == NULL) {
-        	fprintf(stderr, "Error: could not open palette file (%s/%s).\n",static_path,palette_name);
-       		exit(EXIT_FAILURE);
-    	}
-
-	// Initialize all the colors
-	init_s4c_color_pairs(palette_file);
-	*/
-
-	for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-		init_s4c_color_pair(&palette[i],9+i);
-	}
 
 	int reps = 1;
 

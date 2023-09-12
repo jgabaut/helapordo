@@ -172,23 +172,6 @@ int get_saveslot_index(void) {
 	wrefresh(saveslots_win);
 	refresh();
 
-	/*
-	//We set the colors to use s4c's palette file...
-	FILE* palette_file;
-	char path_to_palette[600];
-	char static_path[500];
-	char palette_name[50] = "palette.gpl";
-
-	// Set static_path value to the correct static dir path
-	resolve_staticPath(static_path);
-
-	sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-	palette_file = fopen(path_to_palette, "r");
-
-	init_s4c_color_pairs(palette_file);
-	*/
-
 	while ( !picked && (c = wgetch(menu_win)) != KEY_F(1)) {
 		switch(c) {
 			case KEY_DOWN:
@@ -3777,6 +3760,8 @@ void handleTutorial(void) {
 	clear();
 	refresh();
 	start_color();
+	//FIXME
+	//The tutorial needs to reset color pairs because you can get to it before the game actually sets them for the first time
 	for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
 		init_s4c_color_pair(&palette[i],9+i);
 	}
@@ -3952,27 +3937,6 @@ int handleRogueMenu(Gamestate* gmst, Path* p, Fighter* player, Room* room, loadI
 
 		int picked = 0;
 		int picked_close = 0;
-
-		/*
-		//We set the colors to use s4c's palette file...
-		FILE* palette_file;
-		char path_to_palette[600];
-		char static_path[500];
-		char palette_name[50] = "palette.gpl";
-
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
-
-		sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-		palette_file = fopen(path_to_palette, "r");
-
-		init_s4c_color_pairs(palette_file);
-		*/
-
-		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-			init_s4c_color_pair(&palette[i],9+i);
-		}
 
 		while ( !picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_close) {
 			switch(c) {
