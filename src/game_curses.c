@@ -316,7 +316,7 @@ void displayLore(char** lore_strings, int lore_counter) {
         //box(win, 0, 0);
 	char label[25];
 	sprintf(label,"Chapter %i",lore_counter+1);
-	print_label(win, 1, 0, 70, label, COLOR_PAIR(S4C_BLUE));
+	print_label(win, 1, 0, 70, label, COLOR_PAIR(S4C_CYAN));
 	mvwaddch(win, 2, 0, ACS_LTEE);
 	mvwhline(win, 2, 1, ACS_HLINE, 68);
 	mvwaddch(win, 2, 69, ACS_RTEE);
@@ -527,27 +527,27 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + (int) temp;
 		y = 1;
 		if (e->beast) {
-			wattron(win,COLOR_PAIR(8));
+			wattron(win,COLOR_PAIR(S4C_MAGENTA));
 		} else {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 		}
 		mvwprintw(win, y, x, "%s",stringFromEClass(e->class));
 		if (e->beast) {
-			wattroff(win,COLOR_PAIR(8));
+			wattroff(win,COLOR_PAIR(S4C_MAGENTA));
 		} else {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 		}
 
 		temp = (width - (e->hp/10)) / 2 ;
 		x = startx + xShift; //(int) temp;
 		y += 4;
 		if ( (e->hp / (e->totalhp / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", e->hp, e->totalhp);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -555,12 +555,12 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + xShift; //(int) temp;
 		y += 1;
 		if ( (e->energy / (e->totalenergy / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", e->energy, e->totalenergy);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -568,12 +568,12 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + xShift; //(int) temp;
 		y += 1;
 		if ( (e->stamina / (e->totalstamina / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", e->stamina, e->totalstamina);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -608,11 +608,11 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + xShift;
 		y += 1;
 		if (e->status != Normal) {
-			wattron(win, COLOR_PAIR(2));
+			wattron(win, COLOR_PAIR(S4C_RED));
 		}
 		mvwprintw(win, y, x, "%s", stringFromStatus(e->status));
 		if (e->status != Normal) {
-			wattroff(win, COLOR_PAIR(2));
+			wattroff(win, COLOR_PAIR(S4C_RED));
 		}
 	} else if (isEnemy == 0) { //Fighter panel
 
@@ -623,9 +623,9 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		temp = (width - l) / 2 ;
 		x = startx + (int) temp;
 		y = 1;
-		wattron(win,COLOR_PAIR(2));
+		wattron(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(win, y, x, "%s",f->name);
-		wattroff(win,COLOR_PAIR(2));
+		wattroff(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
 		/*
 		l = strlen(stringFromClass(f->class));
@@ -639,12 +639,12 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + 2;
 		y += 4;
 		if ( (f->hp / (f->totalhp / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", f->hp, f->totalhp);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -652,24 +652,24 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + 2;
 		y += 1;
 		if ( (f->energy / (f->totalenergy / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", f->energy, f->totalenergy);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
 		if (f->equipboost_enr != 0) {
 			if (f->equipboost_enr > 0) {
-				wattron(win,COLOR_PAIR(2));
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 				mvwprintw(win, y, x + 5, "(+%i)", f->equipboost_enr);
-				wattroff(win,COLOR_PAIR(2));
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			} else {
-				wattron(win,COLOR_PAIR(1));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 5 , "(-%i)", f->equipboost_enr);
-				wattroff(win,COLOR_PAIR(1));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 		}
 
@@ -677,12 +677,12 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + 2;
 		y += 1;
 		if ( (f->stamina / (f->totalstamina / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", f->stamina, f->totalstamina);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -696,13 +696,13 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 
 		if (f->equipboost_atk != 0) {
 			if (f->equipboost_atk > 0) {
-				wattron(win,COLOR_PAIR(2));
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 				mvwprintw(win, y, x + 3, "(+%i)", f->equipboost_atk);
-				wattroff(win,COLOR_PAIR(2));
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			} else {
-				wattron(win,COLOR_PAIR(1));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 3 , "(-%i)", f->equipboost_atk);
-				wattroff(win,COLOR_PAIR(1));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 		}
 
@@ -713,13 +713,13 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 
 		if (f->equipboost_def != 0) {
 			if (f->equipboost_def > 0) {
-				wattron(win,COLOR_PAIR(2));
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 				mvwprintw(win, y, x + 3, "(+%i)", f->equipboost_def);
-				wattroff(win,COLOR_PAIR(2));
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			} else {
-				wattron(win,COLOR_PAIR(1));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 3 , "(-%i)", f->equipboost_def);
-				wattroff(win,COLOR_PAIR(1));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 		}
 
@@ -730,13 +730,13 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 
 		if (f->equipboost_vel != 0) {
 			if (f->equipboost_vel > 0) {
-				wattron(win,COLOR_PAIR(2));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 3, "(+%i)", f->equipboost_vel);
-				wattroff(win,COLOR_PAIR(2));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			} else {
-				wattron(win,COLOR_PAIR(1));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 3 , "(-%i)", f->equipboost_vel);
-				wattroff(win,COLOR_PAIR(1));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 		}
 
@@ -749,12 +749,12 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + 2;
 		y += 1;
 		if ( (f->currentlevelxp / (f->totallevelxp / 1.0)) >= 0.75) {
-			wattron(win,COLOR_PAIR(2));
+			wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", f->currentlevelxp, f->totallevelxp);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(2));
+			wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			resetColor = 0;
 		};
 
@@ -763,11 +763,11 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		x = startx + 2;
 		y += 1;
 		if (f->status != Normal) {
-			wattron(win, COLOR_PAIR(1));
+			wattron(win, COLOR_PAIR(S4C_RED));
 		}
 		mvwprintw(win, y, x, "%s", stringFromStatus(f->status));
 		if (f->status != Normal) {
-			wattroff(win, COLOR_PAIR(1));
+			wattroff(win, COLOR_PAIR(S4C_RED));
 		}
 
 	} else if (isEnemy == 2) { //Stat panel
@@ -776,9 +776,9 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		temp = (width - l) / 2 ;
 		x = startx + (int) temp;
 		y = 1;
-		wattron(win,COLOR_PAIR(4));
+		wattron(win,COLOR_PAIR(S4C_CYAN));
 		mvwprintw(win, y, x, "Stat");
-		wattroff(win,COLOR_PAIR(4));
+		wattroff(win,COLOR_PAIR(S4C_CYAN));
 
 		l = strlen("Hp");
 		temp = (width - l) / 2 ;
@@ -1030,27 +1030,27 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + (int) temp;
 		y = 1;
 		if (b->beast) {
-			wattron(win,COLOR_PAIR(8));
+			wattron(win,COLOR_PAIR(S4C_MAGENTA));
 		} else {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 		}
 		mvwprintw(win, y, x, "%s",stringFromBossClass(b->class));
 		if (b->beast) {
-			wattroff(win,COLOR_PAIR(8));
+			wattroff(win,COLOR_PAIR(S4C_MAGENTA));
 		} else {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 		}
 
 		temp = (width - (b->hp/10)) / 2 ;
 		x = startx + xShift; //(int) temp;
 		y += 4;
 		if ( (b->hp / (b->totalhp / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", b->hp, b->totalhp);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -1058,12 +1058,12 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + xShift; //(int) temp;
 		y += 1;
 		if ( (b->energy / (b->totalenergy / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", b->energy, b->totalenergy);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -1071,12 +1071,12 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + xShift; //(int) temp;
 		y += 1;
 		if ( (b->stamina / (b->totalstamina / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", b->stamina, b->totalstamina);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -1111,11 +1111,11 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + xShift;
 		y += 1;
 		if (b->status != Normal) {
-			wattron(win, COLOR_PAIR(2));
+			wattron(win, COLOR_PAIR(S4C_RED));
 		}
 		mvwprintw(win, y, x, "%s", stringFromStatus(b->status));
 		if (b->status != Normal) {
-			wattroff(win, COLOR_PAIR(2));
+			wattroff(win, COLOR_PAIR(S4C_RED));
 		}
 	} else if (isBoss == 0) { //Fighter panel
 
@@ -1125,9 +1125,9 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		temp = (width - l) / 2 ;
 		x = startx + (int) temp;
 		y = 1;
-		wattron(win,COLOR_PAIR(2));
+		wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(win, y, x, "%s",f->name);
-		wattroff(win,COLOR_PAIR(2));
+		wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 		/*
 		l = strlen(stringFromClass(f->class));
@@ -1141,12 +1141,12 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + 2;
 		y += 4;
 		if ( (f->hp / (f->totalhp / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", f->hp, f->totalhp);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -1154,24 +1154,24 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + 2;
 		y += 1;
 		if ( (f->energy / (f->totalenergy / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", f->energy, f->totalenergy);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
 		if (f->equipboost_enr != 0) {
 			if (f->equipboost_enr > 0) {
-				wattron(win,COLOR_PAIR(2));
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 				mvwprintw(win, y, x + 5, "(+%i)", f->equipboost_enr);
-				wattroff(win,COLOR_PAIR(2));
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			} else {
-				wattron(win,COLOR_PAIR(1));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 5 , "(-%i)", f->equipboost_enr);
-				wattroff(win,COLOR_PAIR(1));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 		}
 
@@ -1179,12 +1179,12 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + 2;
 		y += 1;
 		if ( (f->stamina / (f->totalstamina / 1.0)) <= 0.25) {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", f->stamina, f->totalstamina);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
 
@@ -1195,13 +1195,13 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 
 		if (f->equipboost_atk != 0) {
 			if (f->equipboost_atk > 0) {
-				wattron(win,COLOR_PAIR(2));
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 				mvwprintw(win, y, x + 3, "(+%i)", f->equipboost_atk);
-				wattroff(win,COLOR_PAIR(2));
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			} else {
-				wattron(win,COLOR_PAIR(1));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 3 , "(-%i)", f->equipboost_atk);
-				wattroff(win,COLOR_PAIR(1));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 		}
 
@@ -1212,13 +1212,13 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 
 		if (f->equipboost_def != 0) {
 			if (f->equipboost_def > 0) {
-				wattron(win,COLOR_PAIR(2));
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 				mvwprintw(win, y, x + 3, "(+%i)", f->equipboost_def);
-				wattroff(win,COLOR_PAIR(2));
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			} else {
-				wattron(win,COLOR_PAIR(1));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 3 , "(-%i)", f->equipboost_def);
-				wattroff(win,COLOR_PAIR(1));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 		}
 
@@ -1229,13 +1229,13 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 
 		if (f->equipboost_vel != 0) {
 			if (f->equipboost_vel > 0) {
-				wattron(win,COLOR_PAIR(2));
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 				mvwprintw(win, y, x + 3, "(+%i)", f->equipboost_vel);
-				wattroff(win,COLOR_PAIR(2));
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			} else {
-				wattron(win,COLOR_PAIR(1));
+				wattron(win,COLOR_PAIR(S4C_RED));
 				mvwprintw(win, y, x + 3 , "(-%i)", f->equipboost_vel);
-				wattroff(win,COLOR_PAIR(1));
+				wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 		}
 
@@ -1248,12 +1248,12 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + 2;
 		y += 1;
 		if ( (f->currentlevelxp / (f->totallevelxp / 1.0)) >= 0.75) {
-			wattron(win,COLOR_PAIR(2));
+			wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			resetColor = 1;
 		}
 		mvwprintw(win, y, x, "%i/%i", f->currentlevelxp, f->totallevelxp);
 		if (resetColor) {
-			wattroff(win,COLOR_PAIR(2));
+			wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			resetColor = 0;
 		};
 
@@ -1262,11 +1262,11 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		x = startx + 2;
 		y += 1;
 		if (f->status != Normal) {
-			wattron(win, COLOR_PAIR(1));
+			wattron(win, COLOR_PAIR(S4C_RED));
 		}
 		mvwprintw(win, y, x, "%s", stringFromStatus(f->status));
 		if (f->status != Normal) {
-			wattroff(win, COLOR_PAIR(1));
+			wattroff(win, COLOR_PAIR(S4C_RED));
 		}
 
 	} else if (isBoss == 2) { //Stat panel
@@ -1275,9 +1275,9 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		temp = (width - l) / 2 ;
 		x = startx + (int) temp;
 		y = 1;
-		wattron(win,COLOR_PAIR(4));
+		wattron(win,COLOR_PAIR(S4C_CYAN));
 		mvwprintw(win, y, x, "Stat");
-		wattroff(win,COLOR_PAIR(4));
+		wattroff(win,COLOR_PAIR(S4C_CYAN));
 
 		l = strlen("Hp");
 		temp = (width - l) / 2 ;
@@ -1467,7 +1467,7 @@ void applyStatus(WINDOW* notify_win, Fighter* f){
  */
 void applyEStatus(WINDOW *notify_win, Enemy* e){
 
-	wattron(notify_win, COLOR_PAIR(2));
+	wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	switch(e->status) {
 		case Normal:
@@ -1517,7 +1517,7 @@ void applyEStatus(WINDOW *notify_win, Enemy* e){
 		break;
 	}
 
-	wattroff(notify_win, COLOR_PAIR(2));
+	wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
@@ -1531,7 +1531,7 @@ void applyEStatus(WINDOW *notify_win, Enemy* e){
  */
 void applyBStatus(WINDOW *notify_win, Boss* b){
 
-	wattron(notify_win, COLOR_PAIR(2));
+	wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	switch(b->status) {
 		case Normal:
@@ -1581,7 +1581,7 @@ void applyBStatus(WINDOW *notify_win, Boss* b){
 		break;
 	}
 
-	wattroff(notify_win, COLOR_PAIR(2));
+	wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
@@ -1816,9 +1816,9 @@ void updateSelectedConsumableW(WINDOW* w, MENU* my_menu, Fighter* f) {
 		}
 	}
 	//mvwprintw(w,2, 20, "Selected %s",item_name(cur));
-	wattron(w,COLOR_PAIR(6));
+	wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(w,2, 2, "%s",selected->desc);
-	wattroff(w,COLOR_PAIR(6));
+	wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(w,15, 2, "Quantity: x%i",selected->qty);
 	wrefresh(w);
 
@@ -1861,9 +1861,9 @@ void updateSelectedArtifactW(WINDOW* w, MENU* my_menu, Fighter* f) {
 		}
 	}
 	//mvwprintw(w,2, 20, "Selected %s",item_name(cur));
-	wattron(w,COLOR_PAIR(6));
+	wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(w,2, 2, "%s",selected.desc);
-	wattroff(w,COLOR_PAIR(6));
+	wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(w,15, 2, "Quantity: x%i",selected.qty);
 	wrefresh(w);
 
@@ -1900,9 +1900,9 @@ void updateSelectedEquipW(WINDOW* w, MENU* my_menu, Equip* selected,Fighter* f) 
 		}
 	}
 
-	wattron(w,COLOR_PAIR(6));
+	wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(w,2, 2, "%s",selected->desc);
-	wattroff(w,COLOR_PAIR(6));
+	wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	Equipslot * slot = (Equipslot *) f->equipslots[selected->type];
 
 	if (slot->active) {
@@ -1914,7 +1914,7 @@ void updateSelectedEquipW(WINDOW* w, MENU* my_menu, Equip* selected,Fighter* f) 
 		if (current->enr > 0) mvwprintw(w,7, 28, "%i", current->enr);
 	}
 
-	wattron(w,COLOR_PAIR(2));
+	wattron(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 	if (selected->atk > 0) {
 		mvwprintw(w,4, 18, "Atk: %i",selected->atk);
 	}
@@ -1927,22 +1927,22 @@ void updateSelectedEquipW(WINDOW* w, MENU* my_menu, Equip* selected,Fighter* f) 
 	if (selected->enr > 0) {
 		mvwprintw(w,7, 18, "Enr: %i",selected->enr);
 	}
-	wattroff(w,COLOR_PAIR(2));
+	wattroff(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 	int color = -1;
 	switch (selected->qual) {
 		case Bad: {
-			wattron(w,COLOR_PAIR(1));
-			color = 1;
+			wattron(w,COLOR_PAIR(S4C_RED));
+			color = S4C_RED;
 		}
 		break;
 		case Average: {
-			wattron(w,COLOR_PAIR(6));
-			color = 6;
+			wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
+			color = S4C_BRIGHT_YELLOW;
 		}
 		break;
 		case Good: {
-			wattron(w,COLOR_PAIR(4));
-			color = 4;
+			wattron(w,COLOR_PAIR(S4C_CYAN));
+			color = S4C_CYAN;
 		}
 		break;
 		default: {
@@ -1953,11 +1953,11 @@ void updateSelectedEquipW(WINDOW* w, MENU* my_menu, Equip* selected,Fighter* f) 
 	mvwprintw(w, 9, 18, "Quality:    %s",stringFromQuality(selected->qual));
 	wattroff(w,COLOR_PAIR(color));
 
-	wattron(w,COLOR_PAIR(2));
+	wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(w, 10, 18, "Level:    %i",selected->level);
-	wattroff(w,COLOR_PAIR(2));
+	wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
-	wattron(w,COLOR_PAIR(4));
+	wattron(w,COLOR_PAIR(S4C_CYAN));
 	mvwprintw(w, 11, 18, "Perks:    %i",selected->perksCount);
 	int count = selected->perksCount;
 	for (int i = 0; i < count; i++) {
@@ -1965,7 +1965,7 @@ void updateSelectedEquipW(WINDOW* w, MENU* my_menu, Equip* selected,Fighter* f) 
 
 		mvwprintw(w, 11 + i, 18, " x%i %s", p->innerValue, nameStringFromPerk(p->class));
 	};
-	wattroff(w,COLOR_PAIR(4));
+	wattroff(w,COLOR_PAIR(S4C_CYAN));
 	wrefresh(w);
 
 }
@@ -2001,24 +2001,24 @@ void updateEquipslotsWin(WINDOW* w, Fighter* f) {
 		}
 
 		if (selected->active) {
-			wattron(w,COLOR_PAIR(2));
+			wattron(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(w, y + 1, x, "    %s", stringFromEquipzones(selected->type));
-			wattroff(w,COLOR_PAIR(2));
+			wattroff(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			int color = -1;
 			switch (selected->item->qual) {
 				case Bad: {
-					wattron(w,COLOR_PAIR(1));
-					color = 1;
+					wattron(w,COLOR_PAIR(S4C_RED));
+					color = S4C_RED;
 				}
 				break;
 				case Average: {
-					wattron(w,COLOR_PAIR(6));
-					color = 6;
+					wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
+					color = S4C_BRIGHT_YELLOW;
 				}
 				break;
 				case Good: {
-					wattron(w,COLOR_PAIR(4));
-					color = 4;
+					wattron(w,COLOR_PAIR(S4C_CYAN));
+					color = S4C_CYAN;
 				}
 				break;
 				default: {
@@ -2042,9 +2042,9 @@ void updateEquipslotsWin(WINDOW* w, Fighter* f) {
 			}
 		} else {
 			mvwprintw(w, y +3, x, "EMPTY");
-			wattron(w,COLOR_PAIR(6));
+			wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 			mvwprintw(w, y +2, x, "%s", stringFromEquipzones(selected->type));
-			wattroff(w,COLOR_PAIR(6));
+			wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		}
 		x += 13;
 
@@ -2083,10 +2083,10 @@ void updateSelectedSpecialW(WINDOW* w, MENU* my_menu, Fighter* f) {
 
 
 	//mvwprintw(w,2, 20, "Selected %s",item_name(cur));
-	wattron(w,COLOR_PAIR(6));
+	wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(w, y, x, "%s",descStringFromSpecial(f->class,selected->move));
 	mvwprintw(w, y+2, x, "Energy Cost:    %i",selected->cost);
-	wattroff(w,COLOR_PAIR(6));
+	wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	wrefresh(w);
 }
 
@@ -2100,7 +2100,7 @@ void updateSelectedSpecialW(WINDOW* w, MENU* my_menu, Fighter* f) {
  */
 void updateShopDisplayW_Equip(WINDOW* w, Equip* e) {
 	box(w,0,0);
-	print_label(w, 1, 0, 30, "Selected item", COLOR_PAIR(6));
+	print_label(w, 1, 0, 30, "Selected item", COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwaddch(w, 2, 0, ACS_LTEE);
 	mvwhline(w, 2, 1, ACS_HLINE, 28);
 	mvwaddch(w, 2, 29, ACS_RTEE);
@@ -2134,19 +2134,19 @@ void updateShopDisplayW_Equip(WINDOW* w, Equip* e) {
 
 
 
-	wattron(w,COLOR_PAIR(6));
+	wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwprintw(w, y, x + 12, "Level: %i", e->level);
-	wattroff(w,COLOR_PAIR(6));
+	wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	y = 13;
-	wattron(w,COLOR_PAIR(8));
+	wattron(w,COLOR_PAIR(S4C_MAGENTA));
 	mvwprintw(w, y, x + 12, "Perks: %i", e->perksCount);
-	wattroff(w,COLOR_PAIR(8));
+	wattroff(w,COLOR_PAIR(S4C_MAGENTA));
 	y++;
-	wattron(w,COLOR_PAIR(3));
+	wattron(w,COLOR_PAIR(S4C_CYAN));
 	for (int i = 0; i < e->perksCount; i++) {
 		mvwprintw(w, y +i, x + 13, "%s", nameStringFromPerk(e->perks[i]->class));
 	}
-	wattroff(w,COLOR_PAIR(3));
+	wattroff(w,COLOR_PAIR(S4C_CYAN));
 }
 
 /**
@@ -2159,7 +2159,7 @@ void updateShopDisplayW_Equip(WINDOW* w, Equip* e) {
  */
 void updateShopDisplayW_Consumable(WINDOW* w, Consumable* c) {
 	box(w,0,0);
-	print_label(w, 1, 0, 30, "Selected item", COLOR_PAIR(6));
+	print_label(w, 1, 0, 30, "Selected item", COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwaddch(w, 2, 0, ACS_LTEE);
 	mvwhline(w, 2, 1, ACS_HLINE, 28);
 	mvwaddch(w, 2, 29, ACS_RTEE);
@@ -2206,17 +2206,6 @@ void printLoadout(Fighter* f) {
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
-
-
-	/* Initialize all the colors */
-	init_pair(1, COLOR_RED, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-	init_pair(4, COLOR_CYAN, COLOR_BLACK);
-	init_pair(5, COLOR_WHITE, COLOR_BLACK);
-	init_pair(6, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(7, COLOR_BLACK, COLOR_WHITE);
-	init_pair(8, COLOR_MAGENTA, COLOR_BLACK);
 
 
 	/* Create the window to be associated with the menu */
@@ -2270,18 +2259,18 @@ void printLoadout(Fighter* f) {
 			int color = -1;
 			switch (selected->qual) {
 		        	case Bad: {
-			        	wattron(w,COLOR_PAIR(1));
-					color = 1;
+			        	wattron(w,COLOR_PAIR(S4C_RED));
+					color = S4C_RED;
 		       		}
 		       		break;
 		        	case Average: {
-			        	wattron(w,COLOR_PAIR(6));
-			        	color = 6;
+			        	wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
+			        	color = S4C_BRIGHT_YELLOW;
 		        	}
 		        	break;
 		        	case Good: {
-			        	wattron(w,COLOR_PAIR(4));
-			        	color = 4;
+			        	wattron(w,COLOR_PAIR(S4C_CYAN));
+			        	color = S4C_CYAN;
 		        	}
 		        	break;
 		        	default: {
@@ -2292,22 +2281,22 @@ void printLoadout(Fighter* f) {
 	        	mvwprintw(w, y + 6, x, "Quality:    %s",stringFromQuality(selected->qual));
 	        	wattroff(w,COLOR_PAIR(color));
 
-	        	wattron(w,COLOR_PAIR(2));
+	        	wattron(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 	        	mvwprintw(w, y + 7, x, "Level:    %i",selected->level);
-	        	wattroff(w,COLOR_PAIR(2));
+	        	wattroff(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 
-	        	wattron(w,COLOR_PAIR(6));
+	        	wattron(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	        	mvwprintw(w, y + 8, x, "Perks:    %i",selected->perksCount);
 	        	int count = selected->perksCount;
-			wattroff(w,COLOR_PAIR(6));
+			wattroff(w,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
-			wattron(w,COLOR_PAIR(4));
+			wattron(w,COLOR_PAIR(S4C_CYAN));
 	        	for (int i = 0; i < count; i++) {
 		        	Perk* p = selected->perks[i];
 
 		        	mvwprintw(w, y + 9 + i, x, " x%i %s", p->innerValue, nameStringFromPerk(p->class));
 	        	};
-	        	wattroff(w,COLOR_PAIR(4));
+	        	wattroff(w,COLOR_PAIR(S4C_CYAN));
 	        }
 
 	        wrefresh(w);
@@ -2518,17 +2507,6 @@ void displayEquipbagMenu(Fighter* f){
 	noecho();
 	keypad(stdscr, TRUE);
 
-
-	/* Initialize all the colors */
-	init_pair(1, COLOR_RED, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-	init_pair(4, COLOR_CYAN, COLOR_BLACK);
-	init_pair(5, COLOR_WHITE, COLOR_BLACK);
-	init_pair(6, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(7, COLOR_BLACK, COLOR_WHITE);
-	init_pair(8, COLOR_MAGENTA, COLOR_BLACK);
-
 	n_choices = f->equipsBagOccupiedSlots ;
 	/* Create menu items */
       	my_items = (ITEM **)calloc(n_choices+1,sizeof(ITEM *));
@@ -2558,7 +2536,7 @@ void displayEquipbagMenu(Fighter* f){
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 26, "Equips", COLOR_PAIR(4));
+	print_label(my_menu_win, 1, 0, 26, "Equips", COLOR_PAIR(S4C_CYAN));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 23);
 	mvwaddch(my_menu_win, 2, 24, ACS_RTEE);
@@ -2699,16 +2677,6 @@ void handleConsumables(Fighter* f, Enemy* e, Boss* b, int isBoss) {
 	keypad(stdscr, TRUE);
 
 
-	/* Initialize all the colors */
-	init_pair(1, COLOR_RED, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-	init_pair(4, COLOR_CYAN, COLOR_BLACK);
-	init_pair(5, COLOR_WHITE, COLOR_BLACK);
-	init_pair(6, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(7, COLOR_BLACK, COLOR_WHITE);
-	init_pair(8, COLOR_MAGENTA, COLOR_BLACK);
-
 	//To print something when you have no consumables
 
 	for (int i = 0; i < CONSUMABLESMAX +1; i++) {
@@ -2730,10 +2698,10 @@ void handleConsumables(Fighter* f, Enemy* e, Boss* b, int isBoss) {
 		//mvwhline(my_menu_win, 2, 1, ACS_HLINE, 23);
 		//mvwaddch(my_menu_win, 2, 33, ACS_RTEE);
 
-		wattron(my_menu_win,COLOR_PAIR(6));
+		wattron(my_menu_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(my_menu_win,2, 2, "Your bag is empty.");
 		mvwprintw(my_menu_win,3, 2, "You'll find more consumables soon.");
-		wattroff(my_menu_win,COLOR_PAIR(6));
+		wattroff(my_menu_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		wrefresh(my_menu_win);
 		refresh();
 
@@ -2780,7 +2748,7 @@ void handleConsumables(Fighter* f, Enemy* e, Boss* b, int isBoss) {
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 26, "Consumables", COLOR_PAIR(4));
+	print_label(my_menu_win, 1, 0, 26, "Consumables", COLOR_PAIR(S4C_CYAN));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 23);
 	mvwaddch(my_menu_win, 2, 24, ACS_RTEE);
@@ -2895,16 +2863,6 @@ void handleArtifacts(Fighter* f) {
 	keypad(stdscr, TRUE);
 
 
-	/* Initialize all the colors */
-	init_pair(1, COLOR_RED, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-	init_pair(4, COLOR_CYAN, COLOR_BLACK);
-	init_pair(5, COLOR_WHITE, COLOR_BLACK);
-	init_pair(6, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(7, COLOR_BLACK, COLOR_WHITE);
-	init_pair(8, COLOR_MAGENTA, COLOR_BLACK);
-
 	//To print something when you have no consumables
 
 	for (int i = 0; i < ARTIFACTSMAX +1; i++) {
@@ -2926,10 +2884,10 @@ void handleArtifacts(Fighter* f) {
 		//mvwhline(my_menu_win, 2, 1, ACS_HLINE, 23);
 		//mvwaddch(my_menu_win, 2, 33, ACS_RTEE);
 
-		wattron(my_menu_win,COLOR_PAIR(6));
+		wattron(my_menu_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(my_menu_win,2, 2, "Your bag is empty.");
 		mvwprintw(my_menu_win,3, 2, "You'll find more artifacts soon.");
-		wattroff(my_menu_win,COLOR_PAIR(6));
+		wattroff(my_menu_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		wrefresh(my_menu_win);
 		refresh();
 
@@ -2978,7 +2936,7 @@ void handleArtifacts(Fighter* f) {
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 26, "Artifacts", COLOR_PAIR(1));
+	print_label(my_menu_win, 1, 0, 26, "Artifacts", COLOR_PAIR(S4C_RED));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 23);
 	mvwaddch(my_menu_win, 2, 24, ACS_RTEE);
@@ -3097,17 +3055,6 @@ void handleEquips(Fighter* f, Path* p) {
 	noecho();
 	keypad(stdscr, TRUE);
 
-
-	/* Initialize all the colors */
-	init_pair(1, COLOR_RED, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-	init_pair(4, COLOR_CYAN, COLOR_BLACK);
-	init_pair(5, COLOR_WHITE, COLOR_BLACK);
-	init_pair(6, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(7, COLOR_BLACK, COLOR_WHITE);
-	init_pair(8, COLOR_MAGENTA, COLOR_BLACK);
-
 	//To print something when you have no equips
 
 	if ( f->equipsBagOccupiedSlots == 0) {
@@ -3121,10 +3068,10 @@ void handleEquips(Fighter* f, Path* p) {
 		//mvwhline(my_menu_win, 2, 1, ACS_HLINE, 23);
 		//mvwaddch(my_menu_win, 2, 33, ACS_RTEE);
 
-		wattron(my_menu_win,COLOR_PAIR(6));
+		wattron(my_menu_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(my_menu_win,2, 2, "Your bag is empty.");
 		mvwprintw(my_menu_win,3, 2, "You'll find more items soon.");
-		wattroff(my_menu_win,COLOR_PAIR(6));
+		wattroff(my_menu_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		wrefresh(my_menu_win);
 		refresh();
 
@@ -3168,7 +3115,7 @@ void handleEquips(Fighter* f, Path* p) {
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 26, "Equips", COLOR_PAIR(4));
+	print_label(my_menu_win, 1, 0, 26, "Equips", COLOR_PAIR(S4C_CYAN));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 23);
 	mvwaddch(my_menu_win, 2, 24, ACS_RTEE);
@@ -3392,16 +3339,6 @@ void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int e
 	keypad(stdscr, TRUE);
 
 
-	/* Initialize all the colors */
-	init_pair(1, COLOR_RED, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-	init_pair(4, COLOR_CYAN, COLOR_BLACK);
-	init_pair(5, COLOR_WHITE, COLOR_BLACK);
-	init_pair(6, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(7, COLOR_BLACK, COLOR_WHITE);
-	init_pair(8, COLOR_MAGENTA, COLOR_BLACK);
-
 	//To print something when you have no specials
 	for (int i = 0; i < SPECIALSMAX + 1; i++) {
 		Specialslot* s = f->specials[i];
@@ -3417,9 +3354,9 @@ void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int e
 
 		box(my_menu_win, 0, 0);
 
-		wattron(my_menu_win,COLOR_PAIR(6));
+		wattron(my_menu_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(my_menu_win,3, 2, "You don't know any special move yet.");
-		wattroff(my_menu_win,COLOR_PAIR(6));
+		wattroff(my_menu_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		wrefresh(my_menu_win);
 		refresh();
 
@@ -3464,7 +3401,7 @@ void handleSpecials(Fighter* f, Enemy* e, Boss* b, Path* p, int roomIndex, int e
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 26, "Specials", COLOR_PAIR(4));
+	print_label(my_menu_win, 1, 0, 26, "Specials", COLOR_PAIR(S4C_CYAN));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 24);
 	mvwaddch(my_menu_win, 2, 25, ACS_RTEE);
@@ -3592,16 +3529,6 @@ void handleStats(Fighter* f){
 	noecho();
 	keypad(stdscr, TRUE);
 
-	/* Initialize all the colors */
-	init_pair(1, COLOR_RED, COLOR_BLACK);
-	init_pair(2, COLOR_GREEN, COLOR_BLACK);
-	init_pair(3, COLOR_BLUE, COLOR_BLACK);
-	init_pair(4, COLOR_CYAN, COLOR_BLACK);
-	init_pair(5, COLOR_WHITE, COLOR_BLACK);
-	init_pair(6, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(7, COLOR_BLACK, COLOR_WHITE);
-	init_pair(8, COLOR_MAGENTA, COLOR_BLACK);
-
 	/* Create the windows for player stats and lifetime counters */
         win = newwin(22, 35, 1, 2);
         history_win = newwin(24, 30, 1, 44);
@@ -3611,8 +3538,8 @@ void handleStats(Fighter* f){
 	/* Print a border around the windows and print a title */
         box(win, 0, 0);
         box(history_win, 0, 0);
-	print_label(win, 1, 0, 35, "Player", COLOR_PAIR(6));
-	print_label(history_win, 1, 0, 30, "Stats", COLOR_PAIR(6));
+	print_label(win, 1, 0, 35, "Player", COLOR_PAIR(S4C_BRIGHT_YELLOW));
+	print_label(history_win, 1, 0, 30, "Stats", COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwaddch(win, 2, 0, ACS_LTEE);
 	mvwhline(win, 2, 1, ACS_HLINE, 33);
 	mvwaddch(win, 2, 34, ACS_RTEE);
@@ -3623,9 +3550,9 @@ void handleStats(Fighter* f){
 	wrefresh(win);
 	wrefresh(history_win);
 
-	attron(COLOR_PAIR(6));
+	attron(COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvprintw(23, 0, "(Press q or Enter to Exit)");
-	attroff(COLOR_PAIR(6));
+	attroff(COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
 	//Print fighter stats. Code is mostly from win_show()
 
@@ -3651,9 +3578,9 @@ void handleStats(Fighter* f){
 	temp = (width - l) / 2 - 4;
 	x = startx + (int) temp;
 	y = 4;
-	wattron(win,COLOR_PAIR(2));
+	wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 	mvwprintw(win, y, x, "%s",f->name);
-	wattroff(win,COLOR_PAIR(2));
+	wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	l = strlen(stringFromClass(f->class));
 	temp = (width - l) / 2 - 3;
@@ -3665,12 +3592,12 @@ void handleStats(Fighter* f){
 	x = startx + 2;
 	y += 2;
 	if ( (f->hp / (f->totalhp / 1.0)) <= 0.25) {
-		wattron(win,COLOR_PAIR(1));
+		wattron(win,COLOR_PAIR(S4C_RED));
 		resetColor = 1;
 	}
 	mvwprintw(win, y, x, "Hp:      %i/%i", f->hp, f->totalhp);
 	if (resetColor) {
-		wattroff(win,COLOR_PAIR(1));
+		wattroff(win,COLOR_PAIR(S4C_RED));
 		resetColor = 0;
 	};
 
@@ -3678,12 +3605,12 @@ void handleStats(Fighter* f){
 	x = startx + 2;
 	y += 2;
 	if ( (f->energy / (f->totalenergy / 1.0)) <= 0.25) {
-		wattron(win,COLOR_PAIR(1));
+		wattron(win,COLOR_PAIR(S4C_RED));
 		resetColor = 1;
 	}
 	mvwprintw(win, y, x, "Energy: %i/%i", f->energy, f->totalenergy);
 	if (resetColor) {
-		wattroff(win,COLOR_PAIR(1));
+		wattroff(win,COLOR_PAIR(S4C_RED));
 		resetColor = 0;
 	};
 
@@ -3691,13 +3618,13 @@ void handleStats(Fighter* f){
 
 	if (f->equipboost_enr != 0) {
 		if (f->equipboost_enr > 0) {
-			wattron(win,COLOR_PAIR(2));
+			wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(win, y, x + 11, "+%i", f->equipboost_enr);
-			wattroff(win,COLOR_PAIR(2));
+			wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		} else {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			mvwprintw(win, y, x + 11 , "-%i", f->equipboost_enr);
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 		};
 	}
 
@@ -3710,13 +3637,13 @@ void handleStats(Fighter* f){
 
 	if (f->equipboost_atk != 0) {
 		if (f->equipboost_atk > 0) {
-			wattron(win,COLOR_PAIR(2));
+			wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(win, y, x + 8, "(+%i)", f->equipboost_atk);
-			wattroff(win,COLOR_PAIR(2));
+			wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		} else {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			mvwprintw(win, y, x + 8 , "(-%i)", f->equipboost_atk);
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 		};
 	}
 
@@ -3729,13 +3656,13 @@ void handleStats(Fighter* f){
 
 	if (f->equipboost_def != 0) {
 		if (f->equipboost_def > 0) {
-			wattron(win,COLOR_PAIR(2));
+			wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(win, y, x + 8, "(+%i)", f->equipboost_def);
-			wattroff(win,COLOR_PAIR(2));
+			wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		} else {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			mvwprintw(win, y, x + 8 , "(-%i)", f->equipboost_def);
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 		};
 	}
 
@@ -3748,13 +3675,13 @@ void handleStats(Fighter* f){
 
 	if (f->equipboost_vel != 0) {
 		if (f->equipboost_vel > 0) {
-			wattron(win,COLOR_PAIR(2));
+			wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(win, y, x + 8, "(+%i)", f->equipboost_vel);
-			wattroff(win,COLOR_PAIR(2));
+			wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		} else {
-			wattron(win,COLOR_PAIR(1));
+			wattron(win,COLOR_PAIR(S4C_RED));
 			mvwprintw(win, y, x + 8 , "(-%i)", f->equipboost_vel);
-			wattroff(win,COLOR_PAIR(1));
+			wattroff(win,COLOR_PAIR(S4C_RED));
 			};
 	}
 
@@ -3767,12 +3694,12 @@ void handleStats(Fighter* f){
 	x = startx + 2;
 	y += 1;
 	if ( (f->currentlevelxp / (f->totallevelxp / 1.0)) >= 0.75) {
-		wattron(win,COLOR_PAIR(2));
+		wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		resetColor = 1;
 	}
 	mvwprintw(win, y, x, "Xp:        %i/%i", f->currentlevelxp, f->totallevelxp);
 	if (resetColor) {
-		wattroff(win,COLOR_PAIR(2));
+		wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
 		resetColor = 0;
 	};
 
@@ -3869,7 +3796,7 @@ void handleTutorial(void) {
         //box(win, 0, 0);
 	char label[25];
 	sprintf(label,"Tutorial");
-	print_label(win, 1, 0, 70, label, COLOR_PAIR(S4C_BLUE));
+	print_label(win, 1, 0, 70, label, COLOR_PAIR(S4C_CYAN));
 	mvwaddch(win, 2, 0, ACS_LTEE);
 	mvwhline(win, 2, 1, ACS_HLINE, 68);
 	mvwaddch(win, 2, 69, ACS_RTEE);
@@ -3948,8 +3875,6 @@ int handleRogueMenu(Gamestate* gmst, Path* p, Fighter* player, Room* room, loadI
 		cbreak();
 		noecho();
 		keypad(stdscr, TRUE);
-
-		//TODO: clear ambigue color definitions.
 
 		int cursorCheck = curs_set(0); // We make the cursor invisible or return early with the error
 

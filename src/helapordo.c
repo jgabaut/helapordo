@@ -1002,7 +1002,7 @@ void printActivePerks(Fighter* f) {
 
 	/* Print a border around the windows and print a title */
         box(win, 0, 0);
-	print_label(win, 1, 0, 35, "Perks", COLOR_PAIR(6));
+	print_label(win, 1, 0, 35, "Perks", COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwaddch(win, 2, 0, ACS_LTEE);
 	mvwhline(win, 2, 1, ACS_HLINE, 63);
 	mvwaddch(win, 2, 64, ACS_RTEE);
@@ -1029,23 +1029,23 @@ void printActivePerks(Fighter* f) {
 		if (p->innerValue > 0) {
 			empty = 0;
 
-			wattron(win,COLOR_PAIR(4));
+			wattron(win,COLOR_PAIR(S4C_CYAN));
 			mvwprintw(win, y, x, " x%i %s ", p->innerValue, nameStringFromPerk(p->class));
-			wattroff(win,COLOR_PAIR(4));
+			wattroff(win,COLOR_PAIR(S4C_CYAN));
 			char s[250];
 			sprintf(s," x%i %s", p->innerValue, nameStringFromPerk(p->class));
 			int l = strlen(s);
-			wattron(win,COLOR_PAIR(6));
+			wattron(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 			mvwprintw(win, y, x + l + 2, "\"%s\"",  descStringFromPerk(p->class));
-			wattroff(win,COLOR_PAIR(6));
+			wattroff(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 			y++;
 		}
 	};
 
 	if (empty) {	//No perks are active
-		wattron(win,COLOR_PAIR(6));
+		wattron(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(win, y, x , "You don't have any special power yet.");
-		wattroff(win,COLOR_PAIR(6));
+		wattroff(win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	}
 
 	refresh();
@@ -3488,7 +3488,7 @@ void unlockSpecial(Fighter* f) {
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 20, "New move unlocked", COLOR_PAIR(S4C_BLUE));
+	print_label(my_menu_win, 1, 0, 20, "New move unlocked", COLOR_PAIR(S4C_CYAN));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 26);
 	mvwaddch(my_menu_win, 2, 27, ACS_RTEE);
@@ -3946,10 +3946,10 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls) {
 
 	char msg[500];
 
-	wattron(notify_win,COLOR_PAIR(6));
+	wattron(notify_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	sprintf(msg,"You found %s %s!",stringFromQuality(q),stringFromEquips(drop));
 	display_notification(notify_win,msg,800);
-	wattroff(notify_win,COLOR_PAIR(6));
+	wattroff(notify_win,COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	log_tag("debug_log.txt","[DEBUG-DROPS]","Found Equip:    %s.", stringFromEquips(drop));
 
 
@@ -4239,9 +4239,9 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 
 	int color = -1;
 	if (yourhit) {
-		color = 6;
+		color = S4C_WHITE;
 	} else {
-		color = 1;
+		color = S4C_RED;
 	}
 
 	sprintf(msg,"%s was hit.    (%i DMG)",victim,damageDealt > 0 ? damageDealt : 1);
@@ -4271,9 +4271,9 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 		log_tag("debug_log.txt","[PERKS]",msg);
 
 		sprintf(msg,"A critical hit!    (%i DMG)",damageDealt > 0 ? damageDealt : 1);
-		wattron(notify_win,COLOR_PAIR(8));
+		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		display_notification(notify_win,msg,500);
-		wattroff(notify_win,COLOR_PAIR(8));
+		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		//Update stats
 		player->stats->criticalhits++;
 	}
@@ -4293,9 +4293,9 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 			log_tag("debug_log.txt","[PERKS]",msg);
 		}
 		if (e->beast) {
-			color = 8;
+			color = S4C_MAGENTA;
 		} else {
-			color = 2;
+			color = S4C_RED;
 		}
 		wattron(notify_win,COLOR_PAIR(color));
 		sprintf(msg, "%s fainted.",stringFromEClass(e->class));
@@ -4330,9 +4330,9 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 	if (res == FIGHTRES_KILL_DONE && (e->beast || ( (rand() % 9)  - (player->luck/10)  <= 0 ))) {
 		int drop = dropConsumable(player);
 		sprintf(msg, "You found a %s!",stringFromConsumables(drop));
-		wattron(notify_win,COLOR_PAIR(4));
+		wattron(notify_win,COLOR_PAIR(S4C_CYAN));
 		display_notification(notify_win,msg,500);
-		wattroff(notify_win,COLOR_PAIR(4));
+		wattroff(notify_win,COLOR_PAIR(S4C_CYAN));
 		sprintf(msg,"Found Consumable:    %s.", stringFromConsumables(drop));
 		log_tag("debug_log.txt","[DROPS]",msg);
 	}
@@ -4342,9 +4342,9 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 	if ( (player->stats->artifactsfound != ARTIFACTSMAX + 1)  && res == FIGHTRES_KILL_DONE && (e->beast || ( (rand() % 1001)  - (player->luck/10)  <= 0 ))) {
 		int artifact_drop = dropArtifact(player);
 		sprintf(msg, "You found a %s!",stringFromArtifacts(artifact_drop));
-		wattron(notify_win,COLOR_PAIR(8));
+		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		display_notification(notify_win,msg,500);
-		wattroff(notify_win,COLOR_PAIR(8));
+		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		sprintf(msg,"Found Artifact:    %s.", stringFromArtifacts(artifact_drop));
 		log_tag("debug_log.txt","[DROPS]",msg);
 		if (!e->beast) 	log_tag("debug_log.txt","[.1%% CHANCE]","\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
@@ -4525,9 +4525,9 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 
 	int color = -1;
 	if (yourhit) {
-		color = 6;
+		color = S4C_WHITE;
 	} else {
-		color = 1;
+		color = S4C_RED;
 	}
 
 	wattron(notify_win, COLOR_PAIR(color));
@@ -4550,10 +4550,10 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 		int dmgboost_perks = player->perks[CRITBOOST_DMG]->innerValue;
 		damageDealt *= (0.30 + (0.12* dmgboost_perks));
 		b->hp -= damageDealt > 0 ? damageDealt : 1;
-		wattron(notify_win,COLOR_PAIR(8));
+		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		sprintf(msg,"A critical hit!    (%i DMG)", damageDealt > 0 ? damageDealt : 1);
 		display_notification(notify_win,msg,500);
-		wattroff(notify_win,COLOR_PAIR(8));
+		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		sprintf(msg,"Critical hit for %i dmg, proc on 1/%i chance.\n", damageDealt, critMax);
 		log_tag("debug_log.txt","[FIGHT-BOSS]",msg);
 
@@ -4576,9 +4576,9 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 			log_tag("debug_log.txt","[PERKS]",msg);
 		}
 		if (b->beast) {
-			color = 8;
+			color = S4C_MAGENTA;
 		} else {
-			color = 2;
+			color = S4C_RED;
 		}
 		wattron(notify_win,COLOR_PAIR(color));
 		sprintf(msg, "%s fainted.",stringFromBossClass(b->class));
@@ -4624,10 +4624,10 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 	//Consumable drop, guaranteed on killing a beast
 	if (res == FIGHTRES_KILL_DONE) {
 		int drop = dropConsumable(player);
-		wattron(notify_win,COLOR_PAIR(4));
+		wattron(notify_win,COLOR_PAIR(S4C_CYAN));
 		sprintf(msg, "You found a %s!",stringFromConsumables(drop));
 		display_notification(notify_win,msg,500);
-		wattroff(notify_win,COLOR_PAIR(4));
+		wattroff(notify_win,COLOR_PAIR(S4C_CYAN));
 		sprintf(msg,"Found Consumable:    %s.", stringFromConsumables(drop));
 		log_tag("debug_log.txt","[DROPS]",msg);
 	}
@@ -4636,10 +4636,10 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 	//Artifact drop (if we don't have all of them)
 	if (res == FIGHTRES_KILL_DONE && (player->stats->artifactsfound != ARTIFACTSMAX + 1)) {
 		int artifact_drop = dropArtifact(player);
-		wattron(notify_win,COLOR_PAIR(8));
+		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		sprintf(msg, "You found a %s!",stringFromArtifacts(artifact_drop));
 		display_notification(notify_win, msg, 500);
-		wattroff(notify_win,COLOR_PAIR(8));
+		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		sprintf(msg,"Found Artifact:    %s.", stringFromArtifacts(artifact_drop));
 		log_tag("debug_log.txt","[DROPS]",msg);
 	}
@@ -9389,10 +9389,10 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
 	//mvwhline(win, 2, 1, ACS_HLINE, 52);
 	//mvwaddch(win, 2, 53, ACS_RTEE);
 
-	attron(COLOR_PAIR(S4C_BLUE));
+	attron(COLOR_PAIR(S4C_CYAN));
 	mvprintw(20, 2, "Arrows to move");
 	mvprintw(21, 2, "(q to Exit)");
-	attroff(COLOR_PAIR(S4C_BLUE));
+	attroff(COLOR_PAIR(S4C_CYAN));
 	refresh();
 
 	int end_room = 0;
