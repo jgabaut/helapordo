@@ -136,7 +136,7 @@ void display_roomclass_layout(Floor* floor, WINDOW* win) {
 	    switch (floor->roomclass_layout[x][y]) {
 		case HOME: {
 			ch = 'H';
-		        isColored = 2 ;
+		        isColored = S4C_BRIGHT_GREEN;
 		}
 		break;
 		case ENEMIES: {
@@ -145,22 +145,22 @@ void display_roomclass_layout(Floor* floor, WINDOW* win) {
 		break;
 		case BOSS: {
 			ch = 'B';
-		        isColored = 1 ;
+		        isColored = S4C_RED;
 		}
 		break;
 		case SHOP: {
 			ch = '$';
-		        isColored = 3 ;
+		        isColored = S4C_CYAN;
 		}
 		break;
 		case TREASURE: {
 			ch = '*';
-		        isColored = 5 ;
+		        isColored = S4C_ORANGE;
 		}
 		break;
 		case WALL: {
 			ch = '#';
-		        isColored = 6 ;
+		        isColored = S4C_BRIGHT_YELLOW;
 		}
 		break;
 		case BASIC: {
@@ -214,11 +214,11 @@ void display_floor_layout(Floor* floor, WINDOW* win) {
 	    isFull = (floor->floor_layout[x][y] == 1 ? 1 : 0);
 	    isColored = isFull;
 	    if ( isColored > 0 ) {
-		    wattron(win, COLOR_PAIR(6));
+		    wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	    };
             mvwprintw(win, y+3, x+3, "%c",( isFull == 1 ? 'X' : ' '));
 	    if ( isColored > 0 ) {
-		    wattroff(win, COLOR_PAIR(6));
+		    wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	    };
 	    wrefresh(win);
         }
@@ -243,11 +243,11 @@ void display_explored_layout(Floor* floor, WINDOW* win) {
 	    isWalkable = (floor->explored_matrix[x][y] >= 0 ? 1 : 0);
 	    isExplored = (floor->explored_matrix[x][y] > 0 ? 1 : 0);
 	    if ( isWalkable > 0 ) {
-		    wattron(win, COLOR_PAIR(6));
+		    wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
             	    mvwprintw(win, y+3, x+3, "%c",( isExplored == 1 ? '1' : '0'));
 	    };
 	    if ( isWalkable > 0 ) {
-		    wattroff(win, COLOR_PAIR(6));
+		    wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	    };
 	    wrefresh(win);
         }
