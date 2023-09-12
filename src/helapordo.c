@@ -10811,7 +10811,7 @@ void gameloop(int argc, char** argv){
 				keypad(stdscr, TRUE);
 
 				// Create the window
-				floor_win = newwin(28, 30, 1, 2);
+				floor_win = newwin(23, 24, 1, 2);
 				wclear(floor_win);
 				wrefresh(floor_win);
 				keypad(floor_win, TRUE);

@@ -538,10 +538,10 @@ void draw_floor_view(Floor* floor, int current_x, int current_y, WINDOW* win) {
 	int ySize = 3;
 
 	//Center
-	draw_cell(floor,current_x,current_y,win,11,11,xSize,ySize,3);
+	draw_cell(floor,current_x,current_y,win,10,10,xSize,ySize,3);
 
 	//Draw player char
-	mvwprintw(win, FLOOR_MAX_COLS/2, FLOOR_MAX_ROWS/2, "%c", '@');
+	mvwprintw(win, FLOOR_MAX_COLS/2-1, FLOOR_MAX_ROWS/2-1, "%c", '@');
 	wrefresh(win);
 
 	refresh();
@@ -572,13 +572,17 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 			for (int j = 0; j < ySize; j++) {
 				char ch = '?';
 				int isWall = -1;
+				int isColored = -1;
 				isWall = floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0 ;
 				if ( isWall > 0 ) {
 					ch = '#';
+					isColored = S4C_PURPLE;
 				} else {
 					ch = '?';
 				}
+				if (isColored >= 0) { wattron(win,COLOR_PAIR(isColored)); };
 				mvwprintw(win, yShift + j + (drawcorner_y), xShift + i + (drawcorner_x),"%c",ch);
+				if (isColored >= 0) { wattroff(win,COLOR_PAIR(isColored)); isColored = -1;};
 				if ( isWall > 0 ) { isWall = -1; ch = '?'; } ;
 			}
 		}
@@ -594,13 +598,13 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 					}
 					break;
 					case BASIC: {
-						ch = ' ';
-						isColored = S4C_WHITE;
+						ch = '.';
+						isColored = S4C_LIGHT_BROWN;
 					}
 					break;
 					case HOME: {
 						ch = 'H';
-						isColored = S4C_PURPLE;
+						isColored = S4C_WHITE;
 					}
 					break;
 					case BOSS: {
