@@ -28,4 +28,4 @@ kazoj# tests folder name
 1.1.4# Add Gamestate, variadic log_tag()
 1.1.5# Add foeTurnOption
 1.1.6# Add MINGW32_BUILD preproc directives
-1.1.7#
+1.1.7# Drop old colorpair definitions usage
