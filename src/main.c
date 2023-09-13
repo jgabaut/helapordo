@@ -29,8 +29,14 @@ int main(int argc, char** argv) {
 	//
 	setlocale(LC_ALL, "");
 	//test_floors();
+	#ifndef MINGW32_BUILD
 	gameloop(argc, argv);
-
+	#else
+	printf("The Windows build of \"helapordo\" is WIP.\n\n");
+	printf("Press Enter to quit.\n");
+	scanf("%*c");
+	return 1;
+	#endif
 	// 	Monsters
 	// 	Leveling
 	// 	Abilities?
