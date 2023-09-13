@@ -55,7 +55,7 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 	if (GS_AUTOSAVE_ON == 1 && GAMEMODE != Rogue) {
 		log_tag("debug_log.txt","[DEBUG]","Doing autosave.");
 
-		char path_to_autosave_file[600];
+		char path_to_autosave_file[800];
 		char autosave_static_path[500];
 		char autosave_file_name[300];
 	        strcpy(autosave_file_name, p->current_saveslot->save_path);
@@ -95,9 +95,6 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 		//setlocale(LC_CTYPE, "it_IT.UTF-8");
 		//initscr();
 		start_color();
-		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-			init_s4c_color_pair(&palette[i],9+i);
-		}
 		clear();
 		refresh();
 		cbreak();
@@ -181,22 +178,6 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 		int picked = 0;
 		int picked_explore = 0;
 
-		/*
-		//We set the colors to use s4c's palette file...
-		FILE* palette_file;
-		char path_to_palette[600];
-		char static_path[500];
-		char palette_name[50] = "palette.gpl";
-
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
-
-		sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-		palette_file = fopen(path_to_palette, "r");
-
-		init_s4c_color_pairs(palette_file);
-		*/
 		while ( !picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_explore) {
 			switch(c) {
 				case KEY_DOWN:
@@ -485,8 +466,6 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 				noecho();
 				keypad(stdscr, TRUE);
 
-				//TODO: clear ambigue color definitions.
-				init_game_color_pairs();
 
 				int cursorCheck = curs_set(0); // We make the cursor invisible or return early with the error
 
@@ -545,11 +524,11 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 
 				/* Set menu colors */
 				if (e->beast) {
-					set_menu_fore(my_menu,COLOR_PAIR(10));
+					set_menu_fore(my_menu,COLOR_PAIR(S4C_MAGENTA));
 				} else {
-					set_menu_fore(my_menu,COLOR_PAIR(5));
+					set_menu_fore(my_menu,COLOR_PAIR(S4C_RED));
 				}
-				set_menu_back(my_menu,COLOR_PAIR(7));
+				set_menu_back(my_menu,COLOR_PAIR(S4C_WHITE));
 
 				//attron(COLOR_PAIR(2));
 				//mvprintw(LINES - 2, 0, "Use PageUp and PageDown to scoll down or up a page of items");
@@ -648,11 +627,11 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 
 				/* Set menu colors */
 				if (e->beast) {
-					set_menu_fore(my_menu,COLOR_PAIR(10));
+					set_menu_fore(my_menu,COLOR_PAIR(S4C_MAGENTA));
 				} else {
-					set_menu_fore(my_menu,COLOR_PAIR(5));
+					set_menu_fore(my_menu,COLOR_PAIR(S4C_RED));
 				}
-				set_menu_back(my_menu,COLOR_PAIR(7));
+				set_menu_back(my_menu,COLOR_PAIR(S4C_WHITE));
 
 				/* Post the menu */
 				post_menu(my_menu);
@@ -765,27 +744,6 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 			int frame_counter = 0;
 			int frame_tot = 60;
 
-			/*
-			//We set the colors to use s4c's palette file...
-			FILE* palette_file;
-			char path_to_palette[600];
-			char static_path[500];
-			char palette_name[50] = "palette.gpl";
-
-			// Set static_path value to the correct static dir path
-			resolve_staticPath(static_path);
-
-
-			sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-			palette_file = fopen(path_to_palette, "r");
-
-			init_s4c_color_pairs(palette_file);
-			*/
-
-			for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-				init_s4c_color_pair(&palette[i],9+i);
-			}
 			int animation_loops_done = 0;
 
 			while(!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
@@ -1345,8 +1303,6 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 			log_tag("debug_log.txt", "[ANIMATE]","Starting new fighter animation.");
 			log_tag("debug_log.txt", "[ANIMATE]","Starting new boss animation.");
 
-			//TODO: clear ambigue color definitions.
-			init_game_color_pairs();
 			int cursorCheck = curs_set(0); // We make the cursor invisible or return early with the error
 
 			if (cursorCheck == ERR) {
@@ -1400,8 +1356,8 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 			box(my_menu_win, 0, 0);
 
 			/* Set menu colors */
-			set_menu_fore(my_menu,COLOR_PAIR(12));
-			set_menu_back(my_menu,COLOR_PAIR(7));
+			set_menu_fore(my_menu,COLOR_PAIR(S4C_MAGENTA));
+			set_menu_back(my_menu,COLOR_PAIR(S4C_WHITE));
 
 			log_tag("debug_log.txt","[ROOM]","Doing init_boss_wins()");
 			init_boss_wins(my_wins, b, player);
@@ -1463,8 +1419,8 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 			box(my_menu_win, 0, 0);
 
 			/* Set menu colors */
-			set_menu_fore(my_menu,COLOR_PAIR(12));
-			set_menu_back(my_menu,COLOR_PAIR(7));
+			set_menu_fore(my_menu,COLOR_PAIR(S4C_MAGENTA));
+			set_menu_back(my_menu,COLOR_PAIR(S4C_WHITE));
 
 			log_tag("debug_log.txt","[ROOM]","Doing init_boss_wins()");
 			init_boss_wins(my_wins, b, player);
@@ -1586,28 +1542,6 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 		clock_t menu_start_time = clock(), menu_diff_time;//, menu_loop_diff_time;
 		int frame_counter = 0;
 		int frame_tot = 60;
-
-		/*
-		//We set the colors to use s4c's palette file...
-		FILE* palette_file;
-		char path_to_palette[600];
-		char static_path[500];
-		char palette_name[50] = "palette.gpl" ;
-
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
-
-
-		sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-		palette_file = fopen(path_to_palette, "r");
-
-		init_s4c_color_pairs(palette_file);
-		*/
-
-		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-			init_s4c_color_pair(&palette[i],9+i);
-		}
 
 		int animation_loops_done = 0;
 
@@ -1767,9 +1701,9 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 				player->keys_balance += 1;
 				player->stats->keysfound += 1;
 
-				wattron(notifications_win,COLOR_PAIR(1));
+				wattron(notifications_win,COLOR_PAIR(S4C_MAGENTA));
 				display_notification(notifications_win,"You found a key. May be useful.",800);
-				wattroff(notifications_win,COLOR_PAIR(1));
+				wattroff(notifications_win,COLOR_PAIR(S4C_MAGENTA));
 
 				//Win, get xp and free memory from boss
 				giveXp_Boss(player,b);
@@ -1924,9 +1858,6 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 	//initscr();
 	start_color();
 
-	//TODO: clear ambigue color definitions.
-	init_game_color_pairs();
-
 	clear();
 	refresh();
 	cbreak();
@@ -1966,7 +1897,7 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 20, balance_label, COLOR_PAIR(8));
+	print_label(my_menu_win, 1, 0, 20, balance_label, COLOR_PAIR(S4C_MAGENTA));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 18);
 	mvwaddch(my_menu_win, 2, 19, ACS_RTEE);
@@ -1984,18 +1915,18 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
         wins[1] = newwin(18, 30, 0, 0);
         keypad(wins[1], TRUE);
 	box(wins[1], 0, 0);
-	print_label(wins[1], 1, 0, 30, "Selected item", COLOR_PAIR(6));
+	print_label(wins[1], 1, 0, 30, "Selected item", COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	mvwaddch(wins[1], 2, 0, ACS_LTEE);
 	mvwhline(wins[1], 2, 1, ACS_HLINE, 28);
 	mvwaddch(wins[1], 2, 29, ACS_RTEE);
 
 	Equip* firstEq = room->shop->equips[0];
 	updateShopDisplayW_Equip(wins[1],firstEq);
-	attron(COLOR_PAIR(3));
+	attron(COLOR_PAIR(S4C_CYAN));
 	mvprintw(20, 21, "Arrows to");
 	mvprintw(21, 21, "move");
         mvprintw(22, 21, "(q to undo)");
-	attroff(COLOR_PAIR(3));
+	attroff(COLOR_PAIR(S4C_CYAN));
 	refresh();
 
 	int y,x;
@@ -2003,9 +1934,9 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 	//Print all the equips
 	for (int i = 0; i < room->shop->equipsCount; i++) {
 		mvwprintw(wins[0], 1, i * 14 + 3, "%s", stringFromEquips(room->shop->equips[i]->class));
-		wattron(wins[0],COLOR_PAIR(6));
+		wattron(wins[0],COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(wins[0], 2, i * 14 + 5, "$ %i", room->shop->equipPrices[i]);
-		wattroff(wins[0],COLOR_PAIR(6));
+		wattroff(wins[0],COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		char item_sprite_line[80];
 		for (int rows = 0; rows < 8; rows++) {
 
@@ -2023,9 +1954,9 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
 	//Print all the consumables
 	for (int i = 0; i < room->shop->consumablesCount; i++) {
 		mvwprintw(wins[0], 13, i * 14 + 3, "%s", stringFromConsumables(room->shop->consumables[i]->class));
-		wattron(wins[0],COLOR_PAIR(6));
+		wattron(wins[0],COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(wins[0], 14, i * 14 + 5, "$ %i", room->shop->consumablePrices[i]);
-		wattroff(wins[0],COLOR_PAIR(6));
+		wattroff(wins[0],COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		char item_sprite_line[80];
 		for (int rows = 0; rows < 8; rows++) {
 
@@ -2313,30 +2244,6 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
     	}
 	*/
 
-	/*
-    	// Open the palette file and read the color values and names
-    	FILE* palette_file;
-	char path_to_palette[600];
-
-	char palette_name[200] = "palette.gpl";
-
-	sprintf(path_to_palette,"%s/",static_path);
-	strncat(path_to_palette,palette_name,200);
-
-    	palette_file = fopen(path_to_palette, "r");
-    	if (palette_file == NULL) {
-        	fprintf(stderr, "Error: could not open palette file (%s/%s).\n",static_path,palette_name);
-       		exit(EXIT_FAILURE);
-    	}
-
-	// Initialize all the colors
-	init_s4c_color_pairs(palette_file);
-	*/
-
-	for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-		init_s4c_color_pair(&palette[i],9+i);
-	}
-
 	int reps = 1;
 
 	int frametime = DEMOFRAMETIME;
@@ -2383,7 +2290,6 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 	wclear(w);
 	wrefresh(w);
 
-	init_game_color_pairs();
 	box(w,0,0);
 	wrefresh(w);
 
@@ -2458,9 +2364,9 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			f->equipsBag[slotnum] = saved;
 			f->equipsBagOccupiedSlots++;
 			f->earliestBagSlot = f->equipsBagOccupiedSlots;
-			wattron(w,COLOR_PAIR(8));
+			wattron(w,COLOR_PAIR(S4C_MAGENTA));
 			mvwprintw(w,y,x,"You found a %s!", saved->name);
-			wattroff(w,COLOR_PAIR(8));
+			wattroff(w,COLOR_PAIR(S4C_MAGENTA));
 			y += 1;
 			wrefresh(w);
 			napms(800);
@@ -2472,9 +2378,9 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			Consumable* consum = (Consumable*) f->consumablesBag[num];
 			consum->qty += c->consumables[i]->qty;
 			f->stats->consumablesfound++;
-			wattron(w,COLOR_PAIR(2));
+			wattron(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(w,y,x,"You found a %s!", stringFromConsumables(consum->class));
-			wattroff(w,COLOR_PAIR(2));
+			wattroff(w,COLOR_PAIR(S4C_BRIGHT_GREEN));
 			y += 1;
 			wrefresh(w);
 			napms(800);
@@ -2524,7 +2430,6 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 	noecho();
 	keypad(stdscr, TRUE);
 
-	init_game_color_pairs();
 
 	if (room->treasure->class == TREASURE_CHEST) {
 		/* Create items */
@@ -2569,7 +2474,7 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 
 	/* Print a border around the main window and print a title */
         box(my_menu_win, 0, 0);
-	print_label(my_menu_win, 1, 0, 20, label, COLOR_PAIR(8));
+	print_label(my_menu_win, 1, 0, 20, label, COLOR_PAIR(S4C_MAGENTA));
 	mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
 	mvwhline(my_menu_win, 2, 1, ACS_HLINE, 18);
 	mvwaddch(my_menu_win, 2, 19, ACS_RTEE);
@@ -2587,17 +2492,17 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 	char title[80];
 	switch (room->treasure->class) {
 		case TREASURE_CHEST: {
-			title_color = 8;
+			title_color = S4C_MAGENTA;
 			strcpy(title,"Chest");
 				     }
 		break;
 		case TREASURE_CONSUMABLE: {
-			title_color = 2;
+			title_color = S4C_BRIGHT_GREEN;
 			strcpy(title,"Consumable");
 				     }
 		break;
 		case TREASURE_ARTIFACT: {
-			title_color = 4;
+			title_color = S4C_CYAN;
 			strcpy(title,"Artifact");
 				     }
 		break;
@@ -2608,10 +2513,10 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 	mvwhline(win, 2, 1, ACS_HLINE, 52);
 	mvwaddch(win, 2, 53, ACS_RTEE);
 
-	attron(COLOR_PAIR(3));
+	attron(COLOR_PAIR(S4C_CYAN));
 	mvprintw(20, 2, "Arrows to move");
 	mvprintw(21, 2, "(q to Exit)");
-	attroff(COLOR_PAIR(3));
+	attroff(COLOR_PAIR(S4C_CYAN));
 	refresh();
 
 	int y,x;
@@ -2713,9 +2618,9 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
 							f->keys_balance--;
 							end_room = 1;
 						} else {
-							wattron(win,COLOR_PAIR(1));
+							wattron(win,COLOR_PAIR(S4C_RED));
 							mvwprintw(win,18, 5, "You don't have any key.");
-							wattroff(win,COLOR_PAIR(1));
+							wattroff(win,COLOR_PAIR(S4C_RED));
 							wrefresh(win);
 							log_tag("debug_log.txt","[TREASURE]","Tried Opening a chest in Treasure room with no keys, index %i.\n", room->index);
 						}

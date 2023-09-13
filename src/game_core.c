@@ -8,6 +8,7 @@ char* gamemodenamestrings[GAMEMODE_MAX+1] = {
 
 char* hlp_regiontype_strings[HLP_MAX_INDEX+1] = {
 	"None",
+	"KLS_Temp_Header",
 	"KLS_Header",
 	"HLP_Path",
 	"HLP_Wincon",

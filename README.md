@@ -18,6 +18,7 @@
   + [Initialitising Submodules](#init_submodules)
   + [Autoreconf and ./configure](#autotools)
   + [Enable game debug](#debug_access)
+  + [Build with mingw32](#mingw32_build)
   + [Compiling](#compiling)
 + [Installation](#installation)
 + [Generating Documentation](#make_doc)
@@ -25,6 +26,14 @@
 
 
 ## Building <a name = "building"></a>
+
+  The code should build for `x86_64-Linux`, `aarch64-Linux`, `Windows` (through `x86_64-w64-mingw32`).
+
+  *DISCLAIMER:*  The `Windows` build is proof-of-concept as:
+
+  - It doesn't run correctly ATM. WIP (maybe)
+  - `Windows` terminal can't change its color pairs as far as I know, rendering it unsuitable for the game.
+    - A solution to reject extra/modified colors could be implemented.
 
 ### Dependencies <a name = "dependencies"></a>
 
@@ -59,6 +68,23 @@
 
   - `-DHELAPORDO_DEBUG_LOG`  (Enables debug logging)
   - `-DHELAPORDO_DEBUG_ACCESS` (Enables the -d flag to turn on debug mode)
+
+### Build with `x86_64-w64-mingw32` <a name = "mingw32_build"></a>
+
+  After generating the `./configure` script, you may switch target host and use `mingw32` with:
+
+    `./configure --host x86_64-w64-mingw32`
+
+  Which should prepare a `Makefile` with the correct macro definitions. To reset the `Makefile` to release state, run:
+
+    `./configure --host $(./config.guess)`
+
+  You may need to correct the `configure.ac` flags if your installation does not have the expected layout, providing the correct paths for:
+
+  - `mingw32`'s `lib` and `include` dirs, for `ncursesw`
+  - `mingw32`'s correct `gcc`.
+
+  Preprocessor macros based on the `Makefile` passing `-DMINGW32_BUILD` are present to enable/disable `Windows` specific code.
 
 ### Compiling and running <a name = "compiling"></a>
 
@@ -106,10 +132,11 @@
 
   - `linux-x86_64`
   - `linux-aarch64` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
+  - `w64-mingw32-x86_64` (*NOT WORKING.* Any help with debugging is appreciated.)
 
   Some releases may offer a precompiled binary for:
 
   - `apple-arm64`
 
-  📦 v1.1.6 10/09/2023
+  📦 v1.1.7 12/09/2023
   https://github.com/jgabaut/helapordo/releases
