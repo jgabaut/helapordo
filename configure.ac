@@ -30,8 +30,8 @@ fi
 if test "$host_os" = "darwin"; then
   echo "Building for macos: [$host_cpu-$host_vendor-$host_os]"
   # macOS specific flags
-  AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/local/opt/ncurses/include -DKOLISEO_HAS_CURSES"])
-  AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/local/opt/ncurses/lib -lmenu -lpanel -lncurses"])
+  AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/ncurses/include -DKOLISEO_HAS_CURSES"])
+  AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/ncurses/lib -lmenu -lpanel -lncurses"])
   AC_SUBST([OS], ["darwin"])
   AC_SUBST([TARGET], ["helapordo"])
 fi

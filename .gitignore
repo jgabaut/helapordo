@@ -3,6 +3,9 @@ helapordo-save.txt
 helapordo-save-2.txt
 helapordo-save-3.txt
 
+# ignore the MacOS DS_Store file
+.DS_Store
+
 # ignore installer log file
 installer.log
 # ignore docs file
