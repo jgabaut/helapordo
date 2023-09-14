@@ -751,7 +751,7 @@ void log_tag(char* filename, char* header, const char* format, ...) {
 	#ifndef HELAPORDO_DEBUG_LOG
 	#else
 	// Open log file if log flag is set and append to it
-	if (G_LOG_ON) {
+	if (G_LOG_ON == 1) {
 		char path_to_debug_file[500];
 		char static_path[500];
 

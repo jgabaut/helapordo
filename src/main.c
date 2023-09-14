@@ -32,42 +32,7 @@ int main(int argc, char** argv) {
 	#ifndef _WIN32
 	gameloop(argc, argv);
 	#else
-	FILE* debug_file = NULL;
-	char path_to_debug_file[600];
-	char static_path[500];
-	// Set static_path value to the correct static dir path
-	resolve_staticPath(static_path);
-
-	//Truncate "debug_log.txt"
-	sprintf(path_to_debug_file,"%s\\%s",static_path,"debug_log.txt");
-	debug_file = fopen(path_to_debug_file, "w");
-	if (!debug_file) {
-		endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
-		fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
-		exit(EXIT_FAILURE);
-	}
-	fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
-	fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
-	fclose(debug_file);
-
-	char* whoami;
-  	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
-	printTitle();
-	printf("\n\n\n\n\t\t\t\tSTART\n\n");
-	printf("\t\t\t\t\t\t");
-        printFormattedVersion(whoami);
-	printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
-	printf("\n  Press Enter to proceed.\n");
-	scanf("%*c");
-	system("cls");
-	printGlobVars();
-	printWin_EnvVars();
-	printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
-	printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
-	printf("  You may need to spam Enter or the arrow keys.\n\n");
-	scanf("%*c");
-	test_floors();
-	return 1;
+	gameloop_Win(argc, argv);
 	#endif
 	// 	Monsters
 	// 	Leveling
@@ -80,4 +45,6 @@ int main(int argc, char** argv) {
 	// Saves
 	//
 	// Victory / Death
+
+	return 1;
 }
