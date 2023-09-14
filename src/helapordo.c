@@ -11271,6 +11271,9 @@ void gameloop_Win(int argc, char** argv) {
 			break;
 		}
 	}
+
+	default_kls = kls_new(KLS_DEFAULT_SIZE*8);
+  	temporary_kls = kls_new(KLS_DEFAULT_SIZE*8);
 	if (G_LOG_ON == 1) {
 		FILE* debug_file = NULL;
 		char path_to_debug_file[600];
@@ -11286,12 +11289,19 @@ void gameloop_Win(int argc, char** argv) {
 			exit(EXIT_FAILURE);
 		}
 		fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+		fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
+  		print_kls_2file(debug_file,default_kls);
+		fprintf(debug_file,"[DEBUG]    --Temporary kls debug info:--  \n");
+  		print_kls_2file(debug_file,temporary_kls);
 		fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
 		fclose(debug_file);
 	}
 
 	printTitle();
 	printf("\n\n\n\n\t\t\t\tSTART\n\n");
+	if (G_DEBUG_ON) {
+		printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
+	}
 	printf("\t\t\t\t\t\t");
         printFormattedVersion(whoami);
 	printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
@@ -11302,7 +11312,9 @@ void gameloop_Win(int argc, char** argv) {
 	printWin_EnvVars();
 	printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
 	printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
-	printf("  You may need to spam Enter or the arrow keys.\n\n");
+	printf("  You move with the arrow keys.\n\n");
 	scanf("%*c");
 	test_floors();
+	kls_free(temporary_kls);
+	kls_free(default_kls);
 }

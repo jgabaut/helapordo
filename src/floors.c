@@ -620,7 +620,7 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 					#ifndef _WIN32
 					isColored = S4C_PURPLE;
 					#else
-					isColored = S4C_WIN_BLUE;
+					isColored = S4C_WIN_PURPLE;
 					#endif
 				} else {
 					ch = '?';
