@@ -9533,7 +9533,11 @@ void gameloop(int argc, char** argv){
   default_kls = kls_new(KLS_DEFAULT_SIZE*16);
   temporary_kls = kls_new(KLS_DEFAULT_SIZE*32);
 
+  #ifndef MINGW32_BUILD
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
+  #else
+  (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+  #endif
 
   char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),None,"progname",whoami);
   strcpy(kls_progname,whoami);

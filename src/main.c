@@ -32,7 +32,13 @@ int main(int argc, char** argv) {
 	#ifndef MINGW32_BUILD
 	gameloop(argc, argv);
 	#else
-	printf("The Windows build of \"helapordo\" is WIP.\n\n");
+	char* whoami;
+  	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+	printTitle();
+	printf("\n\n\n\n\t\t\t\tSTART\n\n");
+	printf("\t\t\t\t\t\t");
+        printFormattedVersion(whoami);
+	printf("\n\nThe Windows build of \"helapordo\" is WIP.\n\n");
 	printf("Press Enter to quit.\n");
 	scanf("%*c");
 	return 1;
