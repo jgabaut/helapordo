@@ -130,13 +130,13 @@
 
   I try to upload precompiled binaries for:
 
-  - `linux-x86_64`
-  - `linux-aarch64` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `w64-mingw32-x86_64` (*NOT WORKING.* Any help with debugging is appreciated.)
+  - `x86_64-Linux`
+  - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
+  - `x86_64-w64-mingw32` (*NOT WORKING.* Any help with debugging is appreciated.)
 
   Some releases may offer a precompiled binary for:
 
-  - `apple-arm64`
+  - `darwin-arm64`
 
-  📦 v1.1.7 12/09/2023
+  📦 v1.1.8 14/09/2023
   https://github.com/jgabaut/helapordo/releases

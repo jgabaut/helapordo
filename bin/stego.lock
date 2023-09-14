@@ -29,4 +29,4 @@ kazoj# tests folder name
 1.1.5# Add foeTurnOption
 1.1.6# Add MINGW32_BUILD preproc directives
 1.1.7# Drop old colorpair definitions usage
-1.1.8#
+1.1.8# Improve on mingw32 and macOS builds
