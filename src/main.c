@@ -24,17 +24,14 @@ int main(int argc, char** argv) {
 	//Randomise seed
 	srand(time(NULL));
 
+	setlocale(LC_ALL, "");
 	// Randomise path
 	// 	Branches?
 	//
-	setlocale(LC_ALL, "");
 	//test_floors();
 	#ifndef _WIN32
 	gameloop(argc, argv);
 	#else
-	printf("\n  UserProfile: { %s }\n",getenv("UserProfile"));
-	printf("  HomeDrive: { %s }\n",getenv("HomeDrive"));
-	printf("  HomePath: { %s }\n",getenv("HomePath"));
 	char* whoami;
   	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 	printTitle();
@@ -42,10 +39,14 @@ int main(int argc, char** argv) {
 	printf("\t\t\t\t\t\t");
         printFormattedVersion(whoami);
 	printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
-	printf("  Press Enter to demo a minimal rogue floor.\n");
+	printf("\n  Press Enter to proceed.\n");
+	scanf("%*c");
+	system("cls");
+	printGlobVars();
+	printWin_EnvVars();
+	printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
 	printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
 	printf("  You may need to spam Enter or the arrow keys.\n\n");
-	printGlobVars();
 	scanf("%*c");
 	test_floors();
 	return 1;

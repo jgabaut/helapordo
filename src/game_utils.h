@@ -16,6 +16,7 @@
 #include "game_core.h"
 
 void printGlobVars(void);
+void printWin_EnvVars(void);
 
 void red(void);
 void lightRed(void);

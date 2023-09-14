@@ -21,6 +21,22 @@ void printGlobVars(void) {
 }
 
 /**
+ * Prints Windows envvars to stdout.
+ */
+void printWin_EnvVars(void) {
+	printf("\nWindows Environment vars:\n");
+	printf("  UserProfile: { %s }\n",getenv("UserProfile"));
+	printf("  HomeDrive: { %s }\n",getenv("HomeDrive"));
+	printf("  HomePath: { %s }\n",getenv("HomePath"));
+	printf("  ComputerName: { %s }\n",getenv("ComputerName"));
+	printf("  Processor_Revision: { %s }\n",getenv("Processor_Revision"));
+	printf("  Processor_Identifier: { %s }\n",getenv("Processor_Identifier"));
+	printf("  Processor_Level: { %s }\n",getenv("Processor_Level"));
+	printf("  Number_Of_Processors: { %s }\n",getenv("Number_Of_Processors"));
+	printf("  OS: { %s }\n",getenv("OS"));
+}
+
+/**
  * Debugs the passed (preallocated) Fighter with log_tag().
  * @param fighter The allocated Fighter to debug.
  */
