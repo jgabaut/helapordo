@@ -1,6 +1,6 @@
 #include "mage_spark.h"
 
-char mage_spark[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char mage_spark[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

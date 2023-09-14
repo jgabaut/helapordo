@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for headlessninja_throw.
  */
-extern char headlessninja_throw[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char headlessninja_throw[61][MAXROWS][MAXCOLS];
 
 #endif

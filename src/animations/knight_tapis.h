@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for knight_tapis.
  */
-extern char knight_tapis[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char knight_tapis[61][MAXROWS][MAXCOLS];
 
 #endif

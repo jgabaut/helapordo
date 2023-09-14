@@ -1,6 +1,6 @@
 #include "srwarthog_square.h"
 
-char srwarthog_square[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char srwarthog_square[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

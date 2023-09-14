@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for goblin_shoot.
  */
-extern char goblin_shoot[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char goblin_shoot[61][MAXROWS][MAXCOLS];
 
 #endif

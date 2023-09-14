@@ -1,6 +1,6 @@
 #include "assassin_poof.h"
 
-char assassin_poof[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char assassin_poof[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

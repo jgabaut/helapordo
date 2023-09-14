@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for troll_club.
  */
-extern char troll_club[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char troll_club[61][MAXROWS][MAXCOLS];
 
 #endif

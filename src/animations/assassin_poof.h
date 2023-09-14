@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for assassin_poof.
  */
-extern char assassin_poof[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char assassin_poof[61][MAXROWS][MAXCOLS];
 
 #endif

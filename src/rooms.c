@@ -823,8 +823,8 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 				//sprintf(time_msg,"[DEBUG-TIME]    Time: %d s %d ms.", menu_time_spent/1000, menu_time_spent%1000);
 				//debug_log("debug_log.txt", time_msg);
 				if (menu_time_spent%1000 > 37 ) {
-					animate_rangeof_sprites_at_coords(enemy_sprites[e->class],enemy_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
-					animate_rangeof_sprites_at_coords(fighter_sprites[player->class],fighter_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
+					s4c_animate_rangeof_sprites_at_coords(enemy_sprites[e->class],enemy_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
+					s4c_animate_rangeof_sprites_at_coords(fighter_sprites[player->class],fighter_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
 					frame_counter++;
 					if (frame_counter > frame_tot) {
 						animation_loops_done++;
@@ -1598,8 +1598,8 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 			//debug_log("debug_log.txt", time_msg);
 			if (menu_time_spent%1000 > 37 ) {
 				//animate_rangeof_sprites_at_coords(enemy_sprites[e->class],enemy_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
-				animate_rangeof_sprites_at_coords(fighter_sprites[player->class],fighter_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
-				animate_rangeof_sprites_at_coords(boss_sprites[b->class],boss_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
+				s4c_animate_rangeof_sprites_at_coords(fighter_sprites[player->class],fighter_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
+				s4c_animate_rangeof_sprites_at_coords(boss_sprites[b->class],boss_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
 				frame_counter++;
 				if (frame_counter > frame_tot) {
 					animation_loops_done++;
@@ -2257,7 +2257,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 	// Prepare the frames
 	char sprites[MAXFRAMES][MAXROWS][MAXCOLS];
 
-	copy_animation(alt_chest_opening,sprites,num_frames,frame_height,frame_width);
+	s4c_copy_animation(alt_chest_opening,sprites,num_frames,frame_height,frame_width);
 
 	log_tag("debug_log.txt","[PREP]","Copied animation from matrix vector for alt_chest_opening with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
 
@@ -2284,7 +2284,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 	}
 	*/
 
-	int result = animate_sprites_at_coords(sprites, w, reps, frametime, num_frames, frame_height, frame_width, 2, 2);
+	int result = s4c_animate_sprites_at_coords(sprites, w, reps, frametime, num_frames, frame_height, frame_width, 2, 2);
 	sleep(1);
 
 	wclear(w);

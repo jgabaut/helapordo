@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for imp_fireball.
  */
-extern char imp_fireball[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char imp_fireball[61][MAXROWS][MAXCOLS];
 
 #endif

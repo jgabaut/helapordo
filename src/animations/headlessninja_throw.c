@@ -1,6 +1,6 @@
 #include "headlessninja_throw.h"
 
-char headlessninja_throw[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char headlessninja_throw[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for crawlingdude_crawl.
  */
-extern char crawlingdude_crawl[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char crawlingdude_crawl[61][MAXROWS][MAXCOLS];
 
 #endif

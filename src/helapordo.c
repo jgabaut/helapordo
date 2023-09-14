@@ -9824,19 +9824,19 @@ void gameloop(int argc, char** argv){
 
 			switch (i) {
 				case Knight: {
-				        copy_animation(knight_tapis,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				        s4c_copy_animation(knight_tapis,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Mage: {
-				        copy_animation(mage_spark,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				        s4c_copy_animation(mage_spark,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Archer: {
-				        copy_animation(archer_drop,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				        s4c_copy_animation(archer_drop,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Assassin: {
-				        copy_animation(assassin_poof,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				        s4c_copy_animation(assassin_poof,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				default: {
@@ -9893,35 +9893,35 @@ void gameloop(int argc, char** argv){
 		      // Prepare the enemy frames
 		      switch (i) {
 			      case Imp: {
-				      copy_animation(imp_fireball,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(imp_fireball,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Zombie: {
-				      copy_animation(zombie_walk,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(zombie_walk,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Troll: {
-				      copy_animation(troll_club,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(troll_club,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Ghost: {
-				      copy_animation(ghost_spell,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(ghost_spell,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Boar: {
-				      copy_animation(boar_scream,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(boar_scream,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Mummy: {
-				      copy_animation(mummy_shuffle,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(mummy_shuffle,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Goblin: {
-				      copy_animation(goblin_shoot,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(goblin_shoot,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Werewolf: {
-				      copy_animation(werewolf_transform,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(werewolf_transform,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      default: {
@@ -9976,23 +9976,23 @@ void gameloop(int argc, char** argv){
 		      // Prepare the boss frames
 		      switch (i) {
 			      case Blue_Troll: {
-				      copy_animation(bluetroll_wonder,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(bluetroll_wonder,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Headless_Ninja: {
-				      copy_animation(headlessninja_throw,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(headlessninja_throw,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Crawling_Dude: {
-				      copy_animation(crawlingdude_crawl,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(crawlingdude_crawl,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Sr_Warthog: {
-				      copy_animation(srwarthog_square,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(srwarthog_square,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Doppelganger: {
-				      copy_animation(knight_tapis,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(knight_tapis,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      default: {
@@ -10609,7 +10609,7 @@ void gameloop(int argc, char** argv){
 
 				char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
 
-				copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
+				s4c_copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
 
 		      		log_tag("debug_log.txt","[PREP]","Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
 
@@ -10653,7 +10653,7 @@ void gameloop(int argc, char** argv){
 				wclear(door_win);
 				wrefresh(door_win);
 
-				int result = animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
+				int result = s4c_animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
 				log_tag("debug_log.txt","[DEBUG]","animate() result was (%i)", result);
 				wclear(door_win);
 				wrefresh(door_win);
@@ -10919,7 +10919,7 @@ void gameloop(int argc, char** argv){
 
 						char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
 
-						copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
+						s4c_copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
 
 		      				log_tag("debug_log.txt","[PREP]","Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
 
@@ -10965,7 +10965,7 @@ void gameloop(int argc, char** argv){
 						wclear(door_win);
 						wrefresh(door_win);
 
-						int result = animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
+						int result = s4c_animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
 						log_tag("debug_log.txt","[DEBUG]","animate() result was (%i)", result);
 						wclear(door_win);
 						wrefresh(door_win);

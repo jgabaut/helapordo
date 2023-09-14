@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for enter_door.
  */
-extern char enter_door[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char enter_door[61][MAXROWS][MAXCOLS];
 
 #endif

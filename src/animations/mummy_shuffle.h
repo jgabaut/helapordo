@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for mummy_shuffle.
  */
-extern char mummy_shuffle[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char mummy_shuffle[61][MAXROWS][MAXCOLS];
 
 #endif

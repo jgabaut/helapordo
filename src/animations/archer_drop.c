@@ -1,6 +1,6 @@
 #include "archer_drop.h"
 
-char archer_drop[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char archer_drop[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

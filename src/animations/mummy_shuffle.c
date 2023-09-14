@@ -1,6 +1,6 @@
 #include "mummy_shuffle.h"
 
-char mummy_shuffle[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char mummy_shuffle[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for mage_spark.
  */
-extern char mage_spark[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char mage_spark[61][MAXROWS][MAXCOLS];
 
 #endif

@@ -1,6 +1,6 @@
 #include "boar_scream.h"
 
-char boar_scream[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char boar_scream[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

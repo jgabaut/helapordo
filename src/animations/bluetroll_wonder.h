@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for bluetroll_wonder.
  */
-extern char bluetroll_wonder[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char bluetroll_wonder[61][MAXROWS][MAXCOLS];
 
 #endif

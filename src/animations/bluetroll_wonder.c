@@ -1,6 +1,6 @@
 #include "bluetroll_wonder.h"
 
-char bluetroll_wonder[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char bluetroll_wonder[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

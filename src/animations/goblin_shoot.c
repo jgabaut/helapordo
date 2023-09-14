@@ -1,6 +1,6 @@
 #include "goblin_shoot.h"
 
-char goblin_shoot[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char goblin_shoot[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

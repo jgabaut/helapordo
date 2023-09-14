@@ -1,6 +1,6 @@
 #include "ghost_spell.h"
 
-char ghost_spell[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char ghost_spell[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{
