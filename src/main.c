@@ -32,6 +32,24 @@ int main(int argc, char** argv) {
 	#ifndef _WIN32
 	gameloop(argc, argv);
 	#else
+	FILE* debug_file = NULL;
+	char path_to_debug_file[600];
+	char static_path[500];
+	// Set static_path value to the correct static dir path
+	resolve_staticPath(static_path);
+
+	//Truncate "debug_log.txt"
+	sprintf(path_to_debug_file,"%s\\%s",static_path,"debug_log.txt");
+	debug_file = fopen(path_to_debug_file, "w");
+	if (!debug_file) {
+		endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
+		fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
+		exit(EXIT_FAILURE);
+	}
+	fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+	fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
+	fclose(debug_file);
+
 	char* whoami;
   	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 	printTitle();
