@@ -238,6 +238,9 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls, Koliseo_Temp* t_
 Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile);
 
 void gameloop(int argc, char** argv);
+
+#ifdef _WIN32
 void gameloop_Win(int argc, char** argv);
+#endif
 
 #endif
