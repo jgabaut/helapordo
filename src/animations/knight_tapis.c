@@ -1,6 +1,6 @@
 #include "knight_tapis.h"
 
-char knight_tapis[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char knight_tapis[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

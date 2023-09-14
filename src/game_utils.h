@@ -1,7 +1,7 @@
 #ifndef GAME_UTILS_H
 #define GAME_UTILS_H
 
-#ifdef MINGW32_BUILD
+#ifdef _WIN32
 #include <ncursesw/panel.h>
 #else
 #include <panel.h>
@@ -14,6 +14,13 @@
 #include <sys/stat.h>
 #include <time.h>
 #include "game_core.h"
+
+void printGlobVars(void);
+
+#ifdef _WIN32
+void printWin_EnvVars(void);
+void log_Win_EnvVars(void);
+#endif
 
 void red(void);
 void lightRed(void);

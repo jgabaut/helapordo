@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for boar_scream.
  */
-extern char boar_scream[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char boar_scream[61][MAXROWS][MAXCOLS];
 
 #endif

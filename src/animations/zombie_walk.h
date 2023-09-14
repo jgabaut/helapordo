@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for zombie_walk.
  */
-extern char zombie_walk[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char zombie_walk[61][MAXROWS][MAXCOLS];
 
 #endif

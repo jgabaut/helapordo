@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for archer_drop.
  */
-extern char archer_drop[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char archer_drop[61][MAXROWS][MAXCOLS];
 
 #endif

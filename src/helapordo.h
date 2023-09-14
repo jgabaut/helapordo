@@ -8,9 +8,10 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#ifdef MINGW32_BUILD
+#ifdef _WIN32
 #include <ncursesw/panel.h>
 #include <ncursesw/menu.h>
+#include "floor_tester.h"
 #else
 #include <panel.h>
 #include <menu.h>
@@ -237,5 +238,6 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls, Koliseo_Temp* t_
 Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile);
 
 void gameloop(int argc, char** argv);
+void gameloop_Win(int argc, char** argv);
 
 #endif

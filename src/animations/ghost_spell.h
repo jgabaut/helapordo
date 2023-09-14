@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for ghost_spell.
  */
-extern char ghost_spell[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char ghost_spell[61][MAXROWS][MAXCOLS];
 
 #endif

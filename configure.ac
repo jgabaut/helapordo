@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.1.7], [jgabaut@github.com])
+AC_INIT([helapordo], [1.1.8], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -30,8 +30,8 @@ fi
 if test "$host_os" = "darwin"; then
   echo "Building for macos: [$host_cpu-$host_vendor-$host_os]"
   # macOS specific flags
-  AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/local/opt/ncurses/include -DKOLISEO_HAS_CURSES"])
-  AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/local/opt/ncurses/lib -lmenu -lpanel -lncurses"])
+  AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/ncurses/include -DKOLISEO_HAS_CURSES"])
+  AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/ncurses/lib -lmenu -lpanel -lncurses"])
   AC_SUBST([OS], ["darwin"])
   AC_SUBST([TARGET], ["helapordo"])
 fi
@@ -48,7 +48,7 @@ fi
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.1.7"
+  VERSION="1.1.8"
 fi
 
 # Output variables to the config.h header

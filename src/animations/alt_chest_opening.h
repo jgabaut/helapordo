@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for alt_chest_opening.
  */
-extern char alt_chest_opening[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char alt_chest_opening[31][MAXROWS][MAXCOLS];
 
 #endif

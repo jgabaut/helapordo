@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for werewolf_transform.
  */
-extern char werewolf_transform[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char werewolf_transform[61][MAXROWS][MAXCOLS];
 
 #endif

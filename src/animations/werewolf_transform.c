@@ -1,6 +1,6 @@
 #include "werewolf_transform.h"
 
-char werewolf_transform[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char werewolf_transform[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

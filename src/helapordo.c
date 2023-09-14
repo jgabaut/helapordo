@@ -7901,7 +7901,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 	char msg[200];
 	char ch[25];
 	int picked_debug_proc = 0;
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	struct utsname uts;
 	uname(&uts);
 	sprintf(msg,"debug_generic() loaded utsname using uname().\n");
@@ -8062,7 +8062,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 		case 'd': {
 			picked_debug_proc = 1;
 			printf("\nVERSION:    %s\n",VERSION);
-			#ifndef MINGW32_BUILD
+			#ifndef _WIN32
 			printf("\nSystem:    %s\n",uts.sysname);
 			printf("\nOS Release:    %s\n",uts.release);
 			printf("\nOS Version:    %s\n",uts.version);
@@ -8163,7 +8163,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
-				#ifndef MINGW32_BUILD
+				#ifndef _WIN32
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
@@ -8238,7 +8238,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
-				#ifndef MINGW32_BUILD
+				#ifndef _WIN32
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
@@ -8536,7 +8536,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 	char msg[200];
 	char ch[25];
 	int picked_debug_proc = 0;
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	struct utsname uts;
 	uname(&uts);
 	sprintf(msg,"debug_enemies_room() loaded utsname using uname().\n");
@@ -8721,7 +8721,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 		case 'd': {
 			picked_debug_proc = 1;
 			printf("\nVERSION:    %s\n",VERSION);
-			#ifndef MINGW32_BUILD
+			#ifndef _WIN32
 			printf("\nSystem:    %s\n",uts.sysname);
 			printf("\nOS Release:    %s\n",uts.release);
 			printf("\nOS Version:    %s\n",uts.version);
@@ -8783,7 +8783,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
-				#ifndef MINGW32_BUILD
+				#ifndef _WIN32
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
@@ -8858,7 +8858,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
-				#ifndef MINGW32_BUILD
+				#ifndef _WIN32
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
@@ -9155,14 +9155,14 @@ void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	//Can't we print stats and clear the kls?
 	//printStats(p);
 	//printf("\n");
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	sprintf(msg,"Resetting Koliseo_Temp from: (%li)",t_kls->kls->offset);
 	#else
 	sprintf(msg,"Resetting Koliseo_Temp from: (%lli)",t_kls->kls->offset);
 	#endif
 	kls_log("DEBUG",msg);
 	kls_temp_end(*t_kls);
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	sprintf(msg,"Koliseo now at: (%li)",t_kls->kls->offset);
 	#else
 	sprintf(msg,"Koliseo now at: (%lli)",t_kls->kls->offset);
@@ -9533,7 +9533,11 @@ void gameloop(int argc, char** argv){
   default_kls = kls_new(KLS_DEFAULT_SIZE*16);
   temporary_kls = kls_new(KLS_DEFAULT_SIZE*32);
 
+  #ifndef _WIN32
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
+  #else
+  (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+  #endif
 
   char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),None,"progname",whoami);
   strcpy(kls_progname,whoami);
@@ -9668,6 +9672,7 @@ void gameloop(int argc, char** argv){
 				break;
 			}
 		}
+
 		#ifndef HELAPORDO_DEBUG_LOG
 		#else
 		// Open log file if log flag is set and reset it
@@ -9824,19 +9829,19 @@ void gameloop(int argc, char** argv){
 
 			switch (i) {
 				case Knight: {
-				        copy_animation(knight_tapis,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				        s4c_copy_animation(knight_tapis,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Mage: {
-				        copy_animation(mage_spark,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				        s4c_copy_animation(mage_spark,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Archer: {
-				        copy_animation(archer_drop,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				        s4c_copy_animation(archer_drop,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				case Assassin: {
-				        copy_animation(assassin_poof,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				        s4c_copy_animation(assassin_poof,fighter_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 				}
 				break;
 				default: {
@@ -9893,35 +9898,35 @@ void gameloop(int argc, char** argv){
 		      // Prepare the enemy frames
 		      switch (i) {
 			      case Imp: {
-				      copy_animation(imp_fireball,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(imp_fireball,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Zombie: {
-				      copy_animation(zombie_walk,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(zombie_walk,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Troll: {
-				      copy_animation(troll_club,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(troll_club,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Ghost: {
-				      copy_animation(ghost_spell,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(ghost_spell,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Boar: {
-				      copy_animation(boar_scream,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(boar_scream,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Mummy: {
-				      copy_animation(mummy_shuffle,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(mummy_shuffle,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Goblin: {
-				      copy_animation(goblin_shoot,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(goblin_shoot,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Werewolf: {
-				      copy_animation(werewolf_transform,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(werewolf_transform,enemy_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      default: {
@@ -9976,23 +9981,23 @@ void gameloop(int argc, char** argv){
 		      // Prepare the boss frames
 		      switch (i) {
 			      case Blue_Troll: {
-				      copy_animation(bluetroll_wonder,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(bluetroll_wonder,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Headless_Ninja: {
-				      copy_animation(headlessninja_throw,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(headlessninja_throw,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Crawling_Dude: {
-				      copy_animation(crawlingdude_crawl,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(crawlingdude_crawl,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Sr_Warthog: {
-				      copy_animation(srwarthog_square,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(srwarthog_square,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      case Doppelganger: {
-				      copy_animation(knight_tapis,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
+				      s4c_copy_animation(knight_tapis,boss_sprites[i],n_load_frames,n_load_rows,n_load_cols);
 			      }
 			      break;
 			      default: {
@@ -10609,7 +10614,7 @@ void gameloop(int argc, char** argv){
 
 				char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
 
-				copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
+				s4c_copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
 
 		      		log_tag("debug_log.txt","[PREP]","Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
 
@@ -10653,7 +10658,7 @@ void gameloop(int argc, char** argv){
 				wclear(door_win);
 				wrefresh(door_win);
 
-				int result = animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
+				int result = s4c_animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
 				log_tag("debug_log.txt","[DEBUG]","animate() result was (%i)", result);
 				wclear(door_win);
 				wrefresh(door_win);
@@ -10919,7 +10924,7 @@ void gameloop(int argc, char** argv){
 
 						char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
 
-						copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
+						s4c_copy_animation(enter_door,door_sprites,num_frames,frame_height,frame_width);
 
 		      				log_tag("debug_log.txt","[PREP]","Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",num_frames,frame_height,frame_width);
 
@@ -10965,7 +10970,7 @@ void gameloop(int argc, char** argv){
 						wclear(door_win);
 						wrefresh(door_win);
 
-						int result = animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
+						int result = s4c_animate_sprites_at_coords(door_sprites, door_win, reps, frametime, num_frames, frame_height, frame_width, 0 , 0);
 						log_tag("debug_log.txt","[DEBUG]","animate() result was (%i)", result);
 						wclear(door_win);
 						wrefresh(door_win);
@@ -11164,4 +11169,156 @@ void gameloop(int argc, char** argv){
 	white();
 	log_tag("debug_log.txt","[DEBUG]","End of program.");
 	exit(0);
+}
+
+/**
+ * Takes a integer and a string array (possibly from main).
+ * @param argc The number of argv values + 1 (0 is program name?).
+ * @param argv Array of strings with argc - 1 values.
+ */
+void gameloop_Win(int argc, char** argv) {
+    int option;
+	char* whoami;
+  	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+	while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsa")) != -1) {
+		switch (option) {
+			case 'd': {
+				#ifndef HELAPORDO_DEBUG_ACCESS
+				#else
+				G_DEBUG_ON += 1;
+				G_LOG_ON = 1;
+				#endif
+			}
+			break;
+			case 'r': {
+				G_DEBUG_ROOMTYPE_ON += 1;
+			}
+			break;
+			case 'E': {
+				G_DEBUG_ENEMYTYPE_ON += 1;
+			}
+			break;
+			case 'L': {
+				G_LOG_ON = 1;
+			}
+			break;
+			break;
+			case 'G': {
+				G_GODMODE_ON = 1;
+			}
+			break;
+			case 'Q': {
+				G_FASTQUIT_ON = 1;
+			}
+			break;
+			case 'X': {
+				G_EXPERIMENTAL_ON = 1;
+			}
+			break;
+			case 'a': {
+				GS_AUTOSAVE_ON = 0;
+			}
+			break;
+			case 's': {
+				GAMEMODE = Story;
+			}
+			break;
+			case 'R': {
+				GAMEMODE = Rogue;
+			}
+			break;
+			break;
+			case 'h': {
+				usage(whoami);
+				exit(EXIT_SUCCESS);
+			}
+			break;
+			case 'T': {
+				G_DOTUTORIAL_ON = 1;
+				handleTutorial();
+				usage(whoami);
+				exit(EXIT_SUCCESS);
+			}
+			break;
+			case 't': {
+				//Test all colors
+				printFormattedVersion(whoami);
+				printf("Using:\n");
+				printf("  \'animate\' :\n    s4c/animate.h    ");
+				S4C_ECHOVERSION();
+				printf("[DEBUG]    Testing terminal color capabilities.\n");
+				napms(800);
+				display_colorpairs();
+				exit(EXIT_SUCCESS);
+			}
+			break;
+			case 'v': {
+				printVersion();
+				exit(EXIT_SUCCESS);
+			}
+			case '?': {
+				fprintf(stderr,"Invalid option: %c\n Check your arguments.\n", option);
+				usage(whoami);
+				// Handle invalid options
+				exit(EXIT_FAILURE);
+			}
+			break;
+			default: {
+				// Should never get here
+				fprintf(stderr,"Invalid option: %c\n, bad usage.\n", option);
+				exit(EXIT_FAILURE);
+			}
+			break;
+		}
+	}
+
+	default_kls = kls_new(KLS_DEFAULT_SIZE*8);
+  	temporary_kls = kls_new(KLS_DEFAULT_SIZE*8);
+	if (G_LOG_ON == 1) {
+		FILE* debug_file = NULL;
+		char path_to_debug_file[600];
+		char static_path[500];
+		// Set static_path value to the correct static dir path
+		resolve_staticPath(static_path);
+
+		//Truncate "debug_log.txt"
+		sprintf(path_to_debug_file,"%s\\%s",static_path,"debug_log.txt");
+		debug_file = fopen(path_to_debug_file, "w");
+		if (!debug_file) {
+			fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
+			exit(EXIT_FAILURE);
+		}
+		fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+		fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
+  		print_kls_2file(debug_file,default_kls);
+		fprintf(debug_file,"[DEBUG]    --Temporary kls debug info:--  \n");
+  		print_kls_2file(debug_file,temporary_kls);
+		fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
+		fclose(debug_file);
+
+		log_Win_EnvVars();
+
+		log_tag("debug_log.txt","[WIN32-DEBUG]","Printing title.");
+	}
+
+	printTitle();
+	printf("\n\n\n\n\t\t\t\tSTART\n\n");
+	if (G_DEBUG_ON) {
+		printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
+	}
+	printf("\t\t\t\t\t\t");
+        printFormattedVersion(whoami);
+	printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
+	printf("\n  Press Enter to proceed.\n");
+	scanf("%*c");
+	system("cls");
+	printGlobVars();
+	printWin_EnvVars();
+	printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
+	printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
+	printf("  You move with the arrow keys.\n\n");
+	scanf("%*c");
+	test_floors();
+	kls_free(temporary_kls);
+	kls_free(default_kls);
 }

@@ -1,6 +1,6 @@
 #include "troll_club.h"
 
-char troll_club[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char troll_club[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{

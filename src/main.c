@@ -24,13 +24,16 @@ int main(int argc, char** argv) {
 	//Randomise seed
 	srand(time(NULL));
 
+	setlocale(LC_ALL, "");
 	// Randomise path
 	// 	Branches?
 	//
-	setlocale(LC_ALL, "");
 	//test_floors();
+	#ifndef _WIN32
 	gameloop(argc, argv);
-
+	#else
+	gameloop_Win(argc, argv);
+	#endif
 	// 	Monsters
 	// 	Leveling
 	// 	Abilities?
@@ -42,4 +45,6 @@ int main(int argc, char** argv) {
 	// Saves
 	//
 	// Victory / Death
+
+	return 1;
 }

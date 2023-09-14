@@ -6,6 +6,6 @@
 /**
  * Declares animation matrix vector for srwarthog_square.
  */
-extern char srwarthog_square[MAXFRAMES][MAXROWS][MAXCOLS];
+extern char srwarthog_square[61][MAXROWS][MAXCOLS];
 
 #endif

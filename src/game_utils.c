@@ -1,5 +1,58 @@
 #include "game_utils.h"
 //Functions useful in many areas
+//
+
+/**
+ * Prints global vars to stdout.
+ */
+void printGlobVars(void) {
+	printf("\nGlobal vars:\n");
+	printf("  G_PRELOAD_ANIMATIONS_ON: { %i }\n",G_PRELOAD_ANIMATIONS_ON);
+	printf("  G_DEBUG_ON: { %i }\n",G_DEBUG_ON);
+	printf("  G_LOG_ON: { %i }\n",G_LOG_ON);
+	printf("  G_EXPERIMENTAL_ON: { %i }\n",G_EXPERIMENTAL_ON);
+	printf("  G_FASTQUIT_ON: { %i }\n",G_FASTQUIT_ON);
+	printf("  G_GODMODE_ON: { %i }\n",G_GODMODE_ON);
+	printf("  G_DEBUG_ROOMTYPE_ON: { %i }\n",G_DEBUG_ROOMTYPE_ON);
+	printf("  G_ROOMTYPE_ON: { %s } [ %i ]\n",stringFromRoom(G_DEBUG_ROOMTYPE),G_DEBUG_ROOMTYPE);
+	printf("  G_ENEMYTYPE_ON: { %i }\n",G_DEBUG_ENEMYTYPE_ON);
+		printf("  G_DEBUG_ENEMYTYPE { %s } [ %i ]\n",stringFromEClass(G_DEBUG_ENEMYTYPE),G_DEBUG_ENEMYTYPE);
+	printf("  G_DOTUTORIAL_ON: { %i }\n",G_DOTUTORIAL_ON);
+}
+
+#ifdef _WIN32
+/**
+ * Prints Windows envvars to stdout.
+ */
+void printWin_EnvVars(void) {
+	printf("\nWindows Environment vars:\n");
+	printf("  UserProfile: { %s }\n",getenv("UserProfile"));
+	printf("  HomeDrive: { %s }\n",getenv("HomeDrive"));
+	printf("  HomePath: { %s }\n",getenv("HomePath"));
+	printf("  ComputerName: { %s }\n",getenv("ComputerName"));
+	printf("  Processor_Revision: { %s }\n",getenv("Processor_Revision"));
+	printf("  Processor_Identifier: { %s }\n",getenv("Processor_Identifier"));
+	printf("  Processor_Level: { %s }\n",getenv("Processor_Level"));
+	printf("  Number_Of_Processors: { %s }\n",getenv("Number_Of_Processors"));
+	printf("  OS: { %s }\n",getenv("OS"));
+}
+
+/**
+ * Logs Windows envvars to debug log file.
+ */
+void log_Win_EnvVars(void) {
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Windows Environment vars:");
+	log_tag("debug_log.txt","[WIND32-DEBUG","UserProfile: { %s }",getenv("UserProfile"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","HomeDrive: { %s }",getenv("HomeDrive"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","HomePath: { %s }",getenv("HomePath"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","ComputerName: { %s }",getenv("ComputerName"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Processor_Revision: { %s }",getenv("Processor_Revision"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Processor_Identifier: { %s }",getenv("Processor_Identifier"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Processor_Level: { %s }",getenv("Processor_Level"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Number_Of_Processors: { %s }",getenv("Number_Of_Processors"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","OS: { %s }",getenv("OS"));
+}
+#endif
 
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
@@ -394,10 +447,23 @@ void init_game_color_pairs(void) {
  */
 void resolve_staticPath(char static_path[500]){
 	char homedir_path[200];
+	#ifndef _WIN32
 	sprintf(homedir_path, "%s", getenv("HOME"));
+	#else
+	sprintf(homedir_path, "%s", getenv("UserProfile"));
+	#endif
 
+	#ifndef _WIN32
 	const char* static_folder_path_wd = "./static/";
+	#else
+	const char* static_folder_path_wd = ".\\static\\";
+	#endif
+
+	#ifndef _WIN32
 	const char* local_install_static_folder_path = "/helapordo-local/static";
+	#else
+	const char* local_install_static_folder_path = "\\helapordo-local\\static";
+	#endif
 	char static_folder_path_global[500];
 	sprintf(static_folder_path_global,"%s",homedir_path);
 	strncat(static_folder_path_global,local_install_static_folder_path,50);
@@ -635,14 +701,18 @@ void freeRoom(Room* room) {
  */
 void printTitle(void){
 	printf("\n\n\n\n\n");
+	#ifndef _WIN32
 	red();
+	#endif
 	printf("     __  __  ____  __     ______  _____   ______  ____    _____    ______\n");
 	printf("    / / / / / __/ / /    / __  / / __  / / __  / / __ \\  / __  \\  / __  /\n");
 	printf("   / /_/ / / /_  / /    / / / / / /_/ / / / / / / /_/ / / / /  / / / / /\n");
 	printf("  / __  / / __/ / /    / /_/ / / ____/ / / / / /    _/ / / /  / / / / /\n");
 	printf(" / / / / / /_  / /_   / __  / / /     / /_/ / / /\\ |  / /_/ _/ / /_/ /\n");
 	printf("/_/ /_/ /____/ \\___/ /_/ /_/ /_/     /_____/ /_/ /_/ /_____/  /_____/\n");
+	#ifndef _WIN32
 	white();
+	#endif
 }
 
 /**
@@ -697,7 +767,7 @@ void log_tag(char* filename, char* header, const char* format, ...) {
 	#ifndef HELAPORDO_DEBUG_LOG
 	#else
 	// Open log file if log flag is set and append to it
-	if (G_LOG_ON) {
+	if (G_LOG_ON == 1) {
 		char path_to_debug_file[500];
 		char static_path[500];
 
@@ -705,7 +775,13 @@ void log_tag(char* filename, char* header, const char* format, ...) {
 		resolve_staticPath(static_path);
 
 		sprintf(path_to_debug_file,"%s",static_path);
+
+		#ifndef _WIN32
 		strncat(path_to_debug_file,"/",2);
+		#else
+		strncat(path_to_debug_file,"\\",2);
+		#endif
+
 		strncat(path_to_debug_file, filename, 200);
 
 		//fprintf(stderr, "Using %s as path to debug log.\n", path_to_debug_file);

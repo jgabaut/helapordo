@@ -1,8 +1,19 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
 
-#ifdef MINGW32_BUILD
+#ifdef _WIN32
 #include <ncursesw/panel.h>
+#define S4C_WIN_BG 0
+#define S4C_WIN_RED 1
+#define S4C_WIN_GREEN 2
+#define S4C_WIN_BLUE 3
+#define S4C_WIN_CYAN 4
+#define S4C_WIN_WHITE 5
+#define S4C_WIN_YELLOW 6
+#define S4C_WIN_BLACK_ON_WHITE 7
+#define S4C_WIN_PURPLE 8
+#define S4C_WIN_WHITE_ON_RED 9
+#define S4C_WIN_WHITE_ON_PURPLE 10
 #else
 #include <panel.h>
 #endif
@@ -61,7 +72,8 @@ extern Koliseo* default_kls;
  */
 extern Koliseo* temporary_kls;
 /**
- * Global variable for load animations flag.
+ * TODO Remove mentions of this.
+ * Global variable for load animations flag. Legacy.
  */
 extern int G_PRELOAD_ANIMATIONS_ON;
 /**
@@ -122,12 +134,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 7
+#define HELAPORDO_PATCH_VERSION 8
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.1.7"
+#define VERSION "1.1.8"
 
 /**
  * Default savepath.

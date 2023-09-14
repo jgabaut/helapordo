@@ -1,6 +1,6 @@
 #include "enter_door.h"
 
-char enter_door[MAXFRAMES][MAXROWS][MAXCOLS] = {
+char enter_door[61][MAXROWS][MAXCOLS] = {
 
 	//Frame 1
 	{
