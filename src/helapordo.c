@@ -11171,6 +11171,7 @@ void gameloop(int argc, char** argv){
 	exit(0);
 }
 
+#ifdef _WIN32
 /**
  * Takes a integer and a string array (possibly from main).
  * @param argc The number of argv values + 1 (0 is program name?).
@@ -11322,3 +11323,4 @@ void gameloop_Win(int argc, char** argv) {
 	kls_free(temporary_kls);
 	kls_free(default_kls);
 }
+#endif
