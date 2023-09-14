@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 	//
 	setlocale(LC_ALL, "");
 	//test_floors();
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	gameloop(argc, argv);
 	#else
 	char* whoami;

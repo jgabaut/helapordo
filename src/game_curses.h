@@ -1,7 +1,7 @@
 #ifndef GAMECURSES_H
 #define GAMECURSES_H
 
-#ifdef MINGW32_BUILD
+#ifdef _WIN32
 #include <ncursesw/panel.h>
 #include <ncursesw/menu.h>
 #else

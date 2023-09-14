@@ -7901,7 +7901,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 	char msg[200];
 	char ch[25];
 	int picked_debug_proc = 0;
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	struct utsname uts;
 	uname(&uts);
 	sprintf(msg,"debug_generic() loaded utsname using uname().\n");
@@ -8062,7 +8062,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 		case 'd': {
 			picked_debug_proc = 1;
 			printf("\nVERSION:    %s\n",VERSION);
-			#ifndef MINGW32_BUILD
+			#ifndef _WIN32
 			printf("\nSystem:    %s\n",uts.sysname);
 			printf("\nOS Release:    %s\n",uts.release);
 			printf("\nOS Version:    %s\n",uts.version);
@@ -8163,7 +8163,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
-				#ifndef MINGW32_BUILD
+				#ifndef _WIN32
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
@@ -8238,7 +8238,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
-				#ifndef MINGW32_BUILD
+				#ifndef _WIN32
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
@@ -8536,7 +8536,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 	char msg[200];
 	char ch[25];
 	int picked_debug_proc = 0;
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	struct utsname uts;
 	uname(&uts);
 	sprintf(msg,"debug_enemies_room() loaded utsname using uname().\n");
@@ -8721,7 +8721,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 		case 'd': {
 			picked_debug_proc = 1;
 			printf("\nVERSION:    %s\n",VERSION);
-			#ifndef MINGW32_BUILD
+			#ifndef _WIN32
 			printf("\nSystem:    %s\n",uts.sysname);
 			printf("\nOS Release:    %s\n",uts.release);
 			printf("\nOS Version:    %s\n",uts.version);
@@ -8783,7 +8783,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,temporary_kls);
-				#ifndef MINGW32_BUILD
+				#ifndef _WIN32
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
@@ -8858,7 +8858,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			for (int i = HR_Path; i < HLP_MAX_INDEX+99; i++) {
 				ptrdiff_t usage = kls_type_usage(i,kls);
-				#ifndef MINGW32_BUILD
+				#ifndef _WIN32
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
 				#else
 				fprintf(kls_file,"Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n", stringFrom_HLP_Region_Type(i-101+KLS_REGIONTYPE_MAX), i, usage);
@@ -9155,14 +9155,14 @@ void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	//Can't we print stats and clear the kls?
 	//printStats(p);
 	//printf("\n");
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	sprintf(msg,"Resetting Koliseo_Temp from: (%li)",t_kls->kls->offset);
 	#else
 	sprintf(msg,"Resetting Koliseo_Temp from: (%lli)",t_kls->kls->offset);
 	#endif
 	kls_log("DEBUG",msg);
 	kls_temp_end(*t_kls);
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	sprintf(msg,"Koliseo now at: (%li)",t_kls->kls->offset);
 	#else
 	sprintf(msg,"Koliseo now at: (%lli)",t_kls->kls->offset);
@@ -9533,7 +9533,7 @@ void gameloop(int argc, char** argv){
   default_kls = kls_new(KLS_DEFAULT_SIZE*16);
   temporary_kls = kls_new(KLS_DEFAULT_SIZE*32);
 
-  #ifndef MINGW32_BUILD
+  #ifndef _WIN32
   (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
   #else
   (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);

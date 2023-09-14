@@ -635,7 +635,7 @@ void freeRoom(Room* room) {
  */
 void printTitle(void){
 	printf("\n\n\n\n\n");
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	red();
 	#endif
 	printf("     __  __  ____  __     ______  _____   ______  ____    _____    ______\n");
@@ -644,7 +644,7 @@ void printTitle(void){
 	printf("  / __  / / __/ / /    / /_/ / / ____/ / / / / /    _/ / / /  / / / / /\n");
 	printf(" / / / / / /_  / /_   / __  / / /     / /_/ / / /\\ |  / /_/ _/ / /_/ /\n");
 	printf("/_/ /_/ /____/ \\___/ /_/ /_/ /_/     /_____/ /_/ /_/ /_____/  /_____/\n");
-	#ifndef MINGW32_BUILD
+	#ifndef _WIN32
 	white();
 	#endif
 }

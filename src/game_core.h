@@ -1,7 +1,7 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
 
-#ifdef MINGW32_BUILD
+#ifdef _WIN32
 #include <ncursesw/panel.h>
 #else
 #include <panel.h>

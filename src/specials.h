@@ -2,7 +2,7 @@
 #define SPECIALS_H
 #include "game_core.h"
 
-#ifdef MINGW32_BUILD
+#ifdef _WIN32
 #include <ncursesw/panel.h>
 #include <ncursesw/menu.h>
 #else

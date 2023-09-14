@@ -8,7 +8,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#ifdef MINGW32_BUILD
+#ifdef _WIN32
 #include <ncursesw/panel.h>
 #include <ncursesw/menu.h>
 #else
