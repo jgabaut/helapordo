@@ -259,10 +259,8 @@ int test_floors(void) {
 	while (dbg_floor->explored_area < dbg_floor->area) {
 		draw_floor_view(dbg_floor, current_x, current_y, test_win);
 		wclear(side_win);
-		wrefresh(side_win);
 		wprintw(side_win,"\n    Explored Area: { %i }",dbg_floor->explored_area);
 		wprintw(side_win,"\n    Total Area: { %i }",dbg_floor->area);
-        	box(side_win, 0, 0);
 		wrefresh(side_win);
 		move_update(gmst, dbg_floor, &current_x, &current_y, test_win, p, f, r, load_info, kls, t_kls);
 	}

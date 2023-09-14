@@ -36,6 +36,22 @@ void printWin_EnvVars(void) {
 	printf("  Number_Of_Processors: { %s }\n",getenv("Number_Of_Processors"));
 	printf("  OS: { %s }\n",getenv("OS"));
 }
+
+/**
+ * Logs Windows envvars to debug log file.
+ */
+void log_Win_EnvVars(void) {
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Windows Environment vars:");
+	log_tag("debug_log.txt","[WIND32-DEBUG","UserProfile: { %s }",getenv("UserProfile"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","HomeDrive: { %s }",getenv("HomeDrive"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","HomePath: { %s }",getenv("HomePath"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","ComputerName: { %s }",getenv("ComputerName"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Processor_Revision: { %s }",getenv("Processor_Revision"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Processor_Identifier: { %s }",getenv("Processor_Identifier"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Processor_Level: { %s }",getenv("Processor_Level"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","Number_Of_Processors: { %s }",getenv("Number_Of_Processors"));
+	log_tag("debug_log.txt","[WIN32-DEBUG]","OS: { %s }",getenv("OS"));
+}
 #endif
 
 /**

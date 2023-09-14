@@ -11295,6 +11295,10 @@ void gameloop_Win(int argc, char** argv) {
   		print_kls_2file(debug_file,temporary_kls);
 		fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
 		fclose(debug_file);
+
+		log_Win_EnvVars();
+
+		log_tag("debug_log.txt","[WIN32-DEBUG]","Printing title.");
 	}
 
 	printTitle();

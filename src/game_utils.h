@@ -19,6 +19,7 @@ void printGlobVars(void);
 
 #ifdef _WIN32
 void printWin_EnvVars(void);
+void log_Win_EnvVars(void);
 #endif
 
 void red(void);
