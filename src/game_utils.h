@@ -15,6 +15,8 @@
 #include <time.h>
 #include "game_core.h"
 
+void printGlobVars(void);
+
 void red(void);
 void lightRed(void);
 void strongWhite(void);

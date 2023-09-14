@@ -38,9 +38,13 @@ int main(int argc, char** argv) {
 	printf("\n\n\n\n\t\t\t\tSTART\n\n");
 	printf("\t\t\t\t\t\t");
         printFormattedVersion(whoami);
-	printf("\n\nThe Windows build of \"helapordo\" is WIP.\n\n");
-	printf("Press Enter to quit.\n");
+	printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
+	printf("  Press Enter to demo a minimal rogue floor.\n");
+	printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
+	printf("  You may need to spam Enter or the arrow keys.\n\n");
+	printGlobVars();
 	scanf("%*c");
+	test_floors();
 	return 1;
 	#endif
 	// 	Monsters

@@ -40,6 +40,10 @@ endif
 # Compiler flags
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall
 
+if MINGW32_BUILD
+helapordo_SOURCES += src/floor_tester.c
+endif
+
 
 ./src/anvil__helapordo.c:
 	@echo -e "\033[1;34m[Makefile]\e[0m    Using \033[1;33mamboso\e[0m to generate [\033[1;34m./src/anvil__helapordo.c\e[0m and \033[1;34m./src/anvil__helapordo.h\e[0m] for [ \033[1;36m$(VERSION)\e[0m ]:"

@@ -136,31 +136,56 @@ void display_roomclass_layout(Floor* floor, WINDOW* win) {
 	    switch (floor->roomclass_layout[x][y]) {
 		case HOME: {
 			ch = 'H';
+			#ifndef _WIN32
 		        isColored = S4C_BRIGHT_GREEN;
+			#else
+		        isColored = S4C_WIN_GREEN;
+			#endif
 		}
 		break;
 		case ENEMIES: {
 			ch = 'E';
+			#ifndef _WIN32
+		        isColored = S4C_PURPLE;
+			#else
+		        isColored = S4C_WIN_BLUE;
+			#endif
 		}
 		break;
 		case BOSS: {
 			ch = 'B';
+			#ifndef _WIN32
 		        isColored = S4C_RED;
+			#else
+		        isColored = S4C_WIN_RED;
+			#endif
 		}
 		break;
 		case SHOP: {
 			ch = '$';
+			#ifndef _WIN32
 		        isColored = S4C_CYAN;
+			#else
+		        isColored = S4C_WIN_CYAN;
+			#endif
 		}
 		break;
 		case TREASURE: {
 			ch = '*';
+			#ifndef _WIN32
 		        isColored = S4C_ORANGE;
+			#else
+		        isColored = S4C_WIN_WHITE_ON_RED;
+			#endif
 		}
 		break;
 		case WALL: {
 			ch = '#';
+			#ifndef _WIN32
 		        isColored = S4C_BRIGHT_YELLOW;
+			#else
+		        isColored = S4C_WIN_WHITE;
+			#endif
 		}
 		break;
 		case BASIC: {
@@ -214,11 +239,19 @@ void display_floor_layout(Floor* floor, WINDOW* win) {
 	    isFull = (floor->floor_layout[x][y] == 1 ? 1 : 0);
 	    isColored = isFull;
 	    if ( isColored > 0 ) {
+		    #ifndef _WIN32
 		    wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+		    #else
+		    wattron(win, COLOR_PAIR(S4C_WIN_YELLOW));
+		    #endif
 	    };
             mvwprintw(win, y+3, x+3, "%c",( isFull == 1 ? 'X' : ' '));
 	    if ( isColored > 0 ) {
+		    #ifndef _WIN32
 		    wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+		    #else
+		    wattroff(win, COLOR_PAIR(S4C_WIN_YELLOW));
+		    #endif
 	    };
 	    wrefresh(win);
         }
@@ -243,11 +276,19 @@ void display_explored_layout(Floor* floor, WINDOW* win) {
 	    isWalkable = (floor->explored_matrix[x][y] >= 0 ? 1 : 0);
 	    isExplored = (floor->explored_matrix[x][y] > 0 ? 1 : 0);
 	    if ( isWalkable > 0 ) {
+		    #ifndef _WIN32
 		    wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+		    #else
+		    wattron(win, COLOR_PAIR(S4C_WIN_YELLOW));
+		    #endif
             	    mvwprintw(win, y+3, x+3, "%c",( isExplored == 1 ? '1' : '0'));
 	    };
 	    if ( isWalkable > 0 ) {
+		    #ifndef _WIN32
 		    wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+		    #else
+		    wattroff(win, COLOR_PAIR(S4C_WIN_YELLOW));
+		    #endif
 	    };
 	    wrefresh(win);
         }
@@ -576,7 +617,11 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 				isWall = floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0 ;
 				if ( isWall > 0 ) {
 					ch = '#';
+					#ifndef _WIN32
 					isColored = S4C_PURPLE;
+					#else
+					isColored = S4C_WIN_BLUE;
+					#endif
 				} else {
 					ch = '?';
 				}
@@ -594,43 +639,75 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 				switch (floor->roomclass_layout[cell_x][cell_y]) {
 					case WALL: {
 						ch = '#';
+						#ifndef _WIN32
 						isColored = S4C_BLUE;
+						#else
+						isColored = S4C_WIN_BLUE;
+						#endif
 					}
 					break;
 					case BASIC: {
 						ch = '.';
+						#ifndef _WIN32
 						isColored = S4C_LIGHT_BROWN;
+						#else
+						isColored = S4C_WIN_WHITE;
+						#endif
 					}
 					break;
 					case HOME: {
 						ch = 'H';
+						#ifndef _WIN32
 						isColored = S4C_WHITE;
+						#else
+						isColored = S4C_WIN_WHITE;
+						#endif
 					}
 					break;
 					case BOSS: {
 						ch = 'B';
+						#ifndef _WIN32
 						isColored = S4C_RED;
+						#else
+						isColored = S4C_WIN_RED;
+						#endif
 					}
 					break;
 					case TREASURE: {
 						ch = '*';
+						#ifndef _WIN32
 						isColored = S4C_ORANGE;
+						#else
+						isColored = S4C_WIN_WHITE_ON_RED;
+						#endif
 					}
 					break;
 					case SHOP: {
 						ch = '$';
+						#ifndef _WIN32
 						isColored = S4C_MAGENTA;
+						#else
+						isColored = S4C_WIN_PURPLE;
+						#endif
 					}
 					break;
 					case ENEMIES: {
 						ch = '^';
+						#ifndef _WIN32
 						isColored = S4C_CYAN;
+						#else
+						isColored = S4C_WIN_CYAN;
+						#endif
 					}
 					break;
 					default: {
 						log_tag("debug_log.txt","[ERROR]","draw_cell(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",cell_x,cell_y);
 						ch = '?';
+						#ifndef _WIN32
 						isColored = S4C_DARK_GREEN;
+						#else
+						isColored = S4C_WIN_WHITE_ON_PURPLE;
+						#endif
 					}
 					break;
 				}
@@ -671,6 +748,9 @@ void move_update(Gamestate* gamestate, Floor* floor, int* current_x, int* curren
 		target_x = *current_x;
 		target_y = *current_y;
 		switch(c) {
+			//TODO
+			//Implement a working menu for the Windows build
+			#ifndef _WIN32
 			case 'm': {
 				picked = 0;
 				handleRogueMenu(gamestate,path,player,room,load_info,kls,t_kls);
@@ -679,6 +759,7 @@ void move_update(Gamestate* gamestate, Floor* floor, int* current_x, int* curren
 				continue;
 			}
 			break;
+			#endif
 			case KEY_DOWN: {
 				picked = 1;
 				target_y += 1;

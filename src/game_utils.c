@@ -1,5 +1,24 @@
 #include "game_utils.h"
 //Functions useful in many areas
+//
+
+/**
+ * Prints global vars to stdout.
+ */
+void printGlobVars(void) {
+	printf("\nGlobal vars:\n");
+	printf("  G_PRELOAD_ANIMATIONS_ON: { %i }\n",G_PRELOAD_ANIMATIONS_ON);
+	printf("  G_DEBUG_ON: { %i }\n",G_DEBUG_ON);
+	printf("  G_LOG_ON: { %i }\n",G_LOG_ON);
+	printf("  G_EXPERIMENTAL_ON: { %i }\n",G_EXPERIMENTAL_ON);
+	printf("  G_FASTQUIT_ON: { %i }\n",G_FASTQUIT_ON);
+	printf("  G_GODMODE_ON: { %i }\n",G_GODMODE_ON);
+	printf("  G_DEBUG_ROOMTYPE_ON: { %i }\n",G_DEBUG_ROOMTYPE_ON);
+	printf("  G_ROOMTYPE_ON: { %s } [ %i ]\n",stringFromRoom(G_DEBUG_ROOMTYPE),G_DEBUG_ROOMTYPE);
+	printf("  G_ENEMYTYPE_ON: { %i }\n",G_DEBUG_ENEMYTYPE_ON);
+		printf("  G_DEBUG_ENEMYTYPE { %s } [ %i ]\n",stringFromEClass(G_DEBUG_ENEMYTYPE),G_DEBUG_ENEMYTYPE);
+	printf("  G_DOTUTORIAL_ON: { %i }\n",G_DOTUTORIAL_ON);
+}
 
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
