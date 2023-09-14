@@ -1,3 +1,4 @@
+#include "floor_tester.h"
 #include "floors.h"
 
 int test_floors(void) {
