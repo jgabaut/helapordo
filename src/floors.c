@@ -687,7 +687,7 @@ void draw_cell(Floor* floor, int cell_x, int cell_y, WINDOW* win, int drawcorner
 						#ifndef _WIN32
 						isColored = S4C_MAGENTA;
 						#else
-						isColored = S4C_WIN_PURPLE;
+						isColored = S4C_WIN_WHITE_ON_PURPLE;
 						#endif
 					}
 					break;

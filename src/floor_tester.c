@@ -232,16 +232,17 @@ int test_floors(void) {
 	clear();
 	refresh();
 	delwin(test_win);
-	wclear(side_win);
-	wrefresh(side_win);
-	delwin(side_win);
 	test_win = newwin(24, 24, 1, 1);
 	wclear(test_win);
 	wrefresh(test_win);
         keypad(test_win, TRUE);
 
+	wclear(side_win);
+	wrefresh(side_win);
+
 	/* Print a border around the windows and print a title */
         box(test_win, 0, 0);
+        box(side_win, 0, 0);
 
 	int current_x = center_x;
 	int current_y = center_y;
@@ -256,6 +257,12 @@ int test_floors(void) {
 
 	while (dbg_floor->explored_area < dbg_floor->area) {
 		draw_floor_view(dbg_floor, current_x, current_y, test_win);
+		wclear(side_win);
+		wrefresh(side_win);
+		wprintw(side_win,"\n    Explored Area: { %i }",dbg_floor->explored_area);
+		wprintw(side_win,"\n    Total Area: { %i }",dbg_floor->area);
+        	box(side_win, 0, 0);
+		wrefresh(side_win);
 		move_update(gmst, dbg_floor, &current_x, &current_y, test_win, p, f, r, load_info, kls, t_kls);
 	}
 
