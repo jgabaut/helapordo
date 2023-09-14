@@ -29,10 +29,10 @@ int display_colorpairs(void) {
  */
 void print_encoded_char(WINDOW* w, int y, int x, char c) {
 	if (c == ' ') {
-		wattron(w,COLOR_PAIR(S4C_BLACK));
+		wattron(w,COLOR_PAIR(0));
 		//mvwprintw(win, y, x, "%c",s[j]);
-		mvwaddch(w, y, x,' '|A_REVERSE);
-		wattroff(w,COLOR_PAIR(S4C_BLACK));
+		mvwaddch(w, y, x,' ');
+		wattroff(w,COLOR_PAIR(0));
 	} else if (c == '@') {
 		wattron(w,COLOR_PAIR(S4C_BLACK));
 		//mvwaddch(win, y, x, cBlock);
@@ -72,7 +72,7 @@ void print_encoded_char(WINDOW* w, int y, int x, char c) {
 		wattroff(w,COLOR_PAIR(S4C_CYAN));
 	} else if (c == 'I') {
 		wattron(w,COLOR_PAIR(S4C_WHITE));
-		mvwaddch(w, y, x, '|');
+		mvwaddch(w, y, x, ' ');
 		wattroff(w,COLOR_PAIR(S4C_WHITE));
 	}
 
