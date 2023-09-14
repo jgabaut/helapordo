@@ -413,10 +413,23 @@ void init_game_color_pairs(void) {
  */
 void resolve_staticPath(char static_path[500]){
 	char homedir_path[200];
+	#ifndef _WIN32
 	sprintf(homedir_path, "%s", getenv("HOME"));
+	#else
+	sprintf(homedir_path, "%s", getenv("UserProfile"));
+	#endif
 
+	#ifndef _WIN32
 	const char* static_folder_path_wd = "./static/";
+	#else
+	const char* static_folder_path_wd = ".\\static\\";
+	#endif
+
+	#ifndef _WIN32
 	const char* local_install_static_folder_path = "/helapordo-local/static";
+	#else
+	const char* local_install_static_folder_path = "\\helapordo-local\\static";
+	#endif
 	char static_folder_path_global[500];
 	sprintf(static_folder_path_global,"%s",homedir_path);
 	strncat(static_folder_path_global,local_install_static_folder_path,50);
@@ -728,7 +741,13 @@ void log_tag(char* filename, char* header, const char* format, ...) {
 		resolve_staticPath(static_path);
 
 		sprintf(path_to_debug_file,"%s",static_path);
+
+		#ifndef _WIN32
 		strncat(path_to_debug_file,"/",2);
+		#else
+		strncat(path_to_debug_file,"\\",2);
+		#endif
+
 		strncat(path_to_debug_file, filename, 200);
 
 		//fprintf(stderr, "Using %s as path to debug log.\n", path_to_debug_file);

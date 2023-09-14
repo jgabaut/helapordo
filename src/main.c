@@ -32,6 +32,9 @@ int main(int argc, char** argv) {
 	#ifndef _WIN32
 	gameloop(argc, argv);
 	#else
+	printf("\n  UserProfile: { %s }\n",getenv("UserProfile"));
+	printf("  HomeDrive: { %s }\n",getenv("HomeDrive"));
+	printf("  HomePath: { %s }\n",getenv("HomePath"));
 	char* whoami;
   	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 	printTitle();
