@@ -20,6 +20,7 @@ void printGlobVars(void) {
 	printf("  G_DOTUTORIAL_ON: { %i }\n",G_DOTUTORIAL_ON);
 }
 
+#ifdef _WIN32
 /**
  * Prints Windows envvars to stdout.
  */
@@ -35,6 +36,7 @@ void printWin_EnvVars(void) {
 	printf("  Number_Of_Processors: { %s }\n",getenv("Number_Of_Processors"));
 	printf("  OS: { %s }\n",getenv("OS"));
 }
+#endif
 
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().

@@ -16,7 +16,10 @@
 #include "game_core.h"
 
 void printGlobVars(void);
+
+#ifdef _WIN32
 void printWin_EnvVars(void);
+#endif
 
 void red(void);
 void lightRed(void);
