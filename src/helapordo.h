@@ -197,7 +197,11 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls);
 
 int dropArtifact(Fighter* player);
 
+int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls);
+
 int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls);
+
+int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls);
 
 int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* kls);
 

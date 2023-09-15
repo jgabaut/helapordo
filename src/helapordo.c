@@ -162,6 +162,13 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 				log_tag("debug_log.txt","[CRITICAL]","Room pointer was null in turnOP(OP_FIGHT)");
 				exit(EXIT_FAILURE);
 			}
+			if (foe_op == FOE_OP_INVALID) {
+				log_tag("debug_log.txt","[CRITICAL]","foe_op was FOE_OP_INVALID in turnOP(OP_FIGHT)");
+				exit(EXIT_FAILURE);
+			} else if (foe_op < 0 || foe_op > FOETURNOP_MAX) {
+				log_tag("debug_log.txt","[CRITICAL]","foe_op was invalid in turnOP(OP_FIGHT): [%i]",foe_op);
+				exit(EXIT_FAILURE);
+			}
 			room_index = room->index;
 			if (room->class == ENEMIES && enemy == NULL) {
 				log_tag("debug_log.txt","[ERROR]","Enemy pointer was null in turnOP(OP_FIGHT) for ENEMIES room.");
@@ -178,14 +185,14 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 					enemy_index = enemy->index;
 					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (%i) (OP_FIGHT), isBoss == 0", enemy->index);
 					isBoss = 0;
-					res = OP_res_from_fightResult(fight(actor, enemy, notify_win, kls));
+					res = OP_res_from_fightResult(defer_fight_enemy(actor, enemy, foe_op, notify_win, kls));
 				}
 				break;
 				case BOSS: {
 					enemy_index = 0;
 					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (0) (OP_FIGHT), isBoss == 1");
 					isBoss = 1;
-					res = OP_res_from_fightResult(boss_fight(actor, boss, path, notify_win, kls));
+					res = OP_res_from_fightResult(defer_fight_boss(actor, boss, path, foe_op, notify_win, kls));
 				}
 				break;
 				default: {
@@ -4368,6 +4375,27 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 }
 
 /**
+ * Takes a Fighter and a Enemy pointers and calls fight().
+ * @see Fighter
+ * @see Enemy
+ * @see fight()
+ * @param player The Fighter pointer at hand.
+ * @param e The Enemy pointer at hand.
+ * @param foe_op The foeTurnOption_OP for the foe.
+ * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
+ */
+int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls) {
+	fightResult res = FIGHTRES_NO_DMG;
+
+	log_tag("debug_log.txt","[TODO]","Deferring enemy fight!");
+
+	res = fight(player,e,notify_win,kls);
+
+	return res;
+}
+
+/**
  * Takes a Fighter, a Boss and a Path pointers and compares fighters stats to determine who gets damaged and returns the fightStatus value.
  * Prints notifications to the passed WINDOW pointer.
  * On boss death, we call dropConsumable, dropEquip and dropArtifact.
@@ -4658,6 +4686,27 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 		//We give 1 to obtain the better equip generation used for beasts
 		dropEquip(player,1,notify_win,kls);
 	}
+
+	return res;
+}
+
+/**
+ * Takes a Fighter and a Boss pointers and calls boss_fight().
+ * @see Fighter
+ * @see Boss
+ * @see boss_fight()
+ * @param player The Fighter pointer at hand.
+ * @param b The Boss pointer at hand.
+ * @param foe_op The foeTurnOption_OP for the foe.
+ * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
+ */
+int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls) {
+	fightResult res = FIGHTRES_NO_DMG;
+
+	log_tag("debug_log.txt","[TODO]","Deferring boss fight!");
+
+	res = boss_fight(player,b,p,notify_win,kls);
 
 	return res;
 }
