@@ -35,6 +35,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 	if (save_file == NULL) log_tag("debug_log.txt","[WARN]","turnOP_args->(save_file) was NULL");
 	WINDOW* notify_win = args->notify_win;
 	if (notify_win == NULL) log_tag("debug_log.txt","[WARN]","turnOP_args->(notify_win) was NULL");
+	foeTurnOption_OP foe_op = args->foe_op;
+	if (foe_op == FOE_OP_INVALID ) {
+		log_tag("debug_log.txt","[WARN]","turnOP_args->(foe_op) was FOE_OP_INVALID");
+	} else if ( foe_op < 0 || foe_op > FOETURNOP_MAX) {
+		log_tag("debug_log.txt","[ERROR]","turnOP_args->(foe_op) was invalid: [%i]", foe_op);
+		kls_free(default_kls);
+		kls_free(temporary_kls);
+		exit(EXIT_SUCCESS);
+	}
 
 	int isBoss = -1;
 	int room_index = -1;
