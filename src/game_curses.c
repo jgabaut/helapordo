@@ -3820,8 +3820,9 @@ int handleRogueMenu(Gamestate* gmst, Path* p, Fighter* player, Room* room, loadI
 	FILE* dummy_savefile = NULL;
 	FILE* save_file;
 	WINDOW* dummy_notify_win = NULL;
+	foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(gmst, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gmst, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls, dummy_foe_op);
 
 	//Strings for turn menu choices
  	char *choices[] = {

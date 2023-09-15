@@ -10054,7 +10054,8 @@ void gameloop(int argc, char** argv){
 		FILE* fakesavefile = NULL;
 		WINDOW* fakenotifywin = NULL;
 		Gamestate* fakegmst = NULL;
-		turnOP_args* savepick_turn_args = init_turnOP_args(fakegmst,player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &savepick_kls);
+		foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
+		turnOP_args* savepick_turn_args = init_turnOP_args(fakegmst,player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &savepick_kls, fake_foe_op);
  		char *savepick_choices[] = {
 			"New game",
 			"Load save",
@@ -10303,7 +10304,8 @@ void gameloop(int argc, char** argv){
 			FILE* fakesavefile = NULL;
 			WINDOW* fakenotifywin = NULL;
 			Gamestate* fakegmst = NULL;
-			turnOP_args* loading_room_turn_args = init_turnOP_args(fakegmst, player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gamestate_kls);
+			foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
+			turnOP_args* loading_room_turn_args = init_turnOP_args(fakegmst, player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gamestate_kls, fake_foe_op);
 			FILE* save_file;
 			char path_to_savefile[1000];
 			char static_path[500];

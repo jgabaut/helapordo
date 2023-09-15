@@ -63,7 +63,7 @@ void usage(char* progname);
 void log_tag(char* filename, char* header, const char* format, ...);
 void log_OP(turnOption_OP op);
 
-turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls);
+turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls, foeTurnOption_OP foe_op);
 
 saveType saveTypeFrom_string(char* s);
 char* stringFrom_HLP_Region_Type(HLP_Region_Type t);

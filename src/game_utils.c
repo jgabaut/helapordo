@@ -288,8 +288,9 @@ void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* pa
  * @param save_file The FILE pointer to assign to turnOP_args->save_file.
  * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
  * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
+ * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
  */
-turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls) {
+turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls, foeTurnOption_OP foe_op) {
 	Koliseo_Temp tkls = *t_kls;
 	log_tag("debug_log.txt","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
 	kls_log("DEBUG","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
@@ -305,6 +306,7 @@ turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room*
 	res->save_file = save_file;
 	res->notify_win = notify_win;
 	res->t_kls = t_kls;
+	res->foe_op = foe_op;
 
 	return res;
 }

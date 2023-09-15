@@ -1760,6 +1760,7 @@ typedef struct {
 	WINDOW* notify_win; /**< Pointer to notification window for OP*/
 	Koliseo_Temp* t_kls; /**< Pointer to Koliseo_Temp for OP*/
 	Gamestate* gmst; /**< Pointer to Gamestate for OP*/
+	foeTurnOption_OP foe_op; /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
 } turnOP_args;
 
 /**

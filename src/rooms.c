@@ -29,8 +29,9 @@ int handleRoom_Home(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 	FILE* save_file;
 	FILE* autosave_file;
 	WINDOW* dummy_notify_win = NULL;
+	foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls, dummy_foe_op);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -360,9 +361,10 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 	Enemy* args_enemy = NULL;
 	FILE* args_save_file = NULL;
 	WINDOW* args_notify_win = NULL;
+	foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
 
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, args_enemy, dummy_boss, args_save_file, args_notify_win, t_kls, dummy_foe_op);
 
 	//Strings for turn menu choices
  	char *choices[] = {
@@ -1222,9 +1224,10 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 	Enemy* dummy_enemy = NULL;
 	FILE* args_save_file = NULL;
 	WINDOW* args_notify_win = NULL;
+	foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
 	int isBoss = 1;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy, args_boss, args_save_file, args_notify_win, t_kls, dummy_foe_op);
 
 	//Strings for turn menu choices
  	char *choices[] = {
