@@ -129,6 +129,10 @@ foeTurnOption_OP foeTurnOP_from_foeTurnOption(foeTurnOption ft) {
 			res = FOE_OP_SPECIAL;
 		}
 		break;
+		case FOE_IDLE: {
+			res = FOE_OP_IDLE;
+		}
+		break;
 		default: {
 			//FIXME:
 			//Signal error right here?
