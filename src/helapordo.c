@@ -11178,149 +11178,210 @@ void gameloop(int argc, char** argv){
  * @param argv Array of strings with argc - 1 values.
  */
 void gameloop_Win(int argc, char** argv) {
-    int option;
 	char* whoami;
-  	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
-	while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsa")) != -1) {
-		switch (option) {
-			case 'd': {
-				#ifndef HELAPORDO_DEBUG_ACCESS
-				#else
-				G_DEBUG_ON += 1;
-				G_LOG_ON = 1;
-				#endif
+	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+	do {
+		default_kls = kls_new(KLS_DEFAULT_SIZE*8);
+		temporary_kls = kls_new(KLS_DEFAULT_SIZE*8);
+		char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),None,"progname",whoami);
+		strcpy(kls_progname,whoami);
+		#ifndef HELAPORDO_DEBUG_LOG
+		#else
+		FILE *debug_file = NULL;
+		FILE *OPS_debug_file = NULL;
+		#endif
+		// Parse command-line options
+		int option;
+		loadInfo* load_info = (loadInfo*) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo, "loadInfo","loadInfo");
+
+		load_info->is_new_game = 1; //By default we do a new game
+		load_info->enemy_index = -1;
+		load_info->total_foes = -1;
+		load_info->save_type = -1;
+		int loaded_roomtotalenemies = -1;
+		int loaded_roomindex = -1;
+		load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
+		load_info->ptr_to_roomindex = &loaded_roomindex;
+		while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsa")) != -1) {
+			switch (option) {
+				case 'd': {
+					#ifndef HELAPORDO_DEBUG_ACCESS
+					#else
+					G_DEBUG_ON += 1;
+					G_LOG_ON = 1;
+					#endif
+				}
+				break;
+				case 'r': {
+					G_DEBUG_ROOMTYPE_ON += 1;
+				}
+				break;
+				case 'E': {
+					G_DEBUG_ENEMYTYPE_ON += 1;
+				}
+				break;
+				case 'L': {
+					G_LOG_ON = 1;
+				}
+				break;
+				break;
+				case 'G': {
+					G_GODMODE_ON = 1;
+				}
+				break;
+				case 'Q': {
+					G_FASTQUIT_ON = 1;
+				}
+				break;
+				case 'X': {
+					G_EXPERIMENTAL_ON = 1;
+				}
+				break;
+				case 'a': {
+					GS_AUTOSAVE_ON = 0;
+				}
+				break;
+				case 's': {
+					GAMEMODE = Story;
+				}
+				break;
+				case 'R': {
+					GAMEMODE = Rogue;
+				}
+				break;
+				break;
+				case 'h': {
+					usage(whoami);
+					exit(EXIT_SUCCESS);
+				}
+				break;
+				case 'T': {
+					G_DOTUTORIAL_ON = 1;
+					handleTutorial();
+					usage(whoami);
+					exit(EXIT_SUCCESS);
+				}
+				break;
+				case 't': {
+					//Test all colors
+					printFormattedVersion(whoami);
+					printf("Using:\n");
+					printf("  \'animate\' :\n    s4c/animate.h    ");
+					S4C_ECHOVERSION();
+					printf("[DEBUG]    Testing terminal color capabilities.\n");
+					napms(800);
+					display_colorpairs();
+					exit(EXIT_SUCCESS);
+				}
+				break;
+				case 'v': {
+					printVersion();
+					exit(EXIT_SUCCESS);
+				}
+				case '?': {
+					fprintf(stderr,"Invalid option: %c\n Check your arguments.\n", option);
+					usage(whoami);
+					// Handle invalid options
+					exit(EXIT_FAILURE);
+				}
+				break;
+				default: {
+					// Should never get here
+					fprintf(stderr,"Invalid option: %c\n, bad usage.\n", option);
+					exit(EXIT_FAILURE);
+				}
+				break;
 			}
-			break;
-			case 'r': {
-				G_DEBUG_ROOMTYPE_ON += 1;
-			}
-			break;
-			case 'E': {
-				G_DEBUG_ENEMYTYPE_ON += 1;
-			}
-			break;
-			case 'L': {
-				G_LOG_ON = 1;
-			}
-			break;
-			break;
-			case 'G': {
-				G_GODMODE_ON = 1;
-			}
-			break;
-			case 'Q': {
-				G_FASTQUIT_ON = 1;
-			}
-			break;
-			case 'X': {
-				G_EXPERIMENTAL_ON = 1;
-			}
-			break;
-			case 'a': {
-				GS_AUTOSAVE_ON = 0;
-			}
-			break;
-			case 's': {
-				GAMEMODE = Story;
-			}
-			break;
-			case 'R': {
-				GAMEMODE = Rogue;
-			}
-			break;
-			break;
-			case 'h': {
-				usage(whoami);
-				exit(EXIT_SUCCESS);
-			}
-			break;
-			case 'T': {
-				G_DOTUTORIAL_ON = 1;
-				handleTutorial();
-				usage(whoami);
-				exit(EXIT_SUCCESS);
-			}
-			break;
-			case 't': {
-				//Test all colors
-				printFormattedVersion(whoami);
-				printf("Using:\n");
-				printf("  \'animate\' :\n    s4c/animate.h    ");
-				S4C_ECHOVERSION();
-				printf("[DEBUG]    Testing terminal color capabilities.\n");
-				napms(800);
-				display_colorpairs();
-				exit(EXIT_SUCCESS);
-			}
-			break;
-			case 'v': {
-				printVersion();
-				exit(EXIT_SUCCESS);
-			}
-			case '?': {
-				fprintf(stderr,"Invalid option: %c\n Check your arguments.\n", option);
-				usage(whoami);
-				// Handle invalid options
+		}
+
+		#ifndef HELAPORDO_DEBUG_LOG
+		#else
+		// Open log file if log flag is set and reset it
+		if (G_LOG_ON == 1) {
+			KOLISEO_DEBUG = 1;
+			char path_to_debug_file[600];
+			char path_to_kls_debug_file[600];
+			char path_to_OPS_debug_file[600];
+			char static_path[500];
+			// Set static_path value to the correct static dir path
+			resolve_staticPath(static_path);
+
+			//Truncate "debug_log.txt"
+			sprintf(path_to_debug_file,"%s\\%s",static_path,"debug_log.txt");
+			debug_file = fopen(path_to_debug_file, "w");
+			if (!debug_file) {
+				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
+				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
 				exit(EXIT_FAILURE);
 			}
-			break;
-			default: {
-				// Should never get here
-				fprintf(stderr,"Invalid option: %c\n, bad usage.\n", option);
+			if (KOLISEO_DEBUG == 1) {
+				sprintf(path_to_kls_debug_file,"%s\\%s",static_path,"kls_debug_log.txt");
+				KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
+				if (!KOLISEO_DEBUG_FP) {
+					endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
+					fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
+					exit(EXIT_FAILURE);
+				}
+				fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
+			}
+			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
+  			print_kls_2file(debug_file,default_kls);
+			fprintf(debug_file,"[DEBUG]    --Temporary kls debug info:--  \n");
+  			print_kls_2file(debug_file,temporary_kls);
+			fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
+			fclose(debug_file);
+
+			//Lay debug info
+			log_tag("debug_log.txt","[DEBUG]","G_DEBUG_ON == (%i)",G_DEBUG_ON);
+			//FIXME we should have same behaviour as gameloop(), and actually log kls_progname...
+			//Doesn't matter for now, kls_progname is declared later
+			log_tag("debug_log.txt","[DEBUG]","whoami == (%s)",whoami);
+			log_tag("debug_log.txt","[DEBUG]","G_LOG_ON == (%i)",G_LOG_ON);
+			log_tag("debug_log.txt","[DEBUG]","small DEBUG FLAG ASSERTED");
+			log_tag("debug_log.txt","[DEBUG]","[Current position in default_kls] [pos: %lli]\n",kls_get_pos(default_kls));
+
+			//Truncate OPS_LOGFILE
+			sprintf(path_to_OPS_debug_file,"%s\\%s",static_path,OPS_LOGFILE);
+			OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
+			if (!OPS_debug_file) {
+				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
+				fprintf(stderr,"[ERROR]    Can't open OPS logfile (%s\\%s).\n", static_path, OPS_LOGFILE);
 				exit(EXIT_FAILURE);
 			}
-			break;
+			fprintf(OPS_debug_file,"[OPLOG]    --New game--  \n");
+			fclose(OPS_debug_file);
+			log_tag("debug_log.txt","[DEBUG]","Truncated [%s]",OPS_LOGFILE);
+			log_Win_EnvVars();
+			log_tag("debug_log.txt","[WIN32-DEBUG]","Printing title.");
+    		}
+		#endif
+		printTitle();
+		printf("\n\n\n\n\t\t\t\tSTART\n\n");
+		if (G_DEBUG_ON) {
+			printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
 		}
-	}
+		printf("\t\t\t\t\t\t");
+		printFormattedVersion(whoami);
+		printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
+		printf("\n  Press Enter to proceed.\n");
+		scanf("%*c");
+		system("cls");
+		printGlobVars();
+		printWin_EnvVars();
+		printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
+		printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
+		printf("  You move with the arrow keys.\n\n");
+		scanf("%*c");
+		test_floors();
+		kls_free(temporary_kls);
+		kls_free(default_kls);
+	} while (retry());
 
-	default_kls = kls_new(KLS_DEFAULT_SIZE*8);
-  	temporary_kls = kls_new(KLS_DEFAULT_SIZE*8);
-	if (G_LOG_ON == 1) {
-		FILE* debug_file = NULL;
-		char path_to_debug_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
-
-		//Truncate "debug_log.txt"
-		sprintf(path_to_debug_file,"%s\\%s",static_path,"debug_log.txt");
-		debug_file = fopen(path_to_debug_file, "w");
-		if (!debug_file) {
-			fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
-			exit(EXIT_FAILURE);
-		}
-		fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
-		fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
-  		print_kls_2file(debug_file,default_kls);
-		fprintf(debug_file,"[DEBUG]    --Temporary kls debug info:--  \n");
-  		print_kls_2file(debug_file,temporary_kls);
-		fprintf(debug_file,"[DEBUG]    --Closing header for new game.--  \n");
-		fclose(debug_file);
-
-		log_Win_EnvVars();
-
-		log_tag("debug_log.txt","[WIN32-DEBUG]","Printing title.");
-	}
-
-	printTitle();
-	printf("\n\n\n\n\t\t\t\tSTART\n\n");
-	if (G_DEBUG_ON) {
-		printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
-	}
-	printf("\t\t\t\t\t\t");
-        printFormattedVersion(whoami);
-	printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
-	printf("\n  Press Enter to proceed.\n");
-	scanf("%*c");
-	system("cls");
-	printGlobVars();
-	printWin_EnvVars();
-	printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
-	printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
-	printf("  You move with the arrow keys.\n\n");
-	scanf("%*c");
-	test_floors();
-	kls_free(temporary_kls);
-	kls_free(default_kls);
+	//TODO
+	//What is this?
+	printf("\n\n\t\tTHANKS 4 PLAYING!\n\n");
+	log_tag("debug_log.txt","[DEBUG]","End of program.");
+	exit(0);
 }
-#endif
+#endif //End gameloop_Win()

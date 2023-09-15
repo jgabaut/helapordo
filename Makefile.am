@@ -30,7 +30,7 @@ AM_LDFLAGS = -lm
 if DEBUG_BUILD
 AM_LDFLAGS += -ggdb -O0
 KLS_LDFLAGS = -ggdb -O0
-HELAPORDO_CFLAGS += -DHELAPORDO_DEBUG_LOG -DHELAPORDO_DEBUG_ACCESS
+HELAPORDO_CFLAGS += -DHELAPORDO_DEBUG_LOG -DHELAPORDO_DEBUG_ACCESS -DKLS_DEBUG_CORE
 else
 # Linker flag to strip symbols
 AM_LDFLAGS += -s -O2
@@ -63,9 +63,9 @@ endif
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/palette.c:
-	@echo -en "\033[1;34m[Makefile]\e[0m    Using \033[1;33mpython\e[0m to generate C [\033[1;34m./src/palette.c\e[0m and \033[1;34m./src/palette.h\e[0m] files from \033[1;35m[$(PALETTE_PATH)]:\e[0m  "
-	python ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) .. > ./src/palette.c
-	python ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) .. > ./src/palette.h
+	@echo -en "\033[1;34m[Makefile]\e[0m    Using \033[1;33mpython3\e[0m to generate C [\033[1;34m./src/palette.c\e[0m and \033[1;34m./src/palette.h\e[0m] files from \033[1;35m[$(PALETTE_PATH)]:\e[0m  "
+	python3 ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) .. > ./src/palette.c
+	python3 ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) .. > ./src/palette.h
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for object files
