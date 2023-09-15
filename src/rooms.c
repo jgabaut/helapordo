@@ -851,7 +851,7 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 				//Foe picks its turn
 				//
 				args->foe_op = foeTurnOP_from_foeTurnOption(enemyTurnPick(e,player));
-				log_tag("debug_log.txt","[FOETURN]","foePick was: [ %s ]",stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(args->foe_op)));
+				log_tag("debug_log.txt","[FOETURN]","foePick was: [ %s ]",stringFromFoeTurnOP(args->foe_op));
 
 				//TODO:
 				//Handle FIGHT as turnOP(OP_FIGHT)
@@ -1627,7 +1627,7 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 			//Foe picks its turn
 			//
 			args->foe_op = foeTurnOP_from_foeTurnOption(bossTurnPick(b,player));
-			log_tag("debug_log.txt","[FOETURN]","foePick was: [ %s ]",stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(args->foe_op)));
+			log_tag("debug_log.txt","[FOETURN]","foePick was: [ %s ]",stringFromFoeTurnOP(args->foe_op));
 			//TODO:
 			//Handle FIGHT as turnOP(OP_FIGHT)
 			fightStatus = turnOP(OP_FIGHT,args,kls,t_kls);
