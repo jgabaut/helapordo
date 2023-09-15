@@ -4388,7 +4388,34 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls) {
 	fightResult res = FIGHTRES_NO_DMG;
 
-	log_tag("debug_log.txt","[TODO]","Deferring enemy fight!");
+	switch (foe_op) {
+		case FOE_OP_INVALID: {
+			log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
+			kls_free(default_kls);
+			kls_free(temporary_kls);
+			exit(EXIT_FAILURE);
+		}
+		break;
+		case FOE_OP_IDLE: {
+			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+		}
+		break;
+		case FOE_OP_FIGHT: {
+			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+		}
+		break;
+		case FOE_OP_SPECIAL: {
+			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
+		}
+		break;
+		default: {
+			log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+			kls_free(default_kls);
+			kls_free(temporary_kls);
+			exit(EXIT_FAILURE);
+		}
+		break;
+	}
 
 	res = fight(player,e,notify_win,kls);
 
@@ -4704,7 +4731,34 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls) {
 	fightResult res = FIGHTRES_NO_DMG;
 
-	log_tag("debug_log.txt","[TODO]","Deferring boss fight!");
+	switch (foe_op) {
+		case FOE_OP_INVALID: {
+			log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
+			kls_free(default_kls);
+			kls_free(temporary_kls);
+			exit(EXIT_FAILURE);
+		}
+		break;
+		case FOE_OP_IDLE: {
+			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+		}
+		break;
+		case FOE_OP_FIGHT: {
+			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+		}
+		break;
+		case FOE_OP_SPECIAL: {
+			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
+		}
+		break;
+		default: {
+			log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+			kls_free(default_kls);
+			kls_free(temporary_kls);
+			exit(EXIT_FAILURE);
+		}
+		break;
+	}
 
 	res = boss_fight(player,b,p,notify_win,kls);
 
