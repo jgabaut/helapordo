@@ -11202,6 +11202,7 @@ void gameloop_Win(int argc, char** argv) {
 		int loaded_roomindex = -1;
 		load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
 		load_info->ptr_to_roomindex = &loaded_roomindex;
+
 		while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsa")) != -1) {
 			switch (option) {
 				case 'd': {
@@ -11270,7 +11271,8 @@ void gameloop_Win(int argc, char** argv) {
 					S4C_ECHOVERSION();
 					printf("[DEBUG]    Testing terminal color capabilities.\n");
 					napms(800);
-					display_colorpairs();
+					//TODO Win term color test?
+					//display_colorpairs();
 					exit(EXIT_SUCCESS);
 				}
 				break;
