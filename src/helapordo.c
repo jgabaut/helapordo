@@ -4826,7 +4826,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_IDLE: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(b->class));
+					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
 				}
 				break;
 				case FOE_OP_FIGHT: {
