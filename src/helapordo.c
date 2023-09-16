@@ -4412,10 +4412,16 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				break;
 				case FOE_OP_FIGHT: {
 					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+					//TODO
+					//Implement enemy fight function
+					//res = enemy_attack(e,player,notify_win,kls);
 				}
 				break;
 				case FOE_OP_SPECIAL: {
 					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
+					//TODO
+					//Implement enemy special function
+					//res = enemy_attack_special(e,player,notify_win,kls);
 				}
 				break;
 				default: {
@@ -4825,10 +4831,16 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				break;
 				case FOE_OP_FIGHT: {
 					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+					//TODO
+					//Implement boss fight function
+					//res = boss_attack(b,player,p,notify_win,kls);
 				}
 				break;
 				case FOE_OP_SPECIAL: {
 					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
+					//TODO
+					//Implement boss special function
+					//res = boss_attack_special(b,player,p,notify_win,kls);
 				}
 				break;
 				default: {
