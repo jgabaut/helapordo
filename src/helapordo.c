@@ -4386,39 +4386,110 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
  * @param kls The Koliseo used for allocations.
  */
 int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls) {
+
+	//FIXME
+	//Is it okay to return just one result, when having 2 interactions that could go differently?
 	fightResult res = FIGHTRES_NO_DMG;
 
-	switch (foe_op) {
-		case FOE_OP_INVALID: {
-			log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
-			kls_free(default_kls);
-			kls_free(temporary_kls);
-			exit(EXIT_FAILURE);
+	int player_goes_first = (player->vel >= e->vel ? 1 : 0);
+
+	if (player_goes_first) {
+		res = fight(player,e,notify_win,kls);
+		//Check res and apply second action if needed
+		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+			switch (foe_op) {
+				case FOE_OP_INVALID: {
+					log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
+					kls_free(default_kls);
+					kls_free(temporary_kls);
+					exit(EXIT_FAILURE);
+				}
+				break;
+				case FOE_OP_IDLE: {
+					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+				}
+				break;
+				case FOE_OP_FIGHT: {
+					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+				}
+				break;
+				case FOE_OP_SPECIAL: {
+					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
+				}
+				break;
+				default: {
+					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+					kls_free(default_kls);
+					kls_free(temporary_kls);
+					exit(EXIT_FAILURE);
+				}
+				break;
+			} // End foe_op switch
+
+			//TODO
+			//Check second turn act res?
+			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+
+			return res;
+		} else if (res == FIGHTRES_DEATH) {
+			return res;
+		} else if (res == FIGHTRES_KILL_DONE) {
+			return res;
 		}
-		break;
-		case FOE_OP_IDLE: {
-			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+	} else {
+		//Foe acts first
+		switch (foe_op) {
+			case FOE_OP_INVALID: {
+				log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
+				kls_free(default_kls);
+				kls_free(temporary_kls);
+				exit(EXIT_FAILURE);
+			}
+			break;
+			case FOE_OP_IDLE: {
+				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+			}
+			break;
+			case FOE_OP_FIGHT: {
+				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+				//TODO
+				//Implement enemy fight function
+				//res = enemy_attack(e,player,notify_win,kls);
+			}
+			break;
+			case FOE_OP_SPECIAL: {
+				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
+				//TODO
+				//Implement enemy special function
+				//res = enemy_attack_special(e,player,notify_win,kls);
+			}
+			break;
+			default: {
+				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+				kls_free(default_kls);
+				kls_free(temporary_kls);
+				exit(EXIT_FAILURE);
+			}
+			break;
+		} // End foe_op switch
+
+		//Check res and apply second action if needed
+		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+			res = fight(player,e,notify_win,kls);
+
+			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			//TODO
+			//Check second turn act res?
+			return res;
+
+		} else if (res == FIGHTRES_DEATH) {
+			return res;
+		} else if (res == FIGHTRES_KILL_DONE) {
+			return res;
 		}
-		break;
-		case FOE_OP_FIGHT: {
-			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
-		}
-		break;
-		case FOE_OP_SPECIAL: {
-			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
-		}
-		break;
-		default: {
-			log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
-			kls_free(default_kls);
-			kls_free(temporary_kls);
-			exit(EXIT_FAILURE);
-		}
-		break;
 	}
-
-	res = fight(player,e,notify_win,kls);
-
 	return res;
 }
 
@@ -4729,38 +4800,110 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
  * @param kls The Koliseo used for allocations.
  */
 int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls) {
+	//FIXME
+	//Is it okay to return just one result, when having 2 interactions that could go differently?
 	fightResult res = FIGHTRES_NO_DMG;
 
-	switch (foe_op) {
-		case FOE_OP_INVALID: {
-			log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
-			kls_free(default_kls);
-			kls_free(temporary_kls);
-			exit(EXIT_FAILURE);
-		}
-		break;
-		case FOE_OP_IDLE: {
-			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
-		}
-		break;
-		case FOE_OP_FIGHT: {
-			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
-		}
-		break;
-		case FOE_OP_SPECIAL: {
-			log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
-		}
-		break;
-		default: {
-			log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
-			kls_free(default_kls);
-			kls_free(temporary_kls);
-			exit(EXIT_FAILURE);
-		}
-		break;
-	}
+	int player_goes_first = (player->vel >= b->vel ? 1 : 0);
 
-	res = boss_fight(player,b,p,notify_win,kls);
+	if (player_goes_first) {
+		res = boss_fight(player,b,p,notify_win,kls);
+		//Check res and apply second action if needed
+		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+			switch (foe_op) {
+				case FOE_OP_INVALID: {
+					log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
+					kls_free(default_kls);
+					kls_free(temporary_kls);
+					exit(EXIT_FAILURE);
+				}
+				break;
+				case FOE_OP_IDLE: {
+					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(b->class));
+				}
+				break;
+				case FOE_OP_FIGHT: {
+					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+				}
+				break;
+				case FOE_OP_SPECIAL: {
+					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
+				}
+				break;
+				default: {
+					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+					kls_free(default_kls);
+					kls_free(temporary_kls);
+					exit(EXIT_FAILURE);
+				}
+				break;
+			} // End foe_op switch
+
+			//TODO
+			//Check second turn act res?
+			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+
+			return res;
+		} else if (res == FIGHTRES_DEATH) {
+			return res;
+		} else if (res == FIGHTRES_KILL_DONE) {
+			return res;
+		}
+	} else {
+		//Foe acts first
+		switch (foe_op) {
+			case FOE_OP_INVALID: {
+				log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
+				kls_free(default_kls);
+				kls_free(temporary_kls);
+				exit(EXIT_FAILURE);
+			}
+			break;
+			case FOE_OP_IDLE: {
+				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+			}
+			break;
+			case FOE_OP_FIGHT: {
+				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+				//TODO
+				//Implement boss fight function
+				//res = boss_attack(b,player,p,notify_win,kls);
+			}
+			break;
+			case FOE_OP_SPECIAL: {
+				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
+				//TODO
+				//Implement boss special function
+				//res = boss_attack_special(b,player,p,notify_win,kls);
+			}
+			break;
+			default: {
+				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+				kls_free(default_kls);
+				kls_free(temporary_kls);
+				exit(EXIT_FAILURE);
+			}
+			break;
+		} // End foe_op switch
+
+		//Check res and apply second action if needed
+		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+
+		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+			res = boss_fight(player,b,p,notify_win,kls);
+
+			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			//TODO
+			//Check second turn act res?
+			return res;
+
+		} else if (res == FIGHTRES_DEATH) {
+			return res;
+		} else if (res == FIGHTRES_KILL_DONE) {
+			return res;
+		}
+	}
 
 	return res;
 }
