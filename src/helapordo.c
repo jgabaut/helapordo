@@ -4374,6 +4374,22 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 	return res;
 }
 
+int enemy_attack(Enemy* e, Fighter* target, WINDOW* notify_win, Koliseo* kls) {
+	fightResult res = FIGHTRES_NO_DMG;
+
+	//TODO
+	//Implementation similar to fight(), as a base idea
+	//Should return fightResult values, while keeping the perspective on the Fighter, as in:
+	//
+	//	FIGHTRES_DEATH means the Fighter died
+	//	FIGHTRES_KILL_DONE means the Enemy died
+	//	FIGHTRES_DMG_DEALT means the Fighter inflicted damage
+	//	FIGHRES_DMG_TAKEN means the Fighter received damage
+	//
+
+	return res;
+}
+
 /**
  * Takes a Fighter and a Enemy pointers and calls fight().
  * @see Fighter
@@ -4389,6 +4405,8 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 	char msg[200];
 	//FIXME
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
+	//
+	//Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
 	fightResult res = OP_RES_NO_DMG;
 
 	int player_goes_first = (player->vel >= e->vel ? 1 : 0);
@@ -4802,6 +4820,21 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 	return res;
 }
 
+int boss_attack(Boss* b, Fighter* target, Path* p, WINDOW* notify_win, Koliseo* kls) {
+	fightResult res = FIGHTRES_NO_DMG;
+
+	//TODO
+	//Implementation similar to boss_fight(), as a base idea
+	//Should return fightResult values, while keeping the perspective on the Fighter, as in:
+	//
+	//	FIGHTRES_DEATH means the Fighter died
+	//	FIGHTRES_KILL_DONE means the Boss died
+	//	FIGHTRES_DMG_DEALT means the Fighter inflicted damage
+	//	FIGHRES_DMG_TAKEN means the Fighter received damage
+
+	return res;
+}
+
 /**
  * Takes a Fighter and a Boss pointers and calls boss_fight().
  * @see Fighter
@@ -4817,6 +4850,8 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 	char msg[200];
 	//FIXME
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
+	//
+	//Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
 	fightResult res = OP_RES_NO_DMG;
 
 	int player_goes_first = (player->vel >= b->vel ? 1 : 0);
