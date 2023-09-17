@@ -37,9 +37,9 @@ void knightSpecial_Slash(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, int 
 	}
 	f->energy -= costFromSpecial(f->class,KSlash);        //Reduce fighter energy
 	y += 1;
-	wattron(w, COLOR_PAIR(2));
+	wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	mvwprintw(w, y, x,"%s was deeply hurt.",victim);
-	wattroff(w, COLOR_PAIR(2));
+	wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
@@ -70,9 +70,9 @@ void knightSpecial_Cover(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, int 
 
 	y += 1;
 
-	wattron(w, COLOR_PAIR(2));
+	wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	mvwprintw(w, y, x,"+10 DEF");
-	wattroff(w, COLOR_PAIR(2));
+	wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
@@ -105,17 +105,17 @@ void knightSpecial_Armordrop(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, 
 
 		f->energy -= costFromSpecial(f->class,KArmordrop);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "+10 VEL    +2 ATK");
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		y += 1;
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "-10 DEF");
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	} else {
-		wattron(w, COLOR_PAIR(1));
-		mvwprintw(w, y, x, "%s is too exposed to drop his armor.\n\n",f->name);
-		wattroff(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
+		mvwprintw(w, y, x, "%s is too exposed to drop his armor.",f->name);
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -153,17 +153,17 @@ void knightSpecial_Berserk(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, in
 		        f->hp -= 2; //Deal damage
 			f->energy -= costFromSpecial(f->class,KBerserk);        //Reduce fighter energy
 			y += 1;
-			wattron(w, COLOR_PAIR(2));
+			wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(w, y, x, "%s was stunned and hurt!",victim);
-			wattroff(w, COLOR_PAIR(2));
+			wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		} else if (b->hp <= 2) {
-			wattron(w, COLOR_PAIR(1));
+			wattron(w, COLOR_PAIR(S4C_RED));
 			mvwprintw(w, y, x, "%s is weak and not impressionable.",victim);
-			wattroff(w, COLOR_PAIR(1));
+			wattroff(w, COLOR_PAIR(S4C_RED));
 		} else if (f->hp <= 2) {
-			wattron(w, COLOR_PAIR(1));
+			wattron(w, COLOR_PAIR(S4C_RED));
 			mvwprintw(w, y, x, "%s is too weak.",f->name);
-			wattroff(w, COLOR_PAIR(1));
+			wattroff(w, COLOR_PAIR(S4C_RED));
 		}
 
 	} else {	//Enemy
@@ -174,17 +174,17 @@ void knightSpecial_Berserk(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, in
 		        f->hp -= 2; //Deal damage
 			f->energy -= costFromSpecial(f->class,KBerserk);        //Reduce fighter energy
 			y += 1;
-			wattron(w, COLOR_PAIR(2));
+			wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(w, y, x, "%s was stunned and hurt!",victim);
-			wattroff(w, COLOR_PAIR(2));
+			wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		} else if (e->hp <= 2) {
-			wattron(w, COLOR_PAIR(1));
+			wattron(w, COLOR_PAIR(S4C_RED));
 			mvwprintw(w, y, x, "%s is weak and not impressionable.",victim);
-			wattroff(w, COLOR_PAIR(1));
+			wattroff(w, COLOR_PAIR(S4C_RED));
 		} else if (f->hp <= 2) {
-			wattron(w, COLOR_PAIR(1));
+			wattron(w, COLOR_PAIR(S4C_RED));
 			mvwprintw(w, y, x, "%s is too weak.",f->name);
-			wattroff(w, COLOR_PAIR(1));
+			wattroff(w, COLOR_PAIR(S4C_RED));
 		}
 	}
 }
@@ -222,9 +222,9 @@ void archerSpecial_Headshot(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, i
 		b->hp /= 1.75; //Deal damage
 		f->energy -= costFromSpecial(f->class,AHeadshot);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s got headshot!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	} else if (e->hp > 1) {
 		mvwprintw(w, y, x, "%s aims an arrow at %s's head!",f->name,victim);
@@ -232,13 +232,13 @@ void archerSpecial_Headshot(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, i
 		e->hp /= 2; //Deal damage
 		f->energy -= costFromSpecial(f->class,AHeadshot);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s got headshot!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else {
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "%s is weak already.",victim);
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -267,15 +267,15 @@ void archerSpecial_Quivercheck(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p
 			f->atk += 8; //Gain atk
 		f->energy -= costFromSpecial(f->class,AQuivercheck);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s found stronger arrows inside itself.",f->name);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	} else {
 		y += 1;
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "%s can't help but feel weak.",f->name);
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -318,9 +318,9 @@ void archerSpecial_Poisonshot(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p,
 		setCounter((Turncounter *)b->counters[POISON],4); //Give 4 turns of Poison status
 		f->energy -= costFromSpecial(f->class,APoisonshot);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s was hit and poisoned!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	} else if (e->hp > 1) { //Check if enemy has some hp
 		if (e->hp >= 4) {
@@ -333,15 +333,15 @@ void archerSpecial_Poisonshot(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p,
 		setCounter((Turncounter *)e->counters[POISON],4); //Give 4 turns of Poison status
 		f->energy -= costFromSpecial(f->class,APoisonshot);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s was hit and poisoned!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	} else {
 		y += 1;
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "%s is weak already.",victim);
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -384,9 +384,9 @@ void archerSpecial_Fireshot(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, i
 		setCounter((Turncounter *)b->counters[BURNED],3); //Give 3 turns of Burned status
 		f->energy -= costFromSpecial(f->class,AFireshot);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s was hit and set on fire!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else if (e->hp > 1) { //Check if enemy has some hp
 		if (e->hp >= 5) {
 			e->hp -= 4;
@@ -398,13 +398,13 @@ void archerSpecial_Fireshot(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, i
 		setCounter((Turncounter *)e->counters[BURNED],3); //Give 3 turns of Burned status
 		f->energy -= costFromSpecial(f->class,AFireshot);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s was hit and set on fire!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else {
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "%s's is weak already.",victim);
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -435,13 +435,13 @@ void mageSpecial_Fatewarp(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, int
 
 		f->energy -= costFromSpecial(f->class,MFatewarp);        //Reduce fighter energy
 		y += 2;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "+5 LUCK");
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else {
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "%s's fate is bright already.",f->name);
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -471,9 +471,9 @@ void mageSpecial_Powerup(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, int 
 
 	f->energy -= costFromSpecial(f->class,MPowerup);        //Reduce fighter energy
 	y += 1;
-	wattron(w, COLOR_PAIR(2));
+	wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	mvwprintw(w, y, x, "+5 ATK");
-	wattroff(w, COLOR_PAIR(2));
+	wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
@@ -514,9 +514,9 @@ void mageSpecial_Spellstrike(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, 
 
 		f->energy -= costFromSpecial(f->class,MSpellstrike);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s feels the spell!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	} else if (e->hp > 1 ) { //Check if enemy has some hp
 		if (e->hp >= 11 ) {
@@ -529,13 +529,13 @@ void mageSpecial_Spellstrike(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, 
 
 		f->energy -= costFromSpecial(f->class,MSpellstrike);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s feels the spell!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else {
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "%s's is weak already.",victim);
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -578,9 +578,9 @@ void mageSpecial_Flamering(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, in
 		setCounter((Turncounter *)b->counters[BURNED],3); //Give 3 turns of Burned status
 		f->energy -= costFromSpecial(f->class,MFlamering);        //Reduce fighter energy
 		y += 2;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s was set on fire!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 
 	} else if (e->hp > 1) { //Check if enemy has some hp
 		if (e->hp >= 5) {
@@ -593,13 +593,13 @@ void mageSpecial_Flamering(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p, in
 		setCounter((Turncounter *)e->counters[BURNED],3); //Give 3 turns of Burned status
 		f->energy -= costFromSpecial(f->class,MFlamering);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s was set on fire!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else {
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s's is weak already.",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	}
 }
 
@@ -637,9 +637,9 @@ void assassinSpecial_Grimdagger(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* 
 
 		f->energy -= costFromSpecial(f->class,XGrimdagger);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s is defenseless!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else if (e->hp > 1 && e->def >= 5) { //Check if enemy has some hp and defense
 
 		mvwprintw(w, y, x, "%s throws its dagger at %s's heart.",f->name,victim);
@@ -647,13 +647,13 @@ void assassinSpecial_Grimdagger(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* 
 
 		f->energy -= costFromSpecial(f->class,XGrimdagger);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s is defenseless!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else {
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "%s's is weak already.",victim);
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -693,13 +693,13 @@ void assassinSpecial_Leechknife(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* 
 
 			f->energy -= costFromSpecial(f->class,XLeechknife);        //Reduce fighter energy
 			y += 1;
-			wattron(w, COLOR_PAIR(2));
+			wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(w, y, x, "%s's health was sapped!",victim);
-			wattroff(w, COLOR_PAIR(2));
+			wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		} else {
-			wattron(w, COLOR_PAIR(2));
+			wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(w, y, x, "%s is feeling good enough.",f->name);
-			wattroff(w, COLOR_PAIR(2));
+			wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		}
 
 	} else if (e->hp >= 6 ) { //Check if enemy has some hp
@@ -711,18 +711,18 @@ void assassinSpecial_Leechknife(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* 
 
 			f->energy -= costFromSpecial(f->class,XLeechknife);        //Reduce fighter energy
 			y += 1;
-			wattron(w, COLOR_PAIR(2));
+			wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 			mvwprintw(w, y, x, "%s's health was sapped!",victim);
-			wattroff(w, COLOR_PAIR(2));
+			wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		} else {
-			wattron(w, COLOR_PAIR(2));
+			wattron(w, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 			mvwprintw(w, y, x, "%s is feeling good enough.",f->name);
-			wattroff(w, COLOR_PAIR(2));
+			wattroff(w, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		}
 	} else {
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(w, y, x, "%s's is too weak.",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	}
 }
 
@@ -754,17 +754,17 @@ void assassinSpecial_Disguise(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* p,
 		f->energy -= costFromSpecial(f->class,XDisguise);        //Reduce fighter energy
 
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "+8 DEF");
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		y += 1;
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "-2 VEL");
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	} else {
-		wattron(w, COLOR_PAIR(1));
+		wattron(w, COLOR_PAIR(S4C_RED));
 		mvwprintw(w, y, x, "%s is too weak to disguise.",f->name);
-		wattroff(w, COLOR_PAIR(1));
+		wattroff(w, COLOR_PAIR(S4C_RED));
 	}
 }
 
@@ -807,9 +807,9 @@ void assassinSpecial_Venomblade(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* 
 		setCounter((Turncounter *)b->counters[POISON],4); //Give 4 turns of Poison status
 		f->energy -= costFromSpecial(f->class,XVenomblade);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s was hit and poisoned!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else if (e->hp > 1) { //Check if enemy has some hp
 		if (e->hp >= 4) {
 			e->hp -= 3;
@@ -821,12 +821,12 @@ void assassinSpecial_Venomblade(WINDOW* w, Fighter* f, Enemy* e, Boss* b, Path* 
 		setCounter((Turncounter *)e->counters[POISON],4); //Give 4 turns of Poison status
 		f->energy -= costFromSpecial(f->class,XVenomblade);        //Reduce fighter energy
 		y += 1;
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 		mvwprintw(w, y, x, "%s was hit and poisoned!",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
 	} else {
-		wattron(w, COLOR_PAIR(2));
+		wattron(w, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 		mvwprintw(w, y, x, "%s's is weak already.",victim);
-		wattroff(w, COLOR_PAIR(2));
+		wattroff(w, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 	}
 }

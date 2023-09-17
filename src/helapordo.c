@@ -3357,7 +3357,7 @@ foeTurnOption enemyTurnPick(Enemy* e, Fighter* f) {
 	foeTurnOption pick = FOE_INVALID;
 
 	while (pick == FOE_INVALID) {
-		int rn = rand() % 100;
+		int rn = rand() % 101;
 		/*
 		if (rn > 80) {
 			//TODO
@@ -4440,7 +4440,7 @@ int enemy_attack(Enemy* e, Fighter* target, WINDOW* notify_win, Koliseo* kls) {
 			e->hp -= damageDealt > 0 ? damageDealt : 1;
 			res = FIGHTRES_DMG_DEALT;
 		}
-	} else {
+	} else { //Enemy veldelta is not strictly positive
 		atkdelta = -atkdelta;
 		if ( atkOnEnemy > 3 ) {
 			damageDealt = atkOnEnemy;
