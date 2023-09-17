@@ -320,6 +320,8 @@ extern char* artifactstrings[ARTIFACTSMAX+1];
   */
 extern Artifact artifactsBase[ARTIFACTSMAX+1];
 
+#define ENEMY_ARTIFACTDROP_CHANCE 1001 /**< Defines rare Artifact drop chance for normal enemies (e->beast == 0)*/
+
 /**
  * The different kinds of fighterStatus.
  */

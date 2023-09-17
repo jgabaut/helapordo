@@ -4131,16 +4131,11 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 	}
 
 	int damageDealt = -1;
-	sprintf(msg,"atkdelta %i",atkdelta);
-	log_tag("debug_log.txt","[DEBUG-FIGHT]",msg);
-	sprintf(msg,"defdelta %i",defdelta);
-	log_tag("debug_log.txt","[DEBUG-FIGHT]",msg);
-	sprintf(msg,"veldelta %i",veldelta);
-	log_tag("debug_log.txt","[DEBUG-FIGHT]",msg);
-	sprintf(msg,"atkOnEnemy %i",atkOnEnemy);
-	log_tag("debug_log.txt","[DEBUG-FIGHT]",msg);
-	sprintf(msg,"atkOnPlayer %i\n",atkOnPlayer);
-	log_tag("debug_log.txt","[DEBUG-FIGHT]",msg);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkdelta %i",atkdelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","defdelta %i",defdelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","veldelta %i",veldelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkOnEnemy %i",atkOnEnemy);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkOnPlayer %i",atkOnPlayer);
 
 	if (veldelta >= 0) {
 
@@ -4148,19 +4143,19 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 			damageDealt = atkOnEnemy;
 			e->hp -= damageDealt > 0 ? damageDealt : 1;
 			res = FIGHTRES_DMG_DEALT;
-			log_tag("debug_log.txt","[FIGHT]","Fight result A WIN (faster, great atk).\n");
+			log_tag("debug_log.txt","[FIGHT]","Fight result A WIN (faster, great atk).");
 		} else if ( atkOnEnemy >= 0) {
 			damageDealt = abs(atkOnEnemy - atkdelta);
 			e->hp -= damageDealt > 0 ? damageDealt : 1;
 			res = FIGHTRES_DMG_DEALT;
-			log_tag("debug_log.txt","[FIGHT]","Fight result B WIN (faster, ok atk).\n");
+			log_tag("debug_log.txt","[FIGHT]","Fight result B WIN (faster, ok atk).");
 		} else {
 			if ( atkOnEnemy > -3 ) {
 				damageDealt = fabsf(atkOnPlayer - 0.75F * (player->vel + player->equipboost_vel) );
-			log_tag("debug_log.txt","[FIGHT]","Fight result C1 LOST (faster, atk > -3).\n");
+			log_tag("debug_log.txt","[FIGHT]","Fight result C1 LOST (faster, atk > -3).");
 			} else {
 			       	damageDealt = abs(atkOnPlayer - 1 );
-			log_tag("debug_log.txt","[FIGHT]","Fight result C2 LOST (faster, atk < -3).\n");
+			log_tag("debug_log.txt","[FIGHT]","Fight result C2 LOST (faster, atk < -3).");
 			}
 			player->hp -= damageDealt > 0 ? damageDealt : 1;
 			res = FIGHTRES_DMG_TAKEN;
@@ -4171,26 +4166,25 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 			damageDealt = atkOnPlayer;
 			player->hp -= damageDealt > 0 ? damageDealt : 1;
 			res = FIGHTRES_DMG_TAKEN;
-			log_tag("debug_log.txt","[FIGHT]","Fight result D LOST (slower, great enemy atk).\n");
+			log_tag("debug_log.txt","[FIGHT]","Fight result D LOST (slower, great enemy atk).");
 		} else if ( atkOnPlayer >= 0 ) {
 			damageDealt = abs( atkOnPlayer - atkdelta);
 			player->hp -= damageDealt > 0 ? damageDealt : 1;
 			res = FIGHTRES_DMG_TAKEN;
-			log_tag("debug_log.txt","[FIGHT]","Fight result E LOST (slower, ok enemy atk).\n");
+			log_tag("debug_log.txt","[FIGHT]","Fight result E LOST (slower, ok enemy atk).");
 		} else {
 			if ( atkOnPlayer > -3 ) {
 				damageDealt = fabsf(atkOnEnemy - 0.75F * e->vel );
-			log_tag("debug_log.txt","[FIGHT]","Fight result F1 WIN (slower, enemy atk > -3).\n");
+			log_tag("debug_log.txt","[FIGHT]","Fight result F1 WIN (slower, enemy atk > -3).");
 			} else {
 				damageDealt = abs (atkOnEnemy - 1 );
-			log_tag("debug_log.txt","[FIGHT]","Fight result F2 WIN (slower, enemy atk < -3).\n");
+			log_tag("debug_log.txt","[FIGHT]","Fight result F2 WIN (slower, enemy atk < -3).");
 			}
 			e->hp -= damageDealt > 0 ? damageDealt : 1;
 			res = FIGHTRES_DMG_DEALT;
 		}
 	}
-	sprintf(msg,"damageCalc %i\n", damageDealt);
-	log_tag("debug_log.txt","[FIGHT]",msg);
+	log_tag("debug_log.txt","[FIGHT]","damageCalc %i", damageDealt);
 
 	int yourhit = (res == FIGHTRES_DMG_DEALT ) ? 1 : 0 ;
 	char victim[25];
@@ -4217,8 +4211,7 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 		if (vampire_perks > 0) {
 			int recovery = floor(damageDealt * (0.1 * vampire_perks));
 			player->hp += recovery;
-			sprintf(msg,"Vampirism proc for +%i HP.\n",recovery);
-			log_tag("debug_log.txt","[PERKS]",msg);
+			log_tag("debug_log.txt","[PERKS]","Vampirism proc for +%i HP.",recovery);
 			if (player->hp >= player->totalhp) { player->hp = player->totalhp;};
 		}
 
@@ -4227,10 +4220,11 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 		if (hotbody_perks > 0) {
 			int burnchance = 11 - hotbody_perks;
 			if (rand() % burnchance == 0) {
+				//TODO
+				//Handle multiple statuses
 				e->status = Burned; //Set status to Burned. May need change to manage multiple statuses active at once
 				setCounter((Turncounter *)e->counters[Burned],2); //Give 2 turns of Burned status
-				sprintf(msg,"Hotbody proc on 1/%i chance.\n",burnchance);
-				log_tag("debug_log.txt","[PERKS]",msg);
+				log_tag("debug_log.txt","[PERKS]","Hotbody proc on 1/%i chance.",burnchance);
 			}
 		}
 
@@ -4241,8 +4235,7 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 			if (rand() % poisonchance == 0) {
 				e->status = Poison; //Set status to Poison. May need change to manage multiple statuses active at once
 				setCounter((Turncounter *)e->counters[POISON],2); //Give 2 turns of Poison status
-				sprintf(msg,"Biohazard proc on 1/%i chance.\n",poisonchance);
-				log_tag("debug_log.txt","[PERKS]",msg);
+				log_tag("debug_log.txt","[PERKS]","Biohazard proc on 1/%i chance.",poisonchance);
 			}
 		}
 
@@ -4281,10 +4274,8 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 		int dmgboost_perks = player->perks[CRITBOOST_DMG]->innerValue;
 		damageDealt *= (0.30 + (0.12* dmgboost_perks));
 		e->hp -= (damageDealt > 0 ? damageDealt : 1);
-		sprintf(msg,"Critical hit for %i dmg, proc on 1/%i chance.", damageDealt, critMax);
-		log_tag("debug_log.txt","[FIGHT]",msg);
-		sprintf(msg,"Critical hit, critboost was %i.\n", critboost_value);
-		log_tag("debug_log.txt","[PERKS]",msg);
+		log_tag("debug_log.txt","[FIGHT]","Critical hit for %i dmg, proc on 1/%i chance.", damageDealt, critMax);
+		log_tag("debug_log.txt","[PERKS]","Critical hit, critboost was %i.", critboost_value);
 
 		sprintf(msg,"A critical hit!    (%i DMG)",damageDealt > 0 ? damageDealt : 1);
 		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
@@ -4305,8 +4296,7 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 		if (runic_perks > 0) {
 			int recovery = round(0.51 * runic_perks);
 			player->energy += recovery;
-			sprintf(msg,"Runicmagnet proc for %i energy.\n",recovery);
-			log_tag("debug_log.txt","[PERKS]",msg);
+			log_tag("debug_log.txt","[PERKS]","Runicmagnet proc for %i energy.",recovery);
 		}
 		if (e->beast) {
 			color = S4C_MAGENTA;
@@ -4318,8 +4308,7 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 		display_notification(notify_win,msg,500);
 		wattroff(notify_win,COLOR_PAIR(color));
 
-		sprintf(msg,"Killed  %s.", stringFromEClass(e->class));
-		log_tag("debug_log.txt","[FIGHT]",msg);
+		log_tag("debug_log.txt","[FIGHT]","Killed  %s.", stringFromEClass(e->class));
 
 		//Update stats
 		player->stats->enemieskilled++;
@@ -4327,8 +4316,7 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 		//Apply status effects to enemy
 		if (e->status != Normal) {
 			applyEStatus(notify_win, e);
-			sprintf(msg,"Applied  %s to %s.", stringFromStatus(e->status),stringFromEClass(e->class));
-			log_tag("debug_log.txt","[STATUS]",msg);
+			log_tag("debug_log.txt","[STATUS]","Applied  %s to %s.", stringFromStatus(e->status),stringFromEClass(e->class));
 		}
 	}
 
@@ -4349,20 +4337,18 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 		wattron(notify_win,COLOR_PAIR(S4C_CYAN));
 		display_notification(notify_win,msg,500);
 		wattroff(notify_win,COLOR_PAIR(S4C_CYAN));
-		sprintf(msg,"Found Consumable:    %s.", stringFromConsumables(drop));
-		log_tag("debug_log.txt","[DROPS]",msg);
+		log_tag("debug_log.txt","[DROPS]","Found Consumable:    %s.", stringFromConsumables(drop));
 	}
 
 
 	//Artifact drop (if we don't have all of them), guaranteed on killing a beast
-	if ( (player->stats->artifactsfound != ARTIFACTSMAX + 1)  && res == FIGHTRES_KILL_DONE && (e->beast || ( (rand() % 1001)  - (player->luck/10)  <= 0 ))) {
+	if ( (player->stats->artifactsfound != ARTIFACTSMAX + 1)  && res == FIGHTRES_KILL_DONE && (e->beast || ( (rand() % ENEMY_ARTIFACTDROP_CHANCE)  - (player->luck/10)  <= 0 ))) {
 		int artifact_drop = dropArtifact(player);
 		sprintf(msg, "You found a %s!",stringFromArtifacts(artifact_drop));
 		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
 		display_notification(notify_win,msg,500);
 		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
-		sprintf(msg,"Found Artifact:    %s.", stringFromArtifacts(artifact_drop));
-		log_tag("debug_log.txt","[DROPS]",msg);
+		log_tag("debug_log.txt","[DROPS]","Found Artifact:    %s.", stringFromArtifacts(artifact_drop));
 		if (!e->beast) 	log_tag("debug_log.txt","[.1%% CHANCE]","\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
 	}
 
@@ -8106,7 +8092,6 @@ void death(Fighter* player, loadInfo* load_info) {
  */
 void e_death(Enemy* e) {
 
-	char msg[200];
 
 	//Free enemy special slots
 	//for (int i=0; i < SPECIALSMAX + 1 ; i++) {
@@ -8131,9 +8116,10 @@ void e_death(Enemy* e) {
 	}
 	*/
 
-	sprintf(msg,"Freeing enemy %s\n",stringFromEClass(e->class));
-	log_tag("debug_log.txt","[FREE]",msg);
+	//sprintf(msg,"Freeing enemy %s",stringFromEClass(e->class));
+	//log_tag("debug_log.txt","[FREE]",msg);
 	//free(e);
+	log_tag("debug_log.txt","[TODO]","[%s]: remove this empty function.",__func__);
 }
 
 /**
