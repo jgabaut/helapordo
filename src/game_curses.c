@@ -222,18 +222,18 @@ int get_saveslot_index(void) {
 			case 'q':
 			{
 				if (G_FASTQUIT_ON == 1) {
-					log_tag("debug_log.txt","[DEBUG]","Player used q to quit from home room menu.");
+					log_tag("debug_log.txt","[DEBUG]","Player used q to quit from [%s].",__func__);
 					picked = 1;
 					choice = getTurnChoice("Quit");
 					pos_menu_cursor(saveslots_menu);
 					refresh();
 				} else {
-					log_tag("debug_log.txt","[DEBUG]","Player used q in home room menu, but G_FASTQUIT_ON was not 1.");
+					log_tag("debug_log.txt","[DEBUG]","Player used q in [%s], but G_FASTQUIT_ON was not 1.",__func__);
 				}
 			}
 			break;
 			default: {
-					log_tag("debug_log.txt","[DEBUG]","Invalid keystroke in home room menu");
+					log_tag("debug_log.txt","[DEBUG]","Invalid keystroke in [%s]",__func__);
 			}
 			break;
 		}
@@ -3820,8 +3820,9 @@ int handleRogueMenu(Gamestate* gmst, Path* p, Fighter* player, Room* room, loadI
 	FILE* dummy_savefile = NULL;
 	FILE* save_file;
 	WINDOW* dummy_notify_win = NULL;
+	foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
 	//Declare turnOP_args
-	turnOP_args* args = init_turnOP_args(gmst, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls);
+	turnOP_args* args = init_turnOP_args(gmst, player, p, room, load_info, dummy_enemy, dummy_boss, dummy_savefile, dummy_notify_win, t_kls, dummy_foe_op);
 
 	//Strings for turn menu choices
  	char *choices[] = {

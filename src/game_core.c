@@ -129,6 +129,10 @@ foeTurnOption_OP foeTurnOP_from_foeTurnOption(foeTurnOption ft) {
 			res = FOE_OP_SPECIAL;
 		}
 		break;
+		case FOE_IDLE: {
+			res = FOE_OP_IDLE;
+		}
+		break;
 		default: {
 			//FIXME:
 			//Signal error right here?
@@ -166,6 +170,10 @@ OP_res OP_res_from_fightResult(fightResult fr) {
 			res = OP_RES_NO_DMG;
 		}
 		break;
+		case FIGHTRES_CLASH: {
+			res = OP_RES_CLASH;
+		}
+		break;
 		default: {
 			//FIXME:
 			//Signal error right here?
@@ -190,6 +198,7 @@ char* opresstrings[OP_RES_MAX+1] = {
 	"Damage taken",
 	"Death",
 	"No damage done",
+	"Mutual damage done",
 	"Loaded enemy room",
 };
 
@@ -226,6 +235,7 @@ char* fightresultstrings[FIGHT_RES_TOT+1] = {
 	"Damage taken",
 	"Death",
 	"No damage done",
+	"Mutual damage done",
 };
 
 char* consumablestrings[CONSUMABLESMAX+1] = {

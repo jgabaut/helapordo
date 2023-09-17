@@ -27,11 +27,17 @@
 
 ## Building <a name = "building"></a>
 
-  The code should build for `x86_64-Linux`, `aarch64-Linux`, `Windows` (through `x86_64-w64-mingw32`).
+  The code should build for:
 
-  *DISCLAIMER:*  The `Windows` build is proof-of-concept as:
+  - `x86_64-Linux`
+  - `aarch64-Linux`(see [this section](#make_doc))
+  - `aarch64-apple-darwin`
+  - `Windows` (through `x86_64-w64-mingw32`)
 
-  - It doesn't run correctly ATM. WIP (maybe)
+  **DISCLAIMER:**  The `Windows` build is proof-of-concept as:
+
+  - The gameplay loop is a simplified version of `Rogue` gamemode from the main build.
+    - Work in progress on running the original gameloop.
   - `Windows` terminal can't change its color pairs as far as I know, rendering it unsuitable for the game.
     - A solution to reject extra/modified colors could be implemented.
 
@@ -39,7 +45,7 @@
 
   - `autoconf` and `automake` are needed to generate the Makefile used to compile the game.
   - `ncurses-dev` is needed as a library dependecy.
-  - `python` is needed to generate `./src/palette.c` and `./src/palette.h`.
+  - `python3` is needed to generate `./src/palette.c` and `./src/palette.h`.
 
 
 ### Initialising submodules <a name = "init_submodules"></a>
@@ -68,6 +74,7 @@
 
   - `-DHELAPORDO_DEBUG_LOG`  (Enables debug logging)
   - `-DHELAPORDO_DEBUG_ACCESS` (Enables the -d flag to turn on debug mode)
+  - `-DKLS_DEBUG_CORE` (Enables debugging for `Koliseo` funcalls)
 
 ### Build with `x86_64-w64-mingw32` <a name = "mingw32_build"></a>
 
@@ -126,6 +133,8 @@
   make
   ```
 
+  Running `make doc` should give you `./docs/docs.pdf`, just the pdf output from latex, and delete the html index by itself.
+
 ## Latest Release <a name = "latest_release"></a>
 
   I try to upload precompiled binaries for:
@@ -138,5 +147,5 @@
 
   - `darwin-arm64`
 
-  📦 v1.1.8 14/09/2023
+  📦 v1.1.9 17/09/2023
   https://github.com/jgabaut/helapordo/releases

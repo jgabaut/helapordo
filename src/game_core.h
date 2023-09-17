@@ -134,12 +134,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 8
+#define HELAPORDO_PATCH_VERSION 9
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.1.8"
+#define VERSION "1.1.9"
 
 /**
  * Default savepath.
@@ -319,6 +319,8 @@ extern char* artifactstrings[ARTIFACTSMAX+1];
   * @see Artifact
   */
 extern Artifact artifactsBase[ARTIFACTSMAX+1];
+
+#define ENEMY_ARTIFACTDROP_CHANCE 1001 /**< Defines rare Artifact drop chance for normal enemies (e->beast == 0)*/
 
 /**
  * The different kinds of fighterStatus.
@@ -1725,7 +1727,8 @@ typedef enum OP_res {
 	OP_RES_DMG_TAKEN=6, /**< Value of fight status indicating the fighter was damaged.*/
 	OP_RES_DEATH=7, /**< Value of fight status indicating the fighter died.*/
 	OP_RES_NO_DMG=8, /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
-	OP_RES_LOADED_ENEMYROOM=9, /**< Value of OP_res indicating success in loading a enemyroom*/
+	OP_RES_CLASH=9, /**< Value of fight status indicating damage on both sides occurred.*/
+	OP_RES_LOADED_ENEMYROOM=10, /**< Value of OP_res indicating success in loading a enemyroom*/
 } OP_res;
 
 /**
@@ -1733,7 +1736,7 @@ typedef enum OP_res {
  * @see OP_res
  * @see turnOP()
  */
-#define OP_RES_MAX 9
+#define OP_RES_MAX 10
 
 /**
  * Array with the name strings for OP_res.
@@ -1760,6 +1763,7 @@ typedef struct {
 	WINDOW* notify_win; /**< Pointer to notification window for OP*/
 	Koliseo_Temp* t_kls; /**< Pointer to Koliseo_Temp for OP*/
 	Gamestate* gmst; /**< Pointer to Gamestate for OP*/
+	foeTurnOption_OP foe_op; /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
 } turnOP_args;
 
 /**
@@ -1814,13 +1818,14 @@ typedef enum {
 	FIGHTRES_DMG_TAKEN=3, /**< Value of fight status indicating the fighter was damaded.*/
 	FIGHTRES_DEATH=4, /**< Value of fight status indicating the fighter died.*/
 	FIGHTRES_NO_DMG=5, /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
+	FIGHTRES_CLASH=6, /**< Value of fight status indicating damage on both sides occurred.*/
 } fightResult;
 
 /**
  * Total number of defined fightResult values.
  * @see fightResult
  */
-#define FIGHT_RES_TOT 6
+#define FIGHT_RES_TOT 7
 
 /**
  * Array with the name strings for fightResult.

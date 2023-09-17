@@ -760,6 +760,18 @@ void move_update(Gamestate* gamestate, Floor* floor, int* current_x, int* curren
 			}
 			break;
 			#endif
+			case 'q':
+			{
+				if (G_FASTQUIT_ON == 1) {
+					log_tag("debug_log.txt","[DEBUG]","Player used q to quit from [%s].",__func__);
+					kls_free(temporary_kls);
+					kls_free(default_kls);
+					exit(EXIT_SUCCESS);
+				} else {
+					log_tag("debug_log.txt","[DEBUG]","Player used q in from [%s], but G_FASTQUIT_ON was not 1.",__func__);
+				}
+			}
+			break;
 			case KEY_DOWN: {
 				picked = 1;
 				target_y += 1;

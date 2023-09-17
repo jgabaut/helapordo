@@ -197,9 +197,17 @@ void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls);
 
 int dropArtifact(Fighter* player);
 
+int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls);
+
 int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls);
 
+int enemy_attack(Enemy* e, Fighter* target, WINDOW* notify_win, Koliseo* kls);
+
+int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls);
+
 int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* kls);
+
+int boss_attack(Boss* b, Fighter* target, Path* p, WINDOW* notify_win, Koliseo* kls);
 
 void useConsumable(Fighter* f, Enemy* e, Boss* b, char* string, int isBoss);
 

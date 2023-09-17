@@ -8,11 +8,11 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.1.7") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.1.9") ) == 0)) {
    fail("VERSION",0,check);
  };
- if ( ! (HLP_MAX_INDEX == 28) ) {
-   fail("HLP_MAX_INDEX",28,HLP_MAX_INDEX);
+ if ( ! (HLP_MAX_INDEX == 29) ) {
+   fail("HLP_MAX_INDEX",29,HLP_MAX_INDEX);
  }
  if ( ! (MAX_SAVESLOTS == 3) ) {
    fail("MAX_SAVESLOTS",3,MAX_SAVESLOTS);
@@ -23,11 +23,11 @@ int main(void) {
  if ( ! (TURNOP_MAX == 15) ) {
    fail("TURNOP_MAX",15,TURNOP_MAX);
  };
- if ( ! (OP_RES_MAX == 9) ) {
-   fail("OP_RES_MAX",9,OP_RES_MAX);
+ if ( ! (OP_RES_MAX == 10) ) {
+   fail("OP_RES_MAX",10,OP_RES_MAX);
  };
- if ( ! (FIGHT_RES_TOT == 6) ) {
-   fail("FIGHT_RES_TOT",6,FIGHT_RES_TOT);
+ if ( ! (FIGHT_RES_TOT == 7) ) {
+   fail("FIGHT_RES_TOT",7,FIGHT_RES_TOT);
  };
  if ( ! (MAXPLAYERLUCK == 30) ) {
    fail("MAXPLAYERLUCK",30,MAXPLAYERLUCK);
