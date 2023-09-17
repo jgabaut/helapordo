@@ -4365,7 +4365,7 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
  * Prints notifications to the passed WINDOW pointer.
  * On enemy death, there's a chance to call dropConsumable, dropEquip or dropArtifact (guaranteed for beast enemies).
  * NOTE:  that the return values are always from the POV of the Fighter: FIGHTRES_DMG_DEALT means the Enemy was damaged!
- * @see defer_enemy_fight()
+ * @see defer_fight_enemy()
  * @see Fighter
  * @see Enemy
  * @see statReset()
