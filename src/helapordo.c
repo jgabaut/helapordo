@@ -3358,15 +3358,16 @@ foeTurnOption enemyTurnPick(Enemy* e, Fighter* f) {
 
 	while (pick == FOE_INVALID) {
 		int rn = rand() % 100;
-
+		/*
 		if (rn > 80) {
 			//TODO
 			//pick = FOE_SPECIAL;
 			pick = FOE_IDLE;
-		} else if (rn > 50) {
-			//TODO
-			//pick = FOE_FIGHT;
-			pick = FOE_IDLE;
+
+		} else
+		*/
+		if (rn > 50) {
+			pick = FOE_FIGHT;
 		} else {
 			pick = FOE_IDLE;
 		}
@@ -4690,6 +4691,11 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				break;
 				case FOE_OP_FIGHT: {
 					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+					wattron(notify_win,COLOR_PAIR(S4C_GREY));
+					sprintf(msg,"%s is angry!",stringFromEClass(e->class));
+					display_notification(notify_win,msg,500);
+					wattroff(notify_win,COLOR_PAIR(S4C_GREY));
+
 					res = enemy_attack(e,player,notify_win,kls);
 				}
 				break;
