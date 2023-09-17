@@ -4662,7 +4662,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
 	//
 	//Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
-	fightResult res = OP_RES_NO_DMG;
+	fightResult res = FIGHTRES_NO_DMG;
 
 	int player_goes_first = (player->vel >= e->vel ? 1 : 0);
 
@@ -5124,7 +5124,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
 	//
 	//Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
-	fightResult res = OP_RES_NO_DMG;
+	fightResult res = FIGHTRES_NO_DMG;
 
 	int player_goes_first = (player->vel >= b->vel ? 1 : 0);
 
