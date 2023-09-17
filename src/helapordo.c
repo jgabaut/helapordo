@@ -4360,10 +4360,27 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
 	return res;
 }
 
+/**
+ * Takes an Enemy and a Fighter pointer and compares their stats to determine who gets damaged and returns the fightStatus value.
+ * Prints notifications to the passed WINDOW pointer.
+ * On enemy death, there's a chance to call dropConsumable, dropEquip or dropArtifact (guaranteed for beast enemies).
+ * NOTE:  that the return values are always from the POV of the Fighter: FIGHTRES_DMG_DEALT means the Enemy was damaged!
+ * @see defer_enemy_fight()
+ * @see Fighter
+ * @see Enemy
+ * @see statReset()
+ * @see statResetEnemy()
+ * @see stringFromEClass()
+ * @see dropConsumable()
+ * @see dropEquip()
+ * @see dropArtifact()
+ * @param player The Fighter pointer at hand.
+ * @param e The Enemy pointer at hand.
+ * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
+ * @see display_notification()
+ */
 int enemy_attack(Enemy* e, Fighter* target, WINDOW* notify_win, Koliseo* kls) {
-	fightResult res = FIGHTRES_NO_DMG;
-
-	//TODO
 	//Implementation similar to fight(), as a base idea
 	//Should return fightResult values, while keeping the perspective on the Fighter, as in:
 	//
@@ -4371,8 +4388,255 @@ int enemy_attack(Enemy* e, Fighter* target, WINDOW* notify_win, Koliseo* kls) {
 	//	FIGHTRES_KILL_DONE means the Enemy died
 	//	FIGHTRES_DMG_DEALT means the Fighter inflicted damage
 	//	FIGHRES_DMG_TAKEN means the Fighter received damage
+
+	fightResult res = FIGHTRES_NO_DMG;
+	char msg[200];
+	//Stat comparisons
 	//
 
+	int atkdelta = (e->atk + e->turnboost_atk ) - (target->atk + target->equipboost_atk + target->turnboost_atk  - (rand() % 3 ) ) - 1 ; //Skewed with defender
+	int defdelta = (e->def + e->turnboost_def ) - (target->def + target->equipboost_def + target->turnboost_def ) + (rand() % 2 ) + 1  ; //Skewed with attacker
+	int veldelta = (e->vel + e->turnboost_vel ) - (target->vel + target->equipboost_vel + target->turnboost_vel ) + (rand() % 3 ) + 1 ;
+
+	int atkOnPlayer = (e->atk + e->turnboost_atk) - (target->def + target->equipboost_def + target->turnboost_def + (target->vel / 6)) ;
+	int atkOnEnemy = (target->atk + target->equipboost_atk + target->turnboost_atk) - (e->def + e->turnboost_def + (e->vel / 6)) ;
+
+	if (G_GODMODE_ON == 1) {
+		log_tag("debug_log.txt","[DEBUG]","[%s]:  G_GODMODE_ON == 1",__func__);
+		atkdelta = -100;
+		defdelta = -100;
+		veldelta = -100;
+		atkOnPlayer = 1;
+		atkOnEnemy = 100;
+	}
+
+	int damageDealt = -1;
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkdelta %i",atkdelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","defdelta %i",defdelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","veldelta %i",veldelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkOnEnemy %i",atkOnEnemy);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkOnPlayer %i",atkOnPlayer);
+
+	if (veldelta >= 0) { //Enemy has a non-negative veldelta
+		if (atkOnPlayer > 3) {
+			damageDealt = atkOnPlayer;
+			target->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_TAKEN;
+			log_tag("debug_log.txt","[FIGHT]","[%s]:  Fight result D LOST (slower, great enemy atk).",__func__);
+		} else if ( atkOnPlayer >= 0 ) {
+			damageDealt = abs( atkOnPlayer - atkdelta);
+			target->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_TAKEN;
+			log_tag("debug_log.txt","[FIGHT]","[%s]:  Fight result E LOST (slower, ok enemy atk).",__func__);
+		} else {
+			if ( atkOnPlayer > -3 ) {
+				damageDealt = fabsf(atkOnEnemy - 0.75F * e->vel );
+			log_tag("debug_log.txt","[FIGHT]","[%s]:  Fight result F1 WIN (slower, enemy atk > -3).",__func__);
+			} else {
+				damageDealt = abs (atkOnEnemy - 1 );
+			log_tag("debug_log.txt","[FIGHT]","[%s]:  Fight result F2 WIN (slower, enemy atk < -3).",__func__);
+			}
+			e->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_DEALT;
+		}
+	} else {
+		atkdelta = -atkdelta;
+		if ( atkOnEnemy > 3 ) {
+			damageDealt = atkOnEnemy;
+			e->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_DEALT;
+			log_tag("debug_log.txt","[FIGHT]","[%s]:  Fight result A WIN (faster, great atk).",__func__);
+		} else if ( atkOnEnemy >= 0) {
+			damageDealt = abs(atkOnEnemy - atkdelta);
+			e->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_DEALT;
+			log_tag("debug_log.txt","[FIGHT]","[%s]:  Fight result B WIN (faster, ok atk).",__func__);
+		} else {
+			if ( atkOnEnemy > -3 ) {
+				damageDealt = fabsf(atkOnPlayer - 0.75F * (target->vel + target->equipboost_vel) );
+			log_tag("debug_log.txt","[FIGHT]","[%s]:  Fight result C1 LOST (faster, atk > -3).",__func__);
+			} else {
+			       	damageDealt = abs(atkOnPlayer - 1 );
+			log_tag("debug_log.txt","[FIGHT]","[%s]:  Fight result C2 LOST (faster, atk < -3).",__func__);
+			}
+			target->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_TAKEN;
+		}
+	}
+	log_tag("debug_log.txt","[FIGHT]","[%s]:  damageCalc %i", __func__, damageDealt);
+
+	int playerhit = (res == FIGHTRES_DMG_DEALT ) ? 1 : 0 ;
+	char victim[25];
+
+	if (!playerhit) {
+
+		e->vel--;
+		e->atk--;
+		e->def -= 2;
+
+		//Check if someone earned a stat reset after the fight
+		statReset(target,0);
+		statResetEnemy(e,0);
+
+		strcpy(victim,target->name);
+	} else {
+
+		target->vel--;
+		target->atk--;
+		target->def -= 2;
+
+		//Account for vampirism perk
+		int vampire_perks = target->perks[VAMPIRISM]->innerValue;
+		if (vampire_perks > 0) {
+			int recovery = floor(damageDealt * (0.1 * vampire_perks));
+			target->hp += recovery;
+			log_tag("debug_log.txt","[PERKS]","Vampirism proc for +%i HP.",recovery);
+			if (target->hp >= target->totalhp) { target->hp = target->totalhp;};
+		}
+
+		//Account for burn on touch perk
+		int hotbody_perks = target->perks[HOT_BODY]->innerValue;
+		if (hotbody_perks > 0) {
+			int burnchance = 11 - hotbody_perks;
+			if (rand() % burnchance == 0) {
+				//TODO
+				//Handle multiple statuses
+				e->status = Burned; //Set status to Burned. May need change to manage multiple statuses active at once
+				setCounter((Turncounter *)e->counters[Burned],2); //Give 2 turns of Burned status
+				log_tag("debug_log.txt","[PERKS]","Hotbody proc on 1/%i chance.",burnchance);
+			}
+		}
+
+		//Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
+		int biohazard_perks = target->perks[BIOHAZARD]->innerValue;
+		if (biohazard_perks > 0) {
+			int poisonchance = 11 - biohazard_perks;
+			if (rand() % poisonchance == 0) {
+				e->status = Poison; //Set status to Poison. May need change to manage multiple statuses active at once
+				setCounter((Turncounter *)e->counters[POISON],2); //Give 2 turns of Poison status
+				log_tag("debug_log.txt","[PERKS]","Biohazard proc on 1/%i chance.",poisonchance);
+			}
+		}
+
+		//Check if someone earned a stat reset after the fight
+		statResetEnemy(e,0);
+		statReset(target,0);
+
+		strcpy(victim,stringFromEClass(e->class));
+	}
+
+	int color = -1;
+	if (playerhit) {
+		color = S4C_WHITE;
+	} else {
+		color = S4C_RED;
+	}
+
+	sprintf(msg,"%s was hit.    (%i DMG)",victim,damageDealt > 0 ? damageDealt : 1);
+	wattron(notify_win, COLOR_PAIR(color));
+	display_notification(notify_win,msg,500);
+	wattroff(notify_win, COLOR_PAIR(color));
+
+	//Rolls
+	//
+	//Critical hit roll
+
+	//Account for critboost_chance perks
+	int critboost_value = 1.5 * target->perks[CRITBOOST_CHANCE]->innerValue;
+	int critMax =  round(10.0 - floor(target->luck/5) - (critboost_value));
+
+	int critRes = (rand() % critMax);
+
+	if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
+
+		//Account for critboost_dmg perks
+		int dmgboost_perks = target->perks[CRITBOOST_DMG]->innerValue;
+		damageDealt *= (0.30 + (0.12* dmgboost_perks));
+		e->hp -= (damageDealt > 0 ? damageDealt : 1);
+		log_tag("debug_log.txt","[FIGHT]","Critical hit for %i dmg, proc on 1/%i chance.", damageDealt, critMax);
+		log_tag("debug_log.txt","[PERKS]","Critical hit, critboost was %i.", critboost_value);
+
+		sprintf(msg,"A critical hit!    (%i DMG)",damageDealt > 0 ? damageDealt : 1);
+		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
+		display_notification(notify_win,msg,500);
+		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
+		//Update stats
+		target->stats->criticalhits++;
+	}
+	//Check for deaths -> exit condition from loop
+	//
+	//
+	//
+	if (e->hp <= 0 ) {
+		res = FIGHTRES_KILL_DONE;
+
+		//Account for runic circle perk
+		int runic_perks = target->perks[RUNIC_MAGNET]->innerValue;
+		if (runic_perks > 0) {
+			int recovery = round(0.51 * runic_perks);
+			target->energy += recovery;
+			log_tag("debug_log.txt","[PERKS]","Runicmagnet proc for %i energy.",recovery);
+		}
+		if (e->beast) {
+			color = S4C_MAGENTA;
+		} else {
+			color = S4C_RED;
+		}
+		wattron(notify_win,COLOR_PAIR(color));
+		sprintf(msg, "%s fainted.",stringFromEClass(e->class));
+		display_notification(notify_win,msg,500);
+		wattroff(notify_win,COLOR_PAIR(color));
+
+		log_tag("debug_log.txt","[FIGHT]","Killed  %s.", stringFromEClass(e->class));
+
+		//Update stats
+		target->stats->enemieskilled++;
+	} else {
+		//Apply status effects to enemy
+		if (e->status != Normal) {
+			applyEStatus(notify_win, e);
+			log_tag("debug_log.txt","[STATUS]","Applied  %s to %s.", stringFromStatus(e->status),stringFromEClass(e->class));
+		}
+	}
+
+
+	if (target->hp <= 0) {
+		log_tag("debug_log.txt","[DEBUG]","[%s]:  Target died. Hp: (%i)",__func__,target->hp);
+		res = FIGHTRES_DEATH;
+	} else {
+		//Apply status effects to target
+		if (target->status != Normal) {
+			applyStatus(notify_win, target);
+		}
+	}
+
+	//Consumable drop, guaranteed on killing a beast
+	if (res == FIGHTRES_KILL_DONE && (e->beast || ( (rand() % 9)  - (target->luck/10)  <= 0 ))) {
+		int drop = dropConsumable(target);
+		sprintf(msg, "You found a %s!",stringFromConsumables(drop));
+		wattron(notify_win,COLOR_PAIR(S4C_CYAN));
+		display_notification(notify_win,msg,500);
+		wattroff(notify_win,COLOR_PAIR(S4C_CYAN));
+		log_tag("debug_log.txt","[DROPS]","Found Consumable:    %s.", stringFromConsumables(drop));
+	}
+
+
+	//Artifact drop (if we don't have all of them), guaranteed on killing a beast
+	if ( (target->stats->artifactsfound != ARTIFACTSMAX + 1)  && res == FIGHTRES_KILL_DONE && (e->beast || ( (rand() % ENEMY_ARTIFACTDROP_CHANCE)  - (target->luck/10)  <= 0 ))) {
+		int artifact_drop = dropArtifact(target);
+		sprintf(msg, "You found a %s!",stringFromArtifacts(artifact_drop));
+		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
+		display_notification(notify_win,msg,500);
+		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
+		log_tag("debug_log.txt","[DROPS]","Found Artifact:    %s.", stringFromArtifacts(artifact_drop));
+		if (!e->beast) 	log_tag("debug_log.txt","[.1%% CHANCE]","\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
+	}
+
+
+	//Equip drop, guaranteed on killing a beast
+	if (res == FIGHTRES_KILL_DONE && (e->beast || ( (rand() % 15)  - (target->luck/10)  <= 0 ))) {
+		dropEquip(target,e->beast,notify_win,kls);
+	}
 	return res;
 }
 
