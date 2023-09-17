@@ -4661,10 +4661,16 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 
 	int player_goes_first = (player->vel >= e->vel ? 1 : 0);
 
+	int first_act_res = FIGHTRES_NO_DMG;
+
 	if (player_goes_first) {
+
 		res = fight(player,e,notify_win,kls);
+
 		//Check res and apply second action if needed
 		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		first_act_res = res;
+
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
 			switch (foe_op) {
 				case FOE_OP_INVALID: {
@@ -4684,9 +4690,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				break;
 				case FOE_OP_FIGHT: {
 					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
-					//TODO
-					//Implement enemy fight function
-					//res = enemy_attack(e,player,notify_win,kls);
+					res = enemy_attack(e,player,notify_win,kls);
 				}
 				break;
 				case FOE_OP_SPECIAL: {
@@ -4705,9 +4709,13 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				break;
 			} // End foe_op switch
 
-			//TODO
-			//Check second turn act res?
 			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
+				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was not a clash...",__func__);
+			} else if ( (res == FIGHTRES_DMG_TAKEN && first_act_res == FIGHTRES_DMG_DEALT) || (res == FIGHTRES_DMG_DEALT && first_act_res == FIGHTRES_DMG_TAKEN) ) {
+				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was a clash!",__func__);
+				res = FIGHTRES_CLASH;
+			}
 
 			return res;
 		} else if (res == FIGHTRES_DEATH) {
@@ -4735,9 +4743,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 			break;
 			case FOE_OP_FIGHT: {
 				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
-				//TODO
-				//Implement enemy fight function
-				//res = enemy_attack(e,player,notify_win,kls);
+				res = enemy_attack(e,player,notify_win,kls);
 			}
 			break;
 			case FOE_OP_SPECIAL: {
@@ -4758,14 +4764,20 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 
 		//Check res and apply second action if needed
 		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		first_act_res = res;
+
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
 			res = fight(player,e,notify_win,kls);
 
 			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
-			//TODO
-			//Check second turn act res?
-			return res;
+			if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
+				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was not a clash...",__func__);
+			} else if ( (res == FIGHTRES_DMG_TAKEN && first_act_res == FIGHTRES_DMG_DEALT) || (res == FIGHTRES_DMG_DEALT && first_act_res == FIGHTRES_DMG_TAKEN) ) {
+				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was a clash!",__func__);
+				res = FIGHTRES_CLASH;
+			}
 
+			return res;
 		} else if (res == FIGHTRES_DEATH) {
 			return res;
 		} else if (res == FIGHTRES_KILL_DONE) {
