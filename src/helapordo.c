@@ -4386,7 +4386,7 @@ int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls) {
  * @param kls The Koliseo used for allocations.
  */
 int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls) {
-
+	char msg[200];
 	//FIXME
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
 	fightResult res = FIGHTRES_NO_DMG;
@@ -4408,6 +4408,10 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				break;
 				case FOE_OP_IDLE: {
 					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+					wattron(notify_win,COLOR_PAIR(S4C_GREY));
+					sprintf(msg,"%s is loafing around.",stringFromEClass(e->class));
+					display_notification(notify_win,msg,500);
+					wattroff(notify_win,COLOR_PAIR(S4C_GREY));
 				}
 				break;
 				case FOE_OP_FIGHT: {
@@ -4455,6 +4459,10 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 			break;
 			case FOE_OP_IDLE: {
 				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+				wattron(notify_win,COLOR_PAIR(S4C_GREY));
+				sprintf(msg,"%s is loafing around.",stringFromEClass(e->class));
+				display_notification(notify_win,msg,500);
+				wattroff(notify_win,COLOR_PAIR(S4C_GREY));
 			}
 			break;
 			case FOE_OP_FIGHT: {
@@ -4806,6 +4814,7 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
  * @param kls The Koliseo used for allocations.
  */
 int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls) {
+	char msg[200];
 	//FIXME
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
 	fightResult res = FIGHTRES_NO_DMG;
@@ -4827,6 +4836,10 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				break;
 				case FOE_OP_IDLE: {
 					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+					wattron(notify_win,COLOR_PAIR(S4C_GREY));
+					sprintf(msg,"%s is loafing around.",stringFromBossClass(b->class));
+					display_notification(notify_win,msg,500);
+					wattroff(notify_win,COLOR_PAIR(S4C_GREY));
 				}
 				break;
 				case FOE_OP_FIGHT: {
@@ -4874,6 +4887,10 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 			break;
 			case FOE_OP_IDLE: {
 				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+				wattron(notify_win,COLOR_PAIR(S4C_GREY));
+				sprintf(msg,"%s is loafing around.",stringFromBossClass(b->class));
+				display_notification(notify_win,msg,500);
+				wattroff(notify_win,COLOR_PAIR(S4C_GREY));
 			}
 			break;
 			case FOE_OP_FIGHT: {
