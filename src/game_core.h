@@ -1725,7 +1725,8 @@ typedef enum OP_res {
 	OP_RES_DMG_TAKEN=6, /**< Value of fight status indicating the fighter was damaged.*/
 	OP_RES_DEATH=7, /**< Value of fight status indicating the fighter died.*/
 	OP_RES_NO_DMG=8, /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
-	OP_RES_LOADED_ENEMYROOM=9, /**< Value of OP_res indicating success in loading a enemyroom*/
+	OP_RES_CLASH=9, /**< Value of fight status indicating damage on both sides occurred.*/
+	OP_RES_LOADED_ENEMYROOM=10, /**< Value of OP_res indicating success in loading a enemyroom*/
 } OP_res;
 
 /**
@@ -1733,7 +1734,7 @@ typedef enum OP_res {
  * @see OP_res
  * @see turnOP()
  */
-#define OP_RES_MAX 9
+#define OP_RES_MAX 10
 
 /**
  * Array with the name strings for OP_res.
@@ -1815,13 +1816,14 @@ typedef enum {
 	FIGHTRES_DMG_TAKEN=3, /**< Value of fight status indicating the fighter was damaded.*/
 	FIGHTRES_DEATH=4, /**< Value of fight status indicating the fighter died.*/
 	FIGHTRES_NO_DMG=5, /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
+	FIGHTRES_CLASH=6, /**< Value of fight status indicating damage on both sides occurred.*/
 } fightResult;
 
 /**
  * Total number of defined fightResult values.
  * @see fightResult
  */
-#define FIGHT_RES_TOT 6
+#define FIGHT_RES_TOT 7
 
 /**
  * Array with the name strings for fightResult.

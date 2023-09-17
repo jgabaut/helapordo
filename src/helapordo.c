@@ -4389,7 +4389,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 	char msg[200];
 	//FIXME
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
-	fightResult res = FIGHTRES_NO_DMG;
+	fightResult res = OP_RES_NO_DMG;
 
 	int player_goes_first = (player->vel >= e->vel ? 1 : 0);
 
@@ -4817,7 +4817,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 	char msg[200];
 	//FIXME
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
-	fightResult res = FIGHTRES_NO_DMG;
+	fightResult res = OP_RES_NO_DMG;
 
 	int player_goes_first = (player->vel >= b->vel ? 1 : 0);
 
@@ -9734,6 +9734,8 @@ int handleRoom_Roadfork(Room* room, int* roadFork_value, int roomsDone, Path* pa
 	}
 	endwin();
 
+	//FIXME
+	//Why are we relying on this?
 	return FIGHTRES_NO_DMG;
 }
 

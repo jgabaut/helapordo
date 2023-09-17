@@ -97,7 +97,7 @@ const.k:
 
 anviltest: const.k
 	@echo -en "Running anvil tests.\n"
-	./anvil -t
+	./anvil -tX
 	@echo -e "\n\033[1;32mDone.\e[0m"
 
 doc:
