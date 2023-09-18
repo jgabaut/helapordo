@@ -443,6 +443,53 @@ void init_game_color_pairs(void) {
 }
 
 /**
+ * Demoes color pairs from palette.c to the passed WINDOW.
+ * @param win The Window pointer to print to.
+ * @param colors_per_row How many colors to print in each row.
+ */
+void test_game_color_pairs(WINDOW* win, int colors_per_row) {
+	if (win == NULL) {
+		fprintf(stderr,"[%s]:  Passed Window was NULL.",__func__);
+		log_tag("debug_log.txt","[ERROR]","[%s]:  Passed Window was NULL.",__func__);
+		exit(EXIT_FAILURE);
+	}
+
+	int x = 1;
+	int y = 1;
+	int x_offset = 0;
+
+	for (int i = S4C_MIN_COLOR_INDEX; i < S4C_MAX_COLOR_INDEX +1; i++) {
+		int color_index = i;
+        	if (color_index >= 0) {
+            		wattron(win, COLOR_PAIR(color_index));
+            		mvwaddch(win, y, x+x_offset, ' ' | A_REVERSE);
+            		wattroff(win, COLOR_PAIR(color_index));
+        	}
+		x_offset++;
+		if ( (color_index - S4C_MIN_COLOR_INDEX+1) % colors_per_row == 0) {
+			x = 1;
+			x_offset = 0;
+			y++;
+		}
+	}
+
+	int picked = 0;
+	int c = -1;
+	wrefresh(win);
+	refresh();
+
+	while(!picked && (c = wgetch(win)) != 'q') {
+		switch(c) {
+			case 10: { /*Enter*/
+				picked = 1;
+
+				};
+				break;
+		        }
+	}
+}
+
+/**
  * Sets the passed char array to the expected path for /static/ folder.
  * @param static_path The array that will hold path to static folder.
  */

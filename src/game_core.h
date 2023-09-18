@@ -19,6 +19,7 @@
 #endif
 
 #include "../koliseo/src/koliseo.h"
+#include "../sprites4curses/s4c-animate/animate.h"
 
 /**
  * Defines indexes for all types that are allocated with Koliseo.

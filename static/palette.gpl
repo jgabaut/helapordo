@@ -1,5 +1,5 @@
 GIMP Palette
-Name: 0.2-15bit
+Name: 0.3-32bit
 Columns: 0
 #
   0   0   0	Black-1
@@ -14,7 +14,23 @@ Columns: 0
 123  66  40	LightBrown-10
  81  41  24	DarkBrown-11
  54  36 129	Purple-12
- 22  82  12 DarkGreen-13
+ 22  82  12	DarkGreen-13
  90  81  81	Grey-14
 242 245  77	LightYellow-15
  39 140 226	LightBlue-16
+220 190  80	DarkYellow-17
+102 102   0	DarkOlive-18
+204 204   0	LightOlive-19
+153 153   0	Olive-20
+255 102 178	DarkCherry-21
+255 204 229	LightCherry-22
+255 153 204	Cherry-23
+255 102 102	Salmon-24
+  0   0 153	DarkBlue-25
+204 153 255	Violet-26
+153 153 255	Indigo-27
+255 178 102	LightOrange-28
+ 51 255 153	Teal-29
+  0 204 204	DarkCyan-30
+102   0 102	DarkPurple-31
+127   0 255	LightPurple-32

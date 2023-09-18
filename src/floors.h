@@ -5,7 +5,6 @@
 #include <math.h>
 #include "game_utils.h"
 #include "game_curses.h"
-#include "../sprites4curses/s4c-animate/animate.h"
 
 void init_floor_layout(Floor* floor);
 float calc_distance(int x1, int y1, int x2, int y2);

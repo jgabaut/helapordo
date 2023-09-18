@@ -10214,8 +10214,30 @@ void gameloop(int argc, char** argv){
 					printf("  \'animate\' :\n    s4c/animate.h    ");
 					S4C_ECHOVERSION();
 					printf("[DEBUG]    Testing terminal color capabilities.\n");
-					napms(800);
+					napms(200);
 					display_colorpairs();
+					napms(200);
+					WINDOW* test_win;
+					initscr();
+					start_color();
+					for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+						init_s4c_color_pair(&palette[i],9+i);
+					}
+					clear();
+					refresh();
+					cbreak();
+					noecho();
+					test_win = newwin(9,7,1,1);
+					keypad(test_win, TRUE);
+					box(test_win,0,0);
+
+					refresh();
+
+					test_game_color_pairs(test_win,5);
+
+					napms(200);
+					delwin(test_win);
+					endwin();
 					exit(EXIT_SUCCESS);
 				}
 				break;
