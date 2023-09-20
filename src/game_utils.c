@@ -291,10 +291,9 @@ void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* pa
  * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
  */
 turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls, foeTurnOption_OP foe_op) {
-	Koliseo_Temp tkls = *t_kls;
 	log_tag("debug_log.txt","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
 	kls_log("DEBUG","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
-	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_TYPED(tkls,turnOP_args,1,HR_turnOP_args,"turnOP_args","turnOP_args");
+	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_TYPED(t_kls,turnOP_args,1,HR_turnOP_args,"turnOP_args","turnOP_args");
 
 	res->gmst = gmst;
 	res->actor = actor;
@@ -441,6 +440,53 @@ void init_game_color_pairs(void) {
 	init_pair(9, COLOR_WHITE, COLOR_RED);
 	init_pair(10, COLOR_WHITE, COLOR_MAGENTA);
 
+}
+
+/**
+ * Demoes color pairs from palette.c to the passed WINDOW.
+ * @param win The Window pointer to print to.
+ * @param colors_per_row How many colors to print in each row.
+ */
+void test_game_color_pairs(WINDOW* win, int colors_per_row) {
+	if (win == NULL) {
+		fprintf(stderr,"[%s]:  Passed Window was NULL.",__func__);
+		log_tag("debug_log.txt","[ERROR]","[%s]:  Passed Window was NULL.",__func__);
+		exit(EXIT_FAILURE);
+	}
+
+	int x = 1;
+	int y = 1;
+	int x_offset = 0;
+
+	for (int i = S4C_MIN_COLOR_INDEX; i < S4C_MAX_COLOR_INDEX +1; i++) {
+		int color_index = i;
+        	if (color_index >= 0) {
+            		wattron(win, COLOR_PAIR(color_index));
+            		mvwaddch(win, y, x+x_offset, ' ' | A_REVERSE);
+            		wattroff(win, COLOR_PAIR(color_index));
+        	}
+		x_offset++;
+		if ( (color_index - S4C_MIN_COLOR_INDEX+1) % colors_per_row == 0) {
+			x = 1;
+			x_offset = 0;
+			y++;
+		}
+	}
+
+	int picked = 0;
+	int c = -1;
+	wrefresh(win);
+	refresh();
+
+	while(!picked && (c = wgetch(win)) != 'q') {
+		switch(c) {
+			case 10: { /*Enter*/
+				picked = 1;
+
+				};
+				break;
+		        }
+	}
 }
 
 /**

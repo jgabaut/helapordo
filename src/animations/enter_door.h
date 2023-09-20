@@ -1,6 +1,6 @@
 #ifndef ENTER_DOOR_S4C_H_
 #define ENTER_DOOR_S4C_H_
-#define ENTER_DOOR_S4C_H_VERSION "0.1.5"
+#define ENTER_DOOR_S4C_H_VERSION "0.2.1"
 #include "../../sprites4curses/s4c-animate/animate.h"
 
 /**

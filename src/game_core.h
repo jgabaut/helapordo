@@ -19,6 +19,7 @@
 #endif
 
 #include "../koliseo/src/koliseo.h"
+#include "../sprites4curses/s4c-animate/animate.h"
 
 /**
  * Defines indexes for all types that are allocated with Koliseo.
@@ -129,17 +130,17 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current minor release.
  */
-#define HELAPORDO_MINOR_VERSION 1
+#define HELAPORDO_MINOR_VERSION 2
 
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 9
+#define HELAPORDO_PATCH_VERSION 0
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.1.9"
+#define VERSION "1.2.0"
 
 /**
  * Default savepath.

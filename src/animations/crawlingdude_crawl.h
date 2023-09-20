@@ -1,6 +1,6 @@
 #ifndef CRAWLINGDUDE_CRAWL_S4C_H_
 #define CRAWLINGDUDE_CRAWL_S4C_H_
-#define CRAWLINGDUDE_CRAWL_S4C_H_VERSION "0.1.5"
+#define CRAWLINGDUDE_CRAWL_S4C_H_VERSION "0.2.1"
 #include "../../sprites4curses/s4c-animate/animate.h"
 
 /**

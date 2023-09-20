@@ -38,6 +38,7 @@ void cyan(void);
 void lightCyan(void);
 
 void init_game_color_pairs(void);
+void test_game_color_pairs(WINDOW* win, int colors_per_row);
 void resolve_staticPath(char static_path[500]);
 
 void dbg_Gamestate(Gamestate* gmst);

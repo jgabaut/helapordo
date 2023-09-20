@@ -1840,7 +1840,6 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
  * @return When shop is exited, should return NO_DMG.
  */
 int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* kls, Koliseo_Temp* t_kls) {
-	//Koliseo_Temp tkls = *t_kls;
 	//Strings for turn menu choices
  	char *shop_choices[] = {
 			"Buy",
@@ -2216,7 +2215,6 @@ int handleRoom_Shop(Room* room, int roomsDone, Path* path, Fighter* f, Koliseo* 
  * @param t_kls The Koliseo_Temp used for temp allocations.
  */
 void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
 	wclear(w);
 	wrefresh(w);
 	box(w,0,0);
@@ -2288,7 +2286,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 	*/
 
 	int result = s4c_animate_sprites_at_coords(sprites, w, reps, frametime, num_frames, frame_height, frame_width, 2, 2);
-	sleep(1);
+	napms(200);
 
 	wclear(w);
 	wrefresh(w);
@@ -2300,19 +2298,19 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 	if (result < 0) {
 		switch (result) {
 			case S4C_ERR_SMALL_WIN: {
-        			fprintf(stderr,"animate => S4C_ERR_SMALL_WIN : Window was too small.\n");
+        			fprintf(stderr,"[%s] animate => S4C_ERR_SMALL_WIN : Window was too small.\n",__func__);
 			}
 			break;
 			case S4C_ERR_LOADSPRITES: {
-        			fprintf(stderr,"animate => S4C_ERR_LOADSPRITES : Failed loading the sprites.\n");
+        			fprintf(stderr,"[%s] animate => S4C_ERR_LOADSPRITES : Failed loading the sprites.\n",__func__);
 			}
 			break;
 			case S4C_ERR_FILEVERSION: {
-        			fprintf(stderr,"animate => S4C_ERR_FILEVERSION : Failed file version check.\n");
+        			fprintf(stderr,"[%s] animate => S4C_ERR_FILEVERSION : Failed file version check.\n",__func__);
 			}
 			break;
 			case S4C_ERR_CURSOR: {
-        			fprintf(stderr,"animate => S4C_ERR_CURSOR : Failed to change the cursor.\n");
+        			fprintf(stderr,"[%s] animate => S4C_ERR_CURSOR : Failed to change the cursor.\n",__func__);
 			}
 			break;
 		}
@@ -2351,7 +2349,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 			for (int j = 0; j < to_save->perksCount; j++) {
 				log_tag("debug_log.txt","[SHOP]","Prepping Perk (%i/%i) for Equip for Chest.", j, to_save->perksCount);
 				kls_log("DEBUG","Prepping Perk (%i/%i) for Equip for Chest.", j, to_save->perksCount);
-				Perk* save_pk = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk","Perk");
+				Perk* save_pk = (Perk*) KLS_PUSH_T_TYPED(t_kls,Perk,1,HR_Perk,"Perk","Perk");
 				save_pk->class = to_save->perks[j]->class;
 				strcpy(save_pk->name, to_save->perks[j]->name);
 				strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -2669,10 +2667,9 @@ int handleRoom_Treasure(Room* room, int roomsDone, Path* path, Fighter* f, Kolis
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info, Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Home"));
 	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Home"));
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("HOME"),HR_Room_desc,"Room desc","Room desc");
+	r->desc = (char*) KLS_PUSH_T_TYPED(t_kls,char*,sizeof("HOME"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Home");
 	if (!(load_info->is_new_game)) {
 		log_tag("debug_log.txt","[DEBUG]","initRoom_Home() for a loaded game");
@@ -2690,10 +2687,9 @@ void initRoom_Home(Room* r,int roomIndex, Fighter* f, loadInfo* load_info, Kolis
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_info, Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Enemies"));
 	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Enemies"));
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Enemies"),HR_Room_desc,"Room desc","Room desc");
+	r->desc = (char*) KLS_PUSH_T_TYPED(t_kls,char*,sizeof("Enemies"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Enemies");
 	if (enemyTotal <= ROOM_ENEMIES_MAX ) {
 		r->index = roomIndex;
@@ -2701,7 +2697,7 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		r->enemyTotal = enemyTotal;
 		log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for FoeParty:", sizeof(FoeParty));
 		kls_log("DEBUG","Allocated size %lu for FoeParty:", sizeof(FoeParty));
-		FoeParty* foes = (FoeParty*) KLS_PUSH_T_TYPED(tkls,FoeParty,1,HR_FoeParty,"Foeparty","Foeparty");
+		FoeParty* foes = (FoeParty*) KLS_PUSH_T_TYPED(t_kls,FoeParty,1,HR_FoeParty,"Foeparty","Foeparty");
 
 		//Randomise fp class
 		//foes->class = rand() % (FOEPARTY_CLASS_MAX + 1);
@@ -2732,7 +2728,7 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
 		for (; enemyIndex < enemyTotal; enemyIndex++) {
 			log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy), enemyIndex, enemyTotal);
 			kls_log("DEBUG","Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy), enemyIndex, enemyTotal);
-			Enemy* e = KLS_PUSH_T_TYPED(tkls,Enemy,1,HR_Enemy,"Enemy","Enemy"); //&room_enemies[enemyIndex];
+			Enemy* e = KLS_PUSH_T_TYPED(t_kls,Enemy,1,HR_Enemy,"Enemy","Enemy"); //&room_enemies[enemyIndex];
 			prepareRoomEnemy(e, r->index, r->enemyTotal, enemyIndex, t_kls);
 			r->enemies[enemyIndex] = e;
 			//Set FoeParty links
@@ -2763,14 +2759,13 @@ void initRoom_Enemies(Room* r, int roomIndex, int enemyTotal, loadInfo* load_inf
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Shop desc:", sizeof("Shop"));
 	kls_log("DEBUG","Allocated size %lu for Room Shop desc:", sizeof("Shop"));
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Shop"),HR_Room_desc,"Room desc","Room desc");
+	r->desc = (char*) KLS_PUSH_T_TYPED(t_kls,char*,sizeof("Shop"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Shop");
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Shop :", sizeof("Shop"));
 	kls_log("DEBUG","Allocated size %lu for Room Shop :", sizeof("Shop"));
-	Shop* shop = (Shop*) KLS_PUSH_T_TYPED(tkls,Shop,1,HR_Shop,"Shop","Shop");
+	Shop* shop = (Shop*) KLS_PUSH_T_TYPED(t_kls,Shop,1,HR_Shop,"Shop","Shop");
 
 	int indexWeight = roomIndex;
 	initShop(shop,indexWeight,f,t_kls);
@@ -2788,14 +2783,13 @@ void initRoom_Shop(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Boss"));
 	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Boss"));
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Boss"),HR_Room_desc,"Room desc","Room desc");
+	r->desc = (char*) KLS_PUSH_T_TYPED(t_kls,char*,sizeof("Boss"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Boss");
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Boss:", sizeof(Boss));
 	kls_log("DEBUG","Allocated size %lu for Room Boss:", sizeof(Boss));
-	Boss* b = (Boss*) KLS_PUSH_T_TYPED(tkls,Boss,1,HR_Boss,"Boss","Boss");
+	Boss* b = (Boss*) KLS_PUSH_T_TYPED(t_kls,Boss,1,HR_Boss,"Boss","Boss");
 
 	prepareBoss(b, t_kls);
 	r->boss = b;
@@ -2812,14 +2806,13 @@ void initRoom_Boss(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Treasure"));
 	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Treasure"));
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Treasure"),HR_Room_desc,"Room desc","Room desc");
+	r->desc = (char*) KLS_PUSH_T_TYPED(t_kls,char*,sizeof("Treasure"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Treasure");
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Treasure:", sizeof(Treasure));
 	kls_log("DEBUG","Allocated size %lu for Room Treasure:", sizeof(Treasure));
-	Treasure* t = (Treasure*) KLS_PUSH_T_TYPED(tkls,Treasure,1,HR_Treasure,"Treasure","Treasure");
+	Treasure* t = (Treasure*) KLS_PUSH_T_TYPED(t_kls,Treasure,1,HR_Treasure,"Treasure","Treasure");
 	prepareTreasure(t,f,t_kls);
 	r->treasure = t;
 }
@@ -2835,14 +2828,13 @@ void initRoom_Treasure(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) 
  */
 void initRoom_Roadfork(Room* r, int roomIndex, Fighter* f, Koliseo_Temp* t_kls) {
 	log_tag("debug_log.txt","[WARN]","Entering legacy path.");
-	Koliseo_Temp tkls = *t_kls;
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room desc:", sizeof("Roadfork"));
 	kls_log("DEBUG","Allocated size %lu for Room desc:", sizeof("Roadfork"));
-	r->desc = (char*) KLS_PUSH_T_TYPED(tkls,char*,sizeof("Roadfork"),HR_Room_desc,"Room desc","Room desc");
+	r->desc = (char*) KLS_PUSH_T_TYPED(t_kls,char*,sizeof("Roadfork"),HR_Room_desc,"Room desc","Room desc");
 	strcpy(r->desc,"Roadfork");
 	log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for Room Roadfork:", sizeof(Roadfork));
 	kls_log("DEBUG","Allocated size %lu for Room Roadfork:", sizeof(Roadfork));
-	Roadfork* fk = (Roadfork*) KLS_PUSH_T_TYPED(tkls,Roadfork,1,HR_Roadfork,"Roadfork","Roadfork");
+	Roadfork* fk = (Roadfork*) KLS_PUSH_T_TYPED(t_kls,Roadfork,1,HR_Roadfork,"Roadfork","Roadfork");
 
 	prepareRoadfork(fk);
 	r->roadfork = fk;

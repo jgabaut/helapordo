@@ -1205,17 +1205,16 @@ void initCounters(Fighter* f, Koliseo* kls){
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initECounters(Enemy* e, Koliseo_Temp* t_kls){
-	Koliseo_Temp tkls = *t_kls;
 	//Ordering of i corresponds to counterIndexes enum
 	int total = (COUNTERSMAX+1);
 	for (int i = 0; i < total; i++) {
 		log_tag("debug_log.txt","[DEBUG]","Prepping enemy Turncounter (%i)",i);
 		kls_log("DEBUG","Prepping enemy Turncounter (%i)",i);
-		Turncounter* c = (Turncounter*) KLS_PUSH_T_TYPED(tkls, Turncounter, 1, HR_Turncounter, "Turncounter","Turncounter");
+		Turncounter* c = (Turncounter*) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1, HR_Turncounter, "Turncounter","Turncounter");
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
-			c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof(stringFromStatus(i)),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+			c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof(stringFromStatus(i)),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 			strcpy(c->desc,stringFromStatus(i));
 			log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for enemy status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			kls_log("DEBUG","Allocated size %lu for enemy status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
@@ -1229,7 +1228,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("ATK boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("ATK boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"ATK boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
@@ -1241,7 +1240,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_DEF: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("DEF boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("DEF boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"DEF boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
@@ -1253,7 +1252,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_VEL: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("VEL boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("VEL boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"VEL boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
@@ -1265,7 +1264,7 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_ENR: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("ENR boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("ENR boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"ENR boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
@@ -1303,17 +1302,16 @@ void initECounters(Enemy* e, Koliseo_Temp* t_kls){
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initBCounters(Boss* b, Koliseo_Temp* t_kls){
-	Koliseo_Temp tkls = *t_kls;
 	//Ordering of i corresponds to counterIndexes enum
 	int total = (COUNTERSMAX+1);
 	for (int i = 0; i < total; i++) {
 		log_tag("debug_log.txt","[DEBUG]","Prepping boss counter %i",i);
 		kls_log("DEBUG","Prepping boss counter %i",i);
-		Turncounter* c = (Turncounter*) KLS_PUSH_T_TYPED(tkls, Turncounter, 1, HR_Turncounter, "Turncounter","Turncounter");
+		Turncounter* c = (Turncounter*) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1, HR_Turncounter, "Turncounter","Turncounter");
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
-			c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof(stringFromStatus(i)), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
+			c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof(stringFromStatus(i)), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
 			strcpy(c->desc,stringFromStatus(i));
 			log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for boss status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			kls_log("DEBUG","Allocated size %lu for boss status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
@@ -1327,7 +1325,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("ATK boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("ATK boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"ATK boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for boss stat counter: (%s)", sizeof("ATK boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for boss stat counter: (%s)", sizeof("ATK boost"), c->desc);
@@ -1339,7 +1337,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_DEF: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("DEF boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("DEF boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"DEF boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for boss stat counter: (%s)", sizeof("DEF boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for boss stat counter: (%s)", sizeof("DEF boost"), c->desc);
@@ -1351,7 +1349,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_VEL: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("VEL boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("VEL boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"VEL boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for boss stat counter: (%s)", sizeof("VEL boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for boss stat counter: (%s)", sizeof("VEL boost"), c->desc);
@@ -1363,7 +1361,7 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_ENR: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("ENR boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("ENR boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"ENR boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for boss stat counter: (%s)", sizeof("ENR boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for boss stat counter: (%s)", sizeof("ENR boost"), c->desc);
@@ -1401,17 +1399,16 @@ void initBCounters(Boss* b, Koliseo_Temp* t_kls){
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
-	Koliseo_Temp tkls = *t_kls;
 	//Ordering of i corresponds to counterIndexes enum
 	int total = (COUNTERSMAX+1);
 	for (int i = 0; i < total; i++) {
 		log_tag("debug_log.txt","[DEBUG]","Prepping foeparty counter %i",i);
 		kls_log("DEBUG","Prepping foeparty counter %i",i);
-		Turncounter* c = (Turncounter*) KLS_PUSH_T_TYPED(tkls, Turncounter, 1, HR_Turncounter, "Turncounter","Turncounter");
+		Turncounter* c = (Turncounter*) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1, HR_Turncounter, "Turncounter","Turncounter");
 
 		//First, prepare counters for statuses
 		if (i < STATUSMAX+1 ) {
-			c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof(stringFromStatus(i)), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
+			c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof(stringFromStatus(i)), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
 			strcpy(c->desc,stringFromStatus(i));
 			log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for foeparty status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
 			kls_log("DEBUG","Allocated size %lu for foeparty status counter: (%s)", sizeof(stringFromStatus(i)), c->desc);
@@ -1425,7 +1422,7 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 
 			switch(i) {
 				case TURNBOOST_ATK: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("ATK boost"), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("ATK boost"), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"ATK boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for status counter: (%s)", sizeof("ATK boost"), c->desc);
@@ -1437,7 +1434,7 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_DEF: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("DEF boost"), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("DEF boost"), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"DEF boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for status counter: (%s)", sizeof("DEF boost"), c->desc);
@@ -1449,7 +1446,7 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_VEL: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("VEL boost"), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("VEL boost"), HR_Turncounter_desc, "Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"VEL boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for status counter: (%s)", sizeof("VEL boost"), c->desc);
@@ -1461,7 +1458,7 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 				}
 				break;
 				case TURNBOOST_ENR: {
-					c->desc = (char*) KLS_PUSH_T_TYPED(tkls, char*, sizeof("ENR boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
+					c->desc = (char*) KLS_PUSH_T_TYPED(t_kls, char*, sizeof("ENR boost"),HR_Turncounter_desc,"Turncounter desc","Turncounter desc");
 					strcpy(c->desc,"ENR boost");
 					log_tag("debug_log.txt","[DEBUG]","Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
 					kls_log("DEBUG","Allocated size %lu for status counter: (%s)", sizeof("ENR boost"), c->desc);
@@ -2469,8 +2466,6 @@ void setConsumablePrices(int size, int* consumablePrices, Consumable** consumabl
  */
 void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 
-	Koliseo_Temp tkls = *t_kls;
-
 	int equipsCount = (rand() % EQUIP_SHOP_MAX )+1;
 
 	if (equipsCount != 0 ) {
@@ -2479,7 +2474,7 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 			int curr = (rand() % (EQUIPSMAX+1));
 			log_tag("debug_log.txt","[DEBUG]","Prepping Equip (%i/%i) for Shop", equip_index, equipsCount);
 			kls_log("DEBUG","Prepping Equip (%i/%i) for Shop", equip_index, equipsCount);
-			Equip* e = (Equip*) KLS_PUSH_T_TYPED(tkls,Equip,1,HR_Equip,"Equip","Equip");
+			Equip* e = (Equip*) KLS_PUSH_T_TYPED(t_kls,Equip,1,HR_Equip,"Equip","Equip");
 
 			//Randomise quality
 			quality q = rand() % (QUALITIESMAX + 1);
@@ -2553,7 +2548,7 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 					e->perksCount += 1;
 					log_tag("debug_log.txt","[DEBUG]","Prepping Perk (%i) for Shop Equip (%i/%i)", i, equip_index, equipsCount);
 					kls_log("DEBUG","Prepping Perk (%i) for Shop Equip (%i/%i)", i, equip_index, equipsCount);
-					Perk* p = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk","Perk");
+					Perk* p = (Perk*) KLS_PUSH_T_TYPED(t_kls,Perk,1,HR_Perk,"Perk","Perk");
 					p->class = rand() % (PERKSMAX +1) ;
 					//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 					strcpy(p->name,nameStringFromPerk(p->class));
@@ -2609,7 +2604,7 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
 					if (!(already_rolled[curr])) {
 						log_tag("debug_log.txt","[DEBUG]","Prepping Consumable (%i/%i) for Shop", cons_prepared, uniqueConsumablesCount);
 						kls_log("DEBUG","Prepping Consumable (%i/%i) for Shop", cons_prepared, uniqueConsumablesCount);
-						Consumable *cur = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable","Consumable");
+						Consumable *cur = (Consumable*) KLS_PUSH_T_TYPED(t_kls,Consumable,1,HR_Consumable,"Consumable","Consumable");
 						cur->class = curr;
 						already_rolled[curr] = 1;
 						if (uniqueConsumablesCount - cons_prepared > 0) {
@@ -2643,8 +2638,6 @@ void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls) {
  */
 void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 
-	Koliseo_Temp tkls = *t_kls;
-
 	setChestSprite(c);
 
 	strcpy(c->desc,descStringFromChest(c->class));
@@ -2677,7 +2670,7 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 		for (int i = 0; i < c->consumablesCount; i++) {
 			log_tag("debug_log.txt","[DEBUG]","Prepping Consumable (%i/%i) for Chest", i, c->consumablesCount);
 			kls_log("DEBUG","Prepping Consumable (%i/%i) for Chest", i, c->consumablesCount);
-			Consumable* cns = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable","Consumable");
+			Consumable* cns = (Consumable*) KLS_PUSH_T_TYPED(t_kls,Consumable,1,HR_Consumable,"Consumable","Consumable");
 			int drop = rand() % (CONSUMABLESMAX + 1);
 
 			cns->class = drop;
@@ -2706,7 +2699,7 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 			//Prepare the item
 			log_tag("debug_log.txt","[DEBUG]","Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
 			kls_log("DEBUG","Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
-			Equip* e = (Equip*) KLS_PUSH_T_TYPED(tkls,Equip,1,HR_Equip,"Equip","Equip");
+			Equip* e = (Equip*) KLS_PUSH_T_TYPED(t_kls,Equip,1,HR_Equip,"Equip","Equip");
 
 			//Get the base item and copy the stats to the drop
 			Equip* base = &equips[drop];
@@ -2779,7 +2772,7 @@ void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
 
 					log_tag("debug_log.txt","[DEBUG]","Prepping Perk (%i/%i) for Equip (%i/%i) for Chest", j, e->perksCount, i, c->equipsCount);
 					kls_log("DEBUG","Prepping Perk (%i/%i) for Equip (%i/%i) for Chest", j, e->perksCount, i, c->equipsCount);
-					Perk* p = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk","Perk");
+					Perk* p = (Perk*) KLS_PUSH_T_TYPED(t_kls,Perk,1,HR_Perk,"Perk","Perk");
 					p->class = rand() % (PERKSMAX +1) ;
 					//p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
 					strcpy(p->name,nameStringFromPerk(p->class));
@@ -2848,8 +2841,6 @@ void prepareChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls) {
  */
 void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 
-	Koliseo_Temp tkls = *t_kls;
-
 	strcpy(t->desc,descStringFromTreasure(t->class));
 
 	switch(t->class) {
@@ -2857,7 +2848,7 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 
 			    log_tag("debug_log.txt","[DEBUG]","Allocated %lu for Treasure [Chest]:",sizeof(Chest));
 			    kls_log("DEBUG","Allocated %lu for Treasure [Chest]:",sizeof(Chest));
-			    Chest* c = (Chest*) KLS_PUSH_T_TYPED(tkls,Chest,1,HR_Chest,"Chest","Chest");
+			    Chest* c = (Chest*) KLS_PUSH_T_TYPED(t_kls,Chest,1,HR_Chest,"Chest","Chest");
 			    prepareChest(c,f,t_kls);
 			    t->chest = c;
 
@@ -2866,7 +2857,7 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 		case TREASURE_CONSUMABLE: {
 			log_tag("debug_log.txt","[DEBUG]","Allocated %lu for Treasure [Consumable]:",sizeof(Consumable));
 			kls_log("DEBUG","Allocated %lu for Treasure [Consumable]:",sizeof(Consumable));
-			Consumable* cns = (Consumable*) KLS_PUSH_T_TYPED(tkls,Consumable,1,HR_Consumable,"Consumable","Consumable");
+			Consumable* cns = (Consumable*) KLS_PUSH_T_TYPED(t_kls,Consumable,1,HR_Consumable,"Consumable","Consumable");
 			int drop = rand() % (CONSUMABLESMAX + 1);
 
 			cns->class = drop;
@@ -2886,7 +2877,7 @@ void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls) {
 		case TREASURE_ARTIFACT: {
 			log_tag("debug_log.txt","[DEBUG]","Allocated %lu for Treasure [Artifact]:",sizeof(Artifact));
 			kls_log("DEBUG","Allocated %lu for Treasure [Artifact]:",sizeof(Artifact));
-			Artifact* a = (Artifact*) KLS_PUSH_T_TYPED(tkls,Artifact,1,HR_Artifact,"Artifact","Artifact");
+			Artifact* a = (Artifact*) KLS_PUSH_T_TYPED(t_kls,Artifact,1,HR_Artifact,"Artifact","Artifact");
 			int drop = -1;
 			do {
 				drop = rand() % (ARTIFACTSMAX + 1);
@@ -4662,7 +4653,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
 	//
 	//Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
-	fightResult res = OP_RES_NO_DMG;
+	fightResult res = FIGHTRES_NO_DMG;
 
 	int player_goes_first = (player->vel >= e->vel ? 1 : 0);
 
@@ -5124,7 +5115,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 	//Is it okay to return just one result, when having 2 interactions that could go differently?
 	//
 	//Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
-	fightResult res = OP_RES_NO_DMG;
+	fightResult res = FIGHTRES_NO_DMG;
 
 	int player_goes_first = (player->vel >= b->vel ? 1 : 0);
 
@@ -8487,8 +8478,6 @@ int retry(void) {
  */
 void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Koliseo* kls, Koliseo_Temp* t_kls) {
 
-	Koliseo_Temp tkls = *t_kls;
-
 	char msg[200];
 	char ch[25];
 	int picked_debug_proc = 0;
@@ -8688,7 +8677,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			sprintf(msg,"Pushing dbg_floor to tkls.");
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Floor* dbg_floor = (Floor*) KLS_PUSH_T_TYPED(tkls,Floor,1,HR_Floor,"Floor",msg);
+			Floor* dbg_floor = (Floor*) KLS_PUSH_T_TYPED(t_kls,Floor,1,HR_Floor,"Floor",msg);
 			// Start the random walk from the center of the dungeon
     			int center_x = FLOOR_MAX_COLS / 2;
     			int center_y = FLOOR_MAX_ROWS / 2;
@@ -9752,14 +9741,13 @@ void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	sprintf(msg,"Resetting Koliseo_Temp from: (%lli)",t_kls->kls->offset);
 	#endif
 	kls_log("DEBUG",msg);
-	kls_temp_end(*t_kls);
-	#ifndef _WIN32
-	sprintf(msg,"Koliseo now at: (%li)",t_kls->kls->offset);
-	#else
-	sprintf(msg,"Koliseo now at: (%lli)",t_kls->kls->offset);
-	#endif
-	kls_log("DEBUG",msg);
+	kls_temp_end(t_kls);
 	death(p,load_info);
+	//FIXME
+	//I think we should free those?
+	//May cause a crash?
+	//kls_free(default_kls);
+	//kls_free(temporary_kls);
 	//FIXME:
 	//Calling this segfaults?
 	//freeRoom(room);
@@ -9775,7 +9763,6 @@ void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls) {
  * @param f The Fighter pointer at hand.
  */
 void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls) {
-	Koliseo_Temp tkls = *t_kls;
 	char msg[200];
 
 	Equip* saved_equips[EQUIPZONES+1];
@@ -9786,7 +9773,7 @@ void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls) {
 			sprintf(msg,"sell_all_equips(): Prepping Equip to save f->equipslot[%i]",i);
 			log_tag("debug_log.txt","[DEBUG]",msg);
 			kls_log("DEBUG",msg);
-			Equip* saved = (Equip*) KLS_PUSH_T_TYPED(tkls,Equip,1,HR_Equip,"Equip",msg);
+			Equip* saved = (Equip*) KLS_PUSH_T_TYPED(t_kls,Equip,1,HR_Equip,"Equip",msg);
 			Equip* to_save = f->equipslots[i]->item;
 
 			saved->class = to_save->class;
@@ -9809,7 +9796,7 @@ void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls) {
 				sprintf(msg,"sell_all_equips(): Prepping Perk (%i) to save f->equipslot[%i]", j, i);
 				log_tag("debug_log.txt","[DEBUG]",msg);
 				kls_log("DEBUG",msg);
-				Perk* save_pk = (Perk*) KLS_PUSH_T_TYPED(tkls,Perk,1,HR_Perk,"Perk",msg);
+				Perk* save_pk = (Perk*) KLS_PUSH_T_TYPED(t_kls,Perk,1,HR_Perk,"Perk",msg);
 				save_pk->class = to_save->perks[j]->class;
 				strcpy(save_pk->name, to_save->perks[j]->name);
 				strcpy(save_pk->desc, to_save->perks[j]->desc);
@@ -10227,8 +10214,30 @@ void gameloop(int argc, char** argv){
 					printf("  \'animate\' :\n    s4c/animate.h    ");
 					S4C_ECHOVERSION();
 					printf("[DEBUG]    Testing terminal color capabilities.\n");
-					napms(800);
+					napms(200);
 					display_colorpairs();
+					napms(200);
+					WINDOW* test_win;
+					initscr();
+					start_color();
+					for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+						init_s4c_color_pair(&palette[i],9+i);
+					}
+					clear();
+					refresh();
+					cbreak();
+					noecho();
+					test_win = newwin(9,7,1,1);
+					keypad(test_win, TRUE);
+					box(test_win,0,0);
+
+					refresh();
+
+					test_game_color_pairs(test_win,5);
+
+					napms(200);
+					delwin(test_win);
+					endwin();
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10638,7 +10647,7 @@ void gameloop(int argc, char** argv){
         	WINDOW *savepick_side_win;
 		char current_save_path[300]; //Will hold picked path
 
-		Koliseo_Temp savepick_kls = kls_temp_start(temporary_kls);
+		Koliseo_Temp* savepick_kls = kls_temp_start(temporary_kls);
 
 		//Declare turnOP_args
 		Room* fakeroom = NULL;
@@ -10648,7 +10657,7 @@ void gameloop(int argc, char** argv){
 		WINDOW* fakenotifywin = NULL;
 		Gamestate* fakegmst = NULL;
 		foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
-		turnOP_args* savepick_turn_args = init_turnOP_args(fakegmst,player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &savepick_kls, fake_foe_op);
+		turnOP_args* savepick_turn_args = init_turnOP_args(fakegmst,player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, savepick_kls, fake_foe_op);
  		char *savepick_choices[] = {
 			"New game",
 			"Load save",
@@ -10810,7 +10819,7 @@ void gameloop(int argc, char** argv){
 				//TODO
 				//By default we expect the user to press new game, no action needed?
 				log_tag("debug_log.txt","[DEBUG]","Running new game from savepick menu");
-				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, &savepick_kls);
+				turnOP(OP_NEW_GAME,savepick_turn_args, default_kls, savepick_kls);
 			} else if (savepick_choice == LOAD_GAME) {
 				int picked_saveslot_index = get_saveslot_index();
 				log_tag("debug_log.txt","[DEBUG]","Saveslot index picked: [%i]",picked_saveslot_index);
@@ -10823,7 +10832,7 @@ void gameloop(int argc, char** argv){
 				//Setting this to 0 is the only thing we expect here, the actual load is done later.
 				load_info->is_new_game = 0;
 				log_tag("debug_log.txt","[DEBUG]","Set load value: load_info->is_new_game == (%i)", load_info->is_new_game);
-				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls, &savepick_kls);
+				turnOP(OP_LOAD_GAME,savepick_turn_args, default_kls, savepick_kls);
 				//TODO
 				//Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
 			} else if (savepick_choice == QUIT) {
@@ -10874,7 +10883,7 @@ void gameloop(int argc, char** argv){
 		//By now, we expect load_info->is_new_game to be set to 0 or 1.
 		log_tag("debug_log.txt","[DEBUG]","  Checking is_new_game:  load_info->is_new_game == (%i)",load_info->is_new_game);
 
-		Koliseo_Temp gamestate_kls = kls_temp_start(temporary_kls);
+		Koliseo_Temp* gamestate_kls = kls_temp_start(temporary_kls);
 
 		if (load_info->is_new_game) {// We prepare path and fighter
 			path = randomise_path(rand(), default_kls, current_save_path);
@@ -10898,7 +10907,7 @@ void gameloop(int argc, char** argv){
 			WINDOW* fakenotifywin = NULL;
 			Gamestate* fakegmst = NULL;
 			foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
-			turnOP_args* loading_room_turn_args = init_turnOP_args(fakegmst, player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, &gamestate_kls, fake_foe_op);
+			turnOP_args* loading_room_turn_args = init_turnOP_args(fakegmst, player, path, fakeroom, load_info, fakeenemy, fakeboss, fakesavefile, fakenotifywin, gamestate_kls, fake_foe_op);
 			FILE* save_file;
 			char path_to_savefile[1000];
 			char static_path[500];
@@ -10967,7 +10976,7 @@ void gameloop(int argc, char** argv){
 				kls_log("DEBUG","Prepping Loady Enemy");
 				load_info->loaded_enemy = (Enemy*) KLS_PUSH_TYPED(default_kls, Enemy, 1, HR_Enemy, "Enemy","Loaded Enemy");
 				//FIXME: the structs related to loaded enemy are not loaded on default_kls
-				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, &gamestate_kls);
+				prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1, gamestate_kls);
 
 				//Update loading_room_turn_args->enemy pointer
 				loading_room_turn_args->enemy = load_info->loaded_enemy;
@@ -10983,7 +10992,7 @@ void gameloop(int argc, char** argv){
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_ENEMYROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
 					//FIXME: the structs related to loaded enemy are not loaded on default_kls
-					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls, &gamestate_kls);
+					OP_res load_op_result = turnOP(OP_LOAD_ENEMYROOM,loading_room_turn_args, default_kls, gamestate_kls);
 					log_tag("debug_log.txt","[TURNOP]","OP_LOAD_ENEMYROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					log_tag("debug_log.txt","[FREE]","Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
 					//free(loading_room_turn_args);
@@ -10993,7 +11002,7 @@ void gameloop(int argc, char** argv){
 					log_tag("debug_log.txt","[TURNOP]","Doing OP_LOAD_HOMEROOM.");
 					//int* loadinfo_totfoes = &(load_info->total_foes);
 					//FIXME: the structs related to loaded enemy are not loaded on default_kls
-					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls, &gamestate_kls);
+					OP_res load_op_result = turnOP(OP_LOAD_HOMEROOM,loading_room_turn_args, default_kls, gamestate_kls);
 					log_tag("debug_log.txt","[TURNOP]","OP_LOAD_HOMEROOM:  result was [%s].",stringFrom_OP_res(load_op_result));
 					//log_tag("debug_log.txt","[FREE]","Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
 					load_info->done_loading = 1;
@@ -11142,7 +11151,7 @@ void gameloop(int argc, char** argv){
 				setRoomType(path, &roadFork_value, &room_type, roomsDone);
 				log_tag("debug_log.txt","[ROOM]","Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
-				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &gamestate_kls);
+				initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, gamestate_kls);
 				log_tag("debug_log.txt","[ROOM]","Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
 
@@ -11263,16 +11272,16 @@ void gameloop(int argc, char** argv){
 				update_Gamestate(gamestate, 1, current_room->class, roomsDone, -1);
 
 				if (current_room->class == HOME) {
-					res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,&gamestate_kls);
+					res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,gamestate_kls);
 				} else if (current_room->class == ENEMIES) {
-					res = handleRoom_Enemies(gamestate,current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls,&gamestate_kls);
+					res = handleRoom_Enemies(gamestate,current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites,default_kls,gamestate_kls);
 				} else if (current_room->class == SHOP) {
 					//FIXME: does shop require usage of gameloop kls?
-					res = handleRoom_Shop(current_room, roomsDone, path, player, default_kls, &gamestate_kls);
+					res = handleRoom_Shop(current_room, roomsDone, path, player, default_kls, gamestate_kls);
 				} else if (current_room->class == BOSS) {
-					res = handleRoom_Boss(gamestate,current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls,&gamestate_kls);
+					res = handleRoom_Boss(gamestate,current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls,gamestate_kls);
 				} else if (current_room->class == TREASURE) {
-					res = handleRoom_Treasure(current_room, roomsDone, path, player, default_kls, &gamestate_kls);
+					res = handleRoom_Treasure(current_room, roomsDone, path, player, default_kls, gamestate_kls);
 				} else if (current_room->class == ROADFORK) {
 					res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 				} else {
@@ -11489,7 +11498,7 @@ void gameloop(int argc, char** argv){
 						room_type = current_floor->roomclass_layout[current_x][current_y];
 						log_tag("debug_log.txt","[ROOM]","Set Room #%i type:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
-						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, &gamestate_kls);
+						initRoom(current_room, player, roomsDone, room_type, enemyTotal, load_info, gamestate_kls);
 						log_tag("debug_log.txt","[ROOM]","Init Room #%i:    (%s)\n", roomsDone, stringFromRoom(room_type));
 
 
@@ -11575,15 +11584,15 @@ void gameloop(int argc, char** argv){
 						update_Gamestate(gamestate, 1, current_room->class, roomsDone, -1);
 
 						if (current_room->class == HOME) {
-							res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, &gamestate_kls);
+							res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, gamestate_kls);
 						} else if (current_room->class == ENEMIES) {
-							res = handleRoom_Enemies(gamestate, current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls, &gamestate_kls);
+							res = handleRoom_Enemies(gamestate, current_room, roomsDone, path, player, load_info, enemy_sprites, fighter_sprites, default_kls, gamestate_kls);
 						} else if (current_room->class == SHOP) {
-							res = handleRoom_Shop(current_room, roomsDone, path, player, default_kls, &gamestate_kls);
+							res = handleRoom_Shop(current_room, roomsDone, path, player, default_kls, gamestate_kls);
 						} else if (current_room->class == BOSS) {
-							res = handleRoom_Boss(gamestate,current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls, &gamestate_kls);
+							res = handleRoom_Boss(gamestate,current_room, roomsDone, path, player, load_info, boss_sprites, fighter_sprites, default_kls, gamestate_kls);
 						} else if (current_room->class == TREASURE) {
-							res = handleRoom_Treasure(current_room, roomsDone, path, player, default_kls, &gamestate_kls);
+							res = handleRoom_Treasure(current_room, roomsDone, path, player, default_kls, gamestate_kls);
 						} else if (current_room->class == ROADFORK) {
 							res = handleRoom_Roadfork(current_room, &roadFork_value, roomsDone, path, player);
 						} else {
@@ -11693,7 +11702,7 @@ void gameloop(int argc, char** argv){
 					//Draw current FOV
 					draw_floor_view(current_floor, current_x, current_y, floor_win);
 					//Take a step and update screen
-					move_update(gamestate, current_floor, &current_x, &current_y, floor_win, path, player, current_room, load_info, default_kls, &gamestate_kls);
+					move_update(gamestate, current_floor, &current_x, &current_y, floor_win, path, player, current_room, load_info, default_kls, gamestate_kls);
 				}// Win condition loop
 
         			//FIXME: do we need this?
