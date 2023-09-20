@@ -2286,7 +2286,7 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 	*/
 
 	int result = s4c_animate_sprites_at_coords(sprites, w, reps, frametime, num_frames, frame_height, frame_width, 2, 2);
-	sleep(1);
+	napms(200);
 
 	wclear(w);
 	wrefresh(w);
@@ -2298,19 +2298,19 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 	if (result < 0) {
 		switch (result) {
 			case S4C_ERR_SMALL_WIN: {
-        			fprintf(stderr,"animate => S4C_ERR_SMALL_WIN : Window was too small.\n");
+        			fprintf(stderr,"[%s] animate => S4C_ERR_SMALL_WIN : Window was too small.\n",__func__);
 			}
 			break;
 			case S4C_ERR_LOADSPRITES: {
-        			fprintf(stderr,"animate => S4C_ERR_LOADSPRITES : Failed loading the sprites.\n");
+        			fprintf(stderr,"[%s] animate => S4C_ERR_LOADSPRITES : Failed loading the sprites.\n",__func__);
 			}
 			break;
 			case S4C_ERR_FILEVERSION: {
-        			fprintf(stderr,"animate => S4C_ERR_FILEVERSION : Failed file version check.\n");
+        			fprintf(stderr,"[%s] animate => S4C_ERR_FILEVERSION : Failed file version check.\n",__func__);
 			}
 			break;
 			case S4C_ERR_CURSOR: {
-        			fprintf(stderr,"animate => S4C_ERR_CURSOR : Failed to change the cursor.\n");
+        			fprintf(stderr,"[%s] animate => S4C_ERR_CURSOR : Failed to change the cursor.\n",__func__);
 			}
 			break;
 		}

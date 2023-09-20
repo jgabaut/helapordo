@@ -38,7 +38,7 @@ KLS_LDFLAGS = -O2
 endif
 
 # Compiler flags
-AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall
+AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -Wno-trigraphs
 
 if MINGW32_BUILD
 helapordo_SOURCES += src/floor_tester.c

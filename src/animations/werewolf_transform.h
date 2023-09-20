@@ -1,6 +1,6 @@
 #ifndef WEREWOLF_TRANSFORM_H_
 #define WEREWOLF_TRANSFORM_H_
-#define WEREWOLF_TRANSFORM_H_VERSION "0.1.5"
+#define WEREWOLF_TRANSFORM_H_VERSION "0.2.1"
 #include "../../sprites4curses/s4c-animate/animate.h"
 
 /**
