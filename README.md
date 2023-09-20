@@ -30,7 +30,7 @@
   The code should build for:
 
   - `x86_64-Linux`
-  - `aarch64-Linux`(see [this section](#make_doc))
+  - `aarch64-Linux`(see [this section](#latest_release))
   - `aarch64-apple-darwin`
   - `Windows` (through `x86_64-w64-mingw32`)
 
@@ -147,5 +147,5 @@
 
   - `darwin-arm64`
 
-  📦 v1.1.9 17/09/2023
+  📦 v1.2.1 20/09/2023
   https://github.com/jgabaut/helapordo/releases

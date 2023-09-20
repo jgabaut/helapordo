@@ -3348,23 +3348,19 @@ foeTurnOption enemyTurnPick(Enemy* e, Fighter* f) {
 	foeTurnOption pick = FOE_INVALID;
 
 	while (pick == FOE_INVALID) {
-		if (G_EXPERIMENTAL_ON != 1) {
+		int rn = rand() % 101;
+		/*
+		if (rn > 80) {
+			//TODO
+			//pick = FOE_SPECIAL;
 			pick = FOE_IDLE;
-		} else {
-			int rn = rand() % 101;
-			/*
-			if (rn > 80) {
-				//TODO
-				//pick = FOE_SPECIAL;
-				pick = FOE_IDLE;
 
-			} else
-			*/
-			if (rn > 50) {
-				pick = FOE_FIGHT;
-			} else {
-				pick = FOE_IDLE;
-			}
+		} else
+		*/
+		if (rn > 40) {
+			pick = FOE_FIGHT;
+		} else {
+			pick = FOE_IDLE;
 		}
 	}
 
