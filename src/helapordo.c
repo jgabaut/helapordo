@@ -3392,16 +3392,16 @@ foeTurnOption bossTurnPick(Boss* b, Fighter* f) {
 	foeTurnOption pick = FOE_INVALID;
 
 	while (pick == FOE_INVALID) {
-		int rn = rand() % 100;
-
+		int rn = rand() % 101;
+		/*
 		if (rn > 80) {
 			//TODO
 			//pick = FOE_SPECIAL;
 			pick = FOE_IDLE;
-		} else if (rn > 50) {
-			//TODO
-			//pick = FOE_FIGHT;
-			pick = FOE_IDLE;
+		} else
+		*/
+		if (rn > 40) {
+			pick = FOE_FIGHT;
 		} else {
 			pick = FOE_IDLE;
 		}
@@ -4673,7 +4673,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				}
 				break;
 				case FOE_OP_IDLE: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is loafing around.",stringFromEClass(e->class));
 					display_notification(notify_win,msg,500);
@@ -4681,7 +4681,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				}
 				break;
 				case FOE_OP_FIGHT: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is angry!",stringFromEClass(e->class));
 					display_notification(notify_win,msg,500);
@@ -4731,7 +4731,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 			}
 			break;
 			case FOE_OP_IDLE: {
-				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
 				wattron(notify_win,COLOR_PAIR(S4C_GREY));
 				sprintf(msg,"%s is loafing around.",stringFromEClass(e->class));
 				display_notification(notify_win,msg,500);
@@ -4739,7 +4739,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 			}
 			break;
 			case FOE_OP_FIGHT: {
-				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
 				res = enemy_attack(e,player,notify_win,kls);
 			}
 			break;
@@ -5080,7 +5080,6 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 }
 
 int boss_attack(Boss* b, Fighter* target, Path* p, WINDOW* notify_win, Koliseo* kls) {
-	fightResult res = FIGHTRES_NO_DMG;
 
 	//TODO
 	//Implementation similar to boss_fight(), as a base idea
@@ -5090,6 +5089,259 @@ int boss_attack(Boss* b, Fighter* target, Path* p, WINDOW* notify_win, Koliseo* 
 	//	FIGHTRES_KILL_DONE means the Boss died
 	//	FIGHTRES_DMG_DEALT means the Fighter inflicted damage
 	//	FIGHRES_DMG_TAKEN means the Fighter received damage
+	fightResult res = FIGHTRES_NO_DMG;
+	//Stat comparisons
+	//
+	char msg[200];
+
+	int atkdelta = (b->atk + b->turnboost_atk) - (target->atk + target->equipboost_atk + target->turnboost_atk - (rand() % 3) ) - 1 ; //Skewed with defender
+	int defdelta = (b->def + b->turnboost_def) - (target->def + target->equipboost_def + target->turnboost_def) + (rand() % 2) + 1  ; //Skewed with attacker
+	int veldelta = (b->vel + b->turnboost_vel) - (target->vel + target->equipboost_vel + target->turnboost_vel) + (rand() % 3 ) + 1 ;
+
+	int atkOnPlayer = (b->atk + b->turnboost_atk) - (target->def + target->equipboost_def + target->turnboost_def + (target->vel / 6)) ;
+	int atkOnEnemy = (target->atk + target->equipboost_atk + target->turnboost_atk ) - (b->def + b->turnboost_def + (b->vel / 6)) ;
+	if (G_GODMODE_ON == 1) {
+		log_tag("debug_log.txt","[DEBUG]","[%s]:  G_GODMODE_ON == 1",__func__);
+		atkdelta = -100;
+		defdelta = -100;
+		veldelta = -100;
+		atkOnPlayer = 1;
+		atkOnEnemy = 100;
+	}
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkdelta %i",atkdelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","defdelta %i",defdelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","veldelta %i",veldelta);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkOnEnemy %i",atkOnEnemy);
+	log_tag("debug_log.txt","[DEBUG-FIGHT]","atkOnPlayer %i",atkOnPlayer);
+
+	int damageDealt = -1;
+
+	if (veldelta >= 0) { //Boss was faster
+		if (atkOnPlayer > 3) {
+			damageDealt = atkOnPlayer;
+			target->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_TAKEN;
+			log_tag("debug_log.txt","[FIGHT]","Fight result D LOST (slower, great enemy atk.");
+		} else if ( atkOnPlayer >= 0 ) {
+			damageDealt = abs( atkOnPlayer - atkdelta);
+			target->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_TAKEN;
+			log_tag("debug_log.txt","[FIGHT]","Fight result E LOST (slower, ok enemy atk.");
+		} else {
+			if ( atkOnPlayer < -3 ) {
+				damageDealt = fabsf(atkOnEnemy - 0.75F * b->vel );
+				log_tag("debug_log.txt","[FIGHT]","Fight result F1 WIN (slower, enemy atk < -3.");
+			} else {
+				damageDealt = abs (atkOnEnemy - 1 );
+				log_tag("debug_log.txt","[FIGHT]","Fight result F2 WIN (slower, enemy atk > -3.");
+			}
+			b->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_DEALT;
+		}
+	} else { //Target was faster
+		atkdelta = -atkdelta;
+		if ( atkOnEnemy > 3 ) {
+			damageDealt = atkOnEnemy;
+			b->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_DEALT;
+			log_tag("debug_log.txt","[FIGHT]","Fight result A WIN (faster, great atk).");
+		} else if ( atkOnEnemy >= 0) {
+			damageDealt = abs(atkOnEnemy - atkdelta);
+			b->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_DEALT;
+			log_tag("debug_log.txt","[FIGHT]","Fight result B WIN (faster, ok atk).");
+		} else {
+			if ( atkOnEnemy < -3 ) {
+				damageDealt = fabsf(atkOnPlayer - 0.75F * (target->vel + target->equipboost_vel) );
+				log_tag("debug_log.txt","[FIGHT]","Fight result C1 LOST (faster, atk < -3).");
+			} else {
+			       	damageDealt = abs (atkOnPlayer - 1 );
+				log_tag("debug_log.txt","[FIGHT]","Fight result C2 LOST (faster, atk > -3).");
+			}
+			target->hp -= damageDealt > 0 ? damageDealt : 1;
+			res = FIGHTRES_DMG_TAKEN;
+		}
+	}
+
+	log_tag("debug_log.txt","[FIGHT]","damageCalc %i", damageDealt);
+
+	int yourhit = (res == FIGHTRES_DMG_DEALT ) ? 1 : 0 ;
+	char victim[25];
+
+	if (!yourhit) {
+
+		b->vel--;
+		b->atk--;
+		b->def -= 2;
+
+		//Check if someone earned a stat reset after the fight
+		statReset(target,0);
+		statResetBoss(b,0);
+
+		strcpy(victim,target->name);
+	} else {
+
+		target->vel--;
+		target->atk--;
+		target->def -= 2;
+
+		//Account for vampirism perk
+		int vampire_perks = target->perks[VAMPIRISM]->innerValue;
+		if (vampire_perks > 0) {
+			int recovery = floor(damageDealt * (0.1 * vampire_perks));
+			target->hp += recovery;
+			log_tag("debug_log.txt","[PERKS]","Vampirism proc for +%i HP.",recovery);
+			if (target->hp >= target->totalhp) { target->hp = target->totalhp;};
+		}
+
+		//Account for burn on touch perk
+		int hotbody_perks = target->perks[HOT_BODY]->innerValue;
+		if (hotbody_perks > 0) {
+			int burnchance = 11 - hotbody_perks;
+			if (rand() % burnchance == 0) {
+				b->status = Burned; //Set status to Burned. May need change to manage multiple statuses active at once
+				setCounter((Turncounter *)b->counters[Burned],2); //Give 2 turns of Burned status
+				log_tag("debug_log.txt","[PERKS]","Hotbody proc on 1/%i chance.",burnchance);
+			}
+		}
+
+		//Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
+		int biohazard_perks = target->perks[BIOHAZARD]->innerValue;
+		if (biohazard_perks > 0) {
+			int poisonchance = 11 - biohazard_perks;
+			if (rand() % poisonchance == 0) {
+				b->status = Poison; //Set status to Poison. May need change to manage multiple statuses active at once
+				setCounter((Turncounter *)b->counters[POISON],2); //Give 2 turns of Poison status
+				log_tag("debug_log.txt","[PERKS]","Biohazard proc on 1/%i chance.",poisonchance);
+			}
+		}
+
+		//Check if someone earned a stat reset after the fight
+		statResetBoss(b,0);
+		statReset(target,0);
+
+		strcpy(victim,stringFromBossClass(b->class));
+	}
+
+	int color = -1;
+	if (yourhit) {
+		color = S4C_WHITE;
+	} else {
+		color = S4C_RED;
+	}
+
+	wattron(notify_win, COLOR_PAIR(color));
+	sprintf(msg,"%s was hit.    (%i DMG)", victim, damageDealt > 0 ? damageDealt : 1);
+	display_notification(notify_win, msg, 500);
+	wattroff(notify_win, COLOR_PAIR(color));
+
+	//Rolls
+	//
+	//Critical hit roll
+
+	//Account for critboost_chance perks
+	int critMax =  round(10.0 - floor(target->luck/5) - (1.5* target->perks[CRITBOOST_CHANCE]->innerValue)  ) ;
+
+	int critRes = (rand() % critMax);
+
+	if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
+
+		//Account for critboost_dmg perks
+		int dmgboost_perks = target->perks[CRITBOOST_DMG]->innerValue;
+		damageDealt *= (0.30 + (0.12* dmgboost_perks));
+		b->hp -= damageDealt > 0 ? damageDealt : 1;
+		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
+		sprintf(msg,"A critical hit!    (%i DMG)", damageDealt > 0 ? damageDealt : 1);
+		display_notification(notify_win,msg,500);
+		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
+		log_tag("debug_log.txt","[FIGHT-BOSS]","Critical hit for %i dmg, proc on 1/%i chance.", damageDealt, critMax);
+
+		//Update stats
+		target->stats->criticalhits++;
+	}
+	//Check for deaths -> exit condition from loop
+	//
+	//
+	//
+	if (b->hp <= 0 ) {
+		res = FIGHTRES_KILL_DONE;
+
+		//Account for runic circle perk
+		int runic_perks = target->perks[RUNIC_MAGNET]->innerValue;
+		if (runic_perks > 0) {
+			int recovery = round(0.51 * runic_perks);
+			target->energy += recovery;
+			log_tag("debug_log.txt","[PERKS]","Runicmagnet proc for %i energy.",recovery);
+		}
+		if (b->beast) {
+			color = S4C_MAGENTA;
+		} else {
+			color = S4C_RED;
+		}
+		wattron(notify_win,COLOR_PAIR(color));
+		sprintf(msg, "%s fainted.",stringFromBossClass(b->class));
+		display_notification(notify_win, msg, 500);
+		wattroff(notify_win,COLOR_PAIR(color));
+		log_tag("debug_log.txt","[FIGHT-BOSS]","Killed  %s.", stringFromBossClass(b->class));
+
+		//Update stats
+		target->stats->bosseskilled++;
+
+		//Check if we killed this boss before
+		if (target->stats->killed_bosses[b->class] == 0) {
+			//Update stats
+			target->stats->unique_bosseskilled++;
+			target->stats->killed_bosses[b->class] += 1;
+			//Check if we have to update the wincon value
+			if (p->win_condition->class == ALL_BOSSES) {
+				p->win_condition->current_val++;
+			}
+			log_tag("debug_log.txt","[FIGHT-BOSS]","Killed new boss  %s.", stringFromBossClass(b->class));
+		}
+	} else {
+		//Apply status effects to boss
+		if (b->status != Normal) {
+			applyBStatus(notify_win, b);
+			log_tag("debug_log.txt","[STATUS]","Applied  %s to %s.", stringFromStatus(b->status),stringFromBossClass(b->class));
+		}
+	}
+
+
+	if (target->hp <= 0) {
+		res = FIGHTRES_DEATH;
+	} else {
+		//Apply status effects to target
+		if (target->status != Normal) {
+			applyStatus(notify_win, target);
+		}
+	}
+
+	//Consumable drop, guaranteed on killing a beast
+	if (res == FIGHTRES_KILL_DONE) {
+		int drop = dropConsumable(target);
+		wattron(notify_win,COLOR_PAIR(S4C_CYAN));
+		sprintf(msg, "You found a %s!",stringFromConsumables(drop));
+		display_notification(notify_win,msg,500);
+		wattroff(notify_win,COLOR_PAIR(S4C_CYAN));
+		log_tag("debug_log.txt","[DROPS]","Found Consumable:    %s.", stringFromConsumables(drop));
+	}
+
+
+	//Artifact drop (if we don't have all of them)
+	if (res == FIGHTRES_KILL_DONE && (target->stats->artifactsfound != ARTIFACTSMAX + 1)) {
+		int artifact_drop = dropArtifact(target);
+		wattron(notify_win,COLOR_PAIR(S4C_MAGENTA));
+		sprintf(msg, "You found a %s!",stringFromArtifacts(artifact_drop));
+		display_notification(notify_win, msg, 500);
+		wattroff(notify_win,COLOR_PAIR(S4C_MAGENTA));
+		log_tag("debug_log.txt","[DROPS]","Found Artifact:    %s.", stringFromArtifacts(artifact_drop));
+	}
+
+	//Equip drop
+	if (res == FIGHTRES_KILL_DONE) {
+		//We give 1 to obtain the better equip generation used for beasts
+		dropEquip(target,1,notify_win,kls);
+	}
 
 	return res;
 }
@@ -5129,7 +5381,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_IDLE: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is loafing around.",stringFromBossClass(b->class));
 					display_notification(notify_win,msg,500);
@@ -5137,10 +5389,12 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_FIGHT: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
-					//TODO
-					//Implement boss fight function
-					//res = boss_attack(b,player,p,notify_win,kls);
+					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+					wattron(notify_win,COLOR_PAIR(S4C_GREY));
+					sprintf(msg,"%s is angry!",stringFromBossClass(b->class));
+					display_notification(notify_win,msg,500);
+					wattroff(notify_win,COLOR_PAIR(S4C_GREY));
+					res = boss_attack(b,player,p,notify_win,kls);
 				}
 				break;
 				case FOE_OP_SPECIAL: {
@@ -5180,7 +5434,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 			}
 			break;
 			case FOE_OP_IDLE: {
-				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
 				wattron(notify_win,COLOR_PAIR(S4C_GREY));
 				sprintf(msg,"%s is loafing around.",stringFromBossClass(b->class));
 				display_notification(notify_win,msg,500);
@@ -5188,10 +5442,12 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 			}
 			break;
 			case FOE_OP_FIGHT: {
-				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
-				//TODO
-				//Implement boss fight function
-				//res = boss_attack(b,player,p,notify_win,kls);
+				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+				wattron(notify_win,COLOR_PAIR(S4C_GREY));
+				sprintf(msg,"%s is angry!",stringFromBossClass(b->class));
+				display_notification(notify_win,msg,500);
+				wattroff(notify_win,COLOR_PAIR(S4C_GREY));
+				res = boss_attack(b,player,p,notify_win,kls);
 			}
 			break;
 			case FOE_OP_SPECIAL: {
@@ -10105,20 +10361,21 @@ Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile){
 void gameloop(int argc, char** argv){
 
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
-  //Init default_kls
-  default_kls = kls_new(KLS_DEFAULT_SIZE*16);
-  temporary_kls = kls_new(KLS_DEFAULT_SIZE*32);
-
-  #ifndef _WIN32
-  (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
-  #else
-  (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
-  #endif
-
-  char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),None,"progname",whoami);
-  strcpy(kls_progname,whoami);
 
 	do {
+		//Init default_kls
+		default_kls = kls_new(KLS_DEFAULT_SIZE*16);
+		temporary_kls = kls_new(KLS_DEFAULT_SIZE*32);
+
+		#ifndef _WIN32
+		(whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
+		#else
+		(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+		#endif
+
+		char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),None,"progname",whoami);
+		strcpy(kls_progname,whoami);
+
 		#ifndef HELAPORDO_DEBUG_LOG
 		#else
 		FILE *debug_file = NULL;
