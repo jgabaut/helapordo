@@ -34,3 +34,4 @@ kazoj# tests folder name
 1.2.0# Bump s4c to 0.3.2, regen animations
 1.2.1# Enemies can pick FOE_FIGHT without -X
 1.2.2# Bosses can pick FOE_FIGHT, fix crash on retry()
+1.2.3#
