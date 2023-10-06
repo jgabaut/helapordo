@@ -363,9 +363,6 @@ void printBattleStats(WINDOW* wins[3], Fighter* f, Enemy* e) {
 
 
 	/* Show it on the screen */
-	//attron(COLOR_PAIR(4));
-	//mvprintw(LINES - 2, 0, "MENU PROMPT (F1 to Exit)");
-	//attroff(COLOR_PAIR(4));
 	doupdate();
 
 	top = my_panels[2];
@@ -408,12 +405,12 @@ void init_wins(WINDOW **wins, Enemy* e, Fighter* f) {
 		}
 		if (i==1) { //Fighter panel
 			isEnemy=0;
-       			lines = 23;
+       		lines = 23;
 			cols = 32;
 			y = 0;
 			x = 47;
 			wins[i] = newwin(lines, cols, y, x);
-            		wclear(wins[i]);
+            wclear(wins[i]);
 			wrefresh(wins[i]);
 			win_show(wins[i], e, f, isEnemy, border);
 			wrefresh(wins[i]);
@@ -426,7 +423,7 @@ void init_wins(WINDOW **wins, Enemy* e, Fighter* f) {
 			y = 0;
 			x = 0;
 			wins[i] = newwin(lines, cols, y, x);
-            		wclear(wins[i]);
+            wclear(wins[i]);
 			wrefresh(wins[i]);
 			win_show(wins[i], e, f, isEnemy, border);
 			wrefresh(wins[i]);
@@ -452,15 +449,15 @@ void win_show(WINDOW *win, Enemy* e, Fighter* f, int isEnemy, int border)
 	getbegyx(win, starty, startx);
 	getmaxyx(win, height, width);
 
-	log_tag("debug_log.txt","[DEBUG]","win_show():  Begin y (%i) height (%i)", starty, height);
-	log_tag("debug_log.txt","[DEBUG]","win_show():  Begin x (%i) width (%i)", startx, width);
+	log_tag("debug_log.txt","[DEBUG]","%s():  Begin y (%i) height (%i)", __func__, starty, height);
+	log_tag("debug_log.txt","[DEBUG]","%s():  Begin x (%i) width (%i)", __func__, startx, width);
 
 	box(win, 0, 0);
 	if (border) mvwaddch(win, 2, 0, ACS_LTEE);
 	mvwhline(win, 2, 1, ACS_HLINE, width - 2);
 	if (border) mvwaddch(win, 2, width - 1, ACS_RTEE);
 
-	//Print label
+	//Print window contents
 	print_in_panel(win, 1, 0, width, e, f, isEnemy);
 }
 
@@ -597,6 +594,58 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		if (e->status != Normal) {
 			wattroff(win, COLOR_PAIR(S4C_RED));
 		}
+
+        x = startx + xShift -3;
+		y += 2;
+
+        if (e->turnboost_atk != 0) {
+			if (e->turnboost_atk < 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "ATK(%i){%i}", e->turnboost_atk, e->counters[TURNBOOST_ATK]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "ATK(+%i){%i}", e->turnboost_atk, e->counters[TURNBOOST_ATK]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (e->turnboost_def != 0) {
+			if (e->turnboost_def < 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "DEF(%i){%i}", e->turnboost_def, e->counters[TURNBOOST_DEF]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "DEF(+%i){%i}", e->turnboost_def, e->counters[TURNBOOST_DEF]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (e->turnboost_vel != 0) {
+			if (e->turnboost_vel < 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "VEL(%i){%i}", e->turnboost_vel, e->counters[TURNBOOST_VEL]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "VEL(+%i){%i}", e->turnboost_vel, e->counters[TURNBOOST_VEL]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (e->turnboost_enr != 0) {
+			if (e->turnboost_enr < 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "ENR(%i){%i}", e->turnboost_enr, e->counters[TURNBOOST_ENR]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "ENR(+%i){%i}", e->turnboost_enr, e->counters[TURNBOOST_ENR]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
 	} else if (isEnemy == 0) { //Fighter panel
 
 
@@ -668,9 +717,6 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 			wattroff(win,COLOR_PAIR(S4C_RED));
 			resetColor = 0;
 		};
-
-		//TODO
-		//equipboost_sta?
 
 		temp = (width - (f->atk/10)) / 2 ;
 		x = startx + 2;
@@ -751,6 +797,58 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy* e, Fi
 		mvwprintw(win, y, x, "%s", stringFromStatus(f->status));
 		if (f->status != Normal) {
 			wattroff(win, COLOR_PAIR(S4C_RED));
+		}
+
+        x = startx + 1;
+		y += 2;
+
+        if (f->turnboost_atk != 0) {
+			if (f->turnboost_atk > 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "ATK(+%i){%i}", f->turnboost_atk, f->counters[TURNBOOST_ATK]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "ATK(%i){%i}", f->turnboost_atk, f->counters[TURNBOOST_ATK]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (f->turnboost_def != 0) {
+			if (f->turnboost_def > 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "DEF(+%i){%i}", f->turnboost_def, f->counters[TURNBOOST_DEF]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "DEF(%i){%i}", f->turnboost_def, f->counters[TURNBOOST_DEF]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (f->turnboost_vel != 0) {
+			if (f->turnboost_vel > 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "VEL(+%i){%i}", f->turnboost_vel, f->counters[TURNBOOST_VEL]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "VEL(%i){%i}", f->turnboost_vel, f->counters[TURNBOOST_VEL]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (f->turnboost_enr != 0) {
+			if (f->turnboost_enr > 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "ENR(+%i){%i}", f->turnboost_enr, f->counters[TURNBOOST_ENR]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "ENR(%i){%i}", f->turnboost_enr, f->counters[TURNBOOST_ENR]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
 		}
 
 	} else if (isEnemy == 2) { //Stat panel
@@ -1100,6 +1198,58 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		if (b->status != Normal) {
 			wattroff(win, COLOR_PAIR(S4C_RED));
 		}
+
+        x = startx + xShift -3;
+		y += 2;
+
+        if (b->turnboost_atk != 0) {
+			if (b->turnboost_atk < 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "ATK(%i){%i}", b->turnboost_atk, b->counters[TURNBOOST_ATK]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "ATK(+%i){%i}", b->turnboost_atk, b->counters[TURNBOOST_ATK]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (b->turnboost_def != 0) {
+			if (b->turnboost_def < 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "DEF(%i){%i}", b->turnboost_def, b->counters[TURNBOOST_DEF]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "DEF(+%i){%i}", b->turnboost_def, b->counters[TURNBOOST_DEF]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (b->turnboost_vel != 0) {
+			if (b->turnboost_def < 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "VEL(%i){%i}", b->turnboost_vel, b->counters[TURNBOOST_VEL]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "VEL(+%i){%i}", b->turnboost_vel, b->counters[TURNBOOST_VEL]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (b->turnboost_enr != 0) {
+			if (b->turnboost_enr < 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "ENR(%i){%i}", b->turnboost_enr, b->counters[TURNBOOST_ENR]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "ENR(+%i){%i}", b->turnboost_enr, b->counters[TURNBOOST_ENR]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
 	} else if (isBoss == 0) { //Fighter panel
 
 		int resetColor = 0;
@@ -1250,6 +1400,58 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width, Boss* b
 		mvwprintw(win, y, x, "%s", stringFromStatus(f->status));
 		if (f->status != Normal) {
 			wattroff(win, COLOR_PAIR(S4C_RED));
+		}
+
+        x = startx + 1;
+		y += 2;
+
+        if (f->turnboost_atk != 0) {
+			if (f->turnboost_atk > 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "ATK(+%i){%i}", f->turnboost_atk, f->counters[TURNBOOST_ATK]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "ATK(%i){%i}", f->turnboost_atk, f->counters[TURNBOOST_ATK]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (f->turnboost_def != 0) {
+			if (f->turnboost_def > 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "DEF(+%i){%i}", f->turnboost_def, f->counters[TURNBOOST_DEF]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "DEF(%i){%i}", f->turnboost_def, f->counters[TURNBOOST_DEF]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (f->turnboost_vel != 0) {
+			if (f->turnboost_vel > 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "VEL(+%i){%i}", f->turnboost_vel, f->counters[TURNBOOST_VEL]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "VEL(%i){%i}", f->turnboost_vel, f->counters[TURNBOOST_VEL]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
+		}
+        if (f->turnboost_enr != 0) {
+			if (f->turnboost_enr > 0) {
+				wattron(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+				mvwprintw(win, y, x, "ENR(+%i){%i}", f->turnboost_enr, f->counters[TURNBOOST_ENR]->count);
+				wattroff(win,COLOR_PAIR(S4C_BRIGHT_GREEN));
+			} else {
+				wattron(win,COLOR_PAIR(S4C_RED));
+				mvwprintw(win, y, x, "ENR(%i){%i}", f->turnboost_enr, f->counters[TURNBOOST_ENR]->count);
+				wattroff(win,COLOR_PAIR(S4C_RED));
+			}
+		    y += 1;
 		}
 
 	} else if (isBoss == 2) { //Stat panel

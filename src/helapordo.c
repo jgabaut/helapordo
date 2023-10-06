@@ -4891,8 +4891,7 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 		}
 	}
 
-	sprintf(msg,"damageCalc %i\n", damageDealt);
-	log_tag("debug_log.txt","[FIGHT]",msg);
+	log_tag("debug_log.txt","[FIGHT]","damageCalc %i", damageDealt);
 
 	int yourhit = (res == FIGHTRES_DMG_DEALT ) ? 1 : 0 ;
 	char victim[25];
