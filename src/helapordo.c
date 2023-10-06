@@ -10554,17 +10554,25 @@ void gameloop(int argc, char** argv){
 				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n", static_path);
 				exit(EXIT_FAILURE);
 			}
-			if (KOLISEO_DEBUG == 1) {
-				sprintf(path_to_kls_debug_file,"%s/%s",static_path,"kls_debug_log.txt");
-				KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
-				if (!KOLISEO_DEBUG_FP) {
-					endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
-					fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
-					exit(EXIT_FAILURE);
-				}
-				fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
-			}
-			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+            if (KOLISEO_DEBUG == 1) {
+                sprintf(path_to_kls_debug_file,"%s/%s",static_path,"kls_debug_log.txt");
+                KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
+                if (!KOLISEO_DEBUG_FP) {
+                    endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
+                    fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
+                    exit(EXIT_FAILURE);
+                }
+                fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
+            }
+            fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+            if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
+                    && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR
+                    && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH) {
+			    fprintf(debug_file,"[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                        NCURSES_VERSION,
+                        NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH,
+                        EXPECTED_NCURSES_VERSION_MAJOR, EXPECTED_NCURSES_VERSION_MINOR, EXPECTED_NCURSES_VERSION_PATCH);
+            }
 			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
   			print_kls_2file(debug_file,default_kls);
 			fprintf(debug_file,"[DEBUG]    --Temporary kls debug info:--  \n");

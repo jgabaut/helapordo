@@ -9,6 +9,10 @@
 #include <menu.h>
 #endif
 
+#define EXPECTED_NCURSES_VERSION_MAJOR 6 /**< Defines min expected major ncurses version.*/
+#define EXPECTED_NCURSES_VERSION_MINOR 4 /**< Defines min expected minor ncurses version.*/
+#define EXPECTED_NCURSES_VERSION_PATCH 20230520 /**< Defines min expected patch ncurses version.*/
+
 #include <string.h>
 #include <locale.h>
 
