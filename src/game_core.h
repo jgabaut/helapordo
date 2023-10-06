@@ -106,6 +106,10 @@ extern int G_DEBUG_ROOMTYPE;
  */
 extern int G_DEBUG_ROOMTYPE_ON;
 /**
+ * Global variable for debug room flag, set to the passed string argument.
+ */
+extern char* G_DEBUG_ROOMTYPE_ARG;
+/**
  * Global variable for debug enemy in ENEMIES roomtype flag.
  */
 extern int G_DEBUG_ENEMYTYPE;
@@ -113,7 +117,10 @@ extern int G_DEBUG_ENEMYTYPE;
  * Global variable for debug enemy flag.
  */
 extern int G_DEBUG_ENEMYTYPE_ON;
-
+/**
+ * Global variable for debug enemy flag, set to the passed string argument.
+ */
+extern char* G_DEBUG_ENEMYTYPE_ARG;
 /**
  * Global variable for autosave setting.
  */
@@ -135,12 +142,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 2
+#define HELAPORDO_PATCH_VERSION 3
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.2.2"
+#define VERSION "1.2.3"
 
 /**
  * Default savepath.
@@ -819,25 +826,26 @@ typedef struct Fighter {
 	struct Artifact* artifactsBag[ARTIFACTSMAX+1]; /**< Array with all the Artifacts found*/
 
 	int equipsBagOccupiedSlots; /**< Keeps track of how many slots are occupied.*/
-	int earliestBagSlot; /**< Keeps track of first available spot.*/
-		//To always use the array efficiently (???) I sense linked lists may be better
+	int earliestBagSlot; /**< Keeps track of first available spot.*/  //TODO To always use the array efficiently (???) I sense linked lists may be better
 
-	int permboost_atk; /**< Current temp boost value for atk*/
-	int permboost_def; /**< Current temp boost value for atk*/
-	int permboost_vel; /**< Current temp boost value for atk*/
-	int permboost_enr; /**< Current temp boost value for atk*/
+	int permboost_atk; /**< Current temp boost value for atk.*/
+	int permboost_def; /**< Current temp boost value for def.*/
+	int permboost_vel; /**< Current temp boost value for vel.*/
+	int permboost_enr; /**< Current temp boost value for enr.*/
 
-	int equipboost_atk; /**< Current equip boost value for atk*/
-	int equipboost_def; /**< Current equip boost value for atk*/
-	int equipboost_vel; /**< Current equip boost value for atk*/
-	int equipboost_enr; /**< Current equip boost value for atk*/
+	int equipboost_atk; /**< Current equip boost value for atk.*/
+	int equipboost_def; /**< Current equip boost value for def.*/
+	int equipboost_vel; /**< Current equip boost value for vel.*/
+	int equipboost_enr; /**< Current equip boost value for enr.*/
 
 	countStats* stats ; /**< Pointer to countStats instance*/
 
 	int balance; /**< Amount of currency owned*/
 	int keys_balance; /**< Amount of keys owned*/
 	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
-	callback_void_t callback_counter_ptrs[COUNTERSMAX];
+
+    //TODO eval this callback bit if we need to have some without nesting in another turncounter
+	//callback_void_t callback_counter_ptrs[COUNTERSMAX]; /**< Array of callbacks for turnCounter functions.*/
 } Fighter;
 
 /**

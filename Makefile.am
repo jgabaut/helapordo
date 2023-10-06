@@ -138,7 +138,7 @@ pack: versioncheck
 	rm ~/helapordo-local/share/$(PACK_NAME).zip
 	@echo -e "\033[1;32m[TREE] Done.\e[0m"
 	@echo -e "\033[1;35m[PACK] Installing:\e[0m"
-	install ./helapordo ~/helapordo-local/share/$(PACK_NAME)
+	install $(TARGET) ~/helapordo-local/share/$(PACK_NAME)
 
 	@echo -e "\033[1;35m[PACK] Done.\e[0m"
 	@echo -e "\033[1;32m[ZIP] Compressing $(PACK_NAME):\e[0m"

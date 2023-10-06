@@ -44,7 +44,9 @@
  */
 OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t_kls);
 
+/*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
+*/
 
 void resetFighterStatus(Fighter* f);
 

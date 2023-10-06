@@ -490,7 +490,8 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 	return res;
 }
 
-/**
+//TODO Drop dead code
+/*
  * Takes an integer, a callback_void_t pointer function and a Fighter holding the array for the callback registration.
  * Not working as of v0.5.2.
  * Registers the pointer to the function pointer array for counter callback.
@@ -498,10 +499,11 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
  * @param index An integer.
  * @param ptr A pointer to function of type callback_void_t.
  * @param f The fighter pointer holding the callback array.
- */
+ *
 void register_counter_callback(int index, callback_void_t ptr, Fighter* f) {
 	f->callback_counter_ptrs[index] = ptr;
 }
+*/
 
 //Status effect functions
 
@@ -1481,6 +1483,8 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 	};
 }
 
+
+//TODO update this to actually handle different types of counters and reliably print them, maybe to a ncurses window
 /**
  * Takes a Turncounter array.
  * For every Turncounter in the array, the values of count, innerVal, type and all the function pointers fields are printed.
@@ -1507,7 +1511,7 @@ void printCounters(Turncounter* counters[]) {
 /**
  * Takes a Turncounter array, an integer, a Fighter pointer and an Enemy pointer.
  * For every Turncounter in the array count value is checked, and when it's equal to 1, the function pointer relevant to the type value of the Counter is called. Depending on the isEnemy input value, the function call will be for the Fighter or Enemy version (and the according pointer from the input will be passed to the called function).
- * When the count value 0 Counters are considered inactive, so when the count value is not 1, it is lowered by 1 if it's positive.
+ * When the count value is 0, counters are considered inactive, so when the count value is not 1, it is lowered by 1 if it's positive.
  * @see Fighter
  * @see Enemy
  * @see Turncounter
@@ -1545,10 +1549,11 @@ void updateCounters(Turncounter* counters[], int isEnemy, Fighter* f, Enemy* e){
 				break;
 				case CNT_ATKBOOST: case CNT_DEFBOOST: case CNT_VELBOOST: case CNT_ENRBOOST: { //Callback for stat boosts
 					if (!isEnemy) {
-						(c->boost_fun)(f,0); //Invoke ~setPermBoost(STAT)~ with value 0
+						(c->boost_fun)(f,0); //Call ~setPermBoost(STAT)~ with value 0
 						log_tag("debug_log.txt","[DEBUG-COUNTER]","Applied boost function for Fighter.");
 					} else {
-						//Not yet implemented
+                        assert(0 && "UNACCESSIBLE CALL.\n");
+						(c->boost_e_fun)(e,0); //Call ~setPermBoost(STAT)~ with value 0
 					}
 				}
 				break;
@@ -1606,7 +1611,8 @@ void updateCounters_Boss(Turncounter* counters[], int isBoss, Fighter* f, Boss* 
 					if (!isBoss) {
 						(c->boost_fun)(f,0); //Invoke ~setPermBoost(STAT)~ with value 0
 					} else {
-						//Not yet implemented
+                        assert(0 && "UNACCESSIBLE CALL.\n");
+						(c->boost_b_fun)(b,0); //Call ~setPermBoost(STAT)~ with value 0
 					}
 				}
 				break;
@@ -2378,7 +2384,7 @@ void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex
 		//Randomise enemy class
 		e->class = rand() % (ENEMYCLASSESMAX + 1);
 
-		if (G_DEBUG_ENEMYTYPE_ON && ! (GAMEMODE == Story) ){ //Debug flag has a fixed enemy class when used outside of story gamemode
+		if (G_DEBUG_ON && G_DEBUG_ENEMYTYPE_ON && (GAMEMODE != Rogue)){ //Debug flag has a fixed enemy class when used outside of Rogue gamemode
 			log_tag("debug_log.txt","[DEBUG]","prepareRoomEnemy(): Enemy debug flag was asserted outside of story mode, will always spawn a G_DEBUG_ENEMYTYPE (%s).",stringFromEClass(G_DEBUG_ENEMYTYPE));
 			e->class = G_DEBUG_ENEMYTYPE;
 		}
@@ -4885,8 +4891,7 @@ int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* k
 		}
 	}
 
-	sprintf(msg,"damageCalc %i\n", damageDealt);
-	log_tag("debug_log.txt","[FIGHT]",msg);
+	log_tag("debug_log.txt","[FIGHT]","damageCalc %i", damageDealt);
 
 	int yourhit = (res == FIGHTRES_DMG_DEALT ) ? 1 : 0 ;
 	char victim[25];
@@ -10406,10 +10411,12 @@ void gameloop(int argc, char** argv){
 				break;
 				case 'r': {
 					G_DEBUG_ROOMTYPE_ON += 1;
+                    G_DEBUG_ROOMTYPE_ARG = optarg;
 				}
 				break;
 				case 'E': {
 					G_DEBUG_ENEMYTYPE_ON += 1;
+                    G_DEBUG_ENEMYTYPE_ARG = optarg;
 				}
 				break;
 				case 'L': {
@@ -10548,17 +10555,25 @@ void gameloop(int argc, char** argv){
 				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n", static_path);
 				exit(EXIT_FAILURE);
 			}
-			if (KOLISEO_DEBUG == 1) {
-				sprintf(path_to_kls_debug_file,"%s/%s",static_path,"kls_debug_log.txt");
-				KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
-				if (!KOLISEO_DEBUG_FP) {
-					endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
-					fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
-					exit(EXIT_FAILURE);
-				}
-				fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
-			}
-			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+            if (KOLISEO_DEBUG == 1) {
+                sprintf(path_to_kls_debug_file,"%s/%s",static_path,"kls_debug_log.txt");
+                KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
+                if (!KOLISEO_DEBUG_FP) {
+                    endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
+                    fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
+                    exit(EXIT_FAILURE);
+                }
+                fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
+            }
+            fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
+            if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
+                    && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR
+                    && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH) {
+			    fprintf(debug_file,"[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                        NCURSES_VERSION,
+                        NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH,
+                        EXPECTED_NCURSES_VERSION_MAJOR, EXPECTED_NCURSES_VERSION_MINOR, EXPECTED_NCURSES_VERSION_PATCH);
+            }
 			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
   			print_kls_2file(debug_file,default_kls);
 			fprintf(debug_file,"[DEBUG]    --Temporary kls debug info:--  \n");
@@ -10593,19 +10608,22 @@ void gameloop(int argc, char** argv){
 			if ((G_DEBUG_ON > 0)) {
 				G_DEBUG_ON += 1;
 				log_tag("debug_log.txt","[DEBUG]","G_DEBUG_ON == (%i)",G_DEBUG_ON);
-				log_tag("debug_log.txt","[DEBUG]","Forcing enemy type: (%s)",optarg);
+				log_tag("debug_log.txt","[DEBUG]","Forcing enemy type: (%s)",G_DEBUG_ENEMYTYPE_ARG);
 				int setenemy_debug = 0;
 				for (int ec=0; ec<ENEMYCLASSESMAX && (setenemy_debug == 0); ec++) {
 						log_tag("debug_log.txt","[DEBUG]","Checking optarg for -E: (%s)",stringFromEClass(ec));
-					if ((strcmp(optarg,stringFromEClass(ec)) == 0)) {
+					if ((strcmp(G_DEBUG_ENEMYTYPE_ARG,stringFromEClass(ec)) == 0)) {
 						log_tag("debug_log.txt","[DEBUG]","Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",stringFromEClass(ec),ec);
 						G_DEBUG_ENEMYTYPE = ec;
 						setenemy_debug=1;
 					}
 				}
 				if (setenemy_debug == 0) {
-					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -E flag.\n");
-					fprintf(stderr,"[ERROR]    Incorrect -E \"enemyType\" arg.\n");
+					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -E flag: {%s}.\n", G_DEBUG_ENEMYTYPE_ARG);
+					fprintf(stderr,"[ERROR]    Incorrect -E \"enemyType\" arg: {%s}.\n", G_DEBUG_ENEMYTYPE_ARG);
+					fprintf(stderr,"[ERROR]    Run \"%s -h\" for help.\n", kls_progname);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				};
 			}
@@ -10616,19 +10634,22 @@ void gameloop(int argc, char** argv){
 			if ((G_DEBUG_ON > 0)) {
 				G_DEBUG_ON += 1;
 				log_tag("debug_log.txt","[DEBUG]","G_DEBUG_ON == (%i)",G_DEBUG_ON);
-				log_tag("debug_log.txt","[DEBUG]","Forcing room type: optarg was (%s)", optarg);
+				log_tag("debug_log.txt","[DEBUG]","Forcing room type: optarg was (%s)", G_DEBUG_ROOMTYPE_ARG);
 				int setroom_debug = 0;
 				for (int rc=0; (rc<ROOM_CLASS_MAX +1) && (setroom_debug == 0); rc++) {
 						log_tag("debug_log.txt","[DEBUG]","Checking optarg (%s) for -R: (%s)", optarg, stringFromRoom(rc));
-					if ((strcmp(optarg,stringFromRoom(rc)) == 0)) {
+					if ((strcmp(G_DEBUG_ROOMTYPE_ARG,stringFromRoom(rc)) == 0)) {
 						log_tag("debug_log.txt","[DEBUG]","Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",stringFromRoom(rc),rc);
 						G_DEBUG_ROOMTYPE = rc;
 						setroom_debug=1;
 					}
 				}
 				if (setroom_debug == 0) {
-					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -R flag.");
-					fprintf(stderr,"[ERROR]    Incorrect -R \"roomType\" arg.\n");
+					log_tag("debug_log.txt","[ERROR]","Invalid optarg for -R flag: {%s}.",G_DEBUG_ROOMTYPE_ARG);
+					fprintf(stderr,"[ERROR]    Incorrect -R \"roomType\" arg: {%s}.\n", G_DEBUG_ROOMTYPE_ARG);
+					fprintf(stderr,"[ERROR]    Run \"%s -h\" for help.\n", kls_progname);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				};
 			}
@@ -10964,6 +10985,7 @@ void gameloop(int argc, char** argv){
 		wprintw(savepick_side_win,"  \nhelapordo v%s",VERSION);
 		wprintw(savepick_side_win,"  \n  using: s4c-animate v%s",S4C_ANIMATE_VERSION);
 		wprintw(savepick_side_win,"  \n  using: koliseo v%s",KOLISEO_API_VERSION_STRING);
+		wprintw(savepick_side_win,"  \n  using: ncurses v%s",NCURSES_VERSION);
 		wprintw(savepick_side_win,"  \nBuilt with: amboso v%s",ANVIL__API_LEVEL__STRING);
 		//wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
 		wrefresh(savepick_side_win);
