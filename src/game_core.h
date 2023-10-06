@@ -836,6 +836,8 @@ typedef struct Fighter {
 	int balance; /**< Amount of currency owned*/
 	int keys_balance; /**< Amount of keys owned*/
 	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
+
+    //TODO eval this callback bit if we need to have some without nesting in another turncounter
 	//callback_void_t callback_counter_ptrs[COUNTERSMAX]; /**< Array of callbacks for turnCounter functions.*/
 } Fighter;
 
