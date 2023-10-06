@@ -819,25 +819,24 @@ typedef struct Fighter {
 	struct Artifact* artifactsBag[ARTIFACTSMAX+1]; /**< Array with all the Artifacts found*/
 
 	int equipsBagOccupiedSlots; /**< Keeps track of how many slots are occupied.*/
-	int earliestBagSlot; /**< Keeps track of first available spot.*/
-		//To always use the array efficiently (???) I sense linked lists may be better
+	int earliestBagSlot; /**< Keeps track of first available spot.*/  //TODO To always use the array efficiently (???) I sense linked lists may be better
 
-	int permboost_atk; /**< Current temp boost value for atk*/
-	int permboost_def; /**< Current temp boost value for atk*/
-	int permboost_vel; /**< Current temp boost value for atk*/
-	int permboost_enr; /**< Current temp boost value for atk*/
+	int permboost_atk; /**< Current temp boost value for atk.*/
+	int permboost_def; /**< Current temp boost value for def.*/
+	int permboost_vel; /**< Current temp boost value for vel.*/
+	int permboost_enr; /**< Current temp boost value for enr.*/
 
-	int equipboost_atk; /**< Current equip boost value for atk*/
-	int equipboost_def; /**< Current equip boost value for atk*/
-	int equipboost_vel; /**< Current equip boost value for atk*/
-	int equipboost_enr; /**< Current equip boost value for atk*/
+	int equipboost_atk; /**< Current equip boost value for atk.*/
+	int equipboost_def; /**< Current equip boost value for def.*/
+	int equipboost_vel; /**< Current equip boost value for vel.*/
+	int equipboost_enr; /**< Current equip boost value for enr.*/
 
 	countStats* stats ; /**< Pointer to countStats instance*/
 
 	int balance; /**< Amount of currency owned*/
 	int keys_balance; /**< Amount of keys owned*/
 	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
-	callback_void_t callback_counter_ptrs[COUNTERSMAX];
+	//callback_void_t callback_counter_ptrs[COUNTERSMAX]; /**< Array of callbacks for turnCounter functions.*/
 } Fighter;
 
 /**

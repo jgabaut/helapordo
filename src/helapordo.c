@@ -490,7 +490,8 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 	return res;
 }
 
-/**
+//TODO Drop dead code
+/*
  * Takes an integer, a callback_void_t pointer function and a Fighter holding the array for the callback registration.
  * Not working as of v0.5.2.
  * Registers the pointer to the function pointer array for counter callback.
@@ -498,10 +499,11 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
  * @param index An integer.
  * @param ptr A pointer to function of type callback_void_t.
  * @param f The fighter pointer holding the callback array.
- */
+ *
 void register_counter_callback(int index, callback_void_t ptr, Fighter* f) {
 	f->callback_counter_ptrs[index] = ptr;
 }
+*/
 
 //Status effect functions
 
@@ -1481,6 +1483,8 @@ void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls){
 	};
 }
 
+
+//TODO update this to actually handle different types of counters and reliably print them, maybe to a ncurses window
 /**
  * Takes a Turncounter array.
  * For every Turncounter in the array, the values of count, innerVal, type and all the function pointers fields are printed.
@@ -1507,7 +1511,7 @@ void printCounters(Turncounter* counters[]) {
 /**
  * Takes a Turncounter array, an integer, a Fighter pointer and an Enemy pointer.
  * For every Turncounter in the array count value is checked, and when it's equal to 1, the function pointer relevant to the type value of the Counter is called. Depending on the isEnemy input value, the function call will be for the Fighter or Enemy version (and the according pointer from the input will be passed to the called function).
- * When the count value 0 Counters are considered inactive, so when the count value is not 1, it is lowered by 1 if it's positive.
+ * When the count value is 0, counters are considered inactive, so when the count value is not 1, it is lowered by 1 if it's positive.
  * @see Fighter
  * @see Enemy
  * @see Turncounter
@@ -1545,10 +1549,11 @@ void updateCounters(Turncounter* counters[], int isEnemy, Fighter* f, Enemy* e){
 				break;
 				case CNT_ATKBOOST: case CNT_DEFBOOST: case CNT_VELBOOST: case CNT_ENRBOOST: { //Callback for stat boosts
 					if (!isEnemy) {
-						(c->boost_fun)(f,0); //Invoke ~setPermBoost(STAT)~ with value 0
+						(c->boost_fun)(f,0); //Call ~setPermBoost(STAT)~ with value 0
 						log_tag("debug_log.txt","[DEBUG-COUNTER]","Applied boost function for Fighter.");
 					} else {
-						//Not yet implemented
+                        assert(0 && "UNACCESSIBLE CALL.\n");
+						(c->boost_e_fun)(e,0); //Call ~setPermBoost(STAT)~ with value 0
 					}
 				}
 				break;
@@ -1606,7 +1611,8 @@ void updateCounters_Boss(Turncounter* counters[], int isBoss, Fighter* f, Boss* 
 					if (!isBoss) {
 						(c->boost_fun)(f,0); //Invoke ~setPermBoost(STAT)~ with value 0
 					} else {
-						//Not yet implemented
+                        assert(0 && "UNACCESSIBLE CALL.\n");
+						(c->boost_b_fun)(b,0); //Call ~setPermBoost(STAT)~ with value 0
 					}
 				}
 				break;
