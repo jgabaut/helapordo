@@ -16,7 +16,7 @@ void printGlobVars(void) {
 	printf("  G_DEBUG_ROOMTYPE_ON: { %i }\n",G_DEBUG_ROOMTYPE_ON);
 	printf("  G_ROOMTYPE_ON: { %s } [ %i ]\n",stringFromRoom(G_DEBUG_ROOMTYPE),G_DEBUG_ROOMTYPE);
 	printf("  G_ENEMYTYPE_ON: { %i }\n",G_DEBUG_ENEMYTYPE_ON);
-		printf("  G_DEBUG_ENEMYTYPE { %s } [ %i ]\n",stringFromEClass(G_DEBUG_ENEMYTYPE),G_DEBUG_ENEMYTYPE);
+	printf("  G_DEBUG_ENEMYTYPE { %s } [ %i ]\n",stringFromEClass(G_DEBUG_ENEMYTYPE),G_DEBUG_ENEMYTYPE);
 	printf("  G_DOTUTORIAL_ON: { %i }\n",G_DOTUTORIAL_ON);
 }
 
@@ -610,7 +610,7 @@ void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int room
 				} else if (*room_type == -1) {
 					*room_type = ENEMIES;
 				}
-				if ((G_DEBUG_ROOMTYPE_ON > 0)) {
+				if (G_DEBUG_ON && G_DEBUG_ROOMTYPE_ON > 0) {
 					log_tag("debug_log.txt","[DEBUG]","setRoomType(): Room debug flag asserted in standard gamemode, room type will always be equal to G_DEBUG_ROOMTYPE (%s).",stringFromRoom(G_DEBUG_ROOMTYPE));
 					*room_type = G_DEBUG_ROOMTYPE;
 				}
@@ -632,6 +632,10 @@ void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int room
 					*room_type = TREASURE;
 				} else if (*room_type == -1) {
 					*room_type = ENEMIES;
+				}
+				if (G_DEBUG_ON && G_DEBUG_ROOMTYPE_ON > 0) {
+					log_tag("debug_log.txt","[DEBUG]","setRoomType(): Room debug flag asserted in standard gamemode, room type will always be equal to G_DEBUG_ROOMTYPE (%s).",stringFromRoom(G_DEBUG_ROOMTYPE));
+					*room_type = G_DEBUG_ROOMTYPE;
 				}
 		}
 		break;
@@ -783,7 +787,8 @@ void printFormattedVersion(char* progName){
  */
 void usage(char* progname) {
 	fprintf(stderr,"\nUsage:        %s [...options] [name] [class]\n", progname);
-	fprintf(stderr,"Options:\n");
+	fprintf(stderr,"\n    [class]\n\n        [Knight|Archer|Mage|Assassin]\n");
+	fprintf(stderr,"\nOptions:\n");
 	fprintf(stderr,"\n    -R        Enable rogue mode\n");
 	fprintf(stderr,"\n    -s        Enable story mode. Deprecated.\n");
 	fprintf(stderr,"    -l        Load a game.\n");

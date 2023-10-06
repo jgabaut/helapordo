@@ -106,6 +106,10 @@ extern int G_DEBUG_ROOMTYPE;
  */
 extern int G_DEBUG_ROOMTYPE_ON;
 /**
+ * Global variable for debug room flag, set to the passed string argument.
+ */
+extern char* G_DEBUG_ROOMTYPE_ARG;
+/**
  * Global variable for debug enemy in ENEMIES roomtype flag.
  */
 extern int G_DEBUG_ENEMYTYPE;
@@ -113,7 +117,10 @@ extern int G_DEBUG_ENEMYTYPE;
  * Global variable for debug enemy flag.
  */
 extern int G_DEBUG_ENEMYTYPE_ON;
-
+/**
+ * Global variable for debug enemy flag, set to the passed string argument.
+ */
+extern char* G_DEBUG_ENEMYTYPE_ARG;
 /**
  * Global variable for autosave setting.
  */
