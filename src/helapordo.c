@@ -10366,11 +10366,12 @@ Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile){
 void gameloop(int argc, char** argv){
 
   char* whoami; // This will reference argv[0] at basename, it's the same string in memory, just starting later
+  KLS_Conf kls_conf = { .kls_autoset_regions = 1, .kls_autoset_temp_regions = 0};
 
 	do {
 		//Init default_kls
-		default_kls = kls_new(KLS_DEFAULT_SIZE*16);
-		temporary_kls = kls_new(KLS_DEFAULT_SIZE*32);
+		default_kls = kls_new_conf(KLS_DEFAULT_SIZE*16, kls_conf);
+		temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE*32, kls_conf);
 
 		#ifndef _WIN32
 		(whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
@@ -10378,7 +10379,7 @@ void gameloop(int argc, char** argv){
 		(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 		#endif
 
-		char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),None,"progname",whoami);
+		char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),KLS_None,"progname",whoami);
 		strcpy(kls_progname,whoami);
 
 		#ifndef HELAPORDO_DEBUG_LOG
@@ -12058,10 +12059,11 @@ void gameloop(int argc, char** argv){
  */
 void gameloop_Win(int argc, char** argv) {
 	char* whoami;
+    KLS_Conf kls_conf = { .kls_autoset_regions = 1, .kls_autoset_temp_regions = 0};
 	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 	do {
-		default_kls = kls_new(KLS_DEFAULT_SIZE*8);
-		temporary_kls = kls_new(KLS_DEFAULT_SIZE*8);
+		default_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, kls_conf);
+		temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, kls_conf);
 		char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),None,"progname",whoami);
 		strcpy(kls_progname,whoami);
 		#ifndef HELAPORDO_DEBUG_LOG
