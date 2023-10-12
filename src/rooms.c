@@ -2247,13 +2247,13 @@ void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls,  Koliseo_Temp* t
 
 	int reps = 1;
 
-	int frametime = DEMOFRAMETIME;
+	int frametime = CHEST_FRAMETIME;
 
-	int num_frames = DEMOFRAMES;
+	int num_frames = CHEST_FRAMES;
 
-	int frame_height = DEMOROWS;
+	int frame_height = CHEST_ROWS;
 
-	int frame_width = DEMOCOLS;
+	int frame_width = CHEST_COLS;
 
 	// Prepare the frames
 	char sprites[MAXFRAMES][MAXROWS][MAXCOLS];

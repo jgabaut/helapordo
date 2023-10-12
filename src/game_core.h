@@ -1850,4 +1850,9 @@ extern char* fightresultstrings[FIGHT_RES_TOT+1];
  */
 OP_res OP_res_from_fightResult(fightResult fr);
 
+#define CHEST_FRAMES 25 /**< Defines the number of frames for the chest animation.*/
+#define CHEST_ROWS 18 /**< Defines the number of rows for the chest animation.*/
+#define CHEST_COLS 18 /**< Defines the number of cols for the chest animation.*/
+#define CHEST_FRAMETIME 67 /**< Defines for how many millisecs a sprite should stay on screen for the chest animation.*/
+
 #endif
