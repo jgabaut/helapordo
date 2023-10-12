@@ -20,10 +20,6 @@
 
 #include <locale.h>
 #include <sys/stat.h>
-#define DEMOFRAMES 25 /**< Defines the number of sprites in the demo.*/
-#define DEMOROWS 18 /**< Defines the maximum number of rows per sprite.*/
-#define DEMOCOLS 18 /**< Defines the maximum number of colums per sprite.*/
-#define DEMOFRAMETIME 67 /**< Defines for how many millisecs a sprite should stay on screen in the demo.*/
 #include "game_core.h"
 #include "game_utils.h"
 #include "rooms.h"
