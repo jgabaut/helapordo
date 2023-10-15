@@ -292,7 +292,7 @@ void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* pa
  */
 turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls, foeTurnOption_OP foe_op) {
 	log_tag("debug_log.txt","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
-	kls_log("DEBUG","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+	kls_log(t_kls->kls,"DEBUG","[TURNOP]","Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
 	turnOP_args* res = (turnOP_args*) KLS_PUSH_T_TYPED(t_kls,turnOP_args,1,HR_turnOP_args,"turnOP_args","turnOP_args");
 
 	res->gmst = gmst;
