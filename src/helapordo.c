@@ -9037,7 +9037,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			}
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			print_kls_2file(kls_file,temporary_kls);
-			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
+			kls_showList_toFile(temporary_kls->regs,kls_file);
 			kls_usageReport_toFile(temporary_kls,kls_file);
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			WINDOW* win = NULL;
@@ -9112,7 +9112,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 			}
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
-			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
+			kls_showList_toFile(kls->regs,kls_file);
 			kls_usageReport_toFile(kls,kls_file);
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
 			WINDOW* win = NULL;
@@ -9657,7 +9657,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			}
 			fprintf(kls_file,"--BEGIN debug of temporary_kls--\n");
 			print_kls_2file(kls_file,temporary_kls);
-			kls_showList_toFile(kls_reverse(temporary_kls->regs),kls_file);
+			kls_showList_toFile(temporary_kls->regs,kls_file);
 			kls_usageReport_toFile(temporary_kls,kls_file);
 			fprintf(kls_file,"--END debug of temporary_kls--\n\n");
 			WINDOW* win = NULL;
@@ -9732,7 +9732,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 			}
 			fprintf(kls_file,"--BEGIN debug of passed kls--\n");
 			print_kls_2file(kls_file,kls);
-			kls_showList_toFile(kls_reverse(kls->regs),kls_file);
+			kls_showList_toFile(kls->regs,kls_file);
 			kls_usageReport_toFile(kls,kls_file);
 			fprintf(kls_file,"--END debug of passed kls--\n\n");
 			WINDOW* win = NULL;
@@ -10005,8 +10005,6 @@ void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls) {
 	sprintf(msg,"Resetting Koliseo_Temp from: (%lli)",t_kls->kls->offset);
 	#endif
 	kls_log(kls,"DEBUG",msg);
-	kls_temp_end(t_kls);
-    kls_free(kls);
 	death(p,load_info);
 	//FIXME
 	//I think we should free those?
@@ -10382,12 +10380,27 @@ void gameloop(int argc, char** argv){
 
   //Truncate "debug_log.txt"
   sprintf(path_to_kls_debug_file,"%s/%s",static_path,"kls_debug_log.txt");
-  KLS_Conf kls_conf = { .kls_autoset_regions = 1, .kls_autoset_temp_regions = 0, .kls_verbose_lvl = 1, .kls_log_filepath = path_to_kls_debug_file};
+  KLS_Conf default_kls_conf = {
+      .kls_autoset_regions = 1,
+      .kls_autoset_temp_regions = 1,
+      .kls_verbose_lvl = 1,
+      .kls_log_filepath = path_to_kls_debug_file,
+      .kls_reglist_kls_size = KLS_DEFAULT_SIZE*16,
+      .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+  };
+  KLS_Conf temporary_kls_conf = {
+      .kls_autoset_regions = 1,
+      .kls_autoset_temp_regions = 1,
+      .kls_verbose_lvl = 0,
+      .kls_log_fp = stderr,
+      .kls_reglist_kls_size = KLS_DEFAULT_SIZE*16,
+      .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+  };
 
 	do {
 		//Init default_kls
-		default_kls = kls_new_conf(KLS_DEFAULT_SIZE*16, kls_conf);
-		temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE*32, kls_conf);
+		default_kls = kls_new_conf(KLS_DEFAULT_SIZE*16, default_kls_conf);
+		temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE*32, temporary_kls_conf);
 
 		#ifndef _WIN32
 		(whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
