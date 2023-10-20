@@ -22,6 +22,8 @@ void printWin_EnvVars(void);
 void log_Win_EnvVars(void);
 #endif
 
+bool set_Saveslot_name(FILE* file, Saveslot* sv);
+
 void red(void);
 void lightRed(void);
 void strongWhite(void);

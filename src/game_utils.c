@@ -54,6 +54,94 @@ void log_Win_EnvVars(void) {
 }
 #endif
 
+bool set_Saveslot_name(FILE* file, Saveslot* sv) {
+
+	//printf("\nLoading game...\n");
+	log_tag("debug_log.txt","[LOAD]","Starting loading from text file.");
+
+//	FILE* file = fopen("save.txt", "r");
+	if (file == NULL)
+	{
+        endwin();
+		printf("Error with file while trying to load!\n");
+		return false;
+	}
+	char buf[500];
+	char comment[300];
+	int num_value = -1;
+	const char version[] = "v0.1.6";
+
+
+	int scanres = -1;
+	/* File version scanning */
+	scanres = fscanf(file, "%200s\n", buf);
+	if (scanres != 1) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)", __func__, 1,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+
+	int check = -1;
+	if (!((check = strcmp(buf,version)) == 0)) {
+		log_tag("debug_log.txt","[LOAD-ERROR]","Failed save format version check. Was [%s]. Quitting.", buf);
+        endwin();
+		fprintf(stderr,"[ERROR]    File version mismatch on load.\n");
+		return false;
+	};
+	log_tag("debug_log.txt","[LOAD]","Loaded save format version: (%s).",buf);
+
+	/* Save type scanning */
+	scanres = fscanf(file, "%200s\n", buf);
+	if (scanres != 1) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)",__func__,1,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+
+	check = -1;
+	if (! ( ((check = strcmp(buf,stringFrom_saveType(ENEMIES_SAVE)) == 0)) || ((check = strcmp(buf,stringFrom_saveType(HOME_SAVE))) == 0) ) ) {
+		log_tag("debug_log.txt","[LOAD-ERROR]","%s():  Failed save type check, was [%s]. Quitting.",buf);
+        endwin();
+		fprintf(stderr,"[ERROR]    Save type version mismatch on load.\n");
+		return false;
+	};
+	log_tag("debug_log.txt","[LOAD]","Loaded save type: (%s).",buf);
+
+	/* Gamemode scanning */
+	scanres = fscanf(file, "%200[^#]# %s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)",__func__,2,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	int gmd = num_value;
+    log_tag("debug_log.txt","[LOAD]","Gamemode was: {%i}", gmd);
+
+	/* Fighter scanning */
+	scanres = fscanf(file, "%200s\n", buf);
+	if (scanres != 1) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)",__func__,1,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)",__func__,2,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	strncpy(sv->name,buf,50);
+    sv->name[49] = '\0';
+    return true;
+}
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
  * @param fighter The allocated Fighter to debug.
