@@ -142,6 +142,7 @@ bool set_Saveslot_name(FILE* file, Saveslot* sv) {
     sv->name[49] = '\0';
     return true;
 }
+
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
  * @param fighter The allocated Fighter to debug.
@@ -294,6 +295,9 @@ void dbg_Gamestate(Gamestate* gmst) {
 	dbg_countStats(gmst->stats);
 	dbg_Path(gmst->path);
 	dbg_Fighter(gmst->player);
+    //TODO: print out current floor
+    //dbg_print_floor_layout(gmst->current_floor);
+    //dbg_print_roomclass_layout(gmst->current_floor);
 	log_tag("debug_log.txt","[GAMESTATE]","}");
 }
 
@@ -304,16 +308,26 @@ void dbg_Gamestate(Gamestate* gmst) {
  * @param current_roomtype roomClass for current Room.
  * @param current_room_index Index for current Room.
  * @param current_enemy_index Index for current Enemy.
+ * @param current_floor Pointer to current Floor, initialised if gmst->gamemode == Rogue.
  */
-void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index) {
+void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index, Floor* current_floor) {
 	if (gmst == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in %s().", __func__);
 		exit(EXIT_FAILURE);
 	}
 	gmst->current_fighters = current_fighters;
 	gmst->current_roomtype = current_roomtype;
 	gmst->current_room_index = current_room_index;
 	gmst->current_enemy_index = current_enemy_index;
+    if (gmst->gamemode == Rogue) {
+        if (current_floor == NULL) {
+            log_tag("debug_log.txt","[ERROR]","Passed current floor was NULL in %s().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        gmst->current_floor = current_floor;
+    }
 }
 
 /**
@@ -327,23 +341,23 @@ void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_r
  */
 void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* path, Fighter* player, Gamemode gamemode ) {
 	if (gmst == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (stats == NULL) {
-		log_tag("debug_log.txt","[ERROR]","countStats was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","countStats was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (wincon == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Wincon was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Wincon was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (path == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Path was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Path was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (player == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Player was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Player was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (gamemode != Story && gamemode != Rogue) {

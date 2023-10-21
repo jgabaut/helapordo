@@ -11412,7 +11412,14 @@ void gameloop(int argc, char** argv){
 
 		Gamestate* gamestate = KLS_PUSH_TYPED(default_kls,Gamestate,1,HR_Gamestate,"Gamestate","Gamestate");
 		init_Gamestate(gamestate, player->stats, path->win_condition, path, player, GAMEMODE);
-		update_Gamestate(gamestate, 1, HOME, roomsDone, -1);
+        if (gamestate->gamemode == Rogue) {
+            //Note: different lifetime than gamestate
+            //NO. The update_gamestate call is instead performed later.
+            //Floor* current_floor = KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Init Curr floor");
+		    //update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
+        } else {
+		    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+        }
 		log_tag("debug_log.txt","[DEBUG]","Initialised Gamestate.");
 		dbg_Gamestate(gamestate);
 
@@ -11564,7 +11571,7 @@ void gameloop(int argc, char** argv){
 				delwin(door_win);
 				endwin();
 
-				update_Gamestate(gamestate, 1, current_room->class, roomsDone, -1);
+				update_Gamestate(gamestate, 1, current_room->class, roomsDone, -1, NULL);
 
 				if (current_room->class == HOME) {
 					res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,gamestate_kls);
@@ -11730,6 +11737,7 @@ void gameloop(int argc, char** argv){
 				log_tag("debug_log.txt","[DEBUG]","Prepping current_floor.");
 				kls_log(default_kls,"DEBUG","Prepping current_floor.");
 				Floor* current_floor = (Floor*) KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Floor");
+		        update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
 				// Start the random walk from the center of the dungeon
 				int center_x = FLOOR_MAX_COLS / 2;
 				int center_y = FLOOR_MAX_ROWS / 2;
@@ -11876,7 +11884,7 @@ void gameloop(int argc, char** argv){
 						delwin(door_win);
 						endwin();
 
-						update_Gamestate(gamestate, 1, current_room->class, roomsDone, -1);
+		                update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
 
 						if (current_room->class == HOME) {
 							res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, gamestate_kls);
@@ -11934,6 +11942,7 @@ void gameloop(int argc, char** argv){
 								case BOSS: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
 									floors_done++;
+                                    player->stats->floorscompleted++;
 									log_tag("debug_log.txt","[DEBUG]","Floors done: [%i]", floors_done);
 									//Check if we need to update the win condition
 									if (win_con->class == FULL_PATH) {
@@ -11945,6 +11954,7 @@ void gameloop(int argc, char** argv){
 									gamestate_kls = kls_temp_start(temporary_kls);
 
 									current_floor = (Floor*) KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Floor");
+                                    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
 
                   							//Regenerate floor
 									log_tag("debug_log.txt","[DEBUG]","Beaten a boss, regenerating current floor.");

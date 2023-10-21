@@ -1601,6 +1601,8 @@ typedef struct {
 	Fighter* player; /**< Keeps track of current Player.*/
 
 	Gamemode gamemode; /**< Keeps track of current Gamemode.*/
+
+    Floor* current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
 } Gamestate;
 
 /**
