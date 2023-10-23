@@ -11416,7 +11416,8 @@ void gameloop(int argc, char** argv){
             //Note: different lifetime than gamestate
             //NO. The update_gamestate call is instead performed later.
             //Floor* current_floor = KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Init Curr floor");
-		    //update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
+            //NO. We pass NULL now.
+		    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
         } else {
 		    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
         }

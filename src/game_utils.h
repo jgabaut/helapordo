@@ -43,6 +43,7 @@ void init_game_color_pairs(void);
 void test_game_color_pairs(WINDOW* win, int colors_per_row);
 void resolve_staticPath(char static_path[500]);
 
+void dbg_print_floor_layout(Floor* floor);
 void dbg_Gamestate(Gamestate* gmst);
 void dbg_Fighter(Fighter* fighter);
 void dbg_countStats(countStats* stats);

@@ -278,6 +278,27 @@ void dbg_countStats(countStats* stats) {
 }
 
 /**
+ * Logs passed Floor.
+ */
+void dbg_print_floor_layout(Floor* floor) {
+    if (floor == NULL) {
+        fprintf(stderr,"[ERROR]   at %s(): passed floor was NULL.\n",__func__);
+        log_tag("debug_log.txt","[ERROR]","at %s(): passed floor was NULL.",__func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        log_tag("debug_log.txt","[Floor_row]","%i",y);
+        char rowbuf[FLOOR_MAX_COLS+1] = {0};
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            rowbuf[x] = (floor->floor_layout[x][y] == 1 ? '1' : ' ' );
+        }
+        log_tag("debug_log.txt","[Floor_row]", "%s", rowbuf);
+    }
+}
+
+/**
  * Debugs the passed (preallocated) Gamestate with log_tag().
  * @param gmst The allocated Gamestate to debug.
  */
@@ -296,8 +317,12 @@ void dbg_Gamestate(Gamestate* gmst) {
 	dbg_Path(gmst->path);
 	dbg_Fighter(gmst->player);
     //TODO: print out current floor
-    //dbg_print_floor_layout(gmst->current_floor);
-    //dbg_print_roomclass_layout(gmst->current_floor);
+    if (gmst->current_floor == NULL) {
+        log_tag("debug_log.txt","[GAMESTATE]","Current floor was NULL.");
+    } else {
+        dbg_print_floor_layout(gmst->current_floor);
+        //dbg_print_roomclass_layout(gmst->current_floor);
+    }
 	log_tag("debug_log.txt","[GAMESTATE]","}");
 }
 
@@ -321,12 +346,10 @@ void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_r
 	gmst->current_enemy_index = current_enemy_index;
     if (gmst->gamemode == Rogue) {
         if (current_floor == NULL) {
-            log_tag("debug_log.txt","[ERROR]","Passed current floor was NULL in %s().", __func__);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt","[WARN]","Passed current floor was NULL in %s().", __func__);
+        } else {
+            gmst->current_floor = current_floor;
         }
-        gmst->current_floor = current_floor;
     }
 }
 
