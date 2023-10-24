@@ -12089,11 +12089,34 @@ void gameloop(int argc, char** argv){
  */
 void gameloop_Win(int argc, char** argv) {
 	char* whoami;
-    KLS_Conf kls_conf = { .kls_autoset_regions = 1, .kls_autoset_temp_regions = 0};
+    char path_to_kls_debug_file[600];
+    char static_path[500];
+    // Set static_path value to the correct static dir path
+    resolve_staticPath(static_path);
+
+    //Truncate "debug_log.txt"
+    sprintf(path_to_kls_debug_file,"%s\\%s",static_path,"kls_debug_log.txt");
+    KLS_Conf default_kls_conf = {
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 1,
+        .kls_log_filepath = path_to_kls_debug_file,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE*16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+    };
+    KLS_Conf temporary_kls_conf = {
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 0,
+        .kls_log_fp = stderr,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE*16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+    };
+
 	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 	do {
-		default_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, kls_conf);
-		temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, kls_conf);
+		default_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, default_kls_conf);
+		temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, temporary_kls_conf);
 		char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),KLS_None,"progname",whoami);
 		strcpy(kls_progname,whoami);
 		#ifndef HELAPORDO_DEBUG_LOG
@@ -12211,9 +12234,7 @@ void gameloop_Win(int argc, char** argv) {
 		#else
 		// Open log file if log flag is set and reset it
 		if (G_LOG_ON == 1) {
-			KOLISEO_DEBUG = 1;
 			char path_to_debug_file[600];
-			char path_to_kls_debug_file[600];
 			char path_to_OPS_debug_file[600];
 			char static_path[500];
 			// Set static_path value to the correct static dir path
@@ -12226,16 +12247,6 @@ void gameloop_Win(int argc, char** argv) {
 				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
 				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
 				exit(EXIT_FAILURE);
-			}
-			if (KOLISEO_DEBUG == 1) {
-				sprintf(path_to_kls_debug_file,"%s\\%s",static_path,"kls_debug_log.txt");
-				KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
-				if (!KOLISEO_DEBUG_FP) {
-					endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
-					fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
-					exit(EXIT_FAILURE);
-				}
-				fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
 			}
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
 			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
