@@ -278,7 +278,7 @@ void dbg_countStats(countStats* stats) {
 }
 
 /**
- * Logs passed Floor.
+ * Logs floor layout for passed Floor.
  */
 void dbg_print_floor_layout(Floor* floor) {
     if (floor == NULL) {
@@ -289,13 +289,69 @@ void dbg_print_floor_layout(Floor* floor) {
         exit(EXIT_FAILURE);
     }
     for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
-        log_tag("debug_log.txt","[Floor_row]","%i",y);
         char rowbuf[FLOOR_MAX_COLS+1] = {0};
         for (int x = 0; x < FLOOR_MAX_COLS; x++) {
             rowbuf[x] = (floor->floor_layout[x][y] == 1 ? '1' : ' ' );
         }
-        log_tag("debug_log.txt","[Floor_row]", "%s", rowbuf);
+        log_tag("debug_log.txt","[Floor_row]", "{%s} - %i", rowbuf, y);
     }
+    log_tag("debug_log.txt","[DEBUG]", "Logged floor layout.");
+}
+
+/**
+ * Logs roomclass layout for passed Floor.
+ */
+void dbg_print_roomclass_layout(Floor* floor) {
+    if (floor == NULL) {
+        fprintf(stderr,"[ERROR]   at %s(): passed floor was NULL.\n",__func__);
+        log_tag("debug_log.txt","[ERROR]","at %s(): passed floor was NULL.",__func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        char rowbuf[FLOOR_MAX_COLS+1] = {0};
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            char ch = '.';
+            switch (floor->roomclass_layout[x][y]) {
+                case HOME: {
+                    ch = 'H';
+                }
+                break;
+                case ENEMIES: {
+                    ch = 'E';
+                }
+                break;
+                case BOSS: {
+                    ch = 'B';
+                }
+                break;
+                case SHOP: {
+                    ch = '$';
+                }
+                break;
+                case TREASURE: {
+                    ch = '*';
+                }
+                break;
+                case WALL: {
+                    ch = '#';
+                }
+                break;
+                case BASIC: {
+                    ch = ' ';
+                }
+                break;
+                default: {
+                    ch = '?';
+                }
+                break;
+            }
+            rowbuf[x] = ch;
+        }
+        log_tag("debug_log.txt","[Floor_row]", "{%s} - %i", rowbuf, y);
+    }
+    log_tag("debug_log.txt","[DEBUG]", "Logged roomclass layout.");
 }
 
 /**
@@ -321,7 +377,7 @@ void dbg_Gamestate(Gamestate* gmst) {
         log_tag("debug_log.txt","[GAMESTATE]","Current floor was NULL.");
     } else {
         dbg_print_floor_layout(gmst->current_floor);
-        //dbg_print_roomclass_layout(gmst->current_floor);
+        dbg_print_roomclass_layout(gmst->current_floor);
     }
 	log_tag("debug_log.txt","[GAMESTATE]","}");
 }
