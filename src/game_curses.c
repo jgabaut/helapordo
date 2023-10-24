@@ -162,20 +162,27 @@ int get_saveslot_index(void) {
 	/* Post the menu */
 	post_menu(saveslots_menu);
 	wrefresh(menu_win);
+
+
+    //Try updating default save names by reading fighter name from each file
     for (int i = 0; i < 3; i++) {
 		char path_to_sv_file[600];
 		char static_path[500];
 		// Set static_path value to the correct static dir path
 		resolve_staticPath(static_path);
 
+        #ifndef _WIN32
 		sprintf(path_to_sv_file,"%s/%s",static_path,default_saveslots[i].save_path);
+        #else
+		sprintf(path_to_sv_file,"%s\\%s",static_path,default_saveslots[i].save_path);
+        #endif
         FILE* svfile = fopen(path_to_sv_file,"r");
         if (!svfile) {
-            log_tag("debug_log.txt","[WARN]","%s(): Failed opening savefile {%i} at %s.", __func__, i, path_to_sv_file);
+            log_tag("debug_log.txt","[WARN]","%s(): Failed opening savefile {%i} at \"%s\".", __func__, i, path_to_sv_file);
             continue;
         }
         if (!set_Saveslot_name(svfile,&default_saveslots[i])) {
-            log_tag("debug_log.txt","[WARN]","%s(): Failed reading savefile {%i} at %s.", __func__, i, path_to_sv_file);
+            log_tag("debug_log.txt","[WARN]","%s(): Failed reading savefile {%i} at \"%s\".", __func__, i, path_to_sv_file);
         };
         fclose(svfile);
     }
