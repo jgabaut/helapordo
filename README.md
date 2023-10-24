@@ -141,11 +141,11 @@
 
   - `x86_64-Linux`
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `x86_64-w64-mingw32` (*NOT WORKING.* Any help with debugging is appreciated.)
+  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.)
 
   Some releases may offer a precompiled binary for:
 
   - `darwin-arm64`
 
-  📦 v1.2.5 20/10/2023
+  📦 v1.2.6 24/10/2023
   https://github.com/jgabaut/helapordo/releases
