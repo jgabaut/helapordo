@@ -54,6 +54,95 @@ void log_Win_EnvVars(void) {
 }
 #endif
 
+bool set_Saveslot_name(FILE* file, Saveslot* sv) {
+
+	//printf("\nLoading game...\n");
+	log_tag("debug_log.txt","[LOAD]","Starting loading from text file.");
+
+//	FILE* file = fopen("save.txt", "r");
+	if (file == NULL)
+	{
+        endwin();
+		printf("Error with file while trying to load!\n");
+		return false;
+	}
+	char buf[500];
+	char comment[300];
+	int num_value = -1;
+	const char version[] = "v0.1.6";
+
+
+	int scanres = -1;
+	/* File version scanning */
+	scanres = fscanf(file, "%200s\n", buf);
+	if (scanres != 1) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)", __func__, 1,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+
+	int check = -1;
+	if (!((check = strcmp(buf,version)) == 0)) {
+		log_tag("debug_log.txt","[LOAD-ERROR]","Failed save format version check. Was [%s]. Quitting.", buf);
+        endwin();
+		fprintf(stderr,"[ERROR]    File version mismatch on load.\n");
+		return false;
+	};
+	log_tag("debug_log.txt","[LOAD]","Loaded save format version: (%s).",buf);
+
+	/* Save type scanning */
+	scanres = fscanf(file, "%200s\n", buf);
+	if (scanres != 1) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)",__func__,1,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+
+	check = -1;
+	if (! ( ((check = strcmp(buf,stringFrom_saveType(ENEMIES_SAVE)) == 0)) || ((check = strcmp(buf,stringFrom_saveType(HOME_SAVE))) == 0) ) ) {
+		log_tag("debug_log.txt","[LOAD-ERROR]","%s():  Failed save type check, was [%s]. Quitting.",buf);
+        endwin();
+		fprintf(stderr,"[ERROR]    Save type version mismatch on load.\n");
+		return false;
+	};
+	log_tag("debug_log.txt","[LOAD]","Loaded save type: (%s).",buf);
+
+	/* Gamemode scanning */
+	scanres = fscanf(file, "%200[^#]# %s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)",__func__,2,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	sscanf(buf, "%3i", &num_value);
+	int gmd = num_value;
+    log_tag("debug_log.txt","[LOAD]","Gamemode was: {%i}", gmd);
+
+	/* Fighter scanning */
+	scanres = fscanf(file, "%200s\n", buf);
+	if (scanres != 1) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)",__func__,1,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+	if (scanres != 2) {
+		log_tag("debug_log.txt","[DEBUG]","Bad fscanf() result in %s(), expected [%i] was (%i)",__func__,2,scanres);
+        endwin();
+		fprintf(stderr,"Error while loading game.");
+		return false;
+	}
+	log_tag("debug_log.txt","[LOAD]","Loaded %s: %s.", comment, buf);
+	strncpy(sv->name,buf,50);
+    sv->name[49] = '\0';
+    return true;
+}
+
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
  * @param fighter The allocated Fighter to debug.
@@ -189,6 +278,83 @@ void dbg_countStats(countStats* stats) {
 }
 
 /**
+ * Logs floor layout for passed Floor.
+ */
+void dbg_print_floor_layout(Floor* floor) {
+    if (floor == NULL) {
+        fprintf(stderr,"[ERROR]   at %s(): passed floor was NULL.\n",__func__);
+        log_tag("debug_log.txt","[ERROR]","at %s(): passed floor was NULL.",__func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        char rowbuf[FLOOR_MAX_COLS+1] = {0};
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            rowbuf[x] = (floor->floor_layout[x][y] == 1 ? '1' : ' ' );
+        }
+        log_tag("debug_log.txt","[Floor_row]", "{%s} - %i", rowbuf, y);
+    }
+    log_tag("debug_log.txt","[DEBUG]", "Logged floor layout.");
+}
+
+/**
+ * Logs roomclass layout for passed Floor.
+ */
+void dbg_print_roomclass_layout(Floor* floor) {
+    if (floor == NULL) {
+        fprintf(stderr,"[ERROR]   at %s(): passed floor was NULL.\n",__func__);
+        log_tag("debug_log.txt","[ERROR]","at %s(): passed floor was NULL.",__func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        char rowbuf[FLOOR_MAX_COLS+1] = {0};
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            char ch = '.';
+            switch (floor->roomclass_layout[x][y]) {
+                case HOME: {
+                    ch = 'H';
+                }
+                break;
+                case ENEMIES: {
+                    ch = 'E';
+                }
+                break;
+                case BOSS: {
+                    ch = 'B';
+                }
+                break;
+                case SHOP: {
+                    ch = '$';
+                }
+                break;
+                case TREASURE: {
+                    ch = '*';
+                }
+                break;
+                case WALL: {
+                    ch = '#';
+                }
+                break;
+                case BASIC: {
+                    ch = ' ';
+                }
+                break;
+                default: {
+                    ch = '?';
+                }
+                break;
+            }
+            rowbuf[x] = ch;
+        }
+        log_tag("debug_log.txt","[Floor_row]", "{%s} - %i", rowbuf, y);
+    }
+    log_tag("debug_log.txt","[DEBUG]", "Logged roomclass layout.");
+}
+
+/**
  * Debugs the passed (preallocated) Gamestate with log_tag().
  * @param gmst The allocated Gamestate to debug.
  */
@@ -206,6 +372,13 @@ void dbg_Gamestate(Gamestate* gmst) {
 	dbg_countStats(gmst->stats);
 	dbg_Path(gmst->path);
 	dbg_Fighter(gmst->player);
+    //TODO: print out current floor
+    if (gmst->current_floor == NULL) {
+        log_tag("debug_log.txt","[GAMESTATE]","Current floor was NULL.");
+    } else {
+        dbg_print_floor_layout(gmst->current_floor);
+        dbg_print_roomclass_layout(gmst->current_floor);
+    }
 	log_tag("debug_log.txt","[GAMESTATE]","}");
 }
 
@@ -216,16 +389,24 @@ void dbg_Gamestate(Gamestate* gmst) {
  * @param current_roomtype roomClass for current Room.
  * @param current_room_index Index for current Room.
  * @param current_enemy_index Index for current Enemy.
+ * @param current_floor Pointer to current Floor, initialised if gmst->gamemode == Rogue.
  */
-void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index) {
+void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index, Floor* current_floor) {
 	if (gmst == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in %s().", __func__);
 		exit(EXIT_FAILURE);
 	}
 	gmst->current_fighters = current_fighters;
 	gmst->current_roomtype = current_roomtype;
 	gmst->current_room_index = current_room_index;
 	gmst->current_enemy_index = current_enemy_index;
+    if (gmst->gamemode == Rogue) {
+        if (current_floor == NULL) {
+            log_tag("debug_log.txt","[WARN]","Passed current floor was NULL in %s().", __func__);
+        } else {
+            gmst->current_floor = current_floor;
+        }
+    }
 }
 
 /**
@@ -239,23 +420,23 @@ void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_r
  */
 void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* path, Fighter* player, Gamemode gamemode ) {
 	if (gmst == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Gamestate was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (stats == NULL) {
-		log_tag("debug_log.txt","[ERROR]","countStats was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","countStats was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (wincon == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Wincon was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Wincon was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (path == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Path was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Path was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (player == NULL) {
-		log_tag("debug_log.txt","[ERROR]","Player was NULL in init_Gamestate()");
+		log_tag("debug_log.txt","[ERROR]","Player was NULL in %s()", __func__);
 		exit(EXIT_FAILURE);
 	}
 	if (gamemode != Story && gamemode != Rogue) {

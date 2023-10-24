@@ -93,7 +93,7 @@ int get_saveslot_index(void) {
 		(char *)NULL,
 	};
 
-	log_tag("debug_log.txt","[DEBUG]","get_saveslot_index(): getting index from user.");
+	log_tag("debug_log.txt","[DEBUG]","%s(): getting index from user.", __func__);
 
 	int choice = 999;
 	int picked = 0;
@@ -104,7 +104,7 @@ int get_saveslot_index(void) {
 	WINDOW *saveslots_win;
 	int n_choices, c;
 
-	log_tag("debug_log.txt","[DEBUG]","Initialising curses for get_saveslots_index()");
+	log_tag("debug_log.txt","[DEBUG]","Initialising curses for %s()", __func__);
 	/* Initialize curses */
 	start_color();
 	clear();
@@ -116,7 +116,7 @@ int get_saveslot_index(void) {
 	int cursorCheck = curs_set(0); // We make the cursor invisible or return early with the error
 
 	if (cursorCheck == ERR) {
-		log_tag("debug_log.txt","[ERROR]","Failed curs_set(0) at handleRoom_Home()");
+		log_tag("debug_log.txt","[ERROR]","Failed curs_set(0) at %s()", __func__);
 		return S4C_ERR_CURSOR; //fprintf(stderr,"animate => Terminal does not support cursor visibility state.\n");
 	}
 
@@ -162,6 +162,30 @@ int get_saveslot_index(void) {
 	/* Post the menu */
 	post_menu(saveslots_menu);
 	wrefresh(menu_win);
+
+
+    //Try updating default save names by reading fighter name from each file
+    for (int i = 0; i < 3; i++) {
+		char path_to_sv_file[600];
+		char static_path[500];
+		// Set static_path value to the correct static dir path
+		resolve_staticPath(static_path);
+
+        #ifndef _WIN32
+		sprintf(path_to_sv_file,"%s/%s",static_path,default_saveslots[i].save_path);
+        #else
+		sprintf(path_to_sv_file,"%s\\%s",static_path,default_saveslots[i].save_path);
+        #endif
+        FILE* svfile = fopen(path_to_sv_file,"r");
+        if (!svfile) {
+            log_tag("debug_log.txt","[WARN]","%s(): Failed opening savefile {%i} at \"%s\".", __func__, i, path_to_sv_file);
+            continue;
+        }
+        if (!set_Saveslot_name(svfile,&default_saveslots[i])) {
+            log_tag("debug_log.txt","[WARN]","%s(): Failed reading savefile {%i} at \"%s\".", __func__, i, path_to_sv_file);
+        };
+        fclose(svfile);
+    }
 
 	saveslots_win = newwin(12, 24, 2, 5);
 	scrollok(saveslots_win,TRUE);
@@ -242,7 +266,7 @@ int get_saveslot_index(void) {
 
 		if (c == 10) { // Player char was enter
 			if (choice < 0 || choice > 3) {
-				log_tag("debug_log.txt","[ERROR]","Invalid choice in get_saveslot_index().");
+				log_tag("debug_log.txt","[ERROR]","Invalid choice in %s().", __func__);
 				return -1;
 			}
 		} //End if Player char was enter

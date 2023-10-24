@@ -11412,7 +11412,15 @@ void gameloop(int argc, char** argv){
 
 		Gamestate* gamestate = KLS_PUSH_TYPED(default_kls,Gamestate,1,HR_Gamestate,"Gamestate","Gamestate");
 		init_Gamestate(gamestate, player->stats, path->win_condition, path, player, GAMEMODE);
-		update_Gamestate(gamestate, 1, HOME, roomsDone, -1);
+        if (gamestate->gamemode == Rogue) {
+            //Note: different lifetime than gamestate
+            //NO. The update_gamestate call is instead performed later.
+            //Floor* current_floor = KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Init Curr floor");
+            //NO. We pass NULL now.
+		    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+        } else {
+		    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+        }
 		log_tag("debug_log.txt","[DEBUG]","Initialised Gamestate.");
 		dbg_Gamestate(gamestate);
 
@@ -11564,7 +11572,7 @@ void gameloop(int argc, char** argv){
 				delwin(door_win);
 				endwin();
 
-				update_Gamestate(gamestate, 1, current_room->class, roomsDone, -1);
+				update_Gamestate(gamestate, 1, current_room->class, roomsDone, -1, NULL);
 
 				if (current_room->class == HOME) {
 					res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites,default_kls,gamestate_kls);
@@ -11730,6 +11738,7 @@ void gameloop(int argc, char** argv){
 				log_tag("debug_log.txt","[DEBUG]","Prepping current_floor.");
 				kls_log(default_kls,"DEBUG","Prepping current_floor.");
 				Floor* current_floor = (Floor*) KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Floor");
+		        update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
 				// Start the random walk from the center of the dungeon
 				int center_x = FLOOR_MAX_COLS / 2;
 				int center_y = FLOOR_MAX_ROWS / 2;
@@ -11876,7 +11885,7 @@ void gameloop(int argc, char** argv){
 						delwin(door_win);
 						endwin();
 
-						update_Gamestate(gamestate, 1, current_room->class, roomsDone, -1);
+		                update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
 
 						if (current_room->class == HOME) {
 							res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, gamestate_kls);
@@ -11934,6 +11943,7 @@ void gameloop(int argc, char** argv){
 								case BOSS: {
 									current_floor->roomclass_layout[current_x][current_y] = BASIC;
 									floors_done++;
+                                    player->stats->floorscompleted++;
 									log_tag("debug_log.txt","[DEBUG]","Floors done: [%i]", floors_done);
 									//Check if we need to update the win condition
 									if (win_con->class == FULL_PATH) {
@@ -11945,6 +11955,7 @@ void gameloop(int argc, char** argv){
 									gamestate_kls = kls_temp_start(temporary_kls);
 
 									current_floor = (Floor*) KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Floor");
+                                    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
 
                   							//Regenerate floor
 									log_tag("debug_log.txt","[DEBUG]","Beaten a boss, regenerating current floor.");
@@ -12078,11 +12089,34 @@ void gameloop(int argc, char** argv){
  */
 void gameloop_Win(int argc, char** argv) {
 	char* whoami;
-    KLS_Conf kls_conf = { .kls_autoset_regions = 1, .kls_autoset_temp_regions = 0};
+    char path_to_kls_debug_file[600];
+    char static_path[500];
+    // Set static_path value to the correct static dir path
+    resolve_staticPath(static_path);
+
+    //Truncate "debug_log.txt"
+    sprintf(path_to_kls_debug_file,"%s\\%s",static_path,"kls_debug_log.txt");
+    KLS_Conf default_kls_conf = {
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 1,
+        .kls_log_filepath = path_to_kls_debug_file,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE*16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+    };
+    KLS_Conf temporary_kls_conf = {
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 0,
+        .kls_log_fp = stderr,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE*16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+    };
+
 	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 	do {
-		default_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, kls_conf);
-		temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, kls_conf);
+		default_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, default_kls_conf);
+		temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE*8, temporary_kls_conf);
 		char* kls_progname = (char*) KLS_PUSH_TYPED(default_kls, char*, sizeof(whoami),KLS_None,"progname",whoami);
 		strcpy(kls_progname,whoami);
 		#ifndef HELAPORDO_DEBUG_LOG
@@ -12200,9 +12234,7 @@ void gameloop_Win(int argc, char** argv) {
 		#else
 		// Open log file if log flag is set and reset it
 		if (G_LOG_ON == 1) {
-			KOLISEO_DEBUG = 1;
 			char path_to_debug_file[600];
-			char path_to_kls_debug_file[600];
 			char path_to_OPS_debug_file[600];
 			char static_path[500];
 			// Set static_path value to the correct static dir path
@@ -12215,16 +12247,6 @@ void gameloop_Win(int argc, char** argv) {
 				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
 				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
 				exit(EXIT_FAILURE);
-			}
-			if (KOLISEO_DEBUG == 1) {
-				sprintf(path_to_kls_debug_file,"%s\\%s",static_path,"kls_debug_log.txt");
-				KOLISEO_DEBUG_FP = fopen(path_to_kls_debug_file,"w");
-				if (!KOLISEO_DEBUG_FP) {
-					endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
-					fprintf(stderr,"[ERROR]    Can't open kls debug logfile (%s/kls_debug_log.txt).\n", static_path);
-					exit(EXIT_FAILURE);
-				}
-				fprintf(KOLISEO_DEBUG_FP,"[DEBUGLOG]    --Debugging KLS to kls_debug_log.txt--  \n");
 			}
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
 			fprintf(debug_file,"[DEBUG]    --Default kls debug info:--  \n");
