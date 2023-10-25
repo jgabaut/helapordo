@@ -4672,7 +4672,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 		res = fight(player,e,notify_win,kls);
 
 		//Check res and apply second action if needed
-		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		log_tag("debug_log.txt","[DEBUG]","[%s()]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 		first_act_res = res;
 
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
@@ -4685,7 +4685,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				}
 				break;
 				case FOE_OP_IDLE: {
-					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+					log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is loafing around.",stringFromEClass(e->class));
 					display_notification(notify_win,msg,500);
@@ -4693,7 +4693,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				}
 				break;
 				case FOE_OP_FIGHT: {
-					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+					log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is angry!",stringFromEClass(e->class));
 					display_notification(notify_win,msg,500);
@@ -4703,14 +4703,14 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				}
 				break;
 				case FOE_OP_SPECIAL: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
+					log_tag("debug_log.txt","[TODO]","[%s()]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
 					//TODO
 					//Implement enemy special function
 					//res = enemy_attack_special(e,player,notify_win,kls);
 				}
 				break;
 				default: {
-					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s()]: [%i]",__func__,foe_op);
 					kls_free(default_kls);
 					kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
@@ -4718,11 +4718,11 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				break;
 			} // End foe_op switch
 
-			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			log_tag("debug_log.txt","[DEBUG]","[%s()]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 			if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
-				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was not a clash...",__func__);
+				log_tag("debug_log.txt","[DEBUG]","[%s()]: Deferred fight was not a clash...",__func__);
 			} else if ( (res == FIGHTRES_DMG_TAKEN && first_act_res == FIGHTRES_DMG_DEALT) || (res == FIGHTRES_DMG_DEALT && first_act_res == FIGHTRES_DMG_TAKEN) ) {
-				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was a clash!",__func__);
+				log_tag("debug_log.txt","[DEBUG]","[%s()]: Deferred fight was a clash!",__func__);
 				res = FIGHTRES_CLASH;
 			}
 
@@ -4743,7 +4743,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 			}
 			break;
 			case FOE_OP_IDLE: {
-				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+				log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
 				wattron(notify_win,COLOR_PAIR(S4C_GREY));
 				sprintf(msg,"%s is loafing around.",stringFromEClass(e->class));
 				display_notification(notify_win,msg,500);
@@ -4751,19 +4751,19 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 			}
 			break;
 			case FOE_OP_FIGHT: {
-				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+				log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
 				res = enemy_attack(e,player,notify_win,kls);
 			}
 			break;
 			case FOE_OP_SPECIAL: {
-				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
+				log_tag("debug_log.txt","[TODO]","[%s()]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
 				//TODO
 				//Implement enemy special function
 				//res = enemy_attack_special(e,player,notify_win,kls);
 			}
 			break;
 			default: {
-				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s()]: [%i]",__func__,foe_op);
 				kls_free(default_kls);
 				kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
@@ -4772,17 +4772,17 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 		} // End foe_op switch
 
 		//Check res and apply second action if needed
-		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		log_tag("debug_log.txt","[DEBUG]","[%s()]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 		first_act_res = res;
 
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
 			res = fight(player,e,notify_win,kls);
 
-			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			log_tag("debug_log.txt","[DEBUG]","[%s()]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 			if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
-				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was not a clash...",__func__);
+				log_tag("debug_log.txt","[DEBUG]","[%s()]: Deferred fight was not a clash...",__func__);
 			} else if ( (res == FIGHTRES_DMG_TAKEN && first_act_res == FIGHTRES_DMG_DEALT) || (res == FIGHTRES_DMG_DEALT && first_act_res == FIGHTRES_DMG_TAKEN) ) {
-				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was a clash!",__func__);
+				log_tag("debug_log.txt","[DEBUG]","[%s()]: Deferred fight was a clash!",__func__);
 				res = FIGHTRES_CLASH;
 			}
 
@@ -5381,7 +5381,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 	if (player_goes_first) {
 		res = boss_fight(player,b,p,notify_win,kls);
 		//Check res and apply second action if needed
-		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		log_tag("debug_log.txt","[DEBUG]","[%s()]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
 			switch (foe_op) {
 				case FOE_OP_INVALID: {
@@ -5392,7 +5392,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_IDLE: {
-					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+					log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is loafing around.",stringFromBossClass(b->class));
 					display_notification(notify_win,msg,500);
@@ -5400,7 +5400,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_FIGHT: {
-					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+					log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is angry!",stringFromBossClass(b->class));
 					display_notification(notify_win,msg,500);
@@ -5409,14 +5409,14 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_SPECIAL: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
+					log_tag("debug_log.txt","[TODO]","[%s()]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
 					//TODO
 					//Implement boss special function
 					//res = boss_attack_special(b,player,p,notify_win,kls);
 				}
 				break;
 				default: {
-					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s()]: [%i]",__func__,foe_op);
 					kls_free(default_kls);
 					kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
@@ -5426,7 +5426,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 
 			//TODO
 			//Check second turn act res?
-			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			log_tag("debug_log.txt","[DEBUG]","[%s()]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 
 			return res;
 		} else if (res == FIGHTRES_DEATH) {
@@ -5438,14 +5438,14 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 		//Foe acts first
 		switch (foe_op) {
 			case FOE_OP_INVALID: {
-				log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
+				log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s()]: [%i]",__func__,foe_op);
 				kls_free(default_kls);
 				kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
 			}
 			break;
 			case FOE_OP_IDLE: {
-				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+				log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
 				wattron(notify_win,COLOR_PAIR(S4C_GREY));
 				sprintf(msg,"%s is loafing around.",stringFromBossClass(b->class));
 				display_notification(notify_win,msg,500);
@@ -5453,7 +5453,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 			}
 			break;
 			case FOE_OP_FIGHT: {
-				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+				log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
 				wattron(notify_win,COLOR_PAIR(S4C_GREY));
 				sprintf(msg,"%s is angry!",stringFromBossClass(b->class));
 				display_notification(notify_win,msg,500);
@@ -5462,14 +5462,14 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 			}
 			break;
 			case FOE_OP_SPECIAL: {
-				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
+				log_tag("debug_log.txt","[TODO]","[%s()]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
 				//TODO
 				//Implement boss special function
 				//res = boss_attack_special(b,player,p,notify_win,kls);
 			}
 			break;
 			default: {
-				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s()]: [%i]",__func__,foe_op);
 				kls_free(default_kls);
 				kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
@@ -5478,12 +5478,12 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 		} // End foe_op switch
 
 		//Check res and apply second action if needed
-		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		log_tag("debug_log.txt","[DEBUG]","[%s()]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
 			res = boss_fight(player,b,p,notify_win,kls);
 
-			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			log_tag("debug_log.txt","[DEBUG]","[%s()]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 			//TODO
 			//Check second turn act res?
 			return res;
