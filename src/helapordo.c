@@ -8701,28 +8701,34 @@ int retry(void) {
 	lightGreen();
 	printf("\n\nYou died. Want to try again?\n\n\t\t0 - No\t\t\t1 - Yes\n\n");
 	white();
+	char c[25] = {0};
+	if (fgets(c, sizeof(c), stdin) != NULL) {
+	    log_tag("debug_log.txt","[DEBUG]","Read input for %s().",__func__);
+        if (c[strlen(c) -1] == '\n') {
+            c[strlen(c) -1] = '\0';
+        }
 
-	char c[25];
-	char msg[500];
-	char* res = fgets(c, sizeof c, stdin);
-	sprintf(msg,"retry() fgets() result was (%s)",res);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+        for (char *ptr = c; *ptr; ++ptr) {
+            *ptr = tolower(*ptr);
+        }
 
-	switch(c[0]) {
-		case '0':
-			{
-				return 0;
-				break;
-			}
-		case '1':
-			{
-				return 1;
-				break;
-			}
-		default:
-			return 0;
-			break;
-	}
+        if (c[0] == '\0' || strcmp(c, "no") == 0) {
+	        log_tag("debug_log.txt","[DEBUG]","%s(): input was no.",__func__);
+            return 0;
+        } else if (strcmp(c, "yes") == 0) {
+	        log_tag("debug_log.txt","[DEBUG]","%s(): input was yes.",__func__);
+            return 1;
+        } else {
+	        log_tag("debug_log.txt","[DEBUG]","%s(): Invalid input, defaulting to 0.",__func__);
+
+            return 0;
+        }
+    } else {
+	    log_tag("debug_log.txt","[DEBUG]","Failed reading input for %s.",__func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
@@ -10487,6 +10493,8 @@ void gameloop(int argc, char** argv){
 				break;
 				case 'h': {
 					usage(whoami);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10494,6 +10502,8 @@ void gameloop(int argc, char** argv){
 					G_DOTUTORIAL_ON = 1;
 					handleTutorial();
 					usage(whoami);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10528,6 +10538,8 @@ void gameloop(int argc, char** argv){
 					napms(200);
 					delwin(test_win);
 					endwin();
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10546,6 +10558,8 @@ void gameloop(int argc, char** argv){
 					}
 					exit(exitcode);
 					*/
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10553,12 +10567,16 @@ void gameloop(int argc, char** argv){
 					fprintf(stderr,"Invalid option: %c\n Check your arguments.\n", option);
 					usage(whoami);
 					// Handle invalid options
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				}
 				break;
 				default: {
 					// Should never get here
 					fprintf(stderr,"Invalid option: %c\n, bad usage.\n", option);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -11885,7 +11903,7 @@ void gameloop(int argc, char** argv){
 						delwin(door_win);
 						endwin();
 
-		                update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
+				        update_Gamestate(gamestate, 1, current_room->class, current_room->index, -1, current_floor);
 
 						if (current_room->class == HOME) {
 							res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, gamestate_kls);
@@ -11996,6 +12014,8 @@ void gameloop(int argc, char** argv){
 								break;
 								default: {
 									log_tag("debug_log.txt","[ERROR]","Unexpected roomclass value in Rogue loop: [%i] [%s]",current_floor->roomclass_layout[current_x][current_y],stringFromRoom(current_floor->roomclass_layout[current_x][current_y]));
+                                    kls_free(default_kls);
+                                    kls_free(temporary_kls);
 									exit(EXIT_FAILURE);
 								}
 								break;
@@ -12078,7 +12098,7 @@ void gameloop(int argc, char** argv){
 	printf("\n\n\t\tTHANKS 4 PLAYING!\n\n");
 	white();
 	log_tag("debug_log.txt","[DEBUG]","End of program.");
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 #ifdef _WIN32
@@ -12187,6 +12207,8 @@ void gameloop_Win(int argc, char** argv) {
 				break;
 				case 'h': {
 					usage(whoami);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -12194,6 +12216,8 @@ void gameloop_Win(int argc, char** argv) {
 					G_DOTUTORIAL_ON = 1;
 					handleTutorial();
 					usage(whoami);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -12207,23 +12231,31 @@ void gameloop_Win(int argc, char** argv) {
 					napms(800);
 					//TODO Win term color test?
 					//display_colorpairs();
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
 				case 'v': {
 					printVersion();
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				case '?': {
 					fprintf(stderr,"Invalid option: %c\n Check your arguments.\n", option);
 					usage(whoami);
 					// Handle invalid options
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				}
 				break;
 				default: {
 					// Should never get here
 					fprintf(stderr,"Invalid option: %c\n, bad usage.\n", option);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -12246,6 +12278,8 @@ void gameloop_Win(int argc, char** argv) {
 			if (!debug_file) {
 				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
 				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
 			}
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
@@ -12271,6 +12305,8 @@ void gameloop_Win(int argc, char** argv) {
 			if (!OPS_debug_file) {
 				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
 				fprintf(stderr,"[ERROR]    Can't open OPS logfile (%s\\%s).\n", static_path, OPS_LOGFILE);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
 			}
 			fprintf(OPS_debug_file,"[OPLOG]    --New game--  \n");
@@ -12306,6 +12342,8 @@ void gameloop_Win(int argc, char** argv) {
 	//What is this?
 	printf("\n\n\t\tTHANKS 4 PLAYING!\n\n");
 	log_tag("debug_log.txt","[DEBUG]","End of program.");
+    kls_free(default_kls);
+    kls_free(temporary_kls);
 	exit(0);
 }
 #endif //End gameloop_Win()
