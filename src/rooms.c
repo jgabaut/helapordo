@@ -457,6 +457,10 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 		log_tag("debug_log.txt", "[ANIMATE]","Declared new fighter animation.");
 		int debug_n_choices = 0;
 
+        //Keeps track of current animation frame
+        int frame_counter = 0;
+		int animation_loops_done = 0;
+
 		while (!( fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE || choice == QUIT ) ){
 			if (choice != FIGHT) {
 				/* Initialize curses */
@@ -726,6 +730,9 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 			//Go to next battle
 				i++;
 
+                //Reset frame counter
+                frame_counter = 0;
+
 				if ( enemies - i != 1 ) {
 					//TODO
 					//Notification of enemies left in room, if needed?
@@ -744,10 +751,8 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 
 			int picked = 0;
 			clock_t menu_start_time = clock(), menu_diff_time;//, menu_loop_diff_time;
-			int frame_counter = 0;
 			int frame_tot = 60;
 
-			int animation_loops_done = 0;
 
 			while(!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
 				//clock_t menu_loop_time = clock();
@@ -965,6 +970,8 @@ int handleRoom_Enemies(Gamestate* gamestate, Room* room, int index, Path* p, Fig
 
 				//Go to next battle
 					i++;
+
+                    frame_counter = 0; //Reset animation loop on last frame
 
 					if (enemies - i > 1) {
 						//TODO
@@ -1292,6 +1299,9 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 
 	update_Gamestate(gamestate, 1, room->class, room->index-1, 1, gamestate->current_floor);
 
+    int frame_counter = 0;
+	int animation_loops_done = 0;
+
 	while (!( fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE || choice == QUIT ) ){
 
 		if (choice != FIGHT) {
@@ -1544,10 +1554,8 @@ int handleRoom_Boss(Gamestate* gamestate, Room* room, int index, Path* p, Fighte
 
 		int picked = 0;
 		clock_t menu_start_time = clock(), menu_diff_time;//, menu_loop_diff_time;
-		int frame_counter = 0;
 		int frame_tot = 60;
 
-		int animation_loops_done = 0;
 
 	        while(!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
 			//clock_t menu_loop_time = clock();

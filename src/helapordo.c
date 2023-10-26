@@ -4672,7 +4672,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 		res = fight(player,e,notify_win,kls);
 
 		//Check res and apply second action if needed
-		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		log_tag("debug_log.txt","[DEBUG]","[%s()]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 		first_act_res = res;
 
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
@@ -4685,7 +4685,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				}
 				break;
 				case FOE_OP_IDLE: {
-					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+					log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is loafing around.",stringFromEClass(e->class));
 					display_notification(notify_win,msg,500);
@@ -4693,7 +4693,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				}
 				break;
 				case FOE_OP_FIGHT: {
-					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+					log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is angry!",stringFromEClass(e->class));
 					display_notification(notify_win,msg,500);
@@ -4703,14 +4703,14 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				}
 				break;
 				case FOE_OP_SPECIAL: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
+					log_tag("debug_log.txt","[TODO]","[%s()]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
 					//TODO
 					//Implement enemy special function
 					//res = enemy_attack_special(e,player,notify_win,kls);
 				}
 				break;
 				default: {
-					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s()]: [%i]",__func__,foe_op);
 					kls_free(default_kls);
 					kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
@@ -4718,11 +4718,11 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 				break;
 			} // End foe_op switch
 
-			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			log_tag("debug_log.txt","[DEBUG]","[%s()]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 			if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
-				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was not a clash...",__func__);
+				log_tag("debug_log.txt","[DEBUG]","[%s()]: Deferred fight was not a clash...",__func__);
 			} else if ( (res == FIGHTRES_DMG_TAKEN && first_act_res == FIGHTRES_DMG_DEALT) || (res == FIGHTRES_DMG_DEALT && first_act_res == FIGHTRES_DMG_TAKEN) ) {
-				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was a clash!",__func__);
+				log_tag("debug_log.txt","[DEBUG]","[%s()]: Deferred fight was a clash!",__func__);
 				res = FIGHTRES_CLASH;
 			}
 
@@ -4743,7 +4743,7 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 			}
 			break;
 			case FOE_OP_IDLE: {
-				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
+				log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } was idle.",__func__,stringFromEClass(e->class));
 				wattron(notify_win,COLOR_PAIR(S4C_GREY));
 				sprintf(msg,"%s is loafing around.",stringFromEClass(e->class));
 				display_notification(notify_win,msg,500);
@@ -4751,19 +4751,19 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 			}
 			break;
 			case FOE_OP_FIGHT: {
-				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
+				log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } wants to fight.",__func__,stringFromEClass(e->class));
 				res = enemy_attack(e,player,notify_win,kls);
 			}
 			break;
 			case FOE_OP_SPECIAL: {
-				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
+				log_tag("debug_log.txt","[TODO]","[%s()]:  Foe { %s } wants to use a special.",__func__,stringFromEClass(e->class));
 				//TODO
 				//Implement enemy special function
 				//res = enemy_attack_special(e,player,notify_win,kls);
 			}
 			break;
 			default: {
-				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s()]: [%i]",__func__,foe_op);
 				kls_free(default_kls);
 				kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
@@ -4772,17 +4772,17 @@ int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW
 		} // End foe_op switch
 
 		//Check res and apply second action if needed
-		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		log_tag("debug_log.txt","[DEBUG]","[%s()]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 		first_act_res = res;
 
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
 			res = fight(player,e,notify_win,kls);
 
-			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			log_tag("debug_log.txt","[DEBUG]","[%s()]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 			if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
-				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was not a clash...",__func__);
+				log_tag("debug_log.txt","[DEBUG]","[%s()]: Deferred fight was not a clash...",__func__);
 			} else if ( (res == FIGHTRES_DMG_TAKEN && first_act_res == FIGHTRES_DMG_DEALT) || (res == FIGHTRES_DMG_DEALT && first_act_res == FIGHTRES_DMG_TAKEN) ) {
-				log_tag("debug_log.txt","[DEBUG]","[%s]: Deferred fight was a clash!",__func__);
+				log_tag("debug_log.txt","[DEBUG]","[%s()]: Deferred fight was a clash!",__func__);
 				res = FIGHTRES_CLASH;
 			}
 
@@ -5381,7 +5381,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 	if (player_goes_first) {
 		res = boss_fight(player,b,p,notify_win,kls);
 		//Check res and apply second action if needed
-		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		log_tag("debug_log.txt","[DEBUG]","[%s()]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
 			switch (foe_op) {
 				case FOE_OP_INVALID: {
@@ -5392,7 +5392,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_IDLE: {
-					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+					log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is loafing around.",stringFromBossClass(b->class));
 					display_notification(notify_win,msg,500);
@@ -5400,7 +5400,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_FIGHT: {
-					log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+					log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
 					wattron(notify_win,COLOR_PAIR(S4C_GREY));
 					sprintf(msg,"%s is angry!",stringFromBossClass(b->class));
 					display_notification(notify_win,msg,500);
@@ -5409,14 +5409,14 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 				}
 				break;
 				case FOE_OP_SPECIAL: {
-					log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
+					log_tag("debug_log.txt","[TODO]","[%s()]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
 					//TODO
 					//Implement boss special function
 					//res = boss_attack_special(b,player,p,notify_win,kls);
 				}
 				break;
 				default: {
-					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+					log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s()]: [%i]",__func__,foe_op);
 					kls_free(default_kls);
 					kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
@@ -5426,7 +5426,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 
 			//TODO
 			//Check second turn act res?
-			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			log_tag("debug_log.txt","[DEBUG]","[%s()]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 
 			return res;
 		} else if (res == FIGHTRES_DEATH) {
@@ -5438,14 +5438,14 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 		//Foe acts first
 		switch (foe_op) {
 			case FOE_OP_INVALID: {
-				log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s]: [%i]",__func__,foe_op);
+				log_tag("debug_log.txt","[ERROR]","foe_op was FOE_OP_INVALID in [%s()]: [%i]",__func__,foe_op);
 				kls_free(default_kls);
 				kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
 			}
 			break;
 			case FOE_OP_IDLE: {
-				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
+				log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } was idle.",__func__,stringFromBossClass(b->class));
 				wattron(notify_win,COLOR_PAIR(S4C_GREY));
 				sprintf(msg,"%s is loafing around.",stringFromBossClass(b->class));
 				display_notification(notify_win,msg,500);
@@ -5453,7 +5453,7 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 			}
 			break;
 			case FOE_OP_FIGHT: {
-				log_tag("debug_log.txt","[DEFER]","[%s]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
+				log_tag("debug_log.txt","[DEFER]","[%s()]:  Foe { %s } wants to fight.",__func__,stringFromBossClass(b->class));
 				wattron(notify_win,COLOR_PAIR(S4C_GREY));
 				sprintf(msg,"%s is angry!",stringFromBossClass(b->class));
 				display_notification(notify_win,msg,500);
@@ -5462,14 +5462,14 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 			}
 			break;
 			case FOE_OP_SPECIAL: {
-				log_tag("debug_log.txt","[TODO]","[%s]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
+				log_tag("debug_log.txt","[TODO]","[%s()]:  Foe { %s } wants to use a special.",__func__,stringFromBossClass(b->class));
 				//TODO
 				//Implement boss special function
 				//res = boss_attack_special(b,player,p,notify_win,kls);
 			}
 			break;
 			default: {
-				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s]: [%i]",__func__,foe_op);
+				log_tag("debug_log.txt","[ERROR]","Unexpected foeTurnOption_OP in [%s()]: [%i]",__func__,foe_op);
 				kls_free(default_kls);
 				kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
@@ -5478,12 +5478,12 @@ int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op,
 		} // End foe_op switch
 
 		//Check res and apply second action if needed
-		log_tag("debug_log.txt","[DEBUG]","[%s]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+		log_tag("debug_log.txt","[DEBUG]","[%s()]: First act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 
 		if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
 			res = boss_fight(player,b,p,notify_win,kls);
 
-			log_tag("debug_log.txt","[DEBUG]","[%s]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
+			log_tag("debug_log.txt","[DEBUG]","[%s()]: Second act res was [%s]: [%i]",__func__,stringFrom_fightResult(res), res);
 			//TODO
 			//Check second turn act res?
 			return res;
@@ -8701,28 +8701,34 @@ int retry(void) {
 	lightGreen();
 	printf("\n\nYou died. Want to try again?\n\n\t\t0 - No\t\t\t1 - Yes\n\n");
 	white();
+	char c[25] = {0};
+	if (fgets(c, sizeof(c), stdin) != NULL) {
+	    log_tag("debug_log.txt","[DEBUG]","Read input for %s().",__func__);
+        if (c[strlen(c) -1] == '\n') {
+            c[strlen(c) -1] = '\0';
+        }
 
-	char c[25];
-	char msg[500];
-	char* res = fgets(c, sizeof c, stdin);
-	sprintf(msg,"retry() fgets() result was (%s)",res);
-	log_tag("debug_log.txt","[DEBUG]",msg);
+        for (char *ptr = c; *ptr; ++ptr) {
+            *ptr = tolower(*ptr);
+        }
 
-	switch(c[0]) {
-		case '0':
-			{
-				return 0;
-				break;
-			}
-		case '1':
-			{
-				return 1;
-				break;
-			}
-		default:
-			return 0;
-			break;
-	}
+        if (c[0] == '\0' || strcmp(c, "no") == 0) {
+	        log_tag("debug_log.txt","[DEBUG]","%s(): input was no.",__func__);
+            return 0;
+        } else if (strcmp(c, "yes") == 0) {
+	        log_tag("debug_log.txt","[DEBUG]","%s(): input was yes.",__func__);
+            return 1;
+        } else {
+	        log_tag("debug_log.txt","[DEBUG]","%s(): Invalid input, defaulting to 0.",__func__);
+
+            return 0;
+        }
+    } else {
+	    log_tag("debug_log.txt","[DEBUG]","Failed reading input for %s.",__func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
 }
 
 /**
@@ -10487,6 +10493,8 @@ void gameloop(int argc, char** argv){
 				break;
 				case 'h': {
 					usage(whoami);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10494,6 +10502,8 @@ void gameloop(int argc, char** argv){
 					G_DOTUTORIAL_ON = 1;
 					handleTutorial();
 					usage(whoami);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10528,6 +10538,8 @@ void gameloop(int argc, char** argv){
 					napms(200);
 					delwin(test_win);
 					endwin();
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10546,6 +10558,8 @@ void gameloop(int argc, char** argv){
 					}
 					exit(exitcode);
 					*/
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -10553,12 +10567,16 @@ void gameloop(int argc, char** argv){
 					fprintf(stderr,"Invalid option: %c\n Check your arguments.\n", option);
 					usage(whoami);
 					// Handle invalid options
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				}
 				break;
 				default: {
 					// Should never get here
 					fprintf(stderr,"Invalid option: %c\n, bad usage.\n", option);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -11885,7 +11903,7 @@ void gameloop(int argc, char** argv){
 						delwin(door_win);
 						endwin();
 
-		                update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor);
+				        update_Gamestate(gamestate, 1, current_room->class, current_room->index, -1, current_floor);
 
 						if (current_room->class == HOME) {
 							res = handleRoom_Home(gamestate,current_room, roomsDone, path, player, load_info, fighter_sprites, default_kls, gamestate_kls);
@@ -11996,6 +12014,8 @@ void gameloop(int argc, char** argv){
 								break;
 								default: {
 									log_tag("debug_log.txt","[ERROR]","Unexpected roomclass value in Rogue loop: [%i] [%s]",current_floor->roomclass_layout[current_x][current_y],stringFromRoom(current_floor->roomclass_layout[current_x][current_y]));
+                                    kls_free(default_kls);
+                                    kls_free(temporary_kls);
 									exit(EXIT_FAILURE);
 								}
 								break;
@@ -12078,7 +12098,7 @@ void gameloop(int argc, char** argv){
 	printf("\n\n\t\tTHANKS 4 PLAYING!\n\n");
 	white();
 	log_tag("debug_log.txt","[DEBUG]","End of program.");
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 #ifdef _WIN32
@@ -12187,6 +12207,8 @@ void gameloop_Win(int argc, char** argv) {
 				break;
 				case 'h': {
 					usage(whoami);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -12194,6 +12216,8 @@ void gameloop_Win(int argc, char** argv) {
 					G_DOTUTORIAL_ON = 1;
 					handleTutorial();
 					usage(whoami);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
@@ -12207,23 +12231,31 @@ void gameloop_Win(int argc, char** argv) {
 					napms(800);
 					//TODO Win term color test?
 					//display_colorpairs();
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				break;
 				case 'v': {
 					printVersion();
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_SUCCESS);
 				}
 				case '?': {
 					fprintf(stderr,"Invalid option: %c\n Check your arguments.\n", option);
 					usage(whoami);
 					// Handle invalid options
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				}
 				break;
 				default: {
 					// Should never get here
 					fprintf(stderr,"Invalid option: %c\n, bad usage.\n", option);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
 					exit(EXIT_FAILURE);
 				}
 				break;
@@ -12246,6 +12278,8 @@ void gameloop_Win(int argc, char** argv) {
 			if (!debug_file) {
 				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
 				fprintf(stderr,"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n", static_path);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
 			}
 			fprintf(debug_file,"[DEBUGLOG]    --New game--  \n");
@@ -12271,6 +12305,8 @@ void gameloop_Win(int argc, char** argv) {
 			if (!OPS_debug_file) {
 				endwin(); //TODO: Can/should we check if we have to do this only in curses mode?
 				fprintf(stderr,"[ERROR]    Can't open OPS logfile (%s\\%s).\n", static_path, OPS_LOGFILE);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
 				exit(EXIT_FAILURE);
 			}
 			fprintf(OPS_debug_file,"[OPLOG]    --New game--  \n");
@@ -12306,6 +12342,8 @@ void gameloop_Win(int argc, char** argv) {
 	//What is this?
 	printf("\n\n\t\tTHANKS 4 PLAYING!\n\n");
 	log_tag("debug_log.txt","[DEBUG]","End of program.");
+    kls_free(default_kls);
+    kls_free(temporary_kls);
 	exit(0);
 }
 #endif //End gameloop_Win()

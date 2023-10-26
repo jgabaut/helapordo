@@ -44,6 +44,7 @@ void test_game_color_pairs(WINDOW* win, int colors_per_row);
 void resolve_staticPath(char static_path[500]);
 
 void dbg_print_floor_layout(Floor* floor);
+void dbg_print_explored_layout(Floor* floor);
 void dbg_print_roomclass_layout(Floor* floor);
 void dbg_Gamestate(Gamestate* gmst);
 void dbg_Fighter(Fighter* fighter);
@@ -86,6 +87,7 @@ char* stringFromEquips(int e);
 char* stringFromEquipzones(int z);
 char* stringFromQuality(int q);
 char* stringFromArtifacts(int a);
+char* stringFromFloorclass(floorClass fc);
 
 char* descStringFromSpecial(fighterClass class, specialMove move);
 char* nameStringFromSpecial(fighterClass class, specialMove move);
