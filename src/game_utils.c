@@ -299,6 +299,27 @@ void dbg_print_floor_layout(Floor* floor) {
 }
 
 /**
+ * Logs explored layout for passed Floor.
+ */
+void dbg_print_explored_layout(Floor* floor) {
+    if (floor == NULL) {
+        fprintf(stderr,"[ERROR]   at %s(): passed floor was NULL.\n",__func__);
+        log_tag("debug_log.txt","[ERROR]","at %s(): passed floor was NULL.",__func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        char rowbuf[FLOOR_MAX_COLS+1] = {0};
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            rowbuf[x] = (floor->explored_matrix[x][y] == 1 ? '1' : ' ' );
+        }
+        log_tag("debug_log.txt","[Floor_row]", "{%s} - %i", rowbuf, y);
+    }
+    log_tag("debug_log.txt","[DEBUG]", "Logged explored layout.");
+}
+
+/**
  * Logs roomclass layout for passed Floor.
  */
 void dbg_print_roomclass_layout(Floor* floor) {
@@ -376,8 +397,18 @@ void dbg_Gamestate(Gamestate* gmst) {
     if (gmst->current_floor == NULL) {
         log_tag("debug_log.txt","[GAMESTATE]","Current floor was NULL.");
     } else {
+        log_tag("debug_log.txt","[GAMESTATE]","Current floor: {");
+        log_tag("debug_log.txt","[Floor]","index: {%i}", gmst->current_floor->index);
+        if (gmst->current_floor->desc != NULL) {
+            log_tag("debug_log.txt","[Floor]","desc: {%s}", gmst->current_floor->desc);
+        }
+        log_tag("debug_log.txt","[Floor]","floorClass: {%i} {%s}", gmst->current_floor->class, stringFromFloorclass(gmst->current_floor->class));
+        log_tag("debug_log.txt","[Floor]","area: {%i}", gmst->current_floor->area);
+        log_tag("debug_log.txt","[Floor]","explorea area: {%i}", gmst->current_floor->explored_area);
         dbg_print_floor_layout(gmst->current_floor);
+        dbg_print_explored_layout(gmst->current_floor);
         dbg_print_roomclass_layout(gmst->current_floor);
+        log_tag("debug_log.txt","[GAMESTATE]","  }");
     }
 	log_tag("debug_log.txt","[GAMESTATE]","}");
 }
@@ -1361,6 +1392,17 @@ char* stringFromRoom(roomClass r) {
  */
 char* stringFromGamemode(Gamemode g) {
 	return gamemodenamestrings[g];
+}
+
+/**
+ * Takes a integer and returns the corresponding floorClass string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see floorClass
+ * @param fc The integer/floorClass.
+ * @return String corresponding to the floorClass.
+ */
+char* stringFromFloorclass(floorClass fc) {
+    return floornamestrings[fc];
 }
 
 /**
