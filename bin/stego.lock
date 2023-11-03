@@ -39,3 +39,4 @@ kazoj# tests folder name
 1.2.5# Bump koliseo to 0.3.3
 1.2.6# Read save names, fix WIN32 build, bump koliseo to 0.3.4
 1.2.7# Don't restart animations, log explored_matrix
+1.2.8#

@@ -475,6 +475,66 @@ OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t
 			log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
 		}
 		break;
+        case OP_SKILL: {
+
+            log_tag("debug_log.txt","[DEBUG]","OP_SKILL");
+
+            res = NO_OP;
+
+            if (notify_win == NULL) {
+				log_tag("debug_log.txt","[CRITICAL]","Notification WINDOW pointer was null in turnOP(OP_SKILL)");
+				exit(EXIT_FAILURE);
+			}
+			if (room == NULL) {
+				log_tag("debug_log.txt","[CRITICAL]","Room pointer was null in turnOP(OP_SKILL)");
+				exit(EXIT_FAILURE);
+			}
+			if (foe_op == FOE_OP_INVALID) {
+				log_tag("debug_log.txt","[CRITICAL]","foe_op was FOE_OP_INVALID in turnOP(OP_SKILL)");
+				exit(EXIT_FAILURE);
+			} else if (foe_op < 0 || foe_op > FOETURNOP_MAX) {
+				log_tag("debug_log.txt","[CRITICAL]","foe_op was invalid in turnOP(OP_SKILL): [%i]",foe_op);
+				exit(EXIT_FAILURE);
+			}
+			room_index = room->index;
+			if (room->class == ENEMIES && enemy == NULL) {
+				log_tag("debug_log.txt","[ERROR]","Enemy pointer was null in turnOP(OP_SKILL) for ENEMIES room.");
+				exit(EXIT_FAILURE);
+			} else if (room->class == BOSS && boss == NULL){
+				log_tag("debug_log.txt","[ERROR]","Boss pointer was null in turnOP(OP_SKILL) for BOSS room.");
+				exit(EXIT_FAILURE);
+			} else if (room->class != ENEMIES && room->class != BOSS) {
+				log_tag("debug_log.txt","[ERROR]","Invalid room class in turnOP(OP_SKILL): (%s [%i])",stringFromRoom(room->class), room->class);
+				exit(EXIT_FAILURE);
+			}
+			switch (room->class) {
+				case ENEMIES: {
+					enemy_index = enemy->index;
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (%i) (OP_SKILL), isBoss == 0", enemy->index);
+					isBoss = 0;
+                    //TODO
+                    //Implement the missing function to wrap skill usage and foe op
+					//res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, foe_op, notify_win, kls));
+				}
+				break;
+				case BOSS: {
+					enemy_index = 0;
+					log_tag("debug_log.txt","[TURNOP]","Setting enemy_index to (0) (OP_SKILL), isBoss == 1");
+					isBoss = 1;
+                    //TODO
+                    //Implement the missing function to wrap skill usage and foe op
+					//res = OP_res_from_fightResult(defer_skill_boss(actor, boss, path, foe_op, notify_win, kls));
+				}
+				break;
+				default: {
+					log_tag("debug_log.txt","[TURNOP]","Invalid room value in turnOP(OP_FIGHT): [%s (%i)]",stringFromRoom(room->class), room->class);
+					exit(EXIT_FAILURE);
+
+				}
+				break;
+			}
+        }
+        break;
 		default: {
 			log_tag(OPS_LOGFILE,"[ERROR]","Invalid OP in turnOP()");
 			log_tag("debug_log.txt","[ERROR]","Invalid OP in turnOP()");

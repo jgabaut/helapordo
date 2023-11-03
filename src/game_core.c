@@ -104,6 +104,10 @@ turnOption_OP turnOP_from_turnOption(turnOption t) {
 			res = OP_DEBUG;
 		}
 		break;
+        case SKILL: {
+            res = OP_SKILL;
+        }
+        break;
 		default: {
 			//FIXME:
 			//Signal error right here?
@@ -219,6 +223,7 @@ char* turnopstrings[TURNOP_MAX+1] = {
 	"Debug",
 	"Load Enemy Room",
 	"Load Home Room",
+    "Skill",
 };
 
 char* foeturnopstrings[FOETURNOP_MAX+1] = {

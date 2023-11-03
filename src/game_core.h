@@ -142,12 +142,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 7
+#define HELAPORDO_PATCH_VERSION 8
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.2.7"
+#define VERSION "1.2.8"
 
 /**
  * Default savepath.
@@ -1629,6 +1629,7 @@ typedef enum turnOption {
 	DEBUG=1337,
 	TUTORIAL=777,
 	CLOSE_MENU=110,
+    SKILL=111,
 } turnOption;
 
 /**
@@ -1652,6 +1653,7 @@ typedef enum turnOption_OP {
 	OP_DEBUG=13,
 	OP_LOAD_ENEMYROOM=14,
 	OP_LOAD_HOMEROOM=15,
+    OP_SKILL=16,
 } turnOption_OP;
 
 /**
@@ -1667,7 +1669,7 @@ turnOption_OP turnOP_from_turnOption(turnOption t);
  * @see turnOption_OP
  * @see stringFromTurnOP()
  */
-#define TURNOP_MAX 15
+#define TURNOP_MAX 16
 /**
  * Array with the name strings for turnOption.
  * @see turnOption
