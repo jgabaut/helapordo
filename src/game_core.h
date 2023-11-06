@@ -25,32 +25,32 @@
  * Defines indexes for all types that are allocated with Koliseo.
  */
 typedef enum HLP_Region_Type {
-	HR_Path=KLS_REGIONTYPE_MAX+100, //Start counting from last index of Koliseo's own Region_Type values
-	HR_Wincon,
-	HR_Room,
-	HR_Floor,
-	HR_turnOP_args,
-	HR_Fighter,
-	HR_Enemy,
-	HR_Boss,
-	HR_FoeParty,
-	HR_Equip,
-	HR_Equipslot,
-	HR_Specialslot,
-	HR_Turncounter,
-	HR_Perk,
-	HR_Consumable,
-	HR_Artifact,
-	HR_Chest,
-	HR_Treasure,
-	HR_Shop,
-	HR_Roadfork,
-	HR_Turncounter_desc,
-	HR_Room_desc,
-	HR_countStats,
-	HR_Saveslot,
-	HR_Gamestate,
-	HR_loadInfo,
+    HR_Path = KLS_REGIONTYPE_MAX + 100,	//Start counting from last index of Koliseo's own Region_Type values
+    HR_Wincon,
+    HR_Room,
+    HR_Floor,
+    HR_turnOP_args,
+    HR_Fighter,
+    HR_Enemy,
+    HR_Boss,
+    HR_FoeParty,
+    HR_Equip,
+    HR_Equipslot,
+    HR_Specialslot,
+    HR_Turncounter,
+    HR_Perk,
+    HR_Consumable,
+    HR_Artifact,
+    HR_Chest,
+    HR_Treasure,
+    HR_Shop,
+    HR_Roadfork,
+    HR_Turncounter_desc,
+    HR_Room_desc,
+    HR_countStats,
+    HR_Saveslot,
+    HR_Gamestate,
+    HR_loadInfo,
 } HLP_Region_Type;
 
 /**
@@ -62,16 +62,16 @@ typedef enum HLP_Region_Type {
  * Array with the name strings for HLP_Region_Type values.
  * @see HLP_Region_Type
  */
-extern char* hlp_regiontype_strings[HLP_MAX_INDEX+1];
+extern char *hlp_regiontype_strings[HLP_MAX_INDEX + 1];
 
 /**
  * Global variable for default Koliseo.
  */
-extern Koliseo* default_kls;
+extern Koliseo *default_kls;
 /**
  * Global variable for temporary Koliseo.
  */
-extern Koliseo* temporary_kls;
+extern Koliseo *temporary_kls;
 /**
  * TODO Remove mentions of this.
  * Global variable for load animations flag. Legacy.
@@ -108,7 +108,7 @@ extern int G_DEBUG_ROOMTYPE_ON;
 /**
  * Global variable for debug room flag, set to the passed string argument.
  */
-extern char* G_DEBUG_ROOMTYPE_ARG;
+extern char *G_DEBUG_ROOMTYPE_ARG;
 /**
  * Global variable for debug enemy in ENEMIES roomtype flag.
  */
@@ -120,7 +120,7 @@ extern int G_DEBUG_ENEMYTYPE_ON;
 /**
  * Global variable for debug enemy flag, set to the passed string argument.
  */
-extern char* G_DEBUG_ENEMYTYPE_ARG;
+extern char *G_DEBUG_ENEMYTYPE_ARG;
 /**
  * Global variable for autosave setting.
  */
@@ -165,8 +165,8 @@ extern int G_DOTUTORIAL_ON;
  * @see randomise_path()
  */
 typedef struct {
-	char name[50]; /**< Name string for the saveslot.*/
-	char save_path[255]; /**< Path to savefile*/
+    char name[50];     /**< Name string for the saveslot.*/
+    char save_path[255];     /**< Path to savefile*/
 } Saveslot;
 
 /**
@@ -180,7 +180,7 @@ typedef struct {
  * @see Saveslot
  * @see Path
  */
-extern Saveslot default_saveslots[MAX_SAVESLOTS+1];
+extern Saveslot default_saveslots[MAX_SAVESLOTS + 1];
 
 /**
  * Ceiling for Fighter luck.
@@ -206,9 +206,9 @@ extern Saveslot default_saveslots[MAX_SAVESLOTS+1];
  * @see gamemodeStrings
  */
 typedef enum {
-	Standard=0,
-	Story=1,
-	Rogue=2,
+    Standard = 0,
+    Story = 1,
+    Rogue = 2,
 } Gamemode;
 
 /** Maximum index of Gamemode, so that the size has to add 1 for the 0th index
@@ -220,7 +220,7 @@ typedef enum {
  * Array with the name strings for Gamemode.
  * @see Gamemode
  */
-extern char* gamemodenamestrings[GAMEMODE_MAX+1];
+extern char *gamemodenamestrings[GAMEMODE_MAX + 1];
 
 /** Maximum number of lores.
  * @see gameloop()
@@ -240,12 +240,12 @@ extern Gamemode GAMEMODE;
  * @see Consumable
  */
 typedef enum {
-	Potion=0,
-	Rock=1,
-	Bread=2,
-	Coffee=3,
-	Powergem=4,
-	Magicbean=5
+    Potion = 0,
+    Rock = 1,
+    Bread = 2,
+    Coffee = 3,
+    Powergem = 4,
+    Magicbean = 5
 } consumableClass;
 
 /** Maximum index of consumableClass, so that the size has to add 1 for the 0th index
@@ -258,11 +258,11 @@ typedef enum {
  * @see useConsumable()
  */
 typedef struct {
-	consumableClass class; /**< Defines which kind of Consumable this is*/
-	char name[25]; /**< Contains the name of the consumable*/
-	char desc[50]; /**< Contains a brief description of the consumable*/
-	int qty; /**< Indicates how many copies of the consumable the instance of this class holds*/
-	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
+    consumableClass class;     /**< Defines which kind of Consumable this is*/
+    char name[25];     /**< Contains the name of the consumable*/
+    char desc[50];     /**< Contains a brief description of the consumable*/
+    int qty;	 /**< Indicates how many copies of the consumable the instance of this class holds*/
+    char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
 } Consumable;
 
 /**
@@ -270,7 +270,7 @@ typedef struct {
  * @see consumableClass
  * @see Consumable
  */
-extern char* consumablestrings[CONSUMABLESMAX+1];
+extern char *consumablestrings[CONSUMABLESMAX + 1];
 
 /**
  * Array containing all Consumable instances.
@@ -278,7 +278,7 @@ extern char* consumablestrings[CONSUMABLESMAX+1];
  * @see Consumables
  * @see consumableClass
  */
-extern Consumable consumablesBase[CONSUMABLESMAX+1];
+extern Consumable consumablesBase[CONSUMABLESMAX + 1];
 
 /**
  * The different kinds of artifactClass.
@@ -288,13 +288,13 @@ extern Consumable consumablesBase[CONSUMABLESMAX+1];
  * @see Artifact
  */
 typedef enum {
-	THKSKULL=0,
-	TWINKIE=1,
-	WRISTBAND=2,
-	BOARTAIL=3,
-	CHAOSORB=4,
-	POWERSYPHON=5,
-	GIANTFOSSILE=6
+    THKSKULL = 0,
+    TWINKIE = 1,
+    WRISTBAND = 2,
+    BOARTAIL = 3,
+    CHAOSORB = 4,
+    POWERSYPHON = 5,
+    GIANTFOSSILE = 6
 } artifactClass;
 
 /** Maximum index of artifactClass, so that the size has to add 1 for the 0th index
@@ -307,26 +307,26 @@ typedef enum {
  * @see artifactClass
  */
 typedef struct Artifact {
-	artifactClass class; /**< Defines which kind of artifactClass the instance relates to*/
-	char name[25]; /**< Name string*/
-	char desc[50]; /**< Description string*/
-	int qty; /**< Indicates how many copies of the artifact the instance of this class holds*/
-	int active; /**< Flag used to mark instance whose function pointer has been called already*/
-	int innerValue; /**< Indicates interal state of the item when needed*/
-	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
+    artifactClass class;     /**< Defines which kind of artifactClass the instance relates to*/
+    char name[25];     /**< Name string*/
+    char desc[50];     /**< Description string*/
+    int qty;	 /**< Indicates how many copies of the artifact the instance of this class holds*/
+    int active;	    /**< Flag used to mark instance whose function pointer has been called already*/
+    int innerValue;	/**< Indicates interal state of the item when needed*/
+    char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
 } Artifact;
 
 /**
  * Array with the name strings for artifactClass.
  * @see artifactClass
  */
-extern char* artifactstrings[ARTIFACTSMAX+1];
+extern char *artifactstrings[ARTIFACTSMAX + 1];
 
  /**
   * Array with all the Artifact found.
   * @see Artifact
   */
-extern Artifact artifactsBase[ARTIFACTSMAX+1];
+extern Artifact artifactsBase[ARTIFACTSMAX + 1];
 
 #define ENEMY_ARTIFACTDROP_CHANCE 1001 /**< Defines rare Artifact drop chance for normal enemies (e->beast == 0)*/
 
@@ -334,12 +334,12 @@ extern Artifact artifactsBase[ARTIFACTSMAX+1];
  * The different kinds of fighterStatus.
  */
 typedef enum {
-	Normal,
-	Poison,
-	Frozen,
-	Burned,
-	Weak,
-	Strong
+    Normal,
+    Poison,
+    Frozen,
+    Burned,
+    Weak,
+    Strong
 } fighterStatus;
 
 /** Maximum index of fighterStatus, so that the size has to add 1 for the 0th index
@@ -354,10 +354,10 @@ typedef enum {
  * @see Fighter
  */
 typedef enum {
-	Knight=0,
-	Archer=1,
-	Mage=2,
-	Assassin=3
+    Knight = 0,
+    Archer = 1,
+    Mage = 2,
+    Assassin = 3
 } fighterClass;
 
 /** Maximum index of fighterClass, so that the size has to add 1 for the 0th index
@@ -369,16 +369,16 @@ typedef enum {
  * Array with the name strings for fighterClass.
  * @see fighterClass
  */
-extern char* classesstrings[CLASSESMAX+1];
+extern char *classesstrings[CLASSESMAX + 1];
 
 /**
  * The different kinds of Stat.
  */
 typedef enum {
-	ATK,
-	DEF,
-	VEL,
-	ENR
+    ATK,
+    DEF,
+    VEL,
+    ENR
 } Stat;
 
 /** Maximum index of Stat, so that the size has to add 1 for the 0th index
@@ -393,18 +393,18 @@ typedef enum {
  * @see initStats()
  */
 typedef struct BaseStats {
-	fighterClass class; /**< Defines which kind of fighterClass the stats relate to*/
-	int hp; /**< Hp value*/
-	int atk; /**< Atk value*/
-	int def; /**< Def value*/
-	int vel; /**< Vel value*/
-	int level; /**< Level value*/
-	int totalxp; /**< Lifetime xp value*/
-        int totallevelxp; /**< Xp value needed to level up from current level*/
-	int currentlevelxp; /**< Total xp value for current level*/
-	int totalhp; /**< Total hp value*/
-	int totalenergy; /**< Total energy value*/
-	int totalstamina; /**< Total stamina value*/
+    fighterClass class;	    /**< Defines which kind of fighterClass the stats relate to*/
+    int hp;	/**< Hp value*/
+    int atk;	 /**< Atk value*/
+    int def;	 /**< Def value*/
+    int vel;	 /**< Vel value*/
+    int level;	   /**< Level value*/
+    int totalxp;     /**< Lifetime xp value*/
+    int totallevelxp;	  /**< Xp value needed to level up from current level*/
+    int currentlevelxp;	    /**< Total xp value for current level*/
+    int totalhp;     /**< Total hp value*/
+    int totalenergy;	 /**< Total energy value*/
+    int totalstamina;	  /**< Total stamina value*/
 } BaseStats;
 
 /**
@@ -415,7 +415,7 @@ typedef struct BaseStats {
  * @see fighterClass
  * @see initStats()
  */
-extern BaseStats basestats[CLASSESMAX+1];
+extern BaseStats basestats[CLASSESMAX + 1];
 
 /**
  * The different kinds of Enemy.
@@ -424,14 +424,14 @@ extern BaseStats basestats[CLASSESMAX+1];
  * @see Enemy
  */
 typedef enum {
-	Mummy=0,
-	Ghost=1,
-	Zombie=2,
-	Goblin=3,
-	Imp=4,
-	Troll=5,
-	Boar=6,
-	Werewolf=7
+    Mummy = 0,
+    Ghost = 1,
+    Zombie = 2,
+    Goblin = 3,
+    Imp = 4,
+    Troll = 5,
+    Boar = 6,
+    Werewolf = 7
 } enemyClass;
 
 /** Maximum index of enemyClass, so that the size has to add 1 for the 0th index
@@ -444,7 +444,7 @@ typedef enum {
  * @see enemyClass
  * @see printStringFromEClass()
  */
-extern char* classenemystrings[ENEMYCLASSESMAX+1];
+extern char *classenemystrings[ENEMYCLASSESMAX + 1];
 
 /**
  * Holds the base stats for a enemyClass.
@@ -453,17 +453,17 @@ extern char* classenemystrings[ENEMYCLASSESMAX+1];
  * @see initEnemyStats()
  */
 typedef struct EnemyBaseStats {
-	enemyClass class; /**< Defines which kind of enemyClass the stats relate to*/
-	int hp; /**< Hp value*/
-	int atk; /**< Atk value*/
-	int def; /**< Def value*/
-	int vel; /**< Vel value*/
-	int level; /**< Level value*/
-	int xp; /**< Xp value given on death */
-	int totalhp; /**< Total hp value*/
-	int beast; /**< Flag used for "beast" enemies*/
-	int totalenergy;/**< Total energy value*/
-	int totalstamina;/**< Total stamina value*/
+    enemyClass class;	  /**< Defines which kind of enemyClass the stats relate to*/
+    int hp;	/**< Hp value*/
+    int atk;	 /**< Atk value*/
+    int def;	 /**< Def value*/
+    int vel;	 /**< Vel value*/
+    int level;	   /**< Level value*/
+    int xp;	/**< Xp value given on death */
+    int totalhp;     /**< Total hp value*/
+    int beast;	   /**< Flag used for "beast" enemies*/
+    int totalenergy;	/**< Total energy value*/
+    int totalstamina;	 /**< Total stamina value*/
 } EnemyBaseStats;
 
 /**
@@ -474,7 +474,7 @@ typedef struct EnemyBaseStats {
  * @see enemyClass
  * @see initEnemyStats()
  */
-extern EnemyBaseStats baseenemystats[ENEMYCLASSESMAX+1];
+extern EnemyBaseStats baseenemystats[ENEMYCLASSESMAX + 1];
 
 /**
  * The different kinds of Boss.
@@ -483,11 +483,11 @@ extern EnemyBaseStats baseenemystats[ENEMYCLASSESMAX+1];
  * @see Boss
  */
 typedef enum {
-	Blue_Troll=0,
-	Headless_Ninja=1,
-	Crawling_Dude=2,
-	Sr_Warthog=3,
-	Doppelganger=4
+    Blue_Troll = 0,
+    Headless_Ninja = 1,
+    Crawling_Dude = 2,
+    Sr_Warthog = 3,
+    Doppelganger = 4
 } bossClass;
 
 /** Maximum index of bossClass, so that the size has to add 1 for the 0th index
@@ -500,7 +500,7 @@ typedef enum {
  * @see bossClass
  * @see printStringFromBossClass()
  */
-extern char* classbossstrings[BOSSCLASSESMAX+1];
+extern char *classbossstrings[BOSSCLASSESMAX + 1];
 
 /**
  * Holds the base stats for a bossClass.
@@ -509,17 +509,17 @@ extern char* classbossstrings[BOSSCLASSESMAX+1];
  * @see initBossStats()
  */
 typedef struct BossBaseStats {
-	bossClass class; /**< Defines which kind of bossClass the stats relate to*/
-	int hp; /**< Hp value*/
-	int atk; /**< Atk value*/
-	int def; /**< Def value*/
-	int vel; /**< Vel value*/
-	int level; /**< Level value*/
-	int xp; /**< Xp value given on death */
-	int totalhp; /**< Total hp value*/
-	int beast; /**< Flag used for "beast" enemies*/
-	int totalenergy;/**< Total energy value*/
-	int totalstamina;/**< Total stamina value*/
+    bossClass class;	 /**< Defines which kind of bossClass the stats relate to*/
+    int hp;	/**< Hp value*/
+    int atk;	 /**< Atk value*/
+    int def;	 /**< Def value*/
+    int vel;	 /**< Vel value*/
+    int level;	   /**< Level value*/
+    int xp;	/**< Xp value given on death */
+    int totalhp;     /**< Total hp value*/
+    int beast;	   /**< Flag used for "beast" enemies*/
+    int totalenergy;	/**< Total energy value*/
+    int totalstamina;	 /**< Total stamina value*/
 } BossBaseStats;
 
 /**
@@ -530,26 +530,26 @@ typedef struct BossBaseStats {
  * @see bossClass
  * @see initBossStats()
  */
-extern BossBaseStats basebossstats[BOSSCLASSESMAX+1];
+extern BossBaseStats basebossstats[BOSSCLASSESMAX + 1];
 
 /**
  * Holds the lifetime stats of the player.
  * @see Fighter
  */
 typedef struct {
-	int enemieskilled; /**< How many enemies were defeated*/
-	int consumablesfound; /**< How many consumabls were found*/
-	int equipsfound; /**< How many equips were found*/
-	int artifactsfound; /**< How many artifacts were found*/
-	int criticalhits; /**< How many criticals were dealt*/
-	int roomscompleted; /**< How many rooms were completed*/
-	int floorscompleted; /**< How many floors were completed*/
-	int specialsunlocked; /**< How many special move were unlocked*/
-	int coinsfound; /**< How many coins you found in total*/
-	int bosseskilled; /**< How many bosses were defeated*/
-	int unique_bosseskilled; /**< How many unique bosses were defeated*/
-	int killed_bosses[BOSSCLASSESMAX+1]; /**< Keeps track of which bossClass you've killed.*/
-	int keysfound; /**< How many keys you found in total*/
+    int enemieskilled;	   /**< How many enemies were defeated*/
+    int consumablesfound;     /**< How many consumabls were found*/
+    int equipsfound;	 /**< How many equips were found*/
+    int artifactsfound;	    /**< How many artifacts were found*/
+    int criticalhits;	  /**< How many criticals were dealt*/
+    int roomscompleted;	    /**< How many rooms were completed*/
+    int floorscompleted;     /**< How many floors were completed*/
+    int specialsunlocked;     /**< How many special move were unlocked*/
+    int coinsfound;	/**< How many coins you found in total*/
+    int bosseskilled;	  /**< How many bosses were defeated*/
+    int unique_bosseskilled;	 /**< How many unique bosses were defeated*/
+    int killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
+    int keysfound;     /**< How many keys you found in total*/
 } countStats;
 
 /**
@@ -560,47 +560,46 @@ typedef struct {
  * @see specialscosts
  */
 typedef enum {
-	KSlash=0,
-	KCover=1,
-	KArmordrop=2,
-	KBerserk=3,
-	AHeadshot=4,
-	AQuivercheck=5,
-	APoisonshot=6,
-	AFireshot=7,
-	MFatewarp=8,
-	MPowerup=9,
-	MSpellstrike=10,
-	MFlamering=11,
-	XGrimdagger=12,
-	XLeechknife=13,
-	XDisguise=14,
-	XVenomblade=15
+    KSlash = 0,
+    KCover = 1,
+    KArmordrop = 2,
+    KBerserk = 3,
+    AHeadshot = 4,
+    AQuivercheck = 5,
+    APoisonshot = 6,
+    AFireshot = 7,
+    MFatewarp = 8,
+    MPowerup = 9,
+    MSpellstrike = 10,
+    MFlamering = 11,
+    XGrimdagger = 12,
+    XLeechknife = 13,
+    XDisguise = 14,
+    XVenomblade = 15
 } specialMove;
-
 
 /** Maximum index of specialMove per class, so that the size for each Fighter has to add 1 for the 0th index
  * @see specialMove
  */
-#define SPECIALSMAX 3 //num of specials per class (0 inclusive)
+#define SPECIALSMAX 3		//num of specials per class (0 inclusive)
 
 /**
  * Array with the name strings for special moves.
  * @see specialMove
  */
-extern char* specialsnamestrings[CLASSESMAX+1][SPECIALSMAX+1];
+extern char *specialsnamestrings[CLASSESMAX + 1][SPECIALSMAX + 1];
 
 /**
  * Array with the desc strings for special moves.
  * @see specialMove
  */
-extern char* specialsdescstrings[CLASSESMAX+1][SPECIALSMAX+1];
+extern char *specialsdescstrings[CLASSESMAX + 1][SPECIALSMAX + 1];
 
 /**
  * Array with the cost integer values for special moves.
  * @see specialMove
  */
-extern int specialscosts[CLASSESMAX+1][SPECIALSMAX+1];
+extern int specialscosts[CLASSESMAX + 1][SPECIALSMAX + 1];
 
 /**
  * Holds state for a Fighter specials.
@@ -608,11 +607,11 @@ extern int specialscosts[CLASSESMAX+1][SPECIALSMAX+1];
  * @see specialMove
  */
 typedef struct {
-	int enabled; /**< Flag defining if the current slot is initialised*/
-	specialMove move; /**< Defines which kind of specialMove the slot is holding*/
-	char name[80]; /**< Name string*/
-	char desc[80]; /**< Desc string*/
-	int cost; /**< Cost of use*/
+    int enabled;     /**< Flag defining if the current slot is initialised*/
+    specialMove move;	  /**< Defines which kind of specialMove the slot is holding*/
+    char name[80];     /**< Name string*/
+    char desc[80];     /**< Desc string*/
+    int cost;	  /**< Cost of use*/
 } Specialslot;
 
 //Forward declarations for counter fields in entities
@@ -626,16 +625,16 @@ struct Turncounter;
  * @see Fighter
  */
 typedef enum {
-	NORMAL=0,
-	POISON=1,
-	BURNED=2,
-	FROZEN=3,
-	WEAK=4,
-	STRONG=5,
-	TURNBOOST_ATK=6,
-	TURNBOOST_DEF=7,
-	TURNBOOST_VEL=8,
-	TURNBOOST_ENR=9
+    NORMAL = 0,
+    POISON = 1,
+    BURNED = 2,
+    FROZEN = 3,
+    WEAK = 4,
+    STRONG = 5,
+    TURNBOOST_ATK = 6,
+    TURNBOOST_DEF = 7,
+    TURNBOOST_VEL = 8,
+    TURNBOOST_ENR = 9
 } counterIndexes;
 //Number of counters per entity
 
@@ -655,9 +654,9 @@ struct Equip;
  * @see equipzonestrings
  */
 typedef enum {
-	HEAD=0,
-	TORSO=1,
-	LEGS=2
+    HEAD = 0,
+    TORSO = 1,
+    LEGS = 2
 } Equipzone;
 
 /** Maximum index of Equipzone, so that the size has to add 1 for the 0th index
@@ -669,7 +668,7 @@ typedef enum {
  * Array with the name strings for equip zones.
  * @see Equipzone
  */
-extern char* equipzonestrings[EQUIPZONES+1];
+extern char *equipzonestrings[EQUIPZONES + 1];
 
 /* Ceiling for Fighter equipsBag indexes.
  * @see Fighter
@@ -683,15 +682,15 @@ extern char* equipzonestrings[EQUIPZONES+1];
  * @see perksstrings
  */
 typedef enum {
-	CRITBOOST_DMG=0,
-	CRITBOOST_CHANCE=1,
-	VAMPIRISM=2,
-	RUNIC_MAGNET=3,
-	HARVESTER=4,
-	HOT_BODY=5,
-	BIOHAZARD=6,
-	ORACLE_GIFT=7,
-	PENICILLIN=8
+    CRITBOOST_DMG = 0,
+    CRITBOOST_CHANCE = 1,
+    VAMPIRISM = 2,
+    RUNIC_MAGNET = 3,
+    HARVESTER = 4,
+    HOT_BODY = 5,
+    BIOHAZARD = 6,
+    ORACLE_GIFT = 7,
+    PENICILLIN = 8
 } perkClass;
 
 /** Maximum index of perkClass, so that the size has to add 1 for the 0th index
@@ -709,23 +708,23 @@ typedef enum {
  * Array with the name strings for perkClass.
  * @see perkClass
  */
-extern char* perksnamestrings[PERKSMAX+1];
+extern char *perksnamestrings[PERKSMAX + 1];
 
 /**
  * Array with the desc strings for perkClass.
  * @see perkClass
  */
-extern char* perksdescstrings[PERKSMAX+1];
+extern char *perksdescstrings[PERKSMAX + 1];
 
 /**
  * Represents the entity initialised from a perkClass.
  * @see perkClass
  */
 typedef struct {
-	perkClass class; /**< Defines which kind of perk the instance relates to*/
-	char name[25]; /**< Name string*/
-	char desc[50]; /**< Description string*/
-	int innerValue; /**< Contains an integer for perks that need a state*/
+    perkClass class;	 /**< Defines which kind of perk the instance relates to*/
+    char name[25];     /**< Name string*/
+    char desc[50];     /**< Description string*/
+    int innerValue;	/**< Contains an integer for perks that need a state*/
 } Perk;
 
 //Macros for special moves callback
@@ -748,14 +747,14 @@ struct FoeParty;
  * @see Fighter
  * @see Turncounter
  */
-typedef void (*callback_turncounter_fighter_t)(struct Fighter*);
+typedef void (*callback_turncounter_fighter_t)(struct Fighter *);
 
 /**
  * Defines a function pointer returning void and taking a Enemy pointer.
  * @see Enemy
  * @see Turncounter
  */
-typedef void (*callback_turncounter_enemy_t)(struct Enemy*);
+typedef void (*callback_turncounter_enemy_t)(struct Enemy *);
 
 /**
  * Defines a function pointer returning void and taking a WINDOW, a Fighter, a Enemy, a Boss and a Path pointers, along with three ints.
@@ -764,7 +763,8 @@ typedef void (*callback_turncounter_enemy_t)(struct Enemy*);
  * @see Path
  * @see SpecialSlot
  */
-typedef void (*callback_special_t)(WINDOW*,struct Fighter*, struct Enemy*, struct Boss*, struct Path*, int, int, int);
+typedef void (*callback_special_t)(WINDOW *, struct Fighter *, struct Enemy *,
+				   struct Boss *, struct Path *, int, int, int);
 
 /**
  * Defines a function pointer returning void and taking a Fighter, Enemy and Boss pointers; plus as int.
@@ -773,7 +773,8 @@ typedef void (*callback_special_t)(WINDOW*,struct Fighter*, struct Enemy*, struc
  * @see Boss
  * @see Artifact
  */
-typedef void (*callback_artifact_t)(struct Fighter*, struct Enemy*, struct Boss*, int isBoss);
+typedef void (*callback_artifact_t)(struct Fighter *, struct Enemy *,
+				    struct Boss *, int isBoss);
 
 /**
  * Defines a function pointer returning void and taking NO parameters (different than saying just (), unspecified parameters).
@@ -791,61 +792,61 @@ typedef void (*callback_void_t)(void);
  * @see countStats
  */
 typedef struct Fighter {
-	char name[50]; /**< Name string*/
-	fighterClass class; /**< Defines which kind of fighterClass the instance relates to*/
-	int hp; /**< Current hp value*/
-	int atk; /**< Current atk value*/
-	int def; /**< Current def value*/
-	int vel; /**< Current vel value*/
-	int level; /**< Current level value*/
-	int luck; /**< Current luck value*/
-	int totalxp; /**< Lifetime xp value*/
-	int currentlevelxp; /**< Xp gained for the current level*/
-	int totallevelxp; /**< Xp needed to level up*/
-	int totalhp; /**< Full hp value*/
-	fighterStatus status; /**< Defines active fighterStatus*/
+    char name[50];     /**< Name string*/
+    fighterClass class;	    /**< Defines which kind of fighterClass the instance relates to*/
+    int hp;	/**< Current hp value*/
+    int atk;	 /**< Current atk value*/
+    int def;	 /**< Current def value*/
+    int vel;	 /**< Current vel value*/
+    int level;	   /**< Current level value*/
+    int luck;	  /**< Current luck value*/
+    int totalxp;     /**< Lifetime xp value*/
+    int currentlevelxp;	    /**< Xp gained for the current level*/
+    int totallevelxp;	  /**< Xp needed to level up*/
+    int totalhp;     /**< Full hp value*/
+    fighterStatus status;     /**< Defines active fighterStatus*/
 
-	int energy; /**< Current energy value*/
-	int totalenergy; /**< Full energy value*/
-	int stamina; /**< Current stamina value*/
-	int totalstamina; /**< Full stamina value*/
-	Specialslot* specials[SPECIALSMAX+1]; /**< Array with all the Specialslot*/
+    int energy;	    /**< Current energy value*/
+    int totalenergy;	 /**< Full energy value*/
+    int stamina;     /**< Current stamina value*/
+    int totalstamina;	  /**< Full stamina value*/
+    Specialslot *specials[SPECIALSMAX + 1];   /**< Array with all the Specialslot*/
 
-	struct Turncounter* counters[COUNTERSMAX+1]; /**< Array with all the Turncounter pointers*/
-	int turnboost_atk; /**< Current temp boost value for atk*/
-	int turnboost_def; /**< Current temp boost value for def*/
-	int turnboost_vel; /**< Current temp boost value for vel*/
-	int turnboost_enr; /**< Current temp boost value for enr*/
+    struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
+    int turnboost_atk;	   /**< Current temp boost value for atk*/
+    int turnboost_def;	   /**< Current temp boost value for def*/
+    int turnboost_vel;	   /**< Current temp boost value for vel*/
+    int turnboost_enr;	   /**< Current temp boost value for enr*/
 
-	int perksCount; /**< Keeps track of how many perks are active.*/
-	Perk* perks[PERKSMAX+1]; /**< Array with all the Perk*/
+    int perksCount;	/**< Keeps track of how many perks are active.*/
+    Perk *perks[PERKSMAX + 1];	 /**< Array with all the Perk*/
 
-	struct Equipslot* equipslots[EQUIPZONES+1]; /**< Array with all the Equipslot*/
-	struct Equip* equipsBag[EQUIPSBAGSIZE+1]; /**< Array with all the Equip found*/
-	struct Consumable* consumablesBag[CONSUMABLESMAX+1]; /**< Array with all the Consumables found*/
-	struct Artifact* artifactsBag[ARTIFACTSMAX+1]; /**< Array with all the Artifacts found*/
+    struct Equipslot *equipslots[EQUIPZONES + 1];   /**< Array with all the Equipslot*/
+    struct Equip *equipsBag[EQUIPSBAGSIZE + 1];	  /**< Array with all the Equip found*/
+    struct Consumable *consumablesBag[CONSUMABLESMAX + 1];   /**< Array with all the Consumables found*/
+    struct Artifact *artifactsBag[ARTIFACTSMAX + 1];   /**< Array with all the Artifacts found*/
 
-	int equipsBagOccupiedSlots; /**< Keeps track of how many slots are occupied.*/
-	int earliestBagSlot; /**< Keeps track of first available spot.*/  //TODO To always use the array efficiently (???) I sense linked lists may be better
+    int equipsBagOccupiedSlots;	    /**< Keeps track of how many slots are occupied.*/
+    int earliestBagSlot;	/**< Keeps track of first available spot.*///TODO To always use the array efficiently (???) I sense linked lists may be better
 
-	int permboost_atk; /**< Current temp boost value for atk.*/
-	int permboost_def; /**< Current temp boost value for def.*/
-	int permboost_vel; /**< Current temp boost value for vel.*/
-	int permboost_enr; /**< Current temp boost value for enr.*/
+    int permboost_atk;	   /**< Current temp boost value for atk.*/
+    int permboost_def;	   /**< Current temp boost value for def.*/
+    int permboost_vel;	   /**< Current temp boost value for vel.*/
+    int permboost_enr;	   /**< Current temp boost value for enr.*/
 
-	int equipboost_atk; /**< Current equip boost value for atk.*/
-	int equipboost_def; /**< Current equip boost value for def.*/
-	int equipboost_vel; /**< Current equip boost value for vel.*/
-	int equipboost_enr; /**< Current equip boost value for enr.*/
+    int equipboost_atk;	    /**< Current equip boost value for atk.*/
+    int equipboost_def;	    /**< Current equip boost value for def.*/
+    int equipboost_vel;	    /**< Current equip boost value for vel.*/
+    int equipboost_enr;	    /**< Current equip boost value for enr.*/
 
-	countStats* stats ; /**< Pointer to countStats instance*/
+    countStats *stats;	    /**< Pointer to countStats instance*/
 
-	int balance; /**< Amount of currency owned*/
-	int keys_balance; /**< Amount of keys owned*/
-	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
+    int balance;     /**< Amount of currency owned*/
+    int keys_balance;	  /**< Amount of keys owned*/
+    char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
 
     //TODO eval this callback bit if we need to have some without nesting in another turncounter
-	//callback_void_t callback_counter_ptrs[COUNTERSMAX]; /**< Array of callbacks for turnCounter functions.*/
+    //callback_void_t callback_counter_ptrs[COUNTERSMAX]; /**< Array of callbacks for turnCounter functions.*/
 } Fighter;
 
 /**
@@ -857,35 +858,34 @@ typedef struct Fighter {
  * @see counterIndexes
  */
 typedef struct Enemy {
-	int index; /**< Defines position inside containing foeParty.*/
-	enemyClass class; /**< Defines which kind of enemyClass the instance relates to*/
-	int hp; /**< Current hp value*/
-	int atk; /**< Current atk value*/
-	int def; /**< Current def value*/
-	int vel; /**< Current vel value*/
-	int level; /**< Level value*/
-	int luck; /**< Luck value*/
-	int xp; /**< Xp value given on death*/
-	int totalhp; /**< Full hp value*/
+    int index;	   /**< Defines position inside containing foeParty.*/
+    enemyClass class;	  /**< Defines which kind of enemyClass the instance relates to*/
+    int hp;	/**< Current hp value*/
+    int atk;	 /**< Current atk value*/
+    int def;	 /**< Current def value*/
+    int vel;	 /**< Current vel value*/
+    int level;	   /**< Level value*/
+    int luck;	  /**< Luck value*/
+    int xp;	/**< Xp value given on death*/
+    int totalhp;     /**< Full hp value*/
 
-	int energy; /**< Current energy value*/
-	int totalenergy; /**< Full energy value*/
+    int energy;	    /**< Current energy value*/
+    int totalenergy;	 /**< Full energy value*/
 
-	int stamina; /**< Current stamina value*/
-	int totalstamina; /**< Full stamina value*/
+    int stamina;     /**< Current stamina value*/
+    int totalstamina;	  /**< Full stamina value*/
 
-	fighterStatus status; /**< Defines active fighterStatus*/
-	int beast; /**< Flag defining the instance as "beast" if set*/
+    fighterStatus status;     /**< Defines active fighterStatus*/
+    int beast;	   /**< Flag defining the instance as "beast" if set*/
 
-	struct Turncounter* counters[COUNTERSMAX+1]; /**< Array with all the Turncounter pointers*/
-	int turnboost_atk; /**< Current temp boost value for atk*/
-	int turnboost_def; /**< Current temp boost value for def*/
-	int turnboost_vel; /**< Current temp boost value for vel*/
-	int turnboost_enr; /**< Current temp boost value for enr*/
+    struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
+    int turnboost_atk;	   /**< Current temp boost value for atk*/
+    int turnboost_def;	   /**< Current temp boost value for def*/
+    int turnboost_vel;	   /**< Current temp boost value for vel*/
+    int turnboost_enr;	   /**< Current temp boost value for enr*/
 
-
-	int prize; /**< Amount of currency dropped on defeat*/
-	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
+    int prize;	   /**< Amount of currency dropped on defeat*/
+    char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
 } Enemy;
 
 /**
@@ -897,34 +897,33 @@ typedef struct Enemy {
  * @see counterIndexes
  */
 typedef struct Boss {
-	bossClass class; /**< Defines which kind of enemyClass the instance relates to*/
-	int hp; /**< Current hp value*/
-	int atk; /**< Current atk value*/
-	int def; /**< Current def value*/
-	int vel; /**< Current vel value*/
-	int level; /**< Level value*/
-	int luck; /**< Luck value*/
-	int xp; /**< Xp value given on death*/
-	int totalhp; /**< Full hp value*/
+    bossClass class;	 /**< Defines which kind of enemyClass the instance relates to*/
+    int hp;	/**< Current hp value*/
+    int atk;	 /**< Current atk value*/
+    int def;	 /**< Current def value*/
+    int vel;	 /**< Current vel value*/
+    int level;	   /**< Level value*/
+    int luck;	  /**< Luck value*/
+    int xp;	/**< Xp value given on death*/
+    int totalhp;     /**< Full hp value*/
 
-	int energy; /**< Current energy value*/
-	int totalenergy; /**< Full energy value*/
+    int energy;	    /**< Current energy value*/
+    int totalenergy;	 /**< Full energy value*/
 
-	int stamina; /**< Current stamina value*/
-	int totalstamina; /**< Full stamina value*/
+    int stamina;     /**< Current stamina value*/
+    int totalstamina;	  /**< Full stamina value*/
 
-	fighterStatus status; /**< Defines active fighterStatus*/
-	int beast; /**< Flag defining the instance as "beast" if set*/
+    fighterStatus status;     /**< Defines active fighterStatus*/
+    int beast;	   /**< Flag defining the instance as "beast" if set*/
 
-	struct Turncounter* counters[COUNTERSMAX+1]; /**< Array with all the Turncounter pointers*/
-	int turnboost_atk; /**< Current temp boost value for atk*/
-	int turnboost_def; /**< Current temp boost value for def*/
-	int turnboost_vel; /**< Current temp boost value for vel*/
-	int turnboost_enr; /**< Current temp boost value for enr*/
+    struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
+    int turnboost_atk;	   /**< Current temp boost value for atk*/
+    int turnboost_def;	   /**< Current temp boost value for def*/
+    int turnboost_vel;	   /**< Current temp boost value for vel*/
+    int turnboost_enr;	   /**< Current temp boost value for enr*/
 
-
-	int prize; /**< Amount of currency dropped on defeat*/
-	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
+    int prize;	   /**< Amount of currency dropped on defeat*/
+    char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
 } Boss;
 
 /**
@@ -932,61 +931,61 @@ typedef struct Boss {
  * @see Fighter
  * @see Turncounter
  */
-typedef void (*effect_fun)( Fighter*);
+typedef void (*effect_fun)(Fighter *);
 /**
  * Defines a function pointer returning void and taking a Enemy pointer.
  * @see Enemy
  * @see Turncounter
  */
-typedef void (*effect_e_fun)( Enemy*);
+typedef void (*effect_e_fun)(Enemy *);
 /**
  * Defines a function pointer returning void and taking a Boss pointer.
  * @see Boss
  * @see Turncounter
  */
-typedef void (*effect_b_fun)( Boss*);
+typedef void (*effect_b_fun)(Boss *);
 /**
  * Defines a function pointer returning void and taking a FoeParty pointer.
  * @see FoeParty
  * @see Turncounter
  */
-typedef void (*effect_fp_fun)( struct FoeParty*);
+typedef void (*effect_fp_fun)(struct FoeParty *);
 
 /**
  * Defines a function pointer returning void and taking a Fighter pointer and an integer.
  * @see Fighter
  * @see Turncounter
  */
-typedef void (*boost_fun)( Fighter*, int boost);
+typedef void (*boost_fun)(Fighter *, int boost);
 /**
  * Defines a function pointer returning void and taking a Enemy pointer and an integer.
  * @see Enemy
  * @see Turncounter
  */
-typedef void (*boost_e_fun)( Enemy*, int boost);
+typedef void (*boost_e_fun)(Enemy *, int boost);
 /**
  * Defines a function pointer returning void and taking a Boss pointer and an integer.
  * @see Boss
  * @see Turncounter
  */
-typedef void (*boost_b_fun)( Boss*, int boost);
+typedef void (*boost_b_fun)(Boss *, int boost);
 /**
  * Defines a function pointer returning void and taking a FoeParty pointer and an integer.
  * @see FoeParty
  * @see Turncounter
  */
-typedef void (*boost_fp_fun)( struct FoeParty*, int boost);
+typedef void (*boost_fp_fun)(struct FoeParty *, int boost);
 
 /**
  * The different kinds of Countertype.
  * @see Turncounter
  */
 typedef enum {
-	CNT_STATUS, /**< Counter for a fighterStatus.*/
-	CNT_ATKBOOST, /**< Counter for a temp boost on atk.*/
-	CNT_DEFBOOST,  /**< Counter for a temp boost on def.*/
-	CNT_VELBOOST, /**< Counter for a temp boost on vel.*/
-	CNT_ENRBOOST  /**< Counter for a temp boost on enr.*/
+    CNT_STATUS,	    /**< Counter for a fighterStatus.*/
+    CNT_ATKBOOST,     /**< Counter for a temp boost on atk.*/
+    CNT_DEFBOOST,      /**< Counter for a temp boost on def.*/
+    CNT_VELBOOST,     /**< Counter for a temp boost on vel.*/
+    CNT_ENRBOOST      /**< Counter for a temp boost on enr.*/
 } Countertype;
 
 /**
@@ -996,18 +995,18 @@ typedef enum {
  * @see Enemy
  */
 typedef struct Turncounter {
-	int count; /**< Defines the current count.*/
-	char* desc; /**< Description string*/
-	int innerValue; /**< Contains an integer for counters that need a state*/
-	Countertype type; /**< Defines which kind of Countertype the instance relates to*/
-	void (*effect_fun)( Fighter*); /**< Pointer to effect function applying to Fighter*/
-	void (*effect_e_fun)( Enemy*); /**< Pointer to effect function applying to Enemy*/
-	void (*effect_b_fun)( Boss*); /**< Pointer to effect function applying to Boss*/
-	void (*effect_fp_fun)( struct FoeParty*); /**< Pointer to effect function applying to FoeParty*/
-	void (*boost_fun)( Fighter*, int); /**< Pointer to temp boost function applying to Fighter, takes a int*/
-	void (*boost_e_fun)( Enemy*, int); /**< Pointer to temp boost function applying to Enemy, takes a int*/
-	void (*boost_b_fun)( Boss*, int); /**< Pointer to temp boost function applying to Boss, takes a int*/
-	void (*boost_fp_fun)( struct FoeParty*, int); /**< Pointer to temp boost function applying to FoeParty, takes a int*/
+    int count;	   /**< Defines the current count.*/
+    char *desc;	    /**< Description string*/
+    int innerValue;	/**< Contains an integer for counters that need a state*/
+    Countertype type;	  /**< Defines which kind of Countertype the instance relates to*/
+    void (*effect_fun)(Fighter *);     /**< Pointer to effect function applying to Fighter*/
+    void (*effect_e_fun)(Enemy *);     /**< Pointer to effect function applying to Enemy*/
+    void (*effect_b_fun)(Boss *);     /**< Pointer to effect function applying to Boss*/
+    void (*effect_fp_fun)(struct FoeParty *);	  /**< Pointer to effect function applying to FoeParty*/
+    void (*boost_fun)(Fighter *, int);	   /**< Pointer to temp boost function applying to Fighter, takes a int*/
+    void (*boost_e_fun)(Enemy *, int);	   /**< Pointer to temp boost function applying to Enemy, takes a int*/
+    void (*boost_b_fun)(Boss *, int);	  /**< Pointer to temp boost function applying to Boss, takes a int*/
+    void (*boost_fp_fun)(struct FoeParty *, int);     /**< Pointer to temp boost function applying to FoeParty, takes a int*/
 } Turncounter;
 
 /**
@@ -1017,9 +1016,9 @@ typedef struct Turncounter {
  * @see Wincon
  */
 typedef enum {
-	ALL_ARTIFACTS=0, /**< Collect all the artifacts*/
-	FULL_PATH=1, /**< Finish all the room in your path.*/
-	ALL_BOSSES=2  /**< Kill all the bosses once.*/
+    ALL_ARTIFACTS = 0,	 /**< Collect all the artifacts*/
+    FULL_PATH = 1,   /**< Finish all the room in your path.*/
+    ALL_BOSSES = 2    /**< Kill all the bosses once.*/
 } winconClass;
 
 /** Maximum index of winconClass, so that the size has to add 1 for the 0th index
@@ -1031,16 +1030,16 @@ typedef enum {
  * Defines the entity initialised from a winconClass.
  */
 typedef struct Wincon {
-	winconClass class; /**< Defines which kind of winconClass the instance relates to.*/
-	int current_val; /**< Defines the current progress.*/
-	int target_val; /**< Defines the total progress.*/
+    winconClass class;	   /**< Defines which kind of winconClass the instance relates to.*/
+    int current_val;	 /**< Defines the current progress.*/
+    int target_val;	/**< Defines the total progress.*/
 } Wincon;
 
 /**
  * Array with the desc strings for winconClass.
  * @see winconClass
  */
-extern char* winconstrings[WINCON_CLASS_MAX+1];
+extern char *winconstrings[WINCON_CLASS_MAX + 1];
 
 /**
  * Holds the state of game progression.
@@ -1048,12 +1047,12 @@ extern char* winconstrings[WINCON_CLASS_MAX+1];
  * @see Saveslot
  */
 typedef struct Path {
-	int length; /**< Defines how many rooms there are in total.*/
-	int luck; /**< Defines global luck value.*/
-	int prize; /**< Defines the reward for getting to length*/
-	int loreCounter; /**< Counts how many lore prompts have been displayed*/
-	Wincon* win_condition; /**> Defines the win condition for the current game.*/
-	Saveslot* current_saveslot; /** Defines current Saveslot for the game.*/
+    int length;	    /**< Defines how many rooms there are in total.*/
+    int luck;	  /**< Defines global luck value.*/
+    int prize;	   /**< Defines the reward for getting to length*/
+    int loreCounter;	 /**< Counts how many lore prompts have been displayed*/
+    Wincon *win_condition;     /**> Defines the win condition for the current game.*/
+    Saveslot *current_saveslot;	    /** Defines current Saveslot for the game.*/
 } Path;
 
 /**
@@ -1063,12 +1062,12 @@ typedef struct Path {
  * @see equipstrings
  */
 typedef enum {
-	Vest=0,
-	Helmet=1,
-	Boots=2,
-	Cape=3,
-	Tophat=4,
-	Loafers=5
+    Vest = 0,
+    Helmet = 1,
+    Boots = 2,
+    Cape = 3,
+    Tophat = 4,
+    Loafers = 5
 } equipClass;
 
 /** Maximum index of equipClass, so that the size has to add 1 for the 0th index
@@ -1083,9 +1082,9 @@ typedef enum {
  * @see qualitytrings
  */
 typedef enum {
-	Bad=0,
-	Average=1,
-	Good=2,
+    Bad = 0,
+    Average = 1,
+    Good = 2,
 } quality;
 
 /** Maximum index of quality, so that the size has to add 1 for the 0th index
@@ -1097,7 +1096,7 @@ typedef enum {
  * Array with the name strings for quality.
  * @see quality
  */
-extern char* qualitytrings[QUALITIESMAX+1];
+extern char *qualitytrings[QUALITIESMAX + 1];
 
 /**
  * Represents the entity initialised from a equipClass.
@@ -1106,38 +1105,38 @@ extern char* qualitytrings[QUALITIESMAX+1];
  * @see quality
  */
 typedef struct Equip {
-	equipClass class; /**< Defines which kind of equipClass the instance relates to*/
-	Equipzone type; /**< Defines which kind of Equipzone the instance relates to*/
-	char name[25]; /**< Name string*/
-	char desc[50]; /**< Description string*/
-	int qty; /**< Defines how many copies of the equipClass the instance holds. Should be <=1, >=0 */
+    equipClass class;	  /**< Defines which kind of equipClass the instance relates to*/
+    Equipzone type;	/**< Defines which kind of Equipzone the instance relates to*/
+    char name[25];     /**< Name string*/
+    char desc[50];     /**< Description string*/
+    int qty;	 /**< Defines how many copies of the equipClass the instance holds. Should be <=1, >=0 */
 
-	int equipped; /**< Flag indicating the instance as currently in use if set.*/
+    int equipped;     /**< Flag indicating the instance as currently in use if set.*/
 
-	int level; /**< Level value*/
-	//Modifiers
-	//  modifier
-	int atk; /**< equip boost atk value*/
-	int def; /**< equip boost def value*/
-	int vel; /**< equip boost vel value*/
-	int enr; /**< equip boost enr value*/
+    int level;	   /**< Level value*/
+    //Modifiers
+    //  modifier
+    int atk;	 /**< equip boost atk value*/
+    int def;	 /**< equip boost def value*/
+    int vel;	 /**< equip boost vel value*/
+    int enr;	 /**< equip boost enr value*/
 
-	int bonus; /**< Defines how many pointers to bonus functions the instance holds.*/
-	int perksCount; /**< Defines how many Perk pointers the instance holds.*/
+    int bonus;	   /**< Defines how many pointers to bonus functions the instance holds.*/
+    int perksCount;	/**< Defines how many Perk pointers the instance holds.*/
 
-	int cost; /**< Helps giving a coin value when selling or buying the equip.*/
+    int cost;	  /**< Helps giving a coin value when selling or buying the equip.*/
 
-	quality qual; /**< Defines which kind of quality the instances relates to*/
-	void (*equip_fun)(Fighter*,Enemy*,Path*); /**< Pointer to temp boost function applying to Enemy, takes a int*/
-	Perk* perks[EQUIPPERKSMAX]; /**< Array of Perk of the instance*/
-	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
+    quality qual;     /**< Defines which kind of quality the instances relates to*/
+    void (*equip_fun)(Fighter *, Enemy *, Path *);/**< Pointer to temp boost function applying to Enemy, takes a int*/
+    Perk *perks[EQUIPPERKSMAX];	    /**< Array of Perk of the instance*/
+    char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
 } Equip;
 
 /**
  * Array with the name strings for equipClass.
  * @see equipClass
  */
-extern char* equipstrings[EQUIPSMAX+1];
+extern char *equipstrings[EQUIPSMAX + 1];
 
 /**
  * Array containing all Equip instances.
@@ -1145,7 +1144,7 @@ extern char* equipstrings[EQUIPSMAX+1];
  * @see Equip
  * @see equipClass
  */
-extern Equip equips[EQUIPSMAX+1];
+extern Equip equips[EQUIPSMAX + 1];
 
 /**
  * Defines a function pointer returning void and taking a Fighter and a Enemy pointers.
@@ -1153,7 +1152,7 @@ extern Equip equips[EQUIPSMAX+1];
  * @see Fighter
  * @see equipClass
  */
-typedef void (*equip_fun)(Fighter*,Enemy*);
+typedef void (*equip_fun)(Fighter *, Enemy *);
 
 /**
  * Represents the entity containing an Equip instance.
@@ -1161,12 +1160,12 @@ typedef void (*equip_fun)(Fighter*,Enemy*);
  * @see Equipzone
  */
 typedef struct Equipslot {
-	int active; /**< Flag indicating the instance as currently ready to use if set.*/
-	char* desc; /**< Description string.*/
-	Equipzone type; /**< Defines which kind of Equipzone the instance relates to*/
-	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
-	Equip* item; /**< Pointer to the Equip instance associated*/
-	//void (*equip_fun)( Fighter*,Enemy*); /**< Pointer to temp boost function applying to Enemy, takes a int
+    int active;	    /**< Flag indicating the instance as currently ready to use if set.*/
+    char *desc;	    /**< Description string.*/
+    Equipzone type;	/**< Defines which kind of Equipzone the instance relates to*/
+    char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
+    Equip *item;     /**< Pointer to the Equip instance associated*/
+    //void (*equip_fun)( Fighter*,Enemy*); /**< Pointer to temp boost function applying to Enemy, takes a int
 } Equipslot;
 
 /** Maximum number of total items sold in a shop. Must be at least equal to CONSUMABLE_SHOP_MAX + EQUIP_SHOP_MAX.
@@ -1194,17 +1193,17 @@ typedef struct Equipslot {
  */
 typedef struct Shop {
 
-	char* desc; /**< Description string.*/
-	int itemCount; /**< Total number of items for sale*/
+    char *desc;	    /**< Description string.*/
+    int itemCount;     /**< Total number of items for sale*/
 
-	int equipsCount; /**< Total number of equips for sale*/
-	Equip* equips[EQUIP_SHOP_MAX]; /**< Array for equips on sale*/
-	int equipPrices[EQUIP_SHOP_MAX]; /**< Array for equips prices*/
+    int equipsCount;	 /**< Total number of equips for sale*/
+    Equip *equips[EQUIP_SHOP_MAX];     /**< Array for equips on sale*/
+    int equipPrices[EQUIP_SHOP_MAX];	 /**< Array for equips prices*/
 
-	int consumablesCount; /**< Total number of consumables for sale, includes quantity for each kind of consumable*/
-	int uniqueConsumablesCount; /**< Total of unique consumables for sale*/
-	Consumable* consumables[CONSUMABLE_SHOP_MAX]; /**< Array for consumables on sale*/
-	int consumablePrices[CONSUMABLE_SHOP_MAX]; /**< Array for consumables prices. They assume to a consumable with qty == 1*/
+    int consumablesCount;     /**< Total number of consumables for sale, includes quantity for each kind of consumable*/
+    int uniqueConsumablesCount;	    /**< Total of unique consumables for sale*/
+    Consumable *consumables[CONSUMABLE_SHOP_MAX];     /**< Array for consumables on sale*/
+    int consumablePrices[CONSUMABLE_SHOP_MAX];	   /**< Array for consumables prices. They assume to a consumable with qty == 1*/
 
 } Shop;
 
@@ -1215,8 +1214,8 @@ typedef struct Shop {
  * @see CHEST_CLASS_MAX
  */
 typedef enum {
-	CHEST_BASE=0,
-	CHEST_BEAST=1
+    CHEST_BASE = 0,
+    CHEST_BEAST = 1
 } chestClass;
 
 /** Maximum index of chestClass, so that the size has to add 1 for the 0th index
@@ -1237,7 +1236,7 @@ typedef enum {
  * Array with the desc strings for chestClass.
  * @see chestClass
  */
-extern char* chestdescstrings[CHEST_CLASS_MAX+1];
+extern char *chestdescstrings[CHEST_CLASS_MAX + 1];
 
 /**
  * Represents the entity initialised from a chestClass.
@@ -1248,17 +1247,17 @@ extern char* chestdescstrings[CHEST_CLASS_MAX+1];
  */
 typedef struct Chest {
 
-	char desc[80]; /**< Description string.*/
+    char desc[80];     /**< Description string.*/
 
-	chestClass class; /**< Defines which kind of chesteClass the instance relates to*/
-	int consumablesCount; /**< Defines how many consumables the chest contains.*/
+    chestClass class;	  /**< Defines which kind of chesteClass the instance relates to*/
+    int consumablesCount;     /**< Defines how many consumables the chest contains.*/
 
-	Consumable* consumables[CHEST_CONSUMABLES_MAX]; /**< The contained consumables.*/
-	int equipsCount; /**< Defines how many equips the chest contains.*/
+    Consumable *consumables[CHEST_CONSUMABLES_MAX];	/**< The contained consumables.*/
+    int equipsCount;	 /**< Defines how many equips the chest contains.*/
 
-	Equip* equips[CHEST_EQUIPS_MAX]; /**< The contained equips.*/
+    Equip *equips[CHEST_EQUIPS_MAX];	 /**< The contained equips.*/
 
-	char sprite[8][20]; /**< Char matrix to hold the encoded sprite.*/
+    char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
 } Chest;
 
 /**
@@ -1268,9 +1267,9 @@ typedef struct Chest {
  * @see TREASURE_CLASS_MAX
  */
 typedef enum {
-	TREASURE_CHEST=0,
-	TREASURE_CONSUMABLE=1,
-	TREASURE_ARTIFACT=2
+    TREASURE_CHEST = 0,
+    TREASURE_CONSUMABLE = 1,
+    TREASURE_ARTIFACT = 2
 } treasureClass;
 
 /** Maximum index of treasureClass, so that the size has to add 1 for the 0th index
@@ -1282,7 +1281,7 @@ typedef enum {
  * Array with the name strings for treasureClass.
  * @see treasureClass
  */
-extern char* treasuredescstrings[TREASURE_CLASS_MAX+1];
+extern char *treasuredescstrings[TREASURE_CLASS_MAX + 1];
 
 /**
  * Represents the entity initialised from a treasureClass.
@@ -1294,13 +1293,13 @@ extern char* treasuredescstrings[TREASURE_CLASS_MAX+1];
  */
 typedef struct Treasure {
 
-	char desc[80]; /**< Description string.*/
+    char desc[80];     /**< Description string.*/
 
-	treasureClass class; /**< Defines which kind of treasureClass the instance relates to*/
+    treasureClass class;     /**< Defines which kind of treasureClass the instance relates to*/
 
-	Chest* chest; /**< The treasure Chest, initialised if class == TREASURE_CHEST*/
-	Consumable* consumable; /**< The treasure Consumable, initialised if class == TREASURE_CONSUMABLE*/
-	Artifact* artifact; /**< The treasure Artifact, initialised if class == TREASURE_ARTIFACT*/
+    Chest *chest;     /**< The treasure Chest, initialised if class == TREASURE_CHEST*/
+    Consumable *consumable;	/**< The treasure Consumable, initialised if class == TREASURE_CONSUMABLE*/
+    Artifact *artifact;	    /**< The treasure Artifact, initialised if class == TREASURE_ARTIFACT*/
 
 } Treasure;
 
@@ -1311,11 +1310,11 @@ typedef struct Treasure {
  * @see ROADFORK_CLASS_MAX
  */
 typedef enum {
-	ROADFORK_BOSS=0,
-	ROADFORK_SHOP=1,
-	ROADFORK_TREASURE=2,
-	ROADFORK_ENEMIES=3,
-	ROADFORK_ROADFORK=4
+    ROADFORK_BOSS = 0,
+    ROADFORK_SHOP = 1,
+    ROADFORK_TREASURE = 2,
+    ROADFORK_ENEMIES = 3,
+    ROADFORK_ROADFORK = 4
 } roadforkOption;
 
 /** Maximum index of roadforkOption, so that the size has to add 1 for the 0th index
@@ -1327,7 +1326,7 @@ typedef enum {
  * Array with the name strings for roadforkClass.
  * @see roadforkClass
  */
-extern char* roadforkoptionstrings[ROADFORK_OPTIONS_MAX+1];
+extern char *roadforkoptionstrings[ROADFORK_OPTIONS_MAX + 1];
 
 /**
  * Represents the entity initialised from a roadforkClass.
@@ -1338,9 +1337,9 @@ extern char* roadforkoptionstrings[ROADFORK_OPTIONS_MAX+1];
  */
 typedef struct Roadfork {
 
-	char* desc; /**< Description string.*/
+    char *desc;	    /**< Description string.*/
 
-	roadforkOption options[2]; /**< Defines which choices the fork has.*/
+    roadforkOption options[2];	   /**< Defines which choices the fork has.*/
 
 } Roadfork;
 
@@ -1351,14 +1350,14 @@ typedef struct Roadfork {
  * @see roomnamestrings
  */
 typedef enum {
-	ENEMIES=0,
-	SHOP=1,
-	BOSS=2,
-	TREASURE=3,
-	ROADFORK=4,
-	HOME=5,
-	WALL=6,
-	BASIC=7
+    ENEMIES = 0,
+    SHOP = 1,
+    BOSS = 2,
+    TREASURE = 3,
+    ROADFORK = 4,
+    HOME = 5,
+    WALL = 6,
+    BASIC = 7
 } roomClass;
 
 /** Maximum index of roomClass, so that the size has to add 1 for the 0th index
@@ -1370,7 +1369,7 @@ typedef enum {
  * Array with the name strings for roomClass.
  * @see roomClass
  */
-extern char* roomnamestrings[ROOM_CLASS_MAX+1];
+extern char *roomnamestrings[ROOM_CLASS_MAX + 1];
 
 /** Maximum number of enemies in a room.
  * @see initRoom_Enemies()
@@ -1392,8 +1391,8 @@ extern char* roomnamestrings[ROOM_CLASS_MAX+1];
  * @see Boss
  */
 typedef enum {
-	Enemies=0,
-	Bosses=1,
+    Enemies = 0,
+    Bosses = 1,
 } foePartyClass;
 
 /** Maximum index of foePartyClass, so that the size has to add 1 for the 0th index
@@ -1406,7 +1405,7 @@ typedef enum {
  * @see foePartyClass
  * @see printStringFromFoePartyClass()
  */
-extern char* foepartystrings[FOEPARTY_CLASS_MAX+1];
+extern char *foepartystrings[FOEPARTY_CLASS_MAX + 1];
 
 /**
  * Represents the entity initialised from a foePartyClass.
@@ -1415,21 +1414,21 @@ extern char* foepartystrings[FOEPARTY_CLASS_MAX+1];
  * @see counterIndexes
  */
 typedef struct FoeParty {
-	foePartyClass class; /**< Defines which kind of foePartyClass the instance relates to*/
-	int level; /**< Level for the whole FoeParty*/
-	struct Turncounter* counters[COUNTERSMAX+1]; /**< Array with all the Turncounter pointers*/
-	int turnboost_atk; /**< Current temp boost value for atk*/
-	int turnboost_def; /**< Current temp boost value for def*/
-	int turnboost_vel; /**< Current temp boost value for vel*/
-	int turnboost_enr; /**< Current temp boost value for enr*/
-	Enemy* enemy_foes[ROOM_ENEMIES_MAX+1]; /**< Array of pointers to all enemies in a room*/
-	//TODO: this is not ideal. Could we ever need to have a different max for enemy_foes? Only if the group is not in a Room??
-	Boss* boss_foes[FOES_BOSSES_MAX+1]; /**< Array of pointers to all enemies in a room*/
-	int size; /**<  Number of members in the FoeParty.*/
-	int tot_alive; /**<  Number of alive members of the FoeParty.*/
-	int current_index; /**< Index of current foe advancement*/
-	int alive_enemies[ROOM_ENEMIES_MAX+1]; /**< Array of integers with 1 for alive enemies in that position*/
-	int alive_bosses[FOES_BOSSES_MAX+1]; /**< Array of integers with 1 for alive bosses in that position*/
+    foePartyClass class;     /**< Defines which kind of foePartyClass the instance relates to*/
+    int level;	   /**< Level for the whole FoeParty*/
+    struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
+    int turnboost_atk;	   /**< Current temp boost value for atk*/
+    int turnboost_def;	   /**< Current temp boost value for def*/
+    int turnboost_vel;	   /**< Current temp boost value for vel*/
+    int turnboost_enr;	   /**< Current temp boost value for enr*/
+    Enemy *enemy_foes[ROOM_ENEMIES_MAX + 1];   /**< Array of pointers to all enemies in a room*/
+    //TODO: this is not ideal. Could we ever need to have a different max for enemy_foes? Only if the group is not in a Room??
+    Boss *boss_foes[FOES_BOSSES_MAX + 1];   /**< Array of pointers to all enemies in a room*/
+    int size;	  /**<  Number of members in the FoeParty.*/
+    int tot_alive;     /**<  Number of alive members of the FoeParty.*/
+    int current_index;	   /**< Index of current foe advancement*/
+    int alive_enemies[ROOM_ENEMIES_MAX + 1];   /**< Array of integers with 1 for alive enemies in that position*/
+    int alive_bosses[FOES_BOSSES_MAX + 1];   /**< Array of integers with 1 for alive bosses in that position*/
 } FoeParty;
 
 /**
@@ -1439,8 +1438,8 @@ typedef struct FoeParty {
  * @see initFoePartyStats()
  */
 typedef struct FoePartyBaseStats {
-	foePartyClass class; /**< Defines which kind of foePartyClass the stats relate to*/
-	int level; /**< Defines level of the FoeParty*/
+    foePartyClass class;     /**< Defines which kind of foePartyClass the stats relate to*/
+    int level;	   /**< Defines level of the FoeParty*/
 } FoePartyBaseStats;
 
 /**
@@ -1451,7 +1450,7 @@ typedef struct FoePartyBaseStats {
  * @see foePartyClass
  * @see initFoePartyStats()
  */
-extern FoePartyBaseStats basefoepartystats[FOEPARTY_CLASS_MAX+1];
+extern FoePartyBaseStats basefoepartystats[FOEPARTY_CLASS_MAX + 1];
 
 /**
  * Represents the entity initialised from a roomClass.
@@ -1461,18 +1460,18 @@ extern FoePartyBaseStats basefoepartystats[FOEPARTY_CLASS_MAX+1];
  */
 typedef struct Room {
 
-	int index; /**< The room's own number.*/
-	char* desc; /**< Description string.*/
+    int index;	   /**< The room's own number.*/
+    char *desc;	    /**< Description string.*/
 
-	roomClass class; /**< Defines which kind of roomClass the instance relates to*/
-	Shop* shop; /**< The shop pointer, initialised for rooms of class SHOP.*/
-	Roadfork* roadfork; /**< The roadfork pointer, initialised for rooms of class ROADFORK.*/
-	Treasure* treasure; /**< The treasure pointer, initialised for rooms of class TREASURE.*/
+    roomClass class;	 /**< Defines which kind of roomClass the instance relates to*/
+    Shop *shop;	    /**< The shop pointer, initialised for rooms of class SHOP.*/
+    Roadfork *roadfork;	    /**< The roadfork pointer, initialised for rooms of class ROADFORK.*/
+    Treasure *treasure;	    /**< The treasure pointer, initialised for rooms of class TREASURE.*/
 
-	Boss* boss; /**< The boss pointer, initialised for rooms of class BOSS.*/
-	int enemyTotal; /**< Total number of enemies initialised in enemies array.*/
-	Enemy* enemies[ROOM_ENEMIES_MAX]; /**< Array for enemies.*/
-	FoeParty* foes; /**< The FoeParty pointer, initialised for rooms of class ENEMIES.*/
+    Boss *boss;	    /**< The boss pointer, initialised for rooms of class BOSS.*/
+    int enemyTotal;	/**< Total number of enemies initialised in enemies array.*/
+    Enemy *enemies[ROOM_ENEMIES_MAX];	  /**< Array for enemies.*/
+    FoeParty *foes;	/**< The FoeParty pointer, initialised for rooms of class ENEMIES.*/
 } Room;
 
 /**
@@ -1482,8 +1481,8 @@ typedef struct Room {
  * @see floornamestrings
  */
 typedef enum {
-	STD_FLOOR=0,
-	DBG_FLOOR=1,
+    STD_FLOOR = 0,
+    DBG_FLOOR = 1,
 } floorClass;
 
 /** Maximum index of floorClass, so that the size has to add 1 for the 0th index
@@ -1495,7 +1494,7 @@ typedef enum {
  * Array with the name strings for floorClass.
  * @see floorClass
  */
-extern char* floornamestrings[FLOOR_CLASS_MAX+1];
+extern char *floornamestrings[FLOOR_CLASS_MAX + 1];
 
 /**
  * Maximum value of cells in a Floor matrix column.
@@ -1516,18 +1515,18 @@ extern char* floornamestrings[FLOOR_CLASS_MAX+1];
  */
 typedef struct Floor {
 
-	int index; /**< The floor's own number.*/
-	char* desc; /**< Description string.*/
+    int index;	   /**< The floor's own number.*/
+    char *desc;	    /**< Description string.*/
 
-	floorClass class; /**< Defines which kind of floorClass the instance relates to*/
-	int floor_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS]; /**< Defines the layout for the Floor (which cells are actually filled).*/
-	int area; /**< Holds how many cells we succesfully random walked.*/
-	Room* rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS]; /**< Pointer matrix for rooms of this floor.*/
-	roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS]; /**< roomClass matrix for class value for rooms of this floor.*/
-	int explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS]; /**< Int matrix for explored value for rooms of this floor.*/
-	int explored_area; /**< Holds how many cells we explored.*/
+    floorClass class;	  /**< Defines which kind of floorClass the instance relates to*/
+    int floor_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	  /**< Defines the layout for the Floor (which cells are actually filled).*/
+    int area;	  /**< Holds how many cells we succesfully random walked.*/
+    Room *rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< Pointer matrix for rooms of this floor.*/
+    roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
+    int explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
+    int explored_area;	   /**< Holds how many cells we explored.*/
 
-	//TODO: add some pointer to a loot instance, initialised for floors having some flag active.*/
+    //TODO: add some pointer to a loot instance, initialised for floors having some flag active.*/
 } Floor;
 
 /**
@@ -1541,8 +1540,8 @@ typedef struct Floor {
  * @see loadInfo
  */
 typedef enum saveType {
-	HOME_SAVE=0,
-	ENEMIES_SAVE=1,
+    HOME_SAVE = 0,
+    ENEMIES_SAVE = 1,
 } saveType;
 
 /**
@@ -1556,7 +1555,7 @@ typedef enum saveType {
  * @see saveType
  * @see stringFrom_saveType()
  */
-extern char* savetypestrings[SAVETYPE_MAX+1];
+extern char *savetypestrings[SAVETYPE_MAX + 1];
 
 /**
  * Contains loaded values to pass to initRoom().
@@ -1567,14 +1566,14 @@ extern char* savetypestrings[SAVETYPE_MAX+1];
  */
 typedef struct loadInfo {
 
-	int is_new_game;
-	int done_loading;
-	int enemy_index;
-	int total_foes;
-	Enemy* loaded_enemy;
-	int* ptr_to_roomtotalenemies;
-	int* ptr_to_roomindex;
-	saveType save_type;
+    int is_new_game;
+    int done_loading;
+    int enemy_index;
+    int total_foes;
+    Enemy *loaded_enemy;
+    int *ptr_to_roomtotalenemies;
+    int *ptr_to_roomindex;
+    saveType save_type;
 
 } loadInfo;
 
@@ -1587,22 +1586,22 @@ typedef struct loadInfo {
  */
 typedef struct {
 
-	countStats* stats; /**< Keeps track of stats for the game.*/
+    countStats *stats;	   /**< Keeps track of stats for the game.*/
 
-	int current_fighters; /**< Keeps track of Fighter number for the game.*/
-	roomClass current_roomtype; /**< Keeps track of current room type.*/
-	int current_room_index; /**< Keeps track of current room index.*/
+    int current_fighters;     /**< Keeps track of Fighter number for the game.*/
+    roomClass current_roomtype;	    /**< Keeps track of current room type.*/
+    int current_room_index;	/**< Keeps track of current room index.*/
 
-	int current_enemy_index; /**< Keeps track of current enemy index.*/
-	Wincon* wincon; /**< Keeps track of current Wincon.*/
+    int current_enemy_index;	 /**< Keeps track of current enemy index.*/
+    Wincon *wincon;	/**< Keeps track of current Wincon.*/
 
-	Path* path; /**< Keeps track of current Path.*/
+    Path *path;	    /**< Keeps track of current Path.*/
 
-	Fighter* player; /**< Keeps track of current Player.*/
+    Fighter *player;	 /**< Keeps track of current Player.*/
 
-	Gamemode gamemode; /**< Keeps track of current Gamemode.*/
+    Gamemode gamemode;	   /**< Keeps track of current Gamemode.*/
 
-    Floor* current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
+    Floor *current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
 } Gamestate;
 
 /**
@@ -1613,23 +1612,23 @@ typedef struct {
  * @see debug()
  */
 typedef enum turnOption {
-	NEW_GAME=0,
-	LOAD_GAME=1,
-	INVALID=69,
-	FIGHT=100,
-	SPECIAL=101,
-	QUIT=102,
-	CONSUMABLE=103,
-	ARTIFACTS=104,
-	EQUIPS=105,
-	PERKS=106,
-	STATS=107,
-	SAVE=108,
-	EXPLORE=109,
-	DEBUG=1337,
-	TUTORIAL=777,
-	CLOSE_MENU=110,
-    SKILL=111,
+    NEW_GAME = 0,
+    LOAD_GAME = 1,
+    INVALID = 69,
+    FIGHT = 100,
+    SPECIAL = 101,
+    QUIT = 102,
+    CONSUMABLE = 103,
+    ARTIFACTS = 104,
+    EQUIPS = 105,
+    PERKS = 106,
+    STATS = 107,
+    SAVE = 108,
+    EXPLORE = 109,
+    DEBUG = 1337,
+    TUTORIAL = 777,
+    CLOSE_MENU = 110,
+    SKILL = 111,
 } turnOption;
 
 /**
@@ -1637,23 +1636,23 @@ typedef enum turnOption {
  * @see stringFromTurnOP()
  */
 typedef enum turnOption_OP {
-	OP_NEW_GAME=0,
-	OP_LOAD_GAME=1,
-	OP_INVALID=2,
-	OP_FIGHT=3,
-	OP_SPECIAL=4,
-	OP_QUIT=5,
-	OP_CONSUMABLE=6,
-	OP_ARTIFACTS=7,
-	OP_EQUIPS=8,
-	OP_PERKS=9,
-	OP_STATS=10,
-	OP_SAVE=11,
-	OP_EXPLORE=12,
-	OP_DEBUG=13,
-	OP_LOAD_ENEMYROOM=14,
-	OP_LOAD_HOMEROOM=15,
-    OP_SKILL=16,
+    OP_NEW_GAME = 0,
+    OP_LOAD_GAME = 1,
+    OP_INVALID = 2,
+    OP_FIGHT = 3,
+    OP_SPECIAL = 4,
+    OP_QUIT = 5,
+    OP_CONSUMABLE = 6,
+    OP_ARTIFACTS = 7,
+    OP_EQUIPS = 8,
+    OP_PERKS = 9,
+    OP_STATS = 10,
+    OP_SAVE = 11,
+    OP_EXPLORE = 12,
+    OP_DEBUG = 13,
+    OP_LOAD_ENEMYROOM = 14,
+    OP_LOAD_HOMEROOM = 15,
+    OP_SKILL = 16,
 } turnOption_OP;
 
 /**
@@ -1675,16 +1674,16 @@ turnOption_OP turnOP_from_turnOption(turnOption t);
  * @see turnOption
  * @see stringFromTurnOption()
  */
-extern char* turnopstrings[TURNOP_MAX+1];
+extern char *turnopstrings[TURNOP_MAX + 1];
 
 /**
  * The different kinds of foeTurnOption.
  */
 typedef enum foeTurnOption {
-	FOE_INVALID=0,
-	FOE_IDLE=1,
-	FOE_FIGHT=2,
-	FOE_SPECIAL=3,
+    FOE_INVALID = 0,
+    FOE_IDLE = 1,
+    FOE_FIGHT = 2,
+    FOE_SPECIAL = 3,
 } foeTurnOption;
 
 /**
@@ -1692,10 +1691,10 @@ typedef enum foeTurnOption {
  * @see stringFromFoeTurnOP()
  */
 typedef enum foeTurnOption_OP {
-	FOE_OP_INVALID=0,
-	FOE_OP_IDLE=1,
-	FOE_OP_FIGHT=2,
-	FOE_OP_SPECIAL=3,
+    FOE_OP_INVALID = 0,
+    FOE_OP_IDLE = 1,
+    FOE_OP_FIGHT = 2,
+    FOE_OP_SPECIAL = 3,
 } foeTurnOption_OP;
 
 /**
@@ -1717,7 +1716,7 @@ foeTurnOption_OP foeTurnOP_from_foeTurnOption(foeTurnOption ft);
  * @see foeTurnOption
  * @see stringFromFoeTurnOption()
  */
-extern char* foeturnopstrings[FOETURNOP_MAX+1];
+extern char *foeturnopstrings[FOETURNOP_MAX + 1];
 
 /**
  * Filename for OPS log.
@@ -1731,17 +1730,17 @@ extern char* foeturnopstrings[FOETURNOP_MAX+1];
  * @see turnOP()
  */
 typedef enum OP_res {
-	OP_OK=0,
-	INVALID_OP=1,
-	NO_OP=2,
-	OP_CANNOT_OPEN_SAVEFILE=3,
-	OP_RES_KILL_DONE=4, /**< Value of fight status indicating the enemy died.*/
-	OP_RES_DMG_DEALT=5, /**< Value of fight status indicating the enemy was damaged.*/
-	OP_RES_DMG_TAKEN=6, /**< Value of fight status indicating the fighter was damaged.*/
-	OP_RES_DEATH=7, /**< Value of fight status indicating the fighter died.*/
-	OP_RES_NO_DMG=8, /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
-	OP_RES_CLASH=9, /**< Value of fight status indicating damage on both sides occurred.*/
-	OP_RES_LOADED_ENEMYROOM=10, /**< Value of OP_res indicating success in loading a enemyroom*/
+    OP_OK = 0,
+    INVALID_OP = 1,
+    NO_OP = 2,
+    OP_CANNOT_OPEN_SAVEFILE = 3,
+    OP_RES_KILL_DONE = 4,   /**< Value of fight status indicating the enemy died.*/
+    OP_RES_DMG_DEALT = 5,   /**< Value of fight status indicating the enemy was damaged.*/
+    OP_RES_DMG_TAKEN = 6,   /**< Value of fight status indicating the fighter was damaged.*/
+    OP_RES_DEATH = 7,	/**< Value of fight status indicating the fighter died.*/
+    OP_RES_NO_DMG = 8,	 /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
+    OP_RES_CLASH = 9,	/**< Value of fight status indicating damage on both sides occurred.*/
+    OP_RES_LOADED_ENEMYROOM = 10,   /**< Value of OP_res indicating success in loading a enemyroom*/
 } OP_res;
 
 /**
@@ -1757,7 +1756,7 @@ typedef enum OP_res {
  * @see turnOP()
  * @see stringFrom_OP_res()
  */
-extern char* opresstrings[OP_RES_MAX+1];
+extern char *opresstrings[OP_RES_MAX + 1];
 
 /**
  * Holds arguments for a turnOption_OP.
@@ -1766,17 +1765,17 @@ extern char* opresstrings[OP_RES_MAX+1];
  * @see turnOP()
  */
 typedef struct {
-	Fighter* actor; /**< Pointer to Fighter actor for the OP*/
-	Path* path; /**< Pointer to Rath for OP*/
-	Room* room; /**< Pointer to Room for OP*/
-	loadInfo* load_info; /**< Pointer to loadInfo for OP*/
-	Enemy* enemy; /**< Pointer to Enemy for OP*/
-	Boss* boss; /**< Pointer to Boss for OP*/
-	FILE* save_file; /**< Pointer to savefile for OP*/
-	WINDOW* notify_win; /**< Pointer to notification window for OP*/
-	Koliseo_Temp* t_kls; /**< Pointer to Koliseo_Temp for OP*/
-	Gamestate* gmst; /**< Pointer to Gamestate for OP*/
-	foeTurnOption_OP foe_op; /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
+    Fighter *actor;	/**< Pointer to Fighter actor for the OP*/
+    Path *path;	    /**< Pointer to Rath for OP*/
+    Room *room;	    /**< Pointer to Room for OP*/
+    loadInfo *load_info;     /**< Pointer to loadInfo for OP*/
+    Enemy *enemy;     /**< Pointer to Enemy for OP*/
+    Boss *boss;	    /**< Pointer to Boss for OP*/
+    FILE *save_file;	 /**< Pointer to savefile for OP*/
+    WINDOW *notify_win;	    /**< Pointer to notification window for OP*/
+    Koliseo_Temp *t_kls;     /**< Pointer to Koliseo_Temp for OP*/
+    Gamestate *gmst;	 /**< Pointer to Gamestate for OP*/
+    foeTurnOption_OP foe_op;	 /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
 } turnOP_args;
 
 /**
@@ -1825,13 +1824,13 @@ typedef struct {
  * The different kinds of fightResult.
  */
 typedef enum {
-	FIGHTRES_INVALID=0, /**< Value of fight status indicating errors in the fight call.*/
-	FIGHTRES_KILL_DONE=1, /**< Value of fight status indicating the enemy died.*/
-	FIGHTRES_DMG_DEALT=2, /**< Value of fight status indicating the enemy was damaded.*/
-	FIGHTRES_DMG_TAKEN=3, /**< Value of fight status indicating the fighter was damaded.*/
-	FIGHTRES_DEATH=4, /**< Value of fight status indicating the fighter died.*/
-	FIGHTRES_NO_DMG=5, /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
-	FIGHTRES_CLASH=6, /**< Value of fight status indicating damage on both sides occurred.*/
+    FIGHTRES_INVALID = 0,   /**< Value of fight status indicating errors in the fight call.*/
+    FIGHTRES_KILL_DONE = 1,   /**< Value of fight status indicating the enemy died.*/
+    FIGHTRES_DMG_DEALT = 2,   /**< Value of fight status indicating the enemy was damaded.*/
+    FIGHTRES_DMG_TAKEN = 3,   /**< Value of fight status indicating the fighter was damaded.*/
+    FIGHTRES_DEATH = 4,	  /**< Value of fight status indicating the fighter died.*/
+    FIGHTRES_NO_DMG = 5,   /**< Value of fight status indicating no damage occurred. Used to reset the fight status to neutral after the end of a combat. */
+    FIGHTRES_CLASH = 6,	  /**< Value of fight status indicating damage on both sides occurred.*/
 } fightResult;
 
 /**
@@ -1845,7 +1844,7 @@ typedef enum {
  * @see fightResult
  * @see stringFrom_fightResult()
  */
-extern char* fightresultstrings[FIGHT_RES_TOT+1];
+extern char *fightresultstrings[FIGHT_RES_TOT + 1];
 
 /**
  * Returns a OP_res from a fightResult fr.
@@ -1854,7 +1853,7 @@ extern char* fightresultstrings[FIGHT_RES_TOT+1];
  */
 OP_res OP_res_from_fightResult(fightResult fr);
 
-#define CHEST_FRAMES 25 /**< Defines the number of frames for the chest animation.*/
+#define CHEST_FRAMES 25	/**< Defines the number of frames for the chest animation.*/
 #define CHEST_ROWS 18 /**< Defines the number of rows for the chest animation.*/
 #define CHEST_COLS 18 /**< Defines the number of cols for the chest animation.*/
 #define CHEST_FRAMETIME 67 /**< Defines for how many millisecs a sprite should stay on screen for the chest animation.*/

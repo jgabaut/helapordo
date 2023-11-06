@@ -38,17 +38,18 @@
  * @param args Pointer to turnOP_args object.
  * @param kls The Koliseo used for allocations.
  */
-OP_res turnOP(turnOption_OP op, turnOP_args* args, Koliseo* kls, Koliseo_Temp* t_kls);
+OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,
+	      Koliseo_Temp * t_kls);
 
 /*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 */
 
-void resetFighterStatus(Fighter* f);
+void resetFighterStatus(Fighter * f);
 
-void resetEnemyStatus(Enemy* e);
+void resetEnemyStatus(Enemy * e);
 
-void resetBossStatus(Boss* b);
+void resetBossStatus(Boss * b);
 
 effect_fun getStatusCounterFun(fighterStatus status);
 
@@ -58,193 +59,215 @@ effect_b_fun getStatusCounterBossFun(fighterStatus status);
 
 effect_fp_fun get_StatusCounter_FoeParty_Fun(fighterStatus status);
 
-void set_turnboost_atk(Fighter* f,int boost);
-void set_turnboost_def(Fighter* f,int boost);
-void set_turnboost_vel(Fighter* f,int boost);
-void set_turnboost_enr(Fighter* f,int boost);
+void set_turnboost_atk(Fighter * f, int boost);
+void set_turnboost_def(Fighter * f, int boost);
+void set_turnboost_vel(Fighter * f, int boost);
+void set_turnboost_enr(Fighter * f, int boost);
 
-void set_enemy_turnboost_atk(Enemy* e,int boost);
-void set_enemy_turnboost_def(Enemy* e,int boost);
-void set_enemy_turnboost_vel(Enemy* e,int boost);
-void set_enemy_turnboost_enr(Enemy* e,int boost);
+void set_enemy_turnboost_atk(Enemy * e, int boost);
+void set_enemy_turnboost_def(Enemy * e, int boost);
+void set_enemy_turnboost_vel(Enemy * e, int boost);
+void set_enemy_turnboost_enr(Enemy * e, int boost);
 
-void set_boss_turnboost_atk(Boss* b,int boost);
-void set_boss_turnboost_def(Boss* b,int boost);
-void set_boss_turnboost_vel(Boss* b,int boost);
-void set_boss_turnboost_enr(Boss* b,int boost);
+void set_boss_turnboost_atk(Boss * b, int boost);
+void set_boss_turnboost_def(Boss * b, int boost);
+void set_boss_turnboost_vel(Boss * b, int boost);
+void set_boss_turnboost_enr(Boss * b, int boost);
 
-void set_foeparty_turnboost_atk(FoeParty* fp,int boost);
-void set_foeparty_turnboost_def(FoeParty* fp,int boost);
-void set_foeparty_turnboost_vel(FoeParty* fp,int boost);
-void set_foeparty_turnboost_enr(FoeParty* fp,int boost);
+void set_foeparty_turnboost_atk(FoeParty * fp, int boost);
+void set_foeparty_turnboost_def(FoeParty * fp, int boost);
+void set_foeparty_turnboost_vel(FoeParty * fp, int boost);
+void set_foeparty_turnboost_enr(FoeParty * fp, int boost);
 
 boost_fun getStatBoostCounterFun(Stat s);
 boost_e_fun getStatBoostCounterEnemyFun(Stat s);
 boost_b_fun getStatBoostCounterBossFun(Stat s);
 boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s);
 
-void initPerks(Fighter* f, Koliseo* kls);
-void applyEquipPerks(Equip* e, Fighter* f);
-void removeEquipPerks(Equip* e, Fighter* f);
-void printActivePerks(Fighter* f);
+void initPerks(Fighter * f, Koliseo * kls);
+void applyEquipPerks(Equip * e, Fighter * f);
+void removeEquipPerks(Equip * e, Fighter * f);
+void printActivePerks(Fighter * f);
 
-void initCounters(Fighter* f, Koliseo* kls);
+void initCounters(Fighter * f, Koliseo * kls);
 
-void initECounters(Enemy* e, Koliseo_Temp* t_kls);
+void initECounters(Enemy * e, Koliseo_Temp * t_kls);
 
-void initBCounters(Boss* b, Koliseo_Temp* t_kls);
+void initBCounters(Boss * b, Koliseo_Temp * t_kls);
 
-void initFoePartyCounters(FoeParty* fp, Koliseo_Temp* t_kls);
+void initFoePartyCounters(FoeParty * fp, Koliseo_Temp * t_kls);
 
-void printCounters(Turncounter* counters[]);
+void printCounters(Turncounter * counters[]);
 
-void updateCounters(Turncounter* counters[], int isEnemy, Fighter* f, Enemy* e);
-void updateCounters_Boss(Turncounter* counters[], int isBoss, Fighter* f, Boss* b);
-void setCounter(Turncounter* c,int turns);
+void updateCounters(Turncounter * counters[], int isEnemy, Fighter * f,
+		    Enemy * e);
+void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
+			 Boss * b);
+void setCounter(Turncounter * c, int turns);
 
-void setSpecials(Fighter* f, Koliseo* kls);
+void setSpecials(Fighter * f, Koliseo * kls);
 
-void resetPermboosts(Fighter* f);
-void applyPermboosts(Fighter* f);
+void resetPermboosts(Fighter * f);
+void applyPermboosts(Fighter * f);
 
-void resetArtifactsState(Fighter* f);
-void applyArtifacts(Fighter* f, Enemy* e, Boss* b, int isBoss);
+void resetArtifactsState(Fighter * f);
+void applyArtifacts(Fighter * f, Enemy * e, Boss * b, int isBoss);
 
-void initEquipSlots(Fighter* f, Koliseo* kls);
+void initEquipSlots(Fighter * f, Koliseo * kls);
 
-void initConsumableBag(Fighter* f, Koliseo* kls);
-void initArtifactsBag(Fighter* f, Koliseo* kls);
+void initConsumableBag(Fighter * f, Koliseo * kls);
+void initArtifactsBag(Fighter * f, Koliseo * kls);
 
-void initWincon(Wincon* w, Path* p, winconClass class);
+void initWincon(Wincon * w, Path * p, winconClass class);
 
-void initPlayerStats(Fighter* player, Path* path, Koliseo* kls);
+void initPlayerStats(Fighter * player, Path * path, Koliseo * kls);
 
-void initEnemyStats(Enemy* e, Koliseo_Temp* t_kls);
+void initEnemyStats(Enemy * e, Koliseo_Temp * t_kls);
 
 int getBossBoost(int lvl, bossClass bclass);
 
-void statResetBoss(Boss* b, int force);
+void statResetBoss(Boss * b, int force);
 
-void initBossStats(Boss* b, Koliseo_Temp* t_kls);
-void prepareBoss(Boss* b, Koliseo_Temp* t_kls);
+void initBossStats(Boss * b, Koliseo_Temp * t_kls);
+void prepareBoss(Boss * b, Koliseo_Temp * t_kls);
 
-void initFoePartyStats(FoeParty* fp, Koliseo_Temp* t_kls);
-void prepareFoeParty(FoeParty* fp, int total_foes, int roomindex, Koliseo_Temp* t_kls);
+void initFoePartyStats(FoeParty * fp, Koliseo_Temp * t_kls);
+void prepareFoeParty(FoeParty * fp, int total_foes, int roomindex,
+		     Koliseo_Temp * t_kls);
 
 int getEnemyBoost(int lvl, enemyClass eclass);
 
-void statResetEnemy(Enemy* e, int force);
+void statResetEnemy(Enemy * e, int force);
 
-void prepareRoomEnemy(Enemy* e, int roomindex, int enemiesInRoom, int enemyindex, Koliseo_Temp* t_kls);
+void prepareRoomEnemy(Enemy * e, int roomindex, int enemiesInRoom,
+		      int enemyindex, Koliseo_Temp * t_kls);
 
-void setEquipPrices(int size, int* equipPrices, Equip* equips[]);
-void setConsumablePrices(int size, int* consumablePrices, Consumable** consumables);
-void initShop(Shop* s, int indexWeight, Fighter* player, Koliseo_Temp* t_kls);
-void initChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls);
-void prepareChest(Chest* c, Fighter* f, Koliseo_Temp* t_kls);
+void setEquipPrices(int size, int *equipPrices, Equip * equips[]);
+void setConsumablePrices(int size, int *consumablePrices,
+			 Consumable ** consumables);
+void initShop(Shop * s, int indexWeight, Fighter * player,
+	      Koliseo_Temp * t_kls);
+void initChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
+void prepareChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
 
-void initTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls);
-void prepareTreasure(Treasure* t, Fighter* f, Koliseo_Temp* t_kls);
+void initTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
+void prepareTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
 
-void prepareRoadfork(Roadfork* r);
+void prepareRoadfork(Roadfork * r);
 
-void printStats(Fighter* f);
+void printStats(Fighter * f);
 
-void printEStats(Enemy* e);
+void printEStats(Enemy * e);
 
-int getEnemyXpGain(Enemy* e);
+int getEnemyXpGain(Enemy * e);
 
-int getBossXpGain(Boss* b);
+int getBossXpGain(Boss * b);
 
-void printConsumablesStats(Consumable* c);
+void printConsumablesStats(Consumable * c);
 
-void printArtifactStats(Artifact* a);
+void printArtifactStats(Artifact * a);
 
 void printQualityColor(quality q);
 
-void printEquipStats(Equip* e);
+void printEquipStats(Equip * e);
 
-void printSpawnMessage(Enemy* e, int roomIndex, int enemyIndex);
+void printSpawnMessage(Enemy * e, int roomIndex, int enemyIndex);
 
-void getParams(int argc, char** argv, Fighter* player, Path* path, int optTot, Koliseo* kls);
+void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
+	       Koliseo * kls);
 
-turnOption getTurnChoice(char* ch);
+turnOption getTurnChoice(char *ch);
 
-foeTurnOption enemyTurnPick(Enemy* e, Fighter* f);
+foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
 
-foeTurnOption bossTurnPick(Boss* b, Fighter* f);
+foeTurnOption bossTurnPick(Boss * b, Fighter * f);
 
 int getBoost(int lvl, int luck);
 
-void unlockSpecial(Fighter* f);
+void unlockSpecial(Fighter * f);
 
-void onLevelUp(Fighter* player);
+void onLevelUp(Fighter * player);
 
-void checkremainder(Fighter* player, int xp);
+void checkremainder(Fighter * player, int xp);
 
-void giveXp(Fighter* player, Enemy* e);
-void giveXp_Boss(Fighter* player, Boss* b);
+void giveXp(Fighter * player, Enemy * e);
+void giveXp_Boss(Fighter * player, Boss * b);
 
-void statReset(Fighter* player, int force);
+void statReset(Fighter * player, int force);
 
-int dropConsumable(Fighter* player);
+int dropConsumable(Fighter * player);
 
-void dropEquip(Fighter* player, int beast, WINDOW* notify_win, Koliseo* kls);
+void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
 
-int dropArtifact(Fighter* player);
+int dropArtifact(Fighter * player);
 
-int defer_fight_enemy(Fighter* player, Enemy* e, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls);
+int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
+		      WINDOW * notify_win, Koliseo * kls);
 
-int fight(Fighter* player, Enemy* e, WINDOW* notify_win, Koliseo* kls);
+int fight(Fighter * player, Enemy * e, WINDOW * notify_win, Koliseo * kls);
 
-int enemy_attack(Enemy* e, Fighter* target, WINDOW* notify_win, Koliseo* kls);
+int enemy_attack(Enemy * e, Fighter * target, WINDOW * notify_win,
+		 Koliseo * kls);
 
-int defer_fight_boss(Fighter* player, Boss* b, Path* p, foeTurnOption_OP foe_op, WINDOW* notify_win, Koliseo* kls);
+int defer_fight_boss(Fighter * player, Boss * b, Path * p,
+		     foeTurnOption_OP foe_op, WINDOW * notify_win,
+		     Koliseo * kls);
 
-int boss_fight(Fighter* player, Boss* b, Path* p, WINDOW* notify_win, Koliseo* kls);
+int boss_fight(Fighter * player, Boss * b, Path * p, WINDOW * notify_win,
+	       Koliseo * kls);
 
-int boss_attack(Boss* b, Fighter* target, Path* p, WINDOW* notify_win, Koliseo* kls);
+int boss_attack(Boss * b, Fighter * target, Path * p, WINDOW * notify_win,
+		Koliseo * kls);
 
-void useConsumable(Fighter* f, Enemy* e, Boss* b, char* string, int isBoss);
+void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
-int getConsumableQty(Fighter* f, int n);
+int getConsumableQty(Fighter * f, int n);
 
-void emptyConsumables(Fighter* player);
+void emptyConsumables(Fighter * player);
 
-void emptyArtifacts(Fighter* player);
+void emptyArtifacts(Fighter * player);
 
-void emptyEquips(Fighter* player);
+void emptyEquips(Fighter * player);
 
-OP_res handleSave_Enemies(FILE* file, Fighter* f, Path*p, Enemy* e, int enemyIndex, int roomTotalEnemies, int roomIndex);
-OP_res handleSave_Home(FILE* file, Fighter* f, Path*p, int roomIndex);
+OP_res handleSave_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
+			  int enemyIndex, int roomTotalEnemies, int roomIndex);
+OP_res handleSave_Home(FILE * file, Fighter * f, Path * p, int roomIndex);
 
-OP_res handleLoadgame_Enemies(FILE* file, Fighter* f, Path* p, Enemy* e, int* enemyIndex, int* roomTotalEnemies, int* roomIndex, int* total_foes, int* done_loading, Koliseo* kls);
-OP_res handleLoadgame_Home(FILE* file, Fighter* f, Path* p, int* roomIndex, int* done_loading, Koliseo* kls);
-saveType read_saveType(FILE* file);
+OP_res handleLoadgame_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
+			      int *enemyIndex, int *roomTotalEnemies,
+			      int *roomIndex, int *total_foes,
+			      int *done_loading, Koliseo * kls);
+OP_res handleLoadgame_Home(FILE * file, Fighter * f, Path * p, int *roomIndex,
+			   int *done_loading, Koliseo * kls);
+saveType read_saveType(FILE * file);
 
-void death(Fighter* player, loadInfo* load_info);
+void death(Fighter * player, loadInfo * load_info);
 
-void e_death(Enemy* e);
+void e_death(Enemy * e);
 
-void b_death(Boss* b);
+void b_death(Boss * b);
 
 int retry(void);
 
-void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Koliseo* kls, Koliseo_Temp* t_kls);
-void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, Path* p, int roomIndex,int currentEnemyNum, Koliseo* kls, Koliseo_Temp* t_kls);
+void debug_generic(Gamestate * gmst, Fighter * player, Path * p, int roomIndex,
+		   Koliseo * kls, Koliseo_Temp * t_kls);
+void debug_enemies_room(Gamestate * gmst, Room * room, Fighter * player,
+			Enemy * e, Path * p, int roomIndex, int currentEnemyNum,
+			Koliseo * kls, Koliseo_Temp * t_kls);
 
-void quit(Fighter* p, Room* room, loadInfo* load_info, Koliseo_Temp* t_kls);
+void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 
-void sell_all_equips(Fighter* f, Koliseo_Temp* t_kls);
+void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
 
-void open_chest(WINDOW* w, Chest * c, Fighter* f, Koliseo* kls, Koliseo_Temp* t_kls);
+void open_chest(WINDOW * w, Chest * c, Fighter * f, Koliseo * kls,
+		Koliseo_Temp * t_kls);
 
-Path* randomise_path(int seed, Koliseo* kls, const char* path_to_savefile);
+Path *randomise_path(int seed, Koliseo * kls, const char *path_to_savefile);
 
-void gameloop(int argc, char** argv);
+void gameloop(int argc, char **argv);
 
 #ifdef _WIN32
-void gameloop_Win(int argc, char** argv);
+void gameloop_Win(int argc, char **argv);
 #endif
 
 #endif

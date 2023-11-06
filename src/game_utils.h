@@ -22,7 +22,7 @@ void printWin_EnvVars(void);
 void log_Win_EnvVars(void);
 #endif
 
-bool set_Saveslot_name(FILE* file, Saveslot* sv);
+bool set_Saveslot_name(FILE * file, Saveslot * sv);
 
 void red(void);
 void lightRed(void);
@@ -40,83 +40,91 @@ void cyan(void);
 void lightCyan(void);
 
 void init_game_color_pairs(void);
-void test_game_color_pairs(WINDOW* win, int colors_per_row);
+void test_game_color_pairs(WINDOW * win, int colors_per_row);
 void resolve_staticPath(char static_path[500]);
 
-void dbg_print_floor_layout(Floor* floor);
-void dbg_print_explored_layout(Floor* floor);
-void dbg_print_roomclass_layout(Floor* floor);
-void dbg_Gamestate(Gamestate* gmst);
-void dbg_Fighter(Fighter* fighter);
-void dbg_countStats(countStats* stats);
-void dbg_Wincon(Wincon* wc);
-void dbg_Path(Path* path);
-void dbg_Saveslot(Saveslot* saveslot);
-void init_Gamestate(Gamestate* gmst, countStats* stats, Wincon* wincon, Path* path, Fighter* player, Gamemode gamemode );
-void update_Gamestate(Gamestate* gmst, int current_fighters, roomClass current_roomtype, int current_room_index, int current_enemy_index, Floor* current_floor);
+void dbg_print_floor_layout(Floor * floor);
+void dbg_print_explored_layout(Floor * floor);
+void dbg_print_roomclass_layout(Floor * floor);
+void dbg_Gamestate(Gamestate * gmst);
+void dbg_Fighter(Fighter * fighter);
+void dbg_countStats(countStats * stats);
+void dbg_Wincon(Wincon * wc);
+void dbg_Path(Path * path);
+void dbg_Saveslot(Saveslot * saveslot);
+void init_Gamestate(Gamestate * gmst, countStats * stats, Wincon * wincon,
+		    Path * path, Fighter * player, Gamemode gamemode);
+void update_Gamestate(Gamestate * gmst, int current_fighters,
+		      roomClass current_roomtype, int current_room_index,
+		      int current_enemy_index, Floor * current_floor);
 
-void loadLore(char** lore_strings, int loreKind);
+void loadLore(char **lore_strings, int loreKind);
 
-void setRoomType(Path* path, int* roadFork_value, roomClass* room_type, int roomsDone);
-void freeRoom(Room* room);
+void setRoomType(Path * path, int *roadFork_value, roomClass * room_type,
+		 int roomsDone);
+void freeRoom(Room * room);
 
 void printTitle(void);
 
 void printVersion(void);
-void printFormattedVersion(char* progName);
+void printFormattedVersion(char *progName);
 
-void usage(char* progname);
-void log_tag(char* filename, char* header, const char* format, ...);
+void usage(char *progname);
+void log_tag(char *filename, char *header, const char *format, ...);
 void log_OP(turnOption_OP op);
 
-turnOP_args* init_turnOP_args(Gamestate* gmst, Fighter* actor, Path* path, Room* room, loadInfo* load_info, Enemy* enemy, Boss* boss, FILE* save_file, WINDOW* notify_win, Koliseo_Temp* t_kls, foeTurnOption_OP foe_op);
+turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
+			      Room * room, loadInfo * load_info, Enemy * enemy,
+			      Boss * boss, FILE * save_file,
+			      WINDOW * notify_win, Koliseo_Temp * t_kls,
+			      foeTurnOption_OP foe_op);
 
-saveType saveTypeFrom_string(char* s);
-char* stringFrom_HLP_Region_Type(HLP_Region_Type t);
-char* stringFrom_OP_res(OP_res r);
-char* stringFrom_saveType(saveType s);
-char* stringFrom_fightResult(fightResult fr);
-char* stringFromTurnOP(turnOption_OP t);
-char* stringFromFoeTurnOP(foeTurnOption_OP ft);
-char* stringFromStatus(fighterStatus s);
-char* stringFromClass(fighterClass f);
-char* stringFromEClass(enemyClass e);
-char* stringFromBossClass(bossClass b);
-char* stringFromConsumables(int c);
-char* stringFromEquips(int e);
-char* stringFromEquipzones(int z);
-char* stringFromQuality(int q);
-char* stringFromArtifacts(int a);
-char* stringFromFloorclass(floorClass fc);
+saveType saveTypeFrom_string(char *s);
+char *stringFrom_HLP_Region_Type(HLP_Region_Type t);
+char *stringFrom_OP_res(OP_res r);
+char *stringFrom_saveType(saveType s);
+char *stringFrom_fightResult(fightResult fr);
+char *stringFromTurnOP(turnOption_OP t);
+char *stringFromFoeTurnOP(foeTurnOption_OP ft);
+char *stringFromStatus(fighterStatus s);
+char *stringFromClass(fighterClass f);
+char *stringFromEClass(enemyClass e);
+char *stringFromBossClass(bossClass b);
+char *stringFromConsumables(int c);
+char *stringFromEquips(int e);
+char *stringFromEquipzones(int z);
+char *stringFromQuality(int q);
+char *stringFromArtifacts(int a);
+char *stringFromFloorclass(floorClass fc);
 
-char* descStringFromSpecial(fighterClass class, specialMove move);
-char* nameStringFromSpecial(fighterClass class, specialMove move);
+char *descStringFromSpecial(fighterClass class, specialMove move);
+char *nameStringFromSpecial(fighterClass class, specialMove move);
 int costFromSpecial(fighterClass class, specialMove move);
 
-char* nameStringFromPerk(int p);
-char* descStringFromPerk(int p);
+char *nameStringFromPerk(int p);
+char *descStringFromPerk(int p);
 
-char* descStringFromTreasure(int t);
-char* descStringFromChest(int c);
+char *descStringFromTreasure(int t);
+char *descStringFromChest(int c);
 
-char* stringFromWinconClass(winconClass w);
+char *stringFromWinconClass(winconClass w);
 
-char* stringFromFoePartyClass(foePartyClass fp);
-char* stringFromRoom(roomClass r);
-char* stringFromGamemode(Gamemode g);
+char *stringFromFoePartyClass(foePartyClass fp);
+char *stringFromRoom(roomClass r);
+char *stringFromGamemode(Gamemode g);
 
-void scanName(Fighter* player);
+void scanName(Fighter * player);
 
 void printClasses(void);
 int scanClass(void);
-void pickClass(Fighter* player);
+void pickClass(Fighter * player);
 
 void printWincons(void);
 int scanWincon(void);
-void pickWincon(Wincon* w);
+void pickWincon(Wincon * w);
 
-void pickName(Fighter* player);
+void pickName(Fighter * player);
 
-void copy_fighter(Fighter* source, Fighter* dest);
+void copy_fighter(Fighter * source, Fighter * dest);
 
 #endif

@@ -4,6 +4,6 @@
 /**
  * Declares alternative lore array for the game.
  */
-extern char* alt_lore_strings[6];
+extern char *alt_lore_strings[6];
 
 #endif
