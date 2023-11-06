@@ -105,7 +105,6 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
 	log_tag("debug_log.txt", "[DEBUG]",
 		"Initialising curses for handleRoom_Home()");
 	/* Initialize curses */
-	//setlocale(LC_CTYPE, "it_IT.UTF-8");
 	//initscr();
 	start_color();
 	clear();
@@ -515,7 +514,6 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 		|| choice == QUIT)) {
 	    if (choice != FIGHT) {
 		/* Initialize curses */
-		//setlocale(LC_CTYPE, "it_IT.UTF-8");
 		//initscr();
 		start_color();
 		clear();
@@ -1442,7 +1440,6 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
 	if (choice != FIGHT) {
 	    /* Initialize curses */
-	    //setlocale(LC_CTYPE, "it_IT.UTF-8");
 	    //initscr();
 	    start_color();
 	    clear();
@@ -2023,7 +2020,6 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
     int n_choices, c;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     start_color();
 
@@ -2655,7 +2651,6 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
     int n_choices, c;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     start_color();
     clear();

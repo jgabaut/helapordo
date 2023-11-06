@@ -1248,7 +1248,6 @@ void printActivePerks(Fighter *f)
     WINDOW *win;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -4095,7 +4094,6 @@ void unlockSpecial(Fighter *f)
     ITEM *cur;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -10623,7 +10621,6 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
 		int x, y;
 		WINDOW *spriteshow_win;
 		/* Initialize curses */
-		//setlocale(LC_CTYPE, "it_IT.UTF-8");
 		//initscr();
 		start_color();
 		clear();
@@ -11301,7 +11298,6 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
 		int x, y;
 		WINDOW *spriteshow_win;
 		/* Initialize curses */
-		//setlocale(LC_CTYPE, "it_IT.UTF-8");
 		//initscr();
 		start_color();
 		clear();
@@ -11635,7 +11631,6 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
     int n_choices, c;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     start_color();
     clear();
@@ -13172,7 +13167,6 @@ void gameloop(int argc, char **argv)
 		 */
 
 		WINDOW *door_win;
-		//setlocale(LC_CTYPE, "it_IT.UTF-8");
 		//initscr();
 		clear();
 		refresh();
@@ -13534,7 +13528,6 @@ void gameloop(int argc, char **argv)
 			//Play room animation
 
 			WINDOW *door_win;
-			//setlocale(LC_CTYPE, "it_IT.UTF-8");
 			//initscr();
 			clear();
 			refresh();

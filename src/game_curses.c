@@ -328,7 +328,6 @@ void displayLore(char **lore_strings, int lore_counter)
     WINDOW *win;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -2515,7 +2514,6 @@ void printLoadout(Fighter *f)
     WINDOW *w;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -2660,7 +2658,6 @@ void display_printFoeParty(FoeParty *fp)
     log_tag("debug_log.txt", "[FOEPARTY]", "Set total cells to (%i).", cells);
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     clear();
     refresh();
     start_color();
@@ -2738,7 +2735,6 @@ void debug_printFoeParty(FoeParty *fp)
     WINDOW *w;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -2831,7 +2827,6 @@ void displayEquipbagMenu(Fighter *f)
     int c;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -3002,7 +2997,6 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
     int c;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -3187,7 +3181,6 @@ void handleArtifacts(Fighter *f)
     int c;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -3379,7 +3372,6 @@ void handleEquips(Fighter *f, Path *p)
     int c;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -3676,7 +3668,6 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
     int c;
 
     /* Initialize curses */
-    //setlocale(LC_CTYPE, "it_IT.UTF-8");
     //initscr();
     clear();
     refresh();
@@ -4243,7 +4234,6 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
 	log_tag("debug_log.txt", "[DEBUG]",
 		"Initialising curses for handleRogueMenu()");
 	/* Initialize curses */
-	//setlocale(LC_CTYPE, "it_IT.UTF-8");
 	//initscr();
 	start_color();
 	clear();
