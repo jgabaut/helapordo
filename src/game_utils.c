@@ -1439,7 +1439,7 @@ void printClasses(void) {
  * @return The selected integer, negative for unvalid choices.
  */
 int scanClass(void) {
-	int pick=-1;
+	int pick = -1;
 	char c;
 	while (pick < 0 || pick > CLASSESMAX ) {
 		printf("\nPick a class: (0-%i)\n",CLASSESMAX);
@@ -1458,7 +1458,7 @@ int scanClass(void) {
  * @param player The pointer whose class value will be set.
  */
 void pickClass(Fighter* player) {
-	int pick=-1;
+	int pick = -1;
 	do {
 		int res = system("clear");
 		log_tag("debug_log.txt","[DEBUG]","pickClass() system(\"clear\") res was (%i)",res);
@@ -1493,7 +1493,7 @@ void printWincons(void) {
  * @return The selected integer, negative for unvalid choices.
  */
 int scanWincon(void) {
-	int pick=-1;
+	int pick = -1;
 	char c;
 	while (pick < 0 || pick > WINCON_CLASS_MAX ) {
 		printf("\nPick a win condition: (0-%i)\n",WINCON_CLASS_MAX);
@@ -1525,7 +1525,7 @@ void pickName(Fighter* player) {
  * @param w The wincon pointer whose class value will be set.
  */
 void pickWincon(Wincon* w) {
-	int pick=-1;
+	int pick = -1;
 	do {
 		int res = system("clear");
 		log_tag("debug_log.txt","[DEBUG]","pickWincon() system(\"clear\") res was (%i)",res);

@@ -8830,7 +8830,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 	log_tag("debug_log.txt","[DEBUG]",msg);
 
 
-	int c=0,n=-1;
+	int c = 0, n = -1;
 	while (!picked_debug_proc) {
 		int res = system("clear");
 		sprintf(msg,"debug_generic() 2 system(\"clear\") res was (%i)",res);
@@ -8872,7 +8872,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 		break;
 		case '1': {
 			picked_debug_proc = 1;
-			int q=-1;
+			int q = -1;
 			do {
 				printf("\nInsert consumable number:\n");
 			} while ((c = scanf("%i",&n)) != 1 || n > CONSUMABLESMAX || n < 0 );
@@ -8925,7 +8925,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 
 			//printActivePerks(player);
 			int c;
-			int n=-1;
+			int n = -1;
 			do {
 				printf("\nInsert coin number (0<n<100):\n");
 			} while ((c = scanf("%i",&n)) < 0 || c > 3 || n < 0 || n > 100 );
@@ -8942,7 +8942,7 @@ void debug_generic(Gamestate* gmst, Fighter* player, Path* p, int roomIndex, Kol
 		break;
 		case '6': {
 			picked_debug_proc = 1;
-			int n=-1;
+			int n = -1;
 			do {
 				printf("\nInsert artifact number (0<n<%i):\n",ARTIFACTSMAX + 1);
 			} while ((c = scanf("%i",&n)) != 1 || n > ARTIFACTSMAX || n < 0 );
@@ -9465,7 +9465,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 	log_tag("debug_log.txt","[DEBUG]",msg);
 
 
-	int c=0,n=-1;
+	int c = 0,n = -1;
 	while (!picked_debug_proc) {
 		int res = system("clear");
 		sprintf(msg,"debug_enemies_room() 2 system(\"clear\") res was (%i)",res);
@@ -9508,7 +9508,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 		break;
 		case '1': {
 			picked_debug_proc = 1;
-			int q=-1;
+			int q = -1;
 			do {
 				printf("\nInsert consumable number:\n");
 			} while ((c = scanf("%i",&n)) != 1 || n > CONSUMABLESMAX || n < 0 );
@@ -9566,7 +9566,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 
 			//printActivePerks(player);
 			int c;
-			int n=-1;
+			int n = -1;
 			do {
 				printf("\nInsert coin number (0<n<100):\n");
 			} while ((c = scanf("%i",&n)) < 0 || c > 3 || n < 0 || n > 100 );
@@ -9583,7 +9583,7 @@ void debug_enemies_room(Gamestate* gmst, Room* room, Fighter* player, Enemy* e, 
 		break;
 		case '7': {
 			picked_debug_proc = 1;
-			int n=-1;
+			int n = -1;
 			do {
 				printf("\nInsert artifact number (0<n<%i):\n",ARTIFACTSMAX + 1);
 			} while ((c = scanf("%i",&n)) != 1 || n > ARTIFACTSMAX || n < 0 );
