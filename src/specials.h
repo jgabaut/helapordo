@@ -1,3 +1,6 @@
+// jgabaut @ github.com/jgabaut
+// SPDX-License-Identifier: GPL-3.0-only
+
 #ifndef SPECIALS_H
 #define SPECIALS_H
 #include "game_core.h"
