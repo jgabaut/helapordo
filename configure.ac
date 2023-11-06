@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.2.7], [jgabaut@github.com])
+AC_INIT([helapordo], [1.2.8], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -48,7 +48,7 @@ fi
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.2.7"
+  VERSION="1.2.8"
 fi
 
 # Output variables to the config.h header
