@@ -14,49 +14,49 @@
  * @see OP_res
  */
 OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
-	      Koliseo_Temp *t_kls)
+              Koliseo_Temp *t_kls)
 {
 
     OP_res res = INVALID_OP;
 
     Gamestate *gmst = args->gmst;
     if (gmst == NULL)
-	log_tag("debug_log.txt", "[WARN]", "turnOP_args->(gmst) was NULL");
+        log_tag("debug_log.txt", "[WARN]", "turnOP_args->(gmst) was NULL");
     Fighter *actor = args->actor;
     if (actor == NULL)
-	log_tag("debug_log.txt", "[WARN]", "turnOP_args->(actor) was NULL");
+        log_tag("debug_log.txt", "[WARN]", "turnOP_args->(actor) was NULL");
     Path *path = args->path;
     if (path == NULL)
-	log_tag("debug_log.txt", "[WARN]", "turnOP_args->(path) was NULL");
+        log_tag("debug_log.txt", "[WARN]", "turnOP_args->(path) was NULL");
     Room *room = args->room;
     if (room == NULL)
-	log_tag("debug_log.txt", "[WARN]", "turnOP_args->(room) was NULL");
+        log_tag("debug_log.txt", "[WARN]", "turnOP_args->(room) was NULL");
     loadInfo *load_info = args->load_info;
     if (load_info == NULL)
-	log_tag("debug_log.txt", "[WARN]", "turnOP_args->(load_info) was NULL");
+        log_tag("debug_log.txt", "[WARN]", "turnOP_args->(load_info) was NULL");
     Enemy *enemy = args->enemy;
     if (enemy == NULL)
-	log_tag("debug_log.txt", "[WARN]", "turnOP_args->(enemy) was NULL");
+        log_tag("debug_log.txt", "[WARN]", "turnOP_args->(enemy) was NULL");
     Boss *boss = args->boss;
     if (boss == NULL)
-	log_tag("debug_log.txt", "[WARN]", "turnOP_args->(boss) was NULL");
+        log_tag("debug_log.txt", "[WARN]", "turnOP_args->(boss) was NULL");
     FILE *save_file = args->save_file;
     if (save_file == NULL)
-	log_tag("debug_log.txt", "[WARN]", "turnOP_args->(save_file) was NULL");
+        log_tag("debug_log.txt", "[WARN]", "turnOP_args->(save_file) was NULL");
     WINDOW *notify_win = args->notify_win;
     if (notify_win == NULL)
-	log_tag("debug_log.txt", "[WARN]",
-		"turnOP_args->(notify_win) was NULL");
+        log_tag("debug_log.txt", "[WARN]",
+                "turnOP_args->(notify_win) was NULL");
     foeTurnOption_OP foe_op = args->foe_op;
     if (foe_op == FOE_OP_INVALID) {
-	log_tag("debug_log.txt", "[WARN]",
-		"turnOP_args->(foe_op) was FOE_OP_INVALID");
+        log_tag("debug_log.txt", "[WARN]",
+                "turnOP_args->(foe_op) was FOE_OP_INVALID");
     } else if (foe_op < 0 || foe_op > FOETURNOP_MAX) {
-	log_tag("debug_log.txt", "[ERROR]",
-		"turnOP_args->(foe_op) was invalid: [%i]", foe_op);
-	kls_free(default_kls);
-	kls_free(temporary_kls);
-	exit(EXIT_SUCCESS);
+        log_tag("debug_log.txt", "[ERROR]",
+                "turnOP_args->(foe_op) was invalid: [%i]", foe_op);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_SUCCESS);
     }
 
     int isBoss = -1;
@@ -66,636 +66,636 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
     //Log operation code
     log_OP(op);
     switch (op) {
-    case OP_INVALID:{
-	    //No_OP, but unexpected
-	    log_tag("debug_log.txt", "[ERROR]",
-		    "Done turnOP() on an OP_INVALID opcode.");
-	}
-	break;
-    case OP_NEW_GAME:{
-	    res = NO_OP;
-	}
-	break;
-    case OP_LOAD_GAME:{
-	    if (load_info == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(load_info) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    load_info->is_new_game = 0;
-	    res = OP_OK;
-	}
-	break;
-    case OP_LOAD_ENEMYROOM:{
-	    if (load_info == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(load_info) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    load_info = args->load_info;
-	    if (load_info == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_ENEMYROOM");
-		return res;
-	    }
-	    save_file = args->save_file;
+    case OP_INVALID: {
+        //No_OP, but unexpected
+        log_tag("debug_log.txt", "[ERROR]",
+                "Done turnOP() on an OP_INVALID opcode.");
+    }
+    break;
+    case OP_NEW_GAME: {
+        res = NO_OP;
+    }
+    break;
+    case OP_LOAD_GAME: {
+        if (load_info == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(load_info) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        load_info->is_new_game = 0;
+        res = OP_OK;
+    }
+    break;
+    case OP_LOAD_ENEMYROOM: {
+        if (load_info == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(load_info) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        load_info = args->load_info;
+        if (load_info == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_ENEMYROOM");
+            return res;
+        }
+        save_file = args->save_file;
 
-	    if (save_file == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(save_file) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    int *ptr_to_loaded_enemy_index = &(load_info->enemy_index);
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "*(ptr_to_loaded_enemy_index) == [%i]",
-		    *ptr_to_loaded_enemy_index);
-	    int *ptr_to_loaded_roomtotalenemies =
-		(load_info->ptr_to_roomtotalenemies);
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "*(ptr_to_loaded_roomtotalenemies) == [%i]",
-		    *ptr_to_loaded_roomtotalenemies);
-	    int *ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "*(ptr_to_loaded_roomindex) == [%i]",
-		    *ptr_to_loaded_roomindex);
-	    int *tot_foes = &(load_info->total_foes);
-	    log_tag("debug_log.txt", "[TURNOP]", "*(tot_foes) == [%i]",
-		    *tot_foes);
-	    int *ptr_to_done_loading = &(load_info->done_loading);
-	    log_tag("debug_log.txt", "[TURNOP]", "*(done_loading) == [%i]",
-		    *ptr_to_done_loading);
-	    res =
-		handleLoadgame_Enemies(save_file, actor, path,
-				       load_info->loaded_enemy,
-				       ptr_to_loaded_enemy_index,
-				       ptr_to_loaded_roomtotalenemies,
-				       ptr_to_loaded_roomindex, tot_foes,
-				       ptr_to_done_loading, kls);
-	    //Log end of operation
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "Done operation: [%s] res: [%s (%i)]", stringFromTurnOP(op),
-		    stringFrom_OP_res(res), res);
+        if (save_file == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(save_file) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        int *ptr_to_loaded_enemy_index = &(load_info->enemy_index);
+        log_tag("debug_log.txt", "[TURNOP]",
+                "*(ptr_to_loaded_enemy_index) == [%i]",
+                *ptr_to_loaded_enemy_index);
+        int *ptr_to_loaded_roomtotalenemies =
+            (load_info->ptr_to_roomtotalenemies);
+        log_tag("debug_log.txt", "[TURNOP]",
+                "*(ptr_to_loaded_roomtotalenemies) == [%i]",
+                *ptr_to_loaded_roomtotalenemies);
+        int *ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
+        log_tag("debug_log.txt", "[TURNOP]",
+                "*(ptr_to_loaded_roomindex) == [%i]",
+                *ptr_to_loaded_roomindex);
+        int *tot_foes = &(load_info->total_foes);
+        log_tag("debug_log.txt", "[TURNOP]", "*(tot_foes) == [%i]",
+                *tot_foes);
+        int *ptr_to_done_loading = &(load_info->done_loading);
+        log_tag("debug_log.txt", "[TURNOP]", "*(done_loading) == [%i]",
+                *ptr_to_done_loading);
+        res =
+            handleLoadgame_Enemies(save_file, actor, path,
+                                   load_info->loaded_enemy,
+                                   ptr_to_loaded_enemy_index,
+                                   ptr_to_loaded_roomtotalenemies,
+                                   ptr_to_loaded_roomindex, tot_foes,
+                                   ptr_to_done_loading, kls);
+        //Log end of operation
+        log_tag("debug_log.txt", "[TURNOP]",
+                "Done operation: [%s] res: [%s (%i)]", stringFromTurnOP(op),
+                stringFrom_OP_res(res), res);
 
-	    log_tag(OPS_LOGFILE, "[RES]", "res: [%s (%i)]",
-		    stringFrom_OP_res(res), res);
+        log_tag(OPS_LOGFILE, "[RES]", "res: [%s (%i)]",
+                stringFrom_OP_res(res), res);
 
-	    return res;
-	}
-	break;
-    case OP_LOAD_HOMEROOM:{
-	    if (load_info == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(load_info) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    load_info = args->load_info;
-	    if (load_info == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_HOMEROOM");
-		return res;
-	    }
-	    save_file = args->save_file;
+        return res;
+    }
+    break;
+    case OP_LOAD_HOMEROOM: {
+        if (load_info == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(load_info) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        load_info = args->load_info;
+        if (load_info == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_HOMEROOM");
+            return res;
+        }
+        save_file = args->save_file;
 
-	    if (save_file == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(save_file) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    if (load_info->ptr_to_roomindex == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"load_info->ptr_to_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
-		return res;
-	    }
-	    int *ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
-	    if (ptr_to_loaded_roomindex == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"ptr_to_loaded_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
-		return res;
-	    }
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "*(ptr_to_loaded_roomindex) == [%i]",
-		    *ptr_to_loaded_roomindex);
+        if (save_file == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(save_file) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        if (load_info->ptr_to_roomindex == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "load_info->ptr_to_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
+            return res;
+        }
+        int *ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
+        if (ptr_to_loaded_roomindex == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "ptr_to_loaded_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
+            return res;
+        }
+        log_tag("debug_log.txt", "[TURNOP]",
+                "*(ptr_to_loaded_roomindex) == [%i]",
+                *ptr_to_loaded_roomindex);
 
-	    int *ptr_to_done_loading = &(load_info->done_loading);
-	    log_tag("debug_log.txt", "[TURNOP]", "*(done_loading) == [%i]",
-		    *ptr_to_done_loading);
-	    res =
-		handleLoadgame_Home(save_file, actor, path,
-				    ptr_to_loaded_roomindex,
-				    ptr_to_done_loading, kls);
-	    //Log end of operation
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "Done operation: [%s] res: [%s (%i)]", stringFromTurnOP(op),
-		    stringFrom_OP_res(res), res);
+        int *ptr_to_done_loading = &(load_info->done_loading);
+        log_tag("debug_log.txt", "[TURNOP]", "*(done_loading) == [%i]",
+                *ptr_to_done_loading);
+        res =
+            handleLoadgame_Home(save_file, actor, path,
+                                ptr_to_loaded_roomindex,
+                                ptr_to_done_loading, kls);
+        //Log end of operation
+        log_tag("debug_log.txt", "[TURNOP]",
+                "Done operation: [%s] res: [%s (%i)]", stringFromTurnOP(op),
+                stringFrom_OP_res(res), res);
 
-	    log_tag(OPS_LOGFILE, "[RES]", "res: [%s (%i)]",
-		    stringFrom_OP_res(res), res);
+        log_tag(OPS_LOGFILE, "[RES]", "res: [%s (%i)]",
+                stringFrom_OP_res(res), res);
 
-	    return res;
-	}
-	break;
-    case OP_FIGHT:{
-	    if (notify_win == NULL) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"Notification WINDOW pointer was null in turnOP(OP_FIGHT)");
-		exit(EXIT_FAILURE);
-	    }
-	    if (room == NULL) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"Room pointer was null in turnOP(OP_FIGHT)");
-		exit(EXIT_FAILURE);
-	    }
-	    if (foe_op == FOE_OP_INVALID) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"foe_op was FOE_OP_INVALID in turnOP(OP_FIGHT)");
-		exit(EXIT_FAILURE);
-	    } else if (foe_op < 0 || foe_op > FOETURNOP_MAX) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"foe_op was invalid in turnOP(OP_FIGHT): [%i]", foe_op);
-		exit(EXIT_FAILURE);
-	    }
-	    room_index = room->index;
-	    if (room->class == ENEMIES && enemy == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Enemy pointer was null in turnOP(OP_FIGHT) for ENEMIES room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class == BOSS && boss == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Boss pointer was null in turnOP(OP_FIGHT) for BOSS room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class != ENEMIES && room->class != BOSS) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Invalid room class in turnOP(OP_FIGHT): (%s [%i])",
-			stringFromRoom(room->class), room->class);
-		exit(EXIT_FAILURE);
-	    }
-	    switch (room->class) {
-	    case ENEMIES:{
-		    enemy_index = enemy->index;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (%i) (OP_FIGHT), isBoss == 0",
-			    enemy->index);
-		    isBoss = 0;
-		    res =
-			OP_res_from_fightResult(defer_fight_enemy
-						(actor, enemy, foe_op,
-						 notify_win, kls));
-		}
-		break;
-	    case BOSS:{
-		    enemy_index = 0;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (0) (OP_FIGHT), isBoss == 1");
-		    isBoss = 1;
-		    res =
-			OP_res_from_fightResult(defer_fight_boss
-						(actor, boss, path, foe_op,
-						 notify_win, kls));
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Invalid room value in turnOP(OP_FIGHT): [%s (%i)]",
-			    stringFromRoom(room->class), room->class);
-		    exit(EXIT_FAILURE);
+        return res;
+    }
+    break;
+    case OP_FIGHT: {
+        if (notify_win == NULL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "Notification WINDOW pointer was null in turnOP(OP_FIGHT)");
+            exit(EXIT_FAILURE);
+        }
+        if (room == NULL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "Room pointer was null in turnOP(OP_FIGHT)");
+            exit(EXIT_FAILURE);
+        }
+        if (foe_op == FOE_OP_INVALID) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "foe_op was FOE_OP_INVALID in turnOP(OP_FIGHT)");
+            exit(EXIT_FAILURE);
+        } else if (foe_op < 0 || foe_op > FOETURNOP_MAX) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "foe_op was invalid in turnOP(OP_FIGHT): [%i]", foe_op);
+            exit(EXIT_FAILURE);
+        }
+        room_index = room->index;
+        if (room->class == ENEMIES && enemy == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Enemy pointer was null in turnOP(OP_FIGHT) for ENEMIES room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class == BOSS && boss == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Boss pointer was null in turnOP(OP_FIGHT) for BOSS room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class != ENEMIES && room->class != BOSS) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Invalid room class in turnOP(OP_FIGHT): (%s [%i])",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
+        }
+        switch (room->class) {
+        case ENEMIES: {
+            enemy_index = enemy->index;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (%i) (OP_FIGHT), isBoss == 0",
+                    enemy->index);
+            isBoss = 0;
+            res =
+                OP_res_from_fightResult(defer_fight_enemy
+                                        (actor, enemy, foe_op,
+                                         notify_win, kls));
+        }
+        break;
+        case BOSS: {
+            enemy_index = 0;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (0) (OP_FIGHT), isBoss == 1");
+            isBoss = 1;
+            res =
+                OP_res_from_fightResult(defer_fight_boss
+                                        (actor, boss, path, foe_op,
+                                         notify_win, kls));
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Invalid room value in turnOP(OP_FIGHT): [%s (%i)]",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
 
-		}
-		break;
-	    }
-	}
-	break;
-    case OP_SPECIAL:{
-	    if (room == NULL) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"Room pointer was null in turnOP(OP_SPECIAL)");
-		exit(EXIT_FAILURE);
-	    }
-	    room_index = room->index;
-	    if (room->class == ENEMIES && enemy == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Enemy pointer was null in turnOP(OP_SPECIAL) for ENEMIES room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class == BOSS && boss == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Boss pointer was null in turnOP(OP_SPECIAL) for BOSS room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class != ENEMIES && room->class != BOSS) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Invalid room class in turnOP(OP_SPECIAL): (%s [%i])",
-			stringFromRoom(room->class), room->class);
-		exit(EXIT_FAILURE);
-	    }
-	    switch (room->class) {
-	    case ENEMIES:{
-		    enemy_index = enemy->index;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (%i) (OP_SPECIAL), isBoss == 0",
-			    enemy->index);
-		    isBoss = 0;
-		}
-		break;
-	    case BOSS:{
-		    enemy_index = 0;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (0) (OP_SPECIAL), isBoss == 1");
-		    isBoss = 1;
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Invalid room value in turnOP(OP_SPECIAL): [%s (%i)]",
-			    stringFromRoom(room->class), room->class);
-		    exit(EXIT_FAILURE);
+        }
+        break;
+        }
+    }
+    break;
+    case OP_SPECIAL: {
+        if (room == NULL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "Room pointer was null in turnOP(OP_SPECIAL)");
+            exit(EXIT_FAILURE);
+        }
+        room_index = room->index;
+        if (room->class == ENEMIES && enemy == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Enemy pointer was null in turnOP(OP_SPECIAL) for ENEMIES room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class == BOSS && boss == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Boss pointer was null in turnOP(OP_SPECIAL) for BOSS room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class != ENEMIES && room->class != BOSS) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Invalid room class in turnOP(OP_SPECIAL): (%s [%i])",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
+        }
+        switch (room->class) {
+        case ENEMIES: {
+            enemy_index = enemy->index;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (%i) (OP_SPECIAL), isBoss == 0",
+                    enemy->index);
+            isBoss = 0;
+        }
+        break;
+        case BOSS: {
+            enemy_index = 0;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (0) (OP_SPECIAL), isBoss == 1");
+            isBoss = 1;
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Invalid room value in turnOP(OP_SPECIAL): [%s (%i)]",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
 
-		}
-	    }
-	    handleSpecials(actor, enemy, boss, path, room_index, enemy_index,
-			   isBoss);
-	    res = OP_OK;
-	}
-	break;
-    case OP_CONSUMABLE:{
-	    if (room == NULL) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"Room pointer was null in turnOP(OP_CONSUMABLE)");
-		exit(EXIT_FAILURE);
-	    }
-	    room_index = room->index;
-	    if (room->class == ENEMIES && enemy == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Enemy pointer was null in turnOP(OP_CONSUMABLE) for ENEMIES room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class == BOSS && boss == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Boss pointer was null in turnOP(OP_CONSUMABLE) for BOSS room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class != ENEMIES && room->class != BOSS) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Invalid room class in turnOP(OP_CONSUMABLE): (%s [%i])",
-			stringFromRoom(room->class), room->class);
-		exit(EXIT_FAILURE);
-	    }
-	    switch (room->class) {
-	    case ENEMIES:{
-		    enemy_index = enemy->index;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (%i) (OP_CONSUMABLE), isBoss == 0",
-			    enemy->index);
-		    isBoss = 0;
-		}
-		break;
-	    case BOSS:{
-		    enemy_index = 0;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (0) (OP_CONSUMABLE), isBoss == 1");
-		    isBoss = 1;
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Invalid room value in turnOP(OP_CONSUMABLE): [%s (%i)]",
-			    stringFromRoom(room->class), room->class);
-		    exit(EXIT_FAILURE);
+        }
+        }
+        handleSpecials(actor, enemy, boss, path, room_index, enemy_index,
+                       isBoss);
+        res = OP_OK;
+    }
+    break;
+    case OP_CONSUMABLE: {
+        if (room == NULL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "Room pointer was null in turnOP(OP_CONSUMABLE)");
+            exit(EXIT_FAILURE);
+        }
+        room_index = room->index;
+        if (room->class == ENEMIES && enemy == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Enemy pointer was null in turnOP(OP_CONSUMABLE) for ENEMIES room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class == BOSS && boss == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Boss pointer was null in turnOP(OP_CONSUMABLE) for BOSS room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class != ENEMIES && room->class != BOSS) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Invalid room class in turnOP(OP_CONSUMABLE): (%s [%i])",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
+        }
+        switch (room->class) {
+        case ENEMIES: {
+            enemy_index = enemy->index;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (%i) (OP_CONSUMABLE), isBoss == 0",
+                    enemy->index);
+            isBoss = 0;
+        }
+        break;
+        case BOSS: {
+            enemy_index = 0;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (0) (OP_CONSUMABLE), isBoss == 1");
+            isBoss = 1;
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Invalid room value in turnOP(OP_CONSUMABLE): [%s (%i)]",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
 
-		}
-	    }
-	    handleConsumables(actor, enemy, boss, isBoss);
-	    res = OP_OK;
-	}
-	break;
-    case OP_SAVE:{
-	    if (GAMEMODE == Rogue) {
-		log_tag("debug_log.txt", "[WARN]",
-			"GAMEMODE was [Rogue] in turnOP(OP_SAVE)");
-		res = NO_OP;
-		break;
-	    }
-	    if (save_file == NULL) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"save_file pointer was null in turnOP(OP_SAVE)");
-		exit(EXIT_FAILURE);
-	    }
-	    if (load_info == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(load_info) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    if (room == NULL) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"Room pointer was null in turnOP(OP_SAVE)");
-		exit(EXIT_FAILURE);
-	    }
-	    room_index = room->index;
-	    if (room->class == ENEMIES && enemy == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Enemy pointer was null in turnOP(OP_SAVE) for ENEMIES room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class == BOSS && boss == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Boss pointer was null in turnOP(OP_SAVE) for BOSS room.");
-		exit(EXIT_FAILURE);
-	    }
+        }
+        }
+        handleConsumables(actor, enemy, boss, isBoss);
+        res = OP_OK;
+    }
+    break;
+    case OP_SAVE: {
+        if (GAMEMODE == Rogue) {
+            log_tag("debug_log.txt", "[WARN]",
+                    "GAMEMODE was [Rogue] in turnOP(OP_SAVE)");
+            res = NO_OP;
+            break;
+        }
+        if (save_file == NULL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "save_file pointer was null in turnOP(OP_SAVE)");
+            exit(EXIT_FAILURE);
+        }
+        if (load_info == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(load_info) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        if (room == NULL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "Room pointer was null in turnOP(OP_SAVE)");
+            exit(EXIT_FAILURE);
+        }
+        room_index = room->index;
+        if (room->class == ENEMIES && enemy == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Enemy pointer was null in turnOP(OP_SAVE) for ENEMIES room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class == BOSS && boss == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Boss pointer was null in turnOP(OP_SAVE) for BOSS room.");
+            exit(EXIT_FAILURE);
+        }
 
-	    if ((room->class != ENEMIES) && (room->class != HOME)) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Invalid room class in turnOP(OP_SAVE): (%s [%i])",
-			stringFromRoom(room->class), room->class);
-		exit(EXIT_FAILURE);
-	    }
+        if ((room->class != ENEMIES) && (room->class != HOME)) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Invalid room class in turnOP(OP_SAVE): (%s [%i])",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
+        }
 
-	    switch (room->class) {
-	    case ENEMIES:{
-		    enemy_index = enemy->index;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (%i) (OP_SAVE), isBoss == 0",
-			    enemy->index);
-		    isBoss = 0;
-		    load_info->save_type = ENEMIES_SAVE;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting save_type to ENEMIES_SAVE. [%s]",
-			    stringFrom_saveType(load_info->save_type));
-		}
-		break;
-	    case BOSS:{
-		    enemy_index = 0;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (0) (OP_SAVE), isBoss == 1");
-		    isBoss = 1;
-		}
-		break;
-	    case HOME:{
-		    enemy_index = -1;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (-1) (OP_SAVE), isBoss == -1");
-		    isBoss = -1;
-		    load_info->save_type = HOME_SAVE;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting save_type to HOME_SAVE. [%s]",
-			    stringFrom_saveType(load_info->save_type));
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Invalid room value in turnOP(OP_SAVE): [%s (%i)]",
-			    stringFromRoom(room->class), room->class);
-		    exit(EXIT_FAILURE);
+        switch (room->class) {
+        case ENEMIES: {
+            enemy_index = enemy->index;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (%i) (OP_SAVE), isBoss == 0",
+                    enemy->index);
+            isBoss = 0;
+            load_info->save_type = ENEMIES_SAVE;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting save_type to ENEMIES_SAVE. [%s]",
+                    stringFrom_saveType(load_info->save_type));
+        }
+        break;
+        case BOSS: {
+            enemy_index = 0;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (0) (OP_SAVE), isBoss == 1");
+            isBoss = 1;
+        }
+        break;
+        case HOME: {
+            enemy_index = -1;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (-1) (OP_SAVE), isBoss == -1");
+            isBoss = -1;
+            load_info->save_type = HOME_SAVE;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting save_type to HOME_SAVE. [%s]",
+                    stringFrom_saveType(load_info->save_type));
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Invalid room value in turnOP(OP_SAVE): [%s (%i)]",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
 
-		}
-	    }
-	    switch (load_info->save_type) {
-	    case ENEMIES_SAVE:{
-		    res =
-			handleSave_Enemies(save_file, actor, path, enemy,
-					   enemy_index, room->enemyTotal,
-					   room_index);
-		}
-		break;
-	    case HOME_SAVE:{
-		    res = handleSave_Home(save_file, actor, path, room_index);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Invalid save_type value in turnOP(OP_SAVE): (%i)",
-			    (int)load_info->save_type);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    }
-	}
-	break;
-    case OP_DEBUG:{
-	    if (gmst == NULL) {
-		log_tag("debug_log.txt", "[WARN]",
-			"Gamestate pointer was null in turnOP(OP_DEBUG)");
-		exit(EXIT_FAILURE);
-	    }
-	    if (room == NULL) {
-		log_tag("debug_log.txt", "[WARN]",
-			"Room pointer was null in turnOP(OP_DEBUG)");
-		exit(EXIT_FAILURE);
-	    }
-	    room_index = room->index;
-	    if (room->class == ENEMIES && enemy == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Enemy pointer was null in turnOP(OP_DEBUG) for ENEMIES room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class == BOSS && boss == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Boss pointer was null in turnOP(OP_DEBUG) for BOSS room.");
-		exit(EXIT_FAILURE);
-	    }
+        }
+        }
+        switch (load_info->save_type) {
+        case ENEMIES_SAVE: {
+            res =
+                handleSave_Enemies(save_file, actor, path, enemy,
+                                   enemy_index, room->enemyTotal,
+                                   room_index);
+        }
+        break;
+        case HOME_SAVE: {
+            res = handleSave_Home(save_file, actor, path, room_index);
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Invalid save_type value in turnOP(OP_SAVE): (%i)",
+                    (int)load_info->save_type);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        }
+    }
+    break;
+    case OP_DEBUG: {
+        if (gmst == NULL) {
+            log_tag("debug_log.txt", "[WARN]",
+                    "Gamestate pointer was null in turnOP(OP_DEBUG)");
+            exit(EXIT_FAILURE);
+        }
+        if (room == NULL) {
+            log_tag("debug_log.txt", "[WARN]",
+                    "Room pointer was null in turnOP(OP_DEBUG)");
+            exit(EXIT_FAILURE);
+        }
+        room_index = room->index;
+        if (room->class == ENEMIES && enemy == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Enemy pointer was null in turnOP(OP_DEBUG) for ENEMIES room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class == BOSS && boss == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Boss pointer was null in turnOP(OP_DEBUG) for BOSS room.");
+            exit(EXIT_FAILURE);
+        }
 
-	    switch (room->class) {
-	    case HOME:{
-		    enemy_index = -1;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (%i) (OP_DEBUG), isBoss == -1",
-			    enemy_index);
-		    isBoss = -1;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Doing endwin() before debug_generic()");
-		    endwin();
-		    debug_generic(gmst, actor, path, room_index, kls, t_kls);
-		    res = OP_OK;
-		}
-		break;
-	    case ENEMIES:{
-		    enemy_index = enemy->index;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (%i) (OP_DEBUG), isBoss == 0",
-			    enemy->index);
-		    isBoss = 0;
-		    debug_enemies_room(gmst, room, actor, enemy, path,
-				       room_index, enemy_index, kls, t_kls);
-		    res = OP_OK;
-		}
-		break;
-	    case BOSS:{
-		    enemy_index = 0;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (0) (OP_DEBUG), isBoss == 1");
-		    isBoss = 1;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Doing endwin() before debug_generic()");
-		    endwin();
-		    debug_generic(gmst, actor, path, room_index, kls, t_kls);
-		    res = OP_OK;
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Invalid room value in turnOP(OP_DEBUG): [%s (%i)]",
-			    stringFromRoom(room->class), room->class);
-		    exit(EXIT_FAILURE);
-		}
-	    }
-	}
-	break;
-    case OP_EQUIPS:{
-	    if (actor == NULL || path == NULL) {
-		if (actor == NULL)
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "turnOP_args->(actor) was NULL");
-		if (path == NULL)
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "turnOP_args->(path) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    handleEquips(actor, path);
-	    res = OP_OK;
-	};
-	break;
-    case OP_PERKS:{
-	    if (actor == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(actor) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    printActivePerks(actor);
-	    res = OP_OK;
-	}
-	break;
-    case OP_STATS:{
-	    if (actor == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(actor) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    handleStats(actor);
-	    res = OP_OK;
-	}
-	break;
-    case OP_ARTIFACTS:{
-	    if (actor == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"turnOP_args->(actor) was NULL");
-		//free(args);
-		log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-		return res;
-	    }
-	    handleArtifacts(actor);
-	    res = OP_OK;
-	}
-	break;
-    case OP_EXPLORE:{
-	    log_tag("debug_log.txt", "[DEBUG]", "Going to explore!");
-	    //The free of args should be done after the OP; in handleRoom_Home()
-	    res = NO_OP;
-	}
-	break;
-    case OP_QUIT:{
-	    quit(actor, room, load_info, t_kls);
-	    //FIXME
-	    //We can't free the turnOP_args, can we?
-	    //free(args);
-	    log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-	}
-	break;
-    case OP_SKILL:{
+        switch (room->class) {
+        case HOME: {
+            enemy_index = -1;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (%i) (OP_DEBUG), isBoss == -1",
+                    enemy_index);
+            isBoss = -1;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Doing endwin() before debug_generic()");
+            endwin();
+            debug_generic(gmst, actor, path, room_index, kls, t_kls);
+            res = OP_OK;
+        }
+        break;
+        case ENEMIES: {
+            enemy_index = enemy->index;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (%i) (OP_DEBUG), isBoss == 0",
+                    enemy->index);
+            isBoss = 0;
+            debug_enemies_room(gmst, room, actor, enemy, path,
+                               room_index, enemy_index, kls, t_kls);
+            res = OP_OK;
+        }
+        break;
+        case BOSS: {
+            enemy_index = 0;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (0) (OP_DEBUG), isBoss == 1");
+            isBoss = 1;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Doing endwin() before debug_generic()");
+            endwin();
+            debug_generic(gmst, actor, path, room_index, kls, t_kls);
+            res = OP_OK;
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Invalid room value in turnOP(OP_DEBUG): [%s (%i)]",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
+        }
+        }
+    }
+    break;
+    case OP_EQUIPS: {
+        if (actor == NULL || path == NULL) {
+            if (actor == NULL)
+                log_tag("debug_log.txt", "[ERROR]",
+                        "turnOP_args->(actor) was NULL");
+            if (path == NULL)
+                log_tag("debug_log.txt", "[ERROR]",
+                        "turnOP_args->(path) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        handleEquips(actor, path);
+        res = OP_OK;
+    };
+    break;
+    case OP_PERKS: {
+        if (actor == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(actor) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        printActivePerks(actor);
+        res = OP_OK;
+    }
+    break;
+    case OP_STATS: {
+        if (actor == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(actor) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        handleStats(actor);
+        res = OP_OK;
+    }
+    break;
+    case OP_ARTIFACTS: {
+        if (actor == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "turnOP_args->(actor) was NULL");
+            //free(args);
+            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+            return res;
+        }
+        handleArtifacts(actor);
+        res = OP_OK;
+    }
+    break;
+    case OP_EXPLORE: {
+        log_tag("debug_log.txt", "[DEBUG]", "Going to explore!");
+        //The free of args should be done after the OP; in handleRoom_Home()
+        res = NO_OP;
+    }
+    break;
+    case OP_QUIT: {
+        quit(actor, room, load_info, t_kls);
+        //FIXME
+        //We can't free the turnOP_args, can we?
+        //free(args);
+        log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+    }
+    break;
+    case OP_SKILL: {
 
-	    log_tag("debug_log.txt", "[DEBUG]", "OP_SKILL");
+        log_tag("debug_log.txt", "[DEBUG]", "OP_SKILL");
 
-	    res = NO_OP;
+        res = NO_OP;
 
-	    if (notify_win == NULL) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"Notification WINDOW pointer was null in turnOP(OP_SKILL)");
-		exit(EXIT_FAILURE);
-	    }
-	    if (room == NULL) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"Room pointer was null in turnOP(OP_SKILL)");
-		exit(EXIT_FAILURE);
-	    }
-	    if (foe_op == FOE_OP_INVALID) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"foe_op was FOE_OP_INVALID in turnOP(OP_SKILL)");
-		exit(EXIT_FAILURE);
-	    } else if (foe_op < 0 || foe_op > FOETURNOP_MAX) {
-		log_tag("debug_log.txt", "[CRITICAL]",
-			"foe_op was invalid in turnOP(OP_SKILL): [%i]", foe_op);
-		exit(EXIT_FAILURE);
-	    }
-	    room_index = room->index;
-	    if (room->class == ENEMIES && enemy == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Enemy pointer was null in turnOP(OP_SKILL) for ENEMIES room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class == BOSS && boss == NULL) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Boss pointer was null in turnOP(OP_SKILL) for BOSS room.");
-		exit(EXIT_FAILURE);
-	    } else if (room->class != ENEMIES && room->class != BOSS) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Invalid room class in turnOP(OP_SKILL): (%s [%i])",
-			stringFromRoom(room->class), room->class);
-		exit(EXIT_FAILURE);
-	    }
-	    switch (room->class) {
-	    case ENEMIES:{
-		    enemy_index = enemy->index;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (%i) (OP_SKILL), isBoss == 0",
-			    enemy->index);
-		    isBoss = 0;
-		    //TODO
-		    //Implement the missing function to wrap skill usage and foe op
-		    //res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, foe_op, notify_win, kls));
-		}
-		break;
-	    case BOSS:{
-		    enemy_index = 0;
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Setting enemy_index to (0) (OP_SKILL), isBoss == 1");
-		    isBoss = 1;
-		    //TODO
-		    //Implement the missing function to wrap skill usage and foe op
-		    //res = OP_res_from_fightResult(defer_skill_boss(actor, boss, path, foe_op, notify_win, kls));
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Invalid room value in turnOP(OP_FIGHT): [%s (%i)]",
-			    stringFromRoom(room->class), room->class);
-		    exit(EXIT_FAILURE);
+        if (notify_win == NULL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "Notification WINDOW pointer was null in turnOP(OP_SKILL)");
+            exit(EXIT_FAILURE);
+        }
+        if (room == NULL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "Room pointer was null in turnOP(OP_SKILL)");
+            exit(EXIT_FAILURE);
+        }
+        if (foe_op == FOE_OP_INVALID) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "foe_op was FOE_OP_INVALID in turnOP(OP_SKILL)");
+            exit(EXIT_FAILURE);
+        } else if (foe_op < 0 || foe_op > FOETURNOP_MAX) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "foe_op was invalid in turnOP(OP_SKILL): [%i]", foe_op);
+            exit(EXIT_FAILURE);
+        }
+        room_index = room->index;
+        if (room->class == ENEMIES && enemy == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Enemy pointer was null in turnOP(OP_SKILL) for ENEMIES room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class == BOSS && boss == NULL) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Boss pointer was null in turnOP(OP_SKILL) for BOSS room.");
+            exit(EXIT_FAILURE);
+        } else if (room->class != ENEMIES && room->class != BOSS) {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Invalid room class in turnOP(OP_SKILL): (%s [%i])",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
+        }
+        switch (room->class) {
+        case ENEMIES: {
+            enemy_index = enemy->index;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (%i) (OP_SKILL), isBoss == 0",
+                    enemy->index);
+            isBoss = 0;
+            //TODO
+            //Implement the missing function to wrap skill usage and foe op
+            //res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, foe_op, notify_win, kls));
+        }
+        break;
+        case BOSS: {
+            enemy_index = 0;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (0) (OP_SKILL), isBoss == 1");
+            isBoss = 1;
+            //TODO
+            //Implement the missing function to wrap skill usage and foe op
+            //res = OP_res_from_fightResult(defer_skill_boss(actor, boss, path, foe_op, notify_win, kls));
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Invalid room value in turnOP(OP_FIGHT): [%s (%i)]",
+                    stringFromRoom(room->class), room->class);
+            exit(EXIT_FAILURE);
 
-		}
-		break;
-	    }
-	}
-	break;
-    default:{
-	    log_tag(OPS_LOGFILE, "[ERROR]", "Invalid OP in turnOP()");
-	    log_tag("debug_log.txt", "[ERROR]", "Invalid OP in turnOP()");
-	}
-	break;
+        }
+        break;
+        }
+    }
+    break;
+    default: {
+        log_tag(OPS_LOGFILE, "[ERROR]", "Invalid OP in turnOP()");
+        log_tag("debug_log.txt", "[ERROR]", "Invalid OP in turnOP()");
+    }
+    break;
     }
 
     //Log end of operation
     log_tag("debug_log.txt", "[TURNOP]", "Done operation: [%s] res: [%s (%i)]",
-	    stringFromTurnOP(op), stringFrom_OP_res(res), res);
+            stringFromTurnOP(op), stringFrom_OP_res(res), res);
 
     log_tag(OPS_LOGFILE, "[RES]", "res: [%s (%i)]", stringFrom_OP_res(res),
-	    res);
+            res);
 
     return res;
 }
@@ -760,11 +760,11 @@ void resetBossStatus(Boss *b)
 effect_fun getStatusCounterFun(fighterStatus status)
 {
     switch (status) {
-	//case Normal: {
-    default:{
-	    return &resetFighterStatus;
-	}
-	break;
+    //case Normal: {
+    default: {
+        return &resetFighterStatus;
+    }
+    break;
     };
 }
 
@@ -778,11 +778,11 @@ effect_fun getStatusCounterFun(fighterStatus status)
 effect_e_fun getStatusCounterEnemyFun(fighterStatus status)
 {
     switch (status) {
-	//case Normal: {
-    default:{
-	    return &resetEnemyStatus;
-	}
-	break;
+    //case Normal: {
+    default: {
+        return &resetEnemyStatus;
+    }
+    break;
     };
 }
 
@@ -796,11 +796,11 @@ effect_e_fun getStatusCounterEnemyFun(fighterStatus status)
 effect_b_fun getStatusCounterBossFun(fighterStatus status)
 {
     switch (status) {
-	//case Normal: {
-    default:{
-	    return &resetBossStatus;
-	}
-	break;
+    //case Normal: {
+    default: {
+        return &resetBossStatus;
+    }
+    break;
     };
 }
 
@@ -1027,28 +1027,28 @@ boost_fun getStatBoostCounterFun(Stat s)
 {
 
     switch (s) {
-    case ATK:{
-	    return &set_turnboost_atk;
-	}
-	break;
-    case DEF:{
-	    return &set_turnboost_def;
-	}
-	break;
-    case VEL:{
-	    return &set_turnboost_vel;
-	}
-	break;
-    case ENR:{
-	    return &set_turnboost_enr;
-	}
-	break;
-    default:{
-	    log_tag("debug_log.txt", "[ERROR]",
-		    "Invalid stat value in getStatBoostCounterFun()");
-	    exit(EXIT_FAILURE);
-	}
-	break;
+    case ATK: {
+        return &set_turnboost_atk;
+    }
+    break;
+    case DEF: {
+        return &set_turnboost_def;
+    }
+    break;
+    case VEL: {
+        return &set_turnboost_vel;
+    }
+    break;
+    case ENR: {
+        return &set_turnboost_enr;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Invalid stat value in getStatBoostCounterFun()");
+        exit(EXIT_FAILURE);
+    }
+    break;
     };
 }
 
@@ -1063,28 +1063,28 @@ boost_e_fun getStatBoostCounterEnemyFun(Stat s)
 {
 
     switch (s) {
-    case ATK:{
-	    return &set_enemy_turnboost_atk;
-	}
-	break;
-    case DEF:{
-	    return &set_enemy_turnboost_def;
-	}
-	break;
-    case VEL:{
-	    return &set_enemy_turnboost_vel;
-	}
-	break;
-    case ENR:{
-	    return &set_enemy_turnboost_enr;
-	}
-	break;
-    default:{
-	    log_tag("debug_log.txt", "[ERROR]",
-		    "Invalid stat value in getStatBoostCounterEnemyFun()");
-	    exit(EXIT_FAILURE);
-	}
-	break;
+    case ATK: {
+        return &set_enemy_turnboost_atk;
+    }
+    break;
+    case DEF: {
+        return &set_enemy_turnboost_def;
+    }
+    break;
+    case VEL: {
+        return &set_enemy_turnboost_vel;
+    }
+    break;
+    case ENR: {
+        return &set_enemy_turnboost_enr;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Invalid stat value in getStatBoostCounterEnemyFun()");
+        exit(EXIT_FAILURE);
+    }
+    break;
     };
 }
 
@@ -1099,28 +1099,28 @@ boost_b_fun getStatBoostCounterBossFun(Stat s)
 {
 
     switch (s) {
-    case ATK:{
-	    return &set_boss_turnboost_atk;
-	}
-	break;
-    case DEF:{
-	    return &set_boss_turnboost_def;
-	}
-	break;
-    case VEL:{
-	    return &set_boss_turnboost_vel;
-	}
-	break;
-    case ENR:{
-	    return &set_boss_turnboost_enr;
-	}
-	break;
-    default:{
-	    log_tag("debug_log.txt", "[ERROR]",
-		    "Invalid stat value in getStatBoostCounterBossFun()");
-	    exit(EXIT_FAILURE);
-	}
-	break;
+    case ATK: {
+        return &set_boss_turnboost_atk;
+    }
+    break;
+    case DEF: {
+        return &set_boss_turnboost_def;
+    }
+    break;
+    case VEL: {
+        return &set_boss_turnboost_vel;
+    }
+    break;
+    case ENR: {
+        return &set_boss_turnboost_enr;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Invalid stat value in getStatBoostCounterBossFun()");
+        exit(EXIT_FAILURE);
+    }
+    break;
     };
 }
 
@@ -1135,28 +1135,28 @@ boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s)
 {
 
     switch (s) {
-    case ATK:{
-	    return &set_foeparty_turnboost_atk;
-	}
-	break;
-    case DEF:{
-	    return &set_foeparty_turnboost_def;
-	}
-	break;
-    case VEL:{
-	    return &set_foeparty_turnboost_vel;
-	}
-	break;
-    case ENR:{
-	    return &set_foeparty_turnboost_enr;
-	}
-	break;
-    default:{
-	    log_tag("debug_log.txt", "[ERROR]",
-		    "Invalid stat value in getStatBoostCounter_FoeParty_Fun()");
-	    exit(EXIT_FAILURE);
-	}
-	break;
+    case ATK: {
+        return &set_foeparty_turnboost_atk;
+    }
+    break;
+    case DEF: {
+        return &set_foeparty_turnboost_def;
+    }
+    break;
+    case VEL: {
+        return &set_foeparty_turnboost_vel;
+    }
+    break;
+    case ENR: {
+        return &set_foeparty_turnboost_enr;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Invalid stat value in getStatBoostCounter_FoeParty_Fun()");
+        exit(EXIT_FAILURE);
+    }
+    break;
     };
 }
 
@@ -1176,22 +1176,22 @@ void initPerks(Fighter *f, Koliseo *kls)
     //Ordering of i corresponds to perksClass enum
     int total = (PERKSMAX + 1);
     for (int i = 0; i < total; i++) {
-	kls_log(kls, "DEBUG", "Prepping Perk (%i)", i);
-	Perk *p =
-	    (Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
-	p->class = i;
-	char *name = nameStringFromPerk(i);
-	char *desc = descStringFromPerk(i);
+        kls_log(kls, "DEBUG", "Prepping Perk (%i)", i);
+        Perk *p =
+            (Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
+        p->class = i;
+        char *name = nameStringFromPerk(i);
+        char *desc = descStringFromPerk(i);
 
-	//p->name = name; //(char*)malloc(sizeof(name));
-	strcpy(p->name, name);
+        //p->name = name; //(char*)malloc(sizeof(name));
+        strcpy(p->name, name);
 
-	//p->desc = (char*)malloc(sizeof(desc));
-	strcpy(p->desc, desc);
+        //p->desc = (char*)malloc(sizeof(desc));
+        strcpy(p->desc, desc);
 
-	p->innerValue = 0;
+        p->innerValue = 0;
 
-	f->perks[i] = p;
+        f->perks[i] = p;
     }
 }
 
@@ -1208,10 +1208,10 @@ void applyEquipPerks(Equip *e, Fighter *f)
 {
 
     for (int i = 0; i < (e->perksCount); i++) {
-	Perk *p = e->perks[i];
+        Perk *p = e->perks[i];
 
-	Perk *fighterPerk = f->perks[p->class];
-	fighterPerk->innerValue += 1;
+        Perk *fighterPerk = f->perks[p->class];
+        fighterPerk->innerValue += 1;
     }
 }
 
@@ -1228,10 +1228,10 @@ void removeEquipPerks(Equip *e, Fighter *f)
 {
 
     for (int i = 0; i < (e->perksCount); i++) {
-	Perk *p = e->perks[i];
+        Perk *p = e->perks[i];
 
-	Perk *fighterPerk = f->perks[p->class];
-	fighterPerk->innerValue -= 1;
+        Perk *fighterPerk = f->perks[p->class];
+        fighterPerk->innerValue -= 1;
     }
 }
 
@@ -1283,29 +1283,29 @@ void printActivePerks(Fighter *f)
     int count = PERKSMAX + 1;
 
     for (int i = 0; i < count; i++) {
-	Perk *p = f->perks[i];
-	if (p->innerValue > 0) {
-	    empty = 0;
+        Perk *p = f->perks[i];
+        if (p->innerValue > 0) {
+            empty = 0;
 
-	    wattron(win, COLOR_PAIR(S4C_CYAN));
-	    mvwprintw(win, y, x, " x%i %s ", p->innerValue,
-		      nameStringFromPerk(p->class));
-	    wattroff(win, COLOR_PAIR(S4C_CYAN));
-	    char s[250];
-	    sprintf(s, " x%i %s", p->innerValue, nameStringFromPerk(p->class));
-	    int l = strlen(s);
-	    wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-	    mvwprintw(win, y, x + l + 2, "\"%s\"",
-		      descStringFromPerk(p->class));
-	    wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-	    y++;
-	}
+            wattron(win, COLOR_PAIR(S4C_CYAN));
+            mvwprintw(win, y, x, " x%i %s ", p->innerValue,
+                      nameStringFromPerk(p->class));
+            wattroff(win, COLOR_PAIR(S4C_CYAN));
+            char s[250];
+            sprintf(s, " x%i %s", p->innerValue, nameStringFromPerk(p->class));
+            int l = strlen(s);
+            wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+            mvwprintw(win, y, x + l + 2, "\"%s\"",
+                      descStringFromPerk(p->class));
+            wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+            y++;
+        }
     };
 
     if (empty) {		//No perks are active
-	wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-	mvwprintw(win, y, x, "You don't have any special power yet.");
-	wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+        wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+        mvwprintw(win, y, x, "You don't have any special power yet.");
+        wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     }
 
     refresh();
@@ -1315,13 +1315,13 @@ void printActivePerks(Fighter *f)
     wrefresh(win);
 
     while (!picked && (c = wgetch(win)) != 'q') {
-	switch (c) {
-	case 10:{		/*Enter */
-		picked = 1;
+        switch (c) {
+        case 10: {		/*Enter */
+            picked = 1;
 
-	    };
-	    break;
-	}
+        };
+        break;
+        }
     }
     delwin(win);
     endwin();
@@ -1348,132 +1348,132 @@ void initCounters(Fighter *f, Koliseo *kls)
     //Ordering of i corresponds to counterIndexes enum
     int total = (COUNTERSMAX + 1);
     for (int i = 0; i < total; i++) {
-	log_tag("debug_log.txt", "[DEBUG]", "Prepping Turncounter (%i)", i);
-	kls_log(kls, "DEBUG", "Prepping Turncounter (%i)", i);
-	Turncounter *c =
-	    (Turncounter *) KLS_PUSH_TYPED(kls, Turncounter, 1, HR_Turncounter,
-					   "Turncounter", "Turncounter");
+        log_tag("debug_log.txt", "[DEBUG]", "Prepping Turncounter (%i)", i);
+        kls_log(kls, "DEBUG", "Prepping Turncounter (%i)", i);
+        Turncounter *c =
+            (Turncounter *) KLS_PUSH_TYPED(kls, Turncounter, 1, HR_Turncounter,
+                                           "Turncounter", "Turncounter");
 
-	//First, prepare counters for statuses
-	if (i < STATUSMAX + 1) {
-	    c->desc =
-		(char *)KLS_PUSH_TYPED(kls, char *, sizeof(stringFromStatus(i)),
-				       HR_Turncounter_desc, "Turncounter desc",
-				       "Turncounter desc");
-	    strcpy(c->desc, stringFromStatus(i));
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Allocated size %lu for status counter: (%s)",
-		    sizeof(stringFromStatus(i)), c->desc);
-	    kls_log(kls, "DEBUG", "Allocated size %lu for status counter: (%s)",
-		    sizeof(stringFromStatus(i)), c->desc);
+        //First, prepare counters for statuses
+        if (i < STATUSMAX + 1) {
+            c->desc =
+                (char *)KLS_PUSH_TYPED(kls, char *, sizeof(stringFromStatus(i)),
+                                       HR_Turncounter_desc, "Turncounter desc",
+                                       "Turncounter desc");
+            strcpy(c->desc, stringFromStatus(i));
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Allocated size %lu for status counter: (%s)",
+                    sizeof(stringFromStatus(i)), c->desc);
+            kls_log(kls, "DEBUG", "Allocated size %lu for status counter: (%s)",
+                    sizeof(stringFromStatus(i)), c->desc);
 
-	    c->effect_fun = getStatusCounterFun(i);
-	    //sprintf(msg,"Status function pointer is: (%i)", (int) *(c->effect_fun));
-	    //log_tag("debug_log.txt","[DEBUG]",msg);
-	    c->type = CNT_STATUS;
+            c->effect_fun = getStatusCounterFun(i);
+            //sprintf(msg,"Status function pointer is: (%i)", (int) *(c->effect_fun));
+            //log_tag("debug_log.txt","[DEBUG]",msg);
+            c->type = CNT_STATUS;
 
-	    //Register function for the specific status counter
-	    //
-	    //REGISTER_COUNTER_CALLBACK(i,resetFighterStatus);
-	    //
-	    //Why does uncommenting this cause problems to special moves callback?
-	    //More specific, ONLY MAGE MOVES
-	    //debug
-	    //printf("%s",stringFromStatus(j));
-	} else {		//Then, counters for boosts to (all?) stats
+            //Register function for the specific status counter
+            //
+            //REGISTER_COUNTER_CALLBACK(i,resetFighterStatus);
+            //
+            //Why does uncommenting this cause problems to special moves callback?
+            //More specific, ONLY MAGE MOVES
+            //debug
+            //printf("%s",stringFromStatus(j));
+        } else {		//Then, counters for boosts to (all?) stats
 
-	    switch (i) {
-	    case TURNBOOST_ATK:{
-		    c->desc =
-			(char *)KLS_PUSH_TYPED(kls, char *, sizeof("ATK boost"),
-					       HR_Turncounter_desc,
-					       "Turncounter desc",
-					       "Turncounter desc");
-		    strcpy(c->desc, "ATK boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ATK boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ATK boost"), c->desc);
+            switch (i) {
+            case TURNBOOST_ATK: {
+                c->desc =
+                    (char *)KLS_PUSH_TYPED(kls, char *, sizeof("ATK boost"),
+                                           HR_Turncounter_desc,
+                                           "Turncounter desc",
+                                           "Turncounter desc");
+                strcpy(c->desc, "ATK boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ATK boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ATK boost"), c->desc);
 
-		    c->boost_fun = getStatBoostCounterFun(ATK);
-		    c->type = CNT_ATKBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_DEF:{
-		    c->desc =
-			(char *)KLS_PUSH_TYPED(kls, char *, sizeof("DEF boost"),
-					       HR_Turncounter_desc,
-					       "Turncounter desc",
-					       "Turncounter desc");
-		    strcpy(c->desc, "DEF boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("DEF boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("DEF boost"), c->desc);
+                c->boost_fun = getStatBoostCounterFun(ATK);
+                c->type = CNT_ATKBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_DEF: {
+                c->desc =
+                    (char *)KLS_PUSH_TYPED(kls, char *, sizeof("DEF boost"),
+                                           HR_Turncounter_desc,
+                                           "Turncounter desc",
+                                           "Turncounter desc");
+                strcpy(c->desc, "DEF boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("DEF boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("DEF boost"), c->desc);
 
-		    c->boost_fun = getStatBoostCounterFun(DEF);
-		    c->type = CNT_DEFBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_VEL:{
-		    c->desc =
-			(char *)KLS_PUSH_TYPED(kls, char *, sizeof("VEL boost"),
-					       HR_Turncounter_desc,
-					       "Turncounter desc",
-					       "Turncounter desc");
-		    strcpy(c->desc, "VEL boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("VEL boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("VEL boost"), c->desc);
+                c->boost_fun = getStatBoostCounterFun(DEF);
+                c->type = CNT_DEFBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_VEL: {
+                c->desc =
+                    (char *)KLS_PUSH_TYPED(kls, char *, sizeof("VEL boost"),
+                                           HR_Turncounter_desc,
+                                           "Turncounter desc",
+                                           "Turncounter desc");
+                strcpy(c->desc, "VEL boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("VEL boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("VEL boost"), c->desc);
 
-		    c->boost_fun = getStatBoostCounterFun(VEL);
-		    c->type = CNT_VELBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_ENR:{
-		    c->desc =
-			(char *)KLS_PUSH_TYPED(kls, char *, sizeof("ENR boost"),
-					       HR_Turncounter_desc,
-					       "Turncounter desc",
-					       "Turncounter desc");
-		    strcpy(c->desc, "ENR boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ENR boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ENR boost"), c->desc);
+                c->boost_fun = getStatBoostCounterFun(VEL);
+                c->type = CNT_VELBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_ENR: {
+                c->desc =
+                    (char *)KLS_PUSH_TYPED(kls, char *, sizeof("ENR boost"),
+                                           HR_Turncounter_desc,
+                                           "Turncounter desc",
+                                           "Turncounter desc");
+                strcpy(c->desc, "ENR boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ENR boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ENR boost"), c->desc);
 
-		    c->boost_fun = getStatBoostCounterFun(ENR);
-		    c->type = CNT_ENRBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    default:{
-		    printf
-			("\n\nERROR in initCounters(): unexpected i: %i value \n\n",
-			 i);
-		    exit(EXIT_FAILURE);
-		}
-	    }
-	}			//End else
-	c->count = 0;
-	c->innerValue = 0;
-	f->counters[i] = (struct Turncounter *)c;
+                c->boost_fun = getStatBoostCounterFun(ENR);
+                c->type = CNT_ENRBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            default: {
+                printf
+                ("\n\nERROR in initCounters(): unexpected i: %i value \n\n",
+                 i);
+                exit(EXIT_FAILURE);
+            }
+            }
+        }			//End else
+        c->count = 0;
+        c->innerValue = 0;
+        f->counters[i] = (struct Turncounter *)c;
     };				//End for all counters
 }
 
@@ -1497,132 +1497,132 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
     int total = (COUNTERSMAX + 1);
     Koliseo *kls = t_kls->kls;
     for (int i = 0; i < total; i++) {
-	log_tag("debug_log.txt", "[DEBUG]", "Prepping enemy Turncounter (%i)",
-		i);
-	kls_log(kls, "DEBUG", "Prepping enemy Turncounter (%i)", i);
-	Turncounter *c =
-	    (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
-					     HR_Turncounter, "Turncounter",
-					     "Turncounter");
+        log_tag("debug_log.txt", "[DEBUG]", "Prepping enemy Turncounter (%i)",
+                i);
+        kls_log(kls, "DEBUG", "Prepping enemy Turncounter (%i)", i);
+        Turncounter *c =
+            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
+                                             HR_Turncounter, "Turncounter",
+                                             "Turncounter");
 
-	//First, prepare counters for statuses
-	if (i < STATUSMAX + 1) {
-	    c->desc =
-		(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-					 sizeof(stringFromStatus(i)),
-					 HR_Turncounter_desc,
-					 "Turncounter desc",
-					 "Turncounter desc");
-	    strcpy(c->desc, stringFromStatus(i));
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Allocated size %lu for enemy status counter: (%s)",
-		    sizeof(stringFromStatus(i)), c->desc);
-	    kls_log(kls, "DEBUG",
-		    "Allocated size %lu for enemy status counter: (%s)",
-		    sizeof(stringFromStatus(i)), c->desc);
+        //First, prepare counters for statuses
+        if (i < STATUSMAX + 1) {
+            c->desc =
+                (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                         sizeof(stringFromStatus(i)),
+                                         HR_Turncounter_desc,
+                                         "Turncounter desc",
+                                         "Turncounter desc");
+            strcpy(c->desc, stringFromStatus(i));
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Allocated size %lu for enemy status counter: (%s)",
+                    sizeof(stringFromStatus(i)), c->desc);
+            kls_log(kls, "DEBUG",
+                    "Allocated size %lu for enemy status counter: (%s)",
+                    sizeof(stringFromStatus(i)), c->desc);
 
-	    c->effect_e_fun = getStatusCounterEnemyFun(i);
-	    //sprintf(msg,"[DEBUG]    Enemy status function pointer is: (%i)", *(c->effect_e_fun));
-	    //log_tag("debug_log.txt","[DEBUG]",msg);
-	    c->type = CNT_STATUS;
+            c->effect_e_fun = getStatusCounterEnemyFun(i);
+            //sprintf(msg,"[DEBUG]    Enemy status function pointer is: (%i)", *(c->effect_e_fun));
+            //log_tag("debug_log.txt","[DEBUG]",msg);
+            c->type = CNT_STATUS;
 
-	} else {		//Then, counters for boosts to (all?) stats
+        } else {		//Then, counters for boosts to (all?) stats
 
-	    switch (i) {
-	    case TURNBOOST_ATK:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("ATK boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "ATK boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ATK boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ATK boost"), c->desc);
+            switch (i) {
+            case TURNBOOST_ATK: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("ATK boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "ATK boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ATK boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ATK boost"), c->desc);
 
-		    c->boost_e_fun = getStatBoostCounterEnemyFun(ATK);
-		    c->type = CNT_ATKBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_DEF:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("DEF boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "DEF boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("DEF boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("DEF boost"), c->desc);
+                c->boost_e_fun = getStatBoostCounterEnemyFun(ATK);
+                c->type = CNT_ATKBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_DEF: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("DEF boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "DEF boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("DEF boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("DEF boost"), c->desc);
 
-		    c->boost_e_fun = getStatBoostCounterEnemyFun(DEF);
-		    c->type = CNT_DEFBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_VEL:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("VEL boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "VEL boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("VEL boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("VEL boost"), c->desc);
+                c->boost_e_fun = getStatBoostCounterEnemyFun(DEF);
+                c->type = CNT_DEFBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_VEL: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("VEL boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "VEL boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("VEL boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("VEL boost"), c->desc);
 
-		    c->boost_e_fun = getStatBoostCounterEnemyFun(VEL);
-		    c->type = CNT_VELBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_ENR:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("ENR boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "ENR boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ENR boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ENR boost"), c->desc);
+                c->boost_e_fun = getStatBoostCounterEnemyFun(VEL);
+                c->type = CNT_VELBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_ENR: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("ENR boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "ENR boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ENR boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ENR boost"), c->desc);
 
-		    c->boost_e_fun = getStatBoostCounterEnemyFun(ENR);
-		    c->type = CNT_ENRBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "ERROR INITALISING TURNCOUNTER in initECounters()\n");
-		    exit(EXIT_FAILURE);
-		}
-	    }
-	}			//End else
-	c->count = 0;
-	c->innerValue = 0;
-	e->counters[i] = (struct Turncounter *)c;
+                c->boost_e_fun = getStatBoostCounterEnemyFun(ENR);
+                c->type = CNT_ENRBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "ERROR INITALISING TURNCOUNTER in initECounters()\n");
+                exit(EXIT_FAILURE);
+            }
+            }
+        }			//End else
+        c->count = 0;
+        c->innerValue = 0;
+        e->counters[i] = (struct Turncounter *)c;
     };
 }
 
@@ -1646,131 +1646,131 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
     int total = (COUNTERSMAX + 1);
     Koliseo *kls = t_kls->kls;
     for (int i = 0; i < total; i++) {
-	log_tag("debug_log.txt", "[DEBUG]", "Prepping boss counter %i", i);
-	kls_log(kls, "DEBUG", "Prepping boss counter %i", i);
-	Turncounter *c =
-	    (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
-					     HR_Turncounter, "Turncounter",
-					     "Turncounter");
+        log_tag("debug_log.txt", "[DEBUG]", "Prepping boss counter %i", i);
+        kls_log(kls, "DEBUG", "Prepping boss counter %i", i);
+        Turncounter *c =
+            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
+                                             HR_Turncounter, "Turncounter",
+                                             "Turncounter");
 
-	//First, prepare counters for statuses
-	if (i < STATUSMAX + 1) {
-	    c->desc =
-		(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-					 sizeof(stringFromStatus(i)),
-					 HR_Turncounter_desc,
-					 "Turncounter desc",
-					 "Turncounter desc");
-	    strcpy(c->desc, stringFromStatus(i));
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Allocated size %lu for boss status counter: (%s)",
-		    sizeof(stringFromStatus(i)), c->desc);
-	    kls_log(kls, "DEBUG",
-		    "Allocated size %lu for boss status counter: (%s)",
-		    sizeof(stringFromStatus(i)), c->desc);
+        //First, prepare counters for statuses
+        if (i < STATUSMAX + 1) {
+            c->desc =
+                (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                         sizeof(stringFromStatus(i)),
+                                         HR_Turncounter_desc,
+                                         "Turncounter desc",
+                                         "Turncounter desc");
+            strcpy(c->desc, stringFromStatus(i));
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Allocated size %lu for boss status counter: (%s)",
+                    sizeof(stringFromStatus(i)), c->desc);
+            kls_log(kls, "DEBUG",
+                    "Allocated size %lu for boss status counter: (%s)",
+                    sizeof(stringFromStatus(i)), c->desc);
 
-	    c->effect_b_fun = getStatusCounterBossFun(i);
-	    //sprintf(msg,"Boss status function pointer is: (%i)", *(c->effect_b_fun));
-	    //log_tag("debug_log.txt","[DEBUG]",msg);
-	    c->type = CNT_STATUS;
+            c->effect_b_fun = getStatusCounterBossFun(i);
+            //sprintf(msg,"Boss status function pointer is: (%i)", *(c->effect_b_fun));
+            //log_tag("debug_log.txt","[DEBUG]",msg);
+            c->type = CNT_STATUS;
 
-	} else {		//Then, counters for boosts to (all?) stats
+        } else {		//Then, counters for boosts to (all?) stats
 
-	    switch (i) {
-	    case TURNBOOST_ATK:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("ATK boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "ATK boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for boss stat counter: (%s)",
-			    sizeof("ATK boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for boss stat counter: (%s)",
-			    sizeof("ATK boost"), c->desc);
+            switch (i) {
+            case TURNBOOST_ATK: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("ATK boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "ATK boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for boss stat counter: (%s)",
+                        sizeof("ATK boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for boss stat counter: (%s)",
+                        sizeof("ATK boost"), c->desc);
 
-		    c->boost_b_fun = getStatBoostCounterBossFun(ATK);
-		    c->type = CNT_ATKBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_b_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_DEF:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("DEF boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "DEF boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for boss stat counter: (%s)",
-			    sizeof("DEF boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for boss stat counter: (%s)",
-			    sizeof("DEF boost"), c->desc);
+                c->boost_b_fun = getStatBoostCounterBossFun(ATK);
+                c->type = CNT_ATKBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_b_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_DEF: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("DEF boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "DEF boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for boss stat counter: (%s)",
+                        sizeof("DEF boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for boss stat counter: (%s)",
+                        sizeof("DEF boost"), c->desc);
 
-		    c->boost_b_fun = getStatBoostCounterBossFun(DEF);
-		    c->type = CNT_DEFBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_b_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_VEL:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("VEL boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "VEL boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for boss stat counter: (%s)",
-			    sizeof("VEL boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for boss stat counter: (%s)",
-			    sizeof("VEL boost"), c->desc);
+                c->boost_b_fun = getStatBoostCounterBossFun(DEF);
+                c->type = CNT_DEFBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_b_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_VEL: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("VEL boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "VEL boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for boss stat counter: (%s)",
+                        sizeof("VEL boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for boss stat counter: (%s)",
+                        sizeof("VEL boost"), c->desc);
 
-		    c->boost_b_fun = getStatBoostCounterBossFun(VEL);
-		    c->type = CNT_VELBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_b_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_ENR:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("ENR boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "ENR boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for boss stat counter: (%s)",
-			    sizeof("ENR boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for boss stat counter: (%s)",
-			    sizeof("ENR boost"), c->desc);
+                c->boost_b_fun = getStatBoostCounterBossFun(VEL);
+                c->type = CNT_VELBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_b_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_ENR: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("ENR boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "ENR boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for boss stat counter: (%s)",
+                        sizeof("ENR boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for boss stat counter: (%s)",
+                        sizeof("ENR boost"), c->desc);
 
-		    c->boost_b_fun = getStatBoostCounterBossFun(ENR);
-		    c->type = CNT_ENRBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_b_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "ERROR INITALISING TURNCOUNTER in initBCounters()\n");
-		    exit(EXIT_FAILURE);
-		}
-	    }
-	}			//End else
-	c->count = 0;
-	c->innerValue = 0;
-	b->counters[i] = (struct Turncounter *)c;
+                c->boost_b_fun = getStatBoostCounterBossFun(ENR);
+                c->type = CNT_ENRBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_b_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "ERROR INITALISING TURNCOUNTER in initBCounters()\n");
+                exit(EXIT_FAILURE);
+            }
+            }
+        }			//End else
+        c->count = 0;
+        c->innerValue = 0;
+        b->counters[i] = (struct Turncounter *)c;
     };
 }
 
@@ -1794,131 +1794,131 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
     int total = (COUNTERSMAX + 1);
     Koliseo *kls = t_kls->kls;
     for (int i = 0; i < total; i++) {
-	log_tag("debug_log.txt", "[DEBUG]", "Prepping foeparty counter %i", i);
-	kls_log(kls, "DEBUG", "Prepping foeparty counter %i", i);
-	Turncounter *c =
-	    (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
-					     HR_Turncounter, "Turncounter",
-					     "Turncounter");
+        log_tag("debug_log.txt", "[DEBUG]", "Prepping foeparty counter %i", i);
+        kls_log(kls, "DEBUG", "Prepping foeparty counter %i", i);
+        Turncounter *c =
+            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
+                                             HR_Turncounter, "Turncounter",
+                                             "Turncounter");
 
-	//First, prepare counters for statuses
-	if (i < STATUSMAX + 1) {
-	    c->desc =
-		(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-					 sizeof(stringFromStatus(i)),
-					 HR_Turncounter_desc,
-					 "Turncounter desc",
-					 "Turncounter desc");
-	    strcpy(c->desc, stringFromStatus(i));
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Allocated size %lu for foeparty status counter: (%s)",
-		    sizeof(stringFromStatus(i)), c->desc);
-	    kls_log(kls, "DEBUG",
-		    "Allocated size %lu for foeparty status counter: (%s)",
-		    sizeof(stringFromStatus(i)), c->desc);
+        //First, prepare counters for statuses
+        if (i < STATUSMAX + 1) {
+            c->desc =
+                (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                         sizeof(stringFromStatus(i)),
+                                         HR_Turncounter_desc,
+                                         "Turncounter desc",
+                                         "Turncounter desc");
+            strcpy(c->desc, stringFromStatus(i));
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Allocated size %lu for foeparty status counter: (%s)",
+                    sizeof(stringFromStatus(i)), c->desc);
+            kls_log(kls, "DEBUG",
+                    "Allocated size %lu for foeparty status counter: (%s)",
+                    sizeof(stringFromStatus(i)), c->desc);
 
-	    //c->effect_fp_fun = get_StatusCounter_FoeParty_Fun(i);
-	    //sprintf(msg,"Foeparty status function pointer is: (%i)", *(c->effect_b_fun));
-	    //log_tag("debug_log.txt","[DEBUG]",msg);
-	    c->type = CNT_STATUS;
+            //c->effect_fp_fun = get_StatusCounter_FoeParty_Fun(i);
+            //sprintf(msg,"Foeparty status function pointer is: (%i)", *(c->effect_b_fun));
+            //log_tag("debug_log.txt","[DEBUG]",msg);
+            c->type = CNT_STATUS;
 
-	} else {		//Then, counters for boosts to (all?) stats
+        } else {		//Then, counters for boosts to (all?) stats
 
-	    switch (i) {
-	    case TURNBOOST_ATK:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("ATK boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "ATK boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ATK boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ATK boost"), c->desc);
+            switch (i) {
+            case TURNBOOST_ATK: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("ATK boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "ATK boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ATK boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ATK boost"), c->desc);
 
-		    c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ATK);
-		    c->type = CNT_ATKBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fp_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_DEF:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("DEF boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "DEF boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("DEF boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("DEF boost"), c->desc);
+                c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ATK);
+                c->type = CNT_ATKBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fp_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_DEF: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("DEF boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "DEF boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("DEF boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("DEF boost"), c->desc);
 
-		    c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(DEF);
-		    c->type = CNT_DEFBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fp_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_VEL:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("VEL boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "VEL boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("VEL boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("VEL boost"), c->desc);
+                c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(DEF);
+                c->type = CNT_DEFBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fp_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_VEL: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("VEL boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "VEL boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("VEL boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("VEL boost"), c->desc);
 
-		    c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(VEL);
-		    c->type = CNT_VELBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fp_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    case TURNBOOST_ENR:{
-		    c->desc =
-			(char *)KLS_PUSH_T_TYPED(t_kls, char *,
-						 sizeof("ENR boost"),
-						 HR_Turncounter_desc,
-						 "Turncounter desc",
-						 "Turncounter desc");
-		    strcpy(c->desc, "ENR boost");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ENR boost"), c->desc);
-		    kls_log(kls, "DEBUG",
-			    "Allocated size %lu for status counter: (%s)",
-			    sizeof("ENR boost"), c->desc);
+                c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(VEL);
+                c->type = CNT_VELBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fp_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            case TURNBOOST_ENR: {
+                c->desc =
+                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
+                                             sizeof("ENR boost"),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
+                strcpy(c->desc, "ENR boost");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ENR boost"), c->desc);
+                kls_log(kls, "DEBUG",
+                        "Allocated size %lu for status counter: (%s)",
+                        sizeof("ENR boost"), c->desc);
 
-		    c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ENR);
-		    c->type = CNT_ENRBOOST;
-		    //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fp_fun));
-		    //log_tag("debug_log.txt","[DEBUG]",msg);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Invalid counter in initFoePartyCounters");
-		    exit(EXIT_FAILURE);
-		}
-	    }
-	}			//End else
-	c->count = 0;
-	c->innerValue = 0;
-	fp->counters[i] = (struct Turncounter *)c;
+                c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ENR);
+                c->type = CNT_ENRBOOST;
+                //sprintf(msg,"Stat boost function pointer is: (%i)", *(c->boost_fp_fun));
+                //log_tag("debug_log.txt","[DEBUG]",msg);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Invalid counter in initFoePartyCounters");
+                exit(EXIT_FAILURE);
+            }
+            }
+        }			//End else
+        c->count = 0;
+        c->innerValue = 0;
+        fp->counters[i] = (struct Turncounter *)c;
     };
 }
 
@@ -1933,19 +1933,19 @@ void printCounters(Turncounter *counters[])
 {
     yellow();
     printf
-	("%-10.10s\t%-10.10s\t%-3.3s\t%-3.3s\t%-11.11s\t%-11.11s\t%-11.11s\t%-11.11s\n",
-	 "Count", "Desc", "Val", "Typ", "*(eff())", "*(eff_e())", "*(boost())",
-	 "*(boost_e())");
+    ("%-10.10s\t%-10.10s\t%-3.3s\t%-3.3s\t%-11.11s\t%-11.11s\t%-11.11s\t%-11.11s\n",
+     "Count", "Desc", "Val", "Typ", "*(eff())", "*(eff_e())", "*(boost())",
+     "*(boost_e())");
     for (int i = 0; i < (COUNTERSMAX + 1); i++) {
-	Turncounter *c = counters[i];
-	lightBlue();
-	printf("%-10.10i\t%-10.10s\t", c->count, c->desc);
-	strongWhite();
-	printf("(%-3.3i)\t(%-3.3i)\t", c->innerValue, c->type);
-	purple();
-	//printf("[%-11.11i]\t[%-11.11i]\t",*(c->effect_fun),*(c->effect_e_fun));
-	cyan();
-	//printf("[%-11.11i]\t[%-11.11i]\n",*(c->boost_fun), *(c->boost_e_fun));
+        Turncounter *c = counters[i];
+        lightBlue();
+        printf("%-10.10i\t%-10.10s\t", c->count, c->desc);
+        strongWhite();
+        printf("(%-3.3i)\t(%-3.3i)\t", c->innerValue, c->type);
+        purple();
+        //printf("[%-11.11i]\t[%-11.11i]\t",*(c->effect_fun),*(c->effect_e_fun));
+        cyan();
+        //printf("[%-11.11i]\t[%-11.11i]\n",*(c->boost_fun), *(c->boost_e_fun));
     };
     white();
 }
@@ -1969,54 +1969,54 @@ void updateCounters(Turncounter *counters[], int isEnemy, Fighter *f, Enemy *e)
 {
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
 
-	Turncounter *c = counters[i];
-	if (c->count == 1) {	//Counter is about to expire so we call the correct function:
-	    switch (c->type) {
-	    case CNT_STATUS:{	//Callback for status counters
+        Turncounter *c = counters[i];
+        if (c->count == 1) {	//Counter is about to expire so we call the correct function:
+            switch (c->type) {
+            case CNT_STATUS: {	//Callback for status counters
 
-		    if (!isEnemy) {
-			(c->effect_fun) (f);
-			//green();
-			//printf("\t%s status returned to normal.\n",f->name);
-			//white();
-		    } else {	//Enemy function
-			(c->effect_e_fun) (e);
-			//lightRed();
-			//printf("\t%s status returned to normal.\n",stringFromEClass(e->class));
-			//white();
-			//TODO
-			//Display notification to win
-			log_tag("debug_log.txt", "[DEBUG-COUNTER]",
-				"Status reset for %s.",
-				stringFromEClass(e->class));
-		    }
-		}
-		break;
-	    case CNT_ATKBOOST:
-	    case CNT_DEFBOOST:
-	    case CNT_VELBOOST:
-	    case CNT_ENRBOOST:{//Callback for stat boosts
-		    if (!isEnemy) {
-			(c->boost_fun) (f, 0);	//Call ~setPermBoost(STAT)~ with value 0
-			log_tag("debug_log.txt", "[DEBUG-COUNTER]",
-				"Applied boost function for Fighter.");
-		    } else {
-			assert(0 && "UNACCESSIBLE CALL.\n");
-			(c->boost_e_fun) (e, 0);	//Call ~setPermBoost(STAT)~ with value 0
-		    }
-		}
-		break;
-	    }
+                if (!isEnemy) {
+                    (c->effect_fun) (f);
+                    //green();
+                    //printf("\t%s status returned to normal.\n",f->name);
+                    //white();
+                } else {	//Enemy function
+                    (c->effect_e_fun) (e);
+                    //lightRed();
+                    //printf("\t%s status returned to normal.\n",stringFromEClass(e->class));
+                    //white();
+                    //TODO
+                    //Display notification to win
+                    log_tag("debug_log.txt", "[DEBUG-COUNTER]",
+                            "Status reset for %s.",
+                            stringFromEClass(e->class));
+                }
+            }
+            break;
+            case CNT_ATKBOOST:
+            case CNT_DEFBOOST:
+            case CNT_VELBOOST:
+            case CNT_ENRBOOST: { //Callback for stat boosts
+                if (!isEnemy) {
+                    (c->boost_fun) (f, 0);	//Call ~setPermBoost(STAT)~ with value 0
+                    log_tag("debug_log.txt", "[DEBUG-COUNTER]",
+                            "Applied boost function for Fighter.");
+                } else {
+                    assert(0 && "UNACCESSIBLE CALL.\n");
+                    (c->boost_e_fun) (e, 0);	//Call ~setPermBoost(STAT)~ with value 0
+                }
+            }
+            break;
+            }
 
-	    //Set counter to zero
-	    c->count = 0;
-	    c->innerValue = 0;
-	} else if (c->count > 1) {	//We simply advance the count
-	    log_tag("debug_log.txt", "[DEBUG-COUNTER]",
-		    "Advancing counter %i for %s.", i,
-		    (isEnemy ? "Enemy" : "Fighter"));
-	    c->count -= 1;
-	}
+            //Set counter to zero
+            c->count = 0;
+            c->innerValue = 0;
+        } else if (c->count > 1) {	//We simply advance the count
+            log_tag("debug_log.txt", "[DEBUG-COUNTER]",
+                    "Advancing counter %i for %s.", i,
+                    (isEnemy ? "Enemy" : "Fighter"));
+            c->count -= 1;
+        }
     };
 }
 
@@ -2036,50 +2036,50 @@ void updateCounters(Turncounter *counters[], int isEnemy, Fighter *f, Enemy *e)
  * @param b The Boss pointer whose counters field will be updated if isBoss is true.
  */
 void updateCounters_Boss(Turncounter *counters[], int isBoss, Fighter *f,
-			 Boss *b)
+                         Boss *b)
 {
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
 
-	Turncounter *c = counters[i];
-	if (c->count == 1) {	//Counter is about to expire so we call the correct function:
-	    switch (c->type) {
-	    case CNT_STATUS:{	//Callback for status counters
+        Turncounter *c = counters[i];
+        if (c->count == 1) {	//Counter is about to expire so we call the correct function:
+            switch (c->type) {
+            case CNT_STATUS: {	//Callback for status counters
 
-		    //TODO
-		    //Add notification to window
-		    if (!isBoss) {
-			(c->effect_fun) (f);
-			//green();
-			//printf("\t%s status returned to normal.\n",f->name);
-			//white();
-		    } else {	//Boss function
-			(c->effect_b_fun) (b);
-			//lightRed();
-			//printf("\t%s status returned to normal.\n",stringFromBossClass(b->class));
-			//white();
-		    }
-		}
-		break;
-	    case CNT_ATKBOOST:
-	    case CNT_DEFBOOST:
-	    case CNT_VELBOOST:
-	    case CNT_ENRBOOST:{//Callback for stat boosts
-		    if (!isBoss) {
-			(c->boost_fun) (f, 0);	//Invoke ~setPermBoost(STAT)~ with value 0
-		    } else {
-			assert(0 && "UNACCESSIBLE CALL.\n");
-			(c->boost_b_fun) (b, 0);	//Call ~setPermBoost(STAT)~ with value 0
-		    }
-		}
-		break;
-	    }
+                //TODO
+                //Add notification to window
+                if (!isBoss) {
+                    (c->effect_fun) (f);
+                    //green();
+                    //printf("\t%s status returned to normal.\n",f->name);
+                    //white();
+                } else {	//Boss function
+                    (c->effect_b_fun) (b);
+                    //lightRed();
+                    //printf("\t%s status returned to normal.\n",stringFromBossClass(b->class));
+                    //white();
+                }
+            }
+            break;
+            case CNT_ATKBOOST:
+            case CNT_DEFBOOST:
+            case CNT_VELBOOST:
+            case CNT_ENRBOOST: { //Callback for stat boosts
+                if (!isBoss) {
+                    (c->boost_fun) (f, 0);	//Invoke ~setPermBoost(STAT)~ with value 0
+                } else {
+                    assert(0 && "UNACCESSIBLE CALL.\n");
+                    (c->boost_b_fun) (b, 0);	//Call ~setPermBoost(STAT)~ with value 0
+                }
+            }
+            break;
+            }
 
-	    //Set counter to zero
-	    c->count = 0;
-	    c->innerValue = 0;
-	} else if (c->count > 1) {	//We simply advance the count
-	    c->count -= 1;
-	}
+            //Set counter to zero
+            c->count = 0;
+            c->innerValue = 0;
+        } else if (c->count > 1) {	//We simply advance the count
+            c->count -= 1;
+        }
     };
 }
 
@@ -2094,9 +2094,9 @@ void setCounter(Turncounter *c, int turns)
 {
 
     if (c->count == 0) {	// Counter is NOT already active
-	c->count = turns;
+        c->count = turns;
     } else {
-	//Handle counters already activ
+        //Handle counters already activ
     }
 }
 
@@ -2118,19 +2118,19 @@ void setSpecials(Fighter *f, Koliseo *kls)
     char movename[80];
     char movedesc[80];
     for (int i = 0; i <= SPECIALSMAX; i++) {
-	kls_log(kls, "DEBUG", "Prepping Specialslot (%i)", i);
-	Specialslot *s =
-	    (Specialslot *) KLS_PUSH_TYPED(kls, Specialslot, 1, HR_Specialslot,
-					   "Specialslot", "Specialslot");
-	s->enabled = 0;
-	s->move = i + (f->class * (SPECIALSMAX + 1));	// Assign the i-th move offsetting by classNum * specialsMax
-	s->cost = costFromSpecial(f->class, i);
-	strcpy(movename, nameStringFromSpecial(f->class, i));
-	strcpy(movedesc, descStringFromSpecial(f->class, i));
-	//printf("DEBUG\n%i\t%s\n",(i+ (f->class * (SPECIALSMAX + 1))),stringFromSpecial(f->class,i));
-	strcpy(s->name, movename);
-	strcpy(s->desc, movedesc);
-	f->specials[i] = s;
+        kls_log(kls, "DEBUG", "Prepping Specialslot (%i)", i);
+        Specialslot *s =
+            (Specialslot *) KLS_PUSH_TYPED(kls, Specialslot, 1, HR_Specialslot,
+                                           "Specialslot", "Specialslot");
+        s->enabled = 0;
+        s->move = i + (f->class * (SPECIALSMAX + 1));	// Assign the i-th move offsetting by classNum * specialsMax
+        s->cost = costFromSpecial(f->class, i);
+        strcpy(movename, nameStringFromSpecial(f->class, i));
+        strcpy(movedesc, descStringFromSpecial(f->class, i));
+        //printf("DEBUG\n%i\t%s\n",(i+ (f->class * (SPECIALSMAX + 1))),stringFromSpecial(f->class,i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        f->specials[i] = s;
     };
 }
 
@@ -2142,41 +2142,41 @@ void setSpecials(Fighter *f, Koliseo *kls)
 void resetPermboosts(Fighter *f)
 {
     for (int i = 0; i < STATMAX + 1; i++) {
-	switch (i) {
-	case ATK:{
-		f->atk -= f->permboost_atk;
-		if (f->atk < 0) {
-		    f->atk = 0;
-		};
-		f->permboost_atk = 0;
-	    }
-	    break;
-	case DEF:{
-		f->def -= f->permboost_def;
-		if (f->def < 0) {
-		    f->def = 0;
-		};
-		f->permboost_def = 0;
-	    }
-	    break;
-	case VEL:{
-		f->vel -= f->permboost_vel;
-		if (f->vel < 0) {
-		    f->vel = 0;
-		};
-		f->permboost_vel = 0;
-	    }
-	    break;
-	case ENR:{
-		f->totalenergy -= f->permboost_enr;
-		f->energy -= f->permboost_enr;
-		if (f->energy < 0) {
-		    f->energy = 0;
-		};
-		f->permboost_enr = 0;
-	    }
-	    break;
-	};
+        switch (i) {
+        case ATK: {
+            f->atk -= f->permboost_atk;
+            if (f->atk < 0) {
+                f->atk = 0;
+            };
+            f->permboost_atk = 0;
+        }
+        break;
+        case DEF: {
+            f->def -= f->permboost_def;
+            if (f->def < 0) {
+                f->def = 0;
+            };
+            f->permboost_def = 0;
+        }
+        break;
+        case VEL: {
+            f->vel -= f->permboost_vel;
+            if (f->vel < 0) {
+                f->vel = 0;
+            };
+            f->permboost_vel = 0;
+        }
+        break;
+        case ENR: {
+            f->totalenergy -= f->permboost_enr;
+            f->energy -= f->permboost_enr;
+            if (f->energy < 0) {
+                f->energy = 0;
+            };
+            f->permboost_enr = 0;
+        }
+        break;
+        };
     };
 }
 
@@ -2188,25 +2188,25 @@ void resetPermboosts(Fighter *f)
 void applyPermboosts(Fighter *f)
 {
     for (int i = 0; i < STATMAX + 1; i++) {
-	switch (i) {
-	case ATK:{
-		f->atk += f->permboost_atk;
-	    }
-	    break;
-	case DEF:{
-		f->def += f->permboost_def;
-	    }
-	    break;
-	case VEL:{
-		f->vel += f->permboost_vel;
-	    }
-	    break;
-	case ENR:{
-		f->totalenergy += f->permboost_enr;
-		f->energy += f->permboost_enr;
-	    }
-	    break;
-	};
+        switch (i) {
+        case ATK: {
+            f->atk += f->permboost_atk;
+        }
+        break;
+        case DEF: {
+            f->def += f->permboost_def;
+        }
+        break;
+        case VEL: {
+            f->vel += f->permboost_vel;
+        }
+        break;
+        case ENR: {
+            f->totalenergy += f->permboost_enr;
+            f->energy += f->permboost_enr;
+        }
+        break;
+        };
     };
 }
 
@@ -2221,13 +2221,13 @@ void resetArtifactsState(Fighter *f)
 {
     for (int i = 0; i < (ARTIFACTSMAX + 1); i++) {
 
-	//if (i == CHAOSORB) { //Chaosorb never gets reset
-	//      continue;
-	//};
+        //if (i == CHAOSORB) { //Chaosorb never gets reset
+        //      continue;
+        //};
 
-	if (f->artifactsBag[i]->qty != 0) {	//We only reset the ones we have
-	    f->artifactsBag[i]->active = 0;
-	};
+        if (f->artifactsBag[i]->qty != 0) {	//We only reset the ones we have
+            f->artifactsBag[i]->active = 0;
+        };
     };
 }
 
@@ -2244,39 +2244,39 @@ void applyArtifacts(Fighter *f, Enemy *e, Boss *b, int isBoss)
 {
 
     for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
-	Artifact *a = f->artifactsBag[i];
-	if (a->qty != 0 && !(a->active)) {	//We only apply the ones we have unlocked && aren't active already
-	    switch (a->class) {
-	    case THKSKULL:{
-		    artifact_thinkingskull(f, e, b, isBoss);
-		}
-		break;
-	    case TWINKIE:{
-		    artifact_twinkie(f, e, b, isBoss);
-		}
-		break;
-	    case WRISTBAND:{
-		    artifact_wristband(f, e, b, isBoss);
-		}
-		break;
-	    case BOARTAIL:{
-		    artifact_boartail(f, e, b, isBoss);
-		}
-		break;
-	    case CHAOSORB:{
-		    artifact_chaosorb(f, e, b, isBoss);
-		}
-		break;
-	    case POWERSYPHON:{
-		    artifact_powersyphon(f, e, b, isBoss);
-		}
-		break;
-	    case GIANTFOSSILE:{
-		    artifact_giantfossile(f, e, b, isBoss);
-		}
-		break;
-	    };
-	};
+        Artifact *a = f->artifactsBag[i];
+        if (a->qty != 0 && !(a->active)) {	//We only apply the ones we have unlocked && aren't active already
+            switch (a->class) {
+            case THKSKULL: {
+                artifact_thinkingskull(f, e, b, isBoss);
+            }
+            break;
+            case TWINKIE: {
+                artifact_twinkie(f, e, b, isBoss);
+            }
+            break;
+            case WRISTBAND: {
+                artifact_wristband(f, e, b, isBoss);
+            }
+            break;
+            case BOARTAIL: {
+                artifact_boartail(f, e, b, isBoss);
+            }
+            break;
+            case CHAOSORB: {
+                artifact_chaosorb(f, e, b, isBoss);
+            }
+            break;
+            case POWERSYPHON: {
+                artifact_powersyphon(f, e, b, isBoss);
+            }
+            break;
+            case GIANTFOSSILE: {
+                artifact_giantfossile(f, e, b, isBoss);
+            }
+            break;
+            };
+        };
     };
 }
 
@@ -2293,14 +2293,14 @@ void applyArtifacts(Fighter *f, Enemy *e, Boss *b, int isBoss)
 void initEquipSlots(Fighter *f, Koliseo *kls)
 {
     for (int i = 0; i <= EQUIPZONES; i++) {
-	kls_log(kls, "DEBUG", "Prepping Equipslot (%i)", i);
-	Equipslot *s =
-	    (Equipslot *) KLS_PUSH_TYPED(kls, Equipslot, 1, HR_Equipslot,
-					 "Equipslot", "Equipslot");
-	s->active = 0;
-	s->type = i;
-	setEquipslotSprite(s);
-	f->equipslots[i] = (struct Equipslot *)s;
+        kls_log(kls, "DEBUG", "Prepping Equipslot (%i)", i);
+        Equipslot *s =
+            (Equipslot *) KLS_PUSH_TYPED(kls, Equipslot, 1, HR_Equipslot,
+                                         "Equipslot", "Equipslot");
+        s->active = 0;
+        s->type = i;
+        setEquipslotSprite(s);
+        f->equipslots[i] = (struct Equipslot *)s;
     };
 }
 
@@ -2317,22 +2317,22 @@ void initConsumableBag(Fighter *f, Koliseo *kls)
 {
 
     for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
-	kls_log(kls, "DEBUG", "Prepping Consumable (%i)", i);
-	Consumable *c =
-	    (Consumable *) KLS_PUSH_TYPED(kls, Consumable, 1, HR_Consumable,
-					  "Consumable", "Consumable");
-	c->class = i;
+        kls_log(kls, "DEBUG", "Prepping Consumable (%i)", i);
+        Consumable *c =
+            (Consumable *) KLS_PUSH_TYPED(kls, Consumable, 1, HR_Consumable,
+                                          "Consumable", "Consumable");
+        c->class = i;
 
-	Consumable *base = &consumablesBase[i];
+        Consumable *base = &consumablesBase[i];
 
-	strcpy(c->name, base->name);
-	strcpy(c->desc, base->desc);
-	for (int j = 0; j < 8; j++) {
-	    strcpy(c->sprite[j], base->sprite[j]);
-	}
-	c->qty = 0;
+        strcpy(c->name, base->name);
+        strcpy(c->desc, base->desc);
+        for (int j = 0; j < 8; j++) {
+            strcpy(c->sprite[j], base->sprite[j]);
+        }
+        c->qty = 0;
 
-	f->consumablesBag[i] = (struct Consumable *)c;
+        f->consumablesBag[i] = (struct Consumable *)c;
     }
 
 }
@@ -2349,22 +2349,22 @@ void initConsumableBag(Fighter *f, Koliseo *kls)
 void initArtifactsBag(Fighter *f, Koliseo *kls)
 {
     for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
-	kls_log(kls, "DEBUG", "Prepping Artifact (%i)", i);
-	Artifact *a =
-	    (Artifact *) KLS_PUSH_TYPED(kls, Artifact, 1, HR_Artifact,
-					"Artifact", "Artifact");
-	a->class = i;
+        kls_log(kls, "DEBUG", "Prepping Artifact (%i)", i);
+        Artifact *a =
+            (Artifact *) KLS_PUSH_TYPED(kls, Artifact, 1, HR_Artifact,
+                                        "Artifact", "Artifact");
+        a->class = i;
 
-	Artifact *base = &artifactsBase[i];
+        Artifact *base = &artifactsBase[i];
 
-	strcpy(a->name, base->name);
-	strcpy(a->desc, base->desc);
-	for (int j = 0; j < 8; j++) {
-	    strcpy(a->sprite[j], base->sprite[j]);
-	}
-	a->qty = 0;
+        strcpy(a->name, base->name);
+        strcpy(a->desc, base->desc);
+        for (int j = 0; j < 8; j++) {
+            strcpy(a->sprite[j], base->sprite[j]);
+        }
+        a->qty = 0;
 
-	f->artifactsBag[i] = (struct Artifact *)a;
+        f->artifactsBag[i] = (struct Artifact *)a;
     }
 }
 
@@ -2405,8 +2405,8 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
 
     kls_log(kls, "DEBUG", "Prepping countStats");
     countStats *s =
-	(countStats *) KLS_PUSH_TYPED(kls, countStats, 1, HR_countStats,
-				      "countStats", "countStats");
+        (countStats *) KLS_PUSH_TYPED(kls, countStats, 1, HR_countStats,
+                                      "countStats", "countStats");
 
     s->enemieskilled = 0;
     s->criticalhits = 0;
@@ -2420,7 +2420,7 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
     s->bosseskilled = 0;
     s->unique_bosseskilled = 0;
     for (int i = 0; i < BOSSCLASSESMAX + 1; i++) {
-	s->killed_bosses[i] = 0;
+        s->killed_bosses[i] = 0;
     }
     s->keysfound = 0;
 
@@ -2487,12 +2487,12 @@ void initEnemyStats(Enemy *e, Koliseo_Temp *t_kls)
 {
     EnemyBaseStats *base = &baseenemystats[e->class];
     log_tag("debug_log.txt", "[DEBUG]", "Init stats for enemy (%s)",
-	    stringFromEClass(e->class));
+            stringFromEClass(e->class));
 
     float beastf = 1;
 
     if (e->beast) {
-	beastf = BSTFACTOR;
+        beastf = BSTFACTOR;
     }
 
     e->hp = round(beastf * base->hp);
@@ -2547,7 +2547,7 @@ void initBossStats(Boss *b, Koliseo_Temp *t_kls)
     float beastf = 1;
 
     if (b->beast) {
-	beastf = BSTFACTOR;
+        beastf = BSTFACTOR;
     }
 
     b->hp = round(beastf * base->hp);
@@ -2600,11 +2600,11 @@ void initFoePartyStats(FoeParty *fp, Koliseo_Temp *t_kls)
 
     //Zero the alive_enemies values
     for (int i = 0; i < ROOM_ENEMIES_MAX + 1; i++) {
-	fp->alive_enemies[i] = 0;
+        fp->alive_enemies[i] = 0;
     };
     //Zero the alive_bosses values
     for (int i = 0; i < FOES_BOSSES_MAX + 1; i++) {
-	fp->alive_bosses[i] = 0;
+        fp->alive_bosses[i] = 0;
     };
 
     //Zero the turnboost_STAT values
@@ -2620,27 +2620,27 @@ void initFoePartyStats(FoeParty *fp, Koliseo_Temp *t_kls)
     fp->tot_alive = fp->size;
 
     switch (fp->class) {
-    case Enemies:{
-	    //Set alive_enemies values
-	    for (int i = 0; i < fp->tot_alive + 1; i++) {
-		fp->alive_enemies[i] = 1;
-	    };
-	}
-	break;
-    case Bosses:{
-	    //Set alive_bosses values
-	    for (int i = 0; i < fp->tot_alive + 1; i++) {
-		fp->alive_bosses[i] = 1;
-	    };
-	}
-	break;
-    default:{
-	    fprintf(stderr, "UNEXPECTED FOEPARTY CLASS VALUE %i", fp->class);
-	    log_tag("debug_log.txt", "[PANIC]",
-		    "Invalid class value in initFoePartyStats()");
-	    exit(EXIT_FAILURE);
-	}
-	break;
+    case Enemies: {
+        //Set alive_enemies values
+        for (int i = 0; i < fp->tot_alive + 1; i++) {
+            fp->alive_enemies[i] = 1;
+        };
+    }
+    break;
+    case Bosses: {
+        //Set alive_bosses values
+        for (int i = 0; i < fp->tot_alive + 1; i++) {
+            fp->alive_bosses[i] = 1;
+        };
+    }
+    break;
+    default: {
+        fprintf(stderr, "UNEXPECTED FOEPARTY CLASS VALUE %i", fp->class);
+        log_tag("debug_log.txt", "[PANIC]",
+                "Invalid class value in initFoePartyStats()");
+        exit(EXIT_FAILURE);
+    }
+    break;
     };
 
     //Init party counters
@@ -2656,7 +2656,7 @@ void initFoePartyStats(FoeParty *fp, Koliseo_Temp *t_kls)
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void prepareFoeParty(FoeParty *fp, int partysize, int roomindex,
-		     Koliseo_Temp *t_kls)
+                     Koliseo_Temp *t_kls)
 {
 
     //Class must be set by caller
@@ -2674,8 +2674,8 @@ void prepareFoeParty(FoeParty *fp, int partysize, int roomindex,
     initFoePartyStats(fp, t_kls);
 
     log_tag("debug_log.txt", "[DEBUG]",
-	    "Prepared FoeParty with size (%i), room #%i.", partysize,
-	    roomindex);
+            "Prepared FoeParty with size (%i), room #%i.", partysize,
+            roomindex);
 }
 
 /**
@@ -2696,7 +2696,7 @@ int getBossBoost(int lvl, bossClass bclass)
 
     float boost = ((lvl - base->level) * 1.25);
     if (boost <= 0) {
-	boost = 0;
+        boost = 0;
     }
 
     return (int)boost;
@@ -2721,38 +2721,38 @@ int getBossBoost(int lvl, bossClass bclass)
 void statResetBoss(Boss *b, int force)
 {
     if (!force && (b->hp >= 0.4 * b->totalhp)
-	&& !(b->atk <= 0 || b->def <= 0 || b->vel <= 0)) {
-	return;
+        && !(b->atk <= 0 || b->def <= 0 || b->vel <= 0)) {
+        return;
     }
     int boost = getBossBoost(b->level, b->class);
 
     float beastf = 1;
 
     if (b->beast) {
-	beastf = BSTFACTOR;
+        beastf = BSTFACTOR;
     }
     BossBaseStats *base = &basebossstats[b->class];
 
     if (force) {		//We also update hp values
-	int hpBoost =
-	    boost + round(base->level * 0.75) + (base->hp / 10) +
-	    ((base->def / 4) % 10);
-	b->hp = round(beastf * (base->hp + hpBoost));
-	b->totalhp = b->hp;
+        int hpBoost =
+            boost + round(base->level * 0.75) + (base->hp / 10) +
+            ((base->def / 4) % 10);
+        b->hp = round(beastf * (base->hp + hpBoost));
+        b->totalhp = b->hp;
     }
 
     if (force || b->vel <= (0.3 * (base->vel + boost))
-	|| (b->atk <= (0.3 * (base->atk + boost)))
-	|| b->def <= (0.2 * (base->def + boost))) {
-	b->vel = round(beastf * (base->vel + boost));
-	b->atk = round(beastf * (base->atk + boost));
-	b->def = round(beastf * (base->def + boost));
-	//Reset stats
-	if (!force) {
-	    //yellow();
-	    //printf("\n\n\t%s's stats reset.\n",stringFromEClass(e->class));
-	    //white();
-	}
+        || (b->atk <= (0.3 * (base->atk + boost)))
+        || b->def <= (0.2 * (base->def + boost))) {
+        b->vel = round(beastf * (base->vel + boost));
+        b->atk = round(beastf * (base->atk + boost));
+        b->def = round(beastf * (base->def + boost));
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",stringFromEClass(e->class));
+            //white();
+        }
     }
 }
 
@@ -2805,7 +2805,7 @@ int getEnemyBoost(int lvl, enemyClass eclass)
 
     float boost = ((lvl - base->level) * 1.25);
     if (boost <= 0) {
-	boost = 0;
+        boost = 0;
     }
 
     return (int)boost;
@@ -2830,40 +2830,40 @@ int getEnemyBoost(int lvl, enemyClass eclass)
 void statResetEnemy(Enemy *e, int force)
 {
     log_tag("debug_log.txt", "[DEBUG]",
-	    "Call to statResetEnemy() with ($force) == (%i)", force);
+            "Call to statResetEnemy() with ($force) == (%i)", force);
     if (!force && (e->hp >= 0.4 * e->totalhp)
-	&& !(e->atk <= 0 || e->def <= 0 || e->vel <= 0)) {
-	return;
+        && !(e->atk <= 0 || e->def <= 0 || e->vel <= 0)) {
+        return;
     }
     int boost = getEnemyBoost(e->level, e->class);
 
     float beastf = 1;
 
     if (e->beast) {
-	beastf = BSTFACTOR;
+        beastf = BSTFACTOR;
     }
     EnemyBaseStats *base = &baseenemystats[e->class];
 
     if (force) {		//We also update hp values
-	int hpBoost =
-	    floor(0.5 * boost + round(base->level * 0.75) + (base->hp / 10) +
-		  ((base->def / 4) % 10));
-	e->hp = round(beastf * (base->hp + hpBoost));
-	e->totalhp = e->hp;
+        int hpBoost =
+            floor(0.5 * boost + round(base->level * 0.75) + (base->hp / 10) +
+                  ((base->def / 4) % 10));
+        e->hp = round(beastf * (base->hp + hpBoost));
+        e->totalhp = e->hp;
     }
 
     if (force || e->vel <= (0.3 * (base->vel + boost))
-	|| (e->atk <= (0.3 * (base->atk + boost)))
-	|| e->def <= (0.2 * (base->def + boost))) {
-	e->vel = round(beastf * (base->vel + boost));
-	e->atk = round(beastf * (base->atk + boost));
-	e->def = round(beastf * (base->def + boost));
-	//Reset stats
-	if (!force) {
-	    //yellow();
-	    //printf("\n\n\t%s's stats reset.\n",stringFromEClass(e->class));
-	    //white();
-	}
+        || (e->atk <= (0.3 * (base->atk + boost)))
+        || e->def <= (0.2 * (base->def + boost))) {
+        e->vel = round(beastf * (base->vel + boost));
+        e->atk = round(beastf * (base->atk + boost));
+        e->def = round(beastf * (base->def + boost));
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",stringFromEClass(e->class));
+            //white();
+        }
     }
 }
 
@@ -2889,28 +2889,28 @@ void statResetEnemy(Enemy *e, int force)
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
-		      int enemyindex, Koliseo_Temp *t_kls)
+                      int enemyindex, Koliseo_Temp *t_kls)
 {
 
     //Randomise enemy class
     e->class = rand() % (ENEMYCLASSESMAX + 1);
 
     if (G_DEBUG_ON && G_DEBUG_ENEMYTYPE_ON && (GAMEMODE != Rogue)) {	//Debug flag has a fixed enemy class when used outside of Rogue gamemode
-	log_tag("debug_log.txt", "[DEBUG]",
-		"prepareRoomEnemy(): Enemy debug flag was asserted outside of story mode, will always spawn a G_DEBUG_ENEMYTYPE (%s).",
-		stringFromEClass(G_DEBUG_ENEMYTYPE));
-	e->class = G_DEBUG_ENEMYTYPE;
+        log_tag("debug_log.txt", "[DEBUG]",
+                "prepareRoomEnemy(): Enemy debug flag was asserted outside of story mode, will always spawn a G_DEBUG_ENEMYTYPE (%s).",
+                stringFromEClass(G_DEBUG_ENEMYTYPE));
+        e->class = G_DEBUG_ENEMYTYPE;
     }
 
     //Check for spawning beast enemies
     if ((roomindex % BEASTROOM == 0) && (enemyindex == (enemiesInRoom - 1))) {
-	//TODO: better mechanic for spawning beast enemies
-	if (((rand() % 5) == 0)) {
-	    log_tag("debug_log.txt", "[DEBUG]", "Setting e->beast to 1.");
-	    e->beast = 1;
-	}
+        //TODO: better mechanic for spawning beast enemies
+        if (((rand() % 5) == 0)) {
+            log_tag("debug_log.txt", "[DEBUG]", "Setting e->beast to 1.");
+            e->beast = 1;
+        }
     } else {
-	e->beast = 0;
+        e->beast = 0;
     };
 
     EnemyBaseStats *base = &baseenemystats[e->class];
@@ -2942,13 +2942,13 @@ void setEquipPrices(int size, int *equipPrices, Equip *equips[])
 {
 
     for (int i = 0; i < size; i++) {
-	int *cur_price = &equipPrices[i];
-	Equip *e = equips[i];
+        int *cur_price = &equipPrices[i];
+        Equip *e = equips[i];
 
-	int baseprice = e->cost;
-	int price = baseprice;
+        int baseprice = e->cost;
+        int price = baseprice;
 
-	*cur_price = price;
+        *cur_price = price;
     }
 
 }
@@ -2961,18 +2961,18 @@ void setEquipPrices(int size, int *equipPrices, Equip *equips[])
  * @param consumables Pointer to Consumable pointer to influence pricing.
  */
 void setConsumablePrices(int size, int *consumablePrices,
-			 Consumable **consumables)
+                         Consumable **consumables)
 {
 
     for (int i = 0; i < size; i++) {
-	int *cur_price = &consumablePrices[i];
-	//Consumable* c = consumables[i];
+        int *cur_price = &consumablePrices[i];
+        //Consumable* c = consumables[i];
 
-	//Price evaluation
-	int baseprice = 4;
-	int price = baseprice + (rand() % 5) - 1;
+        //Price evaluation
+        int baseprice = 4;
+        int price = baseprice + (rand() % 5) - 1;
 
-	*cur_price = price;
+        *cur_price = price;
     }
 }
 
@@ -2992,135 +2992,135 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
 
     if (equipsCount != 0) {
 
-	for (int equip_index = 0; equip_index < equipsCount; equip_index++) {
-	    int curr = (rand() % (EQUIPSMAX + 1));
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Prepping Equip (%i/%i) for Shop", equip_index,
-		    equipsCount);
-	    kls_log(kls, "DEBUG", "Prepping Equip (%i/%i) for Shop",
-		    equip_index, equipsCount);
-	    Equip *e =
-		(Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
-					   "Equip");
+        for (int equip_index = 0; equip_index < equipsCount; equip_index++) {
+            int curr = (rand() % (EQUIPSMAX + 1));
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Prepping Equip (%i/%i) for Shop", equip_index,
+                    equipsCount);
+            kls_log(kls, "DEBUG", "Prepping Equip (%i/%i) for Shop",
+                    equip_index, equipsCount);
+            Equip *e =
+                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
+                                           "Equip");
 
-	    //Randomise quality
-	    quality q = rand() % (QUALITIESMAX + 1);
+            //Randomise quality
+            quality q = rand() % (QUALITIESMAX + 1);
 
-	    //Get the base item and copy the stats to the current equip
-	    Equip *base = &equips[curr];
+            //Get the base item and copy the stats to the current equip
+            Equip *base = &equips[curr];
 
-	    e->class = base->class;
-	    e->type = base->type;
-	    e->qual = q;
+            e->class = base->class;
+            e->type = base->type;
+            e->qual = q;
 
-	    setEquipSprite(e);
-	    strcpy(e->name, base->name);
-	    strcpy(e->desc, base->desc);
+            setEquipSprite(e);
+            strcpy(e->name, base->name);
+            strcpy(e->desc, base->desc);
 
-	    e->qty = 1;
-	    e->equipped = 0;
-	    e->perksCount = 0;
+            e->qty = 1;
+            e->equipped = 0;
+            e->perksCount = 0;
 
-	    //Calc drop level
-	    e->level = base->level + round(player->level / EQUIPLVLBOOSTRATIO);
+            //Calc drop level
+            e->level = base->level + round(player->level / EQUIPLVLBOOSTRATIO);
 
-	    //Chance for better leveled item
-	    if ((rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
-		e->level += 1;	//At least a simple +1
-		if ((rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
-		    e->level += 1;	//A bonus roll for another +1
+            //Chance for better leveled item
+            if ((rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
+                e->level += 1;	//At least a simple +1
+                if ((rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
+                    e->level += 1;	//A bonus roll for another +1
 
-		}
-	    }
+                }
+            }
 
-	    float boostFactor = 0.7;
+            float boostFactor = 0.7;
 
-	    float lvlBoost = boostFactor * (e->level - 1);
+            float lvlBoost = boostFactor * (e->level - 1);
 
-	    e->atk = round((base->atk * 1.0) + lvlBoost);
-	    e->def = round((base->def * 1.0) + lvlBoost);
-	    e->vel = round((base->vel * 1.0) + lvlBoost);
-	    e->enr = round((base->enr * 1.0) + lvlBoost);
+            e->atk = round((base->atk * 1.0) + lvlBoost);
+            e->def = round((base->def * 1.0) + lvlBoost);
+            e->vel = round((base->vel * 1.0) + lvlBoost);
+            e->enr = round((base->enr * 1.0) + lvlBoost);
 
-	    //Bonus stats on better quality items? Simple for now
-	    //
-	    if (q == Good) {
-		e->atk += (rand() % 3);	//Should use a defined constant
-		e->def += (rand() % 3);	//Should use a defined constant
-		e->vel += (rand() % 3);	//Should use a defined constant
-		e->enr += (rand() % 2);	//Should use a defined constant
-	    } else if (q == Bad) {
-		e->atk -= (rand() % 3);	//Should use a defined constant
-		e->def -= (rand() % 3);	//Should use a defined constant
-		e->vel -= (rand() % 3);	//Should use a defined constant
-		e->enr -= (rand() % 2);	//Should use a defined constant
-		if (e->atk < 0) {
-		    e->atk = 0;
-		};
-		if (e->def < 0) {
-		    e->def = 0;
-		};
-		if (e->vel < 0) {
-		    e->vel = 0;
-		};
-		if (e->enr < 0) {
-		    e->enr = 0;
-		};
-	    }
-	    //Possible perks for the Equip
+            //Bonus stats on better quality items? Simple for now
+            //
+            if (q == Good) {
+                e->atk += (rand() % 3);	//Should use a defined constant
+                e->def += (rand() % 3);	//Should use a defined constant
+                e->vel += (rand() % 3);	//Should use a defined constant
+                e->enr += (rand() % 2);	//Should use a defined constant
+            } else if (q == Bad) {
+                e->atk -= (rand() % 3);	//Should use a defined constant
+                e->def -= (rand() % 3);	//Should use a defined constant
+                e->vel -= (rand() % 3);	//Should use a defined constant
+                e->enr -= (rand() % 2);	//Should use a defined constant
+                if (e->atk < 0) {
+                    e->atk = 0;
+                };
+                if (e->def < 0) {
+                    e->def = 0;
+                };
+                if (e->vel < 0) {
+                    e->vel = 0;
+                };
+                if (e->enr < 0) {
+                    e->enr = 0;
+                };
+            }
+            //Possible perks for the Equip
 
-	    for (int i = 0; i < (EQUIPPERKSMAX); i++) {
-		int chance = 35;
+            for (int i = 0; i < (EQUIPPERKSMAX); i++) {
+                int chance = 35;
 
-		if (q == Good) {
-		    chance *= 1.5;
-		}
+                if (q == Good) {
+                    chance *= 1.5;
+                }
 
-		if ((rand() % 100) < chance) {
+                if ((rand() % 100) < chance) {
 
-		    e->perksCount += 1;
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Prepping Perk (%i) for Shop Equip (%i/%i)", i,
-			    equip_index, equipsCount);
-		    kls_log(kls, "DEBUG",
-			    "Prepping Perk (%i) for Shop Equip (%i/%i)", i,
-			    equip_index, equipsCount);
-		    Perk *p =
-			(Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk,
-						  "Perk", "Perk");
-		    p->class = rand() % (PERKSMAX + 1);
-		    //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
-		    strcpy(p->name, nameStringFromPerk(p->class));
-		    //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
-		    strcpy(p->desc, descStringFromPerk(p->class));
-		    p->innerValue = 1;
-		    e->perks[(e->perksCount - 1)] = p;
-		}
-	    }
+                    e->perksCount += 1;
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Prepping Perk (%i) for Shop Equip (%i/%i)", i,
+                            equip_index, equipsCount);
+                    kls_log(kls, "DEBUG",
+                            "Prepping Perk (%i) for Shop Equip (%i/%i)", i,
+                            equip_index, equipsCount);
+                    Perk *p =
+                        (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk,
+                                                  "Perk", "Perk");
+                    p->class = rand() % (PERKSMAX + 1);
+                    //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
+                    strcpy(p->name, nameStringFromPerk(p->class));
+                    //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
+                    strcpy(p->desc, descStringFromPerk(p->class));
+                    p->innerValue = 1;
+                    e->perks[(e->perksCount - 1)] = p;
+                }
+            }
 
-	    //Set value of how many bonuses we have. Although Equip only has ONE function pointer field for now
-	    e->bonus = base->bonus;
-	    //Randomise if the item will have an effect function.
-	    //Not yet implemented
-	    //Initialisation of function happens here
-	    //
-	    //e->equip_fun =    ;
+            //Set value of how many bonuses we have. Although Equip only has ONE function pointer field for now
+            e->bonus = base->bonus;
+            //Randomise if the item will have an effect function.
+            //Not yet implemented
+            //Initialisation of function happens here
+            //
+            //e->equip_fun =    ;
 
-	    //Calc cost value
+            //Calc cost value
 
-	    float cost = 3;
+            float cost = 3;
 
-	    cost += 4.5 * (e->qual + 1);
-	    cost += 7.5 * (e->perksCount);
+            cost += 4.5 * (e->qual + 1);
+            cost += 7.5 * (e->perksCount);
 
-	    cost += 10.2 * (e->level);
+            cost += 10.2 * (e->level);
 
-	    e->cost = floor(cost);
+            e->cost = floor(cost);
 
-	    s->equips[equip_index] = e;
-	    s->equipsCount++;
+            s->equips[equip_index] = e;
+            s->equipsCount++;
 
-	}			//End for all equips
+        }			//End for all equips
     }
     s->equipsCount = equipsCount;
     setEquipPrices(s->equipsCount, s->equipPrices, s->equips);
@@ -3129,49 +3129,49 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
     int uniques = 0;
     //int not_uniques = 0;
     if (uniqueConsumablesCount != 0) {
-	int already_rolled[CONSUMABLESMAX + 1];
-	for (int i = 0; i < (CONSUMABLESMAX + 1); i++) {
-	    already_rolled[i] = 0;
-	}
-	int cons_prepared = 0;
-	while (cons_prepared < uniqueConsumablesCount) {
+        int already_rolled[CONSUMABLESMAX + 1];
+        for (int i = 0; i < (CONSUMABLESMAX + 1); i++) {
+            already_rolled[i] = 0;
+        }
+        int cons_prepared = 0;
+        while (cons_prepared < uniqueConsumablesCount) {
 
-	    for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
-		if (cons_prepared < uniqueConsumablesCount) {
-		    int curr = rand() % (CONSUMABLESMAX + 1);
-		    if (!(already_rolled[curr])) {
-			log_tag("debug_log.txt", "[DEBUG]",
-				"Prepping Consumable (%i/%i) for Shop",
-				cons_prepared, uniqueConsumablesCount);
-			kls_log(kls, "DEBUG",
-				"Prepping Consumable (%i/%i) for Shop",
-				cons_prepared, uniqueConsumablesCount);
-			Consumable *cur =
-			    (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable,
-							    1, HR_Consumable,
-							    "Consumable",
-							    "Consumable");
-			cur->class = curr;
-			already_rolled[curr] = 1;
-			if (uniqueConsumablesCount - cons_prepared > 0) {
-			    cur->qty = (rand() % 4) + 1;
-			} else {
-			    cur->qty = 1;
-			    //cur->qty = (rand() % (consumablesCount - cons_index)) +1;
-			}
-			setConsumableSprite(cur);
-			//not_uniques += cur->qty;
-			cons_prepared++;	//= cur->qty;
-			s->consumables[uniques] = cur;
-			uniques++;
-		    }
-		}
-	    };
-	}
+            for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
+                if (cons_prepared < uniqueConsumablesCount) {
+                    int curr = rand() % (CONSUMABLESMAX + 1);
+                    if (!(already_rolled[curr])) {
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "Prepping Consumable (%i/%i) for Shop",
+                                cons_prepared, uniqueConsumablesCount);
+                        kls_log(kls, "DEBUG",
+                                "Prepping Consumable (%i/%i) for Shop",
+                                cons_prepared, uniqueConsumablesCount);
+                        Consumable *cur =
+                            (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable,
+                                                            1, HR_Consumable,
+                                                            "Consumable",
+                                                            "Consumable");
+                        cur->class = curr;
+                        already_rolled[curr] = 1;
+                        if (uniqueConsumablesCount - cons_prepared > 0) {
+                            cur->qty = (rand() % 4) + 1;
+                        } else {
+                            cur->qty = 1;
+                            //cur->qty = (rand() % (consumablesCount - cons_index)) +1;
+                        }
+                        setConsumableSprite(cur);
+                        //not_uniques += cur->qty;
+                        cons_prepared++;	//= cur->qty;
+                        s->consumables[uniques] = cur;
+                        uniques++;
+                    }
+                }
+            };
+        }
     }
     s->consumablesCount = uniqueConsumablesCount;
     setConsumablePrices(s->consumablesCount, s->consumablePrices,
-			s->consumables);
+                        s->consumables);
 
     s->itemCount = s->consumablesCount + s->equipsCount;
 }
@@ -3193,23 +3193,23 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
     Koliseo *kls = t_kls->kls;
 
     switch (c->class) {
-    case CHEST_BASE:{
-	    cons_cnt = rand() % (CHEST_CONSUMABLES_MAX - 1);
-	    equip_cnt = rand() % (CHEST_EQUIPS_MAX - 1);
-	}
-	break;
-    case CHEST_BEAST:{
-	    cons_cnt = (rand() % (CHEST_CONSUMABLES_MAX)) + 1;
-	    equip_cnt = (rand() % (CHEST_EQUIPS_MAX)) + 1;
+    case CHEST_BASE: {
+        cons_cnt = rand() % (CHEST_CONSUMABLES_MAX - 1);
+        equip_cnt = rand() % (CHEST_EQUIPS_MAX - 1);
+    }
+    break;
+    case CHEST_BEAST: {
+        cons_cnt = (rand() % (CHEST_CONSUMABLES_MAX)) + 1;
+        equip_cnt = (rand() % (CHEST_EQUIPS_MAX)) + 1;
 
-	}
-	break;
-    default:{
-	    log_tag("debug_log.txt", "[ERROR]",
-		    "%i is not a valid chest class.", c->class);
-	    exit(EXIT_FAILURE);
-	}
-	break;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "%i is not a valid chest class.", c->class);
+        exit(EXIT_FAILURE);
+    }
+    break;
 
     }
 
@@ -3217,166 +3217,166 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
     c->equipsCount = equip_cnt;
 
     if (c->consumablesCount > 0) {
-	for (int i = 0; i < c->consumablesCount; i++) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Prepping Consumable (%i/%i) for Chest", i,
-		    c->consumablesCount);
-	    kls_log(kls, "DEBUG", "Prepping Consumable (%i/%i) for Chest", i,
-		    c->consumablesCount);
-	    Consumable *cns =
-		(Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable, 1,
-						HR_Consumable, "Consumable",
-						"Consumable");
-	    int drop = rand() % (CONSUMABLESMAX + 1);
+        for (int i = 0; i < c->consumablesCount; i++) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Prepping Consumable (%i/%i) for Chest", i,
+                    c->consumablesCount);
+            kls_log(kls, "DEBUG", "Prepping Consumable (%i/%i) for Chest", i,
+                    c->consumablesCount);
+            Consumable *cns =
+                (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable, 1,
+                                                HR_Consumable, "Consumable",
+                                                "Consumable");
+            int drop = rand() % (CONSUMABLESMAX + 1);
 
-	    cns->class = drop;
+            cns->class = drop;
 
-	    Consumable *base = &consumablesBase[drop];
+            Consumable *base = &consumablesBase[drop];
 
-	    strcpy(cns->name, base->name);
-	    strcpy(cns->desc, base->desc);
-	    for (int j = 0; j < 8; j++) {
-		strcpy(cns->sprite[j], base->sprite[j]);
-	    }
-	    cns->qty = 1;
+            strcpy(cns->name, base->name);
+            strcpy(cns->desc, base->desc);
+            for (int j = 0; j < 8; j++) {
+                strcpy(cns->sprite[j], base->sprite[j]);
+            }
+            cns->qty = 1;
 
-	    c->consumables[i] = cns;
-	}
+            c->consumables[i] = cns;
+        }
     }
 
     if (c->equipsCount > 0) {
-	for (int i = 0; i < c->equipsCount; i++) {
+        for (int i = 0; i < c->equipsCount; i++) {
 
-	    //Select a basic item from the list
-	    int drop = rand() % (EQUIPSMAX + 1);
-	    //Randomise quality
-	    quality q = rand() % (QUALITIESMAX + 1);
+            //Select a basic item from the list
+            int drop = rand() % (EQUIPSMAX + 1);
+            //Randomise quality
+            quality q = rand() % (QUALITIESMAX + 1);
 
-	    //Prepare the item
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
-	    kls_log(kls, "DEBUG", "Prepping Equip (%i/%i) for Chest", i,
-		    c->equipsCount);
-	    Equip *e =
-		(Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
-					   "Equip");
+            //Prepare the item
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Prepping Equip (%i/%i) for Chest", i, c->equipsCount);
+            kls_log(kls, "DEBUG", "Prepping Equip (%i/%i) for Chest", i,
+                    c->equipsCount);
+            Equip *e =
+                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
+                                           "Equip");
 
-	    //Get the base item and copy the stats to the drop
-	    Equip *base = &equips[drop];
+            //Get the base item and copy the stats to the drop
+            Equip *base = &equips[drop];
 
-	    e->class = base->class;
-	    e->type = base->type;
-	    e->qual = q;
+            e->class = base->class;
+            e->type = base->type;
+            e->qual = q;
 
-	    setEquipSprite(e);
-	    strcpy(e->name, base->name);
-	    strcpy(e->desc, base->desc);
+            setEquipSprite(e);
+            strcpy(e->name, base->name);
+            strcpy(e->desc, base->desc);
 
-	    e->qty = 1;
-	    e->equipped = 0;
+            e->qty = 1;
+            e->equipped = 0;
 
-	    e->perksCount = 0;
+            e->perksCount = 0;
 
-	    //Calc drop level
-	    e->level = base->level + round(f->level / EQUIPLVLBOOSTRATIO);
+            //Calc drop level
+            e->level = base->level + round(f->level / EQUIPLVLBOOSTRATIO);
 
-	    //Chance for better leveled item
-	    if ((rand() % 8) - (f->luck / 10) <= 0) {	//Should use a defined constant
-		e->level += 1;	//At least a simple +1
-		if ((rand() % 25) - (f->luck / 10) <= 0) {	//Should use a defined constant
-		    e->level += 1;	//A bonus roll for another +1
+            //Chance for better leveled item
+            if ((rand() % 8) - (f->luck / 10) <= 0) {	//Should use a defined constant
+                e->level += 1;	//At least a simple +1
+                if ((rand() % 25) - (f->luck / 10) <= 0) {	//Should use a defined constant
+                    e->level += 1;	//A bonus roll for another +1
 
-		}
-	    }
+                }
+            }
 
-	    float boostFactor = 0.7;
+            float boostFactor = 0.7;
 
-	    float lvlBoost = boostFactor * (e->level - 1);
+            float lvlBoost = boostFactor * (e->level - 1);
 
-	    e->atk = round((base->atk * 1.0) + lvlBoost);
-	    e->def = round((base->def * 1.0) + lvlBoost);
-	    e->vel = round((base->vel * 1.0) + lvlBoost);
-	    e->enr = round((base->enr * 1.0) + lvlBoost);
+            e->atk = round((base->atk * 1.0) + lvlBoost);
+            e->def = round((base->def * 1.0) + lvlBoost);
+            e->vel = round((base->vel * 1.0) + lvlBoost);
+            e->enr = round((base->enr * 1.0) + lvlBoost);
 
-	    //Bonus stats on better quality items? Simple for now
+            //Bonus stats on better quality items? Simple for now
 
-	    if (q == Good) {
-		e->atk += (rand() % 3);	//Should use a defined constant
-		e->def += (rand() % 3);	//Should use a defined constant
-		e->vel += (rand() % 3);	//Should use a defined constant
-		e->enr += (rand() % 2);	//Should use a defined constant
-	    } else if (q == Bad) {
-		e->atk -= (rand() % 3);	//Should use a defined constant
-		e->def -= (rand() % 3);	//Should use a defined constant
-		e->vel -= (rand() % 3);	//Should use a defined constant
-		e->enr -= (rand() % 2);	//Should use a defined constant
-		if (e->atk < 0) {
-		    e->atk = 0;
-		};
-		if (e->def < 0) {
-		    e->def = 0;
-		};
-		if (e->vel < 0) {
-		    e->vel = 0;
-		};
-		if (e->enr < 0) {
-		    e->enr = 0;
-		};
-	    }
-	    //Possible perks for the Equip
+            if (q == Good) {
+                e->atk += (rand() % 3);	//Should use a defined constant
+                e->def += (rand() % 3);	//Should use a defined constant
+                e->vel += (rand() % 3);	//Should use a defined constant
+                e->enr += (rand() % 2);	//Should use a defined constant
+            } else if (q == Bad) {
+                e->atk -= (rand() % 3);	//Should use a defined constant
+                e->def -= (rand() % 3);	//Should use a defined constant
+                e->vel -= (rand() % 3);	//Should use a defined constant
+                e->enr -= (rand() % 2);	//Should use a defined constant
+                if (e->atk < 0) {
+                    e->atk = 0;
+                };
+                if (e->def < 0) {
+                    e->def = 0;
+                };
+                if (e->vel < 0) {
+                    e->vel = 0;
+                };
+                if (e->enr < 0) {
+                    e->enr = 0;
+                };
+            }
+            //Possible perks for the Equip
 
-	    for (int j = 0; j < (EQUIPPERKSMAX); j++) {
-		int chance = 20;
+            for (int j = 0; j < (EQUIPPERKSMAX); j++) {
+                int chance = 20;
 
-		if (q == Good) {
-		    chance *= 1.5;
-		}
+                if (q == Good) {
+                    chance *= 1.5;
+                }
 
-		if ((rand() % 100) < chance
-		    || (c->class == CHEST_BEAST && e->perksCount == 0)) {
+                if ((rand() % 100) < chance
+                    || (c->class == CHEST_BEAST && e->perksCount == 0)) {
 
-		    e->perksCount += 1;
+                    e->perksCount += 1;
 
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Prepping Perk (%i/%i) for Equip (%i/%i) for Chest",
-			    j, e->perksCount, i, c->equipsCount);
-		    kls_log(kls, "DEBUG",
-			    "Prepping Perk (%i/%i) for Equip (%i/%i) for Chest",
-			    j, e->perksCount, i, c->equipsCount);
-		    Perk *p =
-			(Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk,
-						  "Perk", "Perk");
-		    p->class = rand() % (PERKSMAX + 1);
-		    //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
-		    strcpy(p->name, nameStringFromPerk(p->class));
-		    //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
-		    strcpy(p->desc, descStringFromPerk(p->class));
-		    p->innerValue = 1;
-		    e->perks[(e->perksCount - 1)] = p;
-		}
-	    }
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Prepping Perk (%i/%i) for Equip (%i/%i) for Chest",
+                            j, e->perksCount, i, c->equipsCount);
+                    kls_log(kls, "DEBUG",
+                            "Prepping Perk (%i/%i) for Equip (%i/%i) for Chest",
+                            j, e->perksCount, i, c->equipsCount);
+                    Perk *p =
+                        (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk,
+                                                  "Perk", "Perk");
+                    p->class = rand() % (PERKSMAX + 1);
+                    //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
+                    strcpy(p->name, nameStringFromPerk(p->class));
+                    //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
+                    strcpy(p->desc, descStringFromPerk(p->class));
+                    p->innerValue = 1;
+                    e->perks[(e->perksCount - 1)] = p;
+                }
+            }
 
-	    //Set value of how many bonuses we have. Although Equip only has ONE function pointer field for now
-	    e->bonus = base->bonus;
-	    //Randomise if the item will have an effect function.
-	    //Not yet implemented
-	    //Initialisation of function happens here
-	    //
-	    //e->equip_fun =    ;
+            //Set value of how many bonuses we have. Although Equip only has ONE function pointer field for now
+            e->bonus = base->bonus;
+            //Randomise if the item will have an effect function.
+            //Not yet implemented
+            //Initialisation of function happens here
+            //
+            //e->equip_fun =    ;
 
-	    //Calc cost value
+            //Calc cost value
 
-	    float cost = 5;
+            float cost = 5;
 
-	    cost += 2.5 * (e->qual);
-	    cost += 3.5 * (e->perksCount);
+            cost += 2.5 * (e->qual);
+            cost += 3.5 * (e->perksCount);
 
-	    cost += 7.2 * (e->level);
+            cost += 7.2 * (e->level);
 
-	    e->cost = floor(cost);
+            e->cost = floor(cost);
 
-	    c->equips[i] = e;
-	}			//End for all equips
+            c->equips[i] = e;
+        }			//End for all equips
     }				//End if equipsCount > 0
 }
 
@@ -3396,9 +3396,9 @@ void prepareChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
     int drop = (rand() % 100) + 1;
 
     if (drop > 70) {
-	c->class = CHEST_BASE;
+        c->class = CHEST_BASE;
     } else {
-	c->class = CHEST_BEAST;
+        c->class = CHEST_BEAST;
     }
 
     //Load Chest stats
@@ -3420,74 +3420,74 @@ void initTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
     strcpy(t->desc, descStringFromTreasure(t->class));
 
     switch (t->class) {
-    case TREASURE_CHEST:{
+    case TREASURE_CHEST: {
 
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Allocated %lu for Treasure [Chest]:", sizeof(Chest));
-	    kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Chest]:",
-		    sizeof(Chest));
-	    Chest *c =
-		(Chest *) KLS_PUSH_T_TYPED(t_kls, Chest, 1, HR_Chest, "Chest",
-					   "Chest");
-	    prepareChest(c, f, t_kls);
-	    t->chest = c;
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Allocated %lu for Treasure [Chest]:", sizeof(Chest));
+        kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Chest]:",
+                sizeof(Chest));
+        Chest *c =
+            (Chest *) KLS_PUSH_T_TYPED(t_kls, Chest, 1, HR_Chest, "Chest",
+                                       "Chest");
+        prepareChest(c, f, t_kls);
+        t->chest = c;
 
-	}
-	break;
-    case TREASURE_CONSUMABLE:{
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Allocated %lu for Treasure [Consumable]:",
-		    sizeof(Consumable));
-	    kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Consumable]:",
-		    sizeof(Consumable));
-	    Consumable *cns =
-		(Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable, 1,
-						HR_Consumable, "Consumable",
-						"Consumable");
-	    int drop = rand() % (CONSUMABLESMAX + 1);
+    }
+    break;
+    case TREASURE_CONSUMABLE: {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Allocated %lu for Treasure [Consumable]:",
+                sizeof(Consumable));
+        kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Consumable]:",
+                sizeof(Consumable));
+        Consumable *cns =
+            (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable, 1,
+                                            HR_Consumable, "Consumable",
+                                            "Consumable");
+        int drop = rand() % (CONSUMABLESMAX + 1);
 
-	    cns->class = drop;
+        cns->class = drop;
 
-	    Consumable *base = (Consumable *) f->consumablesBag[drop];
+        Consumable *base = (Consumable *) f->consumablesBag[drop];
 
-	    strcpy(cns->name, base->name);
-	    strcpy(cns->desc, base->desc);
-	    for (int j = 0; j < 8; j++) {
-		strcpy(cns->sprite[j], base->sprite[j]);
-	    }
-	    cns->qty = 1;
+        strcpy(cns->name, base->name);
+        strcpy(cns->desc, base->desc);
+        for (int j = 0; j < 8; j++) {
+            strcpy(cns->sprite[j], base->sprite[j]);
+        }
+        cns->qty = 1;
 
-	    t->consumable = cns;
-	}
-	break;
-    case TREASURE_ARTIFACT:{
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Allocated %lu for Treasure [Artifact]:", sizeof(Artifact));
-	    kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Artifact]:",
-		    sizeof(Artifact));
-	    Artifact *a =
-		(Artifact *) KLS_PUSH_T_TYPED(t_kls, Artifact, 1, HR_Artifact,
-					      "Artifact", "Artifact");
-	    int drop = -1;
-	    do {
-		drop = rand() % (ARTIFACTSMAX + 1);
-	    } while (f->artifactsBag[drop]->qty > 0);
+        t->consumable = cns;
+    }
+    break;
+    case TREASURE_ARTIFACT: {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Allocated %lu for Treasure [Artifact]:", sizeof(Artifact));
+        kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Artifact]:",
+                sizeof(Artifact));
+        Artifact *a =
+            (Artifact *) KLS_PUSH_T_TYPED(t_kls, Artifact, 1, HR_Artifact,
+                                          "Artifact", "Artifact");
+        int drop = -1;
+        do {
+            drop = rand() % (ARTIFACTSMAX + 1);
+        } while (f->artifactsBag[drop]->qty > 0);
 
-	    a->class = drop;
+        a->class = drop;
 
-	    Artifact *base = f->artifactsBag[drop];
+        Artifact *base = f->artifactsBag[drop];
 
-	    strcpy(a->name, base->name);
-	    strcpy(a->desc, base->desc);
-	    for (int j = 0; j < 8; j++) {
-		strcpy(a->sprite[j], base->sprite[j]);
-	    }
-	    a->qty = 0;
+        strcpy(a->name, base->name);
+        strcpy(a->desc, base->desc);
+        for (int j = 0; j < 8; j++) {
+            strcpy(a->sprite[j], base->sprite[j]);
+        }
+        a->qty = 0;
 
-	    t->artifact = a;
+        t->artifact = a;
 
-	}
-	break;
+    }
+    break;
     }
 }
 
@@ -3508,11 +3508,11 @@ void prepareTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
     int roll = (rand() % 100) + 1;
 
     if (roll > 70) {
-	t->class = TREASURE_CHEST;
+        t->class = TREASURE_CHEST;
     } else if (roll > 50) {
-	t->class = TREASURE_ARTIFACT;
+        t->class = TREASURE_ARTIFACT;
     } else {
-	t->class = TREASURE_CONSUMABLE;
+        t->class = TREASURE_CONSUMABLE;
     }
 
     //Load Treasure stats
@@ -3536,7 +3536,7 @@ void prepareRoadfork(Roadfork *r)
     int new = -1;
 
     do {
-	new = rand() % (ROADFORK_OPTIONS_MAX + 1);
+        new = rand() % (ROADFORK_OPTIONS_MAX + 1);
 
     } while (new == previous);
 
@@ -3564,7 +3564,7 @@ void printStats(Fighter *f)
     printf("\t\tVel:\t%i\n", f->vel);
     printf("\t\tLvl:\t%i\n", f->level);
     printf("\t\tCurrent Level exp:\t%i/%i\n", f->currentlevelxp,
-	   f->totallevelxp);
+           f->totallevelxp);
     printf("\t\tTotal exp:\t%i\n", f->totalxp);
     printf("\t\tStatus:\t%s\n", stringFromStatus(f->status));
 }
@@ -3579,11 +3579,11 @@ void printStats(Fighter *f)
 void printEStats(Enemy *e)
 {
     if (e->beast) {
-	lightRed();
+        lightRed();
     }
     printf("\t%s's stats:\n", stringFromEClass(e->class));
     if (e->beast) {
-	white();
+        white();
     }
     printf("\tHp:\t%i/%i\n", e->hp, e->totalhp);
     printf("\tEnergy:\t%i/%i\n", e->energy, e->totalenergy);
@@ -3654,18 +3654,18 @@ void printArtifactStats(Artifact *a)
 void printQualityColor(quality q)
 {
     switch (q) {
-    case Bad:{
-	    lightRed();
-	}
-	break;
-    case Average:{
-	    strongWhite();
-	}
-	break;
-    case Good:{
-	    lightCyan();
-	}
-	break;
+    case Bad: {
+        lightRed();
+    }
+    break;
+    case Average: {
+        strongWhite();
+    }
+    break;
+    case Good: {
+        lightCyan();
+    }
+    break;
     };
 }
 
@@ -3695,16 +3695,16 @@ void printEquipStats(Equip *e)
     lightGreen();
     //Stats, will be then printed only if != 0
     if (e->atk != 0) {
-	printf("A: %i ", e->atk);
+        printf("A: %i ", e->atk);
     };
     if (e->def != 0) {
-	printf("D: %i ", e->def);
+        printf("D: %i ", e->def);
     };
     if (e->vel != 0) {
-	printf("V: %i ", e->vel);
+        printf("V: %i ", e->vel);
     };
     if (e->enr != 0) {
-	printf("E: %i", e->enr);
+        printf("E: %i", e->enr);
     };
 
     printf("\n");
@@ -3713,8 +3713,8 @@ void printEquipStats(Equip *e)
     //Perks, will be then printed only if perksCount != 0
 
     for (int i = 0; i < e->perksCount; i++) {
-	lightPurple();
-	printf("\t\t%s\n", e->perks[i]->name);
+        lightPurple();
+        printf("\t\t%s\n", e->perks[i]->name);
     };
     white();
 }
@@ -3730,19 +3730,19 @@ void printEquipStats(Equip *e)
 void printSpawnMessage(Enemy *e, int roomIndex, int enemyIndex)
 {
     if (!e->beast) {
-	//TODO:
-	//Where to print a windowed spawn message?
-	log_tag("debug_log.txt", "[ROOM]", "Room %i)\t\t%s\t\tEnemy #%i",
-		roomIndex, stringFromEClass(e->class), enemyIndex + 1);
+        //TODO:
+        //Where to print a windowed spawn message?
+        log_tag("debug_log.txt", "[ROOM]", "Room %i)\t\t%s\t\tEnemy #%i",
+                roomIndex, stringFromEClass(e->class), enemyIndex + 1);
     } else {
-	log_tag("debug_log.txt", "[ROOM]",
-		"Room %i)\t\t%s\t\tEnemy #%i IS BEAST", roomIndex,
-		stringFromEClass(e->class), enemyIndex + 1);
-	//lightBlue();
-	//printf("\nYou feel at discomfort.\n\nRoom %i)\t\t",roomIndex);
-	//lightRed();
-	//printf("Enemy #%i:\t%s",enemyIndex+1,stringFromEClass(e->class));
-	//white();
+        log_tag("debug_log.txt", "[ROOM]",
+                "Room %i)\t\t%s\t\tEnemy #%i IS BEAST", roomIndex,
+                stringFromEClass(e->class), enemyIndex + 1);
+        //lightBlue();
+        //printf("\nYou feel at discomfort.\n\nRoom %i)\t\t",roomIndex);
+        //lightRed();
+        //printf("Enemy #%i:\t%s",enemyIndex+1,stringFromEClass(e->class));
+        //white();
     }
 }
 
@@ -3762,29 +3762,29 @@ void initWincon(Wincon *w, Path *p, winconClass class)
     w->class = class;
 
     switch (w->class) {
-    case ALL_BOSSES:{
-	    w->current_val = 0;
-	    w->target_val = BOSSCLASSESMAX + 1;
+    case ALL_BOSSES: {
+        w->current_val = 0;
+        w->target_val = BOSSCLASSESMAX + 1;
 
-	};
-	break;
-    case ALL_ARTIFACTS:{
-	    w->current_val = 0;
-	    w->target_val = ARTIFACTSMAX + 1;
+    };
+    break;
+    case ALL_ARTIFACTS: {
+        w->current_val = 0;
+        w->target_val = ARTIFACTSMAX + 1;
 
-	};
-	break;
-    case FULL_PATH:{
-	    w->current_val = 0;
-	    w->target_val = p->length;
-	};
-	break;
-    default:{
-	    fprintf(stderr, "\nUnexpected Wincon Class %i\n", w->class);
-	    w->class = -1;
-	    w->current_val = 0;
-	    w->target_val = 1;
-	}
+    };
+    break;
+    case FULL_PATH: {
+        w->current_val = 0;
+        w->target_val = p->length;
+    };
+    break;
+    default: {
+        fprintf(stderr, "\nUnexpected Wincon Class %i\n", w->class);
+        w->class = -1;
+        w->current_val = 0;
+        w->target_val = 1;
+    }
 
     }
 
@@ -3804,93 +3804,93 @@ void initWincon(Wincon *w, Path *p, winconClass class)
  * @param kls The Koliseo used for allocation.
  */
 void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
-	       Koliseo *kls)
+               Koliseo *kls)
 {
 
     int argTot = argc - optTot;
     if (argTot == 0) {
-	pickName(player);
-	pickClass(player);
-	kls_log(kls, "DEBUG", "Prepping Wincon");
-	Wincon *w =
-	    (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
-				      "Wincon");
-	if (GAMEMODE == Story) {
-	    //Path length must be already initialised before getting here.
-	    initWincon(w, path, FULL_PATH);
-	} else if (GAMEMODE == Rogue) {
-	    //Path length must be already initialised before getting here.
-	    initWincon(w, path, ALL_ARTIFACTS);
-	} else {
-	    pickWincon(w);
-	    initWincon(w, path, w->class);
-	}
-	path->win_condition = w;
+        pickName(player);
+        pickClass(player);
+        kls_log(kls, "DEBUG", "Prepping Wincon");
+        Wincon *w =
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
+                                      "Wincon");
+        if (GAMEMODE == Story) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, FULL_PATH);
+        } else if (GAMEMODE == Rogue) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, ALL_ARTIFACTS);
+        } else {
+            pickWincon(w);
+            initWincon(w, path, w->class);
+        }
+        path->win_condition = w;
     } else if (argTot == 1 || argTot == 2) {
-	char read_name[25];
-	int i = 0, len = 0;
-	len = strlen(argv[optTot]);
-	if (len < 20) {
-	    for (; i < len; i++) {
-		read_name[i] = argv[optTot][i];
-	    }
-	    read_name[i] = '\0';
-	    strcpy(player->name, read_name);
-	} else {
-	    pickName(player);
-	}
+        char read_name[25];
+        int i = 0, len = 0;
+        len = strlen(argv[optTot]);
+        if (len < 20) {
+            for (; i < len; i++) {
+                read_name[i] = argv[optTot][i];
+            }
+            read_name[i] = '\0';
+            strcpy(player->name, read_name);
+        } else {
+            pickName(player);
+        }
     } else {
-	usage(argv[0]);
-	exit(EXIT_FAILURE);
+        usage(argv[0]);
+        exit(EXIT_FAILURE);
     }
     if (argTot == 1) {
-	pickClass(player);
-	kls_log(kls, "DEBUG", "Prepping Wincon");
-	Wincon *w =
-	    (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
-				      "Wincon");
-	if (GAMEMODE == Story) {
-	    //Path length must be already initialised before getting here.
-	    initWincon(w, path, FULL_PATH);
-	} else if (GAMEMODE == Rogue) {
-	    //Path length must be already initialised before getting here.
-	    initWincon(w, path, ALL_ARTIFACTS);
-	} else {
-	    pickWincon(w);
-	    initWincon(w, path, w->class);
-	}
-	path->win_condition = w;
+        pickClass(player);
+        kls_log(kls, "DEBUG", "Prepping Wincon");
+        Wincon *w =
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
+                                      "Wincon");
+        if (GAMEMODE == Story) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, FULL_PATH);
+        } else if (GAMEMODE == Rogue) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, ALL_ARTIFACTS);
+        } else {
+            pickWincon(w);
+            initWincon(w, path, w->class);
+        }
+        path->win_condition = w;
     }
 
     if (argTot == 2) {
-	int c = -1;
-	int i = 0;
-	for (i = 0; i <= CLASSESMAX; i++) {
-	    if (strcmp(argv[optTot + 1], classesstrings[i]) == 0) {
-		c = 1;
-		player->class = i;
-		break;
-	    }
-	}
-	if (c < 0) {
-	    pickClass(player);
-	}
-	kls_log(kls, "DEBUG", "Prepping Wincon");
-	Wincon *w =
-	    (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
-				      "Wincon");
-	if (GAMEMODE == Story) {
-	    //Path length must be already initialised before getting here.
-	    initWincon(w, path, FULL_PATH);
-	} else if (GAMEMODE == Rogue) {
-	    //TODO: what do we set as path length? Number of floors?
-	    //Path length must be already initialised before getting here.
-	    initWincon(w, path, ALL_ARTIFACTS);
-	} else {
-	    pickWincon(w);
-	    initWincon(w, path, w->class);
-	}
-	path->win_condition = w;
+        int c = -1;
+        int i = 0;
+        for (i = 0; i <= CLASSESMAX; i++) {
+            if (strcmp(argv[optTot + 1], classesstrings[i]) == 0) {
+                c = 1;
+                player->class = i;
+                break;
+            }
+        }
+        if (c < 0) {
+            pickClass(player);
+        }
+        kls_log(kls, "DEBUG", "Prepping Wincon");
+        Wincon *w =
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
+                                      "Wincon");
+        if (GAMEMODE == Story) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, FULL_PATH);
+        } else if (GAMEMODE == Rogue) {
+            //TODO: what do we set as path length? Number of floors?
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, ALL_ARTIFACTS);
+        } else {
+            pickWincon(w);
+            initWincon(w, path, w->class);
+        }
+        path->win_condition = w;
     }
 }
 
@@ -3907,48 +3907,48 @@ turnOption getTurnChoice(char *ch)
     turnOption pick = INVALID;
 
     while (pick == INVALID) {
-	if ((comp = strcmp(ch, "Fight")) == 0) {
-	    pick = FIGHT;
-	} else if ((comp = strcmp(ch, "New game")) == 0) {
-	    pick = NEW_GAME;
-	} else if ((comp = strcmp(ch, "Load save")) == 0) {
-	    pick = LOAD_GAME;
-	} else if ((comp = strcmp(ch, "Special")) == 0) {
-	    pick = SPECIAL;
-	} else if ((comp = strcmp(ch, "Consumables")) == 0) {
-	    pick = CONSUMABLE;
-	} else if ((comp = strcmp(ch, "Artifacts")) == 0) {
-	    pick = ARTIFACTS;
-	} else if ((comp = strcmp(ch, "Equips")) == 0) {
-	    pick = EQUIPS;
-	} else if ((comp = strcmp(ch, "Perks")) == 0) {
-	    pick = PERKS;
-	} else if ((comp = strcmp(ch, "Stats")) == 0) {
-	    pick = STATS;
-	} else if ((comp = strcmp(ch, "Save")) == 0) {
-	    pick = SAVE;
-	} else if ((comp = strcmp(ch, "Debug")) == 0) {
-	    pick = DEBUG;
-	} else if ((comp = strcmp(ch, "Quit")) == 0) {
-	    pick = QUIT;
-	} else if ((comp = strcmp(ch, "Explore")) == 0) {
-	    pick = EXPLORE;
-	} else if ((comp = strcmp(ch, "Tutorial")) == 0) {
-	    pick = TUTORIAL;
-	} else if ((comp = strcmp(ch, "Close")) == 0) {
-	    pick = CLOSE_MENU;
-	} else {
-	    pick = INVALID;
-	}
+        if ((comp = strcmp(ch, "Fight")) == 0) {
+            pick = FIGHT;
+        } else if ((comp = strcmp(ch, "New game")) == 0) {
+            pick = NEW_GAME;
+        } else if ((comp = strcmp(ch, "Load save")) == 0) {
+            pick = LOAD_GAME;
+        } else if ((comp = strcmp(ch, "Special")) == 0) {
+            pick = SPECIAL;
+        } else if ((comp = strcmp(ch, "Consumables")) == 0) {
+            pick = CONSUMABLE;
+        } else if ((comp = strcmp(ch, "Artifacts")) == 0) {
+            pick = ARTIFACTS;
+        } else if ((comp = strcmp(ch, "Equips")) == 0) {
+            pick = EQUIPS;
+        } else if ((comp = strcmp(ch, "Perks")) == 0) {
+            pick = PERKS;
+        } else if ((comp = strcmp(ch, "Stats")) == 0) {
+            pick = STATS;
+        } else if ((comp = strcmp(ch, "Save")) == 0) {
+            pick = SAVE;
+        } else if ((comp = strcmp(ch, "Debug")) == 0) {
+            pick = DEBUG;
+        } else if ((comp = strcmp(ch, "Quit")) == 0) {
+            pick = QUIT;
+        } else if ((comp = strcmp(ch, "Explore")) == 0) {
+            pick = EXPLORE;
+        } else if ((comp = strcmp(ch, "Tutorial")) == 0) {
+            pick = TUTORIAL;
+        } else if ((comp = strcmp(ch, "Close")) == 0) {
+            pick = CLOSE_MENU;
+        } else {
+            pick = INVALID;
+        }
     }
 
     log_tag("debug_log.txt", "[TURNOPT]", "Pick was: (%i)", pick);
 
     if (pick == INVALID) {
-	fprintf(stderr, "Error: unexpected turn choice value");
-	log_tag("debug_log.txt", "[ERROR]",
-		"Unexpected turn choice in getTurnChoice(), quitting");
-	exit(EXIT_FAILURE);
+        fprintf(stderr, "Error: unexpected turn choice value");
+        log_tag("debug_log.txt", "[ERROR]",
+                "Unexpected turn choice in getTurnChoice(), quitting");
+        exit(EXIT_FAILURE);
     }
     return pick;
 }
@@ -3962,42 +3962,42 @@ turnOption getTurnChoice(char *ch)
 foeTurnOption enemyTurnPick(Enemy *e, Fighter *f)
 {
     if (e == NULL) {
-	log_tag("debug_log.txt", "[ERROR]",
-		"enemyTurnPick():  Enemy was NULL.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]",
+                "enemyTurnPick():  Enemy was NULL.");
+        exit(EXIT_FAILURE);
     }
     if (f == NULL) {
-	log_tag("debug_log.txt", "[ERROR]",
-		"enemyTurnPick():  Fighter was NULL.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]",
+                "enemyTurnPick():  Fighter was NULL.");
+        exit(EXIT_FAILURE);
     }
     foeTurnOption pick = FOE_INVALID;
 
     while (pick == FOE_INVALID) {
-	int rn = rand() % 101;
-	/*
-	   if (rn > 80) {
-	   //TODO
-	   //pick = FOE_SPECIAL;
-	   pick = FOE_IDLE;
+        int rn = rand() % 101;
+        /*
+           if (rn > 80) {
+           //TODO
+           //pick = FOE_SPECIAL;
+           pick = FOE_IDLE;
 
-	   } else
-	 */
-	if (rn > 40) {
-	    pick = FOE_FIGHT;
-	} else {
-	    pick = FOE_IDLE;
-	}
+           } else
+         */
+        if (rn > 40) {
+            pick = FOE_FIGHT;
+        } else {
+            pick = FOE_IDLE;
+        }
     }
 
     log_tag("debug_log.txt", "[FOETURNOPTION]", "Pick was: ( %i ) [ %s ]", pick,
-	    stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
+            stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
 
     if (pick == FOE_INVALID) {
-	fprintf(stderr, "Error: unexpected turn choice value");
-	log_tag("debug_log.txt", "[ERROR]",
-		"Unexpected turn choice in enemyTurnPick(), quitting");
-	exit(EXIT_FAILURE);
+        fprintf(stderr, "Error: unexpected turn choice value");
+        log_tag("debug_log.txt", "[ERROR]",
+                "Unexpected turn choice in enemyTurnPick(), quitting");
+        exit(EXIT_FAILURE);
     }
     return pick;
 }
@@ -4011,40 +4011,40 @@ foeTurnOption enemyTurnPick(Enemy *e, Fighter *f)
 foeTurnOption bossTurnPick(Boss *b, Fighter *f)
 {
     if (b == NULL) {
-	log_tag("debug_log.txt", "[ERROR]", "bossTurnPick():  Boss was NULL.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "bossTurnPick():  Boss was NULL.");
+        exit(EXIT_FAILURE);
     }
     if (f == NULL) {
-	log_tag("debug_log.txt", "[ERROR]",
-		"bossTurnPick():  Fighter was NULL.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]",
+                "bossTurnPick():  Fighter was NULL.");
+        exit(EXIT_FAILURE);
     }
     foeTurnOption pick = FOE_INVALID;
 
     while (pick == FOE_INVALID) {
-	int rn = rand() % 101;
-	/*
-	   if (rn > 80) {
-	   //TODO
-	   //pick = FOE_SPECIAL;
-	   pick = FOE_IDLE;
-	   } else
-	 */
-	if (rn > 40) {
-	    pick = FOE_FIGHT;
-	} else {
-	    pick = FOE_IDLE;
-	}
+        int rn = rand() % 101;
+        /*
+           if (rn > 80) {
+           //TODO
+           //pick = FOE_SPECIAL;
+           pick = FOE_IDLE;
+           } else
+         */
+        if (rn > 40) {
+            pick = FOE_FIGHT;
+        } else {
+            pick = FOE_IDLE;
+        }
     }
 
     log_tag("debug_log.txt", "[FOETURNOPTION]", "Pick was: ( %i ) [ %s ]", pick,
-	    stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
+            stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
 
     if (pick == FOE_INVALID) {
-	fprintf(stderr, "Error: unexpected turn choice value");
-	log_tag("debug_log.txt", "[ERROR]",
-		"Unexpected turn choice in enemyTurnPick(), quitting");
-	exit(EXIT_FAILURE);
+        fprintf(stderr, "Error: unexpected turn choice value");
+        log_tag("debug_log.txt", "[ERROR]",
+                "Unexpected turn choice in enemyTurnPick(), quitting");
+        exit(EXIT_FAILURE);
     }
     return pick;
 }
@@ -4062,7 +4062,7 @@ int getBoost(int lvl, int luck)
     float boost = (lvl * 1.25F) + ((luck % 2) * 2);
 
     if (lvl < 2) {
-	boost = 1.0;		// Evitare conflitti
+        boost = 1.0;		// Evitare conflitti
     }
 
     return (int)boost;
@@ -4104,10 +4104,10 @@ void unlockSpecial(Fighter *f)
 
     /* Create menu items */
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
-	if (!(f->specials[i]->enabled)) {
-	    my_items[n_choices++] =
-		new_item(nameStringFromSpecial(f->class, i), "  ");
-	}
+        if (!(f->specials[i]->enabled)) {
+            my_items[n_choices++] =
+                new_item(nameStringFromSpecial(f->class, i), "  ");
+        }
     }
 
     /* Create menu */
@@ -4131,7 +4131,7 @@ void unlockSpecial(Fighter *f)
     /* Print a border around the main window and print a title */
     box(my_menu_win, 0, 0);
     print_label(my_menu_win, 1, 0, 20, "New move unlocked",
-		COLOR_PAIR(S4C_CYAN));
+                COLOR_PAIR(S4C_CYAN));
     mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
     mvwhline(my_menu_win, 2, 1, ACS_HLINE, 26);
     mvwaddch(my_menu_win, 2, 27, ACS_RTEE);
@@ -4154,18 +4154,18 @@ void unlockSpecial(Fighter *f)
     //Update selected window
     cur = current_item(my_menu);
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
-	int check = -1;
-	if ((check =
-	     strcmp(nameStringFromSpecial(f->class, i), item_name(cur))) == 0) {
-	    currentIndexed = i;
-	    break;
-	}
+        int check = -1;
+        if ((check =
+                 strcmp(nameStringFromSpecial(f->class, i), item_name(cur))) == 0) {
+            currentIndexed = i;
+            break;
+        }
     }
     mvwprintw(display_win, 2, 2, "%s",
-	      descStringFromSpecial(f->class,
-				    f->specials[currentIndexed]->move));
+              descStringFromSpecial(f->class,
+                                    f->specials[currentIndexed]->move));
     mvwprintw(display_win, 4, 2, "Energy Cost %i",
-	      f->specials[currentIndexed]->cost);
+              f->specials[currentIndexed]->cost);
     wrefresh(my_menu_win);
     wrefresh(display_win);
 
@@ -4173,100 +4173,100 @@ void unlockSpecial(Fighter *f)
     int c;
 
     while (!picked && (c = wgetch(my_menu_win))) {
-	switch (c) {
-	case KEY_DOWN:{
-		menu_driver(my_menu, REQ_DOWN_ITEM);
-		cur = current_item(my_menu);
-		//Update selected window
-		for (int i = 0; i < SPECIALSMAX + 1; i++) {
-		    int check = -1;
-		    if ((check =
-			 strcmp(nameStringFromSpecial(f->class, i),
-				item_name(cur))) == 0) {
-			currentIndexed = i;
-			break;
-		    }
-		}
-	    }
-	    break;
-	case KEY_UP:{
-		menu_driver(my_menu, REQ_UP_ITEM);
-		cur = current_item(my_menu);
-		for (int i = 0; i < SPECIALSMAX + 1; i++) {
-		    int check = -1;
-		    if ((check =
-			 strcmp(nameStringFromSpecial(f->class, i),
-				item_name(cur))) == 0) {
-			currentIndexed = i;
-			break;
-		    }
-		}
-	    }
-	    break;
-	case KEY_NPAGE:{
-		menu_driver(my_menu, REQ_SCR_DPAGE);
-		cur = current_item(my_menu);
-		//Update selected window
-		for (int i = 0; i < SPECIALSMAX + 1; i++) {
-		    int check = -1;
-		    if ((check =
-			 strcmp(nameStringFromSpecial(f->class, i),
-				item_name(cur))) == 0) {
-			currentIndexed = i;
-			break;
-		    }
-		}
-	    }
-	    break;
-	case KEY_PPAGE:{
-		menu_driver(my_menu, REQ_SCR_UPAGE);
-		cur = current_item(my_menu);
-		for (int i = 0; i < SPECIALSMAX + 1; i++) {
-		    int check = -1;
-		    if ((check =
-			 strcmp(nameStringFromSpecial(f->class, i),
-				item_name(cur))) == 0) {
-			currentIndexed = i;
-			break;
-		    }
-		}
-	    }
-	    break;
-	case 10:{		/*Enter */
-		picked = 1;
-		cur = current_item(my_menu);
-		for (int i = 0; i < SPECIALSMAX + 1; i++) {
-		    int check = -1;
-		    if ((check =
-			 strcmp(nameStringFromSpecial(f->class, i),
-				item_name(cur))) == 0) {
-			selection = i;
-			break;
-		    }
+        switch (c) {
+        case KEY_DOWN: {
+            menu_driver(my_menu, REQ_DOWN_ITEM);
+            cur = current_item(my_menu);
+            //Update selected window
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    currentIndexed = i;
+                    break;
+                }
+            }
+        }
+        break;
+        case KEY_UP: {
+            menu_driver(my_menu, REQ_UP_ITEM);
+            cur = current_item(my_menu);
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    currentIndexed = i;
+                    break;
+                }
+            }
+        }
+        break;
+        case KEY_NPAGE: {
+            menu_driver(my_menu, REQ_SCR_DPAGE);
+            cur = current_item(my_menu);
+            //Update selected window
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    currentIndexed = i;
+                    break;
+                }
+            }
+        }
+        break;
+        case KEY_PPAGE: {
+            menu_driver(my_menu, REQ_SCR_UPAGE);
+            cur = current_item(my_menu);
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    currentIndexed = i;
+                    break;
+                }
+            }
+        }
+        break;
+        case 10: {		/*Enter */
+            picked = 1;
+            cur = current_item(my_menu);
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    selection = i;
+                    break;
+                }
 
-		    pos_menu_cursor(my_menu);
-		    refresh();
-		};
-		break;
-	    }
-	}
-	wclear(display_win);
-	wrefresh(display_win);
-	box(display_win, 0, 0);
-	mvwprintw(display_win, 2, 2, "%s",
-		  descStringFromSpecial(f->class,
-					f->specials[currentIndexed]->move));
-	mvwprintw(display_win, 4, 2, "Energy Cost %i",
-		  f->specials[currentIndexed]->cost);
-	wrefresh(my_menu_win);
-	wrefresh(display_win);
-	refresh();
+                pos_menu_cursor(my_menu);
+                refresh();
+            };
+            break;
+        }
+        }
+        wclear(display_win);
+        wrefresh(display_win);
+        box(display_win, 0, 0);
+        mvwprintw(display_win, 2, 2, "%s",
+                  descStringFromSpecial(f->class,
+                                        f->specials[currentIndexed]->move));
+        mvwprintw(display_win, 4, 2, "Energy Cost %i",
+                  f->specials[currentIndexed]->cost);
+        wrefresh(my_menu_win);
+        wrefresh(display_win);
+        refresh();
     }
     /* Unpost and free all the memory taken up */
     unpost_menu(my_menu);
     free_menu(my_menu);
     for (int k = 0; k <= n_choices; k++) {
-	free_item(my_items[k]);
+        free_item(my_items[k]);
     }
     delwin(my_menu_win);
     delwin(display_win);
@@ -4275,13 +4275,13 @@ void unlockSpecial(Fighter *f)
     int num = selection;
 
     if (num < SPECIALSMAX + 1) {	//Check if selected move number is lower than the maximum
-	Specialslot *selected = f->specials[num];
+        Specialslot *selected = f->specials[num];
 
-	//Check if the selected move is NOT enabled
-	if (!(selected->enabled)) {
-	    //Enable the move
-	    selected->enabled = 1;
-	}
+        //Check if the selected move is NOT enabled
+        if (!(selected->enabled)) {
+            //Enable the move
+            selected->enabled = 1;
+        }
     }
     f->stats->specialsunlocked += 1;
 }
@@ -4314,15 +4314,15 @@ void onLevelUp(Fighter *player)
 
     int energyboost = player->level / 5;	//Energy grows by lvl/5 on each lvl up
     player->totalenergy =
-	base->totalenergy + energyboost + player->permboost_enr;
+        base->totalenergy + energyboost + player->permboost_enr;
 
     player->hp = player->totalhp;	//Cure on level up
     player->energy = player->totalenergy;	//Refill energy on level up
 
     //Check if you get a new special move
     if (player->level % SPECIALLVLRATIO == 0
-	&& (player->stats->specialsunlocked < (SPECIALSMAX + 1))) {
-	unlockSpecial(player);
+        && (player->stats->specialsunlocked < (SPECIALSMAX + 1))) {
+        unlockSpecial(player);
     }
 
     log_tag("debug_log.txt", "[LEVELUP]", "Player leveled up.");
@@ -4352,28 +4352,28 @@ void checkremainder(Fighter *player, int xp)
     //TODO: Print notifications to a passed WINDOW
 
     if (curr + xp >= tot) {
-	player->totalxp += xp;
-	//if (xp !=0) printf("\n\t%s obtained %i xp.", player->name, xp);
-	player->level++;
+        player->totalxp += xp;
+        //if (xp !=0) printf("\n\t%s obtained %i xp.", player->name, xp);
+        player->level++;
 
-	//cyan();
-	//printf("\n\t%s reached Lvl. %i !", player->name, player->level);
-	//white();
+        //cyan();
+        //printf("\n\t%s reached Lvl. %i !", player->name, player->level);
+        //white();
 
-	//Stats gains on level up
-	onLevelUp(player);
+        //Stats gains on level up
+        onLevelUp(player);
 
-	player->currentlevelxp = abs((tot - curr - xp));
-	int nextLevelMoreXp =
-	    round(1.75 * (player->level + 1)) + player->level + 1;
-	player->totallevelxp = (tot / player->level) + nextLevelMoreXp;
-	checkremainder(player, 0);
+        player->currentlevelxp = abs((tot - curr - xp));
+        int nextLevelMoreXp =
+            round(1.75 * (player->level + 1)) + player->level + 1;
+        player->totallevelxp = (tot / player->level) + nextLevelMoreXp;
+        checkremainder(player, 0);
     } else {
-	player->currentlevelxp += xp;
-	player->totalxp += xp;
-	if (xp != 0) {
-	    //printf("\n\t%s obtained %i xp.", player->name, xp);
-	}
+        player->currentlevelxp += xp;
+        player->totalxp += xp;
+        if (xp != 0) {
+            //printf("\n\t%s obtained %i xp.", player->name, xp);
+        }
     }
 }
 
@@ -4428,27 +4428,27 @@ void giveXp_Boss(Fighter *player, Boss *b)
 void statReset(Fighter *player, int force)
 {
     log_tag("debug_log.txt", "[DEBUG]",
-	    "Call to statReset() with ($force) == (%i)", force);
+            "Call to statReset() with ($force) == (%i)", force);
     if (!force && (player->hp >= 0.5 * player->totalhp)
-	&& !(player->atk <= 0 || player->def <= 0 || player->vel <= 0)) {
-	return;
+        && !(player->atk <= 0 || player->def <= 0 || player->vel <= 0)) {
+        return;
     }
 
     int boost = getBoost(player->level, player->luck);
 
     BaseStats *base = &basestats[player->class];
     if (force || player->vel <= 0.3 * (base->vel + boost)
-	|| player->atk <= 0.35 * (base->atk + boost)
-	|| player->def <= 0.18 * (base->def + boost)) {
-	player->vel = base->vel + boost + player->permboost_vel;
-	player->atk = base->atk + boost + player->permboost_atk;
-	player->def = base->def + boost + player->permboost_def;
-	//Reset stats
-	if (!force) {
-	    //yellow();
-	    //printf("\n\n\t%s's stats reset.\n",player->name);
-	    //white();
-	}
+        || player->atk <= 0.35 * (base->atk + boost)
+        || player->def <= 0.18 * (base->def + boost)) {
+        player->vel = base->vel + boost + player->permboost_vel;
+        player->atk = base->atk + boost + player->permboost_atk;
+        player->def = base->def + boost + player->permboost_def;
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",player->name);
+            //white();
+        }
     }
 }
 
@@ -4468,9 +4468,9 @@ int dropConsumable(Fighter *player)
 
     //Special drop chances. Maybe a function for this?
     if (drop == Powergem) {
-	if (rand() % 3 == 0) {
-	    drop = rand() % (CONSUMABLESMAX + 1);
-	}
+        if (rand() % 3 == 0) {
+            drop = rand() % (CONSUMABLESMAX + 1);
+        }
     }
     // Powergem has 33% chance to be rerolled
 
@@ -4514,7 +4514,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     //Prepare the item
     kls_log(kls, "DEBUG", "Prepping dropped Equip");
     Equip *e =
-	(Equip *) KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
+        (Equip *) KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
 
     //Get the base item and copy the stats to the drop
     Equip *base = &equips[drop];
@@ -4537,11 +4537,11 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
     //Chance for better leveled item
     if ((rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
-	e->level += 1;		//At least a simple +1
-	if ((rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
-	    e->level += 1;	//A bonus roll for another +1
+        e->level += 1;		//At least a simple +1
+        if ((rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
+            e->level += 1;	//A bonus roll for another +1
 
-	}
+        }
     }
 
     float boostFactor = 0.7;
@@ -4556,55 +4556,55 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     //Bonus stats on better quality items? Simple for now
     //
     if (q == Good) {
-	e->atk += (rand() % 3);	//Should use a defined constant
-	e->def += (rand() % 3);	//Should use a defined constant
-	e->vel += (rand() % 3);	//Should use a defined constant
-	e->enr += (rand() % 2);	//Should use a defined constant
+        e->atk += (rand() % 3);	//Should use a defined constant
+        e->def += (rand() % 3);	//Should use a defined constant
+        e->vel += (rand() % 3);	//Should use a defined constant
+        e->enr += (rand() % 2);	//Should use a defined constant
     } else if (q == Bad) {
-	e->atk -= (rand() % 3);	//Should use a defined constant
-	e->def -= (rand() % 3);	//Should use a defined constant
-	e->vel -= (rand() % 3);	//Should use a defined constant
-	e->enr -= (rand() % 2);	//Should use a defined constant
-	if (e->atk < 0) {
-	    e->atk = 0;
-	};
-	if (e->def < 0) {
-	    e->def = 0;
-	};
-	if (e->vel < 0) {
-	    e->vel = 0;
-	};
-	if (e->enr < 0) {
-	    e->enr = 0;
-	};
+        e->atk -= (rand() % 3);	//Should use a defined constant
+        e->def -= (rand() % 3);	//Should use a defined constant
+        e->vel -= (rand() % 3);	//Should use a defined constant
+        e->enr -= (rand() % 2);	//Should use a defined constant
+        if (e->atk < 0) {
+            e->atk = 0;
+        };
+        if (e->def < 0) {
+            e->def = 0;
+        };
+        if (e->vel < 0) {
+            e->vel = 0;
+        };
+        if (e->enr < 0) {
+            e->enr = 0;
+        };
     }
     //Possible perks for the Equip
 
     for (int i = 0; i < (EQUIPPERKSMAX); i++) {
-	int chance = 20;
+        int chance = 20;
 
-	if (q == Good) {
-	    chance *= 1.5;
-	}
+        if (q == Good) {
+            chance *= 1.5;
+        }
 
-	if ((rand() % 100) < chance || (beast && e->perksCount == 0)) {
+        if ((rand() % 100) < chance || (beast && e->perksCount == 0)) {
 
-	    e->perksCount += 1;
+            e->perksCount += 1;
 
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Prepping Perk (%i) for dropped Equip)", e->perksCount);
-	    kls_log(kls, "DEBUG", "Prepping Perk (%i) for dropped Equip)",
-		    e->perksCount);
-	    Perk *p =
-		(Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
-	    p->class = rand() % (PERKSMAX + 1);
-	    //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
-	    strcpy(p->name, nameStringFromPerk(p->class));
-	    //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
-	    strcpy(p->desc, descStringFromPerk(p->class));
-	    p->innerValue = 1;
-	    e->perks[(e->perksCount - 1)] = p;
-	}
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Prepping Perk (%i) for dropped Equip)", e->perksCount);
+            kls_log(kls, "DEBUG", "Prepping Perk (%i) for dropped Equip)",
+                    e->perksCount);
+            Perk *p =
+                (Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
+            p->class = rand() % (PERKSMAX + 1);
+            //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
+            strcpy(p->name, nameStringFromPerk(p->class));
+            //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
+            strcpy(p->desc, descStringFromPerk(p->class));
+            p->innerValue = 1;
+            e->perks[(e->perksCount - 1)] = p;
+        }
     }
 
     //Set value of how many bonuses we have. Although Equip only has ONE function pointer field for now
@@ -4630,107 +4630,107 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
     wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     sprintf(msg, "You found %s %s!", stringFromQuality(q),
-	    stringFromEquips(drop));
+            stringFromEquips(drop));
     display_notification(notify_win, msg, 800);
     wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     log_tag("debug_log.txt", "[DEBUG-DROPS]", "Found Equip:    %s.",
-	    stringFromEquips(drop));
+            stringFromEquips(drop));
 
     if (player->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {	//Handle full bag by asking player if we throw something away
-	//FIXME: The handling of full bag event is a mess as it does not support curses.
-	lightRed();
-	printf("\tYour bag is full. Want to throw something away?\n");
-	white();
-	log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
-		"Bag full, need to make space.\n");
+        //FIXME: The handling of full bag event is a mess as it does not support curses.
+        lightRed();
+        printf("\tYour bag is full. Want to throw something away?\n");
+        white();
+        log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
+                "Bag full, need to make space.\n");
 
-	for (int i = 0; i < player->equipsBagOccupiedSlots; i++) {
-	    Equip *current = (Equip *) player->equipsBag[i];
-	    if (current->equipped) {
-		green();
-		printf("ON  ");
-		white();
-	    };
+        for (int i = 0; i < player->equipsBagOccupiedSlots; i++) {
+            Equip *current = (Equip *) player->equipsBag[i];
+            if (current->equipped) {
+                green();
+                printf("ON  ");
+                white();
+            };
 
-	    printf("(%i", i);	//This starts lines with the item index.
-	    printEquipStats(current);
-	};
+            printf("(%i", i);	//This starts lines with the item index.
+            printEquipStats(current);
+        };
 
-	int selected = -1;
-	int c = -1;
-	Equip *s = NULL;
+        int selected = -1;
+        int c = -1;
+        Equip *s = NULL;
 
-	while (selected < 0 || selected >= player->equipsBagOccupiedSlots
-	       || c != 1) {
+        while (selected < 0 || selected >= player->equipsBagOccupiedSlots
+               || c != 1) {
 
-	    c = scanf("%i", &selected);
-	    int res = scanf("%*c");
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "dropEquip() scanf() res was (%i)", res);
+            c = scanf("%i", &selected);
+            int res = scanf("%*c");
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "dropEquip() scanf() res was (%i)", res);
 
-	    if (c == 1) {
-		s = (Equip *) player->equipsBag[selected];
-		if (s->equipped) {
-		    printf("You can't delete an equipped item!");
-		    selected = -1;
-		}
-	    }
-	}
+            if (c == 1) {
+                s = (Equip *) player->equipsBag[selected];
+                if (s->equipped) {
+                    printf("You can't delete an equipped item!");
+                    selected = -1;
+                }
+            }
+        }
 
-	printf
-	    ("\tAre you sure you want to delete %s %s ?\n\t\t[0 to confirm, 1 to go back]\n",
-	     stringFromQuality(s->qual), s->name);
+        printf
+        ("\tAre you sure you want to delete %s %s ?\n\t\t[0 to confirm, 1 to go back]\n",
+         stringFromQuality(s->qual), s->name);
 
-	int n = -1;
-	c = -1;
-	while (n < 0 || c != 1) {
-	    c = scanf("%i", &n);
-	    int res = scanf("%*c");
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "dropEquip() scanf() res was (%i)", res);
-	}
+        int n = -1;
+        c = -1;
+        while (n < 0 || c != 1) {
+            c = scanf("%i", &n);
+            int res = scanf("%*c");
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "dropEquip() scanf() res was (%i)", res);
+        }
 
-	if (n != 0) {		//Abort deletion, drop will not be awared.
+        if (n != 0) {		//Abort deletion, drop will not be awared.
 
-	    /*
-	       int perkscount = e->perksCount;
-	       if (perkscount > 0) {
-	       for (int i=0; i < perkscount; i++) {
-	       free(e->perks[i]);
-	       }
-	       }
-	       free(e);
-	     */
-	    log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
-		    "Equip was not taken.\n");
-	    return;
-	};
+            /*
+               int perkscount = e->perksCount;
+               if (perkscount > 0) {
+               for (int i=0; i < perkscount; i++) {
+               free(e->perks[i]);
+               }
+               }
+               free(e);
+             */
+            log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
+                    "Equip was not taken.\n");
+            return;
+        };
 
-	Equip *toDelete = (Equip *) player->equipsBag[selected];
-	int perkscount = toDelete->perksCount;
-	/*
-	   if (perkscount > 0) {
-	   for (int i=0; i < perkscount; i++) {
-	   free(toDelete->perks[i]);
-	   }
-	   }
-	 */
-	log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
-		"Equip %s (%i Perks) was taken by deleting %s.\n",
-		stringFromEquips(e->class), perkscount,
-		stringFromEquips(toDelete->class));
-	/*
-	   free(toDelete);
-	 */
+        Equip *toDelete = (Equip *) player->equipsBag[selected];
+        int perkscount = toDelete->perksCount;
+        /*
+           if (perkscount > 0) {
+           for (int i=0; i < perkscount; i++) {
+           free(toDelete->perks[i]);
+           }
+           }
+         */
+        log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
+                "Equip %s (%i Perks) was taken by deleting %s.\n",
+                stringFromEquips(e->class), perkscount,
+                stringFromEquips(toDelete->class));
+        /*
+           free(toDelete);
+         */
 
-	//Add drop to player bag replacing the one at the selected index
-	player->equipsBag[selected] = (struct Equip *)e;
+        //Add drop to player bag replacing the one at the selected index
+        player->equipsBag[selected] = (struct Equip *)e;
 
-	//Update stats
-	player->stats->equipsfound++;
+        //Update stats
+        player->stats->equipsfound++;
 
-	napms(500);
-	return;
+        napms(500);
+        return;
     };				//End if bag is full
 
     //Add drop to player bag
@@ -4758,7 +4758,7 @@ int dropArtifact(Fighter *player)
 {
     int drop = 0;
     do {
-	drop = rand() % (ARTIFACTSMAX + 1);
+        drop = rand() % (ARTIFACTSMAX + 1);
     } while (player->artifactsBag[drop]->qty != 0);	//We reroll to get one we don't have
 
     player->artifactsBag[drop]->qty++;
@@ -4798,20 +4798,20 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
     int atkdelta = (player->atk + player->equipboost_atk) - e->atk - (rand() % 3) - 1;	//Skewed with defender
     int defdelta = (player->def + player->equipboost_def) - e->def + (rand() % 2) + 1;	//Skewed with attacker
     int veldelta =
-	(player->vel + player->equipboost_vel) - e->vel + (rand() % 3) + 1;
+        (player->vel + player->equipboost_vel) - e->vel + (rand() % 3) + 1;
 
     int atkOnPlayer =
-	e->atk - (player->def + player->equipboost_def + (player->vel / 6));
+        e->atk - (player->def + player->equipboost_def + (player->vel / 6));
     int atkOnEnemy =
-	(player->atk + player->equipboost_atk) - (e->def + (e->vel / 6));
+        (player->atk + player->equipboost_atk) - (e->def + (e->vel / 6));
 
     if (G_GODMODE_ON == 1) {
-	log_tag("debug_log.txt", "[DEBUG]", "fight():  G_GODMODE_ON == 1");
-	atkdelta = 100;
-	defdelta = 100;
-	veldelta = 100;
-	atkOnPlayer = 1;
-	atkOnEnemy = 100;
+        log_tag("debug_log.txt", "[DEBUG]", "fight():  G_GODMODE_ON == 1");
+        atkdelta = 100;
+        defdelta = 100;
+        veldelta = 100;
+        atkOnPlayer = 1;
+        atkOnEnemy = 100;
     }
 
     int damageDealt = -1;
@@ -4823,60 +4823,60 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
 
     if (veldelta >= 0) {
 
-	if (atkOnEnemy > 3) {
-	    damageDealt = atkOnEnemy;
-	    e->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result A WIN (faster, great atk).");
-	} else if (atkOnEnemy >= 0) {
-	    damageDealt = abs(atkOnEnemy - atkdelta);
-	    e->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result B WIN (faster, ok atk).");
-	} else {
-	    if (atkOnEnemy > -3) {
-		damageDealt =
-		    fabsf(atkOnPlayer -
-			  0.75F * (player->vel + player->equipboost_vel));
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result C1 LOST (faster, atk > -3).");
-	    } else {
-		damageDealt = abs(atkOnPlayer - 1);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result C2 LOST (faster, atk < -3).");
-	    }
-	    player->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	}
+        if (atkOnEnemy > 3) {
+            damageDealt = atkOnEnemy;
+            e->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result A WIN (faster, great atk).");
+        } else if (atkOnEnemy >= 0) {
+            damageDealt = abs(atkOnEnemy - atkdelta);
+            e->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result B WIN (faster, ok atk).");
+        } else {
+            if (atkOnEnemy > -3) {
+                damageDealt =
+                    fabsf(atkOnPlayer -
+                          0.75F * (player->vel + player->equipboost_vel));
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result C1 LOST (faster, atk > -3).");
+            } else {
+                damageDealt = abs(atkOnPlayer - 1);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result C2 LOST (faster, atk < -3).");
+            }
+            player->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+        }
     } else {
-	atkdelta = -atkdelta;
-	if (atkOnPlayer > 3) {
-	    damageDealt = atkOnPlayer;
-	    player->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result D LOST (slower, great enemy atk).");
-	} else if (atkOnPlayer >= 0) {
-	    damageDealt = abs(atkOnPlayer - atkdelta);
-	    player->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result E LOST (slower, ok enemy atk).");
-	} else {
-	    if (atkOnPlayer > -3) {
-		damageDealt = fabsf(atkOnEnemy - 0.75F * e->vel);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result F1 WIN (slower, enemy atk > -3).");
-	    } else {
-		damageDealt = abs(atkOnEnemy - 1);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result F2 WIN (slower, enemy atk < -3).");
-	    }
-	    e->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	}
+        atkdelta = -atkdelta;
+        if (atkOnPlayer > 3) {
+            damageDealt = atkOnPlayer;
+            player->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result D LOST (slower, great enemy atk).");
+        } else if (atkOnPlayer >= 0) {
+            damageDealt = abs(atkOnPlayer - atkdelta);
+            player->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result E LOST (slower, ok enemy atk).");
+        } else {
+            if (atkOnPlayer > -3) {
+                damageDealt = fabsf(atkOnEnemy - 0.75F * e->vel);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result F1 WIN (slower, enemy atk > -3).");
+            } else {
+                damageDealt = abs(atkOnEnemy - 1);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result F2 WIN (slower, enemy atk < -3).");
+            }
+            e->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+        }
     }
     log_tag("debug_log.txt", "[FIGHT]", "damageCalc %i", damageDealt);
 
@@ -4885,72 +4885,72 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
 
     if (!yourhit) {
 
-	e->vel--;
-	e->atk--;
-	e->def -= 2;
+        e->vel--;
+        e->atk--;
+        e->def -= 2;
 
-	//Check if someone earned a stat reset after the fight
-	statReset(player, 0);
-	statResetEnemy(e, 0);
+        //Check if someone earned a stat reset after the fight
+        statReset(player, 0);
+        statResetEnemy(e, 0);
 
-	strcpy(victim, player->name);
+        strcpy(victim, player->name);
     } else {
 
-	player->vel--;
-	player->atk--;
-	player->def -= 2;
+        player->vel--;
+        player->atk--;
+        player->def -= 2;
 
-	//Account for vampirism perk
-	int vampire_perks = player->perks[VAMPIRISM]->innerValue;
-	if (vampire_perks > 0) {
-	    int recovery = floor(damageDealt * (0.1 * vampire_perks));
-	    player->hp += recovery;
-	    log_tag("debug_log.txt", "[PERKS]", "Vampirism proc for +%i HP.",
-		    recovery);
-	    if (player->hp >= player->totalhp) {
-		player->hp = player->totalhp;
-	    };
-	}
-	//Account for burn on touch perk
-	int hotbody_perks = player->perks[HOT_BODY]->innerValue;
-	if (hotbody_perks > 0) {
-	    int burnchance = 11 - hotbody_perks;
-	    if (rand() % burnchance == 0) {
-		//TODO
-		//Handle multiple statuses
-		e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
-		setCounter((Turncounter *) e->counters[Burned], 2);	//Give 2 turns of Burned status
-		log_tag("debug_log.txt", "[PERKS]",
-			"Hotbody proc on 1/%i chance.", burnchance);
-	    }
-	}
-	//Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
-	int biohazard_perks = player->perks[BIOHAZARD]->innerValue;
-	if (biohazard_perks > 0) {
-	    int poisonchance = 11 - biohazard_perks;
-	    if (rand() % poisonchance == 0) {
-		e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
-		setCounter((Turncounter *) e->counters[POISON], 2);	//Give 2 turns of Poison status
-		log_tag("debug_log.txt", "[PERKS]",
-			"Biohazard proc on 1/%i chance.", poisonchance);
-	    }
-	}
-	//Check if someone earned a stat reset after the fight
-	statResetEnemy(e, 0);
-	statReset(player, 0);
+        //Account for vampirism perk
+        int vampire_perks = player->perks[VAMPIRISM]->innerValue;
+        if (vampire_perks > 0) {
+            int recovery = floor(damageDealt * (0.1 * vampire_perks));
+            player->hp += recovery;
+            log_tag("debug_log.txt", "[PERKS]", "Vampirism proc for +%i HP.",
+                    recovery);
+            if (player->hp >= player->totalhp) {
+                player->hp = player->totalhp;
+            };
+        }
+        //Account for burn on touch perk
+        int hotbody_perks = player->perks[HOT_BODY]->innerValue;
+        if (hotbody_perks > 0) {
+            int burnchance = 11 - hotbody_perks;
+            if (rand() % burnchance == 0) {
+                //TODO
+                //Handle multiple statuses
+                e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
+                setCounter((Turncounter *) e->counters[Burned], 2);	//Give 2 turns of Burned status
+                log_tag("debug_log.txt", "[PERKS]",
+                        "Hotbody proc on 1/%i chance.", burnchance);
+            }
+        }
+        //Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
+        int biohazard_perks = player->perks[BIOHAZARD]->innerValue;
+        if (biohazard_perks > 0) {
+            int poisonchance = 11 - biohazard_perks;
+            if (rand() % poisonchance == 0) {
+                e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
+                setCounter((Turncounter *) e->counters[POISON], 2);	//Give 2 turns of Poison status
+                log_tag("debug_log.txt", "[PERKS]",
+                        "Biohazard proc on 1/%i chance.", poisonchance);
+            }
+        }
+        //Check if someone earned a stat reset after the fight
+        statResetEnemy(e, 0);
+        statReset(player, 0);
 
-	strcpy(victim, stringFromEClass(e->class));
+        strcpy(victim, stringFromEClass(e->class));
     }
 
     int color = -1;
     if (yourhit) {
-	color = S4C_WHITE;
+        color = S4C_WHITE;
     } else {
-	color = S4C_RED;
+        color = S4C_RED;
     }
 
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
-	    damageDealt > 0 ? damageDealt : 1);
+            damageDealt > 0 ? damageDealt : 1);
     wattron(notify_win, COLOR_PAIR(color));
     display_notification(notify_win, msg, 500);
     wattroff(notify_win, COLOR_PAIR(color));
@@ -4967,106 +4967,106 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
 
     if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
 
-	//Account for critboost_dmg perks
-	int dmgboost_perks = player->perks[CRITBOOST_DMG]->innerValue;
-	damageDealt *= (0.30 + (0.12 * dmgboost_perks));
-	e->hp -= (damageDealt > 0 ? damageDealt : 1);
-	log_tag("debug_log.txt", "[FIGHT]",
-		"Critical hit for %i dmg, proc on 1/%i chance.", damageDealt,
-		critMax);
-	log_tag("debug_log.txt", "[PERKS]", "Critical hit, critboost was %i.",
-		critboost_value);
+        //Account for critboost_dmg perks
+        int dmgboost_perks = player->perks[CRITBOOST_DMG]->innerValue;
+        damageDealt *= (0.30 + (0.12 * dmgboost_perks));
+        e->hp -= (damageDealt > 0 ? damageDealt : 1);
+        log_tag("debug_log.txt", "[FIGHT]",
+                "Critical hit for %i dmg, proc on 1/%i chance.", damageDealt,
+                critMax);
+        log_tag("debug_log.txt", "[PERKS]", "Critical hit, critboost was %i.",
+                critboost_value);
 
-	sprintf(msg, "A critical hit!    (%i DMG)",
-		damageDealt > 0 ? damageDealt : 1);
-	wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	//Update stats
-	player->stats->criticalhits++;
+        sprintf(msg, "A critical hit!    (%i DMG)",
+                damageDealt > 0 ? damageDealt : 1);
+        wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        //Update stats
+        player->stats->criticalhits++;
     }
     //Check for deaths -> exit condition from loop
     //
     //
     //
     if (e->hp <= 0) {
-	res = FIGHTRES_KILL_DONE;
+        res = FIGHTRES_KILL_DONE;
 
-	//Account for runic circle perk
-	int runic_perks = player->perks[RUNIC_MAGNET]->innerValue;
-	if (runic_perks > 0) {
-	    int recovery = round(0.51 * runic_perks);
-	    player->energy += recovery;
-	    log_tag("debug_log.txt", "[PERKS]",
-		    "Runicmagnet proc for %i energy.", recovery);
-	}
-	if (e->beast) {
-	    color = S4C_MAGENTA;
-	} else {
-	    color = S4C_RED;
-	}
-	wattron(notify_win, COLOR_PAIR(color));
-	sprintf(msg, "%s fainted.", stringFromEClass(e->class));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(color));
+        //Account for runic circle perk
+        int runic_perks = player->perks[RUNIC_MAGNET]->innerValue;
+        if (runic_perks > 0) {
+            int recovery = round(0.51 * runic_perks);
+            player->energy += recovery;
+            log_tag("debug_log.txt", "[PERKS]",
+                    "Runicmagnet proc for %i energy.", recovery);
+        }
+        if (e->beast) {
+            color = S4C_MAGENTA;
+        } else {
+            color = S4C_RED;
+        }
+        wattron(notify_win, COLOR_PAIR(color));
+        sprintf(msg, "%s fainted.", stringFromEClass(e->class));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(color));
 
-	log_tag("debug_log.txt", "[FIGHT]", "Killed  %s.",
-		stringFromEClass(e->class));
+        log_tag("debug_log.txt", "[FIGHT]", "Killed  %s.",
+                stringFromEClass(e->class));
 
-	//Update stats
-	player->stats->enemieskilled++;
+        //Update stats
+        player->stats->enemieskilled++;
     } else {
-	//Apply status effects to enemy
-	if (e->status != Normal) {
-	    applyEStatus(notify_win, e);
-	    log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
-		    stringFromStatus(e->status), stringFromEClass(e->class));
-	}
+        //Apply status effects to enemy
+        if (e->status != Normal) {
+            applyEStatus(notify_win, e);
+            log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
+                    stringFromStatus(e->status), stringFromEClass(e->class));
+        }
     }
 
     if (player->hp <= 0) {
-	res = FIGHTRES_DEATH;
+        res = FIGHTRES_DEATH;
     } else {
-	//Apply status effects to player
-	if (player->status != Normal) {
-	    applyStatus(notify_win, player);
-	}
+        //Apply status effects to player
+        if (player->status != Normal) {
+            applyStatus(notify_win, player);
+        }
     }
 
     //Consumable drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
-	&& (e->beast || ((rand() % 9) - (player->luck / 10) <= 0))) {
-	int drop = dropConsumable(player);
-	sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-	wattron(notify_win, COLOR_PAIR(S4C_CYAN));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
-	log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
-		stringFromConsumables(drop));
+        && (e->beast || ((rand() % 9) - (player->luck / 10) <= 0))) {
+        int drop = dropConsumable(player);
+        sprintf(msg, "You found a %s!", stringFromConsumables(drop));
+        wattron(notify_win, COLOR_PAIR(S4C_CYAN));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
+        log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
+                stringFromConsumables(drop));
     }
 
     //Artifact drop (if we don't have all of them), guaranteed on killing a beast
     if ((player->stats->artifactsfound != ARTIFACTSMAX + 1)
-	&& res == FIGHTRES_KILL_DONE && (e->beast
-					 ||
-					 ((rand() % ENEMY_ARTIFACTDROP_CHANCE) -
-					  (player->luck / 10) <= 0))) {
-	int artifact_drop = dropArtifact(player);
-	sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-	wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
-		stringFromArtifacts(artifact_drop));
-	if (!e->beast)
-	    log_tag("debug_log.txt", "[.1%% CHANCE]",
-		    "\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
+        && res == FIGHTRES_KILL_DONE && (e->beast
+                                         ||
+                                         ((rand() % ENEMY_ARTIFACTDROP_CHANCE) -
+                                          (player->luck / 10) <= 0))) {
+        int artifact_drop = dropArtifact(player);
+        sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
+        wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
+                stringFromArtifacts(artifact_drop));
+        if (!e->beast)
+            log_tag("debug_log.txt", "[.1%% CHANCE]",
+                    "\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
     }
 
     //Equip drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
-	&& (e->beast || ((rand() % 15) - (player->luck / 10) <= 0))) {
-	dropEquip(player, e->beast, notify_win, kls);
+        && (e->beast || ((rand() % 15) - (player->luck / 10) <= 0))) {
+        dropEquip(player, e->beast, notify_win, kls);
     }
     return res;
 }
@@ -5109,26 +5109,26 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     int atkdelta = (e->atk + e->turnboost_atk) - (target->atk + target->equipboost_atk + target->turnboost_atk - (rand() % 3)) - 1;	//Skewed with defender
     int defdelta = (e->def + e->turnboost_def) - (target->def + target->equipboost_def + target->turnboost_def) + (rand() % 2) + 1;	//Skewed with attacker
     int veldelta =
-	(e->vel + e->turnboost_vel) - (target->vel + target->equipboost_vel +
-				       target->turnboost_vel) + (rand() % 3) +
-	1;
+        (e->vel + e->turnboost_vel) - (target->vel + target->equipboost_vel +
+                                       target->turnboost_vel) + (rand() % 3) +
+        1;
 
     int atkOnPlayer =
-	(e->atk + e->turnboost_atk) - (target->def + target->equipboost_def +
-				       target->turnboost_def +
-				       (target->vel / 6));
+        (e->atk + e->turnboost_atk) - (target->def + target->equipboost_def +
+                                       target->turnboost_def +
+                                       (target->vel / 6));
     int atkOnEnemy =
-	(target->atk + target->equipboost_atk + target->turnboost_atk) -
-	(e->def + e->turnboost_def + (e->vel / 6));
+        (target->atk + target->equipboost_atk + target->turnboost_atk) -
+        (e->def + e->turnboost_def + (e->vel / 6));
 
     if (G_GODMODE_ON == 1) {
-	log_tag("debug_log.txt", "[DEBUG]", "[%s]:  G_GODMODE_ON == 1",
-		__func__);
-	atkdelta = -100;
-	defdelta = -100;
-	veldelta = -100;
-	atkOnPlayer = 1;
-	atkOnEnemy = 100;
+        log_tag("debug_log.txt", "[DEBUG]", "[%s]:  G_GODMODE_ON == 1",
+                __func__);
+        atkdelta = -100;
+        defdelta = -100;
+        veldelta = -100;
+        atkOnPlayer = 1;
+        atkOnEnemy = 100;
     }
 
     int damageDealt = -1;
@@ -5139,141 +5139,141 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     log_tag("debug_log.txt", "[DEBUG-FIGHT]", "atkOnPlayer %i", atkOnPlayer);
 
     if (veldelta >= 0) {	//Enemy has a non-negative veldelta
-	if (atkOnPlayer > 3) {
-	    damageDealt = atkOnPlayer;
-	    target->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "[%s]:  Fight result D LOST (slower, great enemy atk).",
-		    __func__);
-	} else if (atkOnPlayer >= 0) {
-	    damageDealt = abs(atkOnPlayer - atkdelta);
-	    target->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "[%s]:  Fight result E LOST (slower, ok enemy atk).",
-		    __func__);
-	} else {
-	    if (atkOnPlayer > -3) {
-		damageDealt = fabsf(atkOnEnemy - 0.75F * e->vel);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"[%s]:  Fight result F1 WIN (slower, enemy atk > -3).",
-			__func__);
-	    } else {
-		damageDealt = abs(atkOnEnemy - 1);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"[%s]:  Fight result F2 WIN (slower, enemy atk < -3).",
-			__func__);
-	    }
-	    e->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	}
+        if (atkOnPlayer > 3) {
+            damageDealt = atkOnPlayer;
+            target->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "[%s]:  Fight result D LOST (slower, great enemy atk).",
+                    __func__);
+        } else if (atkOnPlayer >= 0) {
+            damageDealt = abs(atkOnPlayer - atkdelta);
+            target->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "[%s]:  Fight result E LOST (slower, ok enemy atk).",
+                    __func__);
+        } else {
+            if (atkOnPlayer > -3) {
+                damageDealt = fabsf(atkOnEnemy - 0.75F * e->vel);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "[%s]:  Fight result F1 WIN (slower, enemy atk > -3).",
+                        __func__);
+            } else {
+                damageDealt = abs(atkOnEnemy - 1);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "[%s]:  Fight result F2 WIN (slower, enemy atk < -3).",
+                        __func__);
+            }
+            e->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+        }
     } else {			//Enemy veldelta is not strictly positive
-	atkdelta = -atkdelta;
-	if (atkOnEnemy > 3) {
-	    damageDealt = atkOnEnemy;
-	    e->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "[%s]:  Fight result A WIN (faster, great atk).", __func__);
-	} else if (atkOnEnemy >= 0) {
-	    damageDealt = abs(atkOnEnemy - atkdelta);
-	    e->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "[%s]:  Fight result B WIN (faster, ok atk).", __func__);
-	} else {
-	    if (atkOnEnemy > -3) {
-		damageDealt =
-		    fabsf(atkOnPlayer -
-			  0.75F * (target->vel + target->equipboost_vel));
-		log_tag("debug_log.txt", "[FIGHT]",
-			"[%s]:  Fight result C1 LOST (faster, atk > -3).",
-			__func__);
-	    } else {
-		damageDealt = abs(atkOnPlayer - 1);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"[%s]:  Fight result C2 LOST (faster, atk < -3).",
-			__func__);
-	    }
-	    target->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	}
+        atkdelta = -atkdelta;
+        if (atkOnEnemy > 3) {
+            damageDealt = atkOnEnemy;
+            e->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "[%s]:  Fight result A WIN (faster, great atk).", __func__);
+        } else if (atkOnEnemy >= 0) {
+            damageDealt = abs(atkOnEnemy - atkdelta);
+            e->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "[%s]:  Fight result B WIN (faster, ok atk).", __func__);
+        } else {
+            if (atkOnEnemy > -3) {
+                damageDealt =
+                    fabsf(atkOnPlayer -
+                          0.75F * (target->vel + target->equipboost_vel));
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "[%s]:  Fight result C1 LOST (faster, atk > -3).",
+                        __func__);
+            } else {
+                damageDealt = abs(atkOnPlayer - 1);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "[%s]:  Fight result C2 LOST (faster, atk < -3).",
+                        __func__);
+            }
+            target->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+        }
     }
     log_tag("debug_log.txt", "[FIGHT]", "[%s]:  damageCalc %i", __func__,
-	    damageDealt);
+            damageDealt);
 
     int playerhit = (res == FIGHTRES_DMG_DEALT) ? 1 : 0;
     char victim[25];
 
     if (!playerhit) {
 
-	e->vel--;
-	e->atk--;
-	e->def -= 2;
+        e->vel--;
+        e->atk--;
+        e->def -= 2;
 
-	//Check if someone earned a stat reset after the fight
-	statReset(target, 0);
-	statResetEnemy(e, 0);
+        //Check if someone earned a stat reset after the fight
+        statReset(target, 0);
+        statResetEnemy(e, 0);
 
-	strcpy(victim, target->name);
+        strcpy(victim, target->name);
     } else {
 
-	target->vel--;
-	target->atk--;
-	target->def -= 2;
+        target->vel--;
+        target->atk--;
+        target->def -= 2;
 
-	//Account for vampirism perk
-	int vampire_perks = target->perks[VAMPIRISM]->innerValue;
-	if (vampire_perks > 0) {
-	    int recovery = floor(damageDealt * (0.1 * vampire_perks));
-	    target->hp += recovery;
-	    log_tag("debug_log.txt", "[PERKS]", "Vampirism proc for +%i HP.",
-		    recovery);
-	    if (target->hp >= target->totalhp) {
-		target->hp = target->totalhp;
-	    };
-	}
-	//Account for burn on touch perk
-	int hotbody_perks = target->perks[HOT_BODY]->innerValue;
-	if (hotbody_perks > 0) {
-	    int burnchance = 11 - hotbody_perks;
-	    if (rand() % burnchance == 0) {
-		//TODO
-		//Handle multiple statuses
-		e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
-		setCounter((Turncounter *) e->counters[Burned], 2);	//Give 2 turns of Burned status
-		log_tag("debug_log.txt", "[PERKS]",
-			"Hotbody proc on 1/%i chance.", burnchance);
-	    }
-	}
-	//Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
-	int biohazard_perks = target->perks[BIOHAZARD]->innerValue;
-	if (biohazard_perks > 0) {
-	    int poisonchance = 11 - biohazard_perks;
-	    if (rand() % poisonchance == 0) {
-		e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
-		setCounter((Turncounter *) e->counters[POISON], 2);	//Give 2 turns of Poison status
-		log_tag("debug_log.txt", "[PERKS]",
-			"Biohazard proc on 1/%i chance.", poisonchance);
-	    }
-	}
-	//Check if someone earned a stat reset after the fight
-	statResetEnemy(e, 0);
-	statReset(target, 0);
+        //Account for vampirism perk
+        int vampire_perks = target->perks[VAMPIRISM]->innerValue;
+        if (vampire_perks > 0) {
+            int recovery = floor(damageDealt * (0.1 * vampire_perks));
+            target->hp += recovery;
+            log_tag("debug_log.txt", "[PERKS]", "Vampirism proc for +%i HP.",
+                    recovery);
+            if (target->hp >= target->totalhp) {
+                target->hp = target->totalhp;
+            };
+        }
+        //Account for burn on touch perk
+        int hotbody_perks = target->perks[HOT_BODY]->innerValue;
+        if (hotbody_perks > 0) {
+            int burnchance = 11 - hotbody_perks;
+            if (rand() % burnchance == 0) {
+                //TODO
+                //Handle multiple statuses
+                e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
+                setCounter((Turncounter *) e->counters[Burned], 2);	//Give 2 turns of Burned status
+                log_tag("debug_log.txt", "[PERKS]",
+                        "Hotbody proc on 1/%i chance.", burnchance);
+            }
+        }
+        //Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
+        int biohazard_perks = target->perks[BIOHAZARD]->innerValue;
+        if (biohazard_perks > 0) {
+            int poisonchance = 11 - biohazard_perks;
+            if (rand() % poisonchance == 0) {
+                e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
+                setCounter((Turncounter *) e->counters[POISON], 2);	//Give 2 turns of Poison status
+                log_tag("debug_log.txt", "[PERKS]",
+                        "Biohazard proc on 1/%i chance.", poisonchance);
+            }
+        }
+        //Check if someone earned a stat reset after the fight
+        statResetEnemy(e, 0);
+        statReset(target, 0);
 
-	strcpy(victim, stringFromEClass(e->class));
+        strcpy(victim, stringFromEClass(e->class));
     }
 
     int color = -1;
     if (playerhit) {
-	color = S4C_WHITE;
+        color = S4C_WHITE;
     } else {
-	color = S4C_RED;
+        color = S4C_RED;
     }
 
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
-	    damageDealt > 0 ? damageDealt : 1);
+            damageDealt > 0 ? damageDealt : 1);
     wattron(notify_win, COLOR_PAIR(color));
     display_notification(notify_win, msg, 500);
     wattroff(notify_win, COLOR_PAIR(color));
@@ -5290,108 +5290,108 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
 
     if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
 
-	//Account for critboost_dmg perks
-	int dmgboost_perks = target->perks[CRITBOOST_DMG]->innerValue;
-	damageDealt *= (0.30 + (0.12 * dmgboost_perks));
-	e->hp -= (damageDealt > 0 ? damageDealt : 1);
-	log_tag("debug_log.txt", "[FIGHT]",
-		"Critical hit for %i dmg, proc on 1/%i chance.", damageDealt,
-		critMax);
-	log_tag("debug_log.txt", "[PERKS]", "Critical hit, critboost was %i.",
-		critboost_value);
+        //Account for critboost_dmg perks
+        int dmgboost_perks = target->perks[CRITBOOST_DMG]->innerValue;
+        damageDealt *= (0.30 + (0.12 * dmgboost_perks));
+        e->hp -= (damageDealt > 0 ? damageDealt : 1);
+        log_tag("debug_log.txt", "[FIGHT]",
+                "Critical hit for %i dmg, proc on 1/%i chance.", damageDealt,
+                critMax);
+        log_tag("debug_log.txt", "[PERKS]", "Critical hit, critboost was %i.",
+                critboost_value);
 
-	sprintf(msg, "A critical hit!    (%i DMG)",
-		damageDealt > 0 ? damageDealt : 1);
-	wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	//Update stats
-	target->stats->criticalhits++;
+        sprintf(msg, "A critical hit!    (%i DMG)",
+                damageDealt > 0 ? damageDealt : 1);
+        wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        //Update stats
+        target->stats->criticalhits++;
     }
     //Check for deaths -> exit condition from loop
     //
     //
     //
     if (e->hp <= 0) {
-	res = FIGHTRES_KILL_DONE;
+        res = FIGHTRES_KILL_DONE;
 
-	//Account for runic circle perk
-	int runic_perks = target->perks[RUNIC_MAGNET]->innerValue;
-	if (runic_perks > 0) {
-	    int recovery = round(0.51 * runic_perks);
-	    target->energy += recovery;
-	    log_tag("debug_log.txt", "[PERKS]",
-		    "Runicmagnet proc for %i energy.", recovery);
-	}
-	if (e->beast) {
-	    color = S4C_MAGENTA;
-	} else {
-	    color = S4C_RED;
-	}
-	wattron(notify_win, COLOR_PAIR(color));
-	sprintf(msg, "%s fainted.", stringFromEClass(e->class));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(color));
+        //Account for runic circle perk
+        int runic_perks = target->perks[RUNIC_MAGNET]->innerValue;
+        if (runic_perks > 0) {
+            int recovery = round(0.51 * runic_perks);
+            target->energy += recovery;
+            log_tag("debug_log.txt", "[PERKS]",
+                    "Runicmagnet proc for %i energy.", recovery);
+        }
+        if (e->beast) {
+            color = S4C_MAGENTA;
+        } else {
+            color = S4C_RED;
+        }
+        wattron(notify_win, COLOR_PAIR(color));
+        sprintf(msg, "%s fainted.", stringFromEClass(e->class));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(color));
 
-	log_tag("debug_log.txt", "[FIGHT]", "Killed  %s.",
-		stringFromEClass(e->class));
+        log_tag("debug_log.txt", "[FIGHT]", "Killed  %s.",
+                stringFromEClass(e->class));
 
-	//Update stats
-	target->stats->enemieskilled++;
+        //Update stats
+        target->stats->enemieskilled++;
     } else {
-	//Apply status effects to enemy
-	if (e->status != Normal) {
-	    applyEStatus(notify_win, e);
-	    log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
-		    stringFromStatus(e->status), stringFromEClass(e->class));
-	}
+        //Apply status effects to enemy
+        if (e->status != Normal) {
+            applyEStatus(notify_win, e);
+            log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
+                    stringFromStatus(e->status), stringFromEClass(e->class));
+        }
     }
 
     if (target->hp <= 0) {
-	log_tag("debug_log.txt", "[DEBUG]", "[%s]:  Target died. Hp: (%i)",
-		__func__, target->hp);
-	res = FIGHTRES_DEATH;
+        log_tag("debug_log.txt", "[DEBUG]", "[%s]:  Target died. Hp: (%i)",
+                __func__, target->hp);
+        res = FIGHTRES_DEATH;
     } else {
-	//Apply status effects to target
-	if (target->status != Normal) {
-	    applyStatus(notify_win, target);
-	}
+        //Apply status effects to target
+        if (target->status != Normal) {
+            applyStatus(notify_win, target);
+        }
     }
 
     //Consumable drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
-	&& (e->beast || ((rand() % 9) - (target->luck / 10) <= 0))) {
-	int drop = dropConsumable(target);
-	sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-	wattron(notify_win, COLOR_PAIR(S4C_CYAN));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
-	log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
-		stringFromConsumables(drop));
+        && (e->beast || ((rand() % 9) - (target->luck / 10) <= 0))) {
+        int drop = dropConsumable(target);
+        sprintf(msg, "You found a %s!", stringFromConsumables(drop));
+        wattron(notify_win, COLOR_PAIR(S4C_CYAN));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
+        log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
+                stringFromConsumables(drop));
     }
 
     //Artifact drop (if we don't have all of them), guaranteed on killing a beast
     if ((target->stats->artifactsfound != ARTIFACTSMAX + 1)
-	&& res == FIGHTRES_KILL_DONE && (e->beast
-					 ||
-					 ((rand() % ENEMY_ARTIFACTDROP_CHANCE) -
-					  (target->luck / 10) <= 0))) {
-	int artifact_drop = dropArtifact(target);
-	sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-	wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
-		stringFromArtifacts(artifact_drop));
-	if (!e->beast)
-	    log_tag("debug_log.txt", "[.1%% CHANCE]",
-		    "\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
+        && res == FIGHTRES_KILL_DONE && (e->beast
+                                         ||
+                                         ((rand() % ENEMY_ARTIFACTDROP_CHANCE) -
+                                          (target->luck / 10) <= 0))) {
+        int artifact_drop = dropArtifact(target);
+        sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
+        wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
+                stringFromArtifacts(artifact_drop));
+        if (!e->beast)
+            log_tag("debug_log.txt", "[.1%% CHANCE]",
+                    "\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
     }
 
     //Equip drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
-	&& (e->beast || ((rand() % 15) - (target->luck / 10) <= 0))) {
-	dropEquip(target, e->beast, notify_win, kls);
+        && (e->beast || ((rand() % 15) - (target->luck / 10) <= 0))) {
+        dropEquip(target, e->beast, notify_win, kls);
     }
     return res;
 }
@@ -5408,7 +5408,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
  * @param kls The Koliseo used for allocations.
  */
 int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
-		      WINDOW *notify_win, Koliseo *kls)
+                      WINDOW *notify_win, Koliseo *kls)
 {
     char msg[200];
     //FIXME
@@ -5423,171 +5423,169 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
 
     if (player_goes_first) {
 
-	res = fight(player, e, notify_win, kls);
+        res = fight(player, e, notify_win, kls);
 
-	//Check res and apply second action if needed
-	log_tag("debug_log.txt", "[DEBUG]",
-		"[%s()]: First act res was [%s]: [%i]", __func__,
-		stringFrom_fightResult(res), res);
-	first_act_res = res;
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        first_act_res = res;
 
-	if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
-	    switch (foe_op) {
-	    case FOE_OP_INVALID:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
-			    foe_op);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    case FOE_OP_IDLE:{
-		    log_tag("debug_log.txt", "[DEFER]",
-			    "[%s()]:  Foe { %s } was idle.", __func__,
-			    stringFromEClass(e->class));
-		    wattron(notify_win, COLOR_PAIR(S4C_GREY));
-		    sprintf(msg, "%s is loafing around.",
-			    stringFromEClass(e->class));
-		    display_notification(notify_win, msg, 500);
-		    wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-		}
-		break;
-	    case FOE_OP_FIGHT:{
-		    log_tag("debug_log.txt", "[DEFER]",
-			    "[%s()]:  Foe { %s } wants to fight.", __func__,
-			    stringFromEClass(e->class));
-		    wattron(notify_win, COLOR_PAIR(S4C_GREY));
-		    sprintf(msg, "%s is angry!", stringFromEClass(e->class));
-		    display_notification(notify_win, msg, 500);
-		    wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            switch (foe_op) {
+            case FOE_OP_INVALID: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                        foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            case FOE_OP_IDLE: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } was idle.", __func__,
+                        stringFromEClass(e->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is loafing around.",
+                        stringFromEClass(e->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            }
+            break;
+            case FOE_OP_FIGHT: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } wants to fight.", __func__,
+                        stringFromEClass(e->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is angry!", stringFromEClass(e->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
 
-		    res = enemy_attack(e, player, notify_win, kls);
-		}
-		break;
-	    case FOE_OP_SPECIAL:{
-		    log_tag("debug_log.txt", "[TODO]",
-			    "[%s()]:  Foe { %s } wants to use a special.",
-			    __func__, stringFromEClass(e->class));
-		    //TODO
-		    //Implement enemy special function
-		    //res = enemy_attack_special(e,player,notify_win,kls);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Unexpected foeTurnOption_OP in [%s()]: [%i]",
-			    __func__, foe_op);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    }			// End foe_op switch
+                res = enemy_attack(e, player, notify_win, kls);
+            }
+            break;
+            case FOE_OP_SPECIAL: {
+                log_tag("debug_log.txt", "[TODO]",
+                        "[%s()]:  Foe { %s } wants to use a special.",
+                        __func__, stringFromEClass(e->class));
+                //TODO
+                //Implement enemy special function
+                //res = enemy_attack_special(e,player,notify_win,kls);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected foeTurnOption_OP in [%s()]: [%i]",
+                        __func__, foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }			// End foe_op switch
 
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "[%s()]: Second act res was [%s]: [%i]", __func__,
-		    stringFrom_fightResult(res), res);
-	    if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
-		log_tag("debug_log.txt", "[DEBUG]",
-			"[%s()]: Deferred fight was not a clash...", __func__);
-	    } else
-		if ((res == FIGHTRES_DMG_TAKEN
-		     && first_act_res == FIGHTRES_DMG_DEALT)
-		    || (res == FIGHTRES_DMG_DEALT
-			&& first_act_res == FIGHTRES_DMG_TAKEN)) {
-		log_tag("debug_log.txt", "[DEBUG]",
-			"[%s()]: Deferred fight was a clash!", __func__);
-		res = FIGHTRES_CLASH;
-	    }
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was not a clash...", __func__);
+            } else if ((res == FIGHTRES_DMG_TAKEN
+                        && first_act_res == FIGHTRES_DMG_DEALT)
+                       || (res == FIGHTRES_DMG_DEALT
+                           && first_act_res == FIGHTRES_DMG_TAKEN)) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was a clash!", __func__);
+                res = FIGHTRES_CLASH;
+            }
 
-	    return res;
-	} else if (res == FIGHTRES_DEATH) {
-	    return res;
-	} else if (res == FIGHTRES_KILL_DONE) {
-	    return res;
-	}
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
     } else {
-	//Foe acts first
-	switch (foe_op) {
-	case FOE_OP_INVALID:{
-		log_tag("debug_log.txt", "[ERROR]",
-			"foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
-			foe_op);
-		kls_free(default_kls);
-		kls_free(temporary_kls);
-		exit(EXIT_FAILURE);
-	    }
-	    break;
-	case FOE_OP_IDLE:{
-		log_tag("debug_log.txt", "[DEFER]",
-			"[%s()]:  Foe { %s } was idle.", __func__,
-			stringFromEClass(e->class));
-		wattron(notify_win, COLOR_PAIR(S4C_GREY));
-		sprintf(msg, "%s is loafing around.",
-			stringFromEClass(e->class));
-		display_notification(notify_win, msg, 500);
-		wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-	    }
-	    break;
-	case FOE_OP_FIGHT:{
-		log_tag("debug_log.txt", "[DEFER]",
-			"[%s()]:  Foe { %s } wants to fight.", __func__,
-			stringFromEClass(e->class));
-		res = enemy_attack(e, player, notify_win, kls);
-	    }
-	    break;
-	case FOE_OP_SPECIAL:{
-		log_tag("debug_log.txt", "[TODO]",
-			"[%s()]:  Foe { %s } wants to use a special.", __func__,
-			stringFromEClass(e->class));
-		//TODO
-		//Implement enemy special function
-		//res = enemy_attack_special(e,player,notify_win,kls);
-	    }
-	    break;
-	default:{
-		log_tag("debug_log.txt", "[ERROR]",
-			"Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
-			foe_op);
-		kls_free(default_kls);
-		kls_free(temporary_kls);
-		exit(EXIT_FAILURE);
-	    }
-	    break;
-	}			// End foe_op switch
+        //Foe acts first
+        switch (foe_op) {
+        case FOE_OP_INVALID: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        case FOE_OP_IDLE: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } was idle.", __func__,
+                    stringFromEClass(e->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is loafing around.",
+                    stringFromEClass(e->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+        }
+        break;
+        case FOE_OP_FIGHT: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } wants to fight.", __func__,
+                    stringFromEClass(e->class));
+            res = enemy_attack(e, player, notify_win, kls);
+        }
+        break;
+        case FOE_OP_SPECIAL: {
+            log_tag("debug_log.txt", "[TODO]",
+                    "[%s()]:  Foe { %s } wants to use a special.", __func__,
+                    stringFromEClass(e->class));
+            //TODO
+            //Implement enemy special function
+            //res = enemy_attack_special(e,player,notify_win,kls);
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        }			// End foe_op switch
 
-	//Check res and apply second action if needed
-	log_tag("debug_log.txt", "[DEBUG]",
-		"[%s()]: First act res was [%s]: [%i]", __func__,
-		stringFrom_fightResult(res), res);
-	first_act_res = res;
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        first_act_res = res;
 
-	if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
-	    res = fight(player, e, notify_win, kls);
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            res = fight(player, e, notify_win, kls);
 
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "[%s()]: Second act res was [%s]: [%i]", __func__,
-		    stringFrom_fightResult(res), res);
-	    if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
-		log_tag("debug_log.txt", "[DEBUG]",
-			"[%s()]: Deferred fight was not a clash...", __func__);
-	    } else
-		if ((res == FIGHTRES_DMG_TAKEN
-		     && first_act_res == FIGHTRES_DMG_DEALT)
-		    || (res == FIGHTRES_DMG_DEALT
-			&& first_act_res == FIGHTRES_DMG_TAKEN)) {
-		log_tag("debug_log.txt", "[DEBUG]",
-			"[%s()]: Deferred fight was a clash!", __func__);
-		res = FIGHTRES_CLASH;
-	    }
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was not a clash...", __func__);
+            } else if ((res == FIGHTRES_DMG_TAKEN
+                        && first_act_res == FIGHTRES_DMG_DEALT)
+                       || (res == FIGHTRES_DMG_DEALT
+                           && first_act_res == FIGHTRES_DMG_TAKEN)) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was a clash!", __func__);
+                res = FIGHTRES_CLASH;
+            }
 
-	    return res;
-	} else if (res == FIGHTRES_DEATH) {
-	    return res;
-	} else if (res == FIGHTRES_KILL_DONE) {
-	    return res;
-	}
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
     }
     return res;
 }
@@ -5612,7 +5610,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
  * @see display_notification()
  */
 int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
-	       Koliseo *kls)
+               Koliseo *kls)
 {
 
     fightResult res = FIGHTRES_NO_DMG;
@@ -5623,19 +5621,19 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
     int atkdelta = (player->atk + player->equipboost_atk) - b->atk - (rand() % 3) - 1;	//Skewed with defender
     int defdelta = (player->def + player->equipboost_def) - b->def + (rand() % 2) + 1;	//Skewed with attacker
     int veldelta =
-	(player->vel + player->equipboost_vel) - b->vel + (rand() % 3) + 1;
+        (player->vel + player->equipboost_vel) - b->vel + (rand() % 3) + 1;
 
     int atkOnPlayer =
-	b->atk - (player->def + player->equipboost_def + (player->vel / 6));
+        b->atk - (player->def + player->equipboost_def + (player->vel / 6));
     int atkOnEnemy =
-	(player->atk + player->equipboost_atk) - (b->def + (b->vel / 6));
+        (player->atk + player->equipboost_atk) - (b->def + (b->vel / 6));
     if (G_GODMODE_ON == 1) {
-	log_tag("debug_log.txt", "[DEBUG]", "boss_fight():  G_GODMODE_ON == 1");
-	atkdelta = 100;
-	defdelta = 100;
-	veldelta = 100;
-	atkOnPlayer = 1;
-	atkOnEnemy = 100;
+        log_tag("debug_log.txt", "[DEBUG]", "boss_fight():  G_GODMODE_ON == 1");
+        atkdelta = 100;
+        defdelta = 100;
+        veldelta = 100;
+        atkOnPlayer = 1;
+        atkOnEnemy = 100;
     }
     sprintf(msg, "atkdelta %i", atkdelta);
     log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
@@ -5652,60 +5650,60 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
 
     if (veldelta >= 0) {
 
-	if (atkOnEnemy > 3) {
-	    damageDealt = atkOnEnemy;
-	    b->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result A WIN (faster, great atk).\n");
-	} else if (atkOnEnemy >= 0) {
-	    damageDealt = abs(atkOnEnemy - atkdelta);
-	    b->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result B WIN (faster, ok atk).\n");
-	} else {
-	    if (atkOnEnemy < -3) {
-		damageDealt =
-		    fabsf(atkOnPlayer -
-			  0.75F * (player->vel + player->equipboost_vel));
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result C1 LOST (faster, atk < -3).\n");
-	    } else {
-		damageDealt = abs(atkOnPlayer - 1);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result C2 LOST (faster, atk > -3).\n");
-	    }
-	    player->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	}
+        if (atkOnEnemy > 3) {
+            damageDealt = atkOnEnemy;
+            b->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result A WIN (faster, great atk).\n");
+        } else if (atkOnEnemy >= 0) {
+            damageDealt = abs(atkOnEnemy - atkdelta);
+            b->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result B WIN (faster, ok atk).\n");
+        } else {
+            if (atkOnEnemy < -3) {
+                damageDealt =
+                    fabsf(atkOnPlayer -
+                          0.75F * (player->vel + player->equipboost_vel));
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result C1 LOST (faster, atk < -3).\n");
+            } else {
+                damageDealt = abs(atkOnPlayer - 1);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result C2 LOST (faster, atk > -3).\n");
+            }
+            player->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+        }
     } else {
-	atkdelta = -atkdelta;
-	if (atkOnPlayer > 3) {
-	    damageDealt = atkOnPlayer;
-	    player->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result D LOST (slower, great enemy atk.\n");
-	} else if (atkOnPlayer >= 0) {
-	    damageDealt = abs(atkOnPlayer - atkdelta);
-	    player->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result E LOST (slower, ok enemy atk.\n");
-	} else {
-	    if (atkOnPlayer < -3) {
-		damageDealt = fabsf(atkOnEnemy - 0.75F * b->vel);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result F1 WIN (slower, enemy atk < -3.\n");
-	    } else {
-		damageDealt = abs(atkOnEnemy - 1);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result F2 WIN (slower, enemy atk > -3.\n");
-	    }
-	    b->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	}
+        atkdelta = -atkdelta;
+        if (atkOnPlayer > 3) {
+            damageDealt = atkOnPlayer;
+            player->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result D LOST (slower, great enemy atk.\n");
+        } else if (atkOnPlayer >= 0) {
+            damageDealt = abs(atkOnPlayer - atkdelta);
+            player->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result E LOST (slower, ok enemy atk.\n");
+        } else {
+            if (atkOnPlayer < -3) {
+                damageDealt = fabsf(atkOnEnemy - 0.75F * b->vel);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result F1 WIN (slower, enemy atk < -3.\n");
+            } else {
+                damageDealt = abs(atkOnEnemy - 1);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result F2 WIN (slower, enemy atk > -3.\n");
+            }
+            b->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+        }
     }
 
     log_tag("debug_log.txt", "[FIGHT]", "damageCalc %i", damageDealt);
@@ -5715,71 +5713,71 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
 
     if (!yourhit) {
 
-	b->vel--;
-	b->atk--;
-	b->def -= 2;
+        b->vel--;
+        b->atk--;
+        b->def -= 2;
 
-	//Check if someone earned a stat reset after the fight
-	statReset(player, 0);
-	statResetBoss(b, 0);
+        //Check if someone earned a stat reset after the fight
+        statReset(player, 0);
+        statResetBoss(b, 0);
 
-	strcpy(victim, player->name);
+        strcpy(victim, player->name);
     } else {
 
-	player->vel--;
-	player->atk--;
-	player->def -= 2;
+        player->vel--;
+        player->atk--;
+        player->def -= 2;
 
-	//Account for vampirism perk
-	int vampire_perks = player->perks[VAMPIRISM]->innerValue;
-	if (vampire_perks > 0) {
-	    int recovery = floor(damageDealt * (0.1 * vampire_perks));
-	    player->hp += recovery;
-	    sprintf(msg, "Vampirism proc for +%i HP.\n", recovery);
-	    log_tag("debug_log.txt", "[PERKS]", msg);
-	    if (player->hp >= player->totalhp) {
-		player->hp = player->totalhp;
-	    };
-	}
-	//Account for burn on touch perk
-	int hotbody_perks = player->perks[HOT_BODY]->innerValue;
-	if (hotbody_perks > 0) {
-	    int burnchance = 11 - hotbody_perks;
-	    if (rand() % burnchance == 0) {
-		b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
-		setCounter((Turncounter *) b->counters[Burned], 2);	//Give 2 turns of Burned status
-		sprintf(msg, "Hotbody proc on 1/%i chance.\n", burnchance);
-		log_tag("debug_log.txt", "[PERKS]", msg);
-	    }
-	}
-	//Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
-	int biohazard_perks = player->perks[BIOHAZARD]->innerValue;
-	if (biohazard_perks > 0) {
-	    int poisonchance = 11 - biohazard_perks;
-	    if (rand() % poisonchance == 0) {
-		b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
-		setCounter((Turncounter *) b->counters[POISON], 2);	//Give 2 turns of Poison status
-		sprintf(msg, "Biohazard proc on 1/%i chance.\n", poisonchance);
-		log_tag("debug_log.txt", "[PERKS]", msg);
-	    }
-	}
-	//Check if someone earned a stat reset after the fight
-	statResetBoss(b, 0);
-	statReset(player, 0);
+        //Account for vampirism perk
+        int vampire_perks = player->perks[VAMPIRISM]->innerValue;
+        if (vampire_perks > 0) {
+            int recovery = floor(damageDealt * (0.1 * vampire_perks));
+            player->hp += recovery;
+            sprintf(msg, "Vampirism proc for +%i HP.\n", recovery);
+            log_tag("debug_log.txt", "[PERKS]", msg);
+            if (player->hp >= player->totalhp) {
+                player->hp = player->totalhp;
+            };
+        }
+        //Account for burn on touch perk
+        int hotbody_perks = player->perks[HOT_BODY]->innerValue;
+        if (hotbody_perks > 0) {
+            int burnchance = 11 - hotbody_perks;
+            if (rand() % burnchance == 0) {
+                b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
+                setCounter((Turncounter *) b->counters[Burned], 2);	//Give 2 turns of Burned status
+                sprintf(msg, "Hotbody proc on 1/%i chance.\n", burnchance);
+                log_tag("debug_log.txt", "[PERKS]", msg);
+            }
+        }
+        //Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
+        int biohazard_perks = player->perks[BIOHAZARD]->innerValue;
+        if (biohazard_perks > 0) {
+            int poisonchance = 11 - biohazard_perks;
+            if (rand() % poisonchance == 0) {
+                b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
+                setCounter((Turncounter *) b->counters[POISON], 2);	//Give 2 turns of Poison status
+                sprintf(msg, "Biohazard proc on 1/%i chance.\n", poisonchance);
+                log_tag("debug_log.txt", "[PERKS]", msg);
+            }
+        }
+        //Check if someone earned a stat reset after the fight
+        statResetBoss(b, 0);
+        statReset(player, 0);
 
-	strcpy(victim, stringFromBossClass(b->class));
+        strcpy(victim, stringFromBossClass(b->class));
     }
 
     int color = -1;
     if (yourhit) {
-	color = S4C_WHITE;
+        color = S4C_WHITE;
     } else {
-	color = S4C_RED;
+        color = S4C_RED;
     }
 
     wattron(notify_win, COLOR_PAIR(color));
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
-	    damageDealt > 0 ? damageDealt : 1);
+            damageDealt > 0 ? damageDealt : 1);
     display_notification(notify_win, msg, 500);
     wattroff(notify_win, COLOR_PAIR(color));
 
@@ -5789,125 +5787,125 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
 
     //Account for critboost_chance perks
     int critMax =
-	round(10.0 - floor(player->luck / 5) -
-	      (1.5 * player->perks[CRITBOOST_CHANCE]->innerValue));
+        round(10.0 - floor(player->luck / 5) -
+              (1.5 * player->perks[CRITBOOST_CHANCE]->innerValue));
 
     int critRes = (rand() % critMax);
 
     if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
 
-	//Account for critboost_dmg perks
-	int dmgboost_perks = player->perks[CRITBOOST_DMG]->innerValue;
-	damageDealt *= (0.30 + (0.12 * dmgboost_perks));
-	b->hp -= damageDealt > 0 ? damageDealt : 1;
-	wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	sprintf(msg, "A critical hit!    (%i DMG)",
-		damageDealt > 0 ? damageDealt : 1);
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	sprintf(msg, "Critical hit for %i dmg, proc on 1/%i chance.\n",
-		damageDealt, critMax);
-	log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
+        //Account for critboost_dmg perks
+        int dmgboost_perks = player->perks[CRITBOOST_DMG]->innerValue;
+        damageDealt *= (0.30 + (0.12 * dmgboost_perks));
+        b->hp -= damageDealt > 0 ? damageDealt : 1;
+        wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        sprintf(msg, "A critical hit!    (%i DMG)",
+                damageDealt > 0 ? damageDealt : 1);
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        sprintf(msg, "Critical hit for %i dmg, proc on 1/%i chance.\n",
+                damageDealt, critMax);
+        log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
 
-	//Update stats
-	player->stats->criticalhits++;
+        //Update stats
+        player->stats->criticalhits++;
     }
     //Check for deaths -> exit condition from loop
     //
     //
     //
     if (b->hp <= 0) {
-	res = FIGHTRES_KILL_DONE;
+        res = FIGHTRES_KILL_DONE;
 
-	//Account for runic circle perk
-	int runic_perks = player->perks[RUNIC_MAGNET]->innerValue;
-	if (runic_perks > 0) {
-	    int recovery = round(0.51 * runic_perks);
-	    player->energy += recovery;
-	    sprintf(msg, "Runicmagnet proc for %i energy.\n", recovery);
-	    log_tag("debug_log.txt", "[PERKS]", msg);
-	}
-	if (b->beast) {
-	    color = S4C_MAGENTA;
-	} else {
-	    color = S4C_RED;
-	}
-	wattron(notify_win, COLOR_PAIR(color));
-	sprintf(msg, "%s fainted.", stringFromBossClass(b->class));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(color));
-	sprintf(msg, "Killed  %s.", stringFromBossClass(b->class));
-	log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
+        //Account for runic circle perk
+        int runic_perks = player->perks[RUNIC_MAGNET]->innerValue;
+        if (runic_perks > 0) {
+            int recovery = round(0.51 * runic_perks);
+            player->energy += recovery;
+            sprintf(msg, "Runicmagnet proc for %i energy.\n", recovery);
+            log_tag("debug_log.txt", "[PERKS]", msg);
+        }
+        if (b->beast) {
+            color = S4C_MAGENTA;
+        } else {
+            color = S4C_RED;
+        }
+        wattron(notify_win, COLOR_PAIR(color));
+        sprintf(msg, "%s fainted.", stringFromBossClass(b->class));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(color));
+        sprintf(msg, "Killed  %s.", stringFromBossClass(b->class));
+        log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
 
-	//Update stats
-	player->stats->bosseskilled++;
+        //Update stats
+        player->stats->bosseskilled++;
 
-	//Check if we killed this boss before
-	if (player->stats->killed_bosses[b->class] == 0) {
-	    //Update stats
-	    player->stats->unique_bosseskilled++;
-	    player->stats->killed_bosses[b->class] += 1;
-	    //Check if we have to update the wincon value
-	    if (p->win_condition->class == ALL_BOSSES) {
-		p->win_condition->current_val++;
-	    }
-	    sprintf(msg, "Killed new boss  %s.\n",
-		    stringFromBossClass(b->class));
-	    log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
-	}
+        //Check if we killed this boss before
+        if (player->stats->killed_bosses[b->class] == 0) {
+            //Update stats
+            player->stats->unique_bosseskilled++;
+            player->stats->killed_bosses[b->class] += 1;
+            //Check if we have to update the wincon value
+            if (p->win_condition->class == ALL_BOSSES) {
+                p->win_condition->current_val++;
+            }
+            sprintf(msg, "Killed new boss  %s.\n",
+                    stringFromBossClass(b->class));
+            log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
+        }
     } else {
-	//Apply status effects to boss
-	if (b->status != Normal) {
-	    applyBStatus(notify_win, b);
-	    sprintf(msg, "Applied  %s to %s.", stringFromStatus(b->status),
-		    stringFromBossClass(b->class));
-	    log_tag("debug_log.txt", "[STATUS]", msg);
-	}
+        //Apply status effects to boss
+        if (b->status != Normal) {
+            applyBStatus(notify_win, b);
+            sprintf(msg, "Applied  %s to %s.", stringFromStatus(b->status),
+                    stringFromBossClass(b->class));
+            log_tag("debug_log.txt", "[STATUS]", msg);
+        }
     }
 
     if (player->hp <= 0) {
-	res = FIGHTRES_DEATH;
+        res = FIGHTRES_DEATH;
     } else {
-	//Apply status effects to player
-	if (player->status != Normal) {
-	    applyStatus(notify_win, player);
-	}
+        //Apply status effects to player
+        if (player->status != Normal) {
+            applyStatus(notify_win, player);
+        }
     }
 
     //Consumable drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE) {
-	int drop = dropConsumable(player);
-	wattron(notify_win, COLOR_PAIR(S4C_CYAN));
-	sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
-	sprintf(msg, "Found Consumable:    %s.", stringFromConsumables(drop));
-	log_tag("debug_log.txt", "[DROPS]", msg);
+        int drop = dropConsumable(player);
+        wattron(notify_win, COLOR_PAIR(S4C_CYAN));
+        sprintf(msg, "You found a %s!", stringFromConsumables(drop));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
+        sprintf(msg, "Found Consumable:    %s.", stringFromConsumables(drop));
+        log_tag("debug_log.txt", "[DROPS]", msg);
     }
 
     //Artifact drop (if we don't have all of them)
     if (res == FIGHTRES_KILL_DONE
-	&& (player->stats->artifactsfound != ARTIFACTSMAX + 1)) {
-	int artifact_drop = dropArtifact(player);
-	wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	sprintf(msg, "Found Artifact:    %s.",
-		stringFromArtifacts(artifact_drop));
-	log_tag("debug_log.txt", "[DROPS]", msg);
+        && (player->stats->artifactsfound != ARTIFACTSMAX + 1)) {
+        int artifact_drop = dropArtifact(player);
+        wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        sprintf(msg, "Found Artifact:    %s.",
+                stringFromArtifacts(artifact_drop));
+        log_tag("debug_log.txt", "[DROPS]", msg);
     }
     //Equip drop
     if (res == FIGHTRES_KILL_DONE) {
-	//We give 1 to obtain the better equip generation used for beasts
-	dropEquip(player, 1, notify_win, kls);
+        //We give 1 to obtain the better equip generation used for beasts
+        dropEquip(player, 1, notify_win, kls);
     }
 
     return res;
 }
 
 int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
-		Koliseo *kls)
+                Koliseo *kls)
 {
 
     //TODO
@@ -5926,25 +5924,25 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
     int atkdelta = (b->atk + b->turnboost_atk) - (target->atk + target->equipboost_atk + target->turnboost_atk - (rand() % 3)) - 1;	//Skewed with defender
     int defdelta = (b->def + b->turnboost_def) - (target->def + target->equipboost_def + target->turnboost_def) + (rand() % 2) + 1;	//Skewed with attacker
     int veldelta =
-	(b->vel + b->turnboost_vel) - (target->vel + target->equipboost_vel +
-				       target->turnboost_vel) + (rand() % 3) +
-	1;
+        (b->vel + b->turnboost_vel) - (target->vel + target->equipboost_vel +
+                                       target->turnboost_vel) + (rand() % 3) +
+        1;
 
     int atkOnPlayer =
-	(b->atk + b->turnboost_atk) - (target->def + target->equipboost_def +
-				       target->turnboost_def +
-				       (target->vel / 6));
+        (b->atk + b->turnboost_atk) - (target->def + target->equipboost_def +
+                                       target->turnboost_def +
+                                       (target->vel / 6));
     int atkOnEnemy =
-	(target->atk + target->equipboost_atk + target->turnboost_atk) -
-	(b->def + b->turnboost_def + (b->vel / 6));
+        (target->atk + target->equipboost_atk + target->turnboost_atk) -
+        (b->def + b->turnboost_def + (b->vel / 6));
     if (G_GODMODE_ON == 1) {
-	log_tag("debug_log.txt", "[DEBUG]", "[%s]:  G_GODMODE_ON == 1",
-		__func__);
-	atkdelta = -100;
-	defdelta = -100;
-	veldelta = -100;
-	atkOnPlayer = 1;
-	atkOnEnemy = 100;
+        log_tag("debug_log.txt", "[DEBUG]", "[%s]:  G_GODMODE_ON == 1",
+                __func__);
+        atkdelta = -100;
+        defdelta = -100;
+        veldelta = -100;
+        atkOnPlayer = 1;
+        atkOnEnemy = 100;
     }
     log_tag("debug_log.txt", "[DEBUG-FIGHT]", "atkdelta %i", atkdelta);
     log_tag("debug_log.txt", "[DEBUG-FIGHT]", "defdelta %i", defdelta);
@@ -5955,60 +5953,60 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
     int damageDealt = -1;
 
     if (veldelta >= 0) {	//Boss was faster
-	if (atkOnPlayer > 3) {
-	    damageDealt = atkOnPlayer;
-	    target->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result D LOST (slower, great enemy atk.");
-	} else if (atkOnPlayer >= 0) {
-	    damageDealt = abs(atkOnPlayer - atkdelta);
-	    target->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result E LOST (slower, ok enemy atk.");
-	} else {
-	    if (atkOnPlayer < -3) {
-		damageDealt = fabsf(atkOnEnemy - 0.75F * b->vel);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result F1 WIN (slower, enemy atk < -3.");
-	    } else {
-		damageDealt = abs(atkOnEnemy - 1);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result F2 WIN (slower, enemy atk > -3.");
-	    }
-	    b->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	}
+        if (atkOnPlayer > 3) {
+            damageDealt = atkOnPlayer;
+            target->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result D LOST (slower, great enemy atk.");
+        } else if (atkOnPlayer >= 0) {
+            damageDealt = abs(atkOnPlayer - atkdelta);
+            target->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result E LOST (slower, ok enemy atk.");
+        } else {
+            if (atkOnPlayer < -3) {
+                damageDealt = fabsf(atkOnEnemy - 0.75F * b->vel);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result F1 WIN (slower, enemy atk < -3.");
+            } else {
+                damageDealt = abs(atkOnEnemy - 1);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result F2 WIN (slower, enemy atk > -3.");
+            }
+            b->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+        }
     } else {			//Target was faster
-	atkdelta = -atkdelta;
-	if (atkOnEnemy > 3) {
-	    damageDealt = atkOnEnemy;
-	    b->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result A WIN (faster, great atk).");
-	} else if (atkOnEnemy >= 0) {
-	    damageDealt = abs(atkOnEnemy - atkdelta);
-	    b->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_DEALT;
-	    log_tag("debug_log.txt", "[FIGHT]",
-		    "Fight result B WIN (faster, ok atk).");
-	} else {
-	    if (atkOnEnemy < -3) {
-		damageDealt =
-		    fabsf(atkOnPlayer -
-			  0.75F * (target->vel + target->equipboost_vel));
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result C1 LOST (faster, atk < -3).");
-	    } else {
-		damageDealt = abs(atkOnPlayer - 1);
-		log_tag("debug_log.txt", "[FIGHT]",
-			"Fight result C2 LOST (faster, atk > -3).");
-	    }
-	    target->hp -= damageDealt > 0 ? damageDealt : 1;
-	    res = FIGHTRES_DMG_TAKEN;
-	}
+        atkdelta = -atkdelta;
+        if (atkOnEnemy > 3) {
+            damageDealt = atkOnEnemy;
+            b->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result A WIN (faster, great atk).");
+        } else if (atkOnEnemy >= 0) {
+            damageDealt = abs(atkOnEnemy - atkdelta);
+            b->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_DEALT;
+            log_tag("debug_log.txt", "[FIGHT]",
+                    "Fight result B WIN (faster, ok atk).");
+        } else {
+            if (atkOnEnemy < -3) {
+                damageDealt =
+                    fabsf(atkOnPlayer -
+                          0.75F * (target->vel + target->equipboost_vel));
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result C1 LOST (faster, atk < -3).");
+            } else {
+                damageDealt = abs(atkOnPlayer - 1);
+                log_tag("debug_log.txt", "[FIGHT]",
+                        "Fight result C2 LOST (faster, atk > -3).");
+            }
+            target->hp -= damageDealt > 0 ? damageDealt : 1;
+            res = FIGHTRES_DMG_TAKEN;
+        }
     }
 
     log_tag("debug_log.txt", "[FIGHT]", "damageCalc %i", damageDealt);
@@ -6018,71 +6016,71 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
 
     if (!yourhit) {
 
-	b->vel--;
-	b->atk--;
-	b->def -= 2;
+        b->vel--;
+        b->atk--;
+        b->def -= 2;
 
-	//Check if someone earned a stat reset after the fight
-	statReset(target, 0);
-	statResetBoss(b, 0);
+        //Check if someone earned a stat reset after the fight
+        statReset(target, 0);
+        statResetBoss(b, 0);
 
-	strcpy(victim, target->name);
+        strcpy(victim, target->name);
     } else {
 
-	target->vel--;
-	target->atk--;
-	target->def -= 2;
+        target->vel--;
+        target->atk--;
+        target->def -= 2;
 
-	//Account for vampirism perk
-	int vampire_perks = target->perks[VAMPIRISM]->innerValue;
-	if (vampire_perks > 0) {
-	    int recovery = floor(damageDealt * (0.1 * vampire_perks));
-	    target->hp += recovery;
-	    log_tag("debug_log.txt", "[PERKS]", "Vampirism proc for +%i HP.",
-		    recovery);
-	    if (target->hp >= target->totalhp) {
-		target->hp = target->totalhp;
-	    };
-	}
-	//Account for burn on touch perk
-	int hotbody_perks = target->perks[HOT_BODY]->innerValue;
-	if (hotbody_perks > 0) {
-	    int burnchance = 11 - hotbody_perks;
-	    if (rand() % burnchance == 0) {
-		b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
-		setCounter((Turncounter *) b->counters[Burned], 2);	//Give 2 turns of Burned status
-		log_tag("debug_log.txt", "[PERKS]",
-			"Hotbody proc on 1/%i chance.", burnchance);
-	    }
-	}
-	//Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
-	int biohazard_perks = target->perks[BIOHAZARD]->innerValue;
-	if (biohazard_perks > 0) {
-	    int poisonchance = 11 - biohazard_perks;
-	    if (rand() % poisonchance == 0) {
-		b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
-		setCounter((Turncounter *) b->counters[POISON], 2);	//Give 2 turns of Poison status
-		log_tag("debug_log.txt", "[PERKS]",
-			"Biohazard proc on 1/%i chance.", poisonchance);
-	    }
-	}
-	//Check if someone earned a stat reset after the fight
-	statResetBoss(b, 0);
-	statReset(target, 0);
+        //Account for vampirism perk
+        int vampire_perks = target->perks[VAMPIRISM]->innerValue;
+        if (vampire_perks > 0) {
+            int recovery = floor(damageDealt * (0.1 * vampire_perks));
+            target->hp += recovery;
+            log_tag("debug_log.txt", "[PERKS]", "Vampirism proc for +%i HP.",
+                    recovery);
+            if (target->hp >= target->totalhp) {
+                target->hp = target->totalhp;
+            };
+        }
+        //Account for burn on touch perk
+        int hotbody_perks = target->perks[HOT_BODY]->innerValue;
+        if (hotbody_perks > 0) {
+            int burnchance = 11 - hotbody_perks;
+            if (rand() % burnchance == 0) {
+                b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
+                setCounter((Turncounter *) b->counters[Burned], 2);	//Give 2 turns of Burned status
+                log_tag("debug_log.txt", "[PERKS]",
+                        "Hotbody proc on 1/%i chance.", burnchance);
+            }
+        }
+        //Account for poison on touch perk. Order of checks with hot_body perk may cause issues?
+        int biohazard_perks = target->perks[BIOHAZARD]->innerValue;
+        if (biohazard_perks > 0) {
+            int poisonchance = 11 - biohazard_perks;
+            if (rand() % poisonchance == 0) {
+                b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
+                setCounter((Turncounter *) b->counters[POISON], 2);	//Give 2 turns of Poison status
+                log_tag("debug_log.txt", "[PERKS]",
+                        "Biohazard proc on 1/%i chance.", poisonchance);
+            }
+        }
+        //Check if someone earned a stat reset after the fight
+        statResetBoss(b, 0);
+        statReset(target, 0);
 
-	strcpy(victim, stringFromBossClass(b->class));
+        strcpy(victim, stringFromBossClass(b->class));
     }
 
     int color = -1;
     if (yourhit) {
-	color = S4C_WHITE;
+        color = S4C_WHITE;
     } else {
-	color = S4C_RED;
+        color = S4C_RED;
     }
 
     wattron(notify_win, COLOR_PAIR(color));
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
-	    damageDealt > 0 ? damageDealt : 1);
+            damageDealt > 0 ? damageDealt : 1);
     display_notification(notify_win, msg, 500);
     wattroff(notify_win, COLOR_PAIR(color));
 
@@ -6092,115 +6090,115 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
 
     //Account for critboost_chance perks
     int critMax =
-	round(10.0 - floor(target->luck / 5) -
-	      (1.5 * target->perks[CRITBOOST_CHANCE]->innerValue));
+        round(10.0 - floor(target->luck / 5) -
+              (1.5 * target->perks[CRITBOOST_CHANCE]->innerValue));
 
     int critRes = (rand() % critMax);
 
     if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
 
-	//Account for critboost_dmg perks
-	int dmgboost_perks = target->perks[CRITBOOST_DMG]->innerValue;
-	damageDealt *= (0.30 + (0.12 * dmgboost_perks));
-	b->hp -= damageDealt > 0 ? damageDealt : 1;
-	wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	sprintf(msg, "A critical hit!    (%i DMG)",
-		damageDealt > 0 ? damageDealt : 1);
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	log_tag("debug_log.txt", "[FIGHT-BOSS]",
-		"Critical hit for %i dmg, proc on 1/%i chance.", damageDealt,
-		critMax);
+        //Account for critboost_dmg perks
+        int dmgboost_perks = target->perks[CRITBOOST_DMG]->innerValue;
+        damageDealt *= (0.30 + (0.12 * dmgboost_perks));
+        b->hp -= damageDealt > 0 ? damageDealt : 1;
+        wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        sprintf(msg, "A critical hit!    (%i DMG)",
+                damageDealt > 0 ? damageDealt : 1);
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        log_tag("debug_log.txt", "[FIGHT-BOSS]",
+                "Critical hit for %i dmg, proc on 1/%i chance.", damageDealt,
+                critMax);
 
-	//Update stats
-	target->stats->criticalhits++;
+        //Update stats
+        target->stats->criticalhits++;
     }
     //Check for deaths -> exit condition from loop
     //
     //
     //
     if (b->hp <= 0) {
-	res = FIGHTRES_KILL_DONE;
+        res = FIGHTRES_KILL_DONE;
 
-	//Account for runic circle perk
-	int runic_perks = target->perks[RUNIC_MAGNET]->innerValue;
-	if (runic_perks > 0) {
-	    int recovery = round(0.51 * runic_perks);
-	    target->energy += recovery;
-	    log_tag("debug_log.txt", "[PERKS]",
-		    "Runicmagnet proc for %i energy.", recovery);
-	}
-	if (b->beast) {
-	    color = S4C_MAGENTA;
-	} else {
-	    color = S4C_RED;
-	}
-	wattron(notify_win, COLOR_PAIR(color));
-	sprintf(msg, "%s fainted.", stringFromBossClass(b->class));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(color));
-	log_tag("debug_log.txt", "[FIGHT-BOSS]", "Killed  %s.",
-		stringFromBossClass(b->class));
+        //Account for runic circle perk
+        int runic_perks = target->perks[RUNIC_MAGNET]->innerValue;
+        if (runic_perks > 0) {
+            int recovery = round(0.51 * runic_perks);
+            target->energy += recovery;
+            log_tag("debug_log.txt", "[PERKS]",
+                    "Runicmagnet proc for %i energy.", recovery);
+        }
+        if (b->beast) {
+            color = S4C_MAGENTA;
+        } else {
+            color = S4C_RED;
+        }
+        wattron(notify_win, COLOR_PAIR(color));
+        sprintf(msg, "%s fainted.", stringFromBossClass(b->class));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(color));
+        log_tag("debug_log.txt", "[FIGHT-BOSS]", "Killed  %s.",
+                stringFromBossClass(b->class));
 
-	//Update stats
-	target->stats->bosseskilled++;
+        //Update stats
+        target->stats->bosseskilled++;
 
-	//Check if we killed this boss before
-	if (target->stats->killed_bosses[b->class] == 0) {
-	    //Update stats
-	    target->stats->unique_bosseskilled++;
-	    target->stats->killed_bosses[b->class] += 1;
-	    //Check if we have to update the wincon value
-	    if (p->win_condition->class == ALL_BOSSES) {
-		p->win_condition->current_val++;
-	    }
-	    log_tag("debug_log.txt", "[FIGHT-BOSS]", "Killed new boss  %s.",
-		    stringFromBossClass(b->class));
-	}
+        //Check if we killed this boss before
+        if (target->stats->killed_bosses[b->class] == 0) {
+            //Update stats
+            target->stats->unique_bosseskilled++;
+            target->stats->killed_bosses[b->class] += 1;
+            //Check if we have to update the wincon value
+            if (p->win_condition->class == ALL_BOSSES) {
+                p->win_condition->current_val++;
+            }
+            log_tag("debug_log.txt", "[FIGHT-BOSS]", "Killed new boss  %s.",
+                    stringFromBossClass(b->class));
+        }
     } else {
-	//Apply status effects to boss
-	if (b->status != Normal) {
-	    applyBStatus(notify_win, b);
-	    log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
-		    stringFromStatus(b->status), stringFromBossClass(b->class));
-	}
+        //Apply status effects to boss
+        if (b->status != Normal) {
+            applyBStatus(notify_win, b);
+            log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
+                    stringFromStatus(b->status), stringFromBossClass(b->class));
+        }
     }
 
     if (target->hp <= 0) {
-	res = FIGHTRES_DEATH;
+        res = FIGHTRES_DEATH;
     } else {
-	//Apply status effects to target
-	if (target->status != Normal) {
-	    applyStatus(notify_win, target);
-	}
+        //Apply status effects to target
+        if (target->status != Normal) {
+            applyStatus(notify_win, target);
+        }
     }
 
     //Consumable drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE) {
-	int drop = dropConsumable(target);
-	wattron(notify_win, COLOR_PAIR(S4C_CYAN));
-	sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
-	log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
-		stringFromConsumables(drop));
+        int drop = dropConsumable(target);
+        wattron(notify_win, COLOR_PAIR(S4C_CYAN));
+        sprintf(msg, "You found a %s!", stringFromConsumables(drop));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
+        log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
+                stringFromConsumables(drop));
     }
 
     //Artifact drop (if we don't have all of them)
     if (res == FIGHTRES_KILL_DONE
-	&& (target->stats->artifactsfound != ARTIFACTSMAX + 1)) {
-	int artifact_drop = dropArtifact(target);
-	wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-	display_notification(notify_win, msg, 500);
-	wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
-	log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
-		stringFromArtifacts(artifact_drop));
+        && (target->stats->artifactsfound != ARTIFACTSMAX + 1)) {
+        int artifact_drop = dropArtifact(target);
+        wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
+        display_notification(notify_win, msg, 500);
+        wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
+        log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
+                stringFromArtifacts(artifact_drop));
     }
     //Equip drop
     if (res == FIGHTRES_KILL_DONE) {
-	//We give 1 to obtain the better equip generation used for beasts
-	dropEquip(target, 1, notify_win, kls);
+        //We give 1 to obtain the better equip generation used for beasts
+        dropEquip(target, 1, notify_win, kls);
     }
 
     return res;
@@ -6218,7 +6216,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
  * @param kls The Koliseo used for allocations.
  */
 int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
-		     WINDOW *notify_win, Koliseo *kls)
+                     WINDOW *notify_win, Koliseo *kls)
 {
     char msg[200];
     //FIXME
@@ -6230,150 +6228,150 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
     int player_goes_first = (player->vel >= b->vel ? 1 : 0);
 
     if (player_goes_first) {
-	res = boss_fight(player, b, p, notify_win, kls);
-	//Check res and apply second action if needed
-	log_tag("debug_log.txt", "[DEBUG]",
-		"[%s()]: First act res was [%s]: [%i]", __func__,
-		stringFrom_fightResult(res), res);
-	if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
-	    switch (foe_op) {
-	    case FOE_OP_INVALID:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
-			    foe_op);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    case FOE_OP_IDLE:{
-		    log_tag("debug_log.txt", "[DEFER]",
-			    "[%s()]:  Foe { %s } was idle.", __func__,
-			    stringFromBossClass(b->class));
-		    wattron(notify_win, COLOR_PAIR(S4C_GREY));
-		    sprintf(msg, "%s is loafing around.",
-			    stringFromBossClass(b->class));
-		    display_notification(notify_win, msg, 500);
-		    wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-		}
-		break;
-	    case FOE_OP_FIGHT:{
-		    log_tag("debug_log.txt", "[DEFER]",
-			    "[%s()]:  Foe { %s } wants to fight.", __func__,
-			    stringFromBossClass(b->class));
-		    wattron(notify_win, COLOR_PAIR(S4C_GREY));
-		    sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-		    display_notification(notify_win, msg, 500);
-		    wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-		    res = boss_attack(b, player, p, notify_win, kls);
-		}
-		break;
-	    case FOE_OP_SPECIAL:{
-		    log_tag("debug_log.txt", "[TODO]",
-			    "[%s()]:  Foe { %s } wants to use a special.",
-			    __func__, stringFromBossClass(b->class));
-		    //TODO
-		    //Implement boss special function
-		    //res = boss_attack_special(b,player,p,notify_win,kls);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Unexpected foeTurnOption_OP in [%s()]: [%i]",
-			    __func__, foe_op);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    }			// End foe_op switch
+        res = boss_fight(player, b, p, notify_win, kls);
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            switch (foe_op) {
+            case FOE_OP_INVALID: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                        foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            case FOE_OP_IDLE: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } was idle.", __func__,
+                        stringFromBossClass(b->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is loafing around.",
+                        stringFromBossClass(b->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            }
+            break;
+            case FOE_OP_FIGHT: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } wants to fight.", __func__,
+                        stringFromBossClass(b->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+                res = boss_attack(b, player, p, notify_win, kls);
+            }
+            break;
+            case FOE_OP_SPECIAL: {
+                log_tag("debug_log.txt", "[TODO]",
+                        "[%s()]:  Foe { %s } wants to use a special.",
+                        __func__, stringFromBossClass(b->class));
+                //TODO
+                //Implement boss special function
+                //res = boss_attack_special(b,player,p,notify_win,kls);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected foeTurnOption_OP in [%s()]: [%i]",
+                        __func__, foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }			// End foe_op switch
 
-	    //TODO
-	    //Check second turn act res?
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "[%s()]: Second act res was [%s]: [%i]", __func__,
-		    stringFrom_fightResult(res), res);
+            //TODO
+            //Check second turn act res?
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
 
-	    return res;
-	} else if (res == FIGHTRES_DEATH) {
-	    return res;
-	} else if (res == FIGHTRES_KILL_DONE) {
-	    return res;
-	}
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
     } else {
-	//Foe acts first
-	switch (foe_op) {
-	case FOE_OP_INVALID:{
-		log_tag("debug_log.txt", "[ERROR]",
-			"foe_op was FOE_OP_INVALID in [%s()]: [%i]", __func__,
-			foe_op);
-		kls_free(default_kls);
-		kls_free(temporary_kls);
-		exit(EXIT_FAILURE);
-	    }
-	    break;
-	case FOE_OP_IDLE:{
-		log_tag("debug_log.txt", "[DEFER]",
-			"[%s()]:  Foe { %s } was idle.", __func__,
-			stringFromBossClass(b->class));
-		wattron(notify_win, COLOR_PAIR(S4C_GREY));
-		sprintf(msg, "%s is loafing around.",
-			stringFromBossClass(b->class));
-		display_notification(notify_win, msg, 500);
-		wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-	    }
-	    break;
-	case FOE_OP_FIGHT:{
-		log_tag("debug_log.txt", "[DEFER]",
-			"[%s()]:  Foe { %s } wants to fight.", __func__,
-			stringFromBossClass(b->class));
-		wattron(notify_win, COLOR_PAIR(S4C_GREY));
-		sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-		display_notification(notify_win, msg, 500);
-		wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-		res = boss_attack(b, player, p, notify_win, kls);
-	    }
-	    break;
-	case FOE_OP_SPECIAL:{
-		log_tag("debug_log.txt", "[TODO]",
-			"[%s()]:  Foe { %s } wants to use a special.", __func__,
-			stringFromBossClass(b->class));
-		//TODO
-		//Implement boss special function
-		//res = boss_attack_special(b,player,p,notify_win,kls);
-	    }
-	    break;
-	default:{
-		log_tag("debug_log.txt", "[ERROR]",
-			"Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
-			foe_op);
-		kls_free(default_kls);
-		kls_free(temporary_kls);
-		exit(EXIT_FAILURE);
-	    }
-	    break;
-	}			// End foe_op switch
+        //Foe acts first
+        switch (foe_op) {
+        case FOE_OP_INVALID: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "foe_op was FOE_OP_INVALID in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        case FOE_OP_IDLE: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } was idle.", __func__,
+                    stringFromBossClass(b->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is loafing around.",
+                    stringFromBossClass(b->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+        }
+        break;
+        case FOE_OP_FIGHT: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } wants to fight.", __func__,
+                    stringFromBossClass(b->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            res = boss_attack(b, player, p, notify_win, kls);
+        }
+        break;
+        case FOE_OP_SPECIAL: {
+            log_tag("debug_log.txt", "[TODO]",
+                    "[%s()]:  Foe { %s } wants to use a special.", __func__,
+                    stringFromBossClass(b->class));
+            //TODO
+            //Implement boss special function
+            //res = boss_attack_special(b,player,p,notify_win,kls);
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        }			// End foe_op switch
 
-	//Check res and apply second action if needed
-	log_tag("debug_log.txt", "[DEBUG]",
-		"[%s()]: First act res was [%s]: [%i]", __func__,
-		stringFrom_fightResult(res), res);
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
 
-	if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
-	    res = boss_fight(player, b, p, notify_win, kls);
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            res = boss_fight(player, b, p, notify_win, kls);
 
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "[%s()]: Second act res was [%s]: [%i]", __func__,
-		    stringFrom_fightResult(res), res);
-	    //TODO
-	    //Check second turn act res?
-	    return res;
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            //TODO
+            //Check second turn act res?
+            return res;
 
-	} else if (res == FIGHTRES_DEATH) {
-	    return res;
-	} else if (res == FIGHTRES_KILL_DONE) {
-	    return res;
-	}
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
     }
 
     return res;
@@ -6400,68 +6398,68 @@ void useConsumable(Fighter *f, Enemy *e, Boss *b, char *string, int isBoss)
     int i = 0;
     int check;
     for (int j = 0; j < CONSUMABLESMAX + 1; j++) {
-	if ((check = strcmp(consumablestrings[j], string)) == 0) {
-	    i = j;
-	}
+        if ((check = strcmp(consumablestrings[j], string)) == 0) {
+            i = j;
+        }
     };
 
     Consumable *c = (Consumable *) f->consumablesBag[i];
 
     if (c->qty == 0) {
-	return;
+        return;
     }
     if (c->class == Potion) {
-	f->hp = f->totalhp;
-	//green();
-	//printf("\n\n\n\tYour health was restored.\n\n");
-	//white();
+        f->hp = f->totalhp;
+        //green();
+        //printf("\n\n\n\tYour health was restored.\n\n");
+        //white();
     } else if (c->class == Rock) {
-	if (isBoss) {
-	    b->def -= 8;
-	    b->hp -= 2;
-	    //printf("\n\n\n\t%s got smacked.",stringFromBossClass(b->class));
-	} else {
-	    e->def -= 8;
-	    e->hp -= 2;
-	    //printf("\n\n\n\t%s got smacked.",stringFromEClass(e->class));
-	}
-	//red();
-	//printf("\t-8 DEF and -2 HP.\n\n");
-	//white();
+        if (isBoss) {
+            b->def -= 8;
+            b->hp -= 2;
+            //printf("\n\n\n\t%s got smacked.",stringFromBossClass(b->class));
+        } else {
+            e->def -= 8;
+            e->hp -= 2;
+            //printf("\n\n\n\t%s got smacked.",stringFromEClass(e->class));
+        }
+        //red();
+        //printf("\t-8 DEF and -2 HP.\n\n");
+        //white();
     } else if (c->class == Bread) {
-	f->vel -= 1;
-	f->def += 6;
-	f->atk += 4;
-	//printf("\n\n\n\tYou ate elvish bread.");
-	//green();
-	//printf("\t+6 DEF , +4 ATK, ");
-	//yellow();
-	//printf("-1 VEL\n\n");
-	//white();
+        f->vel -= 1;
+        f->def += 6;
+        f->atk += 4;
+        //printf("\n\n\n\tYou ate elvish bread.");
+        //green();
+        //printf("\t+6 DEF , +4 ATK, ");
+        //yellow();
+        //printf("-1 VEL\n\n");
+        //white();
     } else if (c->class == Coffee) {
-	f->vel += 6;
-	f->atk += 2;
-	f->def -= 2;
-	//printf("\n\n\n\tYou drank hot coffee.");
-	//green();
-	//printf("\t+6 SPE , +2 ATK, ");
-	//yellow();
-	//printf("-2 DEF\n\n");
-	//white();
+        f->vel += 6;
+        f->atk += 2;
+        f->def -= 2;
+        //printf("\n\n\n\tYou drank hot coffee.");
+        //green();
+        //printf("\t+6 SPE , +2 ATK, ");
+        //yellow();
+        //printf("-2 DEF\n\n");
+        //white();
     } else if (c->class == Powergem) {
-	//printf("\n\n\n\tYou became wiser.");
-	//green();
-	//printf("\t+25 XP\n\n");
-	//white();
-	checkremainder(f, 25);
+        //printf("\n\n\n\tYou became wiser.");
+        //green();
+        //printf("\t+25 XP\n\n");
+        //white();
+        checkremainder(f, 25);
     } else if (c->class == Magicbean) {
-	//printf("\n\n\n\tYou aren't tired anymore.");
-	//green();
-	//printf("\tEnergy was restored\n\n");
-	//white();
-	f->energy = f->totalenergy;	//Refill energy
+        //printf("\n\n\n\tYou aren't tired anymore.");
+        //green();
+        //printf("\tEnergy was restored\n\n");
+        //white();
+        f->energy = f->totalenergy;	//Refill energy
     } else {
-	return;
+        return;
     }
 
     c->qty--;
@@ -6493,10 +6491,10 @@ int getConsumableQty(Fighter *f, int n)
 void emptyConsumables(Fighter *f)
 {
     for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
-	if (getConsumableQty(f, i) > 0) {
-	    Consumable *c = (Consumable *) f->consumablesBag[i];
-	    c->qty = 0;
-	}
+        if (getConsumableQty(f, i) > 0) {
+            Consumable *c = (Consumable *) f->consumablesBag[i];
+            c->qty = 0;
+        }
     };
 }
 
@@ -6510,10 +6508,10 @@ void emptyConsumables(Fighter *f)
 void emptyArtifacts(Fighter *f)
 {
     for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
-	if (f->artifactsBag[i]->qty > 0) {
-	    f->artifactsBag[i]->qty = 0;
-	    f->artifactsBag[i]->active = 0;
-	}
+        if (f->artifactsBag[i]->qty > 0) {
+            f->artifactsBag[i]->qty = 0;
+            f->artifactsBag[i]->active = 0;
+        }
     };
 }
 
@@ -6531,13 +6529,13 @@ void emptyEquips(Fighter *player)
 
     for (int i = 0; i < occupied; i++) {
 
-	Equip *e = (Equip *) player->equipsBag[i];
-	if (e->qty > 0) {
-	    //free(e);
-	    e->qty = 0;
-	    log_tag("debug_log.txt", "[FIXME]",
-		    "emptyEquips():  how do I empty them semantically?");
-	}
+        Equip *e = (Equip *) player->equipsBag[i];
+        if (e->qty > 0) {
+            //free(e);
+            e->qty = 0;
+            log_tag("debug_log.txt", "[FIXME]",
+                    "emptyEquips():  how do I empty them semantically?");
+        }
     };
 }
 
@@ -6560,8 +6558,8 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
     log_tag("debug_log.txt", "[DEBUG]", "Saving with version %s", version);
 
     if (file == NULL) {
-	fprintf(stderr, "[ERROR]    Can't open save file!\n");
-	return OP_CANNOT_OPEN_SAVEFILE;
+        fprintf(stderr, "[ERROR]    Can't open save file!\n");
+        return OP_CANNOT_OPEN_SAVEFILE;
     }
 
     /* File version printing */
@@ -6595,14 +6593,14 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
     fprintf(file, "%s# status\n", stringFromStatus(f->status));
     fprintf(file, "    Specials{\n");
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
-	fprintf(file, "%i# %i_special_enabled_flag\n", f->specials[i]->enabled,
-		i);
+        fprintf(file, "%i# %i_special_enabled_flag\n", f->specials[i]->enabled,
+                i);
     }
     fprintf(file, "    },\n");
     fprintf(file, "    Counters{\n");
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
-	fprintf(file, "%i# innervalue\n", f->counters[i]->innerValue);
-	fprintf(file, "%i# count\n", f->counters[i]->count);
+        fprintf(file, "%i# innervalue\n", f->counters[i]->innerValue);
+        fprintf(file, "%i# count\n", f->counters[i]->count);
     }
     fprintf(file, "    },\n");
     fprintf(file, "%i# tb_atk\n", f->turnboost_atk);
@@ -6613,30 +6611,30 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
     fprintf(file, "%i# earliestbagslot\n", f->earliestBagSlot);
     fprintf(file, "    EquipsBag{\n");
     for (int i = 0; i < f->equipsBagOccupiedSlots; i++) {
-	Equip *eq = f->equipsBag[i];
-	fprintf(file, "        Equip_%i{\n", i);
+        Equip *eq = f->equipsBag[i];
+        fprintf(file, "        Equip_%i{\n", i);
 
-	fprintf(file, "%s# equipclass\n", stringFromEquips(eq->class));
-	fprintf(file, "%s# equipzone\n", stringFromEquipzones(eq->type));
-	fprintf(file, "%i# qty\n", eq->qty);
-	fprintf(file, "%i# equipped\n", eq->equipped);
-	fprintf(file, "%i# lvl\n", eq->level);
-	fprintf(file, "%i# atk\n", eq->atk);
-	fprintf(file, "%i# def\n", eq->def);
-	fprintf(file, "%i# vel\n", eq->vel);
-	fprintf(file, "%i# enr\n", eq->enr);
-	fprintf(file, "%i# bonus\n", eq->bonus);
-	fprintf(file, "%i# perkscount\n", eq->perksCount);
-	fprintf(file, "%i# cost\n", eq->cost);
-	fprintf(file, "%s# quality\n", stringFromQuality(eq->type));
-	fprintf(file, "            Perks{\n");
-	for (int j = 0; j < eq->perksCount; j++) {
-	    Perk *pk = eq->perks[j];
-	    fprintf(file, "%i# class\n", pk->class);
-	    fprintf(file, "%i# innervalue\n", pk->innerValue);
-	}
-	fprintf(file, "            }\n");
-	fprintf(file, "        }\n");
+        fprintf(file, "%s# equipclass\n", stringFromEquips(eq->class));
+        fprintf(file, "%s# equipzone\n", stringFromEquipzones(eq->type));
+        fprintf(file, "%i# qty\n", eq->qty);
+        fprintf(file, "%i# equipped\n", eq->equipped);
+        fprintf(file, "%i# lvl\n", eq->level);
+        fprintf(file, "%i# atk\n", eq->atk);
+        fprintf(file, "%i# def\n", eq->def);
+        fprintf(file, "%i# vel\n", eq->vel);
+        fprintf(file, "%i# enr\n", eq->enr);
+        fprintf(file, "%i# bonus\n", eq->bonus);
+        fprintf(file, "%i# perkscount\n", eq->perksCount);
+        fprintf(file, "%i# cost\n", eq->cost);
+        fprintf(file, "%s# quality\n", stringFromQuality(eq->type));
+        fprintf(file, "            Perks{\n");
+        for (int j = 0; j < eq->perksCount; j++) {
+            Perk *pk = eq->perks[j];
+            fprintf(file, "%i# class\n", pk->class);
+            fprintf(file, "%i# innervalue\n", pk->innerValue);
+        }
+        fprintf(file, "            }\n");
+        fprintf(file, "        }\n");
     }
     fprintf(file, "    }\n");
     fprintf(file, "%i# pbst_atk\n", f->permboost_atk);
@@ -6660,9 +6658,9 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
     fprintf(file, "%i# uniquebosseskilled\n", f->stats->unique_bosseskilled);
     fprintf(file, "        Bosses_killed{\n");
     for (int b_i = 0; b_i < BOSSCLASSESMAX + 1; b_i++) {
-	fprintf(file, "%i# boss_%iwas_%s_killed\n",
-		f->stats->killed_bosses[b_i], b_i,
-		f->stats->killed_bosses[b_i] ? "" : "not");
+        fprintf(file, "%i# boss_%iwas_%s_killed\n",
+                f->stats->killed_bosses[b_i], b_i,
+                f->stats->killed_bosses[b_i] ? "" : "not");
     }
     fprintf(file, "        },\n");
     fprintf(file, "%i# keysfound\n", f->stats->keysfound);
@@ -6686,16 +6684,16 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
     /* Consumables bag printing */
     fprintf(file, "ConsumableBag{\n");
     for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
-	Consumable *cn = (Consumable *) f->consumablesBag[i];
-	fprintf(file, "%i# qty_for_consumable_%i\n", cn->qty, i);
+        Consumable *cn = (Consumable *) f->consumablesBag[i];
+        fprintf(file, "%i# qty_for_consumable_%i\n", cn->qty, i);
     }
     fprintf(file, "},\n");
 
     /* Artifacts bag printing */
     fprintf(file, "ArtifactsBag{\n");
     for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
-	Artifact *a = f->artifactsBag[i];
-	fprintf(file, "%i# qty_for_artifact_%i\n", a->qty, i);
+        Artifact *a = f->artifactsBag[i];
+        fprintf(file, "%i# qty_for_artifact_%i\n", a->qty, i);
     }
     fprintf(file, "},\n");
 
@@ -6722,15 +6720,15 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
  * @param roomIndex Current room index.
  */
 OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
-			  int enemyIndex, int roomTotalEnemies, int roomIndex)
+                          int enemyIndex, int roomTotalEnemies, int roomIndex)
 {
     const char version[] = "v0.1.6";
     //FILE *file = fopen("save.txt", "w");
     log_tag("debug_log.txt", "[DEBUG]", "Saving with version %s", version);
 
     if (file == NULL) {
-	fprintf(stderr, "[ERROR]    Can't open save file!\n");
-	return OP_CANNOT_OPEN_SAVEFILE;
+        fprintf(stderr, "[ERROR]    Can't open save file!\n");
+        return OP_CANNOT_OPEN_SAVEFILE;
     }
 
     /* File version printing */
@@ -6764,14 +6762,14 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     fprintf(file, "%s# status\n", stringFromStatus(f->status));
     fprintf(file, "    Specials{\n");
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
-	fprintf(file, "%i# %i_special_enabled_flag\n", f->specials[i]->enabled,
-		i);
+        fprintf(file, "%i# %i_special_enabled_flag\n", f->specials[i]->enabled,
+                i);
     }
     fprintf(file, "    },\n");
     fprintf(file, "    Counters{\n");
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
-	fprintf(file, "%i# innervalue\n", f->counters[i]->innerValue);
-	fprintf(file, "%i# count\n", f->counters[i]->count);
+        fprintf(file, "%i# innervalue\n", f->counters[i]->innerValue);
+        fprintf(file, "%i# count\n", f->counters[i]->count);
     }
     fprintf(file, "    },\n");
     fprintf(file, "%i# tb_atk\n", f->turnboost_atk);
@@ -6782,30 +6780,30 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     fprintf(file, "%i# earliestbagslot\n", f->earliestBagSlot);
     fprintf(file, "    EquipsBag{\n");
     for (int i = 0; i < f->equipsBagOccupiedSlots; i++) {
-	Equip *eq = f->equipsBag[i];
-	fprintf(file, "        Equip_%i{\n", i);
+        Equip *eq = f->equipsBag[i];
+        fprintf(file, "        Equip_%i{\n", i);
 
-	fprintf(file, "%s# equipclass\n", stringFromEquips(eq->class));
-	fprintf(file, "%s# equipzone\n", stringFromEquipzones(eq->type));
-	fprintf(file, "%i# qty\n", eq->qty);
-	fprintf(file, "%i# equipped\n", eq->equipped);
-	fprintf(file, "%i# lvl\n", eq->level);
-	fprintf(file, "%i# atk\n", eq->atk);
-	fprintf(file, "%i# def\n", eq->def);
-	fprintf(file, "%i# vel\n", eq->vel);
-	fprintf(file, "%i# enr\n", eq->enr);
-	fprintf(file, "%i# bonus\n", eq->bonus);
-	fprintf(file, "%i# perkscount\n", eq->perksCount);
-	fprintf(file, "%i# cost\n", eq->cost);
-	fprintf(file, "%s# quality\n", stringFromQuality(eq->type));
-	fprintf(file, "            Perks{\n");
-	for (int j = 0; j < eq->perksCount; j++) {
-	    Perk *pk = eq->perks[j];
-	    fprintf(file, "%i# class\n", pk->class);
-	    fprintf(file, "%i# innervalue\n", pk->innerValue);
-	}
-	fprintf(file, "            }\n");
-	fprintf(file, "        }\n");
+        fprintf(file, "%s# equipclass\n", stringFromEquips(eq->class));
+        fprintf(file, "%s# equipzone\n", stringFromEquipzones(eq->type));
+        fprintf(file, "%i# qty\n", eq->qty);
+        fprintf(file, "%i# equipped\n", eq->equipped);
+        fprintf(file, "%i# lvl\n", eq->level);
+        fprintf(file, "%i# atk\n", eq->atk);
+        fprintf(file, "%i# def\n", eq->def);
+        fprintf(file, "%i# vel\n", eq->vel);
+        fprintf(file, "%i# enr\n", eq->enr);
+        fprintf(file, "%i# bonus\n", eq->bonus);
+        fprintf(file, "%i# perkscount\n", eq->perksCount);
+        fprintf(file, "%i# cost\n", eq->cost);
+        fprintf(file, "%s# quality\n", stringFromQuality(eq->type));
+        fprintf(file, "            Perks{\n");
+        for (int j = 0; j < eq->perksCount; j++) {
+            Perk *pk = eq->perks[j];
+            fprintf(file, "%i# class\n", pk->class);
+            fprintf(file, "%i# innervalue\n", pk->innerValue);
+        }
+        fprintf(file, "            }\n");
+        fprintf(file, "        }\n");
     }
     fprintf(file, "    }\n");
     fprintf(file, "%i# pbst_atk\n", f->permboost_atk);
@@ -6829,9 +6827,9 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     fprintf(file, "%i# uniquebosseskilled\n", f->stats->unique_bosseskilled);
     fprintf(file, "        Bosses_killed{\n");
     for (int b_i = 0; b_i < BOSSCLASSESMAX + 1; b_i++) {
-	fprintf(file, "%i# boss_%iwas_%s_killed\n",
-		f->stats->killed_bosses[b_i], b_i,
-		f->stats->killed_bosses[b_i] ? "" : "not");
+        fprintf(file, "%i# boss_%iwas_%s_killed\n",
+                f->stats->killed_bosses[b_i], b_i,
+                f->stats->killed_bosses[b_i] ? "" : "not");
     }
     fprintf(file, "        },\n");
     fprintf(file, "%i# keysfound\n", f->stats->keysfound);
@@ -6857,8 +6855,8 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     fprintf(file, "%s# status\n", stringFromStatus(e->status));
     fprintf(file, "    Counters{\n");
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
-	fprintf(file, "%i# innervalue\n", e->counters[i]->innerValue);
-	fprintf(file, "%i# count\n", e->counters[i]->count);
+        fprintf(file, "%i# innervalue\n", e->counters[i]->innerValue);
+        fprintf(file, "%i# count\n", e->counters[i]->count);
     }
     fprintf(file, "    },\n");
     fprintf(file, "},\n");
@@ -6882,16 +6880,16 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     /* Consumables bag printing */
     fprintf(file, "ConsumableBag{\n");
     for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
-	Consumable *cn = (Consumable *) f->consumablesBag[i];
-	fprintf(file, "%i# qty_for_consumable_%i\n", cn->qty, i);
+        Consumable *cn = (Consumable *) f->consumablesBag[i];
+        fprintf(file, "%i# qty_for_consumable_%i\n", cn->qty, i);
     }
     fprintf(file, "},\n");
 
     /* Artifacts bag printing */
     fprintf(file, "ArtifactsBag{\n");
     for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
-	Artifact *a = f->artifactsBag[i];
-	fprintf(file, "%i# qty_for_artifact_%i\n", a->qty, i);
+        Artifact *a = f->artifactsBag[i];
+        fprintf(file, "%i# qty_for_artifact_%i\n", a->qty, i);
     }
     fprintf(file, "},\n");
 
@@ -6913,9 +6911,9 @@ saveType read_saveType(FILE *file)
     log_tag("debug_log.txt", "[DEBUG]", "Reading save type from text file.");
 
     if (file == NULL) {
-	endwin();
-	printf("Error with file while trying to read save type!\n");
-	return -1;
+        endwin();
+        printf("Error with file while trying to read save type!\n");
+        return -1;
     }
     char buf[500];
     const char version[] = "v0.1.6";
@@ -6924,50 +6922,50 @@ saveType read_saveType(FILE *file)
     /* File version scanning */
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in read_saveType(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while reading save type.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in read_saveType(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while reading save type.");
+        exit(EXIT_FAILURE);
     }
 
     int check = -1;
     if (!((check = strcmp(buf, version)) == 0)) {
-	log_tag("debug_log.txt", "[LOAD-ERROR]",
-		"Failed save format version check. Quitting.");
-	fprintf(stderr,
-		"[ERROR]    File version mismatch on save type reading.\n");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[LOAD-ERROR]",
+                "Failed save format version check. Quitting.");
+        fprintf(stderr,
+                "[ERROR]    File version mismatch on save type reading.\n");
+        exit(EXIT_FAILURE);
     };
     log_tag("debug_log.txt", "[LOAD]", "Read save format version: (%s).\n",
-	    buf);
+            buf);
 
     /* Save type scanning */
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in read_saveType(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while reading save type.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in read_saveType(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while reading save type.");
+        exit(EXIT_FAILURE);
     }
 
     saveType result = saveTypeFrom_string(buf);
 
     if (result == -1) {
-	log_tag("debug_log.txt", "[LOAD-ERROR]",
-		"read_saveType():  Failed save type reading. Read string Was [%s]. Quitting.",
-		buf);
-	fprintf(stderr, "[ERROR]    Save type version error.\n");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[LOAD-ERROR]",
+                "read_saveType():  Failed save type reading. Read string Was [%s]. Quitting.",
+                buf);
+        fprintf(stderr, "[ERROR]    Save type version error.\n");
+        exit(EXIT_FAILURE);
 
     };
 
     log_tag("debug_log.txt", "[LOAD]", "Loaded save type: (%s) --> [%s].\n",
-	    buf, stringFrom_saveType(result));
+            buf, stringFrom_saveType(result));
 
     log_tag("debug_log.txt", "[LOAD]",
-	    "Doing rewind(save_file) before returning from read_saveType()!");
+            "Doing rewind(save_file) before returning from read_saveType()!");
     rewind(file);
     return result;
 }
@@ -6989,7 +6987,7 @@ saveType read_saveType(FILE *file)
  * @return The OP_res corresponding to loading result.
  */
 OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
-			   int *done_loading, Koliseo *kls)
+                           int *done_loading, Koliseo *kls)
 {
 
     //printf("\nLoading game...\n");
@@ -6997,8 +6995,8 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
 
 //      FILE* file = fopen("save.txt", "r");
     if (file == NULL) {
-	printf("Error with file while trying to load!\n");
-	return OP_CANNOT_OPEN_SAVEFILE;
+        printf("Error with file while trying to load!\n");
+        return OP_CANNOT_OPEN_SAVEFILE;
     }
     char buf[500];
     char comment[300];
@@ -7009,51 +7007,51 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     /* File version scanning */
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     int check = -1;
     if (!((check = strcmp(buf, version)) == 0)) {
-	log_tag("debug_log.txt", "[LOAD-ERROR]",
-		"Failed save format version check. Was [%s]. Quitting.\n", buf);
-	fprintf(stderr, "[ERROR]    File version mismatch on load.\n");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[LOAD-ERROR]",
+                "Failed save format version check. Was [%s]. Quitting.\n", buf);
+        fprintf(stderr, "[ERROR]    File version mismatch on load.\n");
+        exit(EXIT_FAILURE);
     };
     log_tag("debug_log.txt", "[LOAD]", "Loaded save format version: (%s).",
-	    buf);
+            buf);
 
     /* Save type scanning */
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     check = -1;
     if (!((check = strcmp(buf, stringFrom_saveType(HOME_SAVE))) == 0)) {
-	log_tag("debug_log.txt", "[LOAD-ERROR]",
-		"handleLoadGame_Home():  Failed save type check, was [%s]. Quitting.",
-		buf);
-	fprintf(stderr, "[ERROR]    Save type version mismatch on load.\n");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[LOAD-ERROR]",
+                "handleLoadGame_Home():  Failed save type check, was [%s]. Quitting.",
+                buf);
+        fprintf(stderr, "[ERROR]    Save type version mismatch on load.\n");
+        exit(EXIT_FAILURE);
     };
     log_tag("debug_log.txt", "[LOAD]", "Loaded save type: (%s).", buf);
 
     /* Gamemode scanning */
     scanres = fscanf(file, "%200[^#]# %s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7062,38 +7060,38 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     /* Fighter scanning */
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     strcpy(f->name, buf);
 
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     for (int i = 0; i < CLASSESMAX + 1; i++) {
-	int check = -1;
-	if ((check = strcmp(buf, stringFromClass(i))) == 0) {
-	    f->class = i;
-	    break;
-	}
+        int check = -1;
+        if ((check = strcmp(buf, stringFromClass(i))) == 0) {
+            f->class = i;
+            break;
+        }
     };
 
     //We have to reload the specials callbacks after setting fighter class
@@ -7102,11 +7100,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //HP
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7114,11 +7112,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //TotalHP
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7126,11 +7124,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7138,11 +7136,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7151,11 +7149,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7163,11 +7161,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Level
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7175,11 +7173,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Luck
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7187,11 +7185,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Totxp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -7199,11 +7197,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Current level xp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -7211,11 +7209,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Totallevelxp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -7223,11 +7221,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Energy
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7235,11 +7233,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Totenergy
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7247,11 +7245,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Stamina
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7259,11 +7257,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Totstamina
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7271,11 +7269,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Coin balance
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -7284,99 +7282,99 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Status
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     for (int i = 0; i < STATUSMAX + 1; i++) {
-	int check = -1;
-	if ((check = strcmp(buf, stringFromStatus(i))) == 0) {
-	    f->status = i;
-	    break;
-	}
+        int check = -1;
+        if ((check = strcmp(buf, stringFromStatus(i))) == 0) {
+            f->status = i;
+            break;
+        }
     };
     //Specials
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
-	//Enabled flag
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //Enabled flag
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	f->specials[i]->enabled = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->specials[i]->enabled = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //Fighter counters
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
-	//innerValue
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //innerValue
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	f->counters[i]->innerValue = num_value;
-	//count
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->counters[i]->innerValue = num_value;
+        //count
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	f->counters[i]->count = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->counters[i]->count = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);
 
     //turnboost_atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7384,11 +7382,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //turnboost_def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7396,11 +7394,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //turnboost_vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7408,11 +7406,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //turnboost_enr
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7421,11 +7419,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //equipsbag occupied slots
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7433,11 +7431,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //equipsbag earliest slot
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7446,307 +7444,307 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Equipsbag
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     for (int i = 0; i < f->equipsBagOccupiedSlots; i++) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Loadgame_Home(): Prepping Equip (%i)", i);
-	kls_log(kls, "DEBUG", "Loadgame_Home(): Prepping Equip (%i)", i);
-	Equip *eq = KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
-	scanres = fscanf(file, "%200s\n", buf);	//Skip equip_i heading
-	if (scanres != 1) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    1, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Loadgame_Home(): Prepping Equip (%i)", i);
+        kls_log(kls, "DEBUG", "Loadgame_Home(): Prepping Equip (%i)", i);
+        Equip *eq = KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
+        scanres = fscanf(file, "%200s\n", buf);	//Skip equip_i heading
+        if (scanres != 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    1, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	//equipClass
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //equipClass
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	for (int j = 0; j < EQUIPSMAX + 1; j++) {
-	    int check = -1;
-	    if ((check = strcmp(buf, stringFromEquips(j))) == 0) {
-		eq->class = j;
-		break;
-	    }
-	};
-	//equipzoneClass
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        for (int j = 0; j < EQUIPSMAX + 1; j++) {
+            int check = -1;
+            if ((check = strcmp(buf, stringFromEquips(j))) == 0) {
+                eq->class = j;
+                break;
+            }
+        };
+        //equipzoneClass
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	for (int j = 0; j < EQUIPZONES + 1; j++) {
-	    int check = -1;
-	    if ((check = strcmp(buf, stringFromEquipzones(j))) == 0) {
-		eq->type = j;
-		break;
-	    }
-	};
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        for (int j = 0; j < EQUIPZONES + 1; j++) {
+            int check = -1;
+            if ((check = strcmp(buf, stringFromEquipzones(j))) == 0) {
+                eq->type = j;
+                break;
+            }
+        };
 
-	//qty
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //qty
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->qty = num_value;
-	//equipped
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->equipped = num_value;
-	//level
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->level = num_value;
-	//atk
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->atk = num_value;
-	//def
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->def = num_value;
-	//vel
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->vel = num_value;
-	//enr
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->enr = num_value;
-	//bonus
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->bonus = num_value;
-	//perksCount
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->perksCount = num_value;
-	//cost
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%8i", &num_value);
-	eq->cost = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->qty = num_value;
+        //equipped
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->equipped = num_value;
+        //level
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->level = num_value;
+        //atk
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->atk = num_value;
+        //def
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->def = num_value;
+        //vel
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->vel = num_value;
+        //enr
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->enr = num_value;
+        //bonus
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->bonus = num_value;
+        //perksCount
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->perksCount = num_value;
+        //cost
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%8i", &num_value);
+        eq->cost = num_value;
 
-	//Quality
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	for (int j = 0; j < QUALITIESMAX + 1; j++) {
-	    int check = -1;
-	    if ((check = strcmp(buf, stringFromQuality(j))) == 0) {
-		eq->qual = j;
-		break;
-	    }
-	};
+        //Quality
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        for (int j = 0; j < QUALITIESMAX + 1; j++) {
+            int check = -1;
+            if ((check = strcmp(buf, stringFromQuality(j))) == 0) {
+                eq->qual = j;
+                break;
+            }
+        };
 
-	//perks
-	scanres = fscanf(file, "%200s\n", buf);	//Skip perks heading
-	if (scanres != 1) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    1, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	for (int j = 0; j < eq->perksCount; j++) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Loadgame_Home(): Prepping Perk (%i)", j);
-	    kls_log(kls, "DEBUG", "Loadgame_Home(): Prepping Perk (%i)", j);
-	    Perk *pk =
-		(Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
-	    //perkClass
-	    scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	    if (scanres != 2) {
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-			2, scanres);
-		fprintf(stderr, "Error while loading game.");
-		exit(EXIT_FAILURE);
-	    }
+        //perks
+        scanres = fscanf(file, "%200s\n", buf);	//Skip perks heading
+        if (scanres != 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    1, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        for (int j = 0; j < eq->perksCount; j++) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Loadgame_Home(): Prepping Perk (%i)", j);
+            kls_log(kls, "DEBUG", "Loadgame_Home(): Prepping Perk (%i)", j);
+            Perk *pk =
+                (Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
+            //perkClass
+            scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+            if (scanres != 2) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                        2, scanres);
+                fprintf(stderr, "Error while loading game.");
+                exit(EXIT_FAILURE);
+            }
 
-	    log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	    sscanf(buf, "%3i", &num_value);
-	    pk->class = num_value;
-	    char *name = nameStringFromPerk(pk->class);
-	    char *desc = descStringFromPerk(pk->class);
-	    //p->name = name; //(char*)malloc(sizeof(name));
-	    strcpy(pk->name, name);
-	    //p->desc = (char*)malloc(sizeof(desc));
-	    strcpy(pk->desc, desc);
-	    pk->innerValue = 0;
-	    eq->perks[j] = pk;
+            log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+            sscanf(buf, "%3i", &num_value);
+            pk->class = num_value;
+            char *name = nameStringFromPerk(pk->class);
+            char *desc = descStringFromPerk(pk->class);
+            //p->name = name; //(char*)malloc(sizeof(name));
+            strcpy(pk->name, name);
+            //p->desc = (char*)malloc(sizeof(desc));
+            strcpy(pk->desc, desc);
+            pk->innerValue = 0;
+            eq->perks[j] = pk;
 
-	    //innerValue
-	    scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	    if (scanres != 2) {
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-			2, scanres);
-		fprintf(stderr, "Error while loading game.");
-		exit(EXIT_FAILURE);
-	    }
+            //innerValue
+            scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+            if (scanres != 2) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                        2, scanres);
+                fprintf(stderr, "Error while loading game.");
+                exit(EXIT_FAILURE);
+            }
 
-	    log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	    sscanf(buf, "%3i", &num_value);
-	    pk->innerValue = num_value;
-	}
+            log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+            sscanf(buf, "%3i", &num_value);
+            pk->innerValue = num_value;
+        }
 
-	scanres = fscanf(file, "%200s\n", buf);	//Skip closing perks breacket
-	if (scanres != 1) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    1, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        scanres = fscanf(file, "%200s\n", buf);	//Skip closing perks breacket
+        if (scanres != 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    1, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	scanres = fscanf(file, "%200s\n", buf);	//Skip closing current equip bracket
-	if (scanres != 1) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    1, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	//Get the base item and copy the stats to the loading item
-	Equip *base = &equips[eq->class];
-	setEquipSprite(eq);
-	strcpy(eq->name, base->name);
-	strcpy(eq->desc, base->desc);
+        scanres = fscanf(file, "%200s\n", buf);	//Skip closing current equip bracket
+        if (scanres != 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    1, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        //Get the base item and copy the stats to the loading item
+        Equip *base = &equips[eq->class];
+        setEquipSprite(eq);
+        strcpy(eq->name, base->name);
+        strcpy(eq->desc, base->desc);
 
-	if (eq->equipped) {
-	    Equipslot *slot = f->equipslots[eq->type];
-	    //We equip the item
-	    slot->item = eq;
-	    applyEquipPerks(eq, f);
-	    slot->active = 1;
-	}
-	f->equipsBag[i] = eq;
+        if (eq->equipped) {
+            Equipslot *slot = f->equipslots[eq->type];
+            //We equip the item
+            slot->item = eq;
+            applyEquipPerks(eq, f);
+            slot->active = 1;
+        }
+        f->equipsBag[i] = eq;
     }				//End for Equips bag
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip closing equipsbag bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     //Fighter boosts
     //permboost_atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7754,11 +7752,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //permboost_def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7766,11 +7764,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //permboost_vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7778,11 +7776,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //permboost_enr
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7790,11 +7788,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //equipboost_atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7802,11 +7800,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //equipboost_def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7814,11 +7812,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //equipboost_vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7826,11 +7824,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //equipboost_enr
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7839,20 +7837,20 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Stats
     scanres = fscanf(file, "%200s\n", buf);	//Skip Stats bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //enemieskilled
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7860,11 +7858,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //consumablesfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7872,11 +7870,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //equipsfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7884,11 +7882,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //artifactsfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7896,11 +7894,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //crits
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7908,11 +7906,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //roomsdone
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7920,11 +7918,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //specials unlocked
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7932,11 +7930,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //coinsfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -7944,11 +7942,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //bosseskilled
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7957,11 +7955,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Unique boss kills
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -7969,63 +7967,63 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip unique bosses bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int boss_index = 0; boss_index < BOSSCLASSESMAX + 1; boss_index++) {
-	//boss %i was killed
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //boss %i was killed
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	f->stats->killed_bosses[boss_index] = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->stats->killed_bosses[boss_index] = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);	//Skip unique bosses closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //keysfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
     f->stats->keysfound = num_value;
     scanres = fscanf(file, "%200s\n", buf);	//Skip Stats closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip Fighter closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Fighter.");
@@ -8033,20 +8031,20 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Path
     scanres = fscanf(file, "%200s\n", buf);	//Skip Path bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //Luck
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8054,11 +8052,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Length
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8066,11 +8064,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Prize
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -8078,11 +8076,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //loreCounter
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8091,20 +8089,20 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Wincon
     scanres = fscanf(file, "%200s\n", buf);	//Skip Wincon bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //winconClass
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8112,11 +8110,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //current_val
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8124,11 +8122,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //target_val
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8136,22 +8134,22 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip Wincon closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Wincon.");
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip Path closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Path.");
@@ -8159,11 +8157,11 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //roomindex
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -8174,36 +8172,36 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Consumables bag
     scanres = fscanf(file, "%200s\n", buf);	//Skip Consumablebag bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     initConsumableBag(f, kls);
     for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
-	Consumable *cn = (Consumable *) f->consumablesBag[i];
-	//qty
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        Consumable *cn = (Consumable *) f->consumablesBag[i];
+        //qty
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	cn->qty = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        cn->qty = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);	//Skip Consumablebag closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Consumable bag.");
@@ -8211,35 +8209,35 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     //Artifacts bag
     scanres = fscanf(file, "%200s\n", buf);	//Skip Artifactsbag bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
-	Artifact *a = f->artifactsBag[i];
-	//qty
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        Artifact *a = f->artifactsBag[i];
+        //qty
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	a->qty = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        a->qty = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);	//Skip Artifactsbag closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Artifacts bag.");
@@ -8275,9 +8273,9 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
  * @return The OP_res corresponding to loading result.
  */
 OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
-			      int *enemyIndex, int *roomTotalEnemies,
-			      int *roomIndex, int *total_foes,
-			      int *done_loading, Koliseo *kls)
+                              int *enemyIndex, int *roomTotalEnemies,
+                              int *roomIndex, int *total_foes,
+                              int *done_loading, Koliseo *kls)
 {
 
     //printf("\nLoading game...\n");
@@ -8285,8 +8283,8 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
 
 //      FILE* file = fopen("save.txt", "r");
     if (file == NULL) {
-	printf("Error with file while trying to load!\n");
-	return OP_CANNOT_OPEN_SAVEFILE;
+        printf("Error with file while trying to load!\n");
+        return OP_CANNOT_OPEN_SAVEFILE;
     }
     char buf[500];
     char comment[300];
@@ -8297,51 +8295,51 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     /* File version scanning */
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     int check = -1;
     if (!((check = strcmp(buf, version)) == 0)) {
-	log_tag("debug_log.txt", "[LOAD-ERROR]",
-		"Failed save format version check. Was [%s]. Quitting.\n", buf);
-	fprintf(stderr, "[ERROR]    File version mismatch on load.\n");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[LOAD-ERROR]",
+                "Failed save format version check. Was [%s]. Quitting.\n", buf);
+        fprintf(stderr, "[ERROR]    File version mismatch on load.\n");
+        exit(EXIT_FAILURE);
     };
     log_tag("debug_log.txt", "[LOAD]", "Loaded save format version: (%s).\n",
-	    buf);
+            buf);
 
     /* Save type scanning */
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     check = -1;
     if (!((check = strcmp(buf, stringFrom_saveType(ENEMIES_SAVE))) == 0)) {
-	log_tag("debug_log.txt", "[LOAD-ERROR]",
-		"handleLoadGame_Enemies():  Failed save type check, was [%s]. Quitting.\n",
-		buf);
-	fprintf(stderr, "[ERROR]    Save type version mismatch on load.\n");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[LOAD-ERROR]",
+                "handleLoadGame_Enemies():  Failed save type check, was [%s]. Quitting.\n",
+                buf);
+        fprintf(stderr, "[ERROR]    Save type version mismatch on load.\n");
+        exit(EXIT_FAILURE);
     };
     log_tag("debug_log.txt", "[LOAD]", "Loaded save type: (%s).\n", buf);
 
     /* Gamemode scanning */
     scanres = fscanf(file, "%200[^#]# %s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.\n", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8350,38 +8348,38 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     /* Fighter scanning */
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     strcpy(f->name, buf);
 
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     for (int i = 0; i < CLASSESMAX + 1; i++) {
-	int check = -1;
-	if ((check = strcmp(buf, stringFromClass(i))) == 0) {
-	    f->class = i;
-	    break;
-	}
+        int check = -1;
+        if ((check = strcmp(buf, stringFromClass(i))) == 0) {
+            f->class = i;
+            break;
+        }
     };
 
     //We have to reload the specials callbacks after setting fighter class
@@ -8390,11 +8388,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //HP
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8402,11 +8400,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //TotalHP
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8414,11 +8412,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8426,11 +8424,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8439,11 +8437,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8451,11 +8449,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Level
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8463,11 +8461,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Luck
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8475,11 +8473,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Totxp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -8487,11 +8485,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Current level xp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -8499,11 +8497,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Totallevelxp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -8511,11 +8509,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Energy
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8523,11 +8521,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Totenergy
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8535,11 +8533,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Stamina
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8547,11 +8545,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Totstamina
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8559,11 +8557,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Coin balance
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -8572,99 +8570,99 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Status
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     for (int i = 0; i < STATUSMAX + 1; i++) {
-	int check = -1;
-	if ((check = strcmp(buf, stringFromStatus(i))) == 0) {
-	    f->status = i;
-	    break;
-	}
+        int check = -1;
+        if ((check = strcmp(buf, stringFromStatus(i))) == 0) {
+            f->status = i;
+            break;
+        }
     };
     //Specials
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
-	//Enabled flag
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //Enabled flag
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	f->specials[i]->enabled = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->specials[i]->enabled = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //Fighter counters
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
-	//innerValue
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //innerValue
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	f->counters[i]->innerValue = num_value;
-	//count
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->counters[i]->innerValue = num_value;
+        //count
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	f->counters[i]->count = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->counters[i]->count = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);
 
     //turnboost_atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8672,11 +8670,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //turnboost_def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8684,11 +8682,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //turnboost_vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8696,11 +8694,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //turnboost_enr
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8709,11 +8707,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //equipsbag occupied slots
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8721,11 +8719,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //equipsbag earliest slot
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -8734,308 +8732,308 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Equipsbag
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     for (int i = 0; i < f->equipsBagOccupiedSlots; i++) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Loadgame_Enemies(): Prepping Equip (%i)", i);
-	kls_log(kls, "DEBUG", "Loadgame_Enemies(): Prepping Equip (%i)", i);
-	Equip *eq = KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
-	scanres = fscanf(file, "%200s\n", buf);	//Skip equip_i heading
-	if (scanres != 1) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    1, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Loadgame_Enemies(): Prepping Equip (%i)", i);
+        kls_log(kls, "DEBUG", "Loadgame_Enemies(): Prepping Equip (%i)", i);
+        Equip *eq = KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
+        scanres = fscanf(file, "%200s\n", buf);	//Skip equip_i heading
+        if (scanres != 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    1, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	//equipClass
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //equipClass
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	for (int j = 0; j < EQUIPSMAX + 1; j++) {
-	    int check = -1;
-	    if ((check = strcmp(buf, stringFromEquips(j))) == 0) {
-		eq->class = j;
-		break;
-	    }
-	};
-	//equipzoneClass
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        for (int j = 0; j < EQUIPSMAX + 1; j++) {
+            int check = -1;
+            if ((check = strcmp(buf, stringFromEquips(j))) == 0) {
+                eq->class = j;
+                break;
+            }
+        };
+        //equipzoneClass
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	for (int j = 0; j < EQUIPZONES + 1; j++) {
-	    int check = -1;
-	    if ((check = strcmp(buf, stringFromEquipzones(j))) == 0) {
-		eq->type = j;
-		break;
-	    }
-	};
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        for (int j = 0; j < EQUIPZONES + 1; j++) {
+            int check = -1;
+            if ((check = strcmp(buf, stringFromEquipzones(j))) == 0) {
+                eq->type = j;
+                break;
+            }
+        };
 
-	//qty
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //qty
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->qty = num_value;
-	//equipped
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->equipped = num_value;
-	//level
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->level = num_value;
-	//atk
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->atk = num_value;
-	//def
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->def = num_value;
-	//vel
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->vel = num_value;
-	//enr
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->enr = num_value;
-	//bonus
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->bonus = num_value;
-	//perksCount
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	eq->perksCount = num_value;
-	//cost
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%8i", &num_value);
-	eq->cost = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->qty = num_value;
+        //equipped
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->equipped = num_value;
+        //level
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->level = num_value;
+        //atk
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->atk = num_value;
+        //def
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->def = num_value;
+        //vel
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->vel = num_value;
+        //enr
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->enr = num_value;
+        //bonus
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->bonus = num_value;
+        //perksCount
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        eq->perksCount = num_value;
+        //cost
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%8i", &num_value);
+        eq->cost = num_value;
 
-	//Quality
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	for (int j = 0; j < QUALITIESMAX + 1; j++) {
-	    int check = -1;
-	    if ((check = strcmp(buf, stringFromQuality(j))) == 0) {
-		eq->qual = j;
-		break;
-	    }
-	};
+        //Quality
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        for (int j = 0; j < QUALITIESMAX + 1; j++) {
+            int check = -1;
+            if ((check = strcmp(buf, stringFromQuality(j))) == 0) {
+                eq->qual = j;
+                break;
+            }
+        };
 
-	//perks
-	scanres = fscanf(file, "%200s\n", buf);	//Skip perks heading
-	if (scanres != 1) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    1, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	for (int j = 0; j < eq->perksCount; j++) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Loadgame_Enemies(): Prepping Perk (%i/%i)", j,
-		    eq->perksCount);
-	    kls_log(kls, "DEBUG", "Loadgame_Enemies(): Prepping Perk (%i/%i)",
-		    j, eq->perksCount);
-	    Perk *pk = KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
-	    //perkClass
-	    scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	    if (scanres != 2) {
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-			2, scanres);
-		fprintf(stderr, "Error while loading game.");
-		exit(EXIT_FAILURE);
-	    }
+        //perks
+        scanres = fscanf(file, "%200s\n", buf);	//Skip perks heading
+        if (scanres != 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    1, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        for (int j = 0; j < eq->perksCount; j++) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Loadgame_Enemies(): Prepping Perk (%i/%i)", j,
+                    eq->perksCount);
+            kls_log(kls, "DEBUG", "Loadgame_Enemies(): Prepping Perk (%i/%i)",
+                    j, eq->perksCount);
+            Perk *pk = KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
+            //perkClass
+            scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+            if (scanres != 2) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                        2, scanres);
+                fprintf(stderr, "Error while loading game.");
+                exit(EXIT_FAILURE);
+            }
 
-	    log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	    sscanf(buf, "%3i", &num_value);
-	    pk->class = num_value;
-	    char *name = nameStringFromPerk(pk->class);
-	    char *desc = descStringFromPerk(pk->class);
-	    //p->name = name; //(char*)malloc(sizeof(name));
-	    strcpy(pk->name, name);
-	    //p->desc = (char*)malloc(sizeof(desc));
-	    strcpy(pk->desc, desc);
-	    pk->innerValue = 0;
-	    eq->perks[j] = pk;
+            log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+            sscanf(buf, "%3i", &num_value);
+            pk->class = num_value;
+            char *name = nameStringFromPerk(pk->class);
+            char *desc = descStringFromPerk(pk->class);
+            //p->name = name; //(char*)malloc(sizeof(name));
+            strcpy(pk->name, name);
+            //p->desc = (char*)malloc(sizeof(desc));
+            strcpy(pk->desc, desc);
+            pk->innerValue = 0;
+            eq->perks[j] = pk;
 
-	    //innerValue
-	    scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	    if (scanres != 2) {
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-			2, scanres);
-		fprintf(stderr, "Error while loading game.");
-		exit(EXIT_FAILURE);
-	    }
+            //innerValue
+            scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+            if (scanres != 2) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                        2, scanres);
+                fprintf(stderr, "Error while loading game.");
+                exit(EXIT_FAILURE);
+            }
 
-	    log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	    sscanf(buf, "%3i", &num_value);
-	    pk->innerValue = num_value;
-	}
+            log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+            sscanf(buf, "%3i", &num_value);
+            pk->innerValue = num_value;
+        }
 
-	scanres = fscanf(file, "%200s\n", buf);	//Skip closing perks breacket
-	if (scanres != 1) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    1, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        scanres = fscanf(file, "%200s\n", buf);	//Skip closing perks breacket
+        if (scanres != 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    1, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	scanres = fscanf(file, "%200s\n", buf);	//Skip closing current equip bracket
-	if (scanres != 1) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    1, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
-	//Get the base item and copy the stats to the loading item
-	Equip *base = &equips[eq->class];
-	setEquipSprite(eq);
-	strcpy(eq->name, base->name);
-	strcpy(eq->desc, base->desc);
+        scanres = fscanf(file, "%200s\n", buf);	//Skip closing current equip bracket
+        if (scanres != 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    1, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+        //Get the base item and copy the stats to the loading item
+        Equip *base = &equips[eq->class];
+        setEquipSprite(eq);
+        strcpy(eq->name, base->name);
+        strcpy(eq->desc, base->desc);
 
-	if (eq->equipped) {
-	    Equipslot *slot = f->equipslots[eq->type];
-	    //We equip the item
-	    slot->item = eq;
-	    applyEquipPerks(eq, f);
-	    slot->active = 1;
-	}
-	f->equipsBag[i] = eq;
+        if (eq->equipped) {
+            Equipslot *slot = f->equipslots[eq->type];
+            //We equip the item
+            slot->item = eq;
+            applyEquipPerks(eq, f);
+            slot->active = 1;
+        }
+        f->equipsBag[i] = eq;
     }				//End for Equips bag
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip closing equipsbag bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     //Fighter boosts
     //permboost_atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9043,11 +9041,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //permboost_def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9055,11 +9053,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //permboost_vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9067,11 +9065,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //permboost_enr
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9079,11 +9077,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //equipboost_atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9091,11 +9089,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //equipboost_def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9103,11 +9101,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //equipboost_vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9115,11 +9113,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //equipboost_enr
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9128,20 +9126,20 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Stats
     scanres = fscanf(file, "%200s\n", buf);	//Skip Stats bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //enemieskilled
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9149,11 +9147,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //consumablesfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9161,11 +9159,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //equipsfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9173,11 +9171,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //artifactsfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9185,11 +9183,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //crits
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9197,11 +9195,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //roomsdone
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9209,11 +9207,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //specials unlocked
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9221,11 +9219,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //coinsfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -9233,11 +9231,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //bosseskilled
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9246,11 +9244,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Unique boss kills
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9258,63 +9256,63 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip unique bosses bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int boss_index = 0; boss_index < BOSSCLASSESMAX + 1; boss_index++) {
-	//boss %i was killed
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //boss %i was killed
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	f->stats->killed_bosses[boss_index] = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->stats->killed_bosses[boss_index] = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);	//Skip unique bosses closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //keysfound
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
     f->stats->keysfound = num_value;
     scanres = fscanf(file, "%200s\n", buf);	//Skip Stats closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip Fighter closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Fighter.");
@@ -9322,28 +9320,28 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Current enemy
     scanres = fscanf(file, "%200s\n", buf);	//Skip Enemy bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //Enemy class
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     for (int i = 0; i < ENEMYCLASSESMAX + 1; i++) {
-	int check = -1;
-	if ((check = strcmp(buf, stringFromEClass(i))) == 0) {
-	    e->class = i;
-	    break;
-	};
+        int check = -1;
+        if ((check = strcmp(buf, stringFromEClass(i))) == 0) {
+            e->class = i;
+            break;
+        };
     }
     //We have to reload the sprite after setting enemy class
     setEnemySprite(e);
@@ -9351,11 +9349,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //hp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9363,11 +9361,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //totalhp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9375,11 +9373,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //atk
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9387,11 +9385,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //def
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9399,11 +9397,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //vel
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9411,11 +9409,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //level
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9423,11 +9421,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //xp
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -9435,11 +9433,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //energy
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9447,11 +9445,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //totalenergy
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9459,11 +9457,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Stamina
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9471,11 +9469,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Totstamina
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9483,11 +9481,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //beast value
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9495,11 +9493,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //prize
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9508,73 +9506,73 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //status
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     for (int i = 0; i < STATUSMAX + 1; i++) {
-	int check = -1;
-	if ((check = strcmp(buf, stringFromStatus(i))) == 0) {
-	    e->status = i;
-	    break;
-	}
+        int check = -1;
+        if ((check = strcmp(buf, stringFromStatus(i))) == 0) {
+            e->status = i;
+            break;
+        }
     };
 
     //Enemy counters
     scanres = fscanf(file, "%200s\n", buf);	//Skip Enemy counters bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
-	//innerValue
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        //innerValue
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	e->counters[i]->innerValue = num_value;
-	//count
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        e->counters[i]->innerValue = num_value;
+        //count
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	e->counters[i]->count = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        e->counters[i]->count = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);	//Skip Enemy counters closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     scanres = fscanf(file, "%200s\n", buf);	//Skip Enemy closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading current Enemy.");
@@ -9582,20 +9580,20 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Path
     scanres = fscanf(file, "%200s\n", buf);	//Skip Path bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //Luck
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9603,11 +9601,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Length
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9615,11 +9613,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Prize
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -9627,11 +9625,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //loreCounter
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9640,20 +9638,20 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Wincon
     scanres = fscanf(file, "%200s\n", buf);	//Skip Wincon bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     //winconClass
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9661,11 +9659,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //current_val
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9673,11 +9671,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //target_val
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9685,22 +9683,22 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip Wincon closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Wincon.");
 
     scanres = fscanf(file, "%200s\n", buf);	//Skip Path closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Path.");
@@ -9708,11 +9706,11 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //enemyindex
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
@@ -9720,27 +9718,27 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //roomtotalenemies
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%3i", &num_value);
     *roomTotalEnemies = num_value;
     *total_foes = num_value;
     log_tag("debug_log.txt", "[LOAD]",
-	    "Also Loaded %s: %s. Additional assignment to pointer for foes, see handleLoadGame(_Enemies)",
-	    "total_foes", buf);
+            "Also Loaded %s: %s. Additional assignment to pointer for foes, see handleLoadGame(_Enemies)",
+            "total_foes", buf);
     //roomindex
     scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
     if (scanres != 2) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		2, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                2, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
     sscanf(buf, "%8i", &num_value);
@@ -9751,36 +9749,36 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Consumables bag
     scanres = fscanf(file, "%200s\n", buf);	//Skip Consumablebag bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     initConsumableBag(f, kls);
     for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
-	Consumable *cn = (Consumable *) f->consumablesBag[i];
-	//qty
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        Consumable *cn = (Consumable *) f->consumablesBag[i];
+        //qty
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	cn->qty = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        cn->qty = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);	//Skip Consumablebag closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Consumable bag.");
@@ -9788,35 +9786,35 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     //Artifacts bag
     scanres = fscanf(file, "%200s\n", buf);	//Skip Artifactsbag bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
     for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
-	Artifact *a = f->artifactsBag[i];
-	//qty
-	scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-	if (scanres != 2) {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		    2, scanres);
-	    fprintf(stderr, "Error while loading game.");
-	    exit(EXIT_FAILURE);
-	}
+        Artifact *a = f->artifactsBag[i];
+        //qty
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
 
-	log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-	sscanf(buf, "%3i", &num_value);
-	a->qty = num_value;
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        a->qty = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);	//Skip Artifactsbag closing bracket
     if (scanres != 1) {
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
-		1, scanres);
-	fprintf(stderr, "Error while loading game.");
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
     }
 
     log_tag("debug_log.txt", "[LOAD]", "Done loading Artifacts bag.");
@@ -10006,7 +10004,7 @@ void e_death(Enemy *e)
     //log_tag("debug_log.txt","[FREE]",msg);
     //free(e);
     log_tag("debug_log.txt", "[TODO]", "[%s]: remove this empty function.",
-	    __func__);
+            __func__);
 }
 
 /**
@@ -10052,35 +10050,35 @@ int retry(void)
     white();
     char c[25] = { 0 };
     if (fgets(c, sizeof(c), stdin) != NULL) {
-	log_tag("debug_log.txt", "[DEBUG]", "Read input for %s().", __func__);
-	if (c[strlen(c) - 1] == '\n') {
-	    c[strlen(c) - 1] = '\0';
-	}
+        log_tag("debug_log.txt", "[DEBUG]", "Read input for %s().", __func__);
+        if (c[strlen(c) - 1] == '\n') {
+            c[strlen(c) - 1] = '\0';
+        }
 
-	for (char *ptr = c; *ptr; ++ptr) {
-	    *ptr = tolower(*ptr);
-	}
+        for (char *ptr = c; *ptr; ++ptr) {
+            *ptr = tolower(*ptr);
+        }
 
-	if (c[0] == '\0' || strcmp(c, "no") == 0) {
-	    log_tag("debug_log.txt", "[DEBUG]", "%s(): input was no.",
-		    __func__);
-	    return 0;
-	} else if (strcmp(c, "yes") == 0) {
-	    log_tag("debug_log.txt", "[DEBUG]", "%s(): input was yes.",
-		    __func__);
-	    return 1;
-	} else {
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "%s(): Invalid input, defaulting to 0.", __func__);
+        if (c[0] == '\0' || strcmp(c, "no") == 0) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s(): input was no.",
+                    __func__);
+            return 0;
+        } else if (strcmp(c, "yes") == 0) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s(): input was yes.",
+                    __func__);
+            return 1;
+        } else {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "%s(): Invalid input, defaulting to 0.", __func__);
 
-	    return 0;
-	}
+            return 0;
+        }
     } else {
-	log_tag("debug_log.txt", "[DEBUG]", "Failed reading input for %s.",
-		__func__);
-	kls_free(default_kls);
-	kls_free(temporary_kls);
-	exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[DEBUG]", "Failed reading input for %s.",
+                __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -10099,7 +10097,7 @@ int retry(void)
  * @param The Koliseo_Temp used for allocations.
  */
 void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
-		   Koliseo *kls, Koliseo_Temp *t_kls)
+                   Koliseo *kls, Koliseo_Temp *t_kls)
 {
 
     char msg[200];
@@ -10126,10 +10124,10 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
 
     int c = 0, n = -1;
     while (!picked_debug_proc) {
-	int res = system("clear");
-	sprintf(msg, "debug_generic() 2 system(\"clear\") res was (%i)", res);
-	log_tag("debug_log.txt", "[DEBUG]", msg);
-	printf("\n\
+        int res = system("clear");
+        sprintf(msg, "debug_generic() 2 system(\"clear\") res was (%i)", res);
+        log_tag("debug_log.txt", "[DEBUG]", msg);
+        printf("\n\
 	What do you want to do? ('q' to quit)\n\
 		[\n\
 			'0':  Give xp points\t'1':  Give consumable\n\
@@ -10148,604 +10146,604 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
 		]\n\n\
 	[%s@debug-func]$ ", player->name);
 
-	char *fgetsres = fgets(ch, sizeof ch, stdin);
-	sprintf(msg, "debug_generic() fgets() res was (%s)", fgetsres);
-	log_tag("debug_log.txt", "[DEBUG]", msg);
-	switch (ch[0]) {
-	case '0':{
-		picked_debug_proc = 1;
-		int xp;
-		do {
-		    printf("\nHow much?\n");
-		} while ((c = scanf("%i", &xp)) != 1 || xp < 0);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_generic() scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		checkremainder(player, xp);
-	    }
-	    break;
-	case '1':{
-		picked_debug_proc = 1;
-		int q = -1;
-		do {
-		    printf("\nInsert consumable number:\n");
-		} while ((c = scanf("%i", &n)) != 1 || n > CONSUMABLESMAX
-			 || n < 0);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_generic() scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		do {
-		    printf("\nInsert quantity:\n");
-		} while ((c = scanf("%i", &q)) != 1 && q <= 0);
-		res = scanf("%*c");
-		sprintf(msg, "debug_generic() 2 scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		Consumable *c = (Consumable *) player->consumablesBag[n];
-		c->qty += q;
-		player->stats->consumablesfound += q;
-	    }
-	    break;
-	case '2':{
-		picked_debug_proc = 1;
-		statReset(player, 1);
-	    }
-	    break;
-	case '3':{
-		picked_debug_proc = 1;
-		printf("\nCurrent luck: %i\tRL: %i\n", player->luck, p->luck);
+        char *fgetsres = fgets(ch, sizeof ch, stdin);
+        sprintf(msg, "debug_generic() fgets() res was (%s)", fgetsres);
+        log_tag("debug_log.txt", "[DEBUG]", msg);
+        switch (ch[0]) {
+        case '0': {
+            picked_debug_proc = 1;
+            int xp;
+            do {
+                printf("\nHow much?\n");
+            } while ((c = scanf("%i", &xp)) != 1 || xp < 0);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_generic() scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            checkremainder(player, xp);
+        }
+        break;
+        case '1': {
+            picked_debug_proc = 1;
+            int q = -1;
+            do {
+                printf("\nInsert consumable number:\n");
+            } while ((c = scanf("%i", &n)) != 1 || n > CONSUMABLESMAX
+                     || n < 0);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_generic() scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            do {
+                printf("\nInsert quantity:\n");
+            } while ((c = scanf("%i", &q)) != 1 && q <= 0);
+            res = scanf("%*c");
+            sprintf(msg, "debug_generic() 2 scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            Consumable *c = (Consumable *) player->consumablesBag[n];
+            c->qty += q;
+            player->stats->consumablesfound += q;
+        }
+        break;
+        case '2': {
+            picked_debug_proc = 1;
+            statReset(player, 1);
+        }
+        break;
+        case '3': {
+            picked_debug_proc = 1;
+            printf("\nCurrent luck: %i\tRL: %i\n", player->luck, p->luck);
 
-		do {
-		    printf("\nInsert new luck:\n");
-		} while ((c = scanf("%i", &n)) != 1 && n > 0);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_generic() 3 scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		//FIXME:
-		//Copy-pasted the calc for player luck... might need a function
-		p->luck = n;
+            do {
+                printf("\nInsert new luck:\n");
+            } while ((c = scanf("%i", &n)) != 1 && n > 0);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_generic() 3 scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            //FIXME:
+            //Copy-pasted the calc for player luck... might need a function
+            p->luck = n;
 
-		player->luck = (p->luck * MAXPLAYERLUCK) / MAXLUCK;
-	    }
-	    break;
-	case '4':{
-		picked_debug_proc = 1;
-		/* Old code invoking the macro for special moves directly. Used for testing.
-		 * int s = -1;
-		 * printf("Insert special num:\n");
-		 * scanf("%i",&s);
-		 * scanf("%*c");
-		 * printf("Read: %i\n",s);
-		 * GET_CALLBACK(s,callback_special_t)(player,e,p,roomIndex,currentEnemyNum);
-		 */
+            player->luck = (p->luck * MAXPLAYERLUCK) / MAXLUCK;
+        }
+        break;
+        case '4': {
+            picked_debug_proc = 1;
+            /* Old code invoking the macro for special moves directly. Used for testing.
+             * int s = -1;
+             * printf("Insert special num:\n");
+             * scanf("%i",&s);
+             * scanf("%*c");
+             * printf("Read: %i\n",s);
+             * GET_CALLBACK(s,callback_special_t)(player,e,p,roomIndex,currentEnemyNum);
+             */
 
-		//printActivePerks(player);
-		int c;
-		int n = -1;
-		do {
-		    printf("\nInsert coin number (0<n<100):\n");
-		} while ((c = scanf("%i", &n)) < 0 || c > 3 || n < 0
-			 || n > 100);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_generic() 4 scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		player->balance += n;
-	    }
-	    break;
-	case '5':{
-		picked_debug_proc = 1;
-		unlockSpecial(player);
-	    }
-	    break;
-	case '6':{
-		picked_debug_proc = 1;
-		int n = -1;
-		do {
-		    printf("\nInsert artifact number (0<n<%i):\n",
-			   ARTIFACTSMAX + 1);
-		} while ((c = scanf("%i", &n)) != 1 || n > ARTIFACTSMAX
-			 || n < 0);
+            //printActivePerks(player);
+            int c;
+            int n = -1;
+            do {
+                printf("\nInsert coin number (0<n<100):\n");
+            } while ((c = scanf("%i", &n)) < 0 || c > 3 || n < 0
+                     || n > 100);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_generic() 4 scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            player->balance += n;
+        }
+        break;
+        case '5': {
+            picked_debug_proc = 1;
+            unlockSpecial(player);
+        }
+        break;
+        case '6': {
+            picked_debug_proc = 1;
+            int n = -1;
+            do {
+                printf("\nInsert artifact number (0<n<%i):\n",
+                       ARTIFACTSMAX + 1);
+            } while ((c = scanf("%i", &n)) != 1 || n > ARTIFACTSMAX
+                     || n < 0);
 
-		int res = scanf("%*c");
-		sprintf(msg, "debug_generic() scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		player->artifactsBag[n]->qty += 1;
-		player->artifactsBag[n]->active = 0;
-		player->stats->artifactsfound += 1;
-	    }
-	    break;
-	case '7':{
-		picked_debug_proc = 1;
-		int res = system("clear");
-		sprintf(msg, "debug_generic() 3 system(\"clear\") res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		printf("\nPlayer Counters:\n");
-		printCounters((Turncounter **) player->counters);
-		printf("\nPress Enter to resume game");
-		res = scanf("%*c");
-		sprintf(msg, "debug_generic() 5 scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'd':{
-		picked_debug_proc = 1;
-		printf("\nVERSION:    %s\n", VERSION);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_generic() scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            player->artifactsBag[n]->qty += 1;
+            player->artifactsBag[n]->active = 0;
+            player->stats->artifactsfound += 1;
+        }
+        break;
+        case '7': {
+            picked_debug_proc = 1;
+            int res = system("clear");
+            sprintf(msg, "debug_generic() 3 system(\"clear\") res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            printf("\nPlayer Counters:\n");
+            printCounters((Turncounter **) player->counters);
+            printf("\nPress Enter to resume game");
+            res = scanf("%*c");
+            sprintf(msg, "debug_generic() 5 scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'd': {
+            picked_debug_proc = 1;
+            printf("\nVERSION:    %s\n", VERSION);
 #ifndef _WIN32
-		printf("\nSystem:    %s\n", uts.sysname);
-		printf("\nOS Release:    %s\n", uts.release);
-		printf("\nOS Version:    %s\n", uts.version);
-		printf("\nMachine:    %s\n", uts.machine);
+            printf("\nSystem:    %s\n", uts.sysname);
+            printf("\nOS Release:    %s\n", uts.release);
+            printf("\nOS Version:    %s\n", uts.version);
+            printf("\nMachine:    %s\n", uts.machine);
 #endif
-		printf("\nGAMEMODE:    %s\n", stringFromGamemode(GAMEMODE));
-		printf("\nPath->current_saveslot->save_path:    %s\n",
-		       p->current_saveslot->save_path);
-		printf("\nGS_AUTOSAVE_ON:    %i\n", GS_AUTOSAVE_ON);
-		printf("\nG_FASTQUIT_ON:    %i\n", G_FASTQUIT_ON);
-		printf("\nG_DEBUG_ON:    %i\n", G_DEBUG_ON);
-		printf("\nG_LOG_ON:    %i\n", G_LOG_ON);
-		printf("\nG_GODMODE_ON:    %i\n", G_GODMODE_ON);
-		printf("\nG_EXPERIMENTAL_ON:    %i\n", G_EXPERIMENTAL_ON);
-		printf("\nG_DEBUG_ROOMTYPE_ON:    %i\n", G_DEBUG_ROOMTYPE_ON);
-		if (G_DEBUG_ROOMTYPE_ON == 1) {
-		    printf("\nG_DEBUG_ROOMTYPE:    %i\n", G_DEBUG_ROOMTYPE);
-		}
-		printf("\nG_DEBUG_ENEMYTYPE_ON:    %i\n", G_DEBUG_ENEMYTYPE_ON);
-		if (G_DEBUG_ENEMYTYPE_ON == 1) {
-		    printf("\nG_DEBUG_ENEMYTYPE:    %i\n", G_DEBUG_ENEMYTYPE);
-		}
-		printf("\nPress Enter to resume game.\n");
-		int res = scanf("%*c");
-		sprintf(msg, "debug_generic() 7 scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'F':{
-		sprintf(msg, "Trying out Floor functionality.");
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		// Declare dbg_floor
-		sprintf(msg, "Pushing dbg_floor to tkls.");
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		kls_log(kls, "DEBUG", msg);
-		Floor *dbg_floor =
-		    (Floor *) KLS_PUSH_T_TYPED(t_kls, Floor, 1, HR_Floor,
-					       "Floor", msg);
-		// Start the random walk from the center of the dungeon
-		int center_x = FLOOR_MAX_COLS / 2;
-		int center_y = FLOOR_MAX_ROWS / 2;
-		// Init dbg_floor
-		init_floor_layout(dbg_floor);
-		//Set center as filled
-		dbg_floor->floor_layout[center_x][center_y] = 1;
+            printf("\nGAMEMODE:    %s\n", stringFromGamemode(GAMEMODE));
+            printf("\nPath->current_saveslot->save_path:    %s\n",
+                   p->current_saveslot->save_path);
+            printf("\nGS_AUTOSAVE_ON:    %i\n", GS_AUTOSAVE_ON);
+            printf("\nG_FASTQUIT_ON:    %i\n", G_FASTQUIT_ON);
+            printf("\nG_DEBUG_ON:    %i\n", G_DEBUG_ON);
+            printf("\nG_LOG_ON:    %i\n", G_LOG_ON);
+            printf("\nG_GODMODE_ON:    %i\n", G_GODMODE_ON);
+            printf("\nG_EXPERIMENTAL_ON:    %i\n", G_EXPERIMENTAL_ON);
+            printf("\nG_DEBUG_ROOMTYPE_ON:    %i\n", G_DEBUG_ROOMTYPE_ON);
+            if (G_DEBUG_ROOMTYPE_ON == 1) {
+                printf("\nG_DEBUG_ROOMTYPE:    %i\n", G_DEBUG_ROOMTYPE);
+            }
+            printf("\nG_DEBUG_ENEMYTYPE_ON:    %i\n", G_DEBUG_ENEMYTYPE_ON);
+            if (G_DEBUG_ENEMYTYPE_ON == 1) {
+                printf("\nG_DEBUG_ENEMYTYPE:    %i\n", G_DEBUG_ENEMYTYPE);
+            }
+            printf("\nPress Enter to resume game.\n");
+            int res = scanf("%*c");
+            sprintf(msg, "debug_generic() 7 scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'F': {
+            sprintf(msg, "Trying out Floor functionality.");
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            // Declare dbg_floor
+            sprintf(msg, "Pushing dbg_floor to tkls.");
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            kls_log(kls, "DEBUG", msg);
+            Floor *dbg_floor =
+                (Floor *) KLS_PUSH_T_TYPED(t_kls, Floor, 1, HR_Floor,
+                                           "Floor", msg);
+            // Start the random walk from the center of the dungeon
+            int center_x = FLOOR_MAX_COLS / 2;
+            int center_y = FLOOR_MAX_ROWS / 2;
+            // Init dbg_floor
+            init_floor_layout(dbg_floor);
+            //Set center as filled
+            dbg_floor->floor_layout[center_x][center_y] = 1;
 
-		init_floor_rooms(dbg_floor);
+            init_floor_rooms(dbg_floor);
 
-		floor_random_walk(dbg_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reload floor_layout if needed
-		load_floor_explored(dbg_floor);
+            floor_random_walk(dbg_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reload floor_layout if needed
+            load_floor_explored(dbg_floor);
 
-		floor_set_room_types(dbg_floor);
+            floor_set_room_types(dbg_floor);
 
-		/*
-		   debug_print_floor_layout(dbg_floor);
+            /*
+               debug_print_floor_layout(dbg_floor);
 
-		   printf("\nPress Enter to see room layout.\n");
-		   int res = scanf("%*c");
-		   sprintf(msg,"debug_generic() 7 scanf() res was (%i)", res);
-		   log_tag("debug_log.txt","[DEBUG]",msg);
-		 */
-		debug_print_roomclass_layout(dbg_floor, stdout);
-		printf("\nPress Enter to return to game.\n");
-		res = scanf("%*c");
-		sprintf(msg, "debug_generic() 8 scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		//free(dbg_floor);
-	    }
-	    break;
-	case 'A':{
-		GS_AUTOSAVE_ON = (GS_AUTOSAVE_ON == 1 ? 0 : 1);
-		sprintf(msg, "Toggled G_AUTOSAVE_ON, new value: (%i)",
-			GS_AUTOSAVE_ON);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'G':{
-		log_tag("debug_log.txt", "[DEBUG]", "Logging Gamestate");
-		dbg_Gamestate(gmst);
-		log_tag("debug_log.txt", "[DEBUG]", "Done logging Gamestate");
-	    }
-	    break;
-	case 'T':{
-		char path_to_kls_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
+               printf("\nPress Enter to see room layout.\n");
+               int res = scanf("%*c");
+               sprintf(msg,"debug_generic() 7 scanf() res was (%i)", res);
+               log_tag("debug_log.txt","[DEBUG]",msg);
+             */
+            debug_print_roomclass_layout(dbg_floor, stdout);
+            printf("\nPress Enter to return to game.\n");
+            res = scanf("%*c");
+            sprintf(msg, "debug_generic() 8 scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            //free(dbg_floor);
+        }
+        break;
+        case 'A': {
+            GS_AUTOSAVE_ON = (GS_AUTOSAVE_ON == 1 ? 0 : 1);
+            sprintf(msg, "Toggled G_AUTOSAVE_ON, new value: (%i)",
+                    GS_AUTOSAVE_ON);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'G': {
+            log_tag("debug_log.txt", "[DEBUG]", "Logging Gamestate");
+            dbg_Gamestate(gmst);
+            log_tag("debug_log.txt", "[DEBUG]", "Done logging Gamestate");
+        }
+        break;
+        case 'T': {
+            char path_to_kls_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-		//Append to "kls_log.txt"
-		sprintf(path_to_kls_file, "%s/%s", static_path,
-			"debug_log.txt");
-		FILE *kls_file = NULL;
-		kls_file = fopen(path_to_kls_file, "a");
-		if (kls_file == NULL) {
-		    fprintf(stderr,
-			    "debug_generic():  failed opening debug logfile.\n");
-		    exit(EXIT_FAILURE);
-		}
-		if (kls == NULL) {
-		    fprintf(stderr, "debug_generic():  kls was NULL.\n");
-		    exit(EXIT_FAILURE);
-		}
+            //Append to "kls_log.txt"
+            sprintf(path_to_kls_file, "%s/%s", static_path,
+                    "debug_log.txt");
+            FILE *kls_file = NULL;
+            kls_file = fopen(path_to_kls_file, "a");
+            if (kls_file == NULL) {
+                fprintf(stderr,
+                        "debug_generic():  failed opening debug logfile.\n");
+                exit(EXIT_FAILURE);
+            }
+            if (kls == NULL) {
+                fprintf(stderr, "debug_generic():  kls was NULL.\n");
+                exit(EXIT_FAILURE);
+            }
 
-		fprintf(kls_file, "--BEGIN debug of temporary_kls--\n");
-		for (int i = HR_Path; i < HLP_MAX_INDEX + 99; i++) {
-		    ptrdiff_t usage = kls_type_usage(i, temporary_kls);
+            fprintf(kls_file, "--BEGIN debug of temporary_kls--\n");
+            for (int i = HR_Path; i < HLP_MAX_INDEX + 99; i++) {
+                ptrdiff_t usage = kls_type_usage(i, temporary_kls);
 #ifndef _WIN32
-		    fprintf(kls_file,
-			    "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n",
-			    stringFrom_HLP_Region_Type(i - 101 +
-						       KLS_REGIONTYPE_MAX), i,
-			    usage);
+                fprintf(kls_file,
+                        "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n",
+                        stringFrom_HLP_Region_Type(i - 101 +
+                                                   KLS_REGIONTYPE_MAX), i,
+                        usage);
 #else
-		    fprintf(kls_file,
-			    "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n",
-			    stringFrom_HLP_Region_Type(i - 101 +
-						       KLS_REGIONTYPE_MAX), i,
-			    usage);
+                fprintf(kls_file,
+                        "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n",
+                        stringFrom_HLP_Region_Type(i - 101 +
+                                                   KLS_REGIONTYPE_MAX), i,
+                        usage);
 #endif
-		}
-		fprintf(kls_file, "--END debug of temporary_kls--\n\n");
+            }
+            fprintf(kls_file, "--END debug of temporary_kls--\n\n");
 
-		fclose(kls_file);
-	    }
-	    break;
-	case 't':{
-		char path_to_kls_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
+            fclose(kls_file);
+        }
+        break;
+        case 't': {
+            char path_to_kls_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-		//Append to "kls_log.txt"
-		sprintf(path_to_kls_file, "%s/%s", static_path,
-			"debug_log.txt");
-		FILE *kls_file = NULL;
-		kls_file = fopen(path_to_kls_file, "a");
-		if (kls_file == NULL) {
-		    fprintf(stderr,
-			    "debug_generic():  failed opening debug logfile.\n");
-		    exit(EXIT_FAILURE);
-		}
-		if (kls == NULL) {
-		    fprintf(stderr, "debug_generic():  kls was NULL.\n");
-		    exit(EXIT_FAILURE);
-		}
-		fprintf(kls_file, "--BEGIN debug of temporary_kls--\n");
-		print_kls_2file(kls_file, temporary_kls);
-		kls_showList_toFile(temporary_kls->regs, kls_file);
-		kls_usageReport_toFile(temporary_kls, kls_file);
-		fprintf(kls_file, "--END debug of temporary_kls--\n\n");
-		WINDOW *win = NULL;
-		/* Initialize curses */
-		clear();
-		refresh();
-		start_color();
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-		win = newwin(20, 50, 1, 2);
-		keypad(win, TRUE);
-		wclear(win);
-		wrefresh(win);
-		kls_showList_toWin(temporary_kls, win);
-		delwin(win);
-		endwin();
+            //Append to "kls_log.txt"
+            sprintf(path_to_kls_file, "%s/%s", static_path,
+                    "debug_log.txt");
+            FILE *kls_file = NULL;
+            kls_file = fopen(path_to_kls_file, "a");
+            if (kls_file == NULL) {
+                fprintf(stderr,
+                        "debug_generic():  failed opening debug logfile.\n");
+                exit(EXIT_FAILURE);
+            }
+            if (kls == NULL) {
+                fprintf(stderr, "debug_generic():  kls was NULL.\n");
+                exit(EXIT_FAILURE);
+            }
+            fprintf(kls_file, "--BEGIN debug of temporary_kls--\n");
+            print_kls_2file(kls_file, temporary_kls);
+            kls_showList_toFile(temporary_kls->regs, kls_file);
+            kls_usageReport_toFile(temporary_kls, kls_file);
+            fprintf(kls_file, "--END debug of temporary_kls--\n\n");
+            WINDOW *win = NULL;
+            /* Initialize curses */
+            clear();
+            refresh();
+            start_color();
+            cbreak();
+            noecho();
+            keypad(stdscr, TRUE);
+            win = newwin(20, 50, 1, 2);
+            keypad(win, TRUE);
+            wclear(win);
+            wrefresh(win);
+            kls_showList_toWin(temporary_kls, win);
+            delwin(win);
+            endwin();
 
-		fclose(kls_file);
-	    }
-	    break;
-	case 'K':{
-		char path_to_kls_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
+            fclose(kls_file);
+        }
+        break;
+        case 'K': {
+            char path_to_kls_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-		//Append to "kls_log.txt"
-		sprintf(path_to_kls_file, "%s/%s", static_path,
-			"debug_log.txt");
-		FILE *kls_file = NULL;
-		kls_file = fopen(path_to_kls_file, "a");
-		if (kls_file == NULL) {
-		    fprintf(stderr,
-			    "debug_generic():  failed opening debug logfile.\n");
-		    exit(EXIT_FAILURE);
-		}
-		if (kls == NULL) {
-		    fprintf(stderr, "debug_generic():  kls was NULL.\n");
-		    exit(EXIT_FAILURE);
-		}
+            //Append to "kls_log.txt"
+            sprintf(path_to_kls_file, "%s/%s", static_path,
+                    "debug_log.txt");
+            FILE *kls_file = NULL;
+            kls_file = fopen(path_to_kls_file, "a");
+            if (kls_file == NULL) {
+                fprintf(stderr,
+                        "debug_generic():  failed opening debug logfile.\n");
+                exit(EXIT_FAILURE);
+            }
+            if (kls == NULL) {
+                fprintf(stderr, "debug_generic():  kls was NULL.\n");
+                exit(EXIT_FAILURE);
+            }
 
-		fprintf(kls_file, "--BEGIN debug of passed kls--\n");
-		for (int i = HR_Path; i < HLP_MAX_INDEX + 99; i++) {
-		    ptrdiff_t usage = kls_type_usage(i, kls);
+            fprintf(kls_file, "--BEGIN debug of passed kls--\n");
+            for (int i = HR_Path; i < HLP_MAX_INDEX + 99; i++) {
+                ptrdiff_t usage = kls_type_usage(i, kls);
 #ifndef _WIN32
-		    fprintf(kls_file,
-			    "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n",
-			    stringFrom_HLP_Region_Type(i - 101 +
-						       KLS_REGIONTYPE_MAX), i,
-			    usage);
+                fprintf(kls_file,
+                        "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n",
+                        stringFrom_HLP_Region_Type(i - 101 +
+                                                   KLS_REGIONTYPE_MAX), i,
+                        usage);
 #else
-		    fprintf(kls_file,
-			    "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n",
-			    stringFrom_HLP_Region_Type(i - 101 +
-						       KLS_REGIONTYPE_MAX), i,
-			    usage);
+                fprintf(kls_file,
+                        "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n",
+                        stringFrom_HLP_Region_Type(i - 101 +
+                                                   KLS_REGIONTYPE_MAX), i,
+                        usage);
 #endif
-		}
-		fprintf(kls_file, "--END debug of passed kls--\n\n");
+            }
+            fprintf(kls_file, "--END debug of passed kls--\n\n");
 
-		fclose(kls_file);
-	    }
-	    break;
-	case 'k':{
-		char path_to_kls_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
+            fclose(kls_file);
+        }
+        break;
+        case 'k': {
+            char path_to_kls_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-		//Append to "kls_log.txt"
-		sprintf(path_to_kls_file, "%s/%s", static_path,
-			"debug_log.txt");
-		FILE *kls_file = NULL;
-		kls_file = fopen(path_to_kls_file, "a");
-		if (kls_file == NULL) {
-		    fprintf(stderr,
-			    "debug_generic():  failed opening debug logfile.\n");
-		    exit(EXIT_FAILURE);
-		}
-		if (kls == NULL) {
-		    fprintf(stderr, "debug_generic():  kls was NULL.\n");
-		    exit(EXIT_FAILURE);
-		}
-		fprintf(kls_file, "--BEGIN debug of passed kls--\n");
-		print_kls_2file(kls_file, kls);
-		kls_showList_toFile(kls->regs, kls_file);
-		kls_usageReport_toFile(kls, kls_file);
-		fprintf(kls_file, "--END debug of passed kls--\n\n");
-		WINDOW *win = NULL;
-		/* Initialize curses */
-		clear();
-		refresh();
-		start_color();
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-		win = newwin(20, 50, 1, 2);
-		keypad(win, TRUE);
-		wclear(win);
-		wrefresh(win);
-		kls_showList_toWin(kls, win);
-		delwin(win);
-		endwin();
+            //Append to "kls_log.txt"
+            sprintf(path_to_kls_file, "%s/%s", static_path,
+                    "debug_log.txt");
+            FILE *kls_file = NULL;
+            kls_file = fopen(path_to_kls_file, "a");
+            if (kls_file == NULL) {
+                fprintf(stderr,
+                        "debug_generic():  failed opening debug logfile.\n");
+                exit(EXIT_FAILURE);
+            }
+            if (kls == NULL) {
+                fprintf(stderr, "debug_generic():  kls was NULL.\n");
+                exit(EXIT_FAILURE);
+            }
+            fprintf(kls_file, "--BEGIN debug of passed kls--\n");
+            print_kls_2file(kls_file, kls);
+            kls_showList_toFile(kls->regs, kls_file);
+            kls_usageReport_toFile(kls, kls_file);
+            fprintf(kls_file, "--END debug of passed kls--\n\n");
+            WINDOW *win = NULL;
+            /* Initialize curses */
+            clear();
+            refresh();
+            start_color();
+            cbreak();
+            noecho();
+            keypad(stdscr, TRUE);
+            win = newwin(20, 50, 1, 2);
+            keypad(win, TRUE);
+            wclear(win);
+            wrefresh(win);
+            kls_showList_toWin(kls, win);
+            delwin(win);
+            endwin();
 
-		fclose(kls_file);
-	    }
-	    break;
-	case 'Q':{
-		G_FASTQUIT_ON = (G_FASTQUIT_ON == 1 ? 0 : 1);
-		sprintf(msg, "Toggled G_FASTQUIT_ON, new value: (%i)",
-			G_FASTQUIT_ON);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'g':{
-		G_GODMODE_ON = (G_GODMODE_ON == 1 ? 0 : 1);
-		sprintf(msg, "Toggled G_GODMODE_ON, new value: (%i)",
-			G_GODMODE_ON);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'L':{
-		G_LOG_ON = (G_LOG_ON == 1 ? 0 : 1);
-		sprintf(msg, "Toggled G_LOG_ON, new value: (%i)", G_LOG_ON);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	case 's':{		//Query sprites slideshow
-		picked_debug_proc = 1;
-		int res = system("clear");
-		sprintf(msg, "debug_generic() 4 system(\"clear\") res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		int comm_len = -1;
-		int picked_comm = 0;
-		char comm[15] = "empty";
-		char *desc = NULL;
-		int sprite_total = -1;
-		int tot_cons = CONSUMABLESMAX + 1;
-		int tot_enemy = ENEMYCLASSESMAX + 1;
-		int tot_boss = BOSSCLASSESMAX + 1;
-		int tot_art = ARTIFACTSMAX + 1;
-		int tot_eq = EQUIPSMAX + 1;
-		int tot_eqzones = EQUIPZONES + 1;
-		int tot_misc = MISC_SPRITES_MAX + 1;
-		int allsprites =
-		    tot_cons +
-		    tot_enemy +
-		    tot_boss + tot_art + tot_eq + tot_eqzones + tot_misc;
+            fclose(kls_file);
+        }
+        break;
+        case 'Q': {
+            G_FASTQUIT_ON = (G_FASTQUIT_ON == 1 ? 0 : 1);
+            sprintf(msg, "Toggled G_FASTQUIT_ON, new value: (%i)",
+                    G_FASTQUIT_ON);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'g': {
+            G_GODMODE_ON = (G_GODMODE_ON == 1 ? 0 : 1);
+            sprintf(msg, "Toggled G_GODMODE_ON, new value: (%i)",
+                    G_GODMODE_ON);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'L': {
+            G_LOG_ON = (G_LOG_ON == 1 ? 0 : 1);
+            sprintf(msg, "Toggled G_LOG_ON, new value: (%i)", G_LOG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        case 's': {		//Query sprites slideshow
+            picked_debug_proc = 1;
+            int res = system("clear");
+            sprintf(msg, "debug_generic() 4 system(\"clear\") res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            int comm_len = -1;
+            int picked_comm = 0;
+            char comm[15] = "empty";
+            char *desc = NULL;
+            int sprite_total = -1;
+            int tot_cons = CONSUMABLESMAX + 1;
+            int tot_enemy = ENEMYCLASSESMAX + 1;
+            int tot_boss = BOSSCLASSESMAX + 1;
+            int tot_art = ARTIFACTSMAX + 1;
+            int tot_eq = EQUIPSMAX + 1;
+            int tot_eqzones = EQUIPZONES + 1;
+            int tot_misc = MISC_SPRITES_MAX + 1;
+            int allsprites =
+                tot_cons +
+                tot_enemy +
+                tot_boss + tot_art + tot_eq + tot_eqzones + tot_misc;
 
-		printf("\nConsumables sprites: \t%d\
-				\nArtifacts sprites: \t%d\
-				\nEquips sprites: \t%d\
-				\nEquip zone sprites: \t%d\
-				\nEnemies sprites: \t%d\
-				\nBosses sprites: \t%d\
-				\nOther misc sprites: \t%d\n", tot_cons, tot_art, tot_eq, tot_eqzones, tot_enemy, tot_boss, tot_misc);
-		printf("--------------------------");
-		printf("\nTotal sprites: \t\t%d\n", allsprites);
-		printf
-		    ("\nInsert sprites query, q to quit: (q|boss|cons|equip|eqzone|artf|enemy|misc):\n\n[%s@spriteshow]$ ",
-		     player->name);
-		while (!picked_comm && (comm_len = scanf("%10s", comm)) > -1) {
-		    int res = scanf("%*c");
-		    sprintf(msg, "debug_generic() 7 scanf() res was (%i)", res);
-		    log_tag("debug_log.txt", "[DEBUG]", msg);
-		    if (strcmp(comm, "q") == 0) {
-			return;
-		    } else if (strcmp(comm, "boss") == 0) {
-			picked_comm = 1;
-			sprite_total = BOSSCLASSESMAX + 1;
-		    } else if (strcmp(comm, "cons") == 0) {
-			picked_comm = 1;
-			sprite_total = CONSUMABLESMAX + 1;
-		    } else if (strcmp(comm, "equip") == 0) {
-			picked_comm = 1;
-			sprite_total = EQUIPSMAX + 1;
-		    } else if (strcmp(comm, "eqzone") == 0) {
-			picked_comm = 1;
-			sprite_total = EQUIPZONES + 1;
-		    } else if (strcmp(comm, "artf") == 0) {
-			picked_comm = 1;
-			sprite_total = ARTIFACTSMAX + 1;
-		    } else if (strcmp(comm, "enemy") == 0) {
-			picked_comm = 1;
-			sprite_total = ENEMYCLASSESMAX + 1;
-		    } else if (strcmp(comm, "misc") == 0) {
-			picked_comm = 1;
-			sprite_total = MISC_SPRITES_MAX + 1;
-		    } else {
-			printf
-			    ("\nInsert sprites query, q to quit: (q|boss|cons|equip|eqzone|artf|enemy|misc):\n\n[%s@spriteshow]$ ",
-			     player->name);
-		    }
-		}
-		int sprite_count = -1;
-		int c = -1;
-		char s[20];
-		int startx = 0;
-		int x, y;
-		WINDOW *spriteshow_win;
-		/* Initialize curses */
-		//initscr();
-		start_color();
-		clear();
-		refresh();
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-		spriteshow_win = newwin(19, 19, 2, 2);
-		keypad(spriteshow_win, TRUE);
-		for (sprite_count = 0; sprite_count < sprite_total;
-		     sprite_count++) {
-		    if (strcmp(comm, "boss") == 0) {
-			desc = stringFromBossClass(sprite_count);
-		    } else if (strcmp(comm, "cons") == 0) {
-			desc = stringFromConsumables(sprite_count);
-		    } else if (strcmp(comm, "equip") == 0) {
-			desc = stringFromEquips(sprite_count);
-		    } else if (strcmp(comm, "eqzone") == 0) {
-			desc = stringFromEquipzones(sprite_count);
-		    } else if (strcmp(comm, "artf") == 0) {
-			desc = stringFromArtifacts(sprite_count);
-		    } else if (strcmp(comm, "enemy") == 0) {
-			desc = stringFromEClass(sprite_count);
-		    } else if (strcmp(comm, "misc") == 0) {
-			desc = "Misc";
-		    }
-		    wclear(spriteshow_win);
-		    wrefresh(spriteshow_win);
-		    wclear(stdscr);
-		    wrefresh(stdscr);
-		    sprintf(msg, "Showing sprite n.%d, class is: %s\n",
-			    sprite_count, desc);
-		    log_tag("debug_log.txt", "[DEBUG]", msg);
-		    mvwprintw(stdscr, 5, 20, "Sprite for: \'%s\'", desc);
-		    mvwprintw(stdscr, 7, 20, "(%i/%i)", sprite_count + 1,
-			      sprite_total);
-		    refresh();
-		    for (int i = 0; i < 8; i++) {
-			if (strcmp(comm, "boss") == 0) {
-			    strcpy(s, bosses_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "cons") == 0) {
-			    strcpy(s, consumables_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "equip") == 0) {
-			    strcpy(s, equips_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "eqzone") == 0) {
-			    strcpy(s, equipzones_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "artf") == 0) {
-			    strcpy(s, artifacts_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "enemy") == 0) {
-			    strcpy(s, enemies_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "misc") == 0) {
-			    strcpy(s, misc_sprites[sprite_count][i]);
-			}
-			//sprintf(msg,"[DEBUG]    Copied string: \'%s\'\n", s);
-			//debug_log("debug_log.txt",msg);
+            printf("\nConsumables sprites: \t%d\
+\nArtifacts sprites: \t%d\
+\nEquips sprites: \t%d\
+\nEquip zone sprites: \t%d\
+\nEnemies sprites: \t%d\
+\nBosses sprites: \t%d\
+\nOther misc sprites: \t%d\n", tot_cons, tot_art, tot_eq, tot_eqzones, tot_enemy, tot_boss, tot_misc);
+            printf("--------------------------");
+            printf("\nTotal sprites: \t\t%d\n", allsprites);
+            printf
+            ("\nInsert sprites query, q to quit: (q|boss|cons|equip|eqzone|artf|enemy|misc):\n\n[%s@spriteshow]$ ",
+             player->name);
+            while (!picked_comm && (comm_len = scanf("%10s", comm)) > -1) {
+                int res = scanf("%*c");
+                sprintf(msg, "debug_generic() 7 scanf() res was (%i)", res);
+                log_tag("debug_log.txt", "[DEBUG]", msg);
+                if (strcmp(comm, "q") == 0) {
+                    return;
+                } else if (strcmp(comm, "boss") == 0) {
+                    picked_comm = 1;
+                    sprite_total = BOSSCLASSESMAX + 1;
+                } else if (strcmp(comm, "cons") == 0) {
+                    picked_comm = 1;
+                    sprite_total = CONSUMABLESMAX + 1;
+                } else if (strcmp(comm, "equip") == 0) {
+                    picked_comm = 1;
+                    sprite_total = EQUIPSMAX + 1;
+                } else if (strcmp(comm, "eqzone") == 0) {
+                    picked_comm = 1;
+                    sprite_total = EQUIPZONES + 1;
+                } else if (strcmp(comm, "artf") == 0) {
+                    picked_comm = 1;
+                    sprite_total = ARTIFACTSMAX + 1;
+                } else if (strcmp(comm, "enemy") == 0) {
+                    picked_comm = 1;
+                    sprite_total = ENEMYCLASSESMAX + 1;
+                } else if (strcmp(comm, "misc") == 0) {
+                    picked_comm = 1;
+                    sprite_total = MISC_SPRITES_MAX + 1;
+                } else {
+                    printf
+                    ("\nInsert sprites query, q to quit: (q|boss|cons|equip|eqzone|artf|enemy|misc):\n\n[%s@spriteshow]$ ",
+                     player->name);
+                }
+            }
+            int sprite_count = -1;
+            int c = -1;
+            char s[20];
+            int startx = 0;
+            int x, y;
+            WINDOW *spriteshow_win;
+            /* Initialize curses */
+            //initscr();
+            start_color();
+            clear();
+            refresh();
+            cbreak();
+            noecho();
+            keypad(stdscr, TRUE);
+            spriteshow_win = newwin(19, 19, 2, 2);
+            keypad(spriteshow_win, TRUE);
+            for (sprite_count = 0; sprite_count < sprite_total;
+                 sprite_count++) {
+                if (strcmp(comm, "boss") == 0) {
+                    desc = stringFromBossClass(sprite_count);
+                } else if (strcmp(comm, "cons") == 0) {
+                    desc = stringFromConsumables(sprite_count);
+                } else if (strcmp(comm, "equip") == 0) {
+                    desc = stringFromEquips(sprite_count);
+                } else if (strcmp(comm, "eqzone") == 0) {
+                    desc = stringFromEquipzones(sprite_count);
+                } else if (strcmp(comm, "artf") == 0) {
+                    desc = stringFromArtifacts(sprite_count);
+                } else if (strcmp(comm, "enemy") == 0) {
+                    desc = stringFromEClass(sprite_count);
+                } else if (strcmp(comm, "misc") == 0) {
+                    desc = "Misc";
+                }
+                wclear(spriteshow_win);
+                wrefresh(spriteshow_win);
+                wclear(stdscr);
+                wrefresh(stdscr);
+                sprintf(msg, "Showing sprite n.%d, class is: %s\n",
+                        sprite_count, desc);
+                log_tag("debug_log.txt", "[DEBUG]", msg);
+                mvwprintw(stdscr, 5, 20, "Sprite for: \'%s\'", desc);
+                mvwprintw(stdscr, 7, 20, "(%i/%i)", sprite_count + 1,
+                          sprite_total);
+                refresh();
+                for (int i = 0; i < 8; i++) {
+                    if (strcmp(comm, "boss") == 0) {
+                        strcpy(s, bosses_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "cons") == 0) {
+                        strcpy(s, consumables_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "equip") == 0) {
+                        strcpy(s, equips_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "eqzone") == 0) {
+                        strcpy(s, equipzones_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "artf") == 0) {
+                        strcpy(s, artifacts_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "enemy") == 0) {
+                        strcpy(s, enemies_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "misc") == 0) {
+                        strcpy(s, misc_sprites[sprite_count][i]);
+                    }
+                    //sprintf(msg,"[DEBUG]    Copied string: \'%s\'\n", s);
+                    //debug_log("debug_log.txt",msg);
 
-			for (int j = 0; j < 13; j++) {
-			    x = startx + 1 + j;
-			    y = 1 + i;
+                    for (int j = 0; j < 13; j++) {
+                        x = startx + 1 + j;
+                        y = 1 + i;
 
-			    print_encoded_char(spriteshow_win, y, x, s[j]);
-			}	//End for line print
-		    }		//End for sprite print
+                        print_encoded_char(spriteshow_win, y, x, s[j]);
+                    }	//End for line print
+                }		//End for sprite print
 
-		    wrefresh(spriteshow_win);
-		    //printf("\nPress Enter for next, q to quit.\n");
-		    int picked = 0;
-		    int go_previous = 0;
-		    int quit_show = 0;
-		    while (!picked
-			   && ((c = wgetch(spriteshow_win)) != KEY_F(1))) {
-			if (c == 10 || c == KEY_RIGHT) {	//Enter, right
-			    sprintf(msg, "Going to next sprite.\n");
-			    log_tag("debug_log.txt", "[DEBUG]", msg);
-			    wclear(spriteshow_win);
-			    wrefresh(spriteshow_win);
-			    picked = 1;
-			    continue;	//Go to next sprite
-			} else if (c == 'q') {	//Quit
-			    sprintf(msg, "Stopping query sprite show.\n");
-			    log_tag("debug_log.txt", "[DEBUG]", msg);
-			    picked = 1;
-			    quit_show = 1;
-			} else if (c == KEY_LEFT) {	//Go to previous sprite
-			    go_previous = 1;
-			    sprintf(msg, "Going to previous sprite.\n");
-			    log_tag("debug_log.txt", "[DEBUG]", msg);
-			    picked = 1;
-			} else {	//Unexpected char
-			    sprintf(msg,
-				    "Wrong operation. Continuing with next sprite.\n");
-			    log_tag("debug_log.txt", "\033[1;31m[ERROR]", msg);
-			    picked = 1;
-			    continue;	//We still go to next sprite
-			}
-		    }		//End while wait for user input
-		    if (go_previous) {
-			sprite_count--;
-			sprite_count--;
-			if (sprite_count < -1)
-			    sprite_count = -1;
-			go_previous = 0;
-		    }
-		    if (quit_show) {
-			break;
-		    }
-		}		//End for all sprites
-		sprintf(msg, "End of sprite show.\n");
-		log_tag("debug_log.txt", "[DEBUG]", msg);
+                wrefresh(spriteshow_win);
+                //printf("\nPress Enter for next, q to quit.\n");
+                int picked = 0;
+                int go_previous = 0;
+                int quit_show = 0;
+                while (!picked
+                       && ((c = wgetch(spriteshow_win)) != KEY_F(1))) {
+                    if (c == 10 || c == KEY_RIGHT) {	//Enter, right
+                        sprintf(msg, "Going to next sprite.\n");
+                        log_tag("debug_log.txt", "[DEBUG]", msg);
+                        wclear(spriteshow_win);
+                        wrefresh(spriteshow_win);
+                        picked = 1;
+                        continue;	//Go to next sprite
+                    } else if (c == 'q') {	//Quit
+                        sprintf(msg, "Stopping query sprite show.\n");
+                        log_tag("debug_log.txt", "[DEBUG]", msg);
+                        picked = 1;
+                        quit_show = 1;
+                    } else if (c == KEY_LEFT) {	//Go to previous sprite
+                        go_previous = 1;
+                        sprintf(msg, "Going to previous sprite.\n");
+                        log_tag("debug_log.txt", "[DEBUG]", msg);
+                        picked = 1;
+                    } else {	//Unexpected char
+                        sprintf(msg,
+                                "Wrong operation. Continuing with next sprite.\n");
+                        log_tag("debug_log.txt", "\033[1;31m[ERROR]", msg);
+                        picked = 1;
+                        continue;	//We still go to next sprite
+                    }
+                }		//End while wait for user input
+                if (go_previous) {
+                    sprite_count--;
+                    sprite_count--;
+                    if (sprite_count < -1)
+                        sprite_count = -1;
+                    go_previous = 0;
+                }
+                if (quit_show) {
+                    break;
+                }
+            }		//End for all sprites
+            sprintf(msg, "End of sprite show.\n");
+            log_tag("debug_log.txt", "[DEBUG]", msg);
 
-		delwin(spriteshow_win);
-		endwin();
-	    }
-	    break;
-	case 'q':{
-		return;
-	    }
-	default:{		//Echo the passed char and ask for one more.
-		char cmd[50];
-		sprintf(cmd, "\necho \"%c\\n\"\n%c\n\n", ch[0], ch[0]);
-		printf("%s", cmd);
-		napms(500);
-	    }
-	    break;
-	}			//Close switch on ch[0]
+            delwin(spriteshow_win);
+            endwin();
+        }
+        break;
+        case 'q': {
+            return;
+        }
+        default: {		//Echo the passed char and ask for one more.
+            char cmd[50];
+            sprintf(cmd, "\necho \"%c\\n\"\n%c\n\n", ch[0], ch[0]);
+            printf("%s", cmd);
+            napms(500);
+        }
+        break;
+        }			//Close switch on ch[0]
     }				//Close while !picked_debug_proc
 
     res = system("clear");
@@ -10776,8 +10774,8 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
  * @param t_kls The Koliseo_Temp used for temporary allocations.
  */
 void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
-			Path *p, int roomIndex, int currentEnemyNum,
-			Koliseo *kls, Koliseo_Temp *t_kls)
+                        Path *p, int roomIndex, int currentEnemyNum,
+                        Koliseo *kls, Koliseo_Temp *t_kls)
 {
 
     char msg[200];
@@ -10804,11 +10802,11 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
 
     int c = 0, n = -1;
     while (!picked_debug_proc) {
-	int res = system("clear");
-	sprintf(msg, "debug_enemies_room() 2 system(\"clear\") res was (%i)",
-		res);
-	log_tag("debug_log.txt", "[DEBUG]", msg);
-	printf("\n\
+        int res = system("clear");
+        sprintf(msg, "debug_enemies_room() 2 system(\"clear\") res was (%i)",
+                res);
+        log_tag("debug_log.txt", "[DEBUG]", msg);
+        printf("\n\
 	What do you want to do? ('q' to quit)\n\
 		[\n\
 			'0':  Give xp points\t'1':  Give consumable\n\
@@ -10828,601 +10826,601 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
 		]\n\n\
 	[%s@debug-func]$ ", player->name);
 
-	char *fgetsres = fgets(ch, sizeof ch, stdin);
-	sprintf(msg, "debug_enemies_room() fgets() res was (%s)", fgetsres);
-	log_tag("debug_log.txt", "[DEBUG]", msg);
-	switch (ch[0]) {
-	case '0':{
-		picked_debug_proc = 1;
-		int xp;
-		do {
-		    printf("\nHow much?\n");
-		} while ((c = scanf("%i", &xp)) != 1 || xp < 0);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		checkremainder(player, xp);
-	    }
-	    break;
-	case '1':{
-		picked_debug_proc = 1;
-		int q = -1;
-		do {
-		    printf("\nInsert consumable number:\n");
-		} while ((c = scanf("%i", &n)) != 1 || n > CONSUMABLESMAX
-			 || n < 0);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		do {
-		    printf("\nInsert quantity:\n");
-		} while ((c = scanf("%i", &q)) != 1 && q <= 0);
-		res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() 2 scanf() res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		Consumable *c = (Consumable *) player->consumablesBag[n];
-		c->qty += q;
-		player->stats->consumablesfound += q;
-	    }
-	    break;
-	case '2':{
-		picked_debug_proc = 1;
-		statReset(player, 1);
-	    }
-	    break;
-	case '3':{
-		picked_debug_proc = 1;
-		statResetEnemy(e, 1);
-	    }
-	    break;
-	case '4':{
-		picked_debug_proc = 1;
-		printf("\nCurrent luck: %i\tRL: %i\n", player->luck, p->luck);
+        char *fgetsres = fgets(ch, sizeof ch, stdin);
+        sprintf(msg, "debug_enemies_room() fgets() res was (%s)", fgetsres);
+        log_tag("debug_log.txt", "[DEBUG]", msg);
+        switch (ch[0]) {
+        case '0': {
+            picked_debug_proc = 1;
+            int xp;
+            do {
+                printf("\nHow much?\n");
+            } while ((c = scanf("%i", &xp)) != 1 || xp < 0);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            checkremainder(player, xp);
+        }
+        break;
+        case '1': {
+            picked_debug_proc = 1;
+            int q = -1;
+            do {
+                printf("\nInsert consumable number:\n");
+            } while ((c = scanf("%i", &n)) != 1 || n > CONSUMABLESMAX
+                     || n < 0);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            do {
+                printf("\nInsert quantity:\n");
+            } while ((c = scanf("%i", &q)) != 1 && q <= 0);
+            res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() 2 scanf() res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            Consumable *c = (Consumable *) player->consumablesBag[n];
+            c->qty += q;
+            player->stats->consumablesfound += q;
+        }
+        break;
+        case '2': {
+            picked_debug_proc = 1;
+            statReset(player, 1);
+        }
+        break;
+        case '3': {
+            picked_debug_proc = 1;
+            statResetEnemy(e, 1);
+        }
+        break;
+        case '4': {
+            picked_debug_proc = 1;
+            printf("\nCurrent luck: %i\tRL: %i\n", player->luck, p->luck);
 
-		do {
-		    printf("\nInsert new luck:\n");
-		} while ((c = scanf("%i", &n)) != 1 && n > 0);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() 3 scanf() res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		//FIXME:
-		//Copy-pasted the calc for player luck... might need a function
-		p->luck = n;
+            do {
+                printf("\nInsert new luck:\n");
+            } while ((c = scanf("%i", &n)) != 1 && n > 0);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() 3 scanf() res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            //FIXME:
+            //Copy-pasted the calc for player luck... might need a function
+            p->luck = n;
 
-		player->luck = (p->luck * MAXPLAYERLUCK) / MAXLUCK;
-	    }
-	    break;
-	case '5':{
-		picked_debug_proc = 1;
-		/* Old code invoking the macro for special moves directly. Used for testing.
-		 * int s = -1;
-		 * printf("Insert special num:\n");
-		 * scanf("%i",&s);
-		 * scanf("%*c");
-		 * printf("Read: %i\n",s);
-		 * GET_CALLBACK(s,callback_special_t)(player,e,p,roomIndex,currentEnemyNum);
-		 */
+            player->luck = (p->luck * MAXPLAYERLUCK) / MAXLUCK;
+        }
+        break;
+        case '5': {
+            picked_debug_proc = 1;
+            /* Old code invoking the macro for special moves directly. Used for testing.
+             * int s = -1;
+             * printf("Insert special num:\n");
+             * scanf("%i",&s);
+             * scanf("%*c");
+             * printf("Read: %i\n",s);
+             * GET_CALLBACK(s,callback_special_t)(player,e,p,roomIndex,currentEnemyNum);
+             */
 
-		//printActivePerks(player);
-		int c;
-		int n = -1;
-		do {
-		    printf("\nInsert coin number (0<n<100):\n");
-		} while ((c = scanf("%i", &n)) < 0 || c > 3 || n < 0
-			 || n > 100);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() 4 scanf() res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		player->balance += n;
-	    }
-	    break;
-	case '6':{
-		picked_debug_proc = 1;
-		unlockSpecial(player);
-	    }
-	    break;
-	case '7':{
-		picked_debug_proc = 1;
-		int n = -1;
-		do {
-		    printf("\nInsert artifact number (0<n<%i):\n",
-			   ARTIFACTSMAX + 1);
-		} while ((c = scanf("%i", &n)) != 1 || n > ARTIFACTSMAX
-			 || n < 0);
+            //printActivePerks(player);
+            int c;
+            int n = -1;
+            do {
+                printf("\nInsert coin number (0<n<100):\n");
+            } while ((c = scanf("%i", &n)) < 0 || c > 3 || n < 0
+                     || n > 100);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() 4 scanf() res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            player->balance += n;
+        }
+        break;
+        case '6': {
+            picked_debug_proc = 1;
+            unlockSpecial(player);
+        }
+        break;
+        case '7': {
+            picked_debug_proc = 1;
+            int n = -1;
+            do {
+                printf("\nInsert artifact number (0<n<%i):\n",
+                       ARTIFACTSMAX + 1);
+            } while ((c = scanf("%i", &n)) != 1 || n > ARTIFACTSMAX
+                     || n < 0);
 
-		int res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() scanf() res was (%i)", res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		player->artifactsBag[n]->qty += 1;
-		player->artifactsBag[n]->active = 0;
-		player->stats->artifactsfound += 1;
-	    }
-	    break;
-	case '8':{
-		picked_debug_proc = 1;
-		int res = system("clear");
-		sprintf(msg,
-			"debug_enemies_room() 3 system(\"clear\") res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		printf("\nPlayer Counters:\n");
-		printCounters((Turncounter **) player->counters);
-		printf("\nEnemy (%s) Counters:\n", stringFromEClass(e->class));
-		printCounters((Turncounter **) e->counters);
-		printf("\nPress Enter to resume game");
-		res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() 5 scanf() res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case '9':{
-		picked_debug_proc = 1;
-		int q = -1;
-		int c = -1;
-		do {
-		    printf("\nInsert quantity:\n");
-		} while ((c = scanf("%i", &q)) != 1 && q <= 0);
-		int res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() 6 scanf() res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() scanf() res was (%i)", res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            player->artifactsBag[n]->qty += 1;
+            player->artifactsBag[n]->active = 0;
+            player->stats->artifactsfound += 1;
+        }
+        break;
+        case '8': {
+            picked_debug_proc = 1;
+            int res = system("clear");
+            sprintf(msg,
+                    "debug_enemies_room() 3 system(\"clear\") res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            printf("\nPlayer Counters:\n");
+            printCounters((Turncounter **) player->counters);
+            printf("\nEnemy (%s) Counters:\n", stringFromEClass(e->class));
+            printCounters((Turncounter **) e->counters);
+            printf("\nPress Enter to resume game");
+            res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() 5 scanf() res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case '9': {
+            picked_debug_proc = 1;
+            int q = -1;
+            int c = -1;
+            do {
+                printf("\nInsert quantity:\n");
+            } while ((c = scanf("%i", &q)) != 1 && q <= 0);
+            int res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() 6 scanf() res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
 
-		//TODO: handle dropping an equip with a new notification window
-		//for (int i=0; i<q;i++) {dropEquip(player,1,notify_win);};
-		log_tag("debug_log.txt", "[DEBUG]", "TODO: not working ATM.");
-	    }
-	    break;
-	case 'd':{
-		picked_debug_proc = 1;
-		printf("\nVERSION:    %s\n", VERSION);
+            //TODO: handle dropping an equip with a new notification window
+            //for (int i=0; i<q;i++) {dropEquip(player,1,notify_win);};
+            log_tag("debug_log.txt", "[DEBUG]", "TODO: not working ATM.");
+        }
+        break;
+        case 'd': {
+            picked_debug_proc = 1;
+            printf("\nVERSION:    %s\n", VERSION);
 #ifndef _WIN32
-		printf("\nSystem:    %s\n", uts.sysname);
-		printf("\nOS Release:    %s\n", uts.release);
-		printf("\nOS Version:    %s\n", uts.version);
-		printf("\nMachine:    %s\n", uts.machine);
+            printf("\nSystem:    %s\n", uts.sysname);
+            printf("\nOS Release:    %s\n", uts.release);
+            printf("\nOS Version:    %s\n", uts.version);
+            printf("\nMachine:    %s\n", uts.machine);
 #endif
-		printf("\nGAMEMODE:    %s\n", stringFromGamemode(GAMEMODE));
-		printf("\nPath->current_saveslot->save_path:    %s\n",
-		       p->current_saveslot->save_path);
-		printf("\nGS_AUTOSAVE_ON:    %i\n", GS_AUTOSAVE_ON);
-		printf("\nG_FASTQUIT_ON:    %i\n", G_FASTQUIT_ON);
-		printf("\nG_DEBUG_ON:    %i\n", G_DEBUG_ON);
-		printf("\nG_LOG_ON:    %i\n", G_LOG_ON);
-		printf("\nG_GODMODE_ON:    %i\n", G_GODMODE_ON);
-		printf("\nG_EXPERIMENTAL_ON:    %i\n", G_EXPERIMENTAL_ON);
-		printf("\nG_DEBUG_ROOMTYPE_ON:    %i\n", G_DEBUG_ROOMTYPE_ON);
-		if (G_DEBUG_ROOMTYPE_ON == 1) {
-		    printf("\nG_DEBUG_ROOMTYPE:    %i\n", G_DEBUG_ROOMTYPE);
-		}
-		printf("\nG_DEBUG_ENEMYTYPE_ON:    %i\n", G_DEBUG_ENEMYTYPE_ON);
-		if (G_DEBUG_ENEMYTYPE_ON == 1) {
-		    printf("\nG_DEBUG_ENEMYTYPE:    %i\n", G_DEBUG_ENEMYTYPE);
-		}
-		printf("\nPress Enter to resume game.\n");
-		int res = scanf("%*c");
-		sprintf(msg, "debug_enemies_room() 7 scanf() res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'f':{
-		clear();
-		refresh();
-		debug_printFoeParty(room->foes);
-	    }
-	    break;
-	case 'G':{
-		log_tag("debug_log.txt", "[DEBUG]", "Logging Gamestate");
-		dbg_Gamestate(gmst);
-		log_tag("debug_log.txt", "[DEBUG]", "Done logging Gamestate");
-	    }
-	    break;
-	case 'T':{
-		char path_to_kls_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
+            printf("\nGAMEMODE:    %s\n", stringFromGamemode(GAMEMODE));
+            printf("\nPath->current_saveslot->save_path:    %s\n",
+                   p->current_saveslot->save_path);
+            printf("\nGS_AUTOSAVE_ON:    %i\n", GS_AUTOSAVE_ON);
+            printf("\nG_FASTQUIT_ON:    %i\n", G_FASTQUIT_ON);
+            printf("\nG_DEBUG_ON:    %i\n", G_DEBUG_ON);
+            printf("\nG_LOG_ON:    %i\n", G_LOG_ON);
+            printf("\nG_GODMODE_ON:    %i\n", G_GODMODE_ON);
+            printf("\nG_EXPERIMENTAL_ON:    %i\n", G_EXPERIMENTAL_ON);
+            printf("\nG_DEBUG_ROOMTYPE_ON:    %i\n", G_DEBUG_ROOMTYPE_ON);
+            if (G_DEBUG_ROOMTYPE_ON == 1) {
+                printf("\nG_DEBUG_ROOMTYPE:    %i\n", G_DEBUG_ROOMTYPE);
+            }
+            printf("\nG_DEBUG_ENEMYTYPE_ON:    %i\n", G_DEBUG_ENEMYTYPE_ON);
+            if (G_DEBUG_ENEMYTYPE_ON == 1) {
+                printf("\nG_DEBUG_ENEMYTYPE:    %i\n", G_DEBUG_ENEMYTYPE);
+            }
+            printf("\nPress Enter to resume game.\n");
+            int res = scanf("%*c");
+            sprintf(msg, "debug_enemies_room() 7 scanf() res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'f': {
+            clear();
+            refresh();
+            debug_printFoeParty(room->foes);
+        }
+        break;
+        case 'G': {
+            log_tag("debug_log.txt", "[DEBUG]", "Logging Gamestate");
+            dbg_Gamestate(gmst);
+            log_tag("debug_log.txt", "[DEBUG]", "Done logging Gamestate");
+        }
+        break;
+        case 'T': {
+            char path_to_kls_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-		//Append to "kls_log.txt"
-		sprintf(path_to_kls_file, "%s/%s", static_path,
-			"debug_log.txt");
-		FILE *kls_file = NULL;
-		kls_file = fopen(path_to_kls_file, "a");
-		if (kls_file == NULL) {
-		    fprintf(stderr,
-			    "debug_generic():  failed opening debug logfile.\n");
-		    exit(EXIT_FAILURE);
-		}
-		if (kls == NULL) {
-		    fprintf(stderr, "debug_generic():  kls was NULL.\n");
-		    exit(EXIT_FAILURE);
-		}
+            //Append to "kls_log.txt"
+            sprintf(path_to_kls_file, "%s/%s", static_path,
+                    "debug_log.txt");
+            FILE *kls_file = NULL;
+            kls_file = fopen(path_to_kls_file, "a");
+            if (kls_file == NULL) {
+                fprintf(stderr,
+                        "debug_generic():  failed opening debug logfile.\n");
+                exit(EXIT_FAILURE);
+            }
+            if (kls == NULL) {
+                fprintf(stderr, "debug_generic():  kls was NULL.\n");
+                exit(EXIT_FAILURE);
+            }
 
-		fprintf(kls_file, "--BEGIN debug of temporary_kls--\n");
-		for (int i = HR_Path; i < HLP_MAX_INDEX + 99; i++) {
-		    ptrdiff_t usage = kls_type_usage(i, temporary_kls);
+            fprintf(kls_file, "--BEGIN debug of temporary_kls--\n");
+            for (int i = HR_Path; i < HLP_MAX_INDEX + 99; i++) {
+                ptrdiff_t usage = kls_type_usage(i, temporary_kls);
 #ifndef _WIN32
-		    fprintf(kls_file,
-			    "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n",
-			    stringFrom_HLP_Region_Type(i - 101 +
-						       KLS_REGIONTYPE_MAX), i,
-			    usage);
+                fprintf(kls_file,
+                        "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n",
+                        stringFrom_HLP_Region_Type(i - 101 +
+                                                   KLS_REGIONTYPE_MAX), i,
+                        usage);
 #else
-		    fprintf(kls_file,
-			    "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n",
-			    stringFrom_HLP_Region_Type(i - 101 +
-						       KLS_REGIONTYPE_MAX), i,
-			    usage);
+                fprintf(kls_file,
+                        "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n",
+                        stringFrom_HLP_Region_Type(i - 101 +
+                                                   KLS_REGIONTYPE_MAX), i,
+                        usage);
 #endif
-		}
-		fprintf(kls_file, "--END debug of temporary_kls--\n\n");
+            }
+            fprintf(kls_file, "--END debug of temporary_kls--\n\n");
 
-		fclose(kls_file);
-	    }
-	    break;
-	case 't':{
-		char path_to_kls_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
+            fclose(kls_file);
+        }
+        break;
+        case 't': {
+            char path_to_kls_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-		//Append to "kls_log.txt"
-		sprintf(path_to_kls_file, "%s/%s", static_path,
-			"debug_log.txt");
-		FILE *kls_file = NULL;
-		kls_file = fopen(path_to_kls_file, "a");
-		if (kls_file == NULL) {
-		    fprintf(stderr,
-			    "debug_generic():  failed opening debug logfile.\n");
-		    exit(EXIT_FAILURE);
-		}
-		if (kls == NULL) {
-		    fprintf(stderr, "debug_generic():  kls was NULL.\n");
-		    exit(EXIT_FAILURE);
-		}
-		fprintf(kls_file, "--BEGIN debug of temporary_kls--\n");
-		print_kls_2file(kls_file, temporary_kls);
-		kls_showList_toFile(temporary_kls->regs, kls_file);
-		kls_usageReport_toFile(temporary_kls, kls_file);
-		fprintf(kls_file, "--END debug of temporary_kls--\n\n");
-		WINDOW *win = NULL;
-		/* Initialize curses */
-		clear();
-		refresh();
-		start_color();
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-		win = newwin(20, 50, 1, 2);
-		keypad(win, TRUE);
-		wclear(win);
-		wrefresh(win);
-		kls_showList_toWin(temporary_kls, win);
-		delwin(win);
-		endwin();
+            //Append to "kls_log.txt"
+            sprintf(path_to_kls_file, "%s/%s", static_path,
+                    "debug_log.txt");
+            FILE *kls_file = NULL;
+            kls_file = fopen(path_to_kls_file, "a");
+            if (kls_file == NULL) {
+                fprintf(stderr,
+                        "debug_generic():  failed opening debug logfile.\n");
+                exit(EXIT_FAILURE);
+            }
+            if (kls == NULL) {
+                fprintf(stderr, "debug_generic():  kls was NULL.\n");
+                exit(EXIT_FAILURE);
+            }
+            fprintf(kls_file, "--BEGIN debug of temporary_kls--\n");
+            print_kls_2file(kls_file, temporary_kls);
+            kls_showList_toFile(temporary_kls->regs, kls_file);
+            kls_usageReport_toFile(temporary_kls, kls_file);
+            fprintf(kls_file, "--END debug of temporary_kls--\n\n");
+            WINDOW *win = NULL;
+            /* Initialize curses */
+            clear();
+            refresh();
+            start_color();
+            cbreak();
+            noecho();
+            keypad(stdscr, TRUE);
+            win = newwin(20, 50, 1, 2);
+            keypad(win, TRUE);
+            wclear(win);
+            wrefresh(win);
+            kls_showList_toWin(temporary_kls, win);
+            delwin(win);
+            endwin();
 
-		fclose(kls_file);
-	    }
-	    break;
-	case 'K':{
-		char path_to_kls_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
+            fclose(kls_file);
+        }
+        break;
+        case 'K': {
+            char path_to_kls_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-		//Append to "kls_log.txt"
-		sprintf(path_to_kls_file, "%s/%s", static_path,
-			"debug_log.txt");
-		FILE *kls_file = NULL;
-		kls_file = fopen(path_to_kls_file, "a");
-		if (kls_file == NULL) {
-		    fprintf(stderr,
-			    "debug_generic():  failed opening debug logfile.\n");
-		    exit(EXIT_FAILURE);
-		}
-		if (kls == NULL) {
-		    fprintf(stderr, "debug_generic():  kls was NULL.\n");
-		    exit(EXIT_FAILURE);
-		}
+            //Append to "kls_log.txt"
+            sprintf(path_to_kls_file, "%s/%s", static_path,
+                    "debug_log.txt");
+            FILE *kls_file = NULL;
+            kls_file = fopen(path_to_kls_file, "a");
+            if (kls_file == NULL) {
+                fprintf(stderr,
+                        "debug_generic():  failed opening debug logfile.\n");
+                exit(EXIT_FAILURE);
+            }
+            if (kls == NULL) {
+                fprintf(stderr, "debug_generic():  kls was NULL.\n");
+                exit(EXIT_FAILURE);
+            }
 
-		fprintf(kls_file, "--BEGIN debug of passed kls--\n");
-		for (int i = HR_Path; i < HLP_MAX_INDEX + 99; i++) {
-		    ptrdiff_t usage = kls_type_usage(i, kls);
+            fprintf(kls_file, "--BEGIN debug of passed kls--\n");
+            for (int i = HR_Path; i < HLP_MAX_INDEX + 99; i++) {
+                ptrdiff_t usage = kls_type_usage(i, kls);
 #ifndef _WIN32
-		    fprintf(kls_file,
-			    "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n",
-			    stringFrom_HLP_Region_Type(i - 101 +
-						       KLS_REGIONTYPE_MAX), i,
-			    usage);
+                fprintf(kls_file,
+                        "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %li }\n",
+                        stringFrom_HLP_Region_Type(i - 101 +
+                                                   KLS_REGIONTYPE_MAX), i,
+                        usage);
 #else
-		    fprintf(kls_file,
-			    "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n",
-			    stringFrom_HLP_Region_Type(i - 101 +
-						       KLS_REGIONTYPE_MAX), i,
-			    usage);
+                fprintf(kls_file,
+                        "Usage for HLP_Region_Type { %s } [Index: %i]  {Size: %lli }\n",
+                        stringFrom_HLP_Region_Type(i - 101 +
+                                                   KLS_REGIONTYPE_MAX), i,
+                        usage);
 #endif
-		}
-		fprintf(kls_file, "--END debug of passed kls--\n\n");
+            }
+            fprintf(kls_file, "--END debug of passed kls--\n\n");
 
-		fclose(kls_file);
-	    }
-	    break;
-	case 'k':{
-		char path_to_kls_file[600];
-		char static_path[500];
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
+            fclose(kls_file);
+        }
+        break;
+        case 'k': {
+            char path_to_kls_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-		//Append to "kls_log.txt"
-		sprintf(path_to_kls_file, "%s/%s", static_path,
-			"debug_log.txt");
-		FILE *kls_file = NULL;
-		kls_file = fopen(path_to_kls_file, "a");
-		if (kls_file == NULL) {
-		    fprintf(stderr,
-			    "debug_generic():  failed opening debug logfile.\n");
-		    exit(EXIT_FAILURE);
-		}
-		if (kls == NULL) {
-		    fprintf(stderr, "debug_generic():  kls was NULL.\n");
-		    exit(EXIT_FAILURE);
-		}
-		fprintf(kls_file, "--BEGIN debug of passed kls--\n");
-		print_kls_2file(kls_file, kls);
-		kls_showList_toFile(kls->regs, kls_file);
-		kls_usageReport_toFile(kls, kls_file);
-		fprintf(kls_file, "--END debug of passed kls--\n\n");
-		WINDOW *win = NULL;
-		/* Initialize curses */
-		clear();
-		refresh();
-		start_color();
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-		win = newwin(20, 50, 1, 2);
-		keypad(win, TRUE);
-		wclear(win);
-		wrefresh(win);
-		kls_showList_toWin(kls, win);
-		delwin(win);
-		endwin();
-		fclose(kls_file);
-	    }
-	    break;
-	case 'A':{
-		GS_AUTOSAVE_ON = (GS_AUTOSAVE_ON == 1 ? 0 : 1);
-		sprintf(msg, "Toggled G_AUTOSAVE_ON, new value: (%i)",
-			GS_AUTOSAVE_ON);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'Q':{
-		G_FASTQUIT_ON = (G_FASTQUIT_ON == 1 ? 0 : 1);
-		sprintf(msg, "Toggled G_FASTQUIT_ON, new value: (%i)",
-			G_FASTQUIT_ON);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'L':{
-		G_LOG_ON = (G_LOG_ON == 1 ? 0 : 1);
-		sprintf(msg, "Toggled G_LOG_ON, new value: (%i)", G_LOG_ON);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 'g':{
-		G_GODMODE_ON = (G_GODMODE_ON == 1 ? 0 : 1);
-		sprintf(msg, "Toggled G_GODMODE_ON, new value: (%i)",
-			G_GODMODE_ON);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-	    }
-	    break;
-	case 's':{		//Query sprites slideshow
-		picked_debug_proc = 1;
-		int res = system("clear");
-		sprintf(msg,
-			"debug_enemies_room() 4 system(\"clear\") res was (%i)",
-			res);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		int comm_len = -1;
-		int picked_comm = 0;
-		char comm[15] = "empty";
-		char *desc = NULL;
-		int sprite_total = -1;
-		int tot_cons = CONSUMABLESMAX + 1;
-		int tot_enemy = ENEMYCLASSESMAX + 1;
-		int tot_boss = BOSSCLASSESMAX + 1;
-		int tot_art = ARTIFACTSMAX + 1;
-		int tot_eq = EQUIPSMAX + 1;
-		int tot_eqzones = EQUIPZONES + 1;
-		int tot_misc = MISC_SPRITES_MAX + 1;
-		int allsprites =
-		    tot_cons +
-		    tot_enemy +
-		    tot_boss + tot_art + tot_eq + tot_eqzones + tot_misc;
+            //Append to "kls_log.txt"
+            sprintf(path_to_kls_file, "%s/%s", static_path,
+                    "debug_log.txt");
+            FILE *kls_file = NULL;
+            kls_file = fopen(path_to_kls_file, "a");
+            if (kls_file == NULL) {
+                fprintf(stderr,
+                        "debug_generic():  failed opening debug logfile.\n");
+                exit(EXIT_FAILURE);
+            }
+            if (kls == NULL) {
+                fprintf(stderr, "debug_generic():  kls was NULL.\n");
+                exit(EXIT_FAILURE);
+            }
+            fprintf(kls_file, "--BEGIN debug of passed kls--\n");
+            print_kls_2file(kls_file, kls);
+            kls_showList_toFile(kls->regs, kls_file);
+            kls_usageReport_toFile(kls, kls_file);
+            fprintf(kls_file, "--END debug of passed kls--\n\n");
+            WINDOW *win = NULL;
+            /* Initialize curses */
+            clear();
+            refresh();
+            start_color();
+            cbreak();
+            noecho();
+            keypad(stdscr, TRUE);
+            win = newwin(20, 50, 1, 2);
+            keypad(win, TRUE);
+            wclear(win);
+            wrefresh(win);
+            kls_showList_toWin(kls, win);
+            delwin(win);
+            endwin();
+            fclose(kls_file);
+        }
+        break;
+        case 'A': {
+            GS_AUTOSAVE_ON = (GS_AUTOSAVE_ON == 1 ? 0 : 1);
+            sprintf(msg, "Toggled G_AUTOSAVE_ON, new value: (%i)",
+                    GS_AUTOSAVE_ON);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'Q': {
+            G_FASTQUIT_ON = (G_FASTQUIT_ON == 1 ? 0 : 1);
+            sprintf(msg, "Toggled G_FASTQUIT_ON, new value: (%i)",
+                    G_FASTQUIT_ON);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'L': {
+            G_LOG_ON = (G_LOG_ON == 1 ? 0 : 1);
+            sprintf(msg, "Toggled G_LOG_ON, new value: (%i)", G_LOG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 'g': {
+            G_GODMODE_ON = (G_GODMODE_ON == 1 ? 0 : 1);
+            sprintf(msg, "Toggled G_GODMODE_ON, new value: (%i)",
+                    G_GODMODE_ON);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+        }
+        break;
+        case 's': {		//Query sprites slideshow
+            picked_debug_proc = 1;
+            int res = system("clear");
+            sprintf(msg,
+                    "debug_enemies_room() 4 system(\"clear\") res was (%i)",
+                    res);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            int comm_len = -1;
+            int picked_comm = 0;
+            char comm[15] = "empty";
+            char *desc = NULL;
+            int sprite_total = -1;
+            int tot_cons = CONSUMABLESMAX + 1;
+            int tot_enemy = ENEMYCLASSESMAX + 1;
+            int tot_boss = BOSSCLASSESMAX + 1;
+            int tot_art = ARTIFACTSMAX + 1;
+            int tot_eq = EQUIPSMAX + 1;
+            int tot_eqzones = EQUIPZONES + 1;
+            int tot_misc = MISC_SPRITES_MAX + 1;
+            int allsprites =
+                tot_cons +
+                tot_enemy +
+                tot_boss + tot_art + tot_eq + tot_eqzones + tot_misc;
 
-		printf("\nConsumables sprites: \t%d\
-				\nArtifacts sprites: \t%d\
-				\nEquips sprites: \t%d\
-				\nEquip zone sprites: \t%d\
-				\nEnemies sprites: \t%d\
-				\nBosses sprites: \t%d\
-				\nOther misc sprites: \t%d\n", tot_cons, tot_art, tot_eq, tot_eqzones, tot_enemy, tot_boss, tot_misc);
-		printf("--------------------------");
-		printf("\nTotal sprites: \t\t%d\n", allsprites);
-		printf
-		    ("\nInsert sprites query, q to quit: (q|boss|cons|equip|eqzone|artf|enemy|misc):\n\n[%s@spriteshow]$ ",
-		     player->name);
-		while (!picked_comm && (comm_len = scanf("%10s", comm)) > -1) {
-		    int res = scanf("%*c");
-		    sprintf(msg, "debug_enemies_room() 7 scanf() res was (%i)",
-			    res);
-		    log_tag("debug_log.txt", "[DEBUG]", msg);
-		    if (strcmp(comm, "q") == 0) {
-			return;
-		    } else if (strcmp(comm, "boss") == 0) {
-			picked_comm = 1;
-			sprite_total = BOSSCLASSESMAX + 1;
-		    } else if (strcmp(comm, "cons") == 0) {
-			picked_comm = 1;
-			sprite_total = CONSUMABLESMAX + 1;
-		    } else if (strcmp(comm, "equip") == 0) {
-			picked_comm = 1;
-			sprite_total = EQUIPSMAX + 1;
-		    } else if (strcmp(comm, "eqzone") == 0) {
-			picked_comm = 1;
-			sprite_total = EQUIPZONES + 1;
-		    } else if (strcmp(comm, "artf") == 0) {
-			picked_comm = 1;
-			sprite_total = ARTIFACTSMAX + 1;
-		    } else if (strcmp(comm, "enemy") == 0) {
-			picked_comm = 1;
-			sprite_total = ENEMYCLASSESMAX + 1;
-		    } else if (strcmp(comm, "misc") == 0) {
-			picked_comm = 1;
-			sprite_total = MISC_SPRITES_MAX + 1;
-		    } else {
-			printf
-			    ("\nInsert sprites query, q to quit: (q|boss|cons|equip|eqzone|artf|enemy|misc):\n\n[%s@spriteshow]$ ",
-			     player->name);
-		    }
-		}
-		int sprite_count = -1;
-		int c = -1;
-		char s[20];
-		int startx = 0;
-		int x, y;
-		WINDOW *spriteshow_win;
-		/* Initialize curses */
-		//initscr();
-		start_color();
-		clear();
-		refresh();
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-		spriteshow_win = newwin(19, 19, 2, 2);
-		keypad(spriteshow_win, TRUE);
-		for (sprite_count = 0; sprite_count < sprite_total;
-		     sprite_count++) {
-		    if (strcmp(comm, "boss") == 0) {
-			desc = stringFromBossClass(sprite_count);
-		    } else if (strcmp(comm, "cons") == 0) {
-			desc = stringFromConsumables(sprite_count);
-		    } else if (strcmp(comm, "equip") == 0) {
-			desc = stringFromEquips(sprite_count);
-		    } else if (strcmp(comm, "eqzone") == 0) {
-			desc = stringFromEquipzones(sprite_count);
-		    } else if (strcmp(comm, "artf") == 0) {
-			desc = stringFromArtifacts(sprite_count);
-		    } else if (strcmp(comm, "enemy") == 0) {
-			desc = stringFromEClass(sprite_count);
-		    } else if (strcmp(comm, "misc") == 0) {
-			desc = "Misc";
-		    }
-		    wclear(spriteshow_win);
-		    wrefresh(spriteshow_win);
-		    wclear(stdscr);
-		    wrefresh(stdscr);
-		    sprintf(msg, "Showing sprite n.%d, class is: %s\n",
-			    sprite_count, desc);
-		    log_tag("debug_log.txt", "[DEBUG]", msg);
-		    mvwprintw(stdscr, 5, 20, "Sprite for: \'%s\'", desc);
-		    mvwprintw(stdscr, 7, 20, "(%i/%i)", sprite_count + 1,
-			      sprite_total);
-		    refresh();
-		    for (int i = 0; i < 8; i++) {
-			if (strcmp(comm, "boss") == 0) {
-			    strcpy(s, bosses_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "cons") == 0) {
-			    strcpy(s, consumables_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "equip") == 0) {
-			    strcpy(s, equips_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "eqzone") == 0) {
-			    strcpy(s, equipzones_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "artf") == 0) {
-			    strcpy(s, artifacts_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "enemy") == 0) {
-			    strcpy(s, enemies_sprites[sprite_count][i]);
-			} else if (strcmp(comm, "misc") == 0) {
-			    strcpy(s, misc_sprites[sprite_count][i]);
-			}
-			//sprintf(msg,"[DEBUG]    Copied string: \'%s\'\n", s);
-			//debug_log("debug_log.txt",msg);
+            printf("\nConsumables sprites: \t%d\
+\nArtifacts sprites: \t%d\
+\nEquips sprites: \t%d\
+\nEquip zone sprites: \t%d\
+\nEnemies sprites: \t%d\
+\nBosses sprites: \t%d\
+\nOther misc sprites: \t%d\n", tot_cons, tot_art, tot_eq, tot_eqzones, tot_enemy, tot_boss, tot_misc);
+            printf("--------------------------");
+            printf("\nTotal sprites: \t\t%d\n", allsprites);
+            printf
+            ("\nInsert sprites query, q to quit: (q|boss|cons|equip|eqzone|artf|enemy|misc):\n\n[%s@spriteshow]$ ",
+             player->name);
+            while (!picked_comm && (comm_len = scanf("%10s", comm)) > -1) {
+                int res = scanf("%*c");
+                sprintf(msg, "debug_enemies_room() 7 scanf() res was (%i)",
+                        res);
+                log_tag("debug_log.txt", "[DEBUG]", msg);
+                if (strcmp(comm, "q") == 0) {
+                    return;
+                } else if (strcmp(comm, "boss") == 0) {
+                    picked_comm = 1;
+                    sprite_total = BOSSCLASSESMAX + 1;
+                } else if (strcmp(comm, "cons") == 0) {
+                    picked_comm = 1;
+                    sprite_total = CONSUMABLESMAX + 1;
+                } else if (strcmp(comm, "equip") == 0) {
+                    picked_comm = 1;
+                    sprite_total = EQUIPSMAX + 1;
+                } else if (strcmp(comm, "eqzone") == 0) {
+                    picked_comm = 1;
+                    sprite_total = EQUIPZONES + 1;
+                } else if (strcmp(comm, "artf") == 0) {
+                    picked_comm = 1;
+                    sprite_total = ARTIFACTSMAX + 1;
+                } else if (strcmp(comm, "enemy") == 0) {
+                    picked_comm = 1;
+                    sprite_total = ENEMYCLASSESMAX + 1;
+                } else if (strcmp(comm, "misc") == 0) {
+                    picked_comm = 1;
+                    sprite_total = MISC_SPRITES_MAX + 1;
+                } else {
+                    printf
+                    ("\nInsert sprites query, q to quit: (q|boss|cons|equip|eqzone|artf|enemy|misc):\n\n[%s@spriteshow]$ ",
+                     player->name);
+                }
+            }
+            int sprite_count = -1;
+            int c = -1;
+            char s[20];
+            int startx = 0;
+            int x, y;
+            WINDOW *spriteshow_win;
+            /* Initialize curses */
+            //initscr();
+            start_color();
+            clear();
+            refresh();
+            cbreak();
+            noecho();
+            keypad(stdscr, TRUE);
+            spriteshow_win = newwin(19, 19, 2, 2);
+            keypad(spriteshow_win, TRUE);
+            for (sprite_count = 0; sprite_count < sprite_total;
+                 sprite_count++) {
+                if (strcmp(comm, "boss") == 0) {
+                    desc = stringFromBossClass(sprite_count);
+                } else if (strcmp(comm, "cons") == 0) {
+                    desc = stringFromConsumables(sprite_count);
+                } else if (strcmp(comm, "equip") == 0) {
+                    desc = stringFromEquips(sprite_count);
+                } else if (strcmp(comm, "eqzone") == 0) {
+                    desc = stringFromEquipzones(sprite_count);
+                } else if (strcmp(comm, "artf") == 0) {
+                    desc = stringFromArtifacts(sprite_count);
+                } else if (strcmp(comm, "enemy") == 0) {
+                    desc = stringFromEClass(sprite_count);
+                } else if (strcmp(comm, "misc") == 0) {
+                    desc = "Misc";
+                }
+                wclear(spriteshow_win);
+                wrefresh(spriteshow_win);
+                wclear(stdscr);
+                wrefresh(stdscr);
+                sprintf(msg, "Showing sprite n.%d, class is: %s\n",
+                        sprite_count, desc);
+                log_tag("debug_log.txt", "[DEBUG]", msg);
+                mvwprintw(stdscr, 5, 20, "Sprite for: \'%s\'", desc);
+                mvwprintw(stdscr, 7, 20, "(%i/%i)", sprite_count + 1,
+                          sprite_total);
+                refresh();
+                for (int i = 0; i < 8; i++) {
+                    if (strcmp(comm, "boss") == 0) {
+                        strcpy(s, bosses_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "cons") == 0) {
+                        strcpy(s, consumables_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "equip") == 0) {
+                        strcpy(s, equips_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "eqzone") == 0) {
+                        strcpy(s, equipzones_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "artf") == 0) {
+                        strcpy(s, artifacts_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "enemy") == 0) {
+                        strcpy(s, enemies_sprites[sprite_count][i]);
+                    } else if (strcmp(comm, "misc") == 0) {
+                        strcpy(s, misc_sprites[sprite_count][i]);
+                    }
+                    //sprintf(msg,"[DEBUG]    Copied string: \'%s\'\n", s);
+                    //debug_log("debug_log.txt",msg);
 
-			for (int j = 0; j < 13; j++) {
-			    x = startx + 1 + j;
-			    y = 1 + i;
+                    for (int j = 0; j < 13; j++) {
+                        x = startx + 1 + j;
+                        y = 1 + i;
 
-			    print_encoded_char(spriteshow_win, y, x, s[j]);
-			}	//End for line print
-		    }		//End for sprite print
+                        print_encoded_char(spriteshow_win, y, x, s[j]);
+                    }	//End for line print
+                }		//End for sprite print
 
-		    wrefresh(spriteshow_win);
-		    //printf("\nPress Enter for next, q to quit.\n");
-		    int picked = 0;
-		    int go_previous = 0;
-		    int quit_show = 0;
-		    while (!picked
-			   && ((c = wgetch(spriteshow_win)) != KEY_F(1))) {
-			if (c == 10 || c == KEY_RIGHT) {	//Enter, right
-			    sprintf(msg, "Going to next sprite.\n");
-			    log_tag("debug_log.txt", "[DEBUG]", msg);
-			    wclear(spriteshow_win);
-			    wrefresh(spriteshow_win);
-			    picked = 1;
-			    continue;	//Go to next sprite
-			} else if (c == 'q') {	//Quit
-			    sprintf(msg, "Stopping query sprite show.\n");
-			    log_tag("debug_log.txt", "[DEBUG]", msg);
-			    picked = 1;
-			    quit_show = 1;
-			} else if (c == KEY_LEFT) {	//Go to previous sprite
-			    go_previous = 1;
-			    sprintf(msg, "Going to previous sprite.\n");
-			    log_tag("debug_log.txt", "[DEBUG]", msg);
-			    picked = 1;
-			} else {	//Unexpected char
-			    sprintf(msg,
-				    "Wrong operation. Continuing with next sprite.\n");
-			    log_tag("debug_log.txt", "\033[1;31m[ERROR]", msg);
-			    picked = 1;
-			    continue;	//We still go to next sprite
-			}
-		    }		//End while wait for user input
-		    if (go_previous) {
-			sprite_count--;
-			sprite_count--;
-			if (sprite_count < -1)
-			    sprite_count = -1;
-			go_previous = 0;
-		    }
-		    if (quit_show) {
-			break;
-		    }
-		}		//End for all sprites
-		sprintf(msg, "End of sprite show.\n");
-		log_tag("debug_log.txt", "[DEBUG]", msg);
+                wrefresh(spriteshow_win);
+                //printf("\nPress Enter for next, q to quit.\n");
+                int picked = 0;
+                int go_previous = 0;
+                int quit_show = 0;
+                while (!picked
+                       && ((c = wgetch(spriteshow_win)) != KEY_F(1))) {
+                    if (c == 10 || c == KEY_RIGHT) {	//Enter, right
+                        sprintf(msg, "Going to next sprite.\n");
+                        log_tag("debug_log.txt", "[DEBUG]", msg);
+                        wclear(spriteshow_win);
+                        wrefresh(spriteshow_win);
+                        picked = 1;
+                        continue;	//Go to next sprite
+                    } else if (c == 'q') {	//Quit
+                        sprintf(msg, "Stopping query sprite show.\n");
+                        log_tag("debug_log.txt", "[DEBUG]", msg);
+                        picked = 1;
+                        quit_show = 1;
+                    } else if (c == KEY_LEFT) {	//Go to previous sprite
+                        go_previous = 1;
+                        sprintf(msg, "Going to previous sprite.\n");
+                        log_tag("debug_log.txt", "[DEBUG]", msg);
+                        picked = 1;
+                    } else {	//Unexpected char
+                        sprintf(msg,
+                                "Wrong operation. Continuing with next sprite.\n");
+                        log_tag("debug_log.txt", "\033[1;31m[ERROR]", msg);
+                        picked = 1;
+                        continue;	//We still go to next sprite
+                    }
+                }		//End while wait for user input
+                if (go_previous) {
+                    sprite_count--;
+                    sprite_count--;
+                    if (sprite_count < -1)
+                        sprite_count = -1;
+                    go_previous = 0;
+                }
+                if (quit_show) {
+                    break;
+                }
+            }		//End for all sprites
+            sprintf(msg, "End of sprite show.\n");
+            log_tag("debug_log.txt", "[DEBUG]", msg);
 
-		delwin(spriteshow_win);
-		endwin();
-	    }
-	    break;
-	case 'q':{
-		return;
-	    }
-	default:{		//Echo the passed char and ask for one more.
-		char cmd[50];
-		sprintf(cmd, "\necho \"%c\\n\"\n%c\n\n", ch[0], ch[0]);
-		printf("%s", cmd);
-		napms(500);
-	    }
-	    break;
-	}			//Close switch on ch[0]
+            delwin(spriteshow_win);
+            endwin();
+        }
+        break;
+        case 'q': {
+            return;
+        }
+        default: {		//Echo the passed char and ask for one more.
+            char cmd[50];
+            sprintf(cmd, "\necho \"%c\\n\"\n%c\n\n", ch[0], ch[0]);
+            printf("%s", cmd);
+            napms(500);
+        }
+        break;
+        }			//Close switch on ch[0]
     }				//Close while !picked_debug_proc
 
 }
@@ -11487,84 +11485,84 @@ void sell_all_equips(Fighter *f, Koliseo_Temp *t_kls)
     Koliseo *kls = t_kls->kls;
 
     for (int i = 0; i < EQUIPZONES + 1; i++) {
-	if (f->equipslots[i]->active) {
-	    sprintf(msg,
-		    "sell_all_equips(): Prepping Equip to save f->equipslot[%i]",
-		    i);
-	    log_tag("debug_log.txt", "[DEBUG]", msg);
-	    kls_log(kls, "DEBUG", msg);
-	    Equip *saved =
-		(Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
-					   msg);
-	    Equip *to_save = f->equipslots[i]->item;
+        if (f->equipslots[i]->active) {
+            sprintf(msg,
+                    "sell_all_equips(): Prepping Equip to save f->equipslot[%i]",
+                    i);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            kls_log(kls, "DEBUG", msg);
+            Equip *saved =
+                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
+                                           msg);
+            Equip *to_save = f->equipslots[i]->item;
 
-	    saved->class = to_save->class;
-	    saved->type = to_save->type;
-	    strcpy(saved->name, to_save->name);
-	    strcpy(saved->desc, to_save->desc);
-	    saved->qty = to_save->qty;
-	    saved->equipped = 0;	//Will be set after when re-equipped
-	    saved->level = to_save->level;
-	    saved->atk = to_save->atk;
-	    saved->def = to_save->def;
-	    saved->vel = to_save->vel;
-	    saved->enr = to_save->enr;
-	    saved->bonus = to_save->bonus;
-	    saved->perksCount = 0;	//Will be set during perks copy
-	    saved->qual = to_save->qual;
-	    saved->equip_fun = to_save->equip_fun;
+            saved->class = to_save->class;
+            saved->type = to_save->type;
+            strcpy(saved->name, to_save->name);
+            strcpy(saved->desc, to_save->desc);
+            saved->qty = to_save->qty;
+            saved->equipped = 0;	//Will be set after when re-equipped
+            saved->level = to_save->level;
+            saved->atk = to_save->atk;
+            saved->def = to_save->def;
+            saved->vel = to_save->vel;
+            saved->enr = to_save->enr;
+            saved->bonus = to_save->bonus;
+            saved->perksCount = 0;	//Will be set during perks copy
+            saved->qual = to_save->qual;
+            saved->equip_fun = to_save->equip_fun;
 
-	    for (int j = 0; j < to_save->perksCount; j++) {
-		sprintf(msg,
-			"sell_all_equips(): Prepping Perk (%i) to save f->equipslot[%i]",
-			j, i);
-		log_tag("debug_log.txt", "[DEBUG]", msg);
-		kls_log(kls, "DEBUG", msg);
-		Perk *save_pk =
-		    (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk, "Perk",
-					      msg);
-		save_pk->class = to_save->perks[j]->class;
-		strcpy(save_pk->name, to_save->perks[j]->name);
-		strcpy(save_pk->desc, to_save->perks[j]->desc);
-		save_pk->innerValue = to_save->perks[j]->innerValue;
-		saved->perks[saved->perksCount] = save_pk;
-		saved->perksCount++;
-	    }
+            for (int j = 0; j < to_save->perksCount; j++) {
+                sprintf(msg,
+                        "sell_all_equips(): Prepping Perk (%i) to save f->equipslot[%i]",
+                        j, i);
+                log_tag("debug_log.txt", "[DEBUG]", msg);
+                kls_log(kls, "DEBUG", msg);
+                Perk *save_pk =
+                    (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk, "Perk",
+                                              msg);
+                save_pk->class = to_save->perks[j]->class;
+                strcpy(save_pk->name, to_save->perks[j]->name);
+                strcpy(save_pk->desc, to_save->perks[j]->desc);
+                save_pk->innerValue = to_save->perks[j]->innerValue;
+                saved->perks[saved->perksCount] = save_pk;
+                saved->perksCount++;
+            }
 
-	    for (int j = 0; j < 8; j++) {
-		strcpy(saved->sprite[j], to_save->sprite[j]);
-	    }
+            for (int j = 0; j < 8; j++) {
+                strcpy(saved->sprite[j], to_save->sprite[j]);
+            }
 
-	    saved_equips[saved_count] = saved;
-	    saved_count++;
-	}
+            saved_equips[saved_count] = saved;
+            saved_count++;
+        }
     }
 
     int deleted_count = 0;
     int pay = 0;
 
     for (int i = 0; i < f->equipsBagOccupiedSlots; i++) {
-	Equip *toDel = f->equipsBag[i];
-	pay += toDel->cost / 2;
-	//int perksTot = toDel->perksCount;
-	/*
-	   for (int j = 0; j < perksTot; j++) {
-	   Perk* pk = toDel->perks[j];
-	   free(pk);
-	   }
-	 */
-	//FIXME: are we deleting this correctly?
-	//free(toDel);
-	deleted_count++;
+        Equip *toDel = f->equipsBag[i];
+        pay += toDel->cost / 2;
+        //int perksTot = toDel->perksCount;
+        /*
+           for (int j = 0; j < perksTot; j++) {
+           Perk* pk = toDel->perks[j];
+           free(pk);
+           }
+         */
+        //FIXME: are we deleting this correctly?
+        //free(toDel);
+        deleted_count++;
     }
 
     f->equipsBagOccupiedSlots -= deleted_count;
 
     for (int i = 0; i < saved_count; i++) {
-	f->equipsBag[i] = saved_equips[i];
-	f->equipslots[i]->item = saved_equips[i];
-	saved_equips[i]->equipped = 1;
-	f->equipsBagOccupiedSlots++;
+        f->equipsBag[i] = saved_equips[i];
+        f->equipslots[i]->item = saved_equips[i];
+        saved_equips[i]->equipped = 1;
+        f->equipsBagOccupiedSlots++;
     }
     f->earliestBagSlot = f->equipsBagOccupiedSlots;
 
@@ -11584,12 +11582,12 @@ void sell_all_equips(Fighter *f, Koliseo_Temp *t_kls)
  * @return When room is exited, should return NO_DMG.
  */
 int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
-			Path *path, Fighter *f)
+                        Path *path, Fighter *f)
 {
     //Strings for turn menu choices
     char choices[ROADFORK_OPTIONS_MAX + 1][80] = {
-	"One",
-	"Two"
+        "One",
+        "Two"
     };
     //TODO: the choices array had a '(char) NULL' value which was giving a obvious warning about pointer to integer casting.
     //Was it needed as a sentinel value??
@@ -11597,30 +11595,30 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
     char msg[200];
 
     for (int i = 0; i < 2; i++) {
-	char c[80];
-	switch (room->roadfork->options[i]) {
-	case ROADFORK_BOSS:{
-		strcpy(c, "Boss Room");
-	    }
-	    break;
-	case ROADFORK_SHOP:{
-		strcpy(c, "Shop Room");
-	    }
-	    break;
-	case ROADFORK_TREASURE:{
-		strcpy(c, "Treasure Room");
-	    }
-	    break;
-	case ROADFORK_ENEMIES:{
-		strcpy(c, "Enemies");
-	    }
-	    break;
-	case ROADFORK_ROADFORK:{
-		strcpy(c, "Roadfork");
-	    }
-	    break;
-	}
-	strcpy(choices[i], c);
+        char c[80];
+        switch (room->roadfork->options[i]) {
+        case ROADFORK_BOSS: {
+            strcpy(c, "Boss Room");
+        }
+        break;
+        case ROADFORK_SHOP: {
+            strcpy(c, "Shop Room");
+        }
+        break;
+        case ROADFORK_TREASURE: {
+            strcpy(c, "Treasure Room");
+        }
+        break;
+        case ROADFORK_ENEMIES: {
+            strcpy(c, "Enemies");
+        }
+        break;
+        case ROADFORK_ROADFORK: {
+            strcpy(c, "Roadfork");
+        }
+        break;
+        }
+        strcpy(choices[i], c);
     }
     sprintf(msg, "Entered Roadfork with %s and %s.\n", choices[0], choices[1]);
     log_tag("debug_log.txt", "[ROADFORK]", msg);
@@ -11645,9 +11643,9 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
     log_tag("debug_log.txt", "[ROADFORK]", msg);
     my_items = (ITEM **) calloc(n_choices, sizeof(ITEM *));
     for (int k = 0; k < n_choices; k++) {
-	my_items[k] = new_item(choices[k], choices[k]);
-	/* Set the user pointer */
-	//set_item_userptr(my_items[i]);
+        my_items[k] = new_item(choices[k], choices[k]);
+        /* Set the user pointer */
+        //set_item_userptr(my_items[i]);
     }
 
     /* Create menu */
@@ -11702,56 +11700,54 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
     int check = -1;
 
     while (!end_room && (c = wgetch(my_menu_win)) != KEY_F(1)) {
-	switch (c) {
-	case KEY_DOWN:
-	    menu_driver(my_menu, REQ_DOWN_ITEM);
-	    break;
-	case KEY_UP:
-	    menu_driver(my_menu, REQ_UP_ITEM);
-	    break;
-	case KEY_NPAGE:
-	    menu_driver(my_menu, REQ_SCR_DPAGE);
-	    break;
-	case KEY_PPAGE:
-	    menu_driver(my_menu, REQ_SCR_UPAGE);
-	    break;
-	case 10:		// Enter
-	    {
-		ITEM *cur;
+        switch (c) {
+        case KEY_DOWN:
+            menu_driver(my_menu, REQ_DOWN_ITEM);
+            break;
+        case KEY_UP:
+            menu_driver(my_menu, REQ_UP_ITEM);
+            break;
+        case KEY_NPAGE:
+            menu_driver(my_menu, REQ_SCR_DPAGE);
+            break;
+        case KEY_PPAGE:
+            menu_driver(my_menu, REQ_SCR_UPAGE);
+            break;
+        case 10: {	// Enter
+            ITEM *cur;
 
-		cur = current_item(my_menu);
-		sprintf(msg, "Picked %s.\n", item_name(cur));
-		log_tag("debug_log.txt", "[ROADFORK]", msg);
-		if ((check = strcmp("Boss Room", item_name(cur))) == 0) {
-		    *roadFork_value = BOSS;
-		    end_room = 1;
-		} else if ((check = strcmp("Shop Room", item_name(cur)) == 0)) {
-		    *roadFork_value = SHOP;
-		    end_room = 1;
-		} else
-		    if ((check =
-			 strcmp("Treasure Room", item_name(cur)) == 0)) {
-		    *roadFork_value = TREASURE;
-		    end_room = 1;
-		} else if ((check = strcmp("Enemies", item_name(cur)) == 0)) {
-		    *roadFork_value = ENEMIES;
-		    end_room = 1;
-		} else if ((check = strcmp("Roadfork", item_name(cur)) == 0)) {
-		    *roadFork_value = ROADFORK;
-		    end_room = 1;
-		}
-		pos_menu_cursor(my_menu);
-		refresh();
-	    };
-	    break;
-	}
-	wrefresh(my_menu_win);
+            cur = current_item(my_menu);
+            sprintf(msg, "Picked %s.\n", item_name(cur));
+            log_tag("debug_log.txt", "[ROADFORK]", msg);
+            if ((check = strcmp("Boss Room", item_name(cur))) == 0) {
+                *roadFork_value = BOSS;
+                end_room = 1;
+            } else if ((check = strcmp("Shop Room", item_name(cur)) == 0)) {
+                *roadFork_value = SHOP;
+                end_room = 1;
+            } else if ((check =
+                            strcmp("Treasure Room", item_name(cur)) == 0)) {
+                *roadFork_value = TREASURE;
+                end_room = 1;
+            } else if ((check = strcmp("Enemies", item_name(cur)) == 0)) {
+                *roadFork_value = ENEMIES;
+                end_room = 1;
+            } else if ((check = strcmp("Roadfork", item_name(cur)) == 0)) {
+                *roadFork_value = ROADFORK;
+                end_room = 1;
+            }
+            pos_menu_cursor(my_menu);
+            refresh();
+        };
+        break;
+        }
+        wrefresh(my_menu_win);
     }
     /* Unpost and free all the memory taken up */
     unpost_menu(my_menu);
     free_menu(my_menu);
     for (int k = 0; k < n_choices; k++) {
-	free_item(my_items[k]);
+        free_item(my_items[k]);
     }
     endwin();
 
@@ -11782,43 +11778,43 @@ Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
     kls_log(kls, "DEBUG", msg);
     sprintf(msg, "save_path: [%s]", path_to_savefile);
     Saveslot *save =
-	(Saveslot *) KLS_PUSH_TYPED(kls, Saveslot, 1, HR_Saveslot, "Saveslot",
-				    msg);
+        (Saveslot *) KLS_PUSH_TYPED(kls, Saveslot, 1, HR_Saveslot, "Saveslot",
+                                    msg);
     sprintf(msg, "Seed: %i", seed);
     strcpy(save->name, msg);
     sprintf(msg, "%s", path_to_savefile);
     strcpy(save->save_path, msg);
     p->current_saveslot = save;
     kls_log(kls, "DEBUG",
-	    "Prepped Saveslot:  path->current_saveslot->save_path == [%s]",
-	    p->current_saveslot->save_path);
+            "Prepped Saveslot:  path->current_saveslot->save_path == [%s]",
+            p->current_saveslot->save_path);
     log_tag("debug_log.txt", "[SAVESLOT]",
-	    "Prepped Saveslot:  path->current_saveslot->save_path == [%s]",
-	    p->current_saveslot->save_path);
+            "Prepped Saveslot:  path->current_saveslot->save_path == [%s]",
+            p->current_saveslot->save_path);
 
     switch (GAMEMODE) {
-    case Standard:{
-	    p->length = (rand() % MAXLENGTH) + 1;
-	    p->luck = (rand() % MAXLUCK) + 1;
-	    p->prize = 15 / p->luck * (rand() % 150) + 500;
-	}
-	break;
-    case Story:{
-	    p->length = 41;
-	    p->luck = (rand() % MAXLUCK) + 1;
-	    p->prize = 15 / p->luck * (rand() % 150) + 500;
-	}
-	break;
-    case Rogue:{
-	    p->length = 1;
-	    p->luck = (rand() % MAXLUCK) + 1;
-	    p->prize = 15 / p->luck * (rand() % 150) + 500;
-	}
-	break;
-    default:{
-	    fprintf(stderr, "\nUnexpected GAMEMODE value %i.\n", GAMEMODE);
-	    exit(EXIT_FAILURE);
-	}
+    case Standard: {
+        p->length = (rand() % MAXLENGTH) + 1;
+        p->luck = (rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (rand() % 150) + 500;
+    }
+    break;
+    case Story: {
+        p->length = 41;
+        p->luck = (rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (rand() % 150) + 500;
+    }
+    break;
+    case Rogue: {
+        p->length = 1;
+        p->luck = (rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (rand() % 150) + 500;
+    }
+    break;
+    default: {
+        fprintf(stderr, "\nUnexpected GAMEMODE value %i.\n", GAMEMODE);
+        exit(EXIT_FAILURE);
+    }
     }
     return p;
 }
@@ -11852,2022 +11848,2020 @@ void gameloop(int argc, char **argv)
     //Truncate "debug_log.txt"
     sprintf(path_to_kls_debug_file, "%s/%s", static_path, "kls_debug_log.txt");
     KLS_Conf default_kls_conf = {
-	.kls_autoset_regions = 1,
-	.kls_autoset_temp_regions = 1,
-	.kls_verbose_lvl = 1,
-	.kls_log_filepath = path_to_kls_debug_file,
-	.kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
-	.kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 1,
+        .kls_log_filepath = path_to_kls_debug_file,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
     };
     KLS_Conf temporary_kls_conf = {
-	.kls_autoset_regions = 1,
-	.kls_autoset_temp_regions = 1,
-	.kls_verbose_lvl = 0,
-	.kls_log_fp = stderr,
-	.kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
-	.kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 0,
+        .kls_log_fp = stderr,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
     };
 
     do {
-	//Init default_kls
-	default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
-	temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
+        //Init default_kls
+        default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
+        temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
 
 #ifndef _WIN32
-	(whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
+        (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 #else
-	(whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+        (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
 
-	char *kls_progname =
-	    (char *)KLS_PUSH_TYPED(default_kls, char *, sizeof(whoami),
-				   KLS_None, "progname", whoami);
-	strcpy(kls_progname, whoami);
+        char *kls_progname =
+            (char *)KLS_PUSH_TYPED(default_kls, char *, sizeof(whoami),
+                                   KLS_None, "progname", whoami);
+        strcpy(kls_progname, whoami);
 
 #ifndef HELAPORDO_DEBUG_LOG
 #else
-	FILE *debug_file = NULL;
-	FILE *OPS_debug_file = NULL;
+        FILE *debug_file = NULL;
+        FILE *OPS_debug_file = NULL;
 #endif
-	// Parse command-line options
-	int option;
-	loadInfo *load_info =
-	    (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo,
-					"loadInfo", "loadInfo");
+        // Parse command-line options
+        int option;
+        loadInfo *load_info =
+            (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo,
+                                        "loadInfo", "loadInfo");
 
-	load_info->is_new_game = 1;	//By default we do a new game
-	load_info->enemy_index = -1;
-	load_info->total_foes = -1;
-	load_info->save_type = -1;
-	int loaded_roomtotalenemies = -1;
-	int loaded_roomindex = -1;
-	load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
-	load_info->ptr_to_roomindex = &loaded_roomindex;
+        load_info->is_new_game = 1;	//By default we do a new game
+        load_info->enemy_index = -1;
+        load_info->total_foes = -1;
+        load_info->save_type = -1;
+        int loaded_roomtotalenemies = -1;
+        int loaded_roomindex = -1;
+        load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
+        load_info->ptr_to_roomindex = &loaded_roomindex;
 
-	while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsa")) != -1) {
-	    switch (option) {
-	    case 'd':{
+        while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsa")) != -1) {
+            switch (option) {
+            case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
-		    G_DEBUG_ON += 1;
-		    G_LOG_ON = 1;
+                G_DEBUG_ON += 1;
+                G_LOG_ON = 1;
 #endif
-		}
-		break;
-	    case 'r':{
-		    G_DEBUG_ROOMTYPE_ON += 1;
-		    G_DEBUG_ROOMTYPE_ARG = optarg;
-		}
-		break;
-	    case 'E':{
-		    G_DEBUG_ENEMYTYPE_ON += 1;
-		    G_DEBUG_ENEMYTYPE_ARG = optarg;
-		}
-		break;
-	    case 'L':{
-		    G_LOG_ON = 1;
-		}
-		break;
-	    case 'l':{
-		    load_info->is_new_game = 0;
-		}
-		break;
-	    case 'G':{
-		    G_GODMODE_ON = 1;
-		}
-		break;
-	    case 'Q':{
-		    G_FASTQUIT_ON = 1;
-		}
-		break;
-	    case 'X':{
-		    G_EXPERIMENTAL_ON = 1;
-		}
-		break;
-	    case 'a':{
-		    GS_AUTOSAVE_ON = 0;
-		}
-		break;
-	    case 's':{
-		    GAMEMODE = Story;
-		}
-		break;
-	    case 'R':{
-		    GAMEMODE = Rogue;
-		}
-		break;
-	    case 'f':{
-		    //filename = optarg;
-		}
-		break;
-	    case 'h':{
-		    usage(whoami);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_SUCCESS);
-		}
-		break;
-	    case 'T':{
-		    G_DOTUTORIAL_ON = 1;
-		    handleTutorial();
-		    usage(whoami);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_SUCCESS);
-		}
-		break;
-	    case 't':{
-		    //Test all colors
-		    printFormattedVersion(whoami);
-		    printf("Using:\n");
-		    printf("  \'animate\' :\n    s4c/animate.h    ");
-		    S4C_ECHOVERSION();
-		    printf("[DEBUG]    Testing terminal color capabilities.\n");
-		    napms(200);
-		    display_colorpairs();
-		    napms(200);
-		    WINDOW *test_win;
-		    initscr();
-		    start_color();
-		    for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-			init_s4c_color_pair(&palette[i], 9 + i);
-		    }
-		    clear();
-		    refresh();
-		    cbreak();
-		    noecho();
-		    test_win = newwin(9, 7, 1, 1);
-		    keypad(test_win, TRUE);
-		    box(test_win, 0, 0);
+            }
+            break;
+            case 'r': {
+                G_DEBUG_ROOMTYPE_ON += 1;
+                G_DEBUG_ROOMTYPE_ARG = optarg;
+            }
+            break;
+            case 'E': {
+                G_DEBUG_ENEMYTYPE_ON += 1;
+                G_DEBUG_ENEMYTYPE_ARG = optarg;
+            }
+            break;
+            case 'L': {
+                G_LOG_ON = 1;
+            }
+            break;
+            case 'l': {
+                load_info->is_new_game = 0;
+            }
+            break;
+            case 'G': {
+                G_GODMODE_ON = 1;
+            }
+            break;
+            case 'Q': {
+                G_FASTQUIT_ON = 1;
+            }
+            break;
+            case 'X': {
+                G_EXPERIMENTAL_ON = 1;
+            }
+            break;
+            case 'a': {
+                GS_AUTOSAVE_ON = 0;
+            }
+            break;
+            case 's': {
+                GAMEMODE = Story;
+            }
+            break;
+            case 'R': {
+                GAMEMODE = Rogue;
+            }
+            break;
+            case 'f': {
+                //filename = optarg;
+            }
+            break;
+            case 'h': {
+                usage(whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 'T': {
+                G_DOTUTORIAL_ON = 1;
+                handleTutorial();
+                usage(whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 't': {
+                //Test all colors
+                printFormattedVersion(whoami);
+                printf("Using:\n");
+                printf("  \'animate\' :\n    s4c/animate.h    ");
+                S4C_ECHOVERSION();
+                printf("[DEBUG]    Testing terminal color capabilities.\n");
+                napms(200);
+                display_colorpairs();
+                napms(200);
+                WINDOW *test_win;
+                initscr();
+                start_color();
+                for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+                    init_s4c_color_pair(&palette[i], 9 + i);
+                }
+                clear();
+                refresh();
+                cbreak();
+                noecho();
+                test_win = newwin(9, 7, 1, 1);
+                keypad(test_win, TRUE);
+                box(test_win, 0, 0);
 
-		    refresh();
+                refresh();
 
-		    test_game_color_pairs(test_win, 5);
+                test_game_color_pairs(test_win, 5);
 
-		    napms(200);
-		    delwin(test_win);
-		    endwin();
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_SUCCESS);
-		}
-		break;
-	    case 'v':{
-		    printVersion();
-		    /*
-		       printf("Using:\n");
-		       printf("  \'animate\' :\n    s4c/animate.h    ");
-		       S4C_ECHOVERSION();
-		       printf("\n  \'anvil\' :\n");
-		       int status = system("echo \"    $( anvil -vv 2>/dev/null ) \"");
-		       int exitcode = status / 256;
-		       if (exitcode != 0) {
-		       printf("\033[1;31m[DEBUG]\e[0m    \"anvil -vv\" failed.\n\n    Maybe amboso is not installed globally?\n");
-		       exit(exitcode);
-		       }
-		       exit(exitcode);
-		     */
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_SUCCESS);
-		}
-		break;
-	    case '?':{
-		    fprintf(stderr,
-			    "Invalid option: %c\n Check your arguments.\n",
-			    option);
-		    usage(whoami);
-		    // Handle invalid options
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    default:{
-		    // Should never get here
-		    fprintf(stderr, "Invalid option: %c\n, bad usage.\n",
-			    option);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    }
-	}
+                napms(200);
+                delwin(test_win);
+                endwin();
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 'v': {
+                printVersion();
+                /*
+                   printf("Using:\n");
+                   printf("  \'animate\' :\n    s4c/animate.h    ");
+                   S4C_ECHOVERSION();
+                   printf("\n  \'anvil\' :\n");
+                   int status = system("echo \"    $( anvil -vv 2>/dev/null ) \"");
+                   int exitcode = status / 256;
+                   if (exitcode != 0) {
+                   printf("\033[1;31m[DEBUG]\e[0m    \"anvil -vv\" failed.\n\n    Maybe amboso is not installed globally?\n");
+                   exit(exitcode);
+                   }
+                   exit(exitcode);
+                 */
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case '?': {
+                fprintf(stderr,
+                        "Invalid option: %c\n Check your arguments.\n",
+                        option);
+                usage(whoami);
+                // Handle invalid options
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            default: {
+                // Should never get here
+                fprintf(stderr, "Invalid option: %c\n, bad usage.\n",
+                        option);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }
+        }
 
 #ifndef HELAPORDO_DEBUG_LOG
 #else
-	// Open log file if log flag is set and reset it
-	if (G_LOG_ON == 1) {
-	    char path_to_debug_file[600];
-	    char path_to_OPS_debug_file[600];
-	    char static_path[500];
-	    // Set static_path value to the correct static dir path
-	    resolve_staticPath(static_path);
+        // Open log file if log flag is set and reset it
+        if (G_LOG_ON == 1) {
+            char path_to_debug_file[600];
+            char path_to_OPS_debug_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-	    //Truncate "debug_log.txt"
-	    sprintf(path_to_debug_file, "%s/%s", static_path, "debug_log.txt");
-	    debug_file = fopen(path_to_debug_file, "w");
-	    if (!debug_file) {
-		endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
-		fprintf(stderr,
-			"[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n",
-			static_path);
-		exit(EXIT_FAILURE);
-	    }
-	    fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
-	    if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
-		&& NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR
-		&& NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH) {
-		fprintf(debug_file,
-			"[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
-			NCURSES_VERSION, NCURSES_VERSION_MAJOR,
-			NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH,
-			EXPECTED_NCURSES_VERSION_MAJOR,
-			EXPECTED_NCURSES_VERSION_MINOR,
-			EXPECTED_NCURSES_VERSION_PATCH);
-	    }
-	    fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
-	    print_kls_2file(debug_file, default_kls);
-	    fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
-	    print_kls_2file(debug_file, temporary_kls);
-	    fprintf(debug_file,
-		    "[DEBUG]    --Closing header for new game.--  \n");
-	    fclose(debug_file);
+            //Truncate "debug_log.txt"
+            sprintf(path_to_debug_file, "%s/%s", static_path, "debug_log.txt");
+            debug_file = fopen(path_to_debug_file, "w");
+            if (!debug_file) {
+                endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+                fprintf(stderr,
+                        "[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n",
+                        static_path);
+                exit(EXIT_FAILURE);
+            }
+            fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
+            if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
+                && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR
+                && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH) {
+                fprintf(debug_file,
+                        "[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                        NCURSES_VERSION, NCURSES_VERSION_MAJOR,
+                        NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH,
+                        EXPECTED_NCURSES_VERSION_MAJOR,
+                        EXPECTED_NCURSES_VERSION_MINOR,
+                        EXPECTED_NCURSES_VERSION_PATCH);
+            }
+            fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
+            print_kls_2file(debug_file, default_kls);
+            fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
+            print_kls_2file(debug_file, temporary_kls);
+            fprintf(debug_file,
+                    "[DEBUG]    --Closing header for new game.--  \n");
+            fclose(debug_file);
 
-	    //Lay debug info
-	    log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
-		    G_DEBUG_ON);
-	    log_tag("debug_log.txt", "[DEBUG]", "kls_progname == (%s)",
-		    kls_progname);
-	    log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
-	    log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "[Current position in default_kls] [pos: %li]\n",
-		    kls_get_pos(default_kls));
+            //Lay debug info
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                    G_DEBUG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "kls_progname == (%s)",
+                    kls_progname);
+            log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[Current position in default_kls] [pos: %li]\n",
+                    kls_get_pos(default_kls));
 
-	    //Truncate OPS_LOGFILE
-	    sprintf(path_to_OPS_debug_file, "%s/%s", static_path, OPS_LOGFILE);
-	    OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
-	    if (!OPS_debug_file) {
-		endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
-		fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s/%s).\n",
-			static_path, OPS_LOGFILE);
-		exit(EXIT_FAILURE);
-	    }
-	    fprintf(OPS_debug_file, "[OPLOG]    --New game--  \n");
-	    fclose(OPS_debug_file);
-	    log_tag("debug_log.txt", "[DEBUG]", "Truncated [%s]", OPS_LOGFILE);
-	}
+            //Truncate OPS_LOGFILE
+            sprintf(path_to_OPS_debug_file, "%s/%s", static_path, OPS_LOGFILE);
+            OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
+            if (!OPS_debug_file) {
+                endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+                fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s/%s).\n",
+                        static_path, OPS_LOGFILE);
+                exit(EXIT_FAILURE);
+            }
+            fprintf(OPS_debug_file, "[OPLOG]    --New game--  \n");
+            fclose(OPS_debug_file);
+            log_tag("debug_log.txt", "[DEBUG]", "Truncated [%s]", OPS_LOGFILE);
+        }
 #endif
 
-	if (G_DEBUG_ENEMYTYPE_ON == 1) {
-	    log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ENEMYTYPE_ON == (%i)",
-		    G_DEBUG_ENEMYTYPE_ON);
-	    log_tag("debug_log.txt", "[DEBUG]", "ENEMY DEBUG FLAG ASSERTED");
-	    if ((G_DEBUG_ON > 0)) {
-		G_DEBUG_ON += 1;
-		log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
-			G_DEBUG_ON);
-		log_tag("debug_log.txt", "[DEBUG]", "Forcing enemy type: (%s)",
-			G_DEBUG_ENEMYTYPE_ARG);
-		int setenemy_debug = 0;
-		for (int ec = 0; ec < ENEMYCLASSESMAX && (setenemy_debug == 0);
-		     ec++) {
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Checking optarg for -E: (%s)",
-			    stringFromEClass(ec));
-		    if ((strcmp(G_DEBUG_ENEMYTYPE_ARG, stringFromEClass(ec)) ==
-			 0)) {
-			log_tag("debug_log.txt", "[DEBUG]",
-				"Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",
-				stringFromEClass(ec), ec);
-			G_DEBUG_ENEMYTYPE = ec;
-			setenemy_debug = 1;
-		    }
-		}
-		if (setenemy_debug == 0) {
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Invalid optarg for -E flag: {%s}.\n",
-			    G_DEBUG_ENEMYTYPE_ARG);
-		    fprintf(stderr,
-			    "[ERROR]    Incorrect -E \"enemyType\" arg: {%s}.\n",
-			    G_DEBUG_ENEMYTYPE_ARG);
-		    fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
-			    kls_progname);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		};
-	    }
-	}
-	if (G_DEBUG_ROOMTYPE_ON == 1) {
-	    log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ROOMTYPE_ON == (%i)",
-		    G_DEBUG_ROOMTYPE_ON);
-	    log_tag("debug_log.txt", "[DEBUG]", "ROOM DEBUG FLAG ASSERTED");
-	    if ((G_DEBUG_ON > 0)) {
-		G_DEBUG_ON += 1;
-		log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
-			G_DEBUG_ON);
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Forcing room type: optarg was (%s)",
-			G_DEBUG_ROOMTYPE_ARG);
-		int setroom_debug = 0;
-		for (int rc = 0;
-		     (rc < ROOM_CLASS_MAX + 1) && (setroom_debug == 0); rc++) {
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Checking optarg (%s) for -R: (%s)", optarg,
-			    stringFromRoom(rc));
-		    if ((strcmp(G_DEBUG_ROOMTYPE_ARG, stringFromRoom(rc)) == 0)) {
-			log_tag("debug_log.txt", "[DEBUG]",
-				"Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",
-				stringFromRoom(rc), rc);
-			G_DEBUG_ROOMTYPE = rc;
-			setroom_debug = 1;
-		    }
-		}
-		if (setroom_debug == 0) {
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Invalid optarg for -R flag: {%s}.",
-			    G_DEBUG_ROOMTYPE_ARG);
-		    fprintf(stderr,
-			    "[ERROR]    Incorrect -R \"roomType\" arg: {%s}.\n",
-			    G_DEBUG_ROOMTYPE_ARG);
-		    fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
-			    kls_progname);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		};
-	    }
-
-	}
-	log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
-
-	// Clear screen and print title, wait for user to press enter
-	int clearres = system("clear");
-	log_tag("debug_log.txt", "[DEBUG]",
-		"gameloop() system(\"clear\") res was (%i)", clearres);
-	printTitle();
-	char c;
-	yellow();
-	printf("\n\n\n\n\t\t\tPRESS ENTER TO START\n\n");
-	white();
-
-	if (G_DEBUG_ON) {
-	    lightCyan();
-	    printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
-	    white();
-	}
-	printf("\t\t\t\t\t\t");
-	printFormattedVersion(whoami);
-	int scanfres = scanf("%c", &c);
-	log_tag("debug_log.txt", "[DEBUG]", "gameloop() scanf() res was (%i)",
-		scanfres);
-
-	// Parse positional arguments
-	//for (int i = optind; i < argc; i++) {
-	// Handle positional arguments
-	Path *path = NULL;
-	Fighter *player = NULL;
-
-	clock_t start_time = clock(), diff_time;
-
-	// Prepare the fighter frames
-	char fighter_sprites[CLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
-
-	char static_path[500];
-
-	// Set static_path value to the correct static dir path
-	resolve_staticPath(static_path);
-
-	/*
-	 * Legacy code for loading animations from an s4c-file.
-	 char fighter_filename[600];
-	 FILE* fighter_sprite_file;
-	 */
-	for (int i = 0; i < CLASSESMAX + 1; i++) {
-
-	    int n_load_frames = 60;
-	    int n_load_rows = 17;
-	    int n_load_cols = 17;
-
-	    switch (i) {
-	    case Knight:{
-		    s4c_copy_animation(knight_tapis, fighter_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Mage:{
-		    s4c_copy_animation(mage_spark, fighter_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Archer:{
-		    s4c_copy_animation(archer_drop, fighter_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Assassin:{
-		    s4c_copy_animation(assassin_poof, fighter_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Unexpected fighterclass index while loading animation for class (%i): [%s]",
-			    i, stringFromClass(i));
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    }
-
-	    /*
-	     * Legacy code for loading animations from an s4c-file
-	     fighter_sprite_file = fopen(fighter_filename, "r");
-	     if (!fighter_sprite_file) {
-	     fprintf(stderr,"Error opening animation file at (%s).\n",fighter_filename);
-	     fprintf(stderr,"Static path was (%s).\n",static_path);
-	     exit(EXIT_FAILURE);
-	     }
-	     int fighter_loadCheck = load_sprites(fighter_sprites[i], fighter_sprite_file, 17, 17);
-	     sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromClass(i), fighter_loadCheck);
-	     log_tag("debug_log.txt","[PREP]",load_msg);
-	     */
-
-	    log_tag("debug_log.txt", "[PREP]",
-		    "Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",
-		    stringFromClass(i), n_load_frames, n_load_rows,
-		    n_load_cols);
-
-	    //Massive log of all loaded lines
-	    /*
-	       for (int k=0; k<MAXFRAMES+1; k++) {
-	       sprintf(load_msg,"[DEBUG]    frame %i:", k);
-	       debug_log("debug_log.txt",load_msg);
-	       for (int z=0; z<MAXROWS+1;z++) {
-	       sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, fighter_sprites[i][k][z]);
-	       debug_log("debug_log.txt",load_msg);
-	       }
-	       }
-	     */
-	}
-
-	//Try preloading all enemy animations
-	char enemy_sprites[ENEMYCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
-	for (int i = 0; i < (ENEMYCLASSESMAX + 1); i++) {
-	    /* Legacy code to load animations from an s4c-file
-	       char static_path[500];
-
-	       // Set static_path value to the correct static dir path
-	       resolve_staticPath(static_path);
-
-	       char enemy_filename[600];
-	       FILE* enemy_sprite_file;
-	     */
-
-	    int n_load_frames = 60;
-	    int n_load_rows = 17;
-	    int n_load_cols = 17;
-	    // Prepare the enemy frames
-	    switch (i) {
-	    case Imp:{
-		    s4c_copy_animation(imp_fireball, enemy_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Zombie:{
-		    s4c_copy_animation(zombie_walk, enemy_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Troll:{
-		    s4c_copy_animation(troll_club, enemy_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Ghost:{
-		    s4c_copy_animation(ghost_spell, enemy_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Boar:{
-		    s4c_copy_animation(boar_scream, enemy_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Mummy:{
-		    s4c_copy_animation(mummy_shuffle, enemy_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Goblin:{
-		    s4c_copy_animation(goblin_shoot, enemy_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Werewolf:{
-		    s4c_copy_animation(werewolf_transform, enemy_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Unexpected enemy index while loading animation for enemy (%i): [%s]",
-			    i, stringFromEClass(i));
-		    exit(EXIT_FAILURE);
-		}
-	    }
-
-	    /* Legacy code loading the animations from an s4c-file
-	       enemy_sprite_file = fopen(enemy_filename, "r");
-	       if (!enemy_sprite_file) {
-	       fprintf(stderr,"Error opening animation file at (%s/%s).\n",static_path,enemy_filename);
-	       exit(EXIT_FAILURE);
-	       }
-	       int enemy_loadCheck = load_sprites(enemy_sprites[i], enemy_sprite_file, 17, 17);
-	       sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromEClass(i), enemy_loadCheck);
-	       log_tag("debug_log.txt","[PREP]",load_msg);
-	     */
-
-	    log_tag("debug_log.txt", "[PREP]",
-		    "Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",
-		    stringFromEClass(i), n_load_frames, n_load_rows,
-		    n_load_cols);
-
-	    //Massive log of all loaded lines
-	    /*
-	       for (int k=0; k<MAXFRAMES+1; k++) {
-	       sprintf(load_msg,"[DEBUG]    frame %i:", k);
-	       debug_log("debug_log.txt",load_msg);
-	       for (int z=0; z<MAXROWS+1;z++) {
-	       sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, enemy_sprites[i][k][z]);
-	       debug_log("debug_log.txt",load_msg);
-	       }
-	       }
-	     */
-	}
-	//Try preloading all boss animations
-	char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
-	for (int i = 0; i < (BOSSCLASSESMAX + 1); i++) {
-	    int n_load_frames = 60;
-	    int n_load_rows = 17;
-	    int n_load_cols = 17;
-
-	    /*
-	     * Legacy code for loading animations from an s4c-file.
-	     char static_path[500];
-
-	     // Set static_path value to the correct static dir path
-	     resolve_staticPath(static_path);
-
-	     char boss_filename[600];
-	     FILE* boss_sprite_file;
-	     */
-
-	    // Prepare the boss frames
-	    switch (i) {
-	    case Blue_Troll:{
-		    s4c_copy_animation(bluetroll_wonder, boss_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Headless_Ninja:{
-		    s4c_copy_animation(headlessninja_throw, boss_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Crawling_Dude:{
-		    s4c_copy_animation(crawlingdude_crawl, boss_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Sr_Warthog:{
-		    s4c_copy_animation(srwarthog_square, boss_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    case Doppelganger:{
-		    s4c_copy_animation(knight_tapis, boss_sprites[i],
-				       n_load_frames, n_load_rows, n_load_cols);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Unexpected boss index while loading animation for boss (%i): [%s]",
-			    i, stringFromBossClass(i));
-		    exit(EXIT_FAILURE);
-		}
-	    }
-	    /*
-	     * Legacy code for loading animations from an s4c-file.
-	     boss_sprite_file = fopen(boss_filename, "r");
-	     if (!boss_sprite_file) {
-	     fprintf(stderr,"Error opening animation file at (%s/%s).\n",static_path,boss_filename);
-	     exit(EXIT_FAILURE);
-	     }
-	     int boss_loadCheck = load_sprites(boss_sprites[i], boss_sprite_file, 17, 17);
-	     sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromBossClass(i), boss_loadCheck);
-	     log_tag("debug_log.txt","[PREP]",load_msg);
-	     */
-
-	    log_tag("debug_log.txt", "[PREP]",
-		    "Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",
-		    stringFromBossClass(i), n_load_frames, n_load_rows,
-		    n_load_cols);
-
-	    //Massive log of all loaded lines
-	    /*
-	       for (int k=0; k<MAXFRAMES+1; k++) {
-	       sprintf(load_msg,"[DEBUG]    frame %i:", k);
-	       debug_log("debug_log.txt",load_msg);
-	       for (int z=0; z<MAXROWS+1;z++) {
-	       sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, enemy_sprites[i][k][z]);
-	       debug_log("debug_log.txt",load_msg);
-	       }
-	       }
-	     */
-	}			//End loading boss animations
-	//End of loading animations
-	clock_t animationload_time = clock() - start_time;
-	double time_spent_loading_animations =
-	    (double)animationload_time / CLOCKS_PER_SEC;
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Animation loading took %0.7f seconds.",
-		time_spent_loading_animations);
-
-	initscr();
-	// TODO
-	//Select load or new game
-	ITEM **savepick_items;
-	MENU *savepick_menu;
-	WINDOW *savepick_menu_win;
-	WINDOW *savepick_side_win;
-	char current_save_path[300];	//Will hold picked path
-
-	Koliseo_Temp *savepick_kls = kls_temp_start(temporary_kls);
-
-	//Declare turnOP_args
-	Room *fakeroom = NULL;
-	Enemy *fakeenemy = NULL;
-	Boss *fakeboss = NULL;
-	FILE *fakesavefile = NULL;
-	WINDOW *fakenotifywin = NULL;
-	Gamestate *fakegmst = NULL;
-	foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
-	turnOP_args *savepick_turn_args =
-	    init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
-			     fakeenemy, fakeboss, fakesavefile, fakenotifywin,
-			     savepick_kls, fake_foe_op);
-	char *savepick_choices[] = {
-	    "New game",
-	    "Load save",
-	    "Tutorial",
-	    "Quit",
-	    (char *)NULL,
-	};
-	int savepick_n_choices = ARRAY_SIZE(savepick_choices);
-	//FIXME: remove magic numbers
-	turnOption savepick_choice = 999;
-
-	/* Create menu items */
-	savepick_items = (ITEM **) calloc(savepick_n_choices, sizeof(ITEM *));
-	for (int i = 0; i < savepick_n_choices; i++) {
-	    savepick_items[i] =
-		new_item(savepick_choices[i], savepick_choices[i]);
-	}
-	savepick_items[savepick_n_choices - 1] = (ITEM *) NULL;
-
-	/* Create menu */
-	savepick_menu = new_menu((ITEM **) savepick_items);
-
-	/* Set description off */
-	menu_opts_off(savepick_menu, O_SHOWDESC);
-
-	/* Create the window to be associated with the menu */
-	savepick_menu_win = newwin(11, 16, 5, 35);
-	keypad(savepick_menu_win, TRUE);
-
-	/* Set main window and sub window */
-	set_menu_win(savepick_menu, savepick_menu_win);
-	set_menu_sub(savepick_menu, derwin(savepick_menu_win, 4, 14, 4, 1));
-	set_menu_format(savepick_menu, 4, 1);
-
-	/* Set menu mark to the string " >  " */
-	set_menu_mark(savepick_menu, " >  ");
-
-	/* Print a border around main menu window */
-	box(savepick_menu_win, 0, 0);
-	print_label(savepick_menu_win, 1, 0, 16, "Select save", COLOR_PAIR(6));
-	mvwaddch(savepick_menu_win, 2, 0, ACS_LTEE);
-	mvwhline(savepick_menu_win, 2, 1, ACS_HLINE, 16);
-	mvwaddch(savepick_menu_win, 2, 15, ACS_RTEE);
-
-	/* Post the menu */
-	post_menu(savepick_menu);
-	wrefresh(savepick_menu_win);
-
-	//Handle side window for welcome info
-	savepick_side_win = newwin(12, 32, 2, 2);
-	scrollok(savepick_side_win, TRUE);
-	wprintw(savepick_side_win, "  \nhelapordo v%s", VERSION);
-	wprintw(savepick_side_win, "  \n  using: s4c-animate v%s",
-		S4C_ANIMATE_VERSION);
-	wprintw(savepick_side_win, "  \n  using: koliseo v%s",
-		KOLISEO_API_VERSION_STRING);
-	wprintw(savepick_side_win, "  \n  using: ncurses v%s", NCURSES_VERSION);
-	wprintw(savepick_side_win, "  \nBuilt with: amboso v%s",
-		ANVIL__API_LEVEL__STRING);
-	//wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
-	wrefresh(savepick_side_win);
-	refresh();
-
-	int savepick_picked = 0;
-
-	/*
-	   //We set the colors to use s4c's palette file...
-	   FILE* palette_file;
-	   char path_to_palette[600];
-	   char palette_name[50] = "palette.gpl";
-	 */
-	int pickchar = -1;
-
-	/*
-	   // Set static_path value to the correct static dir path
-	   resolve_staticPath(static_path);
-
-	   sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-	   palette_file = fopen(path_to_palette, "r");
-
-	   init_s4c_color_pairs(palette_file);
-	 */
-
-	for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-	    init_s4c_color_pair(&palette[i], 9 + i);
-	}
-
-	while (!savepick_picked
-	       && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
-	    switch (pickchar) {
-	    case KEY_DOWN:{
-		    menu_driver(savepick_menu, REQ_DOWN_ITEM);
-		}
-		break;
-	    case KEY_UP:{
-		    menu_driver(savepick_menu, REQ_UP_ITEM);
-		}
-		break;
-	    case KEY_LEFT:{	/*Left option pick */
-		    ITEM *cur;
-		    cur = current_item(savepick_menu);
-		    savepick_choice = getTurnChoice((char *)item_name(cur));
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Left on choice: [ %s ] value (%i)", item_name(cur),
-			    savepick_choice);
-		    if (savepick_choice == NEW_GAME) {
-			log_tag("debug_log.txt", "[DEBUG]",
-				"Should do something");
-		    }
-		}
-		break;
-	    case KEY_RIGHT:{	/*Right option pick */
-		    ITEM *cur;
-		    cur = current_item(savepick_menu);
-		    savepick_choice = getTurnChoice((char *)item_name(cur));
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Right on choice: [ %s ] value (%i)",
-			    item_name(cur), savepick_choice);
-		    if (savepick_choice == NEW_GAME) {
-			log_tag("debug_log.txt", "[DEBUG]",
-				"Should do something");
-		    }
-		}
-		break;
-	    case KEY_NPAGE:{
-		    menu_driver(savepick_menu, REQ_SCR_DPAGE);
-		}
-		break;
-	    case KEY_PPAGE:{
-		    menu_driver(savepick_menu, REQ_SCR_UPAGE);
-		}
-		break;
-	    case 10:		/* Enter */
-		{
-		    savepick_picked = 1;
-		    ITEM *cur;
-
-		    //move(18,47);
-		    //clrtoeol();
-		    cur = current_item(savepick_menu);
-		    //mvprintw(18, 47, "Item selected is : %s", item_name(cur));
-		    savepick_choice = getTurnChoice((char *)item_name(cur));
-		    pos_menu_cursor(savepick_menu);
-		    refresh();
-		}
-		break;
-	    case 'q':
-		{
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Player used q to quit from savepick menu.");
-		    //TODO: take some variable to disable quick quitting with q
-		    savepick_picked = 1;
-		    savepick_choice = getTurnChoice("Quit");
-		    pos_menu_cursor(savepick_menu);
-		    refresh();
-		}
-		break;
-	    default:{
-		    break;
-		}
-	    }
-	    wrefresh(savepick_menu_win);
-	    if (savepick_choice == NEW_GAME) {
-		int picked_saveslot_index = get_saveslot_index();
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Saveslot index picked: [%i]", picked_saveslot_index);
-		sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
-		//TODO
-		//Get picked_slot with a curses menu.
-		//int picked_slot = handle_pickSave();
-		//sprintf(current_save_path,default_saveslots[picked_slot].save_path);
-		//TODO
-		//By default we expect the user to press new game, no action needed?
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Running new game from savepick menu");
-		turnOP(OP_NEW_GAME, savepick_turn_args, default_kls,
-		       savepick_kls);
-	    } else if (savepick_choice == LOAD_GAME) {
-		int picked_saveslot_index = get_saveslot_index();
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Saveslot index picked: [%i]", picked_saveslot_index);
-		sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
-		//TODO
-		//Get picked_slot with a curses menu.
-		//int picked_slot = handle_pickSave();
-		//sprintf(current_save_path,default_saveslots[picked_slot].save_path);
-		//ATM we expect a single save.
-		//Setting this to 0 is the only thing we expect here, the actual load is done later.
-		load_info->is_new_game = 0;
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Set load value: load_info->is_new_game == (%i)",
-			load_info->is_new_game);
-		turnOP(OP_LOAD_GAME, savepick_turn_args, default_kls,
-		       savepick_kls);
-		//TODO
-		//Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
-	    } else if (savepick_choice == QUIT) {
-		//TODO
-		//We can quit, I guess.
-		log_tag("debug_log.txt", "[DEBUG]",
-			"Savepick menu: doing exit(%i)", EXIT_SUCCESS);
-		// Unpost menu and free all the memory taken up
-		unpost_menu(savepick_menu);
-		free_menu(savepick_menu);
-		log_tag("debug_log.txt", "[FREE]", "Freed savepick menu");
-		for (int k = 0; k < savepick_n_choices; k++) {
-		    free_item(savepick_items[k]);
-		    log_tag("debug_log.txt", "[FREE]",
-			    "Freed %i savepick menu item", k);
-		}
-
-		delwin(savepick_menu_win);
-		endwin();
-		kls_free(default_kls);
-		kls_free(temporary_kls);
-		exit(EXIT_SUCCESS);
-	    } else if (savepick_choice == TUTORIAL) {
-		log_tag("debug_log.txt", "[DEBUG]", "Doing tutorial.");
-		handleTutorial();
-		exit(EXIT_SUCCESS);
-	    }
-	}			//End while !savepick_picked
-
-	//Free turnOP_args
-	//free(savepick_turn_args);
-
-	// Unpost menu and free all the memory taken up
-	unpost_menu(savepick_menu);
-	free_menu(savepick_menu);
-	log_tag("debug_log.txt", "[FREE]", "Freed savepick menu");
-	for (int k = 0; k < savepick_n_choices; k++) {
-	    free_item(savepick_items[k]);
-	    log_tag("debug_log.txt", "[FREE]", "Freed %i savepick menu item",
-		    k);
-	}
-
-	delwin(savepick_menu_win);
-	endwin();
-	log_tag("debug_log.txt", "[DEBUG]",
-		"Ended window mode for savepick menu");
-
-	kls_temp_end(savepick_kls);
-
-	//Flush the terminal
-	int clrres = system("clear");
-	log_tag("debug_log.txt", "[DEBUG]",
-		"gameloop() system(\"clear\") after savepick res was (%i)",
-		clrres);
-
-	//By now, we expect load_info->is_new_game to be set to 0 or 1.
-	log_tag("debug_log.txt", "[DEBUG]",
-		"  Checking is_new_game:  load_info->is_new_game == (%i)",
-		load_info->is_new_game);
-
-	Koliseo_Temp *gamestate_kls = kls_temp_start(temporary_kls);
-
-	if (load_info->is_new_game) {	// We prepare path and fighter
-	    path = randomise_path(rand(), default_kls, current_save_path);
-	    path->loreCounter = -1;
-
-	    kls_log(default_kls, "DEBUG", "Prepping Fighter");
-	    player =
-		(Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, 1, HR_Fighter,
-					   "Fighter", "Fighter");
-
-	    int optTot = optind;
-
-	    getParams(argc, argv, player, path, optTot, default_kls);
-	    initPlayerStats(player, path, default_kls);
-	} else {		//Handle loading of gamestate
-
-	    //Declar turnOP_args
-	    Room *fakeroom = NULL;
-	    Enemy *fakeenemy = NULL;
-	    Boss *fakeboss = NULL;
-	    FILE *fakesavefile = NULL;
-	    WINDOW *fakenotifywin = NULL;
-	    Gamestate *fakegmst = NULL;
-	    foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
-	    turnOP_args *loading_room_turn_args =
-		init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
-				 fakeenemy, fakeboss, fakesavefile,
-				 fakenotifywin, gamestate_kls, fake_foe_op);
-	    FILE *save_file;
-	    char path_to_savefile[1000];
-	    char static_path[500];
-	    char savefile_name[300];
-
-	    //Copy current_save_path
-	    sprintf(savefile_name, "%s", current_save_path);
-
-	    // Set static_path value to the correct static dir path
-	    resolve_staticPath(static_path);
-
-	    sprintf(path_to_savefile, "%s/%s", static_path, savefile_name);
-
-	    save_file = fopen(path_to_savefile, "r");
-	    if (!save_file) {
-		//User error
-		fprintf(stderr,
-			"[ERROR]    Can't open savefile for loading game.\n");
-		fprintf(stderr, "[ERROR]    Expected at path [%s].\n",
-			path_to_savefile);
-		//Debug error
-		log_tag("debug_log.txt", "[ERROR]",
-			"Could not load savefile at (%s)", path_to_savefile);
-		exit(EXIT_FAILURE);
-	    }
-	    //Update loading_room_turn_args->save_file pointer
-	    loading_room_turn_args->save_file = save_file;
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "Assigned loading_room_turn_args->save_file: path [%s]",
-		    path_to_savefile);
-
-	    //Read save type
-	    //
-	    saveType loaded_save_type = -1;
-	    loaded_save_type = read_saveType(save_file);
-	    log_tag("debug_log.txt", "[TURNOP]", "Read saveType, was [%s].",
-		    stringFrom_saveType(loaded_save_type));
-
-	    if (loaded_save_type == -1) {
-		log_tag("debug_log.txt", "[ERROR]",
-			"Failed setting loaded_save_type. Quitting.");
-		fprintf(stderr, "[ERROR]    Failed setting a save type.");
-
-		exit(EXIT_FAILURE);
-	    }
-
-	    load_info->save_type = loaded_save_type;
-
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "Assigned load_info->save_type: [%s]",
-		    stringFrom_saveType(load_info->save_type));
-
-	    path = randomise_path(rand(), default_kls, current_save_path);
-	    kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
-	    player =
-		(Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, 1, HR_Fighter,
-					   "Fighter", "Loady Fighter");
-	    player->class = Knight;
-
-	    strcpy(player->name, "Loady");
-
-	    //Update loading_room_turn_args->actor pointer
-	    loading_room_turn_args->actor = player;
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "Assigned Fighter [%s]. loading_room_turn_args->actor->name: [%s]",
-		    player->name, loading_room_turn_args->actor->name);
-
-	    kls_log(default_kls, "DEBUG", "Prepping Loady Wincon");
-	    Wincon *w =
-		(Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, 1, HR_Wincon,
-					  "Wincon", "Loady Wincon");
-	    w->class = FULL_PATH;
-	    initWincon(w, path, w->class);
-	    initPlayerStats(player, path, default_kls);
-	    path->win_condition = w;
-
-	    if (load_info->save_type == ENEMIES_SAVE) {
-
-		kls_log(default_kls, "DEBUG", "Prepping Loady Enemy");
-		load_info->loaded_enemy =
-		    (Enemy *) KLS_PUSH_TYPED(default_kls, Enemy, 1, HR_Enemy,
-					     "Enemy", "Loaded Enemy");
-		//FIXME: the structs related to loaded enemy are not loaded on default_kls
-		prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1,
-				 gamestate_kls);
-
-		//Update loading_room_turn_args->enemy pointer
-		loading_room_turn_args->enemy = load_info->loaded_enemy;
-		log_tag("debug_log.txt", "[TURNOP]",
-			"Assigned load_info->loaded_enemy->class == [%s]. loading_room_turn_args->loaded_enemy->class == [%s]",
-			stringFromEClass(load_info->loaded_enemy->class),
-			stringFromEClass(loading_room_turn_args->enemy->class));
-	    }
-	    //Update loading_room_turn_args->path pointer
-	    loading_room_turn_args->path = path;
-	    log_tag("debug_log.txt", "[TURNOP]",
-		    "Assigned loading_room_turn_args->path == [path] (len %i)",
-		    path->length);
-
-	    switch (load_info->save_type) {
-	    case ENEMIES_SAVE:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Doing OP_LOAD_ENEMYROOM.");
-		    //int* loadinfo_totfoes = &(load_info->total_foes);
-		    //FIXME: the structs related to loaded enemy are not loaded on default_kls
-		    OP_res load_op_result =
-			turnOP(OP_LOAD_ENEMYROOM, loading_room_turn_args,
-			       default_kls, gamestate_kls);
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "OP_LOAD_ENEMYROOM:  result was [%s].",
-			    stringFrom_OP_res(load_op_result));
-		    log_tag("debug_log.txt", "[FREE]",
-			    "Freed loading_room_turn_args. Load result was [%s].",
-			    stringFrom_OP_res(load_op_result));
-		    //free(loading_room_turn_args);
-		}
-		break;
-	    case HOME_SAVE:{
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "Doing OP_LOAD_HOMEROOM.");
-		    //int* loadinfo_totfoes = &(load_info->total_foes);
-		    //FIXME: the structs related to loaded enemy are not loaded on default_kls
-		    OP_res load_op_result =
-			turnOP(OP_LOAD_HOMEROOM, loading_room_turn_args,
-			       default_kls, gamestate_kls);
-		    log_tag("debug_log.txt", "[TURNOP]",
-			    "OP_LOAD_HOMEROOM:  result was [%s].",
-			    stringFrom_OP_res(load_op_result));
-		    //log_tag("debug_log.txt","[FREE]","Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
-		    load_info->done_loading = 1;
-		    log_tag("debug_log.txt", "[PREP]",
-			    "Set load_info->done_loading to 1.");
-		    //free(loading_room_turn_args);
-		}
-		break;
-	    default:{
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "gameloop():  Unexpected save type, value was (%i).",
-			    (int)load_info->save_type);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    }
-
-	    //e_death(loaded_enemy);
-	    //death(player);
-	    //exit(0);
-	}
-
-	/*
-	 * TODO
-	 * Remove me
-	 * Legacy code to load lores from a text file.
-	 for (int i=0; i<5; i++) {
-	 sprintf(msg,"Prepping lore (%i)",i);
-	 kls_log("DEBUG",msg);
-	 lore_strings[i] = (char*) KLS_PUSH_NAMED(default_kls, char, 300, "Lore", msg);
-	 }
-	 */
-
-	int *loreCounter = &(path->loreCounter);
-	log_tag("debug_log.txt", "[DEBUG]", "loreCounter == (%i)",
-		*loreCounter);
-
-	if (GAMEMODE == Story) {
-
-	    /*
-	     * TODO
-	     * Remove me
-	     * Legacy code to load lores from a text file.
-	     int loreKind = 0; //rand() % LORES_MAX;
-	     */
-
-	    if (load_info->is_new_game) {
-		log_tag("debug_log.txt", "[FIXME]",
-			"loreCounter was (%i), setting it to 0.", *loreCounter);
-		*loreCounter = 0;	//We must set the counter before going forward
-		//FIXME:
-		//loreCounter should not start from 0 again.
-	    }
-
-	    /*
-	     * TODO
-	     *Remove me
-	     *Legacy code for loading lores from a text file.
-	     loadLore(lore_strings,loreKind);
-	     */
-
-	} else {
-	    log_tag("debug_log.txt", "[WARN]",
-		    "GAMEMODE is not Story. Value was: (%i)", GAMEMODE);
-	}
-
-	//Set consumables sprites
-	for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
-	    setConsumableSprite((Consumable *) player->consumablesBag[i]);
-	    log_tag("debug_log.txt", "[PREP]", "Set sprite for %s",
-		    stringFromConsumables(i));
-	}
-	log_tag("debug_log.txt", "[DEBUG-PREP]",
-		"Done setting sprites for Consumables.");
-	//Set artifact sprites
-	for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
-	    setArtifactSprite(player->artifactsBag[i]);
-	    log_tag("debug_log.txt", "[PREP]", "Set sprite for %s",
-		    stringFromArtifacts(i));
-	}
-	log_tag("debug_log.txt", "[PREP]",
-		"Done setting sprites for Artifacts.");
-	//Set base equips sprites...
-	for (int i = 0; i < EQUIPSMAX + 1; i++) {
-	    setEquipSprite(&equips[i]);
-	    log_tag("debug_log.txt", "[PREP]", "Set sprite for %s",
-		    stringFromEquips(i));
-	}
-	log_tag("debug_log.txt", "[PREP]", "Done setting sprites for Equips.");
-
-	if (load_info->is_new_game) {
-	    log_tag("debug_log.txt", "[PREP]", "New game from scratch.");
-	} else {
-	    log_tag("debug_log.txt", "[PREP]", "New game from loading.");
-	}
-	log_tag("debug_log.txt", "[DEBUG]", "Name:    %s", player->name);
-	log_tag("debug_log.txt", "[DEBUG]", "Class:    %s",
-		stringFromClass(player->class));
-	log_tag("debug_log.txt", "[DEBUG]", "Gamemode:    %s",
-		stringFromGamemode(GAMEMODE));
-
-	//purple();
-	//printStats(player);
-	//white();
-
-	int roomsDone = load_info->is_new_game ? 1 : loaded_roomindex;
-	OP_res res = OP_RES_NO_DMG;
-	int roadFork_value = -1;	//0 may be used as a value, so
-
-	Wincon *win_con = path->win_condition;
-	log_tag("debug_log.txt", "[DEBUG]", "Wincon:    %s\n",
-		stringFromWinconClass(win_con->class));
-
-	//int refresh_artifact_wincon = 0;
-	if (load_info->save_type == ENEMIES_SAVE) {
-	    load_info->done_loading = 0;
-	    log_tag("debug_log.txt", "[DEBUG-PREP]",
-		    "Set load_info->done_loading to 0.");
-	}
-	log_tag("debug_log.txt", "[DEBUG-PREP]", "Prepping done.\n");
-	log_tag("debug_log.txt", "[DEBUG]", "Starting wincon loop.\n");
-
-	diff_time = clock() - start_time;
-	int time_spent = diff_time * 1000 / CLOCKS_PER_SEC;
-	//sprintf(msg,"[DEBUG]    Prep took %0.7f seconds.\n",time_spent);
-	log_tag("debug_log.txt", "[DEBUG]", "Prep took %d s, %d ms.",
-		time_spent / 1000, time_spent % 1000);
-
-	Gamestate *gamestate =
-	    KLS_PUSH_TYPED(default_kls, Gamestate, 1, HR_Gamestate, "Gamestate",
-			   "Gamestate");
-	init_Gamestate(gamestate, player->stats, path->win_condition, path,
-		       player, GAMEMODE);
-	if (gamestate->gamemode == Rogue) {
-	    //Note: different lifetime than gamestate
-	    //NO. The update_gamestate call is instead performed later.
-	    //Floor* current_floor = KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Init Curr floor");
-	    //NO. We pass NULL now.
-	    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
-	} else {
-	    update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
-	}
-	log_tag("debug_log.txt", "[DEBUG]", "Initialised Gamestate.");
-	dbg_Gamestate(gamestate);
-
-	if (GAMEMODE == Story || GAMEMODE == Standard) {
-
-	    //Loop till wincon reached
-
-	    while (win_con->current_val < win_con->target_val) {
-
-		//Flush the terminal
-		int loop_clrres = system("clear");
-		log_tag("debug_log.txt", "[DEBUG]",
-			"gameloop() system(\"clear\") in wincon loop, res: (%i)",
-			loop_clrres);
-
-		//Check if we have to update the wincon value
-		if (path->win_condition->class == ALL_ARTIFACTS) {
-		    path->win_condition->current_val =
-			player->stats->artifactsfound;
-		    //Are we forced to do one more room?
-		}
-
-		int enemyTotal = -1;
-		roomClass room_type = -1;
-
-		if (!(load_info->is_new_game) && !(load_info->done_loading)
-		    && (load_info->save_type == ENEMIES_SAVE)) {
-		    enemyTotal = loaded_roomtotalenemies;
-		}
-
-		kls_log(temporary_kls, "DEBUG",
-			"Prepping Room for Story Gamemode. roomsDone=(%i)",
-			roomsDone);
-		Room *current_room =
-		    (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, 1, HR_Room,
-					      "Room", "Story Room");
-
-		current_room->index = roomsDone;
-		setRoomType(path, &roadFork_value, &room_type, roomsDone);
-		log_tag("debug_log.txt", "[ROOM]",
-			"Set Room #%i type:    (%s)\n", roomsDone,
-			stringFromRoom(room_type));
-
-		initRoom(current_room, player, roomsDone, room_type, enemyTotal,
-			 load_info, gamestate_kls);
-		log_tag("debug_log.txt", "[ROOM]", "Init Room #%i:    (%s)\n",
-			roomsDone, stringFromRoom(room_type));
-
-		start_color();
-		int colorCheck = has_colors();
-
-		if (colorCheck == FALSE) {
-		    fprintf(stderr, "Terminal can't use colors, abort.\n");
-		    exit(S4C_ERR_TERMCOLOR);
-		}
-
-		colorCheck = can_change_color();
-
-		if (colorCheck == FALSE) {
-		    fprintf(stderr, "Terminal can't change colors, abort.\n");
-		    exit(S4C_ERR_TERMCHANGECOLOR);
-		}
-		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-		    init_s4c_color_pair(&palette[i], 9 + i);
-		}
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-
-		//Check if we need to display a story prompt
-		if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
-		    displayLore(lore_strings, *loreCounter);
-		    (*loreCounter)++;
-		}
-		//Play room animation
-
-		/*
-		   FILE* palette_file;
-		   char path_to_palette[600];
-		   char static_path[500];
-		   char palette_name[50] = "palette.gpl" ;
-
-		   // Set static_path value to the correct static dir path
-		   resolve_staticPath(static_path);
-
-		   sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-		   palette_file = fopen(path_to_palette, "r");
-		   if (palette_file == NULL) {
-		   fprintf(stderr, "Error: could not open palette file (%s/%s).\n",static_path, palette_name);
-		   exit(EXIT_FAILURE);
-		   }
-		 */
-
-		WINDOW *door_win;
-		//initscr();
-		clear();
-		refresh();
-
-		int reps = 1;
-		int frametime = 27;
-		int num_frames = 60;
-		int frame_height = 22;
-		int frame_width = 22;
-		door_win = newwin(frame_height + 1, frame_width + 1, 0, 25);
-
-		char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
-
-		s4c_copy_animation(enter_door, door_sprites, num_frames,
-				   frame_height, frame_width);
-
-		log_tag("debug_log.txt", "[PREP]",
-			"Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",
-			num_frames, frame_height, frame_width);
-
-		/*
-		 * TODO
-		 * Remove me
-		 * Legacy code for loading animation from an s4c-file.
-		 *
-		 // Set static_path value to the correct static dir path
-		 resolve_staticPath(static_path);
-
-		 char door_file_path[600];
-
-		 sprintf(door_file_path,"%s/animations/enter_door.txt",static_path);
-
-		 FILE* door_file = fopen(door_file_path,"r");
-		 if (!door_file) {
-		 fprintf(stderr,"[ERROR]    Can't open enter_door file.\n");
-		 exit(EXIT_FAILURE);
-		 }
-		 int loadCheck = load_sprites(door_sprites, door_file, frame_height-1, frame_width-1);
-
-		 // Check for possible loadCheck() errors and in this case we return early if we couldn't load
-		 if (loadCheck < 0) {
-		 endwin();
-		 switch (loadCheck) {
-		 case S4C_ERR_FILEVERSION: {
-		 fprintf(stderr,"S4C_ERR_FILEVERSION : Failed file version check.\n");
-		 }
-		 break;
-		 case S4C_ERR_LOADSPRITES: {
-		 fprintf(stderr,"S4C_ERR_LOADSPRITES : Failed loading the sprites.\n");
-		 }
-		 break;
-		 }
-		 exit(loadCheck);
-		 }
-		 */
-
-		// We make sure we have the background correcly set up and expect animate_sprites to refresh it
-		wclear(door_win);
-		wrefresh(door_win);
-
-		int result =
-		    s4c_animate_sprites_at_coords(door_sprites, door_win, reps,
-						  frametime, num_frames,
-						  frame_height, frame_width, 0,
-						  0);
-		log_tag("debug_log.txt", "[DEBUG]", "animate() result was (%i)",
-			result);
-		wclear(door_win);
-		wrefresh(door_win);
-		delwin(door_win);
-		endwin();
-
-		update_Gamestate(gamestate, 1, current_room->class, roomsDone,
-				 -1, NULL);
-
-		if (current_room->class == HOME) {
-		    res =
-			handleRoom_Home(gamestate, current_room, roomsDone,
-					path, player, load_info,
-					fighter_sprites, default_kls,
-					gamestate_kls);
-		} else if (current_room->class == ENEMIES) {
-		    res =
-			handleRoom_Enemies(gamestate, current_room, roomsDone,
-					   path, player, load_info,
-					   enemy_sprites, fighter_sprites,
-					   default_kls, gamestate_kls);
-		} else if (current_room->class == SHOP) {
-		    //FIXME: does shop require usage of gameloop kls?
-		    res =
-			handleRoom_Shop(current_room, roomsDone, path, player,
-					default_kls, gamestate_kls);
-		} else if (current_room->class == BOSS) {
-		    res =
-			handleRoom_Boss(gamestate, current_room, roomsDone,
-					path, player, load_info, boss_sprites,
-					fighter_sprites, default_kls,
-					gamestate_kls);
-		} else if (current_room->class == TREASURE) {
-		    res =
-			handleRoom_Treasure(current_room, roomsDone, path,
-					    player, default_kls, gamestate_kls);
-		} else if (current_room->class == ROADFORK) {
-		    res =
-			handleRoom_Roadfork(current_room, &roadFork_value,
-					    roomsDone, path, player);
-		} else {
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Unexpected current_room->class value: [%i] [%s]",
-			    current_room->class,
-			    stringFromRoom(current_room->class));
-		    //freeRoom(current_room);
-		    log_tag("debug_log.txt", "[ERROR]",
-			    "Freed current room, quitting program.");
-		    exit(EXIT_FAILURE);
-		}
-
-		if (res == OP_RES_DEATH) {
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "Room resulted in DEATH.\n");
-		    //Free room memory
-		    //freeRoom(current_room);
-		    break;
-		} else {
-		    //Flush the terminal
-		    int clrres = system("clear");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "gameloop() system(\"clear\") res was (%i)",
-			    clrres);
-
-		    if (roadFork_value > 0) {
-			//TODO
-			//What is this?
-			lightYellow();
-			printStats(player);
-			lightGreen();
-			log_tag("debug_log.txt", "[ROADFORK?]",
-				"You completed room %i.", roomsDone);
-			white();
-		    }
-		    roomsDone++;
-
-		    //Update stats
-		    player->stats->roomscompleted++;
-
-		    //Check if we need to update the win condition
-		    if (win_con->class == FULL_PATH) {
-			win_con->current_val++;
-		    }
-		    //Free room memory
-		    //freeRoom(current_room);
-		    // Reset gamestate_kls
-		    kls_temp_end(gamestate_kls);
-		    gamestate_kls = kls_temp_start(temporary_kls);
-		}
-	    }			// Win condition loop
-
-	    // Clear default_kls
-	    //kls_clear(default_kls);
-
-	    //Got out of the loop with res not being DEATH; so i won
-	    if (res != OP_RES_DEATH) {	//I guess player and enemy were freed already?
-		int clrres = system("clear");
-		log_tag("debug_log.txt", "[DEBUG]",
-			"gameloop() 2 system(\"clear\") res was (%i)", clrres);
-		handleStats(player);
-		printf("\n\n\tYOU WON!\n\n");
-		log_tag("debug_log.txt", "[DEBUG]", "Game won.");
-		//Free default kls
-		kls_log(default_kls, "DEBUG", "Freeing default KLS");
-		kls_free(default_kls);
-		log_tag("debug_log.txt", "[DEBUG-KLS]", "Freed default KLS");
-
-		//Free temporary kls
-		kls_log(temporary_kls, "DEBUG", "Freeing temporary KLS");
-		kls_free(temporary_kls);
-		log_tag("debug_log.txt", "[DEBUG-KLS]", "Freed temporary KLS");
-	    }
-
-	    /*
-	       //Free lore strings if they were loaded
-	       if (GAMEMODE == Story) {
-	       for (int i=0; i<5; i++) {
-	       char msg[1000];
-	       sprintf(msg,"Freed lore string %i",i);
-	       log_tag("debug_log.txt","[FREE]",msg);
-	       sprintf(msg,"%s",lore_strings[i]);
-	       log_tag("debug_log.txt","[FREE]",msg);
-	       free(lore_strings[i]);
-	       }
-	       }
-	     */
-	    //free(path->win_condition);
-	    //free(path);
-	    log_tag("debug_log.txt", "[DEBUG]", "End of wincon loop.\n");
-
-	} else {		//Gamemode is not Story or Standard
-	    log_tag("debug_log.txt", "[DEBUG]", "Gamemode was [%i]", GAMEMODE);
-
-	    if (GAMEMODE == Rogue) {
-		log_tag("debug_log.txt", "[DEBUG]", "Doing a Rogue run.");
-		FILE *palette_file;
-		char path_to_palette[600];
-		char static_path[500];
-		char palette_name[50] = "palette.gpl";
-
-		// Set static_path value to the correct static dir path
-		resolve_staticPath(static_path);
-
-		sprintf(path_to_palette, "%s/%s", static_path, palette_name);
-
-		palette_file = fopen(path_to_palette, "r");
-		if (palette_file == NULL) {
-		    fprintf(stderr,
-			    "Error: could not open palette file (%s/%s).\n",
-			    static_path, palette_name);
-		    exit(EXIT_FAILURE);
-		}
-
-		WINDOW *floor_win;
-		//TODO: store if we have done initsrc() or endwin(). Am sure we can get this from ncurses with some MACRO
-		//initscr();
-		clear();
-		refresh();
-		start_color();
-
-		int colorCheck = has_colors();
-
-		if (colorCheck == FALSE) {
-		    fprintf(stderr, "Terminal can't use colors, abort.\n");
-		    exit(S4C_ERR_TERMCOLOR);
-		}
-
-		colorCheck = can_change_color();
-
-		if (colorCheck == FALSE) {
-		    fprintf(stderr, "Terminal can't change colors, abort.\n");
-		    exit(S4C_ERR_TERMCHANGECOLOR);
-		}
-		for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-		    init_s4c_color_pair(&palette[i], 9 + i);
-		}
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-
-		cbreak();
-		noecho();
-		keypad(stdscr, TRUE);
-
-		// Create the window
-		floor_win = newwin(23, 24, 1, 2);
-		wclear(floor_win);
-		wrefresh(floor_win);
-		keypad(floor_win, TRUE);
-
-		/* Print a border around the windows and print a title */
-		box(floor_win, 0, 0);
-		wrefresh(floor_win);
-		refresh();
-		int res = -1;
-		char msg[500];
-
-		log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
-		kls_log(default_kls, "DEBUG", "Prepping current_floor.");
-		Floor *current_floor =
-		    (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor, 1,
-					       HR_Floor, "Floor", "Floor");
-		update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
-				 current_floor);
-		// Start the random walk from the center of the dungeon
-		int center_x = FLOOR_MAX_COLS / 2;
-		int center_y = FLOOR_MAX_ROWS / 2;
-
-		// Init dbg_floor
-		init_floor_layout(current_floor);
-
-		//Set center as filled
-		current_floor->floor_layout[center_x][center_y] = 1;
-
-		//Init floor rooms
-		init_floor_rooms(current_floor);
-
-		//Random walk #1
-		floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-		//Random walk #2
-		floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-
-		//Set floor explored matrix
-		load_floor_explored(current_floor);
-
-		//Set room types
-		floor_set_room_types(current_floor);
-
-		int current_x = center_x;
-		int current_y = center_y;
-
-		//TODO: handle finishing all floors
-		path->length = MAX_ROGUE_FLOORS;
-
-		int floors_done = 0;
-
-		//Loop till wincon reached
-
-		//while (dbg_floor->explored_area*1.0 < (dbg_floor->area*0.8)) {
-		while (win_con->current_val < win_con->target_val) {
-
-		    //Check if we have to update the wincon value
-		    if (path->win_condition->class == ALL_ARTIFACTS) {
-			path->win_condition->current_val =
-			    player->stats->artifactsfound;
-			//Are we forced to do one more room?
-		    }
-
-		    int enemyTotal = -1;
-		    roomClass room_type = -1;
-
-		    if (!(load_info->is_new_game) && !(load_info->done_loading)
-			&& (load_info->save_type == ENEMIES_SAVE)) {
-			enemyTotal = loaded_roomtotalenemies;
-		    }
-
-		    Room *current_room = NULL;
-
-		    //Check if current room needs to be played
-		    if (current_floor->roomclass_layout[current_x][current_y] !=
-			BASIC) {
-			kls_log(temporary_kls, "DEBUG",
-				"Prepping Room for Rogue Gamemode. roomsDone=(%i)",
-				roomsDone);
-			current_room =
-			    (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, 1,
-						      HR_Room, "Room", msg);
-
-			current_room->index = roomsDone;
-			//setRoomType(path, &roadFork_value, &room_type, roomsDone);
-
-			room_type =
-			    current_floor->
-			    roomclass_layout[current_x][current_y];
-			log_tag("debug_log.txt", "[ROOM]",
-				"Set Room #%i type:    (%s)\n", roomsDone,
-				stringFromRoom(room_type));
-
-			initRoom(current_room, player, roomsDone, room_type,
-				 enemyTotal, load_info, gamestate_kls);
-			log_tag("debug_log.txt", "[ROOM]",
-				"Init Room #%i:    (%s)\n", roomsDone,
-				stringFromRoom(room_type));
-
-			/*
-			   //Check if we need to display a story prompt
-			   if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
-			   displayLore(lore_strings,*loreCounter);
-			   (*loreCounter)++;
-			   }
-			 */
-
-			//Play room animation
-
-			WINDOW *door_win;
-			//initscr();
-			clear();
-			refresh();
-			start_color();
-
-			int reps = 1;
-			int frametime = 27;
-			int num_frames = 60;
-			int frame_height = 22;
-			int frame_width = 22;
-			door_win =
-			    newwin(frame_height + 1, frame_width + 1, 0, 25);
-
-			char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
-
-			s4c_copy_animation(enter_door, door_sprites, num_frames,
-					   frame_height, frame_width);
-
-			log_tag("debug_log.txt", "[PREP]",
-				"Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",
-				num_frames, frame_height, frame_width);
-
-			/*
-			 * TODO
-			 * Remove me
-			 * Legacy code for loading animation from an s4c-file.
-			 *
-			 // Set static_path value to the correct static dir path
-
-			 // Set static_path value to the correct static dir path
-			 resolve_staticPath(static_path);
-
-			 char door_file_path[600];
-
-			 sprintf(door_file_path,"%s/animations/enter_door.txt",static_path);
-
-			 FILE* door_file = fopen(door_file_path,"r");
-			 if (!door_file) {
-			 fprintf(stderr,"[ERROR]    Can't open enter_door file.\n");
-			 exit(EXIT_FAILURE);
-			 }
-			 int loadCheck = load_sprites(door_sprites, door_file, frame_height-1, frame_width-1);
-
-			 // Check for possible loadCheck() errors and in this case we return early if we couldn't load
-			 if (loadCheck < 0) {
-			 endwin();
-			 switch (loadCheck) {
-			 case S4C_ERR_FILEVERSION: {
-			 fprintf(stderr,"S4C_ERR_FILEVERSION : Failed file version check.\n");
-			 }
-			 break;
-			 case S4C_ERR_LOADSPRITES: {
-			 fprintf(stderr,"S4C_ERR_LOADSPRITES : Failed loading the sprites.\n");
-			 }
-			 break;
-			 }
-			 exit(loadCheck);
-			 }
-			 */
-
-			// We make sure we have the background correcly set up and expect animate_sprites to refresh it
-			wclear(door_win);
-			wrefresh(door_win);
-
-			int result =
-			    s4c_animate_sprites_at_coords(door_sprites,
-							  door_win, reps,
-							  frametime, num_frames,
-							  frame_height,
-							  frame_width, 0, 0);
-			log_tag("debug_log.txt", "[DEBUG]",
-				"animate() result was (%i)", result);
-			wclear(door_win);
-			wrefresh(door_win);
-			delwin(door_win);
-			endwin();
-
-			update_Gamestate(gamestate, 1, current_room->class,
-					 current_room->index, -1,
-					 current_floor);
-
-			if (current_room->class == HOME) {
-			    res =
-				handleRoom_Home(gamestate, current_room,
-						roomsDone, path, player,
-						load_info, fighter_sprites,
-						default_kls, gamestate_kls);
-			} else if (current_room->class == ENEMIES) {
-			    res =
-				handleRoom_Enemies(gamestate, current_room,
-						   roomsDone, path, player,
-						   load_info, enemy_sprites,
-						   fighter_sprites, default_kls,
-						   gamestate_kls);
-			} else if (current_room->class == SHOP) {
-			    res =
-				handleRoom_Shop(current_room, roomsDone, path,
-						player, default_kls,
-						gamestate_kls);
-			} else if (current_room->class == BOSS) {
-			    res =
-				handleRoom_Boss(gamestate, current_room,
-						roomsDone, path, player,
-						load_info, boss_sprites,
-						fighter_sprites, default_kls,
-						gamestate_kls);
-			} else if (current_room->class == TREASURE) {
-			    res =
-				handleRoom_Treasure(current_room, roomsDone,
-						    path, player, default_kls,
-						    gamestate_kls);
-			} else if (current_room->class == ROADFORK) {
-			    res =
-				handleRoom_Roadfork(current_room,
-						    &roadFork_value, roomsDone,
-						    path, player);
-			} else {
-			    sprintf(msg,
-				    "Unexpected current_room->class value: [%i] [%s]",
-				    current_room->class,
-				    stringFromRoom(current_room->class));
-			    log_tag("debug_log.txt", "[ERROR]", msg);
-			    //freeRoom(current_room);
-			    log_tag("debug_log.txt", "[ERROR]",
-				    "Freed current room, quitting program.");
-			    exit(EXIT_FAILURE);
-			}
-
-			if (res == OP_RES_DEATH) {
-			    log_tag("debug_log.txt", "[DEBUG]",
-				    "Room resulted in DEATH.");
-			    //Free room memory
-			    //freeRoom(current_room);
-			    break;
-			} else {
-			    //Flush the terminal
-			    int clrres = system("clear");
-			    log_tag("debug_log.txt", "[DEBUG]",
-				    "gameloop() system(\"clear\") res was (%i)",
-				    clrres);
-
-			    if (roadFork_value > 0) {
-				//lightYellow();
-				//TODO
-				//What is this?
-				printStats(player);
-				//lightGreen();
-				log_tag("debug_logx.txt", "[ROADFORK?]",
-					"You completed room %i.", roomsDone);
-				//white();
-			    }
-			    roomsDone++;
-
-			    //Update stats
-			    player->stats->roomscompleted++;
-
-			    //Free room memory
-			    //freeRoom(current_room);
-
-			    //Update floor's roomclass layout for finished rooms which should not be replayed
-			    switch (current_floor->
-				    roomclass_layout[current_x][current_y]) {
-			    case ENEMIES:{
-				    current_floor->
-					roomclass_layout[current_x][current_y] =
-					BASIC;
-				}
-				break;
-			    case BOSS:{
-				    current_floor->
-					roomclass_layout[current_x][current_y] =
-					BASIC;
-				    floors_done++;
-				    player->stats->floorscompleted++;
-				    log_tag("debug_log.txt", "[DEBUG]",
-					    "Floors done: [%i]", floors_done);
-				    //Check if we need to update the win condition
-				    if (win_con->class == FULL_PATH) {
-					win_con->current_val++;
-				    }
-				    // Reset gamestate_kls
-				    kls_temp_end(gamestate_kls);
-				    gamestate_kls =
-					kls_temp_start(temporary_kls);
-
-				    current_floor =
-					(Floor *)
-					KLS_PUSH_T_TYPED(gamestate_kls, Floor,
-							 1, HR_Floor, "Floor",
-							 "Floor");
-				    update_Gamestate(gamestate, 1, HOME,
-						     roomsDone, -1,
-						     current_floor);
-
-				    //Regenerate floor
-				    log_tag("debug_log.txt", "[DEBUG]",
-					    "Beaten a boss, regenerating current floor.");
-				    // Init
-				    init_floor_layout(current_floor);
-				    //Set center as filled
-				    current_floor->
-					floor_layout[center_x][center_y] = 1;
-				    //Init floor rooms
-				    init_floor_rooms(current_floor);
-				    //Random walk #1
-				    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-				    //Random walk #2
-				    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-				    //Set floor explored matrix
-				    load_floor_explored(current_floor);
-				    //Set room types
-				    floor_set_room_types(current_floor);
-
-				    //Center current coords
-				    current_x = center_x;
-				    current_y = center_y;
-				    continue;	//Check win condition for loop
-
-				}
-				break;
-			    case SHOP:{
-				    current_floor->
-					roomclass_layout[current_x][current_y] =
-					BASIC;
-				}
-				break;
-			    case TREASURE:{
-				    current_floor->
-					roomclass_layout[current_x][current_y] =
-					BASIC;
-				}
-				break;
-			    case HOME:{
-				    //We leave it available
-				    log_tag("debug_log.txt", "[DEBUG]",
-					    "Skipping reset of roomclass for HOME room");
-				}
-				break;
-			    default:{
-				    log_tag("debug_log.txt", "[ERROR]",
-					    "Unexpected roomclass value in Rogue loop: [%i] [%s]",
-					    current_floor->
-					    roomclass_layout[current_x]
-					    [current_y],
-					    stringFromRoom(current_floor->
-							   roomclass_layout
-							   [current_x]
-							   [current_y]));
-				    kls_free(default_kls);
-				    kls_free(temporary_kls);
-				    exit(EXIT_FAILURE);
-				}
-				break;
-			    }
-			}
-		    } else {
-			log_tag("debug_log.txt", "[DEBUG]",
-				"Current room class was [%s] (val: %i), not playable.",
-				stringFromRoom(current_floor->
-					       roomclass_layout[current_x]
-					       [current_y]),
-				current_floor->
-				roomclass_layout[current_x][current_y]);
-		    }
-
-		    //Draw current FOV
-		    draw_floor_view(current_floor, current_x, current_y,
-				    floor_win);
-		    //Take a step and update screen
-		    move_update(gamestate, current_floor, &current_x,
-				&current_y, floor_win, path, player,
-				current_room, load_info, default_kls,
-				gamestate_kls);
-		}		// Win condition loop
-
-		//FIXME: do we need this?
-		//kls_temp_end(gamestate_kls);
-		// Clear default_kls
-		//kls_clear(default_kls);
-
-		//Got out of the loop with res not being DEATH; so i won
-		if (res != OP_RES_DEATH) {	//I guess player and enemy were freed already?
-		    int clrres = system("clear");
-		    //TODO
-		    //What is this?
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "gameloop() 2 system(\"clear\") res was (%i)",
-			    clrres);
-		    handleStats(player);
-		    printf("\n\n\tYOU WON!\n\n");
-		    log_tag("debug_log.txt", "[DEBUG]", "Game won.");
-		    //Free default kls
-		    kls_log(default_kls, "DEBUG", "Freeing default KLS");
-		    kls_free(default_kls);
-		    log_tag("debug_log.txt", "[DEBUG-KLS]",
-			    "Freed default KLS");
-
-		    //Free temporary kls
-		    kls_log(temporary_kls, "DEBUG", "Freeing temporary KLS");
-		    kls_free(temporary_kls);
-		    log_tag("debug_log.txt", "[DEBUG-KLS]",
-			    "Freed temporary KLS");
-		} else {
-		    //TODO
-		    //What is this?
-		    int clrres = system("clear");
-		    log_tag("debug_log.txt", "[DEBUG]",
-			    "gameloop() 3 system(\"clear\") res was (%i)",
-			    clrres);
-		    printf("\n\n\tYOU DIED.\n\n");
-		    log_tag("debug_log.txt", "[DEBUG]", "Game lost.");
-		}
-
-		/*
-		   //Free lore strings if they were loaded
-		   if (GAMEMODE == Story) {
-		   for (int i=0; i<5; i++) {
-		   char msg[1000];
-		   sprintf(msg,"Freed lore string %i",i);
-		   log_tag("debug_log.txt","[FREE]",msg);
-		   sprintf(msg,"%s",lore_strings[i]);
-		   log_tag("debug_log.txt","[FREE]",msg);
-		   //free(lore_strings[i]);
-		   }
-		   }
-		 */
-
-		//free(path->win_condition);
-		//free(path);
-		log_tag("debug_log.txt", "[DEBUG]", "End of wincon loop.");
-
-		//free(current_floor);
-
-		endwin();
-	    } else {
-		log_tag("debug_log.txt", "[ERROR]", "Error in gameloop().");
-		exit(EXIT_FAILURE);
-	    }
-	}
-	//kls_temp_end(gamestate_kls);
+        if (G_DEBUG_ENEMYTYPE_ON == 1) {
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ENEMYTYPE_ON == (%i)",
+                    G_DEBUG_ENEMYTYPE_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "ENEMY DEBUG FLAG ASSERTED");
+            if ((G_DEBUG_ON > 0)) {
+                G_DEBUG_ON += 1;
+                log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                        G_DEBUG_ON);
+                log_tag("debug_log.txt", "[DEBUG]", "Forcing enemy type: (%s)",
+                        G_DEBUG_ENEMYTYPE_ARG);
+                int setenemy_debug = 0;
+                for (int ec = 0; ec < ENEMYCLASSESMAX && (setenemy_debug == 0);
+                     ec++) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Checking optarg for -E: (%s)",
+                            stringFromEClass(ec));
+                    if ((strcmp(G_DEBUG_ENEMYTYPE_ARG, stringFromEClass(ec)) ==
+                         0)) {
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",
+                                stringFromEClass(ec), ec);
+                        G_DEBUG_ENEMYTYPE = ec;
+                        setenemy_debug = 1;
+                    }
+                }
+                if (setenemy_debug == 0) {
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "Invalid optarg for -E flag: {%s}.\n",
+                            G_DEBUG_ENEMYTYPE_ARG);
+                    fprintf(stderr,
+                            "[ERROR]    Incorrect -E \"enemyType\" arg: {%s}.\n",
+                            G_DEBUG_ENEMYTYPE_ARG);
+                    fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
+                            kls_progname);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                };
+            }
+        }
+        if (G_DEBUG_ROOMTYPE_ON == 1) {
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ROOMTYPE_ON == (%i)",
+                    G_DEBUG_ROOMTYPE_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "ROOM DEBUG FLAG ASSERTED");
+            if ((G_DEBUG_ON > 0)) {
+                G_DEBUG_ON += 1;
+                log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                        G_DEBUG_ON);
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Forcing room type: optarg was (%s)",
+                        G_DEBUG_ROOMTYPE_ARG);
+                int setroom_debug = 0;
+                for (int rc = 0;
+                     (rc < ROOM_CLASS_MAX + 1) && (setroom_debug == 0); rc++) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Checking optarg (%s) for -R: (%s)", optarg,
+                            stringFromRoom(rc));
+                    if ((strcmp(G_DEBUG_ROOMTYPE_ARG, stringFromRoom(rc)) == 0)) {
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",
+                                stringFromRoom(rc), rc);
+                        G_DEBUG_ROOMTYPE = rc;
+                        setroom_debug = 1;
+                    }
+                }
+                if (setroom_debug == 0) {
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "Invalid optarg for -R flag: {%s}.",
+                            G_DEBUG_ROOMTYPE_ARG);
+                    fprintf(stderr,
+                            "[ERROR]    Incorrect -R \"roomType\" arg: {%s}.\n",
+                            G_DEBUG_ROOMTYPE_ARG);
+                    fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
+                            kls_progname);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                };
+            }
+
+        }
+        log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
+
+        // Clear screen and print title, wait for user to press enter
+        int clearres = system("clear");
+        log_tag("debug_log.txt", "[DEBUG]",
+                "gameloop() system(\"clear\") res was (%i)", clearres);
+        printTitle();
+        char c;
+        yellow();
+        printf("\n\n\n\n\t\t\tPRESS ENTER TO START\n\n");
+        white();
+
+        if (G_DEBUG_ON) {
+            lightCyan();
+            printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
+            white();
+        }
+        printf("\t\t\t\t\t\t");
+        printFormattedVersion(whoami);
+        int scanfres = scanf("%c", &c);
+        log_tag("debug_log.txt", "[DEBUG]", "gameloop() scanf() res was (%i)",
+                scanfres);
+
+        // Parse positional arguments
+        //for (int i = optind; i < argc; i++) {
+        // Handle positional arguments
+        Path *path = NULL;
+        Fighter *player = NULL;
+
+        clock_t start_time = clock(), diff_time;
+
+        // Prepare the fighter frames
+        char fighter_sprites[CLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
+
+        char static_path[500];
+
+        // Set static_path value to the correct static dir path
+        resolve_staticPath(static_path);
+
+        /*
+         * Legacy code for loading animations from an s4c-file.
+         char fighter_filename[600];
+         FILE* fighter_sprite_file;
+         */
+        for (int i = 0; i < CLASSESMAX + 1; i++) {
+
+            int n_load_frames = 60;
+            int n_load_rows = 17;
+            int n_load_cols = 17;
+
+            switch (i) {
+            case Knight: {
+                s4c_copy_animation(knight_tapis, fighter_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Mage: {
+                s4c_copy_animation(mage_spark, fighter_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Archer: {
+                s4c_copy_animation(archer_drop, fighter_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Assassin: {
+                s4c_copy_animation(assassin_poof, fighter_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected fighterclass index while loading animation for class (%i): [%s]",
+                        i, stringFromClass(i));
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }
+
+            /*
+             * Legacy code for loading animations from an s4c-file
+             fighter_sprite_file = fopen(fighter_filename, "r");
+             if (!fighter_sprite_file) {
+             fprintf(stderr,"Error opening animation file at (%s).\n",fighter_filename);
+             fprintf(stderr,"Static path was (%s).\n",static_path);
+             exit(EXIT_FAILURE);
+             }
+             int fighter_loadCheck = load_sprites(fighter_sprites[i], fighter_sprite_file, 17, 17);
+             sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromClass(i), fighter_loadCheck);
+             log_tag("debug_log.txt","[PREP]",load_msg);
+             */
+
+            log_tag("debug_log.txt", "[PREP]",
+                    "Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",
+                    stringFromClass(i), n_load_frames, n_load_rows,
+                    n_load_cols);
+
+            //Massive log of all loaded lines
+            /*
+               for (int k=0; k<MAXFRAMES+1; k++) {
+               sprintf(load_msg,"[DEBUG]    frame %i:", k);
+               debug_log("debug_log.txt",load_msg);
+               for (int z=0; z<MAXROWS+1;z++) {
+               sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, fighter_sprites[i][k][z]);
+               debug_log("debug_log.txt",load_msg);
+               }
+               }
+             */
+        }
+
+        //Try preloading all enemy animations
+        char enemy_sprites[ENEMYCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
+        for (int i = 0; i < (ENEMYCLASSESMAX + 1); i++) {
+            /* Legacy code to load animations from an s4c-file
+               char static_path[500];
+
+               // Set static_path value to the correct static dir path
+               resolve_staticPath(static_path);
+
+               char enemy_filename[600];
+               FILE* enemy_sprite_file;
+             */
+
+            int n_load_frames = 60;
+            int n_load_rows = 17;
+            int n_load_cols = 17;
+            // Prepare the enemy frames
+            switch (i) {
+            case Imp: {
+                s4c_copy_animation(imp_fireball, enemy_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Zombie: {
+                s4c_copy_animation(zombie_walk, enemy_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Troll: {
+                s4c_copy_animation(troll_club, enemy_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Ghost: {
+                s4c_copy_animation(ghost_spell, enemy_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Boar: {
+                s4c_copy_animation(boar_scream, enemy_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Mummy: {
+                s4c_copy_animation(mummy_shuffle, enemy_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Goblin: {
+                s4c_copy_animation(goblin_shoot, enemy_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Werewolf: {
+                s4c_copy_animation(werewolf_transform, enemy_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected enemy index while loading animation for enemy (%i): [%s]",
+                        i, stringFromEClass(i));
+                exit(EXIT_FAILURE);
+            }
+            }
+
+            /* Legacy code loading the animations from an s4c-file
+               enemy_sprite_file = fopen(enemy_filename, "r");
+               if (!enemy_sprite_file) {
+               fprintf(stderr,"Error opening animation file at (%s/%s).\n",static_path,enemy_filename);
+               exit(EXIT_FAILURE);
+               }
+               int enemy_loadCheck = load_sprites(enemy_sprites[i], enemy_sprite_file, 17, 17);
+               sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromEClass(i), enemy_loadCheck);
+               log_tag("debug_log.txt","[PREP]",load_msg);
+             */
+
+            log_tag("debug_log.txt", "[PREP]",
+                    "Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",
+                    stringFromEClass(i), n_load_frames, n_load_rows,
+                    n_load_cols);
+
+            //Massive log of all loaded lines
+            /*
+               for (int k=0; k<MAXFRAMES+1; k++) {
+               sprintf(load_msg,"[DEBUG]    frame %i:", k);
+               debug_log("debug_log.txt",load_msg);
+               for (int z=0; z<MAXROWS+1;z++) {
+               sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, enemy_sprites[i][k][z]);
+               debug_log("debug_log.txt",load_msg);
+               }
+               }
+             */
+        }
+        //Try preloading all boss animations
+        char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
+        for (int i = 0; i < (BOSSCLASSESMAX + 1); i++) {
+            int n_load_frames = 60;
+            int n_load_rows = 17;
+            int n_load_cols = 17;
+
+            /*
+             * Legacy code for loading animations from an s4c-file.
+             char static_path[500];
+
+             // Set static_path value to the correct static dir path
+             resolve_staticPath(static_path);
+
+             char boss_filename[600];
+             FILE* boss_sprite_file;
+             */
+
+            // Prepare the boss frames
+            switch (i) {
+            case Blue_Troll: {
+                s4c_copy_animation(bluetroll_wonder, boss_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Headless_Ninja: {
+                s4c_copy_animation(headlessninja_throw, boss_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Crawling_Dude: {
+                s4c_copy_animation(crawlingdude_crawl, boss_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Sr_Warthog: {
+                s4c_copy_animation(srwarthog_square, boss_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            case Doppelganger: {
+                s4c_copy_animation(knight_tapis, boss_sprites[i],
+                                   n_load_frames, n_load_rows, n_load_cols);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected boss index while loading animation for boss (%i): [%s]",
+                        i, stringFromBossClass(i));
+                exit(EXIT_FAILURE);
+            }
+            }
+            /*
+             * Legacy code for loading animations from an s4c-file.
+             boss_sprite_file = fopen(boss_filename, "r");
+             if (!boss_sprite_file) {
+             fprintf(stderr,"Error opening animation file at (%s/%s).\n",static_path,boss_filename);
+             exit(EXIT_FAILURE);
+             }
+             int boss_loadCheck = load_sprites(boss_sprites[i], boss_sprite_file, 17, 17);
+             sprintf(load_msg,"Loaded animation for %s, load result was %i.", stringFromBossClass(i), boss_loadCheck);
+             log_tag("debug_log.txt","[PREP]",load_msg);
+             */
+
+            log_tag("debug_log.txt", "[PREP]",
+                    "Copied animation from default matrix vector for: [%s] with dimensions: [%i][%i][%i].",
+                    stringFromBossClass(i), n_load_frames, n_load_rows,
+                    n_load_cols);
+
+            //Massive log of all loaded lines
+            /*
+               for (int k=0; k<MAXFRAMES+1; k++) {
+               sprintf(load_msg,"[DEBUG]    frame %i:", k);
+               debug_log("debug_log.txt",load_msg);
+               for (int z=0; z<MAXROWS+1;z++) {
+               sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, enemy_sprites[i][k][z]);
+               debug_log("debug_log.txt",load_msg);
+               }
+               }
+             */
+        }			//End loading boss animations
+        //End of loading animations
+        clock_t animationload_time = clock() - start_time;
+        double time_spent_loading_animations =
+            (double)animationload_time / CLOCKS_PER_SEC;
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Animation loading took %0.7f seconds.",
+                time_spent_loading_animations);
+
+        initscr();
+        // TODO
+        //Select load or new game
+        ITEM **savepick_items;
+        MENU *savepick_menu;
+        WINDOW *savepick_menu_win;
+        WINDOW *savepick_side_win;
+        char current_save_path[300];	//Will hold picked path
+
+        Koliseo_Temp *savepick_kls = kls_temp_start(temporary_kls);
+
+        //Declare turnOP_args
+        Room *fakeroom = NULL;
+        Enemy *fakeenemy = NULL;
+        Boss *fakeboss = NULL;
+        FILE *fakesavefile = NULL;
+        WINDOW *fakenotifywin = NULL;
+        Gamestate *fakegmst = NULL;
+        foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
+        turnOP_args *savepick_turn_args =
+            init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
+                             fakeenemy, fakeboss, fakesavefile, fakenotifywin,
+                             savepick_kls, fake_foe_op);
+        char *savepick_choices[] = {
+            "New game",
+            "Load save",
+            "Tutorial",
+            "Quit",
+            (char *)NULL,
+        };
+        int savepick_n_choices = ARRAY_SIZE(savepick_choices);
+        //FIXME: remove magic numbers
+        turnOption savepick_choice = 999;
+
+        /* Create menu items */
+        savepick_items = (ITEM **) calloc(savepick_n_choices, sizeof(ITEM *));
+        for (int i = 0; i < savepick_n_choices; i++) {
+            savepick_items[i] =
+                new_item(savepick_choices[i], savepick_choices[i]);
+        }
+        savepick_items[savepick_n_choices - 1] = (ITEM *) NULL;
+
+        /* Create menu */
+        savepick_menu = new_menu((ITEM **) savepick_items);
+
+        /* Set description off */
+        menu_opts_off(savepick_menu, O_SHOWDESC);
+
+        /* Create the window to be associated with the menu */
+        savepick_menu_win = newwin(11, 16, 5, 35);
+        keypad(savepick_menu_win, TRUE);
+
+        /* Set main window and sub window */
+        set_menu_win(savepick_menu, savepick_menu_win);
+        set_menu_sub(savepick_menu, derwin(savepick_menu_win, 4, 14, 4, 1));
+        set_menu_format(savepick_menu, 4, 1);
+
+        /* Set menu mark to the string " >  " */
+        set_menu_mark(savepick_menu, " >  ");
+
+        /* Print a border around main menu window */
+        box(savepick_menu_win, 0, 0);
+        print_label(savepick_menu_win, 1, 0, 16, "Select save", COLOR_PAIR(6));
+        mvwaddch(savepick_menu_win, 2, 0, ACS_LTEE);
+        mvwhline(savepick_menu_win, 2, 1, ACS_HLINE, 16);
+        mvwaddch(savepick_menu_win, 2, 15, ACS_RTEE);
+
+        /* Post the menu */
+        post_menu(savepick_menu);
+        wrefresh(savepick_menu_win);
+
+        //Handle side window for welcome info
+        savepick_side_win = newwin(12, 32, 2, 2);
+        scrollok(savepick_side_win, TRUE);
+        wprintw(savepick_side_win, "  \nhelapordo v%s", VERSION);
+        wprintw(savepick_side_win, "  \n  using: s4c-animate v%s",
+                S4C_ANIMATE_VERSION);
+        wprintw(savepick_side_win, "  \n  using: koliseo v%s",
+                KOLISEO_API_VERSION_STRING);
+        wprintw(savepick_side_win, "  \n  using: ncurses v%s", NCURSES_VERSION);
+        wprintw(savepick_side_win, "  \nBuilt with: amboso v%s",
+                ANVIL__API_LEVEL__STRING);
+        //wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
+        wrefresh(savepick_side_win);
+        refresh();
+
+        int savepick_picked = 0;
+
+        /*
+           //We set the colors to use s4c's palette file...
+           FILE* palette_file;
+           char path_to_palette[600];
+           char palette_name[50] = "palette.gpl";
+         */
+        int pickchar = -1;
+
+        /*
+           // Set static_path value to the correct static dir path
+           resolve_staticPath(static_path);
+
+           sprintf(path_to_palette,"%s/%s",static_path,palette_name);
+
+           palette_file = fopen(path_to_palette, "r");
+
+           init_s4c_color_pairs(palette_file);
+         */
+
+        for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+            init_s4c_color_pair(&palette[i], 9 + i);
+        }
+
+        while (!savepick_picked
+               && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
+            switch (pickchar) {
+            case KEY_DOWN: {
+                menu_driver(savepick_menu, REQ_DOWN_ITEM);
+            }
+            break;
+            case KEY_UP: {
+                menu_driver(savepick_menu, REQ_UP_ITEM);
+            }
+            break;
+            case KEY_LEFT: {	/*Left option pick */
+                ITEM *cur;
+                cur = current_item(savepick_menu);
+                savepick_choice = getTurnChoice((char *)item_name(cur));
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Left on choice: [ %s ] value (%i)", item_name(cur),
+                        savepick_choice);
+                if (savepick_choice == NEW_GAME) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Should do something");
+                }
+            }
+            break;
+            case KEY_RIGHT: {	/*Right option pick */
+                ITEM *cur;
+                cur = current_item(savepick_menu);
+                savepick_choice = getTurnChoice((char *)item_name(cur));
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Right on choice: [ %s ] value (%i)",
+                        item_name(cur), savepick_choice);
+                if (savepick_choice == NEW_GAME) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Should do something");
+                }
+            }
+            break;
+            case KEY_NPAGE: {
+                menu_driver(savepick_menu, REQ_SCR_DPAGE);
+            }
+            break;
+            case KEY_PPAGE: {
+                menu_driver(savepick_menu, REQ_SCR_UPAGE);
+            }
+            break;
+            case 10: {	/* Enter */
+                savepick_picked = 1;
+                ITEM *cur;
+
+                //move(18,47);
+                //clrtoeol();
+                cur = current_item(savepick_menu);
+                //mvprintw(18, 47, "Item selected is : %s", item_name(cur));
+                savepick_choice = getTurnChoice((char *)item_name(cur));
+                pos_menu_cursor(savepick_menu);
+                refresh();
+            }
+            break;
+            case 'q': {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Player used q to quit from savepick menu.");
+                //TODO: take some variable to disable quick quitting with q
+                savepick_picked = 1;
+                savepick_choice = getTurnChoice("Quit");
+                pos_menu_cursor(savepick_menu);
+                refresh();
+            }
+            break;
+            default: {
+                break;
+            }
+            }
+            wrefresh(savepick_menu_win);
+            if (savepick_choice == NEW_GAME) {
+                int picked_saveslot_index = get_saveslot_index();
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Saveslot index picked: [%i]", picked_saveslot_index);
+                sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
+                //TODO
+                //Get picked_slot with a curses menu.
+                //int picked_slot = handle_pickSave();
+                //sprintf(current_save_path,default_saveslots[picked_slot].save_path);
+                //TODO
+                //By default we expect the user to press new game, no action needed?
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Running new game from savepick menu");
+                turnOP(OP_NEW_GAME, savepick_turn_args, default_kls,
+                       savepick_kls);
+            } else if (savepick_choice == LOAD_GAME) {
+                int picked_saveslot_index = get_saveslot_index();
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Saveslot index picked: [%i]", picked_saveslot_index);
+                sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
+                //TODO
+                //Get picked_slot with a curses menu.
+                //int picked_slot = handle_pickSave();
+                //sprintf(current_save_path,default_saveslots[picked_slot].save_path);
+                //ATM we expect a single save.
+                //Setting this to 0 is the only thing we expect here, the actual load is done later.
+                load_info->is_new_game = 0;
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Set load value: load_info->is_new_game == (%i)",
+                        load_info->is_new_game);
+                turnOP(OP_LOAD_GAME, savepick_turn_args, default_kls,
+                       savepick_kls);
+                //TODO
+                //Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
+            } else if (savepick_choice == QUIT) {
+                //TODO
+                //We can quit, I guess.
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Savepick menu: doing exit(%i)", EXIT_SUCCESS);
+                // Unpost menu and free all the memory taken up
+                unpost_menu(savepick_menu);
+                free_menu(savepick_menu);
+                log_tag("debug_log.txt", "[FREE]", "Freed savepick menu");
+                for (int k = 0; k < savepick_n_choices; k++) {
+                    free_item(savepick_items[k]);
+                    log_tag("debug_log.txt", "[FREE]",
+                            "Freed %i savepick menu item", k);
+                }
+
+                delwin(savepick_menu_win);
+                endwin();
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            } else if (savepick_choice == TUTORIAL) {
+                log_tag("debug_log.txt", "[DEBUG]", "Doing tutorial.");
+                handleTutorial();
+                exit(EXIT_SUCCESS);
+            }
+        }			//End while !savepick_picked
+
+        //Free turnOP_args
+        //free(savepick_turn_args);
+
+        // Unpost menu and free all the memory taken up
+        unpost_menu(savepick_menu);
+        free_menu(savepick_menu);
+        log_tag("debug_log.txt", "[FREE]", "Freed savepick menu");
+        for (int k = 0; k < savepick_n_choices; k++) {
+            free_item(savepick_items[k]);
+            log_tag("debug_log.txt", "[FREE]", "Freed %i savepick menu item",
+                    k);
+        }
+
+        delwin(savepick_menu_win);
+        endwin();
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Ended window mode for savepick menu");
+
+        kls_temp_end(savepick_kls);
+
+        //Flush the terminal
+        int clrres = system("clear");
+        log_tag("debug_log.txt", "[DEBUG]",
+                "gameloop() system(\"clear\") after savepick res was (%i)",
+                clrres);
+
+        //By now, we expect load_info->is_new_game to be set to 0 or 1.
+        log_tag("debug_log.txt", "[DEBUG]",
+                "  Checking is_new_game:  load_info->is_new_game == (%i)",
+                load_info->is_new_game);
+
+        Koliseo_Temp *gamestate_kls = kls_temp_start(temporary_kls);
+
+        if (load_info->is_new_game) {	// We prepare path and fighter
+            path = randomise_path(rand(), default_kls, current_save_path);
+            path->loreCounter = -1;
+
+            kls_log(default_kls, "DEBUG", "Prepping Fighter");
+            player =
+                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, 1, HR_Fighter,
+                                           "Fighter", "Fighter");
+
+            int optTot = optind;
+
+            getParams(argc, argv, player, path, optTot, default_kls);
+            initPlayerStats(player, path, default_kls);
+        } else {		//Handle loading of gamestate
+
+            //Declar turnOP_args
+            Room *fakeroom = NULL;
+            Enemy *fakeenemy = NULL;
+            Boss *fakeboss = NULL;
+            FILE *fakesavefile = NULL;
+            WINDOW *fakenotifywin = NULL;
+            Gamestate *fakegmst = NULL;
+            foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
+            turnOP_args *loading_room_turn_args =
+                init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
+                                 fakeenemy, fakeboss, fakesavefile,
+                                 fakenotifywin, gamestate_kls, fake_foe_op);
+            FILE *save_file;
+            char path_to_savefile[1000];
+            char static_path[500];
+            char savefile_name[300];
+
+            //Copy current_save_path
+            sprintf(savefile_name, "%s", current_save_path);
+
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
+
+            sprintf(path_to_savefile, "%s/%s", static_path, savefile_name);
+
+            save_file = fopen(path_to_savefile, "r");
+            if (!save_file) {
+                //User error
+                fprintf(stderr,
+                        "[ERROR]    Can't open savefile for loading game.\n");
+                fprintf(stderr, "[ERROR]    Expected at path [%s].\n",
+                        path_to_savefile);
+                //Debug error
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Could not load savefile at (%s)", path_to_savefile);
+                exit(EXIT_FAILURE);
+            }
+            //Update loading_room_turn_args->save_file pointer
+            loading_room_turn_args->save_file = save_file;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Assigned loading_room_turn_args->save_file: path [%s]",
+                    path_to_savefile);
+
+            //Read save type
+            //
+            saveType loaded_save_type = -1;
+            loaded_save_type = read_saveType(save_file);
+            log_tag("debug_log.txt", "[TURNOP]", "Read saveType, was [%s].",
+                    stringFrom_saveType(loaded_save_type));
+
+            if (loaded_save_type == -1) {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Failed setting loaded_save_type. Quitting.");
+                fprintf(stderr, "[ERROR]    Failed setting a save type.");
+
+                exit(EXIT_FAILURE);
+            }
+
+            load_info->save_type = loaded_save_type;
+
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Assigned load_info->save_type: [%s]",
+                    stringFrom_saveType(load_info->save_type));
+
+            path = randomise_path(rand(), default_kls, current_save_path);
+            kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
+            player =
+                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, 1, HR_Fighter,
+                                           "Fighter", "Loady Fighter");
+            player->class = Knight;
+
+            strcpy(player->name, "Loady");
+
+            //Update loading_room_turn_args->actor pointer
+            loading_room_turn_args->actor = player;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Assigned Fighter [%s]. loading_room_turn_args->actor->name: [%s]",
+                    player->name, loading_room_turn_args->actor->name);
+
+            kls_log(default_kls, "DEBUG", "Prepping Loady Wincon");
+            Wincon *w =
+                (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, 1, HR_Wincon,
+                                          "Wincon", "Loady Wincon");
+            w->class = FULL_PATH;
+            initWincon(w, path, w->class);
+            initPlayerStats(player, path, default_kls);
+            path->win_condition = w;
+
+            if (load_info->save_type == ENEMIES_SAVE) {
+
+                kls_log(default_kls, "DEBUG", "Prepping Loady Enemy");
+                load_info->loaded_enemy =
+                    (Enemy *) KLS_PUSH_TYPED(default_kls, Enemy, 1, HR_Enemy,
+                                             "Enemy", "Loaded Enemy");
+                //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1,
+                                 gamestate_kls);
+
+                //Update loading_room_turn_args->enemy pointer
+                loading_room_turn_args->enemy = load_info->loaded_enemy;
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Assigned load_info->loaded_enemy->class == [%s]. loading_room_turn_args->loaded_enemy->class == [%s]",
+                        stringFromEClass(load_info->loaded_enemy->class),
+                        stringFromEClass(loading_room_turn_args->enemy->class));
+            }
+            //Update loading_room_turn_args->path pointer
+            loading_room_turn_args->path = path;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Assigned loading_room_turn_args->path == [path] (len %i)",
+                    path->length);
+
+            switch (load_info->save_type) {
+            case ENEMIES_SAVE: {
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Doing OP_LOAD_ENEMYROOM.");
+                //int* loadinfo_totfoes = &(load_info->total_foes);
+                //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                OP_res load_op_result =
+                    turnOP(OP_LOAD_ENEMYROOM, loading_room_turn_args,
+                           default_kls, gamestate_kls);
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "OP_LOAD_ENEMYROOM:  result was [%s].",
+                        stringFrom_OP_res(load_op_result));
+                log_tag("debug_log.txt", "[FREE]",
+                        "Freed loading_room_turn_args. Load result was [%s].",
+                        stringFrom_OP_res(load_op_result));
+                //free(loading_room_turn_args);
+            }
+            break;
+            case HOME_SAVE: {
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Doing OP_LOAD_HOMEROOM.");
+                //int* loadinfo_totfoes = &(load_info->total_foes);
+                //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                OP_res load_op_result =
+                    turnOP(OP_LOAD_HOMEROOM, loading_room_turn_args,
+                           default_kls, gamestate_kls);
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "OP_LOAD_HOMEROOM:  result was [%s].",
+                        stringFrom_OP_res(load_op_result));
+                //log_tag("debug_log.txt","[FREE]","Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
+                load_info->done_loading = 1;
+                log_tag("debug_log.txt", "[PREP]",
+                        "Set load_info->done_loading to 1.");
+                //free(loading_room_turn_args);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "gameloop():  Unexpected save type, value was (%i).",
+                        (int)load_info->save_type);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }
+
+            //e_death(loaded_enemy);
+            //death(player);
+            //exit(0);
+        }
+
+        /*
+         * TODO
+         * Remove me
+         * Legacy code to load lores from a text file.
+         for (int i=0; i<5; i++) {
+         sprintf(msg,"Prepping lore (%i)",i);
+         kls_log("DEBUG",msg);
+         lore_strings[i] = (char*) KLS_PUSH_NAMED(default_kls, char, 300, "Lore", msg);
+         }
+         */
+
+        int *loreCounter = &(path->loreCounter);
+        log_tag("debug_log.txt", "[DEBUG]", "loreCounter == (%i)",
+                *loreCounter);
+
+        if (GAMEMODE == Story) {
+
+            /*
+             * TODO
+             * Remove me
+             * Legacy code to load lores from a text file.
+             int loreKind = 0; //rand() % LORES_MAX;
+             */
+
+            if (load_info->is_new_game) {
+                log_tag("debug_log.txt", "[FIXME]",
+                        "loreCounter was (%i), setting it to 0.", *loreCounter);
+                *loreCounter = 0;	//We must set the counter before going forward
+                //FIXME:
+                //loreCounter should not start from 0 again.
+            }
+
+            /*
+             * TODO
+             *Remove me
+             *Legacy code for loading lores from a text file.
+             loadLore(lore_strings,loreKind);
+             */
+
+        } else {
+            log_tag("debug_log.txt", "[WARN]",
+                    "GAMEMODE is not Story. Value was: (%i)", GAMEMODE);
+        }
+
+        //Set consumables sprites
+        for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
+            setConsumableSprite((Consumable *) player->consumablesBag[i]);
+            log_tag("debug_log.txt", "[PREP]", "Set sprite for %s",
+                    stringFromConsumables(i));
+        }
+        log_tag("debug_log.txt", "[DEBUG-PREP]",
+                "Done setting sprites for Consumables.");
+        //Set artifact sprites
+        for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
+            setArtifactSprite(player->artifactsBag[i]);
+            log_tag("debug_log.txt", "[PREP]", "Set sprite for %s",
+                    stringFromArtifacts(i));
+        }
+        log_tag("debug_log.txt", "[PREP]",
+                "Done setting sprites for Artifacts.");
+        //Set base equips sprites...
+        for (int i = 0; i < EQUIPSMAX + 1; i++) {
+            setEquipSprite(&equips[i]);
+            log_tag("debug_log.txt", "[PREP]", "Set sprite for %s",
+                    stringFromEquips(i));
+        }
+        log_tag("debug_log.txt", "[PREP]", "Done setting sprites for Equips.");
+
+        if (load_info->is_new_game) {
+            log_tag("debug_log.txt", "[PREP]", "New game from scratch.");
+        } else {
+            log_tag("debug_log.txt", "[PREP]", "New game from loading.");
+        }
+        log_tag("debug_log.txt", "[DEBUG]", "Name:    %s", player->name);
+        log_tag("debug_log.txt", "[DEBUG]", "Class:    %s",
+                stringFromClass(player->class));
+        log_tag("debug_log.txt", "[DEBUG]", "Gamemode:    %s",
+                stringFromGamemode(GAMEMODE));
+
+        //purple();
+        //printStats(player);
+        //white();
+
+        int roomsDone = load_info->is_new_game ? 1 : loaded_roomindex;
+        OP_res res = OP_RES_NO_DMG;
+        int roadFork_value = -1;	//0 may be used as a value, so
+
+        Wincon *win_con = path->win_condition;
+        log_tag("debug_log.txt", "[DEBUG]", "Wincon:    %s\n",
+                stringFromWinconClass(win_con->class));
+
+        //int refresh_artifact_wincon = 0;
+        if (load_info->save_type == ENEMIES_SAVE) {
+            load_info->done_loading = 0;
+            log_tag("debug_log.txt", "[DEBUG-PREP]",
+                    "Set load_info->done_loading to 0.");
+        }
+        log_tag("debug_log.txt", "[DEBUG-PREP]", "Prepping done.\n");
+        log_tag("debug_log.txt", "[DEBUG]", "Starting wincon loop.\n");
+
+        diff_time = clock() - start_time;
+        int time_spent = diff_time * 1000 / CLOCKS_PER_SEC;
+        //sprintf(msg,"[DEBUG]    Prep took %0.7f seconds.\n",time_spent);
+        log_tag("debug_log.txt", "[DEBUG]", "Prep took %d s, %d ms.",
+                time_spent / 1000, time_spent % 1000);
+
+        Gamestate *gamestate =
+            KLS_PUSH_TYPED(default_kls, Gamestate, 1, HR_Gamestate, "Gamestate",
+                           "Gamestate");
+        init_Gamestate(gamestate, player->stats, path->win_condition, path,
+                       player, GAMEMODE);
+        if (gamestate->gamemode == Rogue) {
+            //Note: different lifetime than gamestate
+            //NO. The update_gamestate call is instead performed later.
+            //Floor* current_floor = KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Init Curr floor");
+            //NO. We pass NULL now.
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+        } else {
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+        }
+        log_tag("debug_log.txt", "[DEBUG]", "Initialised Gamestate.");
+        dbg_Gamestate(gamestate);
+
+        if (GAMEMODE == Story || GAMEMODE == Standard) {
+
+            //Loop till wincon reached
+
+            while (win_con->current_val < win_con->target_val) {
+
+                //Flush the terminal
+                int loop_clrres = system("clear");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "gameloop() system(\"clear\") in wincon loop, res: (%i)",
+                        loop_clrres);
+
+                //Check if we have to update the wincon value
+                if (path->win_condition->class == ALL_ARTIFACTS) {
+                    path->win_condition->current_val =
+                        player->stats->artifactsfound;
+                    //Are we forced to do one more room?
+                }
+
+                int enemyTotal = -1;
+                roomClass room_type = -1;
+
+                if (!(load_info->is_new_game) && !(load_info->done_loading)
+                    && (load_info->save_type == ENEMIES_SAVE)) {
+                    enemyTotal = loaded_roomtotalenemies;
+                }
+
+                kls_log(temporary_kls, "DEBUG",
+                        "Prepping Room for Story Gamemode. roomsDone=(%i)",
+                        roomsDone);
+                Room *current_room =
+                    (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, 1, HR_Room,
+                                              "Room", "Story Room");
+
+                current_room->index = roomsDone;
+                setRoomType(path, &roadFork_value, &room_type, roomsDone);
+                log_tag("debug_log.txt", "[ROOM]",
+                        "Set Room #%i type:    (%s)\n", roomsDone,
+                        stringFromRoom(room_type));
+
+                initRoom(current_room, player, roomsDone, room_type, enemyTotal,
+                         load_info, gamestate_kls);
+                log_tag("debug_log.txt", "[ROOM]", "Init Room #%i:    (%s)\n",
+                        roomsDone, stringFromRoom(room_type));
+
+                start_color();
+                int colorCheck = has_colors();
+
+                if (colorCheck == FALSE) {
+                    fprintf(stderr, "Terminal can't use colors, abort.\n");
+                    exit(S4C_ERR_TERMCOLOR);
+                }
+
+                colorCheck = can_change_color();
+
+                if (colorCheck == FALSE) {
+                    fprintf(stderr, "Terminal can't change colors, abort.\n");
+                    exit(S4C_ERR_TERMCHANGECOLOR);
+                }
+                for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+                    init_s4c_color_pair(&palette[i], 9 + i);
+                }
+                cbreak();
+                noecho();
+                keypad(stdscr, TRUE);
+
+                //Check if we need to display a story prompt
+                if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
+                    displayLore(lore_strings, *loreCounter);
+                    (*loreCounter)++;
+                }
+                //Play room animation
+
+                /*
+                   FILE* palette_file;
+                   char path_to_palette[600];
+                   char static_path[500];
+                   char palette_name[50] = "palette.gpl" ;
+
+                   // Set static_path value to the correct static dir path
+                   resolve_staticPath(static_path);
+
+                   sprintf(path_to_palette,"%s/%s",static_path,palette_name);
+
+                   palette_file = fopen(path_to_palette, "r");
+                   if (palette_file == NULL) {
+                   fprintf(stderr, "Error: could not open palette file (%s/%s).\n",static_path, palette_name);
+                   exit(EXIT_FAILURE);
+                   }
+                 */
+
+                WINDOW *door_win;
+                //initscr();
+                clear();
+                refresh();
+
+                int reps = 1;
+                int frametime = 27;
+                int num_frames = 60;
+                int frame_height = 22;
+                int frame_width = 22;
+                door_win = newwin(frame_height + 1, frame_width + 1, 0, 25);
+
+                char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
+
+                s4c_copy_animation(enter_door, door_sprites, num_frames,
+                                   frame_height, frame_width);
+
+                log_tag("debug_log.txt", "[PREP]",
+                        "Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",
+                        num_frames, frame_height, frame_width);
+
+                /*
+                 * TODO
+                 * Remove me
+                 * Legacy code for loading animation from an s4c-file.
+                 *
+                 // Set static_path value to the correct static dir path
+                 resolve_staticPath(static_path);
+
+                 char door_file_path[600];
+
+                 sprintf(door_file_path,"%s/animations/enter_door.txt",static_path);
+
+                 FILE* door_file = fopen(door_file_path,"r");
+                 if (!door_file) {
+                 fprintf(stderr,"[ERROR]    Can't open enter_door file.\n");
+                 exit(EXIT_FAILURE);
+                 }
+                 int loadCheck = load_sprites(door_sprites, door_file, frame_height-1, frame_width-1);
+
+                 // Check for possible loadCheck() errors and in this case we return early if we couldn't load
+                 if (loadCheck < 0) {
+                 endwin();
+                 switch (loadCheck) {
+                 case S4C_ERR_FILEVERSION: {
+                 fprintf(stderr,"S4C_ERR_FILEVERSION : Failed file version check.\n");
+                 }
+                 break;
+                 case S4C_ERR_LOADSPRITES: {
+                 fprintf(stderr,"S4C_ERR_LOADSPRITES : Failed loading the sprites.\n");
+                 }
+                 break;
+                 }
+                 exit(loadCheck);
+                 }
+                 */
+
+                // We make sure we have the background correcly set up and expect animate_sprites to refresh it
+                wclear(door_win);
+                wrefresh(door_win);
+
+                int result =
+                    s4c_animate_sprites_at_coords(door_sprites, door_win, reps,
+                                                  frametime, num_frames,
+                                                  frame_height, frame_width, 0,
+                                                  0);
+                log_tag("debug_log.txt", "[DEBUG]", "animate() result was (%i)",
+                        result);
+                wclear(door_win);
+                wrefresh(door_win);
+                delwin(door_win);
+                endwin();
+
+                update_Gamestate(gamestate, 1, current_room->class, roomsDone,
+                                 -1, NULL);
+
+                if (current_room->class == HOME) {
+                    res =
+                        handleRoom_Home(gamestate, current_room, roomsDone,
+                                        path, player, load_info,
+                                        fighter_sprites, default_kls,
+                                        gamestate_kls);
+                } else if (current_room->class == ENEMIES) {
+                    res =
+                        handleRoom_Enemies(gamestate, current_room, roomsDone,
+                                           path, player, load_info,
+                                           enemy_sprites, fighter_sprites,
+                                           default_kls, gamestate_kls);
+                } else if (current_room->class == SHOP) {
+                    //FIXME: does shop require usage of gameloop kls?
+                    res =
+                        handleRoom_Shop(current_room, roomsDone, path, player,
+                                        default_kls, gamestate_kls);
+                } else if (current_room->class == BOSS) {
+                    res =
+                        handleRoom_Boss(gamestate, current_room, roomsDone,
+                                        path, player, load_info, boss_sprites,
+                                        fighter_sprites, default_kls,
+                                        gamestate_kls);
+                } else if (current_room->class == TREASURE) {
+                    res =
+                        handleRoom_Treasure(current_room, roomsDone, path,
+                                            player, default_kls, gamestate_kls);
+                } else if (current_room->class == ROADFORK) {
+                    res =
+                        handleRoom_Roadfork(current_room, &roadFork_value,
+                                            roomsDone, path, player);
+                } else {
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "Unexpected current_room->class value: [%i] [%s]",
+                            current_room->class,
+                            stringFromRoom(current_room->class));
+                    //freeRoom(current_room);
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "Freed current room, quitting program.");
+                    exit(EXIT_FAILURE);
+                }
+
+                if (res == OP_RES_DEATH) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Room resulted in DEATH.\n");
+                    //Free room memory
+                    //freeRoom(current_room);
+                    break;
+                } else {
+                    //Flush the terminal
+                    int clrres = system("clear");
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "gameloop() system(\"clear\") res was (%i)",
+                            clrres);
+
+                    if (roadFork_value > 0) {
+                        //TODO
+                        //What is this?
+                        lightYellow();
+                        printStats(player);
+                        lightGreen();
+                        log_tag("debug_log.txt", "[ROADFORK?]",
+                                "You completed room %i.", roomsDone);
+                        white();
+                    }
+                    roomsDone++;
+
+                    //Update stats
+                    player->stats->roomscompleted++;
+
+                    //Check if we need to update the win condition
+                    if (win_con->class == FULL_PATH) {
+                        win_con->current_val++;
+                    }
+                    //Free room memory
+                    //freeRoom(current_room);
+                    // Reset gamestate_kls
+                    kls_temp_end(gamestate_kls);
+                    gamestate_kls = kls_temp_start(temporary_kls);
+                }
+            }			// Win condition loop
+
+            // Clear default_kls
+            //kls_clear(default_kls);
+
+            //Got out of the loop with res not being DEATH; so i won
+            if (res != OP_RES_DEATH) {	//I guess player and enemy were freed already?
+                int clrres = system("clear");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "gameloop() 2 system(\"clear\") res was (%i)", clrres);
+                handleStats(player);
+                printf("\n\n\tYOU WON!\n\n");
+                log_tag("debug_log.txt", "[DEBUG]", "Game won.");
+                //Free default kls
+                kls_log(default_kls, "DEBUG", "Freeing default KLS");
+                kls_free(default_kls);
+                log_tag("debug_log.txt", "[DEBUG-KLS]", "Freed default KLS");
+
+                //Free temporary kls
+                kls_log(temporary_kls, "DEBUG", "Freeing temporary KLS");
+                kls_free(temporary_kls);
+                log_tag("debug_log.txt", "[DEBUG-KLS]", "Freed temporary KLS");
+            }
+
+            /*
+               //Free lore strings if they were loaded
+               if (GAMEMODE == Story) {
+               for (int i=0; i<5; i++) {
+               char msg[1000];
+               sprintf(msg,"Freed lore string %i",i);
+               log_tag("debug_log.txt","[FREE]",msg);
+               sprintf(msg,"%s",lore_strings[i]);
+               log_tag("debug_log.txt","[FREE]",msg);
+               free(lore_strings[i]);
+               }
+               }
+             */
+            //free(path->win_condition);
+            //free(path);
+            log_tag("debug_log.txt", "[DEBUG]", "End of wincon loop.\n");
+
+        } else {		//Gamemode is not Story or Standard
+            log_tag("debug_log.txt", "[DEBUG]", "Gamemode was [%i]", GAMEMODE);
+
+            if (GAMEMODE == Rogue) {
+                log_tag("debug_log.txt", "[DEBUG]", "Doing a Rogue run.");
+                FILE *palette_file;
+                char path_to_palette[600];
+                char static_path[500];
+                char palette_name[50] = "palette.gpl";
+
+                // Set static_path value to the correct static dir path
+                resolve_staticPath(static_path);
+
+                sprintf(path_to_palette, "%s/%s", static_path, palette_name);
+
+                palette_file = fopen(path_to_palette, "r");
+                if (palette_file == NULL) {
+                    fprintf(stderr,
+                            "Error: could not open palette file (%s/%s).\n",
+                            static_path, palette_name);
+                    exit(EXIT_FAILURE);
+                }
+
+                WINDOW *floor_win;
+                //TODO: store if we have done initsrc() or endwin(). Am sure we can get this from ncurses with some MACRO
+                //initscr();
+                clear();
+                refresh();
+                start_color();
+
+                int colorCheck = has_colors();
+
+                if (colorCheck == FALSE) {
+                    fprintf(stderr, "Terminal can't use colors, abort.\n");
+                    exit(S4C_ERR_TERMCOLOR);
+                }
+
+                colorCheck = can_change_color();
+
+                if (colorCheck == FALSE) {
+                    fprintf(stderr, "Terminal can't change colors, abort.\n");
+                    exit(S4C_ERR_TERMCHANGECOLOR);
+                }
+                for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+                    init_s4c_color_pair(&palette[i], 9 + i);
+                }
+                cbreak();
+                noecho();
+                keypad(stdscr, TRUE);
+
+                cbreak();
+                noecho();
+                keypad(stdscr, TRUE);
+
+                // Create the window
+                floor_win = newwin(23, 24, 1, 2);
+                wclear(floor_win);
+                wrefresh(floor_win);
+                keypad(floor_win, TRUE);
+
+                /* Print a border around the windows and print a title */
+                box(floor_win, 0, 0);
+                wrefresh(floor_win);
+                refresh();
+                int res = -1;
+                char msg[500];
+
+                log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
+                kls_log(default_kls, "DEBUG", "Prepping current_floor.");
+                Floor *current_floor =
+                    (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor, 1,
+                                               HR_Floor, "Floor", "Floor");
+                update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
+                                 current_floor);
+                // Start the random walk from the center of the dungeon
+                int center_x = FLOOR_MAX_COLS / 2;
+                int center_y = FLOOR_MAX_ROWS / 2;
+
+                // Init dbg_floor
+                init_floor_layout(current_floor);
+
+                //Set center as filled
+                current_floor->floor_layout[center_x][center_y] = 1;
+
+                //Init floor rooms
+                init_floor_rooms(current_floor);
+
+                //Random walk #1
+                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                //Random walk #2
+                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+
+                //Set floor explored matrix
+                load_floor_explored(current_floor);
+
+                //Set room types
+                floor_set_room_types(current_floor);
+
+                int current_x = center_x;
+                int current_y = center_y;
+
+                //TODO: handle finishing all floors
+                path->length = MAX_ROGUE_FLOORS;
+
+                int floors_done = 0;
+
+                //Loop till wincon reached
+
+                //while (dbg_floor->explored_area*1.0 < (dbg_floor->area*0.8)) {
+                while (win_con->current_val < win_con->target_val) {
+
+                    //Check if we have to update the wincon value
+                    if (path->win_condition->class == ALL_ARTIFACTS) {
+                        path->win_condition->current_val =
+                            player->stats->artifactsfound;
+                        //Are we forced to do one more room?
+                    }
+
+                    int enemyTotal = -1;
+                    roomClass room_type = -1;
+
+                    if (!(load_info->is_new_game) && !(load_info->done_loading)
+                        && (load_info->save_type == ENEMIES_SAVE)) {
+                        enemyTotal = loaded_roomtotalenemies;
+                    }
+
+                    Room *current_room = NULL;
+
+                    //Check if current room needs to be played
+                    if (current_floor->roomclass_layout[current_x][current_y] !=
+                        BASIC) {
+                        kls_log(temporary_kls, "DEBUG",
+                                "Prepping Room for Rogue Gamemode. roomsDone=(%i)",
+                                roomsDone);
+                        current_room =
+                            (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, 1,
+                                                      HR_Room, "Room", msg);
+
+                        current_room->index = roomsDone;
+                        //setRoomType(path, &roadFork_value, &room_type, roomsDone);
+
+                        room_type =
+                            current_floor->
+                            roomclass_layout[current_x][current_y];
+                        log_tag("debug_log.txt", "[ROOM]",
+                                "Set Room #%i type:    (%s)\n", roomsDone,
+                                stringFromRoom(room_type));
+
+                        initRoom(current_room, player, roomsDone, room_type,
+                                 enemyTotal, load_info, gamestate_kls);
+                        log_tag("debug_log.txt", "[ROOM]",
+                                "Init Room #%i:    (%s)\n", roomsDone,
+                                stringFromRoom(room_type));
+
+                        /*
+                           //Check if we need to display a story prompt
+                           if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
+                           displayLore(lore_strings,*loreCounter);
+                           (*loreCounter)++;
+                           }
+                         */
+
+                        //Play room animation
+
+                        WINDOW *door_win;
+                        //initscr();
+                        clear();
+                        refresh();
+                        start_color();
+
+                        int reps = 1;
+                        int frametime = 27;
+                        int num_frames = 60;
+                        int frame_height = 22;
+                        int frame_width = 22;
+                        door_win =
+                            newwin(frame_height + 1, frame_width + 1, 0, 25);
+
+                        char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
+
+                        s4c_copy_animation(enter_door, door_sprites, num_frames,
+                                           frame_height, frame_width);
+
+                        log_tag("debug_log.txt", "[PREP]",
+                                "Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",
+                                num_frames, frame_height, frame_width);
+
+                        /*
+                         * TODO
+                         * Remove me
+                         * Legacy code for loading animation from an s4c-file.
+                         *
+                         // Set static_path value to the correct static dir path
+
+                         // Set static_path value to the correct static dir path
+                         resolve_staticPath(static_path);
+
+                         char door_file_path[600];
+
+                         sprintf(door_file_path,"%s/animations/enter_door.txt",static_path);
+
+                         FILE* door_file = fopen(door_file_path,"r");
+                         if (!door_file) {
+                         fprintf(stderr,"[ERROR]    Can't open enter_door file.\n");
+                         exit(EXIT_FAILURE);
+                         }
+                         int loadCheck = load_sprites(door_sprites, door_file, frame_height-1, frame_width-1);
+
+                         // Check for possible loadCheck() errors and in this case we return early if we couldn't load
+                         if (loadCheck < 0) {
+                         endwin();
+                         switch (loadCheck) {
+                         case S4C_ERR_FILEVERSION: {
+                         fprintf(stderr,"S4C_ERR_FILEVERSION : Failed file version check.\n");
+                         }
+                         break;
+                         case S4C_ERR_LOADSPRITES: {
+                         fprintf(stderr,"S4C_ERR_LOADSPRITES : Failed loading the sprites.\n");
+                         }
+                         break;
+                         }
+                         exit(loadCheck);
+                         }
+                         */
+
+                        // We make sure we have the background correcly set up and expect animate_sprites to refresh it
+                        wclear(door_win);
+                        wrefresh(door_win);
+
+                        int result =
+                            s4c_animate_sprites_at_coords(door_sprites,
+                                                          door_win, reps,
+                                                          frametime, num_frames,
+                                                          frame_height,
+                                                          frame_width, 0, 0);
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "animate() result was (%i)", result);
+                        wclear(door_win);
+                        wrefresh(door_win);
+                        delwin(door_win);
+                        endwin();
+
+                        update_Gamestate(gamestate, 1, current_room->class,
+                                         current_room->index, -1,
+                                         current_floor);
+
+                        if (current_room->class == HOME) {
+                            res =
+                                handleRoom_Home(gamestate, current_room,
+                                                roomsDone, path, player,
+                                                load_info, fighter_sprites,
+                                                default_kls, gamestate_kls);
+                        } else if (current_room->class == ENEMIES) {
+                            res =
+                                handleRoom_Enemies(gamestate, current_room,
+                                                   roomsDone, path, player,
+                                                   load_info, enemy_sprites,
+                                                   fighter_sprites, default_kls,
+                                                   gamestate_kls);
+                        } else if (current_room->class == SHOP) {
+                            res =
+                                handleRoom_Shop(current_room, roomsDone, path,
+                                                player, default_kls,
+                                                gamestate_kls);
+                        } else if (current_room->class == BOSS) {
+                            res =
+                                handleRoom_Boss(gamestate, current_room,
+                                                roomsDone, path, player,
+                                                load_info, boss_sprites,
+                                                fighter_sprites, default_kls,
+                                                gamestate_kls);
+                        } else if (current_room->class == TREASURE) {
+                            res =
+                                handleRoom_Treasure(current_room, roomsDone,
+                                                    path, player, default_kls,
+                                                    gamestate_kls);
+                        } else if (current_room->class == ROADFORK) {
+                            res =
+                                handleRoom_Roadfork(current_room,
+                                                    &roadFork_value, roomsDone,
+                                                    path, player);
+                        } else {
+                            sprintf(msg,
+                                    "Unexpected current_room->class value: [%i] [%s]",
+                                    current_room->class,
+                                    stringFromRoom(current_room->class));
+                            log_tag("debug_log.txt", "[ERROR]", msg);
+                            //freeRoom(current_room);
+                            log_tag("debug_log.txt", "[ERROR]",
+                                    "Freed current room, quitting program.");
+                            exit(EXIT_FAILURE);
+                        }
+
+                        if (res == OP_RES_DEATH) {
+                            log_tag("debug_log.txt", "[DEBUG]",
+                                    "Room resulted in DEATH.");
+                            //Free room memory
+                            //freeRoom(current_room);
+                            break;
+                        } else {
+                            //Flush the terminal
+                            int clrres = system("clear");
+                            log_tag("debug_log.txt", "[DEBUG]",
+                                    "gameloop() system(\"clear\") res was (%i)",
+                                    clrres);
+
+                            if (roadFork_value > 0) {
+                                //lightYellow();
+                                //TODO
+                                //What is this?
+                                printStats(player);
+                                //lightGreen();
+                                log_tag("debug_logx.txt", "[ROADFORK?]",
+                                        "You completed room %i.", roomsDone);
+                                //white();
+                            }
+                            roomsDone++;
+
+                            //Update stats
+                            player->stats->roomscompleted++;
+
+                            //Free room memory
+                            //freeRoom(current_room);
+
+                            //Update floor's roomclass layout for finished rooms which should not be replayed
+                            switch (current_floor->
+                                    roomclass_layout[current_x][current_y]) {
+                            case ENEMIES: {
+                                current_floor->
+                                roomclass_layout[current_x][current_y] =
+                                    BASIC;
+                            }
+                            break;
+                            case BOSS: {
+                                current_floor->
+                                roomclass_layout[current_x][current_y] =
+                                    BASIC;
+                                floors_done++;
+                                player->stats->floorscompleted++;
+                                log_tag("debug_log.txt", "[DEBUG]",
+                                        "Floors done: [%i]", floors_done);
+                                //Check if we need to update the win condition
+                                if (win_con->class == FULL_PATH) {
+                                    win_con->current_val++;
+                                }
+                                // Reset gamestate_kls
+                                kls_temp_end(gamestate_kls);
+                                gamestate_kls =
+                                    kls_temp_start(temporary_kls);
+
+                                current_floor =
+                                    (Floor *)
+                                    KLS_PUSH_T_TYPED(gamestate_kls, Floor,
+                                                     1, HR_Floor, "Floor",
+                                                     "Floor");
+                                update_Gamestate(gamestate, 1, HOME,
+                                                 roomsDone, -1,
+                                                 current_floor);
+
+                                //Regenerate floor
+                                log_tag("debug_log.txt", "[DEBUG]",
+                                        "Beaten a boss, regenerating current floor.");
+                                // Init
+                                init_floor_layout(current_floor);
+                                //Set center as filled
+                                current_floor->
+                                floor_layout[center_x][center_y] = 1;
+                                //Init floor rooms
+                                init_floor_rooms(current_floor);
+                                //Random walk #1
+                                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                                //Random walk #2
+                                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                                //Set floor explored matrix
+                                load_floor_explored(current_floor);
+                                //Set room types
+                                floor_set_room_types(current_floor);
+
+                                //Center current coords
+                                current_x = center_x;
+                                current_y = center_y;
+                                continue;	//Check win condition for loop
+
+                            }
+                            break;
+                            case SHOP: {
+                                current_floor->
+                                roomclass_layout[current_x][current_y] =
+                                    BASIC;
+                            }
+                            break;
+                            case TREASURE: {
+                                current_floor->
+                                roomclass_layout[current_x][current_y] =
+                                    BASIC;
+                            }
+                            break;
+                            case HOME: {
+                                //We leave it available
+                                log_tag("debug_log.txt", "[DEBUG]",
+                                        "Skipping reset of roomclass for HOME room");
+                            }
+                            break;
+                            default: {
+                                log_tag("debug_log.txt", "[ERROR]",
+                                        "Unexpected roomclass value in Rogue loop: [%i] [%s]",
+                                        current_floor->
+                                        roomclass_layout[current_x]
+                                        [current_y],
+                                        stringFromRoom(current_floor->
+                                                       roomclass_layout
+                                                       [current_x]
+                                                       [current_y]));
+                                kls_free(default_kls);
+                                kls_free(temporary_kls);
+                                exit(EXIT_FAILURE);
+                            }
+                            break;
+                            }
+                        }
+                    } else {
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "Current room class was [%s] (val: %i), not playable.",
+                                stringFromRoom(current_floor->
+                                               roomclass_layout[current_x]
+                                               [current_y]),
+                                current_floor->
+                                roomclass_layout[current_x][current_y]);
+                    }
+
+                    //Draw current FOV
+                    draw_floor_view(current_floor, current_x, current_y,
+                                    floor_win);
+                    //Take a step and update screen
+                    move_update(gamestate, current_floor, &current_x,
+                                &current_y, floor_win, path, player,
+                                current_room, load_info, default_kls,
+                                gamestate_kls);
+                }		// Win condition loop
+
+                //FIXME: do we need this?
+                //kls_temp_end(gamestate_kls);
+                // Clear default_kls
+                //kls_clear(default_kls);
+
+                //Got out of the loop with res not being DEATH; so i won
+                if (res != OP_RES_DEATH) {	//I guess player and enemy were freed already?
+                    int clrres = system("clear");
+                    //TODO
+                    //What is this?
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "gameloop() 2 system(\"clear\") res was (%i)",
+                            clrres);
+                    handleStats(player);
+                    printf("\n\n\tYOU WON!\n\n");
+                    log_tag("debug_log.txt", "[DEBUG]", "Game won.");
+                    //Free default kls
+                    kls_log(default_kls, "DEBUG", "Freeing default KLS");
+                    kls_free(default_kls);
+                    log_tag("debug_log.txt", "[DEBUG-KLS]",
+                            "Freed default KLS");
+
+                    //Free temporary kls
+                    kls_log(temporary_kls, "DEBUG", "Freeing temporary KLS");
+                    kls_free(temporary_kls);
+                    log_tag("debug_log.txt", "[DEBUG-KLS]",
+                            "Freed temporary KLS");
+                } else {
+                    //TODO
+                    //What is this?
+                    int clrres = system("clear");
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "gameloop() 3 system(\"clear\") res was (%i)",
+                            clrres);
+                    printf("\n\n\tYOU DIED.\n\n");
+                    log_tag("debug_log.txt", "[DEBUG]", "Game lost.");
+                }
+
+                /*
+                   //Free lore strings if they were loaded
+                   if (GAMEMODE == Story) {
+                   for (int i=0; i<5; i++) {
+                   char msg[1000];
+                   sprintf(msg,"Freed lore string %i",i);
+                   log_tag("debug_log.txt","[FREE]",msg);
+                   sprintf(msg,"%s",lore_strings[i]);
+                   log_tag("debug_log.txt","[FREE]",msg);
+                   //free(lore_strings[i]);
+                   }
+                   }
+                 */
+
+                //free(path->win_condition);
+                //free(path);
+                log_tag("debug_log.txt", "[DEBUG]", "End of wincon loop.");
+
+                //free(current_floor);
+
+                endwin();
+            } else {
+                log_tag("debug_log.txt", "[ERROR]", "Error in gameloop().");
+                exit(EXIT_FAILURE);
+            }
+        }
+        //kls_temp_end(gamestate_kls);
     } while (retry());
 
     //TODO
@@ -13896,239 +13890,239 @@ void gameloop_Win(int argc, char **argv)
     //Truncate "debug_log.txt"
     sprintf(path_to_kls_debug_file, "%s\\%s", static_path, "kls_debug_log.txt");
     KLS_Conf default_kls_conf = {
-	.kls_autoset_regions = 1,
-	.kls_autoset_temp_regions = 1,
-	.kls_verbose_lvl = 1,
-	.kls_log_filepath = path_to_kls_debug_file,
-	.kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
-	.kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 1,
+        .kls_log_filepath = path_to_kls_debug_file,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
     };
     KLS_Conf temporary_kls_conf = {
-	.kls_autoset_regions = 1,
-	.kls_autoset_temp_regions = 1,
-	.kls_verbose_lvl = 0,
-	.kls_log_fp = stderr,
-	.kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
-	.kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 0,
+        .kls_log_fp = stderr,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
     };
 
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
     do {
-	default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, default_kls_conf);
-	temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, temporary_kls_conf);
-	char *kls_progname =
-	    (char *)KLS_PUSH_TYPED(default_kls, char *, sizeof(whoami),
-				   KLS_None, "progname", whoami);
-	strcpy(kls_progname, whoami);
+        default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, default_kls_conf);
+        temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, temporary_kls_conf);
+        char *kls_progname =
+            (char *)KLS_PUSH_TYPED(default_kls, char *, sizeof(whoami),
+                                   KLS_None, "progname", whoami);
+        strcpy(kls_progname, whoami);
 #ifndef HELAPORDO_DEBUG_LOG
 #else
-	FILE *debug_file = NULL;
-	FILE *OPS_debug_file = NULL;
+        FILE *debug_file = NULL;
+        FILE *OPS_debug_file = NULL;
 #endif
-	// Parse command-line options
-	int option;
-	loadInfo *load_info =
-	    (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo,
-					"loadInfo", "loadInfo");
+        // Parse command-line options
+        int option;
+        loadInfo *load_info =
+            (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo,
+                                        "loadInfo", "loadInfo");
 
-	load_info->is_new_game = 1;	//By default we do a new game
-	load_info->enemy_index = -1;
-	load_info->total_foes = -1;
-	load_info->save_type = -1;
-	int loaded_roomtotalenemies = -1;
-	int loaded_roomindex = -1;
-	load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
-	load_info->ptr_to_roomindex = &loaded_roomindex;
+        load_info->is_new_game = 1;	//By default we do a new game
+        load_info->enemy_index = -1;
+        load_info->total_foes = -1;
+        load_info->save_type = -1;
+        int loaded_roomtotalenemies = -1;
+        int loaded_roomindex = -1;
+        load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
+        load_info->ptr_to_roomindex = &loaded_roomindex;
 
-	while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsa")) != -1) {
-	    switch (option) {
-	    case 'd':{
+        while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsa")) != -1) {
+            switch (option) {
+            case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
-		    G_DEBUG_ON += 1;
-		    G_LOG_ON = 1;
+                G_DEBUG_ON += 1;
+                G_LOG_ON = 1;
 #endif
-		}
-		break;
-	    case 'r':{
-		    G_DEBUG_ROOMTYPE_ON += 1;
-		}
-		break;
-	    case 'E':{
-		    G_DEBUG_ENEMYTYPE_ON += 1;
-		}
-		break;
-	    case 'L':{
-		    G_LOG_ON = 1;
-		}
-		break;
-		break;
-	    case 'G':{
-		    G_GODMODE_ON = 1;
-		}
-		break;
-	    case 'Q':{
-		    G_FASTQUIT_ON = 1;
-		}
-		break;
-	    case 'X':{
-		    G_EXPERIMENTAL_ON = 1;
-		}
-		break;
-	    case 'a':{
-		    GS_AUTOSAVE_ON = 0;
-		}
-		break;
-	    case 's':{
-		    GAMEMODE = Story;
-		}
-		break;
-	    case 'R':{
-		    GAMEMODE = Rogue;
-		}
-		break;
-		break;
-	    case 'h':{
-		    usage(whoami);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_SUCCESS);
-		}
-		break;
-	    case 'T':{
-		    G_DOTUTORIAL_ON = 1;
-		    handleTutorial();
-		    usage(whoami);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_SUCCESS);
-		}
-		break;
-	    case 't':{
-		    //Test all colors
-		    printFormattedVersion(whoami);
-		    printf("Using:\n");
-		    printf("  \'animate\' :\n    s4c/animate.h    ");
-		    S4C_ECHOVERSION();
-		    printf("[DEBUG]    Testing terminal color capabilities.\n");
-		    napms(800);
-		    //TODO Win term color test?
-		    //display_colorpairs();
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_SUCCESS);
-		}
-		break;
-	    case 'v':{
-		    printVersion();
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_SUCCESS);
-		}
-	    case '?':{
-		    fprintf(stderr,
-			    "Invalid option: %c\n Check your arguments.\n",
-			    option);
-		    usage(whoami);
-		    // Handle invalid options
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    default:{
-		    // Should never get here
-		    fprintf(stderr, "Invalid option: %c\n, bad usage.\n",
-			    option);
-		    kls_free(default_kls);
-		    kls_free(temporary_kls);
-		    exit(EXIT_FAILURE);
-		}
-		break;
-	    }
-	}
+            }
+            break;
+            case 'r': {
+                G_DEBUG_ROOMTYPE_ON += 1;
+            }
+            break;
+            case 'E': {
+                G_DEBUG_ENEMYTYPE_ON += 1;
+            }
+            break;
+            case 'L': {
+                G_LOG_ON = 1;
+            }
+            break;
+            break;
+            case 'G': {
+                G_GODMODE_ON = 1;
+            }
+            break;
+            case 'Q': {
+                G_FASTQUIT_ON = 1;
+            }
+            break;
+            case 'X': {
+                G_EXPERIMENTAL_ON = 1;
+            }
+            break;
+            case 'a': {
+                GS_AUTOSAVE_ON = 0;
+            }
+            break;
+            case 's': {
+                GAMEMODE = Story;
+            }
+            break;
+            case 'R': {
+                GAMEMODE = Rogue;
+            }
+            break;
+            break;
+            case 'h': {
+                usage(whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 'T': {
+                G_DOTUTORIAL_ON = 1;
+                handleTutorial();
+                usage(whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 't': {
+                //Test all colors
+                printFormattedVersion(whoami);
+                printf("Using:\n");
+                printf("  \'animate\' :\n    s4c/animate.h    ");
+                S4C_ECHOVERSION();
+                printf("[DEBUG]    Testing terminal color capabilities.\n");
+                napms(800);
+                //TODO Win term color test?
+                //display_colorpairs();
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 'v': {
+                printVersion();
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            case '?': {
+                fprintf(stderr,
+                        "Invalid option: %c\n Check your arguments.\n",
+                        option);
+                usage(whoami);
+                // Handle invalid options
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            default: {
+                // Should never get here
+                fprintf(stderr, "Invalid option: %c\n, bad usage.\n",
+                        option);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }
+        }
 
 #ifndef HELAPORDO_DEBUG_LOG
 #else
-	// Open log file if log flag is set and reset it
-	if (G_LOG_ON == 1) {
-	    char path_to_debug_file[600];
-	    char path_to_OPS_debug_file[600];
-	    char static_path[500];
-	    // Set static_path value to the correct static dir path
-	    resolve_staticPath(static_path);
+        // Open log file if log flag is set and reset it
+        if (G_LOG_ON == 1) {
+            char path_to_debug_file[600];
+            char path_to_OPS_debug_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-	    //Truncate "debug_log.txt"
-	    sprintf(path_to_debug_file, "%s\\%s", static_path, "debug_log.txt");
-	    debug_file = fopen(path_to_debug_file, "w");
-	    if (!debug_file) {
-		endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
-		fprintf(stderr,
-			"[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n",
-			static_path);
-		kls_free(default_kls);
-		kls_free(temporary_kls);
-		exit(EXIT_FAILURE);
-	    }
-	    fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
-	    fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
-	    print_kls_2file(debug_file, default_kls);
-	    fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
-	    print_kls_2file(debug_file, temporary_kls);
-	    fprintf(debug_file,
-		    "[DEBUG]    --Closing header for new game.--  \n");
-	    fclose(debug_file);
+            //Truncate "debug_log.txt"
+            sprintf(path_to_debug_file, "%s\\%s", static_path, "debug_log.txt");
+            debug_file = fopen(path_to_debug_file, "w");
+            if (!debug_file) {
+                endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+                fprintf(stderr,
+                        "[ERROR]    Can't open debug logfile (%s\\debug_log.txt).\n",
+                        static_path);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
+            fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
+            print_kls_2file(debug_file, default_kls);
+            fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
+            print_kls_2file(debug_file, temporary_kls);
+            fprintf(debug_file,
+                    "[DEBUG]    --Closing header for new game.--  \n");
+            fclose(debug_file);
 
-	    //Lay debug info
-	    log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
-		    G_DEBUG_ON);
-	    //FIXME we should have same behaviour as gameloop(), and actually log kls_progname...
-	    //Doesn't matter for now, kls_progname is declared later
-	    log_tag("debug_log.txt", "[DEBUG]", "whoami == (%s)", whoami);
-	    log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
-	    log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
-	    log_tag("debug_log.txt", "[DEBUG]",
-		    "[Current position in default_kls] [pos: %lli]\n",
-		    kls_get_pos(default_kls));
+            //Lay debug info
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                    G_DEBUG_ON);
+            //FIXME we should have same behaviour as gameloop(), and actually log kls_progname...
+            //Doesn't matter for now, kls_progname is declared later
+            log_tag("debug_log.txt", "[DEBUG]", "whoami == (%s)", whoami);
+            log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[Current position in default_kls] [pos: %lli]\n",
+                    kls_get_pos(default_kls));
 
-	    //Truncate OPS_LOGFILE
-	    sprintf(path_to_OPS_debug_file, "%s\\%s", static_path, OPS_LOGFILE);
-	    OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
-	    if (!OPS_debug_file) {
-		endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
-		fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s\\%s).\n",
-			static_path, OPS_LOGFILE);
-		kls_free(default_kls);
-		kls_free(temporary_kls);
-		exit(EXIT_FAILURE);
-	    }
-	    fprintf(OPS_debug_file, "[OPLOG]    --New game--  \n");
-	    fclose(OPS_debug_file);
-	    log_tag("debug_log.txt", "[DEBUG]", "Truncated [%s]", OPS_LOGFILE);
-	    log_Win_EnvVars();
-	    log_tag("debug_log.txt", "[WIN32-DEBUG]", "Printing title.");
-	}
+            //Truncate OPS_LOGFILE
+            sprintf(path_to_OPS_debug_file, "%s\\%s", static_path, OPS_LOGFILE);
+            OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
+            if (!OPS_debug_file) {
+                endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+                fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s\\%s).\n",
+                        static_path, OPS_LOGFILE);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            fprintf(OPS_debug_file, "[OPLOG]    --New game--  \n");
+            fclose(OPS_debug_file);
+            log_tag("debug_log.txt", "[DEBUG]", "Truncated [%s]", OPS_LOGFILE);
+            log_Win_EnvVars();
+            log_tag("debug_log.txt", "[WIN32-DEBUG]", "Printing title.");
+        }
 #endif
-	printTitle();
-	printf("\n\n\n\n\t\t\t\tSTART\n\n");
-	if (G_DEBUG_ON) {
-	    printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
-	}
-	printf("\t\t\t\t\t\t");
-	printFormattedVersion(whoami);
-	printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
-	printf("\n  Press Enter to proceed.\n");
-	scanf("%*c");
-	system("cls");
-	printGlobVars();
-	printWin_EnvVars();
-	printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
-	printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
-	printf("  You move with the arrow keys.\n\n");
-	scanf("%*c");
-	test_floors();
-	kls_free(temporary_kls);
-	kls_free(default_kls);
+        printTitle();
+        printf("\n\n\n\n\t\t\t\tSTART\n\n");
+        if (G_DEBUG_ON) {
+            printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
+        }
+        printf("\t\t\t\t\t\t");
+        printFormattedVersion(whoami);
+        printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
+        printf("\n  Press Enter to proceed.\n");
+        scanf("%*c");
+        system("cls");
+        printGlobVars();
+        printWin_EnvVars();
+        printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
+        printf("  Quit with Ctrl+C, or explore enough of the map.\n\n");
+        printf("  You move with the arrow keys.\n\n");
+        scanf("%*c");
+        test_floors();
+        kls_free(temporary_kls);
+        kls_free(default_kls);
     } while (retry());
 
     //TODO

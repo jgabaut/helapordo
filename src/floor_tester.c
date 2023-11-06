@@ -39,8 +39,8 @@ int test_floors(void)
     char msg[500];
     FILE *debug_file = fopen("static/debug_log.txt", "w");
     if (debug_file == NULL) {
-	fprintf(stderr, "Error while opening debug log file for truncation.");
-	exit(EXIT_FAILURE);
+        fprintf(stderr, "Error while opening debug log file for truncation.");
+        exit(EXIT_FAILURE);
     }
     fprintf(debug_file, "%s", "");
     fclose(debug_file);
@@ -254,14 +254,14 @@ int test_floors(void)
     Koliseo_Temp *t_kls = NULL;
 
     while (dbg_floor->explored_area < dbg_floor->area) {
-	draw_floor_view(dbg_floor, current_x, current_y, test_win);
-	wclear(side_win);
-	wprintw(side_win, "\n    Explored Area: { %i }",
-		dbg_floor->explored_area);
-	wprintw(side_win, "\n    Total Area: { %i }", dbg_floor->area);
-	wrefresh(side_win);
-	move_update(gmst, dbg_floor, &current_x, &current_y, test_win, p, f, r,
-		    load_info, kls, t_kls);
+        draw_floor_view(dbg_floor, current_x, current_y, test_win);
+        wclear(side_win);
+        wprintw(side_win, "\n    Explored Area: { %i }",
+                dbg_floor->explored_area);
+        wprintw(side_win, "\n    Total Area: { %i }", dbg_floor->area);
+        wrefresh(side_win);
+        move_update(gmst, dbg_floor, &current_x, &current_y, test_win, p, f, r,
+                    load_info, kls, t_kls);
     }
 
     free(dbg_floor);

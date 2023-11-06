@@ -49,71 +49,71 @@ turnOption_OP turnOP_from_turnOption(turnOption t)
     turnOption_OP res = OP_INVALID;
 
     switch (t) {
-    case INVALID:{
-	    res = OP_INVALID;
-	}
-	break;
-    case QUIT:{
-	    res = OP_QUIT;
-	}
-	break;
-    case NEW_GAME:{
-	    res = OP_NEW_GAME;
-	}
-	break;
-    case LOAD_GAME:{
-	    res = OP_LOAD_GAME;
-	}
-	break;
-    case FIGHT:{
-	    res = OP_FIGHT;
-	}
-	break;
-    case SPECIAL:{
-	    res = OP_SPECIAL;
-	}
-	break;
-    case CONSUMABLE:{
-	    res = OP_CONSUMABLE;
-	}
-	break;
-    case ARTIFACTS:{
-	    res = OP_ARTIFACTS;
-	}
-	break;
-    case EQUIPS:{
-	    res = OP_EQUIPS;
-	}
-	break;
-    case PERKS:{
-	    res = OP_PERKS;
-	}
-	break;
-    case STATS:{
-	    res = OP_STATS;
-	}
-	break;
-    case SAVE:{
-	    res = OP_SAVE;
-	}
-	break;
-    case EXPLORE:{
-	    res = OP_EXPLORE;
-	}
-	break;
-    case DEBUG:{
-	    res = OP_DEBUG;
-	}
-	break;
-    case SKILL:{
-	    res = OP_SKILL;
-	}
-	break;
-    default:{
-	    //FIXME:
-	    //Signal error right here?
-	    return OP_INVALID;
-	}
+    case INVALID: {
+        res = OP_INVALID;
+    }
+    break;
+    case QUIT: {
+        res = OP_QUIT;
+    }
+    break;
+    case NEW_GAME: {
+        res = OP_NEW_GAME;
+    }
+    break;
+    case LOAD_GAME: {
+        res = OP_LOAD_GAME;
+    }
+    break;
+    case FIGHT: {
+        res = OP_FIGHT;
+    }
+    break;
+    case SPECIAL: {
+        res = OP_SPECIAL;
+    }
+    break;
+    case CONSUMABLE: {
+        res = OP_CONSUMABLE;
+    }
+    break;
+    case ARTIFACTS: {
+        res = OP_ARTIFACTS;
+    }
+    break;
+    case EQUIPS: {
+        res = OP_EQUIPS;
+    }
+    break;
+    case PERKS: {
+        res = OP_PERKS;
+    }
+    break;
+    case STATS: {
+        res = OP_STATS;
+    }
+    break;
+    case SAVE: {
+        res = OP_SAVE;
+    }
+    break;
+    case EXPLORE: {
+        res = OP_EXPLORE;
+    }
+    break;
+    case DEBUG: {
+        res = OP_DEBUG;
+    }
+    break;
+    case SKILL: {
+        res = OP_SKILL;
+    }
+    break;
+    default: {
+        //FIXME:
+        //Signal error right here?
+        return OP_INVALID;
+    }
     }
     return res;
 }
@@ -123,27 +123,27 @@ foeTurnOption_OP foeTurnOP_from_foeTurnOption(foeTurnOption ft)
     foeTurnOption_OP res = FOE_OP_INVALID;
 
     switch (ft) {
-    case FOE_INVALID:{
-	    res = FOE_OP_INVALID;
-	}
-	break;
-    case FOE_FIGHT:{
-	    res = FOE_OP_FIGHT;
-	}
-	break;
-    case FOE_SPECIAL:{
-	    res = FOE_OP_SPECIAL;
-	}
-	break;
-    case FOE_IDLE:{
-	    res = FOE_OP_IDLE;
-	}
-	break;
-    default:{
-	    //FIXME:
-	    //Signal error right here?
-	    return FOE_OP_INVALID;
-	}
+    case FOE_INVALID: {
+        res = FOE_OP_INVALID;
+    }
+    break;
+    case FOE_FIGHT: {
+        res = FOE_OP_FIGHT;
+    }
+    break;
+    case FOE_SPECIAL: {
+        res = FOE_OP_SPECIAL;
+    }
+    break;
+    case FOE_IDLE: {
+        res = FOE_OP_IDLE;
+    }
+    break;
+    default: {
+        //FIXME:
+        //Signal error right here?
+        return FOE_OP_INVALID;
+    }
     }
     return res;
 }
@@ -153,39 +153,39 @@ OP_res OP_res_from_fightResult(fightResult fr)
     OP_res res = INVALID_OP;
 
     switch (fr) {
-    case FIGHTRES_INVALID:{
-	    res = INVALID_OP;
-	}
-	break;
-    case FIGHTRES_KILL_DONE:{
-	    res = OP_RES_KILL_DONE;
-	}
-	break;
-    case FIGHTRES_DMG_DEALT:{
-	    res = OP_RES_DMG_DEALT;
-	}
-	break;
-    case FIGHTRES_DMG_TAKEN:{
-	    res = OP_RES_DMG_TAKEN;
-	}
-	break;
-    case FIGHTRES_DEATH:{
-	    res = OP_RES_DEATH;
-	}
-	break;
-    case FIGHTRES_NO_DMG:{
-	    res = OP_RES_NO_DMG;
-	}
-	break;
-    case FIGHTRES_CLASH:{
-	    res = OP_RES_CLASH;
-	}
-	break;
-    default:{
-	    //FIXME:
-	    //Signal error right here?
-	    return INVALID_OP;
-	}
+    case FIGHTRES_INVALID: {
+        res = INVALID_OP;
+    }
+    break;
+    case FIGHTRES_KILL_DONE: {
+        res = OP_RES_KILL_DONE;
+    }
+    break;
+    case FIGHTRES_DMG_DEALT: {
+        res = OP_RES_DMG_DEALT;
+    }
+    break;
+    case FIGHTRES_DMG_TAKEN: {
+        res = OP_RES_DMG_TAKEN;
+    }
+    break;
+    case FIGHTRES_DEATH: {
+        res = OP_RES_DEATH;
+    }
+    break;
+    case FIGHTRES_NO_DMG: {
+        res = OP_RES_NO_DMG;
+    }
+    break;
+    case FIGHTRES_CLASH: {
+        res = OP_RES_CLASH;
+    }
+    break;
+    default: {
+        //FIXME:
+        //Signal error right here?
+        return INVALID_OP;
+    }
     }
     return res;
 }
@@ -279,13 +279,17 @@ Artifact artifactsBase[ARTIFACTSMAX + 1] = {
 
     {THKSKULL, "Thinking Skull", "You learn from questioning.", 0, 0, 0},
     {TWINKIE, "Soft Twinkie", "Zombies seem to not like this.", 0, 0, 0},
-    {WRISTBAND, "Gold Wristband", "I'd have been cooler on your finger.", 0, 0,
-     0},
+    {
+        WRISTBAND, "Gold Wristband", "I'd have been cooler on your finger.", 0, 0,
+        0
+    },
     {BOARTAIL, "Boar Tail", "The beast managed to run.", 0, 0, 0},
     {CHAOSORB, "Dark Orb", "This feels ominous.", 0, 0, 0},
     {POWERSYPHON, "Power Syphon", "Energy can only be transformed.", 0, 0, 0},
-    {GIANTFOSSILE, "Giant Fossile", "Maybe some species really are related.", 0,
-     0, 0}
+    {
+        GIANTFOSSILE, "Giant Fossile", "Maybe some species really are related.", 0,
+        0, 0
+    }
 };
 
 char *classesstrings[CLASSESMAX + 1] = {
@@ -424,8 +428,10 @@ Equip equips[EQUIPSMAX + 1] = {
     {Boots, LEGS, "Boots", "NOT made for crawling.", 0, 0, 1, 1, 0, 1, 0, 0, 0},
     {Cape, TORSO, "Cape", "Doesn't make you fly.", 0, 0, 1, 2, 0, 0, 1, 0, 0},
     {Tophat, HEAD, "Top Hat", "Dapper you say?", 0, 0, 1, 0, 1, 0, 1, 0, 0},
-    {Loafers, LEGS, "Loafers", "Soft and comfy for battles.", 0, 0, 1, 0, 1, 2,
-     0, 0, 0}
+    {
+        Loafers, LEGS, "Loafers", "Soft and comfy for battles.", 0, 0, 1, 0, 1, 2,
+        0, 0, 0
+    }
 };
 
 char *chestdescstrings[CHEST_CLASS_MAX + 1] = {

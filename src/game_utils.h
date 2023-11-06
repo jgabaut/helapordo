@@ -56,15 +56,15 @@ void dbg_Wincon(Wincon * wc);
 void dbg_Path(Path * path);
 void dbg_Saveslot(Saveslot * saveslot);
 void init_Gamestate(Gamestate * gmst, countStats * stats, Wincon * wincon,
-		    Path * path, Fighter * player, Gamemode gamemode);
+                    Path * path, Fighter * player, Gamemode gamemode);
 void update_Gamestate(Gamestate * gmst, int current_fighters,
-		      roomClass current_roomtype, int current_room_index,
-		      int current_enemy_index, Floor * current_floor);
+                      roomClass current_roomtype, int current_room_index,
+                      int current_enemy_index, Floor * current_floor);
 
 void loadLore(char **lore_strings, int loreKind);
 
 void setRoomType(Path * path, int *roadFork_value, roomClass * room_type,
-		 int roomsDone);
+                 int roomsDone);
 void freeRoom(Room * room);
 
 void printTitle(void);
@@ -77,10 +77,10 @@ void log_tag(char *filename, char *header, const char *format, ...);
 void log_OP(turnOption_OP op);
 
 turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
-			      Room * room, loadInfo * load_info, Enemy * enemy,
-			      Boss * boss, FILE * save_file,
-			      WINDOW * notify_win, Koliseo_Temp * t_kls,
-			      foeTurnOption_OP foe_op);
+                              Room * room, loadInfo * load_info, Enemy * enemy,
+                              Boss * boss, FILE * save_file,
+                              WINDOW * notify_win, Koliseo_Temp * t_kls,
+                              foeTurnOption_OP foe_op);
 
 saveType saveTypeFrom_string(char *s);
 char *stringFrom_HLP_Region_Type(HLP_Region_Type t);

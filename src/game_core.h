@@ -325,10 +325,10 @@ typedef struct Artifact {
  */
 extern char *artifactstrings[ARTIFACTSMAX + 1];
 
- /**
-  * Array with all the Artifact found.
-  * @see Artifact
-  */
+/**
+ * Array with all the Artifact found.
+ * @see Artifact
+ */
 extern Artifact artifactsBase[ARTIFACTSMAX + 1];
 
 #define ENEMY_ARTIFACTDROP_CHANCE 1001 /**< Defines rare Artifact drop chance for normal enemies (e->beast == 0)*/
@@ -767,7 +767,7 @@ typedef void (*callback_turncounter_enemy_t)(struct Enemy *);
  * @see SpecialSlot
  */
 typedef void (*callback_special_t)(WINDOW *, struct Fighter *, struct Enemy *,
-				   struct Boss *, struct Path *, int, int, int);
+                                   struct Boss *, struct Path *, int, int, int);
 
 /**
  * Defines a function pointer returning void and taking a Fighter, Enemy and Boss pointers; plus as int.
@@ -777,7 +777,7 @@ typedef void (*callback_special_t)(WINDOW *, struct Fighter *, struct Enemy *,
  * @see Artifact
  */
 typedef void (*callback_artifact_t)(struct Fighter *, struct Enemy *,
-				    struct Boss *, int isBoss);
+                                    struct Boss *, int isBoss);
 
 /**
  * Defines a function pointer returning void and taking NO parameters (different than saying just (), unspecified parameters).

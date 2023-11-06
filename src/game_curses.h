@@ -56,17 +56,17 @@ void printBattleStats(WINDOW * wins[3], Fighter * f, Enemy * e);
 void init_wins(WINDOW ** wins, Enemy * e, Fighter * f);
 void win_show(WINDOW * win, Enemy * e, Fighter * f, int isEnemy, int border);
 void print_in_panel(WINDOW * win, int starty, int startx, int width, Enemy * e,
-		    Fighter * f, int isEnemy);
+                    Fighter * f, int isEnemy);
 
 void printBossBattleStats(WINDOW * wins[3], Fighter * f, Boss * b);
 
 void init_boss_wins(WINDOW ** wins, Boss * b, Fighter * f);
 void boss_win_show(WINDOW * win, Boss * b, Fighter * f, int isBoss, int border);
 void boss_print_in_panel(WINDOW * win, int starty, int startx, int width,
-			 Boss * b, Fighter * f, int isBoss);
+                         Boss * b, Fighter * f, int isBoss);
 
 void print_label(WINDOW * win, int starty, int startx, int width, char *string,
-		 chtype color);
+                 chtype color);
 
 void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
 
@@ -92,7 +92,7 @@ void updateSelectedConsumableW(WINDOW * w, MENU * my_menu, Fighter * f);
 void updateSelectedArtifactW(WINDOW * w, MENU * my_menu, Fighter * f);
 
 void updateSelectedEquipW(WINDOW * w, MENU * my_menu, Equip * selected,
-			  Fighter * f);
+                          Fighter * f);
 
 void updateEquipslotsWin(WINDOW * w, Fighter * f);
 
@@ -111,12 +111,12 @@ void handleConsumables(Fighter * f, Enemy * e, Boss * b, int isBoss);
 void handleArtifacts(Fighter * f);
 void handleEquips(Fighter * f, Path * p);
 void fight_Special(specialMove move, WINDOW * w, Fighter * f, Enemy * e,
-		   Boss * b, Path * p, int roomIndex, int enemyIndex,
-		   int isBoss);
+                   Boss * b, Path * p, int roomIndex, int enemyIndex,
+                   int isBoss);
 void handleSpecials(Fighter * f, Enemy * e, Boss * b, Path * p, int roomIndex,
-		    int enemyIndex, int isBoss);
+                    int enemyIndex, int isBoss);
 void handleStats(Fighter * f);
 void handleTutorial(void);
 int handleRogueMenu(Gamestate * gmst, Path * p, Fighter * player, Room * room,
-		    loadInfo * load_info, Koliseo * kls, Koliseo_Temp * t_kls);
+                    loadInfo * load_info, Koliseo * kls, Koliseo_Temp * t_kls);
 #endif

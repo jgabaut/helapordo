@@ -42,7 +42,7 @@
  * @param kls The Koliseo used for allocations.
  */
 OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,
-	      Koliseo_Temp * t_kls);
+              Koliseo_Temp * t_kls);
 
 /*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
@@ -103,9 +103,9 @@ void initFoePartyCounters(FoeParty * fp, Koliseo_Temp * t_kls);
 void printCounters(Turncounter * counters[]);
 
 void updateCounters(Turncounter * counters[], int isEnemy, Fighter * f,
-		    Enemy * e);
+                    Enemy * e);
 void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
-			 Boss * b);
+                         Boss * b);
 void setCounter(Turncounter * c, int turns);
 
 void setSpecials(Fighter * f, Koliseo * kls);
@@ -136,20 +136,20 @@ void prepareBoss(Boss * b, Koliseo_Temp * t_kls);
 
 void initFoePartyStats(FoeParty * fp, Koliseo_Temp * t_kls);
 void prepareFoeParty(FoeParty * fp, int total_foes, int roomindex,
-		     Koliseo_Temp * t_kls);
+                     Koliseo_Temp * t_kls);
 
 int getEnemyBoost(int lvl, enemyClass eclass);
 
 void statResetEnemy(Enemy * e, int force);
 
 void prepareRoomEnemy(Enemy * e, int roomindex, int enemiesInRoom,
-		      int enemyindex, Koliseo_Temp * t_kls);
+                      int enemyindex, Koliseo_Temp * t_kls);
 
 void setEquipPrices(int size, int *equipPrices, Equip * equips[]);
 void setConsumablePrices(int size, int *consumablePrices,
-			 Consumable ** consumables);
+                         Consumable ** consumables);
 void initShop(Shop * s, int indexWeight, Fighter * player,
-	      Koliseo_Temp * t_kls);
+              Koliseo_Temp * t_kls);
 void initChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
 void prepareChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
 
@@ -177,7 +177,7 @@ void printEquipStats(Equip * e);
 void printSpawnMessage(Enemy * e, int roomIndex, int enemyIndex);
 
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
-	       Koliseo * kls);
+               Koliseo * kls);
 
 turnOption getTurnChoice(char *ch);
 
@@ -205,22 +205,22 @@ void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
 int dropArtifact(Fighter * player);
 
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
-		      WINDOW * notify_win, Koliseo * kls);
+                      WINDOW * notify_win, Koliseo * kls);
 
 int fight(Fighter * player, Enemy * e, WINDOW * notify_win, Koliseo * kls);
 
 int enemy_attack(Enemy * e, Fighter * target, WINDOW * notify_win,
-		 Koliseo * kls);
+                 Koliseo * kls);
 
 int defer_fight_boss(Fighter * player, Boss * b, Path * p,
-		     foeTurnOption_OP foe_op, WINDOW * notify_win,
-		     Koliseo * kls);
+                     foeTurnOption_OP foe_op, WINDOW * notify_win,
+                     Koliseo * kls);
 
 int boss_fight(Fighter * player, Boss * b, Path * p, WINDOW * notify_win,
-	       Koliseo * kls);
+               Koliseo * kls);
 
 int boss_attack(Boss * b, Fighter * target, Path * p, WINDOW * notify_win,
-		Koliseo * kls);
+                Koliseo * kls);
 
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
@@ -233,15 +233,15 @@ void emptyArtifacts(Fighter * player);
 void emptyEquips(Fighter * player);
 
 OP_res handleSave_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
-			  int enemyIndex, int roomTotalEnemies, int roomIndex);
+                          int enemyIndex, int roomTotalEnemies, int roomIndex);
 OP_res handleSave_Home(FILE * file, Fighter * f, Path * p, int roomIndex);
 
 OP_res handleLoadgame_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
-			      int *enemyIndex, int *roomTotalEnemies,
-			      int *roomIndex, int *total_foes,
-			      int *done_loading, Koliseo * kls);
+                              int *enemyIndex, int *roomTotalEnemies,
+                              int *roomIndex, int *total_foes,
+                              int *done_loading, Koliseo * kls);
 OP_res handleLoadgame_Home(FILE * file, Fighter * f, Path * p, int *roomIndex,
-			   int *done_loading, Koliseo * kls);
+                           int *done_loading, Koliseo * kls);
 saveType read_saveType(FILE * file);
 
 void death(Fighter * player, loadInfo * load_info);
@@ -253,17 +253,17 @@ void b_death(Boss * b);
 int retry(void);
 
 void debug_generic(Gamestate * gmst, Fighter * player, Path * p, int roomIndex,
-		   Koliseo * kls, Koliseo_Temp * t_kls);
+                   Koliseo * kls, Koliseo_Temp * t_kls);
 void debug_enemies_room(Gamestate * gmst, Room * room, Fighter * player,
-			Enemy * e, Path * p, int roomIndex, int currentEnemyNum,
-			Koliseo * kls, Koliseo_Temp * t_kls);
+                        Enemy * e, Path * p, int roomIndex, int currentEnemyNum,
+                        Koliseo * kls, Koliseo_Temp * t_kls);
 
 void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 
 void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
 
 void open_chest(WINDOW * w, Chest * c, Fighter * f, Koliseo * kls,
-		Koliseo_Temp * t_kls);
+                Koliseo_Temp * t_kls);
 
 Path *randomise_path(int seed, Koliseo * kls, const char *path_to_savefile);
 

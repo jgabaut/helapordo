@@ -20,17 +20,17 @@ void display_explored_layout(Floor * floor, WINDOW * win);
 void display_roomclass_layout(Floor * floor, WINDOW * win);
 
 void draw_cell(Floor * floor, int cell_x, int cell_y, WINDOW * win,
-	       int drawcorner_x, int drawcorner_y, int x_size, int y_size,
-	       int recurse);
+               int drawcorner_x, int drawcorner_y, int x_size, int y_size,
+               int recurse);
 void draw_floor_view(Floor * floor, int current_x, int current_y, WINDOW * win);
 
 void move_update(Gamestate * gamestate, Floor * floor, int *current_x,
-		 int *current_y, WINDOW * win, Path * path, Fighter * player,
-		 Room * room, loadInfo * load_info, Koliseo * kls,
-		 Koliseo_Temp * t_kls);
+                 int *current_y, WINDOW * win, Path * path, Fighter * player,
+                 Room * room, loadInfo * load_info, Koliseo * kls,
+                 Koliseo_Temp * t_kls);
 
 void floor_random_walk(Floor * floor, int x, int y, int steps,
-		       int do_layout_clean);
+                       int do_layout_clean);
 void floor_set_room_types(Floor * floor);
 
 #endif

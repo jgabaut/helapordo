@@ -8,7 +8,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.2.7") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.2.8") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (HLP_MAX_INDEX == 29) ) {
@@ -20,8 +20,8 @@ int main(void) {
  if ( ! (FOETURNOP_MAX == 3) ) {
    fail("FOETURNOP_MAX",3,FOETURNOP_MAX);
  };
- if ( ! (TURNOP_MAX == 15) ) {
-   fail("TURNOP_MAX",15,TURNOP_MAX);
+ if ( ! (TURNOP_MAX == 16) ) {
+   fail("TURNOP_MAX",16,TURNOP_MAX);
  };
  if ( ! (OP_RES_MAX == 10) ) {
    fail("OP_RES_MAX",10,OP_RES_MAX);
