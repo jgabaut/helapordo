@@ -147,5 +147,5 @@
 
   - `darwin-arm64`
 
-  📦 v1.2.8 06/11/2023
+  📦 v1.2.9 12/11/2023
   https://github.com/jgabaut/helapordo/releases
