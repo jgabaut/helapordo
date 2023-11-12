@@ -17,7 +17,13 @@
 */
 
 #ifndef HELAPORDO_H
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) //We need C11
 #define HELAPORDO_H
+
+#ifndef _WIN32
+#define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -288,4 +294,7 @@ void gameloop(int argc, char **argv);
 void gameloop_Win(int argc, char **argv);
 #endif
 
+#else
+#error "This code requires C11.\n    _Alignof\n"
 #endif
+#endif //HELAPORDO_H
