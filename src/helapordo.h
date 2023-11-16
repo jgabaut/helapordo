@@ -131,6 +131,8 @@ void setCounter(Turncounter * c, int turns);
 
 void setSpecials(Fighter * f, Koliseo * kls);
 
+void setSkills(Fighter *f, Koliseo *kls);
+
 void resetPermboosts(Fighter * f);
 void applyPermboosts(Fighter * f);
 

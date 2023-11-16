@@ -55,6 +55,7 @@ typedef enum HLP_Region_Type {
     HR_Equip,
     HR_Equipslot,
     HR_Specialslot,
+    HR_Skillslot,
     HR_Turncounter,
     HR_Perk,
     HR_Consumable,
@@ -632,6 +633,53 @@ typedef struct {
     int cost;	  /**< Cost of use*/
 } Specialslot;
 
+
+typedef enum {
+    SKILL_TYPE_ATKBOOST=0,
+    SKILL_TYPE_LAST_UNLOCKABLE,
+    SKILL_TYPE_IDLE,
+    SKILL_TYPE_MAX,
+} skillType;
+
+#define SKILLSTOTAL SKILL_TYPE_MAX
+
+#define FIGHTER_SKILL_SLOTS 5
+#define ENEMY_SKILL_SLOTS 1
+#define BOSS_SKILL_SLOTS 1
+
+/**
+ * Array with the name strings for skills.
+ * @see skillType
+ */
+extern char *skillsnamestrings[SKILLSTOTAL + 1];
+
+/**
+ * Array with the desc strings for skills.
+ * @see skillType
+ */
+extern char *skillsdescstrings[SKILLSTOTAL + 1];
+
+/**
+ * Array with the cost integer values for skills.
+ * @see skillType
+ */
+extern int skillscosts[SKILLSTOTAL + 1];
+
+/**
+ * Holds state for a skillType.
+ * @see Fighter
+ * @see Enemy
+ * @see Boss
+ * @see skillType
+ */
+typedef struct {
+    int enabled;     /**< Flag defining if the current slot is initialised*/
+    skillType class;	  /**< Defines which kind of skillType the slot is holding*/
+    char name[80];     /**< Name string*/
+    char desc[80];     /**< Desc string*/
+    int cost;	  /**< Cost of use*/
+} Skillslot;
+
 //Forward declarations for counter fields in entities
 struct Turncounter;
 
@@ -829,6 +877,7 @@ typedef struct Fighter {
     int stamina;     /**< Current stamina value*/
     int totalstamina;	  /**< Full stamina value*/
     Specialslot *specials[SPECIALSMAX + 1];   /**< Array with all the Specialslot*/
+    Skillslot *skills[FIGHTER_SKILL_SLOTS + 1];   /**< Array with all the Skillslot*/
 
     struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
     int turnboost_atk;	   /**< Current temp boost value for atk*/

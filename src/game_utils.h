@@ -119,6 +119,10 @@ char *descStringFromSpecial(fighterClass class, specialMove move);
 char *nameStringFromSpecial(fighterClass class, specialMove move);
 int costFromSpecial(fighterClass class, specialMove move);
 
+char *descStringFromSkill(skillType class);
+char *nameStringFromSkill(skillType class);
+int costFromSkill(skillType class);
+
 char *nameStringFromPerk(int p);
 char *descStringFromPerk(int p);
 

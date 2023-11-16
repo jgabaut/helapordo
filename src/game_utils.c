@@ -1524,7 +1524,7 @@ char *descStringFromSpecial(fighterClass class, specialMove move)
 
 /**
  * Takes a fighterClass and a specialMove and returns the corresponding cost by the inner array position, as an integer.
- * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * Correct result is only possible by having the enum values in a consistent order with the integer array.
  * @see fighterClass
  * @see specialMove
  * @param class The fighterClass.
@@ -1534,6 +1534,45 @@ char *descStringFromSpecial(fighterClass class, specialMove move)
 int costFromSpecial(fighterClass class, specialMove move)
 {
     return specialscosts[class][(move % (SPECIALSMAX + 1))];
+}
+
+/**
+ * Takes a skillType and returns the corresponding name string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see fighterClass
+ * @see specialMove
+ * @param class The skillType.
+ * @return String corresponding to the skillType.
+ */
+char *nameStringFromSkill(skillType class)
+{
+    return skillsnamestrings[class];
+}
+
+/**
+ * Takes a fighterClass and a specialMove and returns the corresponding desc string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see fighterClass
+ * @see skillType
+ * @param class The skillType.
+ * @return String corresponding to the skillType.
+ */
+char *descStringFromSkill(skillType class)
+{
+    return skillsdescstrings[class];
+}
+
+/**
+ * Takes a skillType and returns the corresponding cost by the inner array position, as an integer.
+ * Correct result is only possible by having the enum values in a consistent order with the integer array.
+ * @see fighterClass
+ * @see skillType
+ * @param class The skillType.
+ * @return int Cost of the corresponding skillType.
+ */
+int costFromSkill(skillType class)
+{
+    return skillscosts[class];
 }
 
 /**

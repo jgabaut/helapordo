@@ -39,6 +39,7 @@ char *hlp_regiontype_strings[HLP_MAX_INDEX + 1] = {
     "HLP_Equip",
     "HLP_Equipslot",
     "HLP_Specialslot",
+    "HLP_Skillslot",
     "HLP_Turncounter",
     "HLP_Perk",
     "HLP_Consumable",
@@ -385,6 +386,27 @@ int specialscosts[CLASSESMAX + 1][SPECIALSMAX + 1] = {
     {2, 4, 2, 3},   /**< costs for Archer, fighterClass 1*/
     {4, 3, 2, 3},   /**< costs for Mage, fighterClass 2*/
     {4, 3, 3, 3},    /**< costs for Assassin, fighterClass 3*/
+};
+
+char *skillsnamestrings[SKILLSTOTAL + 1] = {
+    "Atk boost",
+    "Last unlockable",
+    "Idle",
+    "Skills_MAX",
+};
+
+char *skillsdescstrings[SKILLSTOTAL + 1] = {
+    "A temporary boost to atk",
+    "Sentinel value for last unlockable skill",
+    "Do nothing",
+    "Sentinel value for total skills",
+};
+
+int skillscosts[SKILLSTOTAL + 1] = {
+    1,
+    99,
+    0,
+    99,
 };
 
 char *equipzonestrings[EQUIPZONES + 1] = {

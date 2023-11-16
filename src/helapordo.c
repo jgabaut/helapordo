@@ -2152,6 +2152,39 @@ void setSpecials(Fighter *f, Koliseo *kls)
 }
 
 /**
+ * Takes a Fighter pointer and prepares its skillSlot fields by allocating FIGHTER_SKILL_SLOTS slots.
+ * Skill slots are initialised.
+ * @see Fighter
+ * @see Skilllot
+ * @see FIGHTER_SKILL_SLOTS
+ * @see SKILL_TYPE_LAST_UNLOCKABLE
+ * @see costFromSkill()
+ * @see stringFromSkill()
+ * @param kls The Koliseo used for allocations.
+ * @param f The Fighter pointer whose skill slots will be initialised.
+ */
+void setSkills(Fighter *f, Koliseo *kls)
+{
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i <= SKILL_TYPE_LAST_UNLOCKABLE; i++) {
+        kls_log(kls, "DEBUG", "Prepping Skillslot (%i)", i);
+        Skillslot *s =
+            (Skillslot *) KLS_PUSH_TYPED(kls, Skillslot, 1, HR_Skillslot,
+                                           "Skillslot", "Skillslot");
+        s->enabled = 0;
+        s->class = i;
+        s->cost = costFromSkill(i);
+        strcpy(movename, nameStringFromSkill(i));
+        strcpy(movedesc, descStringFromSkill(i));
+        //printf("DEBUG\n%i\t%s\n",(i),stringFromSkill(i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        f->skills[i] = s;
+    };
+}
+
+/**
  * Takes a Fighter pointer and resets all of its permboost_STAT values to 0, also correctly updating the current stat values.
  * @see Fighter
  * @param f The fighter pointer whose permboosts will be reset.
