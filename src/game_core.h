@@ -168,6 +168,8 @@ extern int G_DOTUTORIAL_ON;
  */
 #define VERSION "1.3.1"
 
+#define HELAPORDO_SAVEFILE_VERSION "0.1.7"
+
 /**
  * Default savepath.
  * @see handleRoom_Home()

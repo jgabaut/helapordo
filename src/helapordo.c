@@ -2167,7 +2167,7 @@ void setSkills(Fighter *f, Koliseo *kls)
 {
     char movename[80];
     char movedesc[80];
-    for (int i = 0; i < SKILL_TYPE_LAST_UNLOCKABLE; i++) {
+    for (int i = 0; i <= FIGHTER_SKILL_SLOTS; i++) {
         kls_log(kls, "DEBUG", "Prepping Skillslot (%i)", i);
         Skillslot *s =
             (Skillslot *) KLS_PUSH_TYPED(kls, Skillslot, 1, HR_Skillslot,
@@ -2541,6 +2541,7 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
     s->keysfound = 0;
 
     setSpecials(player, kls);
+    setSkills(player, kls),
     initCounters(player, kls);
     initPerks(player, kls);
 
@@ -6676,7 +6677,7 @@ void emptyEquips(Fighter *player)
  */
 OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
 {
-    const char version[] = "v0.1.6";
+    const char* version = HELAPORDO_SAVEFILE_VERSION;
     //FILE *file = fopen("save.txt", "w");
     log_tag("debug_log.txt", "[DEBUG]", "Saving with version %s", version);
 
@@ -6717,6 +6718,12 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
     fprintf(file, "    Specials{\n");
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
         fprintf(file, "%i# %i_special_enabled_flag\n", f->specials[i]->enabled,
+                i);
+    }
+    fprintf(file, "    },\n");
+    fprintf(file, "    Skills{\n");
+    for (int i = 0; i < FIGHTER_SKILL_SLOTS; i++) {
+        fprintf(file, "%i# %i_skill_enabled_flag\n", f->skills[i]->enabled,
                 i);
     }
     fprintf(file, "    },\n");
@@ -6845,7 +6852,7 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
 OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
                           int enemyIndex, int roomTotalEnemies, int roomIndex)
 {
-    const char version[] = "v0.1.6";
+    const char * version = HELAPORDO_SAVEFILE_VERSION;
     //FILE *file = fopen("save.txt", "w");
     log_tag("debug_log.txt", "[DEBUG]", "Saving with version %s", version);
 
@@ -6886,6 +6893,12 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     fprintf(file, "    Specials{\n");
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
         fprintf(file, "%i# %i_special_enabled_flag\n", f->specials[i]->enabled,
+                i);
+    }
+    fprintf(file, "    },\n");
+    fprintf(file, "    Skills{\n");
+    for (int i = 0; i < FIGHTER_SKILL_SLOTS; i++) {
+        fprintf(file, "%i# %i_skill_enabled_flag\n", f->skills[i]->enabled,
                 i);
     }
     fprintf(file, "    },\n");
@@ -7039,7 +7052,7 @@ saveType read_saveType(FILE *file)
         return -1;
     }
     char buf[500];
-    const char version[] = "v0.1.6";
+    const char* version = HELAPORDO_SAVEFILE_VERSION;
 
     int scanres = -1;
     /* File version scanning */
@@ -7124,7 +7137,7 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     char buf[500];
     char comment[300];
     int num_value = -1;
-    const char version[] = "v0.1.6";
+    const char * version = HELAPORDO_SAVEFILE_VERSION;
 
     int scanres = -1;
     /* File version scanning */
@@ -7447,6 +7460,38 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     if (scanres != 1) {
         log_tag("debug_log.txt", "[DEBUG]",
                 "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    //Skills
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < FIGHTER_SKILL_SLOTS; i++) {
+        //Enabled flag
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->skills[i]->enabled = num_value;
+    }
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
                 1, scanres);
         fprintf(stderr, "Error while loading game.");
         exit(EXIT_FAILURE);
@@ -8412,7 +8457,7 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     char buf[500];
     char comment[300];
     int num_value = -1;
-    const char version[] = "v0.1.6";
+    const char version[] = HELAPORDO_SAVEFILE_VERSION;
 
     int scanres = -1;
     /* File version scanning */
@@ -8730,6 +8775,38 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
         log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
         sscanf(buf, "%3i", &num_value);
         f->specials[i]->enabled = num_value;
+    }
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    //Skills
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < FIGHTER_SKILL_SLOTS; i++) {
+        //Enabled flag
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->skills[i]->enabled = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
