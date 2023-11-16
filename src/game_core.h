@@ -635,7 +635,6 @@ typedef struct {
     int cost;	  /**< Cost of use*/
 } Specialslot;
 
-
 typedef enum {
     SKILL_TYPE_ATKBOOST=0,
     SKILL_TYPE_LAST_UNLOCKABLE,

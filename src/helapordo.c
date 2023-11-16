@@ -2171,7 +2171,7 @@ void setSkills(Fighter *f, Koliseo *kls)
         kls_log(kls, "DEBUG", "Prepping Skillslot (%i)", i);
         Skillslot *s =
             (Skillslot *) KLS_PUSH_TYPED(kls, Skillslot, 1, HR_Skillslot,
-                                           "Skillslot", "Skillslot");
+                                         "Skillslot", "Skillslot");
         s->enabled = 0;
         s->class = i;
         s->cost = costFromSkill(i);
@@ -2541,7 +2541,7 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
     s->keysfound = 0;
 
     setSpecials(player, kls);
-    setSkills(player, kls),
+    setSkills(player, kls);
     initCounters(player, kls);
     initPerks(player, kls);
 
