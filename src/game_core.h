@@ -645,9 +645,9 @@ typedef enum {
 
 #define SKILLSTOTAL SKILL_TYPE_MAX
 
-#define FIGHTER_SKILL_SLOTS 5
-#define ENEMY_SKILL_SLOTS 1
-#define BOSS_SKILL_SLOTS 1
+#define FIGHTER_SKILL_SLOTS SKILLSTOTAL
+#define ENEMY_SKILL_SLOTS SKILLSTOTAL
+#define BOSS_SKILL_SLOTS SKILLSTOTAL
 
 /**
  * Array with the name strings for skills.
