@@ -17,7 +17,7 @@
 */
 #ifndef ARCHER_DROP_S4C_H_
 #define ARCHER_DROP_S4C_H_
-#define ARCHER_DROP_S4C_H_VERSION "0.2.1"
+#define ARCHER_DROP_S4C_H_VERSION "0.2.2"
 #include "../../sprites4curses/s4c-animate/animate.h"
 
 /**

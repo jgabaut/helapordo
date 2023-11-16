@@ -165,7 +165,7 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.2.10"
+#define VERSION "1.3.0"
 
 /**
  * Default savepath.
