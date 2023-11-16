@@ -161,12 +161,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 0
+#define HELAPORDO_PATCH_VERSION 1
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.3.0"
+#define VERSION "1.3.1"
 
 /**
  * Default savepath.
@@ -945,6 +945,8 @@ typedef struct Enemy {
     fighterStatus status;     /**< Defines active fighterStatus*/
     int beast;	   /**< Flag defining the instance as "beast" if set*/
 
+    Skillslot *skills[ENEMY_SKILL_SLOTS + 1];   /**< Array with all the Skillslot*/
+
     struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
     int turnboost_atk;	   /**< Current temp boost value for atk*/
     int turnboost_def;	   /**< Current temp boost value for def*/
@@ -983,6 +985,7 @@ typedef struct Boss {
     fighterStatus status;     /**< Defines active fighterStatus*/
     int beast;	   /**< Flag defining the instance as "beast" if set*/
 
+    Skillslot *skills[BOSS_SKILL_SLOTS + 1];   /**< Array with all the Skillslot*/
     struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
     int turnboost_atk;	   /**< Current temp boost value for atk*/
     int turnboost_def;	   /**< Current temp boost value for def*/

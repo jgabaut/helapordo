@@ -2167,7 +2167,7 @@ void setSkills(Fighter *f, Koliseo *kls)
 {
     char movename[80];
     char movedesc[80];
-    for (int i = 0; i <= SKILL_TYPE_LAST_UNLOCKABLE; i++) {
+    for (int i = 0; i < SKILL_TYPE_LAST_UNLOCKABLE; i++) {
         kls_log(kls, "DEBUG", "Prepping Skillslot (%i)", i);
         Skillslot *s =
             (Skillslot *) KLS_PUSH_TYPED(kls, Skillslot, 1, HR_Skillslot,
@@ -2181,6 +2181,72 @@ void setSkills(Fighter *f, Koliseo *kls)
         strcpy(s->name, movename);
         strcpy(s->desc, movedesc);
         f->skills[i] = s;
+    };
+}
+
+/**
+ * Takes a Enemy pointer and prepares its skillSlot fields by allocating ENEMY_SKILL_SLOTS slots.
+ * Skill slots are initialised.
+ * @see Enemy
+ * @see Skilllot
+ * @see ENEMY_SKILL_SLOTS
+ * @see SKILLSTOTAL
+ * @see costFromSkill()
+ * @see stringFromSkill()
+ * @param t_kls The Koliseo_Temp used for allocations.
+ * @param e The Enemy pointer whose skill slots will be initialised.
+ */
+void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls)
+{
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i < ENEMY_SKILL_SLOTS; i++) {
+        kls_log(t_kls->kls, "DEBUG", "Prepping Enemy Skillslot (%i)", i);
+        Skillslot *s =
+            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, 1, HR_Skillslot,
+                                           "Enemy Skillslot", "Enemy Skillslot");
+        s->enabled = 0;
+        s->class = i;
+        s->cost = costFromSkill(i);
+        strcpy(movename, nameStringFromSkill(i));
+        strcpy(movedesc, descStringFromSkill(i));
+        //printf("DEBUG\n%i\t%s\n",(i),stringFromSkill(i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        e->skills[i] = s;
+    };
+}
+
+/**
+ * Takes a Boss pointer and prepares its skillSlot fields by allocating BOSS_SKILL_SLOTS slots.
+ * Skill slots are initialised.
+ * @see Boss
+ * @see Skilllot
+ * @see Boss_SKILL_SLOTS
+ * @see SKILLSTOTAL
+ * @see costFromSkill()
+ * @see stringFromSkill()
+ * @param t_kls The Koliseo_Temp used for allocations.
+ * @param b The Boss pointer whose skill slots will be initialised.
+ */
+void setBossSkills(Boss *b, Koliseo_Temp *t_kls)
+{
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i < BOSS_SKILL_SLOTS; i++) {
+        kls_log(t_kls->kls, "DEBUG", "Prepping Boss Skillslot (%i)", i);
+        Skillslot *s =
+            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, 1, HR_Skillslot,
+                                           "Boss Skillslot", "Boss Skillslot");
+        s->enabled = 0;
+        s->class = i;
+        s->cost = costFromSkill(i);
+        strcpy(movename, nameStringFromSkill(i));
+        strcpy(movedesc, descStringFromSkill(i));
+        //printf("DEBUG\n%i\t%s\n",(i),stringFromSkill(i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        b->skills[i] = s;
     };
 }
 
@@ -2832,6 +2898,9 @@ void prepareBoss(Boss *b, Koliseo_Temp *t_kls)
     //Load boss stats
     initBossStats(b, t_kls);
 
+    //Set skill slots
+    setBossSkills(b, t_kls);
+
     //Force load of level bonuses
     statResetBoss(b, 1);
 
@@ -2975,6 +3044,10 @@ void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
 
     //Load enemy stats
     initEnemyStats(e, t_kls);
+
+    //Load enemy skills
+    //
+    setEnemySkills(e, t_kls);
 
     //Force load of level bonuses
     statResetEnemy(e, 1);
