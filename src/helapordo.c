@@ -6989,6 +6989,12 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     fprintf(file, "%i# beast\n", e->beast);
     fprintf(file, "%i# prize\n", e->prize);
     fprintf(file, "%s# status\n", stringFromStatus(e->status));
+    fprintf(file, "    Skills{\n");
+    for (int i = 0; i < ENEMY_SKILL_SLOTS; i++) {
+        fprintf(file, "%i# %i_skill_enabled_flag\n", e->skills[i]->enabled,
+                i);
+    }
+    fprintf(file, "    },\n");
     fprintf(file, "    Counters{\n");
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
         fprintf(file, "%i# innervalue\n", e->counters[i]->innerValue);
@@ -9721,6 +9727,38 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
         }
     };
 
+    //Skills
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < ENEMY_SKILL_SLOTS; i++) {
+        //Enabled flag
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        e->skills[i]->enabled = num_value;
+    }
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
     //Enemy counters
     scanres = fscanf(file, "%200s\n", buf);	//Skip Enemy counters bracket
     if (scanres != 1) {
