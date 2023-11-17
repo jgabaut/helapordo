@@ -65,6 +65,8 @@
 OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,
               Koliseo_Temp * t_kls);
 
+fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, WINDOW * notify_win, Koliseo * kls);
+
 /*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 */
@@ -230,6 +232,8 @@ void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
 int dropArtifact(Fighter * player);
 
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
+                      WINDOW * notify_win, Koliseo * kls);
+int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
                       WINDOW * notify_win, Koliseo * kls);
 
 int fight(Fighter * player, Enemy * e, WINDOW * notify_win, Koliseo * kls);

@@ -1847,6 +1847,7 @@ typedef struct {
     Koliseo_Temp *t_kls;     /**< Pointer to Koliseo_Temp for OP*/
     Gamestate *gmst;	 /**< Pointer to Gamestate for OP*/
     foeTurnOption_OP foe_op;	 /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
+    skillType picked_skill;	 /**< Picked skillType, initialised only for OP_SKILL.*/
 } turnOP_args;
 
 /**

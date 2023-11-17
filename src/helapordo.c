@@ -75,6 +75,11 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
         kls_free(temporary_kls);
         exit(EXIT_SUCCESS);
     }
+    skillType skill = args->picked_skill;
+    if (skill < 0 || skill >= SKILLSTOTAL) {
+        log_tag("debug_log.txt", "[WARN]",
+                "turnOP_args->(picked_skill) was invalid: [%i]", skill);
+    }
 
     int isBoss = -1;
     int room_index = -1;
@@ -652,6 +657,11 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                     "foe_op was invalid in turnOP(OP_SKILL): [%i]", foe_op);
             exit(EXIT_FAILURE);
         }
+        if (skill < 0 || skill > SKILLSTOTAL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "skill was invalid in turnOP(OP_SKILL): [%i]", skill);
+            exit(EXIT_FAILURE);
+        }
         room_index = room->index;
         if (room->class == ENEMIES && enemy == NULL) {
             log_tag("debug_log.txt", "[ERROR]",
@@ -676,7 +686,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             isBoss = 0;
             //TODO
             //Implement the missing function to wrap skill usage and foe op
-            //res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, foe_op, notify_win, kls));
+            res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, skill, foe_op, notify_win, kls));
         }
         break;
         case BOSS: {
@@ -715,6 +725,12 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             res);
 
     return res;
+}
+
+fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, WINDOW * notify_win, Koliseo * kls)
+{
+
+    return FIGHTRES_NO_DMG;
 }
 
 //TODO Drop dead code
@@ -5688,6 +5704,201 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
 
         if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
             res = fight(player, e, notify_win, kls);
+
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was not a clash...", __func__);
+            } else if ((res == FIGHTRES_DMG_TAKEN
+                        && first_act_res == FIGHTRES_DMG_DEALT)
+                       || (res == FIGHTRES_DMG_DEALT
+                           && first_act_res == FIGHTRES_DMG_TAKEN)) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was a clash!", __func__);
+                res = FIGHTRES_CLASH;
+            }
+
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
+    }
+    return res;
+}
+
+/**
+ * Takes a Fighter and a Enemy pointers and calls do_Skill().
+ * @see Fighter
+ * @see Enemy
+ * @see do_Skill()
+ * @param player The Fighter pointer at hand.
+ * @param e The Enemy pointer at hand.
+ * @param picked_skill The picked skill by Fighter.
+ * @param foe_op The foeTurnOption_OP for the foe.
+ * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
+ */
+int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
+                      WINDOW *notify_win, Koliseo *kls)
+{
+    char msg[200];
+    //FIXME
+    //Is it okay to return just one result, when having 2 interactions that could go differently?
+    //
+    //Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
+    fightResult res = FIGHTRES_NO_DMG;
+
+    int player_goes_first = (player->vel >= e->vel ? 1 : 0);
+
+    int first_act_res = FIGHTRES_NO_DMG;
+
+    if (player_goes_first) {
+
+        res = do_Skill(player, e, picked_skill, notify_win, kls);
+
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        first_act_res = res;
+
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            switch (foe_op) {
+            case FOE_OP_INVALID: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                        foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            case FOE_OP_IDLE: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } was idle.", __func__,
+                        stringFromEClass(e->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is loafing around.",
+                        stringFromEClass(e->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            }
+            break;
+            case FOE_OP_FIGHT: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } wants to fight.", __func__,
+                        stringFromEClass(e->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is angry!", stringFromEClass(e->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+
+                res = enemy_attack(e, player, notify_win, kls);
+            }
+            break;
+            case FOE_OP_SPECIAL: {
+                log_tag("debug_log.txt", "[TODO]",
+                        "[%s()]:  Foe { %s } wants to use a special.",
+                        __func__, stringFromEClass(e->class));
+                //TODO
+                //Implement enemy special function
+                //res = enemy_attack_special(e,player,notify_win,kls);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected foeTurnOption_OP in [%s()]: [%i]",
+                        __func__, foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }			// End foe_op switch
+
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was not a clash...", __func__);
+            } else if ((res == FIGHTRES_DMG_TAKEN
+                        && first_act_res == FIGHTRES_DMG_DEALT)
+                       || (res == FIGHTRES_DMG_DEALT
+                           && first_act_res == FIGHTRES_DMG_TAKEN)) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was a clash!", __func__);
+                res = FIGHTRES_CLASH;
+            }
+
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
+    } else {
+        //Foe acts first
+        switch (foe_op) {
+        case FOE_OP_INVALID: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        case FOE_OP_IDLE: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } was idle.", __func__,
+                    stringFromEClass(e->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is loafing around.",
+                    stringFromEClass(e->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+        }
+        break;
+        case FOE_OP_FIGHT: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } wants to fight.", __func__,
+                    stringFromEClass(e->class));
+            res = enemy_attack(e, player, notify_win, kls);
+        }
+        break;
+        case FOE_OP_SPECIAL: {
+            log_tag("debug_log.txt", "[TODO]",
+                    "[%s()]:  Foe { %s } wants to use a special.", __func__,
+                    stringFromEClass(e->class));
+            //TODO
+            //Implement enemy special function
+            //res = enemy_attack_special(e,player,notify_win,kls);
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        }			// End foe_op switch
+
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        first_act_res = res;
+
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            res = do_Skill(player, e, picked_skill, notify_win, kls);
 
             log_tag("debug_log.txt", "[DEBUG]",
                     "[%s()]: Second act res was [%s]: [%i]", __func__,
