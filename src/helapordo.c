@@ -696,7 +696,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             isBoss = 1;
             //TODO
             //Implement the missing function to wrap skill usage and foe op
-            //res = OP_res_from_fightResult(defer_skill_boss(actor, boss, path, foe_op, notify_win, kls));
+            res = OP_res_from_fightResult(defer_skill_boss(actor, boss, skill, path, foe_op, notify_win, kls));
         }
         break;
         default: {
@@ -728,6 +728,12 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
 }
 
 fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, WINDOW * notify_win, Koliseo * kls)
+{
+
+    return FIGHTRES_NO_DMG;
+}
+
+fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, WINDOW * notify_win, Koliseo * kls)
 {
 
     return FIGHTRES_NO_DMG;
@@ -6712,6 +6718,179 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
     return res;
 }
 
+/**
+ * Takes a Fighter and a Boss pointers and calls do_Skill_boss().
+ * @see Fighter
+ * @see Boss
+ * @see do_Skill_boss()
+ * @param player The Fighter pointer at hand.
+ * @param b The Boss pointer at hand.
+ * @param picked_skill The skill picked by Fighter.
+ * @param foe_op The foeTurnOption_OP for the foe.
+ * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
+ */
+int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
+                     WINDOW *notify_win, Koliseo *kls)
+{
+    char msg[200];
+    //FIXME
+    //Is it okay to return just one result, when having 2 interactions that could go differently?
+    //
+    //Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
+    fightResult res = FIGHTRES_NO_DMG;
+
+    int player_goes_first = (player->vel >= b->vel ? 1 : 0);
+
+    if (player_goes_first) {
+        res = do_Skill_boss(player, b, picked_skill, p, notify_win, kls);
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            switch (foe_op) {
+            case FOE_OP_INVALID: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                        foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            case FOE_OP_IDLE: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } was idle.", __func__,
+                        stringFromBossClass(b->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is loafing around.",
+                        stringFromBossClass(b->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            }
+            break;
+            case FOE_OP_FIGHT: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } wants to fight.", __func__,
+                        stringFromBossClass(b->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+                res = boss_attack(b, player, p, notify_win, kls);
+            }
+            break;
+            case FOE_OP_SPECIAL: {
+                log_tag("debug_log.txt", "[TODO]",
+                        "[%s()]:  Foe { %s } wants to use a special.",
+                        __func__, stringFromBossClass(b->class));
+                //TODO
+                //Implement boss special function
+                //res = boss_attack_special(b,player,p,notify_win,kls);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected foeTurnOption_OP in [%s()]: [%i]",
+                        __func__, foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }			// End foe_op switch
+
+            //TODO
+            //Check second turn act res?
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
+    } else {
+        //Foe acts first
+        switch (foe_op) {
+        case FOE_OP_INVALID: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "foe_op was FOE_OP_INVALID in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        case FOE_OP_IDLE: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } was idle.", __func__,
+                    stringFromBossClass(b->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is loafing around.",
+                    stringFromBossClass(b->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+        }
+        break;
+        case FOE_OP_FIGHT: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } wants to fight.", __func__,
+                    stringFromBossClass(b->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            res = boss_attack(b, player, p, notify_win, kls);
+        }
+        break;
+        case FOE_OP_SPECIAL: {
+            log_tag("debug_log.txt", "[TODO]",
+                    "[%s()]:  Foe { %s } wants to use a special.", __func__,
+                    stringFromBossClass(b->class));
+            //TODO
+            //Implement boss special function
+            //res = boss_attack_special(b,player,p,notify_win,kls);
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        }			// End foe_op switch
+
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            res = do_Skill_boss(player, b, picked_skill, p, notify_win, kls);
+
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            //TODO
+            //Check second turn act res?
+            return res;
+
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
+    }
+
+    return res;
+}
 /**
  * Takes a Fighter, an Enemy and a Boss pointers, a string denoting the consumableClass and an int for use on enemy or boss.
  * If qty value for the Consumable is 0, we have an early return. Otherise effect is applied and qty is decreased.
