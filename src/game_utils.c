@@ -640,11 +640,13 @@ void init_Gamestate(Gamestate *gmst, countStats *stats, Wincon *wincon,
  * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
  * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
  * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
+ * @param picked_skill The skillType to assign to turnOP_args->picked_skill.
  */
 turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
                               Room *room, loadInfo *load_info, Enemy *enemy,
                               Boss *boss, FILE *save_file, WINDOW *notify_win,
-                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op)
+                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
+                              skillType picked_skill)
 {
     log_tag("debug_log.txt", "[TURNOP]",
             "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
@@ -665,6 +667,7 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
     res->notify_win = notify_win;
     res->t_kls = t_kls;
     res->foe_op = foe_op;
+    res->picked_skill = picked_skill;
 
     return res;
 }

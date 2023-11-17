@@ -95,7 +95,7 @@ turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
                               WINDOW * notify_win, Koliseo_Temp * t_kls,
-                              foeTurnOption_OP foe_op);
+                              foeTurnOption_OP foe_op, skillType picked_skill);
 
 saveType saveTypeFrom_string(char *s);
 char *stringFrom_HLP_Region_Type(HLP_Region_Type t);
