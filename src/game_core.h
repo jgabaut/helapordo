@@ -55,6 +55,7 @@ typedef enum HLP_Region_Type {
     HR_Equip,
     HR_Equipslot,
     HR_Specialslot,
+    HR_Skillslot,
     HR_Turncounter,
     HR_Perk,
     HR_Consumable,
@@ -160,12 +161,14 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 0
+#define HELAPORDO_PATCH_VERSION 1
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.3.0"
+#define VERSION "1.3.1"
+
+#define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
 /**
  * Default savepath.
@@ -632,6 +635,52 @@ typedef struct {
     int cost;	  /**< Cost of use*/
 } Specialslot;
 
+typedef enum {
+    SKILL_TYPE_ATKBOOST=0,
+    SKILL_TYPE_LAST_UNLOCKABLE,
+    SKILL_TYPE_IDLE,
+    SKILL_TYPE_MAX,
+} skillType;
+
+#define SKILLSTOTAL SKILL_TYPE_MAX
+
+#define FIGHTER_SKILL_SLOTS SKILLSTOTAL
+#define ENEMY_SKILL_SLOTS SKILLSTOTAL
+#define BOSS_SKILL_SLOTS SKILLSTOTAL
+
+/**
+ * Array with the name strings for skills.
+ * @see skillType
+ */
+extern char *skillsnamestrings[SKILLSTOTAL + 1];
+
+/**
+ * Array with the desc strings for skills.
+ * @see skillType
+ */
+extern char *skillsdescstrings[SKILLSTOTAL + 1];
+
+/**
+ * Array with the cost integer values for skills.
+ * @see skillType
+ */
+extern int skillscosts[SKILLSTOTAL + 1];
+
+/**
+ * Holds state for a skillType.
+ * @see Fighter
+ * @see Enemy
+ * @see Boss
+ * @see skillType
+ */
+typedef struct {
+    int enabled;     /**< Flag defining if the current slot is initialised*/
+    skillType class;	  /**< Defines which kind of skillType the slot is holding*/
+    char name[80];     /**< Name string*/
+    char desc[80];     /**< Desc string*/
+    int cost;	  /**< Cost of use*/
+} Skillslot;
+
 //Forward declarations for counter fields in entities
 struct Turncounter;
 
@@ -829,6 +878,7 @@ typedef struct Fighter {
     int stamina;     /**< Current stamina value*/
     int totalstamina;	  /**< Full stamina value*/
     Specialslot *specials[SPECIALSMAX + 1];   /**< Array with all the Specialslot*/
+    Skillslot *skills[FIGHTER_SKILL_SLOTS + 1];   /**< Array with all the Skillslot*/
 
     struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
     int turnboost_atk;	   /**< Current temp boost value for atk*/
@@ -896,6 +946,8 @@ typedef struct Enemy {
     fighterStatus status;     /**< Defines active fighterStatus*/
     int beast;	   /**< Flag defining the instance as "beast" if set*/
 
+    Skillslot *skills[ENEMY_SKILL_SLOTS + 1];   /**< Array with all the Skillslot*/
+
     struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
     int turnboost_atk;	   /**< Current temp boost value for atk*/
     int turnboost_def;	   /**< Current temp boost value for def*/
@@ -934,6 +986,7 @@ typedef struct Boss {
     fighterStatus status;     /**< Defines active fighterStatus*/
     int beast;	   /**< Flag defining the instance as "beast" if set*/
 
+    Skillslot *skills[BOSS_SKILL_SLOTS + 1];   /**< Array with all the Skillslot*/
     struct Turncounter *counters[COUNTERSMAX + 1];   /**< Array with all the Turncounter pointers*/
     int turnboost_atk;	   /**< Current temp boost value for atk*/
     int turnboost_def;	   /**< Current temp boost value for def*/
@@ -1794,6 +1847,7 @@ typedef struct {
     Koliseo_Temp *t_kls;     /**< Pointer to Koliseo_Temp for OP*/
     Gamestate *gmst;	 /**< Pointer to Gamestate for OP*/
     foeTurnOption_OP foe_op;	 /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
+    skillType picked_skill;	 /**< Picked skillType, initialised only for OP_SKILL.*/
 } turnOP_args;
 
 /**

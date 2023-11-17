@@ -21,7 +21,7 @@
   + [Build with mingw32](#mingw32_build)
   + [Compiling](#compiling)
 + [Installation](#installation)
-+ [Generating Documentation](#make_doc)
++ [Documentation](#doc)
 + [Latest Release](#latest_release)
 
 
@@ -118,22 +118,15 @@
 
   You can skip the alias and maybe add the `helapordo-local` dir to your PATH instead.
 
-## Generating documentation <a name = "make_doc"></a>
+## Documentation <a name = "doc"></a>
 
-  You can use `doxygen` to generate docs in both HTML and latex.
+  HTML docs are available at [this Github Pages link](https://jgabaut.github.io/helapordo-docs/index.html).
 
-  To generate the documentation run, *from the repo dir*:
+  You can also get the ready pdf version of the docs from the latest release.
 
-  ```
-  doxygen docs/helapordo.doxyfile
-  ```
+  If you have `doxygen` installed you can generate the HTML yourself, or even the pdf if you have `doxygen-latex` or equivalents.
 
-  To have a pdf version, you can install a tex compiler and, inside `doxygen/latex`, run:
-  ```
-  make
-  ```
-
-  Running `make doc` should give you `./docs/docs.pdf`, just the pdf output from latex, and delete the html index by itself.
+  You if you have those packages, running `make doc` should give you `./docs/docs.pdf`, just the pdf output from latex, and delete the doxygen folder by itself.
 
 ## Latest Release <a name = "latest_release"></a>
 
@@ -147,5 +140,5 @@
 
   - `darwin-arm64`
 
-  📦 v1.2.9 12/11/2023
+  📦 v1.3.1 17/11/2023
   https://github.com/jgabaut/helapordo/releases

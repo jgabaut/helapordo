@@ -8,11 +8,11 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.3.0") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.3.1") ) == 0)) {
    fail("VERSION",0,check);
  };
- if ( ! (HLP_MAX_INDEX == 29) ) {
-   fail("HLP_MAX_INDEX",29,HLP_MAX_INDEX);
+ if ( ! (HLP_MAX_INDEX == 30) ) {
+   fail("HLP_MAX_INDEX",30,HLP_MAX_INDEX);
  }
  if ( ! (MAX_SAVESLOTS == 3) ) {
    fail("MAX_SAVESLOTS",3,MAX_SAVESLOTS);
@@ -70,6 +70,18 @@ int main(void) {
  };
  if ( ! (SPECIALSMAX == 3) ) { //num of specials per class (0 inclusive)
    fail("SPECIALSMAX",3,SPECIALSMAX);
+ };
+ if ( ! (SKILLSTOTAL == 3) ) {
+   fail("SKILLSTOTAL",3,SKILLSTOTAL);
+ };
+ if ( ! (FIGHTER_SKILL_SLOTS == 3) ) {
+   fail("FIGHTER_SKILL_SLOTS",3,FIGHTER_SKILL_SLOTS);
+ };
+ if ( ! (ENEMY_SKILL_SLOTS == 3) ) {
+   fail("ENEMY_SKILL_SLOTS",3,ENEMY_SKILL_SLOTS);
+ };
+ if ( ! (BOSS_SKILL_SLOTS == 3) ) {
+   fail("BOSS_SKILL_SLOTS",3,BOSS_SKILL_SLOTS);
  };
  if ( ! (COUNTERSMAX == 9) ) {
    fail("COUNTERSMAX",9,COUNTERSMAX);

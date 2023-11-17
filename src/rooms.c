@@ -52,11 +52,12 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     FILE *autosave_file;
     WINDOW *dummy_notify_win = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+    skillType dummy_skill_pick = -1;
     //Declare turnOP_args
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy,
                          dummy_boss, dummy_savefile, dummy_notify_win, t_kls,
-                         dummy_foe_op);
+                         dummy_foe_op, dummy_skill_pick);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -416,12 +417,13 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
     FILE *args_save_file = NULL;
     WINDOW *args_notify_win = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+    skillType dummy_picked_skill = -1;
 
     //Declare turnOP_args
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, args_enemy,
                          dummy_boss, args_save_file, args_notify_win, t_kls,
-                         dummy_foe_op);
+                         dummy_foe_op, dummy_picked_skill);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -1370,12 +1372,13 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     FILE *args_save_file = NULL;
     WINDOW *args_notify_win = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+    skillType dummy_skill_pick = -1;
     int isBoss = 1;
     //Declare turnOP_args
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy,
                          args_boss, args_save_file, args_notify_win, t_kls,
-                         dummy_foe_op);
+                         dummy_foe_op, dummy_skill_pick);
 
     //Strings for turn menu choices
     char *choices[] = {

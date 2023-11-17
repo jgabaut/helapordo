@@ -75,6 +75,11 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
         kls_free(temporary_kls);
         exit(EXIT_SUCCESS);
     }
+    skillType skill = args->picked_skill;
+    if (skill < 0 || skill >= SKILLSTOTAL) {
+        log_tag("debug_log.txt", "[WARN]",
+                "turnOP_args->(picked_skill) was invalid: [%i]", skill);
+    }
 
     int isBoss = -1;
     int room_index = -1;
@@ -652,6 +657,11 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                     "foe_op was invalid in turnOP(OP_SKILL): [%i]", foe_op);
             exit(EXIT_FAILURE);
         }
+        if (skill < 0 || skill > SKILLSTOTAL) {
+            log_tag("debug_log.txt", "[CRITICAL]",
+                    "skill was invalid in turnOP(OP_SKILL): [%i]", skill);
+            exit(EXIT_FAILURE);
+        }
         room_index = room->index;
         if (room->class == ENEMIES && enemy == NULL) {
             log_tag("debug_log.txt", "[ERROR]",
@@ -676,7 +686,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             isBoss = 0;
             //TODO
             //Implement the missing function to wrap skill usage and foe op
-            //res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, foe_op, notify_win, kls));
+            res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, skill, foe_op, notify_win, kls));
         }
         break;
         case BOSS: {
@@ -686,7 +696,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             isBoss = 1;
             //TODO
             //Implement the missing function to wrap skill usage and foe op
-            //res = OP_res_from_fightResult(defer_skill_boss(actor, boss, path, foe_op, notify_win, kls));
+            res = OP_res_from_fightResult(defer_skill_boss(actor, boss, skill, path, foe_op, notify_win, kls));
         }
         break;
         default: {
@@ -715,6 +725,18 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             res);
 
     return res;
+}
+
+fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, WINDOW * notify_win, Koliseo * kls)
+{
+
+    return FIGHTRES_NO_DMG;
+}
+
+fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, WINDOW * notify_win, Koliseo * kls)
+{
+
+    return FIGHTRES_NO_DMG;
 }
 
 //TODO Drop dead code
@@ -2152,6 +2174,105 @@ void setSpecials(Fighter *f, Koliseo *kls)
 }
 
 /**
+ * Takes a Fighter pointer and prepares its skillSlot fields by allocating FIGHTER_SKILL_SLOTS slots.
+ * Skill slots are initialised.
+ * @see Fighter
+ * @see Skilllot
+ * @see FIGHTER_SKILL_SLOTS
+ * @see SKILL_TYPE_LAST_UNLOCKABLE
+ * @see costFromSkill()
+ * @see stringFromSkill()
+ * @param kls The Koliseo used for allocations.
+ * @param f The Fighter pointer whose skill slots will be initialised.
+ */
+void setSkills(Fighter *f, Koliseo *kls)
+{
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i <= FIGHTER_SKILL_SLOTS; i++) {
+        kls_log(kls, "DEBUG", "Prepping Skillslot (%i)", i);
+        Skillslot *s =
+            (Skillslot *) KLS_PUSH_TYPED(kls, Skillslot, 1, HR_Skillslot,
+                                         "Skillslot", "Skillslot");
+        s->enabled = 0;
+        s->class = i;
+        s->cost = costFromSkill(i);
+        strcpy(movename, nameStringFromSkill(i));
+        strcpy(movedesc, descStringFromSkill(i));
+        //printf("DEBUG\n%i\t%s\n",(i),stringFromSkill(i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        f->skills[i] = s;
+    };
+}
+
+/**
+ * Takes a Enemy pointer and prepares its skillSlot fields by allocating ENEMY_SKILL_SLOTS slots.
+ * Skill slots are initialised.
+ * @see Enemy
+ * @see Skilllot
+ * @see ENEMY_SKILL_SLOTS
+ * @see SKILLSTOTAL
+ * @see costFromSkill()
+ * @see stringFromSkill()
+ * @param t_kls The Koliseo_Temp used for allocations.
+ * @param e The Enemy pointer whose skill slots will be initialised.
+ */
+void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls)
+{
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i < ENEMY_SKILL_SLOTS; i++) {
+        kls_log(t_kls->kls, "DEBUG", "Prepping Enemy Skillslot (%i)", i);
+        Skillslot *s =
+            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, 1, HR_Skillslot,
+                                           "Enemy Skillslot", "Enemy Skillslot");
+        s->enabled = 0;
+        s->class = i;
+        s->cost = costFromSkill(i);
+        strcpy(movename, nameStringFromSkill(i));
+        strcpy(movedesc, descStringFromSkill(i));
+        //printf("DEBUG\n%i\t%s\n",(i),stringFromSkill(i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        e->skills[i] = s;
+    };
+}
+
+/**
+ * Takes a Boss pointer and prepares its skillSlot fields by allocating BOSS_SKILL_SLOTS slots.
+ * Skill slots are initialised.
+ * @see Boss
+ * @see Skilllot
+ * @see Boss_SKILL_SLOTS
+ * @see SKILLSTOTAL
+ * @see costFromSkill()
+ * @see stringFromSkill()
+ * @param t_kls The Koliseo_Temp used for allocations.
+ * @param b The Boss pointer whose skill slots will be initialised.
+ */
+void setBossSkills(Boss *b, Koliseo_Temp *t_kls)
+{
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i < BOSS_SKILL_SLOTS; i++) {
+        kls_log(t_kls->kls, "DEBUG", "Prepping Boss Skillslot (%i)", i);
+        Skillslot *s =
+            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, 1, HR_Skillslot,
+                                           "Boss Skillslot", "Boss Skillslot");
+        s->enabled = 0;
+        s->class = i;
+        s->cost = costFromSkill(i);
+        strcpy(movename, nameStringFromSkill(i));
+        strcpy(movedesc, descStringFromSkill(i));
+        //printf("DEBUG\n%i\t%s\n",(i),stringFromSkill(i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        b->skills[i] = s;
+    };
+}
+
+/**
  * Takes a Fighter pointer and resets all of its permboost_STAT values to 0, also correctly updating the current stat values.
  * @see Fighter
  * @param f The fighter pointer whose permboosts will be reset.
@@ -2442,6 +2563,7 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
     s->keysfound = 0;
 
     setSpecials(player, kls);
+    setSkills(player, kls);
     initCounters(player, kls);
     initPerks(player, kls);
 
@@ -2799,6 +2921,9 @@ void prepareBoss(Boss *b, Koliseo_Temp *t_kls)
     //Load boss stats
     initBossStats(b, t_kls);
 
+    //Set skill slots
+    setBossSkills(b, t_kls);
+
     //Force load of level bonuses
     statResetBoss(b, 1);
 
@@ -2942,6 +3067,10 @@ void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
 
     //Load enemy stats
     initEnemyStats(e, t_kls);
+
+    //Load enemy skills
+    //
+    setEnemySkills(e, t_kls);
 
     //Force load of level bonuses
     statResetEnemy(e, 1);
@@ -5608,6 +5737,201 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
 }
 
 /**
+ * Takes a Fighter and a Enemy pointers and calls do_Skill().
+ * @see Fighter
+ * @see Enemy
+ * @see do_Skill()
+ * @param player The Fighter pointer at hand.
+ * @param e The Enemy pointer at hand.
+ * @param picked_skill The picked skill by Fighter.
+ * @param foe_op The foeTurnOption_OP for the foe.
+ * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
+ */
+int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
+                      WINDOW *notify_win, Koliseo *kls)
+{
+    char msg[200];
+    //FIXME
+    //Is it okay to return just one result, when having 2 interactions that could go differently?
+    //
+    //Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
+    fightResult res = FIGHTRES_NO_DMG;
+
+    int player_goes_first = (player->vel >= e->vel ? 1 : 0);
+
+    int first_act_res = FIGHTRES_NO_DMG;
+
+    if (player_goes_first) {
+
+        res = do_Skill(player, e, picked_skill, notify_win, kls);
+
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        first_act_res = res;
+
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            switch (foe_op) {
+            case FOE_OP_INVALID: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                        foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            case FOE_OP_IDLE: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } was idle.", __func__,
+                        stringFromEClass(e->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is loafing around.",
+                        stringFromEClass(e->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            }
+            break;
+            case FOE_OP_FIGHT: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } wants to fight.", __func__,
+                        stringFromEClass(e->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is angry!", stringFromEClass(e->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+
+                res = enemy_attack(e, player, notify_win, kls);
+            }
+            break;
+            case FOE_OP_SPECIAL: {
+                log_tag("debug_log.txt", "[TODO]",
+                        "[%s()]:  Foe { %s } wants to use a special.",
+                        __func__, stringFromEClass(e->class));
+                //TODO
+                //Implement enemy special function
+                //res = enemy_attack_special(e,player,notify_win,kls);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected foeTurnOption_OP in [%s()]: [%i]",
+                        __func__, foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }			// End foe_op switch
+
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was not a clash...", __func__);
+            } else if ((res == FIGHTRES_DMG_TAKEN
+                        && first_act_res == FIGHTRES_DMG_DEALT)
+                       || (res == FIGHTRES_DMG_DEALT
+                           && first_act_res == FIGHTRES_DMG_TAKEN)) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was a clash!", __func__);
+                res = FIGHTRES_CLASH;
+            }
+
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
+    } else {
+        //Foe acts first
+        switch (foe_op) {
+        case FOE_OP_INVALID: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        case FOE_OP_IDLE: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } was idle.", __func__,
+                    stringFromEClass(e->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is loafing around.",
+                    stringFromEClass(e->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+        }
+        break;
+        case FOE_OP_FIGHT: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } wants to fight.", __func__,
+                    stringFromEClass(e->class));
+            res = enemy_attack(e, player, notify_win, kls);
+        }
+        break;
+        case FOE_OP_SPECIAL: {
+            log_tag("debug_log.txt", "[TODO]",
+                    "[%s()]:  Foe { %s } wants to use a special.", __func__,
+                    stringFromEClass(e->class));
+            //TODO
+            //Implement enemy special function
+            //res = enemy_attack_special(e,player,notify_win,kls);
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        }			// End foe_op switch
+
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        first_act_res = res;
+
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            res = do_Skill(player, e, picked_skill, notify_win, kls);
+
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            if (res == FIGHTRES_DEATH || res == FIGHTRES_KILL_DONE) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was not a clash...", __func__);
+            } else if ((res == FIGHTRES_DMG_TAKEN
+                        && first_act_res == FIGHTRES_DMG_DEALT)
+                       || (res == FIGHTRES_DMG_DEALT
+                           && first_act_res == FIGHTRES_DMG_TAKEN)) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "[%s()]: Deferred fight was a clash!", __func__);
+                res = FIGHTRES_CLASH;
+            }
+
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
+    }
+    return res;
+}
+
+/**
  * Takes a Fighter, a Boss and a Path pointers and compares fighters stats to determine who gets damaged and returns the fightStatus value.
  * Prints notifications to the passed WINDOW pointer.
  * On boss death, we call dropConsumable, dropEquip and dropArtifact.
@@ -6395,6 +6719,179 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
 }
 
 /**
+ * Takes a Fighter and a Boss pointers and calls do_Skill_boss().
+ * @see Fighter
+ * @see Boss
+ * @see do_Skill_boss()
+ * @param player The Fighter pointer at hand.
+ * @param b The Boss pointer at hand.
+ * @param picked_skill The skill picked by Fighter.
+ * @param foe_op The foeTurnOption_OP for the foe.
+ * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param kls The Koliseo used for allocations.
+ */
+int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
+                     WINDOW *notify_win, Koliseo *kls)
+{
+    char msg[200];
+    //FIXME
+    //Is it okay to return just one result, when having 2 interactions that could go differently?
+    //
+    //Use FIGHTRES_CLASH as needed, to indicate both sides were damaged at some point.
+    fightResult res = FIGHTRES_NO_DMG;
+
+    int player_goes_first = (player->vel >= b->vel ? 1 : 0);
+
+    if (player_goes_first) {
+        res = do_Skill_boss(player, b, picked_skill, p, notify_win, kls);
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            switch (foe_op) {
+            case FOE_OP_INVALID: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
+                        foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            case FOE_OP_IDLE: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } was idle.", __func__,
+                        stringFromBossClass(b->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is loafing around.",
+                        stringFromBossClass(b->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            }
+            break;
+            case FOE_OP_FIGHT: {
+                log_tag("debug_log.txt", "[DEFER]",
+                        "[%s()]:  Foe { %s } wants to fight.", __func__,
+                        stringFromBossClass(b->class));
+                wattron(notify_win, COLOR_PAIR(S4C_GREY));
+                sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
+                display_notification(notify_win, msg, 500);
+                wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+                res = boss_attack(b, player, p, notify_win, kls);
+            }
+            break;
+            case FOE_OP_SPECIAL: {
+                log_tag("debug_log.txt", "[TODO]",
+                        "[%s()]:  Foe { %s } wants to use a special.",
+                        __func__, stringFromBossClass(b->class));
+                //TODO
+                //Implement boss special function
+                //res = boss_attack_special(b,player,p,notify_win,kls);
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Unexpected foeTurnOption_OP in [%s()]: [%i]",
+                        __func__, foe_op);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }			// End foe_op switch
+
+            //TODO
+            //Check second turn act res?
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+
+            return res;
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
+    } else {
+        //Foe acts first
+        switch (foe_op) {
+        case FOE_OP_INVALID: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "foe_op was FOE_OP_INVALID in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        case FOE_OP_IDLE: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } was idle.", __func__,
+                    stringFromBossClass(b->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is loafing around.",
+                    stringFromBossClass(b->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+        }
+        break;
+        case FOE_OP_FIGHT: {
+            log_tag("debug_log.txt", "[DEFER]",
+                    "[%s()]:  Foe { %s } wants to fight.", __func__,
+                    stringFromBossClass(b->class));
+            wattron(notify_win, COLOR_PAIR(S4C_GREY));
+            sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
+            display_notification(notify_win, msg, 500);
+            wattroff(notify_win, COLOR_PAIR(S4C_GREY));
+            res = boss_attack(b, player, p, notify_win, kls);
+        }
+        break;
+        case FOE_OP_SPECIAL: {
+            log_tag("debug_log.txt", "[TODO]",
+                    "[%s()]:  Foe { %s } wants to use a special.", __func__,
+                    stringFromBossClass(b->class));
+            //TODO
+            //Implement boss special function
+            //res = boss_attack_special(b,player,p,notify_win,kls);
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
+                    foe_op);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        }			// End foe_op switch
+
+        //Check res and apply second action if needed
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[%s()]: First act res was [%s]: [%i]", __func__,
+                stringFrom_fightResult(res), res);
+
+        if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
+            res = do_Skill_boss(player, b, picked_skill, p, notify_win, kls);
+
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[%s()]: Second act res was [%s]: [%i]", __func__,
+                    stringFrom_fightResult(res), res);
+            //TODO
+            //Check second turn act res?
+            return res;
+
+        } else if (res == FIGHTRES_DEATH) {
+            return res;
+        } else if (res == FIGHTRES_KILL_DONE) {
+            return res;
+        }
+    }
+
+    return res;
+}
+/**
  * Takes a Fighter, an Enemy and a Boss pointers, a string denoting the consumableClass and an int for use on enemy or boss.
  * If qty value for the Consumable is 0, we have an early return. Otherise effect is applied and qty is decreased.
  * @see Fighter
@@ -6570,7 +7067,7 @@ void emptyEquips(Fighter *player)
  */
 OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
 {
-    const char version[] = "v0.1.6";
+    const char* version = HELAPORDO_SAVEFILE_VERSION;
     //FILE *file = fopen("save.txt", "w");
     log_tag("debug_log.txt", "[DEBUG]", "Saving with version %s", version);
 
@@ -6611,6 +7108,12 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
     fprintf(file, "    Specials{\n");
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
         fprintf(file, "%i# %i_special_enabled_flag\n", f->specials[i]->enabled,
+                i);
+    }
+    fprintf(file, "    },\n");
+    fprintf(file, "    Skills{\n");
+    for (int i = 0; i < FIGHTER_SKILL_SLOTS; i++) {
+        fprintf(file, "%i# %i_skill_enabled_flag\n", f->skills[i]->enabled,
                 i);
     }
     fprintf(file, "    },\n");
@@ -6739,7 +7242,7 @@ OP_res handleSave_Home(FILE *file, Fighter *f, Path *p, int roomIndex)
 OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
                           int enemyIndex, int roomTotalEnemies, int roomIndex)
 {
-    const char version[] = "v0.1.6";
+    const char * version = HELAPORDO_SAVEFILE_VERSION;
     //FILE *file = fopen("save.txt", "w");
     log_tag("debug_log.txt", "[DEBUG]", "Saving with version %s", version);
 
@@ -6780,6 +7283,12 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     fprintf(file, "    Specials{\n");
     for (int i = 0; i < SPECIALSMAX + 1; i++) {
         fprintf(file, "%i# %i_special_enabled_flag\n", f->specials[i]->enabled,
+                i);
+    }
+    fprintf(file, "    },\n");
+    fprintf(file, "    Skills{\n");
+    for (int i = 0; i < FIGHTER_SKILL_SLOTS; i++) {
+        fprintf(file, "%i# %i_skill_enabled_flag\n", f->skills[i]->enabled,
                 i);
     }
     fprintf(file, "    },\n");
@@ -6870,6 +7379,12 @@ OP_res handleSave_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     fprintf(file, "%i# beast\n", e->beast);
     fprintf(file, "%i# prize\n", e->prize);
     fprintf(file, "%s# status\n", stringFromStatus(e->status));
+    fprintf(file, "    Skills{\n");
+    for (int i = 0; i < ENEMY_SKILL_SLOTS; i++) {
+        fprintf(file, "%i# %i_skill_enabled_flag\n", e->skills[i]->enabled,
+                i);
+    }
+    fprintf(file, "    },\n");
     fprintf(file, "    Counters{\n");
     for (int i = 0; i < COUNTERSMAX + 1; i++) {
         fprintf(file, "%i# innervalue\n", e->counters[i]->innerValue);
@@ -6933,7 +7448,7 @@ saveType read_saveType(FILE *file)
         return -1;
     }
     char buf[500];
-    const char version[] = "v0.1.6";
+    const char* version = HELAPORDO_SAVEFILE_VERSION;
 
     int scanres = -1;
     /* File version scanning */
@@ -7018,7 +7533,7 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     char buf[500];
     char comment[300];
     int num_value = -1;
-    const char version[] = "v0.1.6";
+    const char * version = HELAPORDO_SAVEFILE_VERSION;
 
     int scanres = -1;
     /* File version scanning */
@@ -7341,6 +7856,38 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
     if (scanres != 1) {
         log_tag("debug_log.txt", "[DEBUG]",
                 "Bad fscanf() result in handleLoadgame_Home(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    //Skills
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < FIGHTER_SKILL_SLOTS; i++) {
+        //Enabled flag
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->skills[i]->enabled = num_value;
+    }
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
                 1, scanres);
         fprintf(stderr, "Error while loading game.");
         exit(EXIT_FAILURE);
@@ -8306,7 +8853,7 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
     char buf[500];
     char comment[300];
     int num_value = -1;
-    const char version[] = "v0.1.6";
+    const char version[] = HELAPORDO_SAVEFILE_VERSION;
 
     int scanres = -1;
     /* File version scanning */
@@ -8624,6 +9171,38 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
         log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
         sscanf(buf, "%3i", &num_value);
         f->specials[i]->enabled = num_value;
+    }
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    //Skills
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < FIGHTER_SKILL_SLOTS; i++) {
+        //Enabled flag
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        f->skills[i]->enabled = num_value;
     }
     scanres = fscanf(file, "%200s\n", buf);
     if (scanres != 1) {
@@ -9538,6 +10117,38 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
         }
     };
 
+    //Skills
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
+    for (int i = 0; i < ENEMY_SKILL_SLOTS; i++) {
+        //Enabled flag
+        scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
+        if (scanres != 2) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                    2, scanres);
+            fprintf(stderr, "Error while loading game.");
+            exit(EXIT_FAILURE);
+        }
+
+        log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
+        sscanf(buf, "%3i", &num_value);
+        e->skills[i]->enabled = num_value;
+    }
+    scanres = fscanf(file, "%200s\n", buf);
+    if (scanres != 1) {
+        log_tag("debug_log.txt", "[DEBUG]",
+                "Bad fscanf() result in handleLoadGame_Enemies(), expected [%i] was (%i)",
+                1, scanres);
+        fprintf(stderr, "Error while loading game.");
+        exit(EXIT_FAILURE);
+    }
     //Enemy counters
     scanres = fscanf(file, "%200s\n", buf);	//Skip Enemy counters bracket
     if (scanres != 1) {
@@ -12528,10 +13139,11 @@ void gameloop(int argc, char **argv)
         WINDOW *fakenotifywin = NULL;
         Gamestate *fakegmst = NULL;
         foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
+        skillType fake_skill = -1;
         turnOP_args *savepick_turn_args =
             init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
                              fakeenemy, fakeboss, fakesavefile, fakenotifywin,
-                             savepick_kls, fake_foe_op);
+                             savepick_kls, fake_foe_op, fake_skill);
         char *savepick_choices[] = {
             "New game",
             "Load save",
@@ -12810,10 +13422,12 @@ void gameloop(int argc, char **argv)
             WINDOW *fakenotifywin = NULL;
             Gamestate *fakegmst = NULL;
             foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
+            skillType fake_skill = -1;
             turnOP_args *loading_room_turn_args =
                 init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
                                  fakeenemy, fakeboss, fakesavefile,
-                                 fakenotifywin, gamestate_kls, fake_foe_op);
+                                 fakenotifywin, gamestate_kls, fake_foe_op,
+                                 fake_skill);
             FILE *save_file;
             char path_to_savefile[1000];
             char static_path[500];

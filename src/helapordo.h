@@ -65,6 +65,9 @@
 OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,
               Koliseo_Temp * t_kls);
 
+fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, WINDOW * notify_win, Koliseo * kls);
+fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, WINDOW * notify_win, Koliseo * kls);
+
 /*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 */
@@ -130,6 +133,10 @@ void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
 void setCounter(Turncounter * c, int turns);
 
 void setSpecials(Fighter * f, Koliseo * kls);
+
+void setSkills(Fighter *f, Koliseo *kls);
+void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls);
+void setBossSkills(Boss *b, Koliseo_Temp *t_kls);
 
 void resetPermboosts(Fighter * f);
 void applyPermboosts(Fighter * f);
@@ -227,6 +234,8 @@ int dropArtifact(Fighter * player);
 
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
                       WINDOW * notify_win, Koliseo * kls);
+int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
+                      WINDOW * notify_win, Koliseo * kls);
 
 int fight(Fighter * player, Enemy * e, WINDOW * notify_win, Koliseo * kls);
 
@@ -236,6 +245,9 @@ int enemy_attack(Enemy * e, Fighter * target, WINDOW * notify_win,
 int defer_fight_boss(Fighter * player, Boss * b, Path * p,
                      foeTurnOption_OP foe_op, WINDOW * notify_win,
                      Koliseo * kls);
+
+int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
+                     WINDOW *notify_win, Koliseo *kls);
 
 int boss_fight(Fighter * player, Boss * b, Path * p, WINDOW * notify_win,
                Koliseo * kls);
