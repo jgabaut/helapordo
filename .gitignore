@@ -10,6 +10,8 @@ helapordo-save-3.txt
 installer.log
 # ignore docs file
 docs/docs.pdf
+# ignore doxygen dir
+doxygen
 # ignore object files
 *.o
 # ignore executable
