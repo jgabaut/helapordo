@@ -56,6 +56,17 @@
 #include "game_lore.h"
 #include "game_lore_alt.h"
 
+/*! \mainpage Helapordo index page
+ *
+ * \section intro_sec Intro
+ *
+ * Helapordo is roguelike terminal game, using ncurses.
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ *
+ * Check it out on [github](https://github.com/jgabaut/helapordo).
+ */
+
 /**
  * Call function associated with the passed turnOption_OP.
  * @param op The turnOption_OP to execute.
