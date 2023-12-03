@@ -8,7 +8,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.3.1") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.3.2") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (HLP_MAX_INDEX == 30) ) {
