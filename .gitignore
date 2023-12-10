@@ -56,3 +56,6 @@ src/palette.h
 
 # ignore old .txt animations files
 static/animations/*.txt
+
+# ignore anvil symlink
+anvil

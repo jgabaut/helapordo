@@ -7,3 +7,6 @@
 [submodule "koliseo"]
 	path = koliseo
 	url = git@github.com:jgabaut/koliseo.git
+[submodule "invil"]
+	path = invil
+	url = git@github.com:jgabaut/invil
