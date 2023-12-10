@@ -15,6 +15,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+script_version="0.1"
+
 print_impls() {
     printf "Impl list:\n"
     printf "  repo_amboso\n  repo_invil\n  path_anvil\n\n"
@@ -31,7 +33,6 @@ usage() {
     printf "Usage:    %s [-i] <impl>\n" "$prog"
     print_impls
 }
-echo "$#: $*"
 
 if [ "$#" -gt 3 ] ; then {
     usage "$0"
@@ -49,6 +50,7 @@ is_interactive=0
 
 if [ "$1" = "-i" ] ; then {
     is_interactive=1
+    printf "%s v%s\n" "$0" "$script_version"
 }
 fi
 
