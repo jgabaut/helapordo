@@ -132,13 +132,13 @@
 
   I try to upload precompiled binaries for:
 
-  - `x86_64-Linux`
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.4/helapordo-1.3.4-Linux-x86_64.zip)
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.)
+  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.4/helapordo.exe-1.3.4-w64-mingw32-x86_64.zip)
 
   Some releases may offer a precompiled binary for:
 
   - `darwin-arm64`
 
-  📦 v1.3.2 03/12/2023
+  📦 v1.3.4 17/12/2023
   https://github.com/jgabaut/helapordo/releases
