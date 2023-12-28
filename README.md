@@ -91,7 +91,7 @@
   - `mingw32`'s `lib` and `include` dirs, for `ncursesw`
   - `mingw32`'s correct `gcc`.
 
-  Preprocessor macros based on the `Makefile` passing `-DMINGW32_BUILD` are present to enable/disable `Windows` specific code.
+  Preprocessor macros based on the `Makefile` passing `-DWINDOWS_BUILD` are present to enable/disable `Windows` specific code.
 
 ### Compiling and running <a name = "compiling"></a>
 
