@@ -25,7 +25,7 @@ case "${host_os}" in
         echo "Building for mingw32: [$host_cpu-$host_vendor-$host_os]"
         build_windows=yes
         # mingw32 specific flags
-        AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DMINGW32_BUILD -DKOLISEO_HAS_CURSES -DNCURSES_STATIC"])
+        AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DKOLISEO_HAS_CURSES -DNCURSES_STATIC"])
         AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lpanelw -lmenuw -lncursesw -static"])
         AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
         AC_SUBST([OS], ["w64-mingw32"])
@@ -55,7 +55,7 @@ case "${host_os}" in
     ;;
 esac
 
-AM_CONDITIONAL([MINGW32_BUILD], [test "$build_windows" = "yes"])
+AM_CONDITIONAL([WINDOWS_BUILD], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([DARWIN_BUILD], [test "$build_mac" = "yes"])
 AM_CONDITIONAL([LINUX_BUILD], [test "$build_linux" = "yes"])
 
