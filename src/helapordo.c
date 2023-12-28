@@ -13210,7 +13210,17 @@ void gameloop(int argc, char **argv)
                 INVIL__VERSION__STRING);
         wprintw(savepick_side_win, "  \nVersion Info: %.8s",
                 get_ANVIL__VERSION__DESC__());
-
+        char build_time_buff[20] = {0};
+        const char* anvil_date = get_ANVIL__VERSION__DATE__();
+        char* anvil_date_end;
+        long anvil_build_time = strtol( anvil_date , &anvil_date_end, 10);
+        if (anvil_date_end == anvil_date) {
+            log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
+        } else {
+            time_t build_time = time(&anvil_build_time);
+            strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&build_time));
+            wprintw(savepick_side_win, "  \nDate: %s", build_time_buff);
+        }
 #endif
 #else
         wprintw(savepick_side_win, "  \nBuilt without anvil");
