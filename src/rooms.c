@@ -734,9 +734,10 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 // Unpost menu and free all the memory taken up
                 unpost_menu(my_menu);
                 free_menu(my_menu);
-                for (int k = 0; k < n_choices; k++) {
+                for (int k = 0; k < (n_choices + debug_n_choices); k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
 
                 /*
                    if (e->beast) {
@@ -978,6 +979,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     for (int k = 0; k < totalChoices; k++) {
                         free_item(my_items[k]);
                     }
+                    free(my_items);
 
                     log_tag("debug_log.txt", "[ANIMATE]",
                             "Ending enemy animation.");
@@ -1042,6 +1044,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     for (int k = 0; k < totalChoices; k++) {
                         free_item(my_items[k]);
                     }
+                    free(my_items);
 
                     log_tag("debug_log.txt", "[ANIMATE]",
                             "Ending enemy animation.");
@@ -1118,6 +1121,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < totalChoices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
 
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending enemy animation.");
@@ -1139,6 +1143,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < totalChoices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
 
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending enemy animation.");
@@ -1158,6 +1163,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < totalChoices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
 
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending enemy animation.");
@@ -1177,6 +1183,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < totalChoices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending enemy animation.");
                 log_tag("debug_log.txt", "[ANIMATE]",
@@ -1196,6 +1203,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < totalChoices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending enemy animation.");
                 log_tag("debug_log.txt", "[ANIMATE]",
@@ -1242,6 +1250,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < totalChoices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
 
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending enemy animation.");
@@ -1261,6 +1270,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < totalChoices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
 
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending enemy animation.");
@@ -1280,6 +1290,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < totalChoices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
 
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending enemy animation.");
@@ -1625,6 +1636,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < totalChoices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
 
             //TODO:notifications for BOSS room
             //purple();
@@ -1813,6 +1825,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < n_choices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
                 endwin();
 
                 //Account for oracle gift perk
@@ -1864,6 +1877,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 for (int k = 0; k < n_choices; k++) {
                     free_item(my_items[k]);
                 }
+                free(my_items);
 
                 //Give coins
 
@@ -1916,6 +1930,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < n_choices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
             endwin();
             turnOP(OP_SPECIAL, args, kls, t_kls);
         } else if (choice == CONSUMABLE) {
@@ -1925,6 +1940,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < n_choices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
             endwin();
             turnOP(OP_CONSUMABLE, args, kls, t_kls);
         } else if (choice == EQUIPS) {
@@ -1934,6 +1950,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < n_choices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
             endwin();
             turnOP(OP_EQUIPS, args, kls, t_kls);
         } else if (choice == PERKS) {
@@ -1943,6 +1960,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < n_choices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
             endwin();
             turnOP(OP_PERKS, args, kls, t_kls);
         } else if (choice == STATS) {
@@ -1952,6 +1970,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < n_choices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
             endwin();
             turnOP(OP_STATS, args, kls, t_kls);
         } else if (choice == DEBUG) {
@@ -1965,6 +1984,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < totalChoices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
             endwin();
             turnOP(OP_DEBUG, args, kls, t_kls);
         } else if (choice == ARTIFACTS) {
@@ -1974,6 +1994,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < n_choices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
             endwin();
             turnOP(OP_ARTIFACTS, args, kls, t_kls);
         } else if (choice == QUIT) {
@@ -1983,6 +2004,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             for (int k = 0; k < n_choices; k++) {
                 free_item(my_items[k]);
             }
+            free(my_items);
             endwin();
             turnOP(OP_QUIT, args, kls, t_kls);
         }
@@ -2413,6 +2435,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
     for (int k = 0; k < n_choices; k++) {
         free_item(my_items[k]);
     }
+    free(my_items);
     delwin(wins[0]);
     delwin(wins[1]);
     endwin();
@@ -2905,6 +2928,7 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
     for (int k = 0; k < n_choices; k++) {
         free_item(my_items[k]);
     }
+    free(my_items);
     delwin(win);
     endwin();
 
