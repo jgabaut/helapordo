@@ -138,7 +138,7 @@
 
   Some releases may offer a precompiled binary for:
 
-  - `darwin-arm64`
+  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.4/helapordo-1.3.4-darwin-arm64.zip)
 
   📦 v1.3.4 17/12/2023
   https://github.com/jgabaut/helapordo/releases
