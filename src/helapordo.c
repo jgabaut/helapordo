@@ -13201,8 +13201,16 @@ void gameloop(int argc, char **argv)
         wprintw(savepick_side_win, "  \n  using: koliseo v%s",
                 KOLISEO_API_VERSION_STRING);
         wprintw(savepick_side_win, "  \n  using: ncurses v%s", NCURSES_VERSION);
+#ifndef INVIL__helapordo__HEADER__
         wprintw(savepick_side_win, "  \nBuilt with: amboso v%s",
                 ANVIL__API_LEVEL__STRING);
+#else
+        wprintw(savepick_side_win, "  \nBuilt with: invil v%s",
+                INVIL__VERSION__STRING);
+        wprintw(savepick_side_win, "  \nVersion Info: %.8s",
+                get_ANVIL__VERSION__DESC__());
+
+#endif
         //wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
         wrefresh(savepick_side_win);
         refresh();
