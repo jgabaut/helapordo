@@ -40,7 +40,7 @@ endif
 # Compiler flags
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11
 
-if MINGW32_BUILD
+if WINDOWS_BUILD
 helapordo_SOURCES += src/floor_tester.c
 endif
 

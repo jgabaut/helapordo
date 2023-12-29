@@ -13201,8 +13201,34 @@ void gameloop(int argc, char **argv)
         wprintw(savepick_side_win, "  \n  using: koliseo v%s",
                 KOLISEO_API_VERSION_STRING);
         wprintw(savepick_side_win, "  \n  using: ncurses v%s", NCURSES_VERSION);
+#ifdef ANVIL__helapordo__
+#ifndef INVIL__helapordo__HEADER__
         wprintw(savepick_side_win, "  \nBuilt with: amboso v%s",
                 ANVIL__API_LEVEL__STRING);
+#else
+        wprintw(savepick_side_win, "  \nBuilt with: invil v%s",
+                INVIL__VERSION__STRING);
+        wprintw(savepick_side_win, "  \nVersion Info: %.8s",
+                get_ANVIL__VERSION__DESC__());
+        char build_time_buff[20] = {0};
+        const char* anvil_date = get_ANVIL__VERSION__DATE__();
+        char* anvil_date_end;
+#ifndef _WIN32
+        long anvil_build_time = strtol( anvil_date, &anvil_date_end, 10);
+#else
+        long long anvil_build_time = strtol( anvil_date, &anvil_date_end, 10);
+#endif
+        if (anvil_date_end == anvil_date) {
+            log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
+        } else {
+            time_t build_time = time(&anvil_build_time);
+            strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&build_time));
+            wprintw(savepick_side_win, "  \nDate: %s", build_time_buff);
+        }
+#endif
+#else
+        wprintw(savepick_side_win, "  \nBuilt without anvil");
+#endif
         //wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
         wrefresh(savepick_side_win);
         refresh();
@@ -13451,6 +13477,8 @@ void gameloop(int argc, char **argv)
                 //Debug error
                 log_tag("debug_log.txt", "[ERROR]",
                         "Could not load savefile at (%s)", path_to_savefile);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
             }
             //Update loading_room_turn_args->save_file pointer
