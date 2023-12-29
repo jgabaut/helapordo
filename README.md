@@ -47,6 +47,14 @@
   - `ncurses-dev` is needed as a library dependecy.
   - `python3` is needed to generate `./src/palette.c` and `./src/palette.h`.
 
+  - Some source files are expected to be generated at build time. This means you need:
+    - `awk` is needed by `amboso` to generate `./src/anvil__helapordo.h`.
+      - `bash >=4` is needed to run `amboso`.
+      - Unfortunately, `mawk` is not compatible with `amboso`.
+    - If you dont' have those, you can use `invil` to generate `./src/anvil__helapordo.h`.
+      - You will need `cargo` to build `invil`.
+    - If you want to just build the code without `./src/anvil__helapordo.h`., you can apply the patch file provided at [this link](https://github.com/jgabaut/helapordo/issues/52#issuecomment-1871877437).
+
 
 ### Initialising submodules <a name = "init_submodules"></a>
 
@@ -132,13 +140,13 @@
 
   I try to upload precompiled binaries for:
 
-  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.4/helapordo-1.3.4-Linux-x86_64.zip)
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.5/helapordo-1.3.5-Linux-x86_64.zip)
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.4/helapordo.exe-1.3.4-w64-mingw32-x86_64.zip)
+  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.5/helapordo.exe-1.3.5-w64-mingw32-x86_64.zip)
 
   Some releases may offer a precompiled binary for:
 
   - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.4/helapordo-1.3.4-darwin-arm64.zip)
 
-  📦 v1.3.4 17/12/2023
+  📦 v1.3.5 29/12/2023
   https://github.com/jgabaut/helapordo/releases
