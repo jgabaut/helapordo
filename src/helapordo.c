@@ -13213,7 +13213,11 @@ void gameloop(int argc, char **argv)
         char build_time_buff[20] = {0};
         const char* anvil_date = get_ANVIL__VERSION__DATE__();
         char* anvil_date_end;
+#ifndef _WIN32
         long anvil_build_time = strtol( anvil_date , &anvil_date_end, 10);
+#else
+        long long anvil_build_time = strtol( anvil_date , &anvil_date_end, 10);
+#endif
         if (anvil_date_end == anvil_date) {
             log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
         } else {
