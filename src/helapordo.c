@@ -13473,6 +13473,8 @@ void gameloop(int argc, char **argv)
                 //Debug error
                 log_tag("debug_log.txt", "[ERROR]",
                         "Could not load savefile at (%s)", path_to_savefile);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
             }
             //Update loading_room_turn_args->save_file pointer
