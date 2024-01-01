@@ -15,11 +15,11 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-script_version="0.1"
+script_version="0.2"
 
 print_impls() {
     printf "Impl list:\n"
-    printf "  repo_amboso\n  repo_invil\n  path_anvil\n\n"
+    printf "  repo_amboso\n  repo_invil\n  path_anvil\n  cargo_invil\n\n"
 }
 
 prompt_impls() {
@@ -73,6 +73,9 @@ if [ "$is_interactive" -eq 0 ] ; then {
     } elif [ "$impl_q" = "path_anvil" ] ; then {
         ln -s /usr/local/bin/anvil ./anvil
         exit "$?"
+    } elif [ "$impl_q" = "cargo_invil" ] ; then {
+        ln -s "$HOME"/.cargo/bin/invil ./anvil
+        exit "$?"
     } else {
         printf "[ERROR]    Invalid impl query: {%s}.\n" "$impl_q"
         exit 1
@@ -102,6 +105,9 @@ while read -p "$(prompt_impls)" line; do {
             fi
         } elif [ "$impl_q" = "path_anvil" ] ; then {
             ln -s /usr/local/bin/anvil ./anvil
+            exit "$?"
+        } elif [ "$impl_q" = "cargo_invil" ] ; then {
+            ln -s "$HOME"/.cargo/bin/invil ./anvil
             exit "$?"
         } else {
             printf "[ERROR]    Invalid impl query: {%s}.\n" "$impl_q"
