@@ -18,7 +18,7 @@
 #include "helapordo_raylib.h"
 
 void gameloop_rl(int argc, char** argv) {
-    printf("\n\t\t\tWIP\n\n");
+    printf("\n\t\t\tDISCLAIMER: THIS BUILD IS STILL WIP. NO GUARANTEES ARE MADE.\n\n");
     printf("helapordo v%s\n", VERSION);
     S4C_PRINTVERSION();
     printf("koliseo v%s\n", string_koliseo_version());
