@@ -20,13 +20,14 @@
 #define SPECIALS_H
 #include "game_core.h"
 
+#ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #include <ncursesw/menu.h>
 #else
 #include <panel.h>
 #include <menu.h>
-#endif
+#endif // _WIN32
 
 void knightSpecial_Slash(WINDOW * w, Fighter * f, Enemy * e, Boss * b, Path * p,
                          int roomIndex, int enemyIndex, int isBoss);
@@ -73,5 +74,52 @@ void assassinSpecial_Disguise(WINDOW * w, Fighter * f, Enemy * e, Boss * b,
 void assassinSpecial_Venomblade(WINDOW * w, Fighter * f, Enemy * e, Boss * b,
                                 Path * p, int roomIndex, int enemyIndex,
                                 int isBoss);
-
-#endif
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+void knightSpecial_Slash(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
+                         int roomIndex, int enemyIndex, int isBoss);
+void knightSpecial_Cover(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
+                         int roomIndex, int enemyIndex, int isBoss);
+void knightSpecial_Armordrop(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                             Path * p, int roomIndex, int enemyIndex,
+                             int isBoss);
+void knightSpecial_Berserk(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                           Path * p, int roomIndex, int enemyIndex, int isBoss);
+void archerSpecial_Headshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                            Path * p, int roomIndex, int enemyIndex,
+                            int isBoss);
+void archerSpecial_Quivercheck(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                               Path * p, int roomIndex, int enemyIndex,
+                               int isBoss);
+void archerSpecial_Poisonshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                              Path * p, int roomIndex, int enemyIndex,
+                              int isBoss);
+void archerSpecial_Fireshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                            Path * p, int roomIndex, int enemyIndex,
+                            int isBoss);
+void mageSpecial_Fatewarp(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                          Path * p, int roomIndex, int enemyIndex, int isBoss);
+void mageSpecial_Powerup(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
+                         int roomIndex, int enemyIndex, int isBoss);
+void mageSpecial_Spellstrike(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                             Path * p, int roomIndex, int enemyIndex,
+                             int isBoss);
+void mageSpecial_Flamering(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                           Path * p, int roomIndex, int enemyIndex, int isBoss);
+void assassinSpecial_Grimdagger(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                                Path * p, int roomIndex, int enemyIndex,
+                                int isBoss);
+void assassinSpecial_Leechknife(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                                Path * p, int roomIndex, int enemyIndex,
+                                int isBoss);
+void assassinSpecial_Disguise(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                              Path * p, int roomIndex, int enemyIndex,
+                              int isBoss);
+void assassinSpecial_Venomblade(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                                Path * p, int roomIndex, int enemyIndex,
+                                int isBoss);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+#endif // SPECIALS_H

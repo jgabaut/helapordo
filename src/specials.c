@@ -15,8 +15,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#ifdef HELAPORDO_CURSES_BUILD
 #include "helapordo.h"
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+#include "helapordo_raylib.h"
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 #include "specials.h"
+
+#ifdef HELAPORDO_CURSES_BUILD
 //Functions for special moves
 /**
  * Takes one each of Fighter, Enemy and Path pointers and two integers denoting the index of current room and current enemy when the function is called.
@@ -894,3 +904,103 @@ void assassinSpecial_Venomblade(WINDOW *w, Fighter *f, Enemy *e, Boss *b,
         wattroff(w, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     }
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+
+void knightSpecial_Slash(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
+                         int roomIndex, int enemyIndex, int isBoss)
+{
+
+}
+
+void knightSpecial_Cover(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
+                         int roomIndex, int enemyIndex, int isBoss)
+{
+
+}
+
+void knightSpecial_Armordrop(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                             Path * p, int roomIndex, int enemyIndex,
+                             int isBoss)
+{
+
+}
+
+void knightSpecial_Berserk(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                           Path * p, int roomIndex, int enemyIndex, int isBoss)
+{
+
+}
+void archerSpecial_Headshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                            Path * p, int roomIndex, int enemyIndex,
+                            int isBoss)
+{
+
+}
+void archerSpecial_Quivercheck(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                               Path * p, int roomIndex, int enemyIndex,
+                               int isBoss)
+{
+
+}
+void archerSpecial_Poisonshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                              Path * p, int roomIndex, int enemyIndex,
+                              int isBoss)
+{
+
+}
+void archerSpecial_Fireshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                            Path * p, int roomIndex, int enemyIndex,
+                            int isBoss)
+{
+
+}
+void mageSpecial_Fatewarp(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                          Path * p, int roomIndex, int enemyIndex, int isBoss)
+{
+
+}
+void mageSpecial_Powerup(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
+                         int roomIndex, int enemyIndex, int isBoss)
+{
+
+}
+void mageSpecial_Spellstrike(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                             Path * p, int roomIndex, int enemyIndex,
+                             int isBoss)
+{
+
+}
+void mageSpecial_Flamering(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                           Path * p, int roomIndex, int enemyIndex, int isBoss)
+{
+
+}
+void assassinSpecial_Grimdagger(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                                Path * p, int roomIndex, int enemyIndex,
+                                int isBoss)
+{
+
+}
+void assassinSpecial_Leechknife(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                                Path * p, int roomIndex, int enemyIndex,
+                                int isBoss)
+{
+
+}
+void assassinSpecial_Disguise(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                              Path * p, int roomIndex, int enemyIndex,
+                              int isBoss)
+{
+
+}
+void assassinSpecial_Venomblade(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
+                                Path * p, int roomIndex, int enemyIndex,
+                                int isBoss)
+{
+
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
