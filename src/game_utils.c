@@ -1168,6 +1168,7 @@ void freeRoom(Room *room)
 
 /**
  * Prints an hardcoded title screen.
+ * @see helapordo_title_string
  */
 void printTitle(void)
 {
@@ -1175,18 +1176,7 @@ void printTitle(void)
 #ifndef _WIN32
     red();
 #endif
-    printf
-    ("     __  __  ____  __     ______  _____   ______  ____    _____    ______\n");
-    printf
-    ("    / / / / / __/ / /    / __  / / __  / / __  / / __ \\  / __  \\  / __  /\n");
-    printf
-    ("   / /_/ / / /_  / /    / / / / / /_/ / / / / / / /_/ / / / /  / / / / /\n");
-    printf
-    ("  / __  / / __/ / /    / /_/ / / ____/ / / / / /    _/ / / /  / / / / /\n");
-    printf
-    (" / / / / / /_  / /_   / __  / / /     / /_/ / / /\\ |  / /_/ _/ / /_/ /\n");
-    printf
-    ("/_/ /_/ /____/ \\___/ /_/ /_/ /_/     /_____/ /_/ /_/ /_____/  /_____/\n");
+    printf("%s\n", helapordo_title_string);
 #ifndef _WIN32
     white();
 #endif

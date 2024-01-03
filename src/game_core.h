@@ -39,6 +39,8 @@
 #include "../koliseo/src/koliseo.h"
 #include "../sprites4curses/s4c-animate/animate.h"
 
+extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
+
 /**
  * Defines indexes for all types that are allocated with Koliseo.
  */
