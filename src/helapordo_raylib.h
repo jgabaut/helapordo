@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include "game_core.h"
 #include "game_utils.h"
+#include "sprites.h"
 #include "anvil__helapordo.h"
 #include "game_lore.h"
 #include "game_lore_alt.h"
