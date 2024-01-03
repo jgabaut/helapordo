@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2023  jgabaut
+    Copyright (C) 2022-2024 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,6 +38,8 @@
 
 #include "../koliseo/src/koliseo.h"
 #include "../sprites4curses/s4c-animate/animate.h"
+
+extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
 
 /**
  * Defines indexes for all types that are allocated with Koliseo.
@@ -161,12 +163,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 5
+#define HELAPORDO_PATCH_VERSION 6
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.3.5"
+#define VERSION "1.3.6"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 

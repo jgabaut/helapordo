@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2023  jgabaut
+    Copyright (C) 2022-2024 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,6 +16,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "game_core.h"
+
+const char* helapordo_title_string = "     __  __  ____  __     ______  _____   ______  ____    _____    ______\n\
+    / / / / / __/ / /    / __  / / __  / / __  / / __ \\  / __  \\  / __  /\n\
+   / /_/ / / /_  / /    / / / / / /_/ / / / / / / /_/ / / / /  / / / / /\n\
+  / __  / / __/ / /    / /_/ / / ____/ / / / / /    _/ / / /  / / / / /\n\
+ / / / / / /_  / /_   / __  / / /     / /_/ / / /\\ |  / /_/ _/ / /_/ /\n\
+/_/ /_/ /____/ \\___/ /_/ /_/ /_/     /_____/ /_/ /_/ /_____/  /_____/\n";
 
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
     "Standard",

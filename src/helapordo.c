@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2023  jgabaut
+    Copyright (C) 2022-2024 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13210,20 +13210,26 @@ void gameloop(int argc, char **argv)
                 INVIL__VERSION__STRING);
         wprintw(savepick_side_win, "  \nVersion Info: %.8s",
                 get_ANVIL__VERSION__DESC__());
-        char build_time_buff[20] = {0};
         const char* anvil_date = get_ANVIL__VERSION__DATE__();
         char* anvil_date_end;
 #ifndef _WIN32
-        long anvil_build_time = strtol( anvil_date, &anvil_date_end, 10);
+        time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
 #else
-        long long anvil_build_time = strtol( anvil_date, &anvil_date_end, 10);
+        time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
 #endif
+
         if (anvil_date_end == anvil_date) {
             log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
         } else {
-            time_t build_time = time(&anvil_build_time);
-            strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", localtime(&build_time));
-            wprintw(savepick_side_win, "  \nDate: %s", build_time_buff);
+            char build_time_buff[20] = {0};
+            struct tm* build_time_tm = localtime(&anvil_build_time);
+
+            if (build_time_tm == NULL) {
+                log_tag("debug_log.txt", "ERROR", "localtime() failed");
+            } else {
+                strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
+                wprintw(savepick_side_win, "  \nDate: %s", build_time_buff);
+            }
         }
 #endif
 #else

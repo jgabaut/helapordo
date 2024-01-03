@@ -15,15 +15,21 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-script_version="0.1"
+script_version="0.2"
 
 print_impls() {
     printf "Impl list:\n"
-    printf "  repo_amboso\n  repo_invil\n  path_anvil\n\n"
+    printf "  repo_amboso\n  repo_invil\n  path_anvil\n  cargo_invil\n\n"
 }
 
 prompt_impls() {
-    printf "\nSelect anvil implementation:\n"
+    hint="$1"
+    if [ ! -z "$hint" ] ; then {
+        printf "\nPress Enter to use {%s} as requested anvil impl or select anvil implementation:\n" "$hint"
+    } else {
+        printf "\nSelect anvil implementation:\n"
+    }
+    fi
     print_impls
     printf "Choice:  \n"
 }
@@ -73,13 +79,16 @@ if [ "$is_interactive" -eq 0 ] ; then {
     } elif [ "$impl_q" = "path_anvil" ] ; then {
         ln -s /usr/local/bin/anvil ./anvil
         exit "$?"
+    } elif [ "$impl_q" = "cargo_invil" ] ; then {
+        ln -s "$HOME"/.cargo/bin/invil ./anvil
+        exit "$?"
     } else {
         printf "[ERROR]    Invalid impl query: {%s}.\n" "$impl_q"
         exit 1
     }
     fi
 } else {
-while read -p "$(prompt_impls)" line; do {
+    while read -p "$(prompt_impls "$2")" line; do {
         if [ -z "$line" ] ; then {
             line="$2"
         }
@@ -102,6 +111,9 @@ while read -p "$(prompt_impls)" line; do {
             fi
         } elif [ "$impl_q" = "path_anvil" ] ; then {
             ln -s /usr/local/bin/anvil ./anvil
+            exit "$?"
+        } elif [ "$impl_q" = "cargo_invil" ] ; then {
+            ln -s "$HOME"/.cargo/bin/invil ./anvil
             exit "$?"
         } else {
             printf "[ERROR]    Invalid impl query: {%s}.\n" "$impl_q"
