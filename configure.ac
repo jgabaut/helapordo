@@ -43,8 +43,8 @@ case "${host_os}" in
         if test "$enable_raylib" = "yes"; then
             echo "Building with raylib"
             build_raylib=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DKOLISEO_HAS_CURSES -DNCURSES_STATIC"])
-            AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lpanelw -lmenuw -lncursesw -lraylib -lm -lgdi32 -lwinmm -static"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DS4C_RAYLIB_EXTENSION"])
+            AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lraylib -lm -lgdi32 -lwinmm -static"])
             AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
             AC_SUBST([OS], ["w64-mingw32"])
             AC_SUBST([TARGET], ["helapordo.exe"])
@@ -81,8 +81,8 @@ case "${host_os}" in
             echo "Building with raylib"
             build_raylib=yes
             build_curses=no
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/ncurses/include -DKOLISEO_HAS_CURSES"])
-            AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/ncurses/lib -lmenu -lpanel -lncurses"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/raylib/include -DS4C_RAYLIB_EXTENSION"])
+            AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/raylib/lib -lraylib"])
             AC_SUBST([OS], ["darwin"])
             AC_SUBST([TARGET], ["helapordo"])
             if test "$enable_anvilpick" = "yes"; then
@@ -117,8 +117,8 @@ case "${host_os}" in
             echo "Building with raylib"
             build_raylib=yes
             build_curses=no
-            AC_SUBST([HELAPORDO_CFLAGS], ["-DKOLISEO_HAS_CURSES"])
-            AC_SUBST([HELAPORDO_LDFLAGS], ["-lmenu -lpanel -lncurses -lraylib"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-DS4C_RAYLIB_EXTENSION"])
+            AC_SUBST([HELAPORDO_LDFLAGS], ["-lraylib"])
             AC_SUBST([OS], ["Linux"])
             AC_SUBST([CCOMP], ["gcc"]) #Yes
             AC_SUBST([TARGET], ["helapordo"])

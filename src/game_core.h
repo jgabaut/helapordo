@@ -19,6 +19,7 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
 
+#ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #define S4C_WIN_BG 0
@@ -34,7 +35,14 @@
 #define S4C_WIN_WHITE_ON_PURPLE 10
 #else
 #include <panel.h>
-#endif
+#endif // _WIN32
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+typedef void WINDOW;
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 #include "../koliseo/src/koliseo.h"
 #include "../sprites4curses/s4c-animate/animate.h"
