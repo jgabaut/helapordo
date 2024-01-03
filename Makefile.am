@@ -46,7 +46,7 @@ endif
 
 ./anvil:
 	@echo -e "\033[1;35m[Makefile]\e[0m    Bootstrapping \"./anvil\":"
-	./scripts/bootstrap_anvil.sh repo_amboso
+	./scripts/bootstrap_anvil.sh $(ANVIL_IMPL)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/anvil__helapordo.c:

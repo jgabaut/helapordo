@@ -30,6 +30,7 @@ case "${host_os}" in
         AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
         AC_SUBST([OS], ["w64-mingw32"])
         AC_SUBST([TARGET], ["helapordo.exe"])
+        AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
     ;;
     darwin*)
         echo "Building for macos: [$host_cpu-$host_vendor-$host_os]"
@@ -39,6 +40,7 @@ case "${host_os}" in
         AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/ncurses/lib -lmenu -lpanel -lncurses"])
         AC_SUBST([OS], ["darwin"])
         AC_SUBST([TARGET], ["helapordo"])
+        AC_SUBST([ANVIL_IMPL], ["repo_invil"])
     ;;
     linux*)
         echo "Building for Linux: [$host_cpu-$host_vendor-$host_os]"
@@ -49,6 +51,7 @@ case "${host_os}" in
         AC_SUBST([OS], ["Linux"])
         AC_SUBST([CCOMP], ["gcc"]) #Yes
         AC_SUBST([TARGET], ["helapordo"])
+        AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
     ;;
     *)
         AC_MSG_ERROR(["OS $host_os is not supported"])
