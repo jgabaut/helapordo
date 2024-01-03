@@ -40,7 +40,7 @@
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
-typedef void WINDOW;
+// Add more includes for rl-build here
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
@@ -842,8 +842,17 @@ typedef void (*callback_turncounter_enemy_t)(struct Enemy *);
  * @see Path
  * @see SpecialSlot
  */
+#ifdef HELAPORDO_CURSES_BUILD
 typedef void (*callback_special_t)(WINDOW *, struct Fighter *, struct Enemy *,
                                    struct Boss *, struct Path *, int, int, int);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+typedef void (*callback_special_t)(Rectangle* r, struct Fighter *, struct Enemy *,
+                                   struct Boss *, struct Path *, int, int, int);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Defines a function pointer returning void and taking a Fighter, Enemy and Boss pointers; plus as int.
@@ -1855,7 +1864,15 @@ typedef struct {
     Enemy *enemy;     /**< Pointer to Enemy for OP*/
     Boss *boss;	    /**< Pointer to Boss for OP*/
     FILE *save_file;	 /**< Pointer to savefile for OP*/
+#ifdef HELAPORDO_CURSES_BUILD
     WINDOW *notify_win;	    /**< Pointer to notification window for OP*/
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+    Rectangle *notification_area; /**< Pointer to notification area for OP*/
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
     Koliseo_Temp *t_kls;     /**< Pointer to Koliseo_Temp for OP*/
     Gamestate *gmst;	 /**< Pointer to Gamestate for OP*/
     foeTurnOption_OP foe_op;	 /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/

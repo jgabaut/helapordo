@@ -638,6 +638,7 @@ void init_Gamestate(Gamestate *gmst, countStats *stats, Wincon *wincon,
     gmst->gamemode = gamemode;
 }
 
+#ifdef HELAPORDO_CURSES_BUILD
 /**
  * Allocates and prepares a turnOP_args and returns a pointer to it.
  * @see turnOP_args
@@ -685,6 +686,21 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
 
     return res;
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
+                              Room *room, loadInfo *load_info, Enemy *enemy,
+                              Boss *boss, FILE *save_file, Rectangle *notification_area,
+                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
+                              skillType picked_skill)
+{
+    printf("%s():    TODO - implement turnOP init for rl-build\n", __func__);
+    return NULL;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Takes a string and returns the corresponding saveType.
@@ -917,7 +933,7 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
-void test_game_color_pairs(WINDOW *win, int colors_per_row)
+void test_game_color_pairs(Rectangle * win, int colors_per_row)
 {
     (void) win;
     (void) colors_per_row;
