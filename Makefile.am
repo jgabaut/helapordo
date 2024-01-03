@@ -184,6 +184,7 @@ clean:
 	-rm koliseo/src/*.o
 	-rm ./*.o
 	-rm src/anvil__helapordo.*
+	-rm ./anvil
 	@echo -e "\033[1;33mDone.\e[0m"
 
 cleanob:

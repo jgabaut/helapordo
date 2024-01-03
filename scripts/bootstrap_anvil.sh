@@ -23,7 +23,13 @@ print_impls() {
 }
 
 prompt_impls() {
-    printf "\nSelect anvil implementation:\n"
+    hint="$1"
+    if [ ! -z "$hint" ] ; then {
+        printf "\nPress Enter to use {%s} as requested anvil impl or select anvil implementation:\n" "$hint"
+    } else {
+        printf "\nSelect anvil implementation:\n"
+    }
+    fi
     print_impls
     printf "Choice:  \n"
 }
@@ -82,7 +88,7 @@ if [ "$is_interactive" -eq 0 ] ; then {
     }
     fi
 } else {
-while read -p "$(prompt_impls)" line; do {
+    while read -p "$(prompt_impls "$2")" line; do {
         if [ -z "$line" ] ; then {
             line="$2"
         }
