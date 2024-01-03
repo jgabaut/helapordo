@@ -19,11 +19,20 @@
 #ifndef GAME_UTILS_H
 #define GAME_UTILS_H
 
+#ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #else
 #include <panel.h>
-#endif
+#endif // _WIN32
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+
+#endif // HELAPORDO_RAYLIB_BUILD
+
+#endif // HELAPORDO_CURSES_BUILD
 
 #include <stdio.h>
 #include <stdlib.h>

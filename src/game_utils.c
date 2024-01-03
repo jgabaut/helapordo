@@ -84,6 +84,7 @@ void log_Win_EnvVars(void)
 }
 #endif
 
+#ifdef HELAPORDO_CURSES_BUILD
 bool set_Saveslot_name(FILE *file, Saveslot *sv)
 {
 
@@ -186,6 +187,19 @@ bool set_Saveslot_name(FILE *file, Saveslot *sv)
     sv->name[49] = '\0';
     return true;
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+bool set_Saveslot_name(FILE *file, Saveslot *sv)
+{
+    (void) file;
+    (void) sv;
+    printf("%s():    TODO - implement set_Saveslot_namefor rl-build.\n", __func__);
+    return false;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
@@ -818,6 +832,7 @@ void lightCyan(void)
     printf("\033[0;36m");
 }
 
+#ifdef HELAPORDO_CURSES_BUILD
 /**
  * Initialises color pairs for the game.
  */
@@ -837,7 +852,19 @@ void init_game_color_pairs(void)
     init_pair(10, COLOR_WHITE, COLOR_MAGENTA);
 
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+void init_game_color_pairs(void)
+{
+    printf("%s():    TODO - Implement color pair init for rl-build\n", __func__);
+    return;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
+#ifdef HELAPORDO_CURSES_BUILD
 /**
  * Demoes color pairs from palette.c to the passed WINDOW.
  * @param win The Window pointer to print to.
@@ -886,6 +913,19 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
         }
     }
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+void test_game_color_pairs(WINDOW *win, int colors_per_row)
+{
+    (void) win;
+    (void) colors_per_row;
+    printf("%s():    TODO - Implement game color pairs test for rl-build\n", __func__);
+    return;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Sets the passed char array to the expected path for /static/ folder.

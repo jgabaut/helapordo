@@ -19,6 +19,8 @@
 #ifndef FLOORS_H
 #define FLOORS_H
 
+#ifdef HELAPORDO_CURSES_BUILD
+
 #include <stdlib.h>
 #include <math.h>
 #include "game_utils.h"
@@ -48,4 +50,14 @@ void floor_random_walk(Floor * floor, int x, int y, int steps,
                        int do_layout_clean);
 void floor_set_room_types(Floor * floor);
 
-#endif
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+#include <stdlib.h>
+#include "game_utils.h"
+#endif // HELAPORDO_RAYLIB_BUILD
+
+#endif // HELAPORDO_CURSES_BUILD
+
+#endif // FLOORS_H

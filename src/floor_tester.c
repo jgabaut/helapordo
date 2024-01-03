@@ -18,6 +18,7 @@
 #include "floor_tester.h"
 #include "floors.h"
 
+#ifdef HELAPORDO_CURSES_BUILD
 int test_floors(void)
 {
     G_LOG_ON = 1;
@@ -287,3 +288,10 @@ int test_floors(void)
 
     return 0;
 }
+#else
+int test_floors(void)
+{
+    printf("%s():    TODO - implement test_floors() for rl build\n", __func__);
+    return 0;
+}
+#endif
