@@ -35,6 +35,7 @@
 #include "specials.h"
 #include "artifacts.h"
 #include "sprites.h"
+#include "floors.h"
 #include "anvil__helapordo.h"
 #include "game_lore.h"
 #include "game_lore_alt.h"
