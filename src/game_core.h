@@ -41,6 +41,8 @@
 
 extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
 
+extern const char* helapordo_build_string;
+
 /**
  * Defines indexes for all types that are allocated with Koliseo.
  */
@@ -158,17 +160,17 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current minor release.
  */
-#define HELAPORDO_MINOR_VERSION 3
+#define HELAPORDO_MINOR_VERSION 4
 
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 6
+#define HELAPORDO_PATCH_VERSION 0
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.3.6"
+#define VERSION "1.4.0-dev"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 

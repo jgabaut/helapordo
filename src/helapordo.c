@@ -13196,6 +13196,7 @@ void gameloop(int argc, char **argv)
         savepick_side_win = newwin(12, 32, 2, 2);
         scrollok(savepick_side_win, TRUE);
         wprintw(savepick_side_win, "  \nhelapordo v%s", VERSION);
+        wprintw(savepick_side_win, "  \n  build: %s", helapordo_build_string);
         wprintw(savepick_side_win, "  \n  using: s4c-animate v%s",
                 S4C_ANIMATE_VERSION);
         wprintw(savepick_side_win, "  \n  using: koliseo v%s",
@@ -13216,7 +13217,7 @@ void gameloop(int argc, char **argv)
         time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
 #else
         time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
-#endif
+#endif //_WIN32
 
         if (anvil_date_end == anvil_date) {
             log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
@@ -13231,10 +13232,10 @@ void gameloop(int argc, char **argv)
                 wprintw(savepick_side_win, "  \nDate: %s", build_time_buff);
             }
         }
-#endif
+#endif // INVIL__helapordo__HEADER__
 #else
         wprintw(savepick_side_win, "  \nBuilt without anvil");
-#endif
+#endif // ANVIL__helapordo__
         //wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
         wrefresh(savepick_side_win);
         refresh();

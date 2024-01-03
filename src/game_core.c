@@ -24,6 +24,16 @@ const char* helapordo_title_string = "     __  __  ____  __     ______  _____   
  / / / / / /_  / /_   / __  / / /     / /_/ / / /\\ |  / /_/ _/ / /_/ /\n\
 /_/ /_/ /____/ \\___/ /_/ /_/ /_/     /_____/ /_/ /_/ /_____/  /_____/\n";
 
+#ifdef HELAPORDO_RAYLIB_BUILD
+const char* helapordo_build_string = "rl-"VERSION;
+#else
+#ifdef HELAPORDO_CURSES_BUILD
+const char* helapordo_build_string = "nc-"VERSION;
+#else
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#endif
+#endif
+
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
     "Standard",
     "Story",

@@ -44,6 +44,12 @@ if WINDOWS_BUILD
 helapordo_SOURCES += src/floor_tester.c
 endif
 
+if HL_RAYLIB_BUILD
+AM_CFLAGS += -DHELAPORDO_RAYLIB_BUILD
+else
+AM_CFLAGS += -DHELAPORDO_CURSES_BUILD
+endif
+
 ./anvil:
 	@echo -e "\033[1;35m[Makefile]\e[0m    Bootstrapping \"./anvil\":"
 	./scripts/bootstrap_anvil.sh $(ANVIL_IMPL)
