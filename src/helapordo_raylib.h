@@ -33,6 +33,8 @@
 #include "game_core.h"
 #include "game_utils.h"
 #include "anvil__helapordo.h"
+#include "game_lore.h"
+#include "game_lore_alt.h"
 
 void gameloop_rl(int argc, char** argv);
 #endif
