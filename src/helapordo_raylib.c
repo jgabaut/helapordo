@@ -518,7 +518,7 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangle(0, 0, screenWidth, screenHeight, RAYWHITE);
             DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
             DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
-            DrawSprite(mage_spark[current_anim_frame], 17, 17, 24, palette, PALETTE_S4C_H_TOTCOLORS);
+            DrawSprite(mage_spark[current_anim_frame], 17, 17, 0.02*sqrt(screenWidth*screenHeight), palette, PALETTE_S4C_H_TOTCOLORS);
         }
         break;
         case ENDING: {
