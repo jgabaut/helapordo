@@ -562,6 +562,14 @@ void gameloop_rl(int argc, char** argv)
             int en_rect_Y = pl_rect_Y;
             int en_frame_W = pl_frame_W;
             int en_frame_H = pl_frame_H;
+            float stats_label_W = 0.17 * scale_factor;
+            float stats_label_H = 0.17 * scale_factor;
+            Rectangle stats_label_r = CLITERAL(Rectangle) {
+                ((pl_rect_X - (en_rect_X + (en_frame_W * 0.02 * scale_factor))) / 2) + (en_rect_X + (en_frame_W * 0.02 * scale_factor)) - (stats_label_W/2),
+                en_rect_Y,
+                stats_label_W,
+                stats_label_H
+            };
             Rectangle pl_r = CLITERAL(Rectangle) {
                 pl_rect_X,
                 pl_rect_Y,
@@ -574,6 +582,7 @@ void gameloop_rl(int argc, char** argv)
                 screenWidth - en_rect_X,
                 screenHeight - en_rect_Y
             };
+            DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
             float pixelSize = 0.02 * scale_factor;
             int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
             int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
