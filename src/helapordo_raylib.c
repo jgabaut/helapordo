@@ -375,11 +375,12 @@ void gameloop_rl(int argc, char** argv)
             "gameloop() system(\"cls\") res was (%i)", clearres);
 #endif
 
-    printf("\n\t\t\tDISCLAIMER: THIS BUILD IS STILL WIP. NO GUARANTEES ARE MADE.\n\n");
+    printf("\n\tDISCLAIMER: THIS BUILD IS STILL WIP.\n\n\tNO GUARANTEES ARE MADE.\n\n");
     printf("helapordo v%s\n", VERSION);
-    S4C_PRINTVERSION();
-    printf("koliseo v%s\n", string_koliseo_version());
-    printf("raylib v%s\n", RAYLIB_VERSION);
+    printf("  build: %s\n", helapordo_build_string);
+    printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
+    printf("  using: koliseo v%s\n", string_koliseo_version());
+    printf("  using: raylib v%s\n", RAYLIB_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
     printf("Built with: amboso v%s\n",
