@@ -380,6 +380,40 @@ void gameloop_rl(int argc, char** argv)
     S4C_PRINTVERSION();
     printf("koliseo v%s\n", string_koliseo_version());
     printf("raylib v%s\n", RAYLIB_VERSION);
+#ifdef ANVIL__helapordo__
+#ifndef INVIL__helapordo__HEADER__
+    printf("Built with: amboso v%s\n",
+                ANVIL__API_LEVEL__STRING);
+#else
+    printf("Built with: invil v%s\n",
+                INVIL__VERSION__STRING);
+    printf("Version Info: %.8s\n",
+                get_ANVIL__VERSION__DESC__());
+    const char* anvil_date = get_ANVIL__VERSION__DATE__();
+    char* anvil_date_end;
+#ifndef _WIN32
+    time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
+#else
+    time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
+#endif //_WIN32
+
+    if (anvil_date_end == anvil_date) {
+        log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
+    } else {
+        char build_time_buff[20] = {0};
+        struct tm* build_time_tm = localtime(&anvil_build_time);
+
+        if (build_time_tm == NULL) {
+            log_tag("debug_log.txt", "ERROR", "localtime() failed");
+        } else {
+            strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
+            printf("Date: %s\n", build_time_buff);
+        }
+    }
+#endif // INVIL__helapordo__HEADER__
+#else
+    printf("Built without anvil\n");
+#endif // ANVIL__helapordo__
 
     printTitle();
     char c;
