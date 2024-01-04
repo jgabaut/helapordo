@@ -557,11 +557,11 @@ void gameloop_rl(int argc, char** argv)
             int pl_rect_Y = 20;
             int pl_frame_W = 17;
             int pl_frame_H = pl_frame_W;
+            int pl_rect_X = screenWidth - (pl_frame_W * 0.02 * scale_factor ) - 20;
             int en_rect_X = 20;
             int en_rect_Y = pl_rect_Y;
             int en_frame_W = pl_frame_W;
             int en_frame_H = pl_frame_H;
-            int pl_rect_X = en_rect_X + (en_frame_W * 0.02 * scale_factor ) + 280;
             Rectangle pl_r = CLITERAL(Rectangle) {
                 pl_rect_X,
                 pl_rect_Y,
