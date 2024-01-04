@@ -26,7 +26,6 @@ void gameloop_rl(int argc, char** argv) {
 
     int screenWidth = 800;
     int screenHeight = 450;
-    int logo_sleep = 120;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
@@ -38,9 +37,12 @@ void gameloop_rl(int argc, char** argv) {
 
     int framesCounter = 0;          // Useful to count frames
 
-    SetTargetFPS(60);               // Set desired framerate (frames-per-second)
+    int fps_target = 30;
+    SetTargetFPS(fps_target);               // Set desired framerate (frames-per-second)
+    int logo_sleep = fps_target*2;
                                     //
     int current_anim_frame = 0;
+    bool pause_animation = false;
 
     while (!WindowShouldClose()) {
         // Update
@@ -77,12 +79,19 @@ void gameloop_rl(int argc, char** argv) {
             {
                 // TODO: Update GAMEPLAY screen variables here!
                 framesCounter++;    // Count frames
-                current_anim_frame = framesCounter%60;
 
                 // Press enter to change to ENDING screen
                 if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
                 {
                     currentScreen = ENDING;
+                }
+                if (IsKeyPressed(KEY_P))
+                {
+                    pause_animation = !pause_animation;
+                }
+                if (!pause_animation)
+                {
+                    current_anim_frame = framesCounter%60;
                 }
             } break;
             case ENDING:
