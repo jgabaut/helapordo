@@ -554,10 +554,12 @@ void gameloop_rl(int argc, char** argv)
             DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
             DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
             float scale_factor = sqrt(screenWidth * screenHeight);
+            float pixel_factor = 0.02;
+            float sprite_w_factor = pixel_factor * scale_factor;
             int pl_rect_Y = 20;
             int pl_frame_W = 17;
             int pl_frame_H = pl_frame_W;
-            int pl_rect_X = screenWidth - (pl_frame_W * 0.02 * scale_factor ) - 20;
+            int pl_rect_X = screenWidth - (pl_frame_W * sprite_w_factor ) - 20;
             int en_rect_X = 20;
             int en_rect_Y = pl_rect_Y;
             int en_frame_W = pl_frame_W;
@@ -565,7 +567,7 @@ void gameloop_rl(int argc, char** argv)
             float stats_label_W = 0.17 * scale_factor;
             float stats_label_H = 0.17 * scale_factor;
             Rectangle stats_label_r = CLITERAL(Rectangle) {
-                ((pl_rect_X - (en_rect_X + (en_frame_W * 0.02 * scale_factor))) / 2) + (en_rect_X + (en_frame_W * 0.02 * scale_factor)) - (stats_label_W/2),
+                ((pl_rect_X - (en_rect_X + (en_frame_W * sprite_w_factor))) / 2) + (en_rect_X + (en_frame_W * sprite_w_factor)) - (stats_label_W/2),
                 en_rect_Y,
                 stats_label_W,
                 stats_label_H
@@ -583,9 +585,8 @@ void gameloop_rl(int argc, char** argv)
                 screenHeight - en_rect_Y
             };
             DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
-            float pixelSize = 0.02 * scale_factor;
-            int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
-            int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
+            int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
+            int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
             if (pl_res != 0 || en_res !=0)
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
