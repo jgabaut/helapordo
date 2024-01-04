@@ -12843,6 +12843,7 @@ void gameloop(int argc, char **argv)
             printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
             white();
         }
+        printf("\t\t\t\t\t\t\tncurses build\n");
         printf("\t\t\t\t\t\t");
         printFormattedVersion(whoami);
         int scanfres = scanf("%c", &c);

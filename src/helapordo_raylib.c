@@ -18,12 +18,6 @@
 #include "helapordo_raylib.h"
 
 void gameloop_rl(int argc, char** argv) {
-    printf("\n\t\t\tDISCLAIMER: THIS BUILD IS STILL WIP. NO GUARANTEES ARE MADE.\n\n");
-    printf("helapordo v%s\n", VERSION);
-    S4C_PRINTVERSION();
-    printf("koliseo v%s\n", string_koliseo_version());
-    printf("raylib v%s\n", RAYLIB_VERSION);
-
 
     char *whoami;		// This will reference argv[0] at basename, it's the same string in memory, just starting later
     char path_to_kls_debug_file[600];
@@ -371,9 +365,22 @@ void gameloop_rl(int argc, char** argv) {
         log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
 
         // Clear screen and print title, wait for user to press enter
+#ifndef _WIN32
         int clearres = system("clear");
         log_tag("debug_log.txt", "[DEBUG]",
                 "gameloop() system(\"clear\") res was (%i)", clearres);
+#else
+        int clearres = system("cls");
+        log_tag("debug_log.txt", "[DEBUG]",
+                "gameloop() system(\"cls\") res was (%i)", clearres);
+#endif
+
+        printf("\n\t\t\tDISCLAIMER: THIS BUILD IS STILL WIP. NO GUARANTEES ARE MADE.\n\n");
+        printf("helapordo v%s\n", VERSION);
+        S4C_PRINTVERSION();
+        printf("koliseo v%s\n", string_koliseo_version());
+        printf("raylib v%s\n", RAYLIB_VERSION);
+
         printTitle();
         char c;
         yellow();
@@ -385,6 +392,7 @@ void gameloop_rl(int argc, char** argv) {
             printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
             white();
         }
+        printf("\t\t\t\t\t\t\traylib build\n");
         printf("\t\t\t\t\t\t");
         printFormattedVersion(whoami);
         int scanfres = scanf("%c", &c);
