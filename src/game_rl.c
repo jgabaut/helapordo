@@ -39,7 +39,9 @@ void handleTutorial(S4C_Color* palette)
         BeginDrawing();
         ClearBackground(color_from_s4c_color(palette[S4C_GREY - S4C_BASE_COLOR_INDEX]));
     }
-    rc = CLITERAL(Rectangle){1, 2, 20, 70};
+    rc = CLITERAL(Rectangle) {
+        1, 2, 20, 70
+    };
 
     int fontSize = 20;
     const char* label = "Tutorial";;
