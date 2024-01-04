@@ -384,12 +384,12 @@ void gameloop_rl(int argc, char** argv)
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
     printf("Built with: amboso v%s\n",
-                ANVIL__API_LEVEL__STRING);
+           ANVIL__API_LEVEL__STRING);
 #else
     printf("Built with: invil v%s\n",
-                INVIL__VERSION__STRING);
+           INVIL__VERSION__STRING);
     printf("Version Info: %.8s\n",
-                get_ANVIL__VERSION__DESC__());
+           get_ANVIL__VERSION__DESC__());
     const char* anvil_date = get_ANVIL__VERSION__DATE__();
     char* anvil_date_end;
 #ifndef _WIN32
@@ -553,8 +553,29 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangle(0, 0, screenWidth, screenHeight, RAYWHITE);
             DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
             DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
-            Rectangle r = CLITERAL(Rectangle){20,20,screenWidth-2,screenHeight-2};
-            DrawSpriteRect(mage_spark[current_anim_frame], r, 17, 17,0.02*sqrt(screenWidth*screenHeight), palette, PALETTE_S4C_H_TOTCOLORS);
+            int pl_rect_X = 300;
+            int pl_rect_Y = 20;
+            int pl_frame_W = 17;
+            int pl_frame_H = pl_frame_W;
+            int en_rect_X = 20;
+            int en_rect_Y = pl_rect_Y;
+            int en_frame_W = pl_frame_W;
+            int en_frame_H = pl_frame_H;
+            Rectangle pl_r = CLITERAL(Rectangle) {
+                pl_rect_X,
+                pl_rect_Y,
+                screenWidth - pl_rect_X,
+                screenHeight - pl_rect_Y
+            };
+            Rectangle en_r = CLITERAL(Rectangle) {
+                en_rect_X,
+                en_rect_Y,
+                screenWidth - en_rect_X,
+                screenHeight - en_rect_Y
+            };
+            float pixelSize = 0.02 * sqrt(screenWidth * screenHeight);
+            DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
+            DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
         }
         break;
         case ENDING: {

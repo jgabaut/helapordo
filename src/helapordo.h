@@ -268,7 +268,6 @@ int dropArtifact(Fighter * player);
 #ifdef HELAPORDO_CURSES_BUILD
 void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
 
-
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
                       WINDOW * notify_win, Koliseo * kls);
 int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
@@ -296,7 +295,6 @@ int boss_attack(Boss * b, Fighter * target, Path * p, WINDOW * notify_win,
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
 #else
 void dropEquip(Fighter * player, int beast, Rectangle * notification_area, Koliseo * kls);
-
 
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
                       Rectangle * notification_area, Koliseo * kls);
