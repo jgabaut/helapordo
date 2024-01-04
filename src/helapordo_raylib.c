@@ -553,7 +553,7 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangle(0, 0, screenWidth, screenHeight, RAYWHITE);
             DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
             DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
-            int pl_rect_X = 300;
+            float scale_factor = sqrt(screenWidth * screenHeight);
             int pl_rect_Y = 20;
             int pl_frame_W = 17;
             int pl_frame_H = pl_frame_W;
@@ -561,6 +561,7 @@ void gameloop_rl(int argc, char** argv)
             int en_rect_Y = pl_rect_Y;
             int en_frame_W = pl_frame_W;
             int en_frame_H = pl_frame_H;
+            int pl_rect_X = en_rect_X + (en_frame_W * 0.02 * scale_factor ) + 280;
             Rectangle pl_r = CLITERAL(Rectangle) {
                 pl_rect_X,
                 pl_rect_Y,
@@ -573,9 +574,14 @@ void gameloop_rl(int argc, char** argv)
                 screenWidth - en_rect_X,
                 screenHeight - en_rect_Y
             };
-            float pixelSize = 0.02 * sqrt(screenWidth * screenHeight);
-            DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
-            DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
+            float pixelSize = 0.02 * scale_factor;
+            int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
+            int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, pixelSize, palette, PALETTE_S4C_H_TOTCOLORS);
+            if (pl_res != 0 || en_res !=0)
+            {
+                DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                DrawText("Window too small. Please resize to a larger window.", 20, 20, 20, RAYWHITE);
+            }
         }
         break;
         case ENDING: {
