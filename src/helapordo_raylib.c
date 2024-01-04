@@ -24,6 +24,373 @@ void gameloop_rl(int argc, char** argv) {
     printf("koliseo v%s\n", string_koliseo_version());
     printf("raylib v%s\n", RAYLIB_VERSION);
 
+
+    char *whoami;		// This will reference argv[0] at basename, it's the same string in memory, just starting later
+    char path_to_kls_debug_file[600];
+    char static_path[500];
+    // Set static_path value to the correct static dir path
+    resolve_staticPath(static_path);
+
+    //Truncate "debug_log.txt"
+    sprintf(path_to_kls_debug_file, "%s/%s", static_path, "kls_debug_log.txt");
+    KLS_Conf default_kls_conf = {
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 1,
+        .kls_log_filepath = path_to_kls_debug_file,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+    };
+    KLS_Conf temporary_kls_conf = {
+        .kls_autoset_regions = 1,
+        .kls_autoset_temp_regions = 1,
+        .kls_verbose_lvl = 0,
+        .kls_log_fp = stderr,
+        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
+        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
+    };
+
+    //Init default_kls
+    default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
+    temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
+
+#ifndef _WIN32
+    (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
+#else
+    (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+#endif
+
+    char *kls_progname = (char *)KLS_PUSH_TYPED(default_kls, char *, sizeof(whoami),
+                KLS_None, "progname", whoami);
+    strcpy(kls_progname, whoami);
+
+#ifndef HELAPORDO_DEBUG_LOG
+#else
+        FILE *debug_file = NULL;
+        FILE *OPS_debug_file = NULL;
+#endif
+        // Parse command-line options
+        int option;
+        loadInfo *load_info =
+            (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo,
+                                        "loadInfo", "loadInfo");
+
+        load_info->is_new_game = 1;	//By default we do a new game
+        load_info->enemy_index = -1;
+        load_info->total_foes = -1;
+        load_info->save_type = -1;
+        int loaded_roomtotalenemies = -1;
+        int loaded_roomindex = -1;
+        load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
+        load_info->ptr_to_roomindex = &loaded_roomindex;
+
+        while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsa")) != -1) {
+            switch (option) {
+            case 'd': {
+#ifndef HELAPORDO_DEBUG_ACCESS
+#else
+                G_DEBUG_ON += 1;
+                G_LOG_ON = 1;
+#endif
+            }
+            break;
+            case 'r': {
+                G_DEBUG_ROOMTYPE_ON += 1;
+                G_DEBUG_ROOMTYPE_ARG = optarg;
+            }
+            break;
+            case 'E': {
+                G_DEBUG_ENEMYTYPE_ON += 1;
+                G_DEBUG_ENEMYTYPE_ARG = optarg;
+            }
+            break;
+            case 'L': {
+                G_LOG_ON = 1;
+            }
+            break;
+            case 'l': {
+                load_info->is_new_game = 0;
+            }
+            break;
+            case 'G': {
+                G_GODMODE_ON = 1;
+            }
+            break;
+            case 'Q': {
+                G_FASTQUIT_ON = 1;
+            }
+            break;
+            case 'X': {
+                G_EXPERIMENTAL_ON = 1;
+            }
+            break;
+            case 'a': {
+                GS_AUTOSAVE_ON = 0;
+            }
+            break;
+            case 's': {
+                GAMEMODE = Story;
+            }
+            break;
+            case 'R': {
+                GAMEMODE = Rogue;
+            }
+            break;
+            case 'f': {
+                //filename = optarg;
+            }
+            break;
+            case 'h': {
+                usage(whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 'T': {
+                G_DOTUTORIAL_ON = 1;
+                int screenWidth = 1000;
+                int screenHeight = 450;
+
+                SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
+                InitWindow(screenWidth, screenHeight, "helapordo Tutorial");
+                int framesCounter = 0;
+                int fps_target = 30;
+                SetTargetFPS(fps_target);
+                while (!WindowShouldClose()) {
+                    screenWidth = GetScreenWidth();
+                    screenHeight = GetScreenHeight();
+                    framesCounter++;
+                    if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+                    {
+                        break;
+                    }
+                    handleTutorial(palette);
+                }
+                CloseWindow();
+                usage(whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 't': {
+            }
+            break;
+            case 'v': {
+                printVersion();
+                /*
+                   printf("Using:\n");
+                   printf("  \'animate\' :\n    s4c/animate.h    ");
+                   S4C_ECHOVERSION();
+                   printf("\n  \'anvil\' :\n");
+                   int status = system("echo \"    $( anvil -vv 2>/dev/null ) \"");
+                   int exitcode = status / 256;
+                   if (exitcode != 0) {
+                   printf("\033[1;31m[DEBUG]\e[0m    \"anvil -vv\" failed.\n\n    Maybe amboso is not installed globally?\n");
+                   exit(exitcode);
+                   }
+                   exit(exitcode);
+                 */
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case '?': {
+                fprintf(stderr,
+                        "Invalid option: %c\n Check your arguments.\n",
+                        option);
+                usage(whoami);
+                // Handle invalid options
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            default: {
+                // Should never get here
+                fprintf(stderr, "Invalid option: %c\n, bad usage.\n",
+                        option);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+            }
+        }
+
+#ifndef HELAPORDO_DEBUG_LOG
+#else
+        // Open log file if log flag is set and reset it
+        if (G_LOG_ON == 1) {
+            char path_to_debug_file[600];
+            char path_to_OPS_debug_file[600];
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
+
+            //Truncate "debug_log.txt"
+            sprintf(path_to_debug_file, "%s/%s", static_path, "debug_log.txt");
+            debug_file = fopen(path_to_debug_file, "w");
+            if (!debug_file) {
+                endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+                fprintf(stderr,
+                        "[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n",
+                        static_path);
+                exit(EXIT_FAILURE);
+            }
+            fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
+            if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
+                && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR
+                && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH) {
+                fprintf(debug_file,
+                        "[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                        NCURSES_VERSION, NCURSES_VERSION_MAJOR,
+                        NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH,
+                        EXPECTED_NCURSES_VERSION_MAJOR,
+                        EXPECTED_NCURSES_VERSION_MINOR,
+                        EXPECTED_NCURSES_VERSION_PATCH);
+            }
+            fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
+            print_kls_2file(debug_file, default_kls);
+            fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
+            print_kls_2file(debug_file, temporary_kls);
+            fprintf(debug_file,
+                    "[DEBUG]    --Closing header for new game.--  \n");
+            fclose(debug_file);
+
+            //Lay debug info
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                    G_DEBUG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "kls_progname == (%s)",
+                    kls_progname);
+            log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "[Current position in default_kls] [pos: %li]\n",
+                    kls_get_pos(default_kls));
+
+            //Truncate OPS_LOGFILE
+            sprintf(path_to_OPS_debug_file, "%s/%s", static_path, OPS_LOGFILE);
+            OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
+            if (!OPS_debug_file) {
+                endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+                fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s/%s).\n",
+                        static_path, OPS_LOGFILE);
+                exit(EXIT_FAILURE);
+            }
+            fprintf(OPS_debug_file, "[OPLOG]    --New game--  \n");
+            fclose(OPS_debug_file);
+            log_tag("debug_log.txt", "[DEBUG]", "Truncated [%s]", OPS_LOGFILE);
+        }
+#endif
+
+        if (G_DEBUG_ENEMYTYPE_ON == 1) {
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ENEMYTYPE_ON == (%i)",
+                    G_DEBUG_ENEMYTYPE_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "ENEMY DEBUG FLAG ASSERTED");
+            if ((G_DEBUG_ON > 0)) {
+                G_DEBUG_ON += 1;
+                log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                        G_DEBUG_ON);
+                log_tag("debug_log.txt", "[DEBUG]", "Forcing enemy type: (%s)",
+                        G_DEBUG_ENEMYTYPE_ARG);
+                int setenemy_debug = 0;
+                for (int ec = 0; ec < ENEMYCLASSESMAX && (setenemy_debug == 0);
+                     ec++) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Checking optarg for -E: (%s)",
+                            stringFromEClass(ec));
+                    if ((strcmp(G_DEBUG_ENEMYTYPE_ARG, stringFromEClass(ec)) ==
+                         0)) {
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",
+                                stringFromEClass(ec), ec);
+                        G_DEBUG_ENEMYTYPE = ec;
+                        setenemy_debug = 1;
+                    }
+                }
+                if (setenemy_debug == 0) {
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "Invalid optarg for -E flag: {%s}.\n",
+                            G_DEBUG_ENEMYTYPE_ARG);
+                    fprintf(stderr,
+                            "[ERROR]    Incorrect -E \"enemyType\" arg: {%s}.\n",
+                            G_DEBUG_ENEMYTYPE_ARG);
+                    fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
+                            kls_progname);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                };
+            }
+        }
+        if (G_DEBUG_ROOMTYPE_ON == 1) {
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ROOMTYPE_ON == (%i)",
+                    G_DEBUG_ROOMTYPE_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "ROOM DEBUG FLAG ASSERTED");
+            if ((G_DEBUG_ON > 0)) {
+                G_DEBUG_ON += 1;
+                log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                        G_DEBUG_ON);
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Forcing room type: optarg was (%s)",
+                        G_DEBUG_ROOMTYPE_ARG);
+                int setroom_debug = 0;
+                for (int rc = 0;
+                     (rc < ROOM_CLASS_MAX + 1) && (setroom_debug == 0); rc++) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Checking optarg (%s) for -R: (%s)", optarg,
+                            stringFromRoom(rc));
+                    if ((strcmp(G_DEBUG_ROOMTYPE_ARG, stringFromRoom(rc)) == 0)) {
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",
+                                stringFromRoom(rc), rc);
+                        G_DEBUG_ROOMTYPE = rc;
+                        setroom_debug = 1;
+                    }
+                }
+                if (setroom_debug == 0) {
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "Invalid optarg for -R flag: {%s}.",
+                            G_DEBUG_ROOMTYPE_ARG);
+                    fprintf(stderr,
+                            "[ERROR]    Incorrect -R \"roomType\" arg: {%s}.\n",
+                            G_DEBUG_ROOMTYPE_ARG);
+                    fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
+                            kls_progname);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                };
+            }
+
+        }
+        log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
+
+        // Clear screen and print title, wait for user to press enter
+        int clearres = system("clear");
+        log_tag("debug_log.txt", "[DEBUG]",
+                "gameloop() system(\"clear\") res was (%i)", clearres);
+        printTitle();
+        char c;
+        yellow();
+        printf("\n\n\n\n\t\t\tPRESS ENTER TO START\n\n");
+        white();
+
+        if (G_DEBUG_ON) {
+            lightCyan();
+            printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
+            white();
+        }
+        printf("\t\t\t\t\t\t");
+        printFormattedVersion(whoami);
+        int scanfres = scanf("%c", &c);
+        log_tag("debug_log.txt", "[DEBUG]", "gameloop() scanf() res was (%i)",
+                scanfres);
+
     int screenWidth = 800;
     int screenHeight = 450;
 

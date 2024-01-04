@@ -46,4 +46,5 @@
 #include "./animations/enter_door.h"
 #include "./animations/alt_chest_opening.h"
 
+void handleTutorial(S4C_Color* palette);
 #endif // GAMECURSES_RL_H
