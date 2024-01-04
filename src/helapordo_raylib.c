@@ -580,7 +580,8 @@ void gameloop_rl(int argc, char** argv)
             if (pl_res != 0 || en_res !=0)
             {
                 DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
-                DrawText("Window too small. Please resize to a larger window.", 20, 20, 20, RAYWHITE);
+                DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+                DrawText("Please resize.", 20, 50, 20, RAYWHITE);
             }
         }
         break;
