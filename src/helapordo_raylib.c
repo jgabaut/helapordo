@@ -77,7 +77,7 @@ void gameloop_rl(int argc, char** argv) {
             {
                 // TODO: Update GAMEPLAY screen variables here!
                 framesCounter++;    // Count frames
-                current_anim_frame = ( current_anim_frame < 60 ? current_anim_frame +1 : 0);
+                current_anim_frame = framesCounter%60;
 
                 // Press enter to change to ENDING screen
                 if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
