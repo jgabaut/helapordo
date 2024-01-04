@@ -32,6 +32,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #include <ncursesw/menu.h>
@@ -40,7 +41,13 @@
 #include <panel.h>
 #include <menu.h>
 #include <sys/utsname.h>
-#endif
+#endif // _WIN32
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined"
+#else
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 #include <locale.h>
 #include <sys/stat.h>
@@ -49,7 +56,16 @@
 #include "rooms.h"
 #include "specials.h"
 #include "artifacts.h"
+
+#ifdef HELAPORDO_CURSES_BUILD
 #include "game_curses.h"
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined"
+#else
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+
 #include "sprites.h"
 #include "floors.h"
 #include "anvil__helapordo.h"
@@ -76,8 +92,17 @@
 OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,
               Koliseo_Temp * t_kls);
 
+#ifdef HELAPORDO_CURSES_BUILD
 fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, WINDOW * notify_win, Koliseo * kls);
 fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, WINDOW * notify_win, Koliseo * kls);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, Rectangle * notification_area, Koliseo * kls);
+fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, Rectangle * notification_area, Koliseo * kls);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
@@ -238,10 +263,11 @@ void giveXp_Boss(Fighter * player, Boss * b);
 void statReset(Fighter * player, int force);
 
 int dropConsumable(Fighter * player);
+int dropArtifact(Fighter * player);
 
+#ifdef HELAPORDO_CURSES_BUILD
 void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
 
-int dropArtifact(Fighter * player);
 
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
                       WINDOW * notify_win, Koliseo * kls);
@@ -265,6 +291,37 @@ int boss_fight(Fighter * player, Boss * b, Path * p, WINDOW * notify_win,
 
 int boss_attack(Boss * b, Fighter * target, Path * p, WINDOW * notify_win,
                 Koliseo * kls);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+void dropEquip(Fighter * player, int beast, Rectangle * notification_area, Koliseo * kls);
+
+
+int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
+                      Rectangle * notification_area, Koliseo * kls);
+int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
+                      Rectangle * notification_area, Koliseo * kls);
+
+int fight(Fighter * player, Enemy * e, Rectangle * notification_area, Koliseo * kls);
+
+int enemy_attack(Enemy * e, Fighter * target, Rectangle * notification_area,
+                 Koliseo * kls);
+
+int defer_fight_boss(Fighter * player, Boss * b, Path * p,
+                     foeTurnOption_OP foe_op, Rectangle * notification_area,
+                     Koliseo * kls);
+
+int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
+                     Rectangle * notification_area, Koliseo *kls);
+
+int boss_fight(Fighter * player, Boss * b, Path * p, Rectangle * notification_area,
+               Koliseo * kls);
+
+int boss_attack(Boss * b, Fighter * target, Path * p, Rectangle * notification_area,
+                Koliseo * kls);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
@@ -306,8 +363,17 @@ void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 
 void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
 
+#ifdef HELAPORDO_CURSES_BUILD
 void open_chest(WINDOW * w, Chest * c, Fighter * f, Koliseo * kls,
                 Koliseo_Temp * t_kls);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+void open_chest(Rectangle * notification_area, Chest * c, Fighter * f, Koliseo * kls,
+                Koliseo_Temp * t_kls);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 Path *randomise_path(int seed, Koliseo * kls, const char *path_to_savefile);
 

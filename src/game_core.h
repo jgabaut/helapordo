@@ -1871,7 +1871,7 @@ typedef struct {
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
-    Rectangle *notification_area; /**< Pointer to notification area for OP*/
+    Rectangle *notify_win; /**< Pointer to notification area for OP*/
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
     Koliseo_Temp *t_kls;     /**< Pointer to Koliseo_Temp for OP*/

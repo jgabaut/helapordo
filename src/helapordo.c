@@ -60,7 +60,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
     FILE *save_file = args->save_file;
     if (save_file == NULL)
         log_tag("debug_log.txt", "[WARN]", "turnOP_args->(save_file) was NULL");
+#ifdef HELAPORDO_CURSES_BUILD
     WINDOW *notify_win = args->notify_win;
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    Rectangle *notify_win = args->notify_win;
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
     if (notify_win == NULL)
         log_tag("debug_log.txt", "[WARN]",
                 "turnOP_args->(notify_win) was NULL");
