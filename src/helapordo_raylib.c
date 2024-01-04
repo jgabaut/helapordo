@@ -564,8 +564,8 @@ void gameloop_rl(int argc, char** argv)
             int en_rect_Y = pl_rect_Y;
             int en_frame_W = pl_frame_W;
             int en_frame_H = pl_frame_H;
-            float stats_label_W = 0.17 * scale_factor;
-            float stats_label_H = 0.17 * scale_factor;
+            float stats_label_W = 10 * sprite_w_factor;
+            float stats_label_H = 10 * sprite_w_factor;
             Rectangle stats_label_r = CLITERAL(Rectangle) {
                 ((pl_rect_X - (en_rect_X + (en_frame_W * sprite_w_factor))) / 2) + (en_rect_X + (en_frame_W * sprite_w_factor)) - (stats_label_W/2),
                 en_rect_Y,
