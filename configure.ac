@@ -51,7 +51,7 @@ case "${host_os}" in
             if test "$enable_anvilpick" = "yes"; then
                 echo "Building with anvil interactive selection"
                 build_anvilpick=yes
-                AC_SUBST([ANVIL_IMPL], ["-i repo_amboso"])
+                AC_SUBST([ANVIL_IMPL], ["-i repo_invil"])
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
             fi
@@ -67,7 +67,7 @@ case "${host_os}" in
             if test "$enable_anvilpick" = "yes"; then
                 echo "Building with anvil interactive selection"
                 build_anvilpick=yes
-                AC_SUBST([ANVIL_IMPL], ["-i repo_amboso"])
+                AC_SUBST([ANVIL_IMPL], ["-i repo_invil"])
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
             fi
@@ -125,7 +125,7 @@ case "${host_os}" in
             if test "$enable_anvilpick" = "yes"; then
                 echo "Building with anvil interactive selection"
                 build_anvilpick=yes
-                AC_SUBST([ANVIL_IMPL], ["-i repo_amboso"])
+                AC_SUBST([ANVIL_IMPL], ["-i repo_invil"])
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
             fi
@@ -142,7 +142,7 @@ case "${host_os}" in
             if test "$enable_anvilpick" = "yes"; then
                 echo "Building with anvil interactive selection"
                 build_anvilpick=yes
-                AC_SUBST([ANVIL_IMPL], ["-i repo_amboso"])
+                AC_SUBST([ANVIL_IMPL], ["-i repo_invil"])
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
             fi
