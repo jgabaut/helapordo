@@ -17,7 +17,7 @@ SHELL := /bin/bash
 .ONESHELL:
 # Check system info
 MACHINE := $$(uname -m)
-PACK_NAME = $(TARGET)-$(VERSION)-$(OS)-$(MACHINE)
+PACK_NAME = $(HL_BUILD_STR)-$(TARGET)-$(VERSION)-$(OS)-$(MACHINE)
 PALETTE_PATH = "./static/palette.gpl"
 
 # Source files

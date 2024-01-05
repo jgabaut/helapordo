@@ -55,6 +55,7 @@ case "${host_os}" in
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
             fi
+            AC_SUBST([HL_BUILD_STR], ["rl"])
         else
             echo "Building with ncurses"
             #build_raylib=no
@@ -71,6 +72,7 @@ case "${host_os}" in
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
             fi
+            AC_SUBST([HL_BUILD_STR], ["nc"])
         fi
     ;;
     darwin*)
@@ -92,6 +94,7 @@ case "${host_os}" in
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_invil"])
             fi
+            AC_SUBST([HL_BUILD_STR], ["rl"])
         else
             echo "Building with ncurses"
             #build_raylib=no
@@ -107,6 +110,7 @@ case "${host_os}" in
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_invil"])
             fi
+            AC_SUBST([HL_BUILD_STR], ["nc"])
         fi
     ;;
     linux*)
@@ -129,6 +133,7 @@ case "${host_os}" in
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
             fi
+            AC_SUBST([HL_BUILD_STR], ["rl"])
 
         else
             echo "Building with ncurses"
@@ -146,6 +151,7 @@ case "${host_os}" in
             else
                 AC_SUBST([ANVIL_IMPL], ["repo_amboso"])
             fi
+            AC_SUBST([HL_BUILD_STR], ["nc"])
         fi
     ;;
     *)
