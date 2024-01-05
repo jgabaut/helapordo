@@ -37,7 +37,7 @@ KLS_LDFLAGS = -O2
 endif
 
 # Compiler flags
-AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11
+AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11 -DHELAPORDO_BUILD_STR=\"$(HL_BUILD_STR)\"
 
 if HL_RAYLIB_BUILD
 AM_CFLAGS += -DHELAPORDO_RAYLIB_BUILD
