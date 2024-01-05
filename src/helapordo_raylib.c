@@ -170,14 +170,14 @@ void gameloop_rl(int argc, char** argv)
         }
         break;
         case 't': {
-                      /*
+            /*
             int screenWidth = 1000;
             int screenHeight = 450;
             Rectangle r = CLITERAL(Rectangle) {
-                0,
-                0,
-                screenWidth,
-                screenHeight
+            0,
+            0,
+            screenWidth,
+            screenHeight
             };
 
             SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -187,13 +187,13 @@ void gameloop_rl(int argc, char** argv)
             int fps_target = 30;
             SetTargetFPS(fps_target);
             while (!WindowShouldClose()) {
-                screenWidth = GetScreenWidth();
-                screenHeight = GetScreenHeight();
-                framesCounter++;
-                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-                    break;
-                }
-                test_s4c_color_pairs(&r, palette);
+            screenWidth = GetScreenWidth();
+            screenHeight = GetScreenHeight();
+            framesCounter++;
+            if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+            break;
+            }
+            test_s4c_color_pairs(&r, palette);
             }
             CloseWindow();
             */
@@ -212,12 +212,12 @@ void gameloop_rl(int argc, char** argv)
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
             printf("  Built with: amboso v%s\n",
-                    ANVIL__API_LEVEL__STRING);
+                   ANVIL__API_LEVEL__STRING);
 #else
             printf("  Built with: invil v%s\n",
-                    INVIL__VERSION__STRING);
+                   INVIL__VERSION__STRING);
             printf("Version Info: %.8s\n",
-                    get_ANVIL__VERSION__DESC__());
+                   get_ANVIL__VERSION__DESC__());
             const char* anvil_date = get_ANVIL__VERSION__DATE__();
             char* anvil_date_end;
 #ifndef _WIN32
@@ -670,8 +670,7 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
             int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
             int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
-            if (pl_res != 0 || en_res !=0)
-            {
+            if (pl_res != 0 || en_res !=0) {
                 DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
                 DrawText("Window too small.", 20, 20, 20, RAYWHITE);
                 DrawText("Please resize.", 20, 50, 20, RAYWHITE);

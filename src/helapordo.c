@@ -12652,12 +12652,12 @@ void gameloop(int argc, char **argv)
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
                 printf("  Built with: amboso v%s\n",
-                        ANVIL__API_LEVEL__STRING);
+                       ANVIL__API_LEVEL__STRING);
 #else
                 printf("  Built with: invil v%s\n",
-                        INVIL__VERSION__STRING);
+                       INVIL__VERSION__STRING);
                 printf("Version Info: %.8s\n",
-                        get_ANVIL__VERSION__DESC__());
+                       get_ANVIL__VERSION__DESC__());
                 const char* anvil_date = get_ANVIL__VERSION__DATE__();
                 char* anvil_date_end;
 #ifndef _WIN32
@@ -14740,12 +14740,12 @@ void gameloop_Win(int argc, char **argv)
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
                 printf("  Built with: amboso v%s\n",
-                        ANVIL__API_LEVEL__STRING);
+                       ANVIL__API_LEVEL__STRING);
 #else
                 printf("  Built with: invil v%s\n",
-                        INVIL__VERSION__STRING);
+                       INVIL__VERSION__STRING);
                 printf("Version Info: %.8s\n",
-                        get_ANVIL__VERSION__DESC__());
+                       get_ANVIL__VERSION__DESC__());
                 const char* anvil_date = get_ANVIL__VERSION__DATE__();
                 char* anvil_date_end;
 #ifndef _WIN32
