@@ -170,6 +170,38 @@ void gameloop_rl(int argc, char** argv)
         }
         break;
         case 't': {
+                      /*
+            int screenWidth = 1000;
+            int screenHeight = 450;
+            Rectangle r = CLITERAL(Rectangle) {
+                0,
+                0,
+                screenWidth,
+                screenHeight
+            };
+
+            SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
+            InitWindow(screenWidth, screenHeight, "helapordo Color test");
+            int framesCounter = 0;
+            int fps_target = 30;
+            SetTargetFPS(fps_target);
+            while (!WindowShouldClose()) {
+                screenWidth = GetScreenWidth();
+                screenHeight = GetScreenHeight();
+                framesCounter++;
+                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                    break;
+                }
+                test_s4c_color_pairs(&r, palette);
+            }
+            CloseWindow();
+            */
+            printf("TODO: add test_s4c_color_pairs() call");
+            usage(whoami);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_SUCCESS);
         }
         break;
         case 'v': {
