@@ -535,6 +535,8 @@ void gameloop_rl(int argc, char** argv)
     float pixel_factor = 0.02;
     float sprite_w_factor = pixel_factor * scale_factor;
 
+    char time_str[20] = {0};
+
     while (!WindowShouldClose()) {
         // Update
         //----------------------------------------------------------------------------------
@@ -667,6 +669,15 @@ void gameloop_rl(int argc, char** argv)
                 screenWidth - en_rect_X,
                 screenHeight - en_rect_Y
             };
+            time_t framesTime = framesCounter / GetFPS();
+            struct tm* time_tm = localtime(&framesTime);
+
+            if (time_tm == NULL) {
+                fprintf(stderr, "%s():    time_tm was NULL.\n", __func__);
+            } else {
+                strftime(time_str, 20, "Time: %M:%S", time_tm);
+                DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
+            }
             DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
             int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
             int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
