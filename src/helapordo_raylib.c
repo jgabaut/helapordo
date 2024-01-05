@@ -17,6 +17,38 @@
 */
 #include "helapordo_raylib.h"
 
+void ToggleFullScreenWindow(int w_W, int w_H)
+{
+    if (!IsWindowFullscreen()) {
+        int mon = GetCurrentMonitor();
+        SetWindowSize(GetMonitorWidth(mon), GetMonitorHeight(mon));
+        ToggleFullscreen();
+    } else {
+        ToggleFullscreen();
+        SetWindowSize(w_W, w_H);
+    }
+}
+
+int GetDisplayWidth(void)
+{
+    if (IsWindowFullscreen()) {
+        int mon = GetCurrentMonitor();
+        return GetMonitorWidth(mon);
+    } else {
+        return GetScreenWidth();
+    }
+}
+
+int GetDisplayHeigth(void)
+{
+    if (IsWindowFullscreen()) {
+        int mon = GetCurrentMonitor();
+        return GetMonitorHeight(mon);
+    } else {
+        return GetScreenHeight();
+    }
+}
+
 void gameloop_rl(int argc, char** argv)
 {
 
@@ -543,6 +575,11 @@ void gameloop_rl(int argc, char** argv)
 
         screenWidth = GetScreenWidth();
         screenHeight = GetScreenHeight();
+
+        if (IsKeyPressed(KEY_SPACE)) {
+            ToggleFullScreenWindow(screenWidth, screenHeight);
+        }
+
         scale_factor = sqrt(screenWidth * screenHeight);
         sprite_w_factor = pixel_factor * scale_factor;
 
