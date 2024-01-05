@@ -1679,6 +1679,8 @@ typedef struct loadInfo {
  */
 typedef struct {
 
+    clock_t start_time; /**< Keeps track of game start time.*/
+
     countStats *stats;	   /**< Keeps track of stats for the game.*/
 
     int current_fighters;     /**< Keeps track of Fighter number for the game.*/

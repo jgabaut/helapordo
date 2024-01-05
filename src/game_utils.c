@@ -517,6 +517,8 @@ void dbg_Gamestate(Gamestate *gmst)
     log_tag("debug_log.txt", "[DEBUG]", "Gamestate:{");
     log_tag("debug_log.txt", "[GAMESTATE]", "Current Gamemode: { %s } [ %i ]",
             stringFromGamemode(gmst->gamemode), gmst->gamemode);
+    log_tag("debug_log.txt", "[GAMESTATE]", "Start time: {%llu}",
+            (unsigned long long) gmst->start_time);
     log_tag("debug_log.txt", "[GAMESTATE]", "Current fighters: { %i }",
             gmst->current_fighters);
     log_tag("debug_log.txt", "[GAMESTATE]", "Current room index: { %i }",
@@ -589,13 +591,14 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
 /**
  * Inits the passed (preallocated) Gamestate with the passed pointers.
  * @param gmst The allocated Gamestate to init.
+ * @param start_time The start time for current game.
  * @param stats Game stats.
  * @param wincon Game Wincon.
  * @param path Game Path.
  * @param player Game main player.
  * @param gamemode Picked gamemode.
  */
-void init_Gamestate(Gamestate *gmst, countStats *stats, Wincon *wincon,
+void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
                     Path *path, Fighter *player, Gamemode gamemode)
 {
     if (gmst == NULL) {
@@ -627,6 +630,7 @@ void init_Gamestate(Gamestate *gmst, countStats *stats, Wincon *wincon,
                 gamemode);
         exit(EXIT_FAILURE);
     }
+    gmst->start_time = start_time;
     gmst->stats = stats;
     gmst->current_fighters = -1;
     gmst->current_roomtype = -1;

@@ -87,7 +87,7 @@ void dbg_countStats(countStats * stats);
 void dbg_Wincon(Wincon * wc);
 void dbg_Path(Path * path);
 void dbg_Saveslot(Saveslot * saveslot);
-void init_Gamestate(Gamestate * gmst, countStats * stats, Wincon * wincon,
+void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
                     Path * path, Fighter * player, Gamemode gamemode);
 void update_Gamestate(Gamestate * gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,

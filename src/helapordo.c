@@ -13774,7 +13774,7 @@ void gameloop(int argc, char **argv)
         Gamestate *gamestate =
             KLS_PUSH_TYPED(default_kls, Gamestate, 1, HR_Gamestate, "Gamestate",
                            "Gamestate");
-        init_Gamestate(gamestate, player->stats, path->win_condition, path,
+        init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
                        player, GAMEMODE);
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
