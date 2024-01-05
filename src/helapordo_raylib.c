@@ -216,7 +216,7 @@ void gameloop_rl(int argc, char** argv)
 #else
             printf("  Built with: invil v%s\n",
                     INVIL__VERSION__STRING);
-            printf("  Version Info: %.8s\n",
+            printf("Version Info: %.8s\n",
                     get_ANVIL__VERSION__DESC__());
             const char* anvil_date = get_ANVIL__VERSION__DATE__();
             char* anvil_date_end;
@@ -236,7 +236,7 @@ void gameloop_rl(int argc, char** argv)
                     //TODO: error
                 } else {
                     strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
-                    printf("  Date: %s\n", build_time_buff);
+                    printf("Date: %s\n", build_time_buff);
                 }
             }
 #endif // INVIL__helapordo__HEADER__
