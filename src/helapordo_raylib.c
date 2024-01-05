@@ -202,7 +202,6 @@ void gameloop_rl(int argc, char** argv)
         }
         break;
         case 't': {
-            /*
             int screenWidth = 1000;
             int screenHeight = 450;
             Rectangle r = CLITERAL(Rectangle) {
@@ -228,7 +227,6 @@ void gameloop_rl(int argc, char** argv)
             test_s4c_color_pairs(&r, palette);
             }
             CloseWindow();
-            */
             printf("TODO: add test_s4c_color_pairs() call");
             usage(whoami);
             kls_free(default_kls);
