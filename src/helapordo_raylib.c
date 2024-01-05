@@ -576,7 +576,7 @@ void gameloop_rl(int argc, char** argv)
         screenWidth = GetScreenWidth();
         screenHeight = GetScreenHeight();
 
-        if (IsKeyPressed(KEY_SPACE)) {
+        if (IsKeyPressed(KEY_F) && IsKeyDown(KEY_LEFT_ALT)) {
             ToggleFullScreenWindow(screenWidth, screenHeight);
         }
 
