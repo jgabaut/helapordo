@@ -75,263 +75,6 @@ void init_floor_rooms(Floor *floor)
 }
 
 /**
- * Takes a Floor pointer and initialises its explored_matrix using the values in floor_layout fields.
- * @see Floor
- * @see floorClass
- */
-void load_floor_explored(Floor *floor)
-{
-    // Initialize the explored_matrix to 0 (unexplored), for cells with a 1 in floor_layout, or -1 for empty cells
-    for (int x = 0; x < FLOOR_MAX_COLS; x++) {
-        for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
-            floor->explored_matrix[x][y] =
-                floor->floor_layout[x][y] == 1 ? 0 : -1;
-        }
-    }
-}
-
-/**
- * Takes a Floor pointer and prints its roomClass layout to the passed FILE pointer.
- * @see Floor
- * @see floorClass
- * @see roomClass
- */
-void debug_print_roomclass_layout(Floor *floor, FILE *fp)
-{
-    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
-        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
-            char ch = '.';
-            switch (floor->roomclass_layout[x][y]) {
-            case HOME: {
-                ch = 'H';
-            }
-            break;
-            case ENEMIES: {
-                ch = 'E';
-            }
-            break;
-            case BOSS: {
-                ch = 'B';
-            }
-            break;
-            case SHOP: {
-                ch = '$';
-            }
-            break;
-            case TREASURE: {
-                ch = '*';
-            }
-            break;
-            case WALL: {
-                ch = '#';
-            }
-            break;
-            case BASIC: {
-                ch = ' ';
-            }
-            break;
-            default: {
-                ch = '?';
-            }
-            break;
-            }
-            fprintf(fp, "%c ", ch);
-        }
-        fprintf(fp, "\n");
-    }
-}
-
-/**
- * Takes a Floor pointer and prints its roomClass layout to the passed WINDOW pointer.
- * @see Floor
- * @see floorClass
- * @see roomClass
- */
-void display_roomclass_layout(Floor *floor, WINDOW *win)
-{
-    if (win == NULL) {
-        log_tag("debug_log.txt", "[ERROR]",
-                "display_roomclass_layout:  win was NULL");
-        exit(EXIT_FAILURE);
-    }
-    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
-        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
-            char ch = '.';
-            int isColored = -1;
-            switch (floor->roomclass_layout[x][y]) {
-            case HOME: {
-                ch = 'H';
-#ifndef _WIN32
-                isColored = S4C_BRIGHT_GREEN;
-#else
-                isColored = S4C_WIN_GREEN;
-#endif
-            }
-            break;
-            case ENEMIES: {
-                ch = 'E';
-#ifndef _WIN32
-                isColored = S4C_PURPLE;
-#else
-                isColored = S4C_WIN_BLUE;
-#endif
-            }
-            break;
-            case BOSS: {
-                ch = 'B';
-#ifndef _WIN32
-                isColored = S4C_RED;
-#else
-                isColored = S4C_WIN_RED;
-#endif
-            }
-            break;
-            case SHOP: {
-                ch = '$';
-#ifndef _WIN32
-                isColored = S4C_CYAN;
-#else
-                isColored = S4C_WIN_CYAN;
-#endif
-            }
-            break;
-            case TREASURE: {
-                ch = '*';
-#ifndef _WIN32
-                isColored = S4C_ORANGE;
-#else
-                isColored = S4C_WIN_WHITE_ON_RED;
-#endif
-            }
-            break;
-            case WALL: {
-                ch = '#';
-#ifndef _WIN32
-                isColored = S4C_BRIGHT_YELLOW;
-#else
-                isColored = S4C_WIN_WHITE;
-#endif
-            }
-            break;
-            case BASIC: {
-                ch = ' ';
-            }
-            break;
-            default: {
-                ch = '?';
-            }
-            break;
-            }
-
-            if (isColored >= 0)
-                wattron(win, COLOR_PAIR(isColored));
-            mvwprintw(win, y + 3, x + 3, "%c", ch);
-            if (isColored >= 0) {
-                wattroff(win, COLOR_PAIR(isColored));
-                isColored = -1;
-            };
-            wrefresh(win);
-        }
-    }
-
-    refresh();
-}
-
-/**
- * Takes a Floor pointer and prints its floor layout to the passed FILE pointer.
- * @see Floor
- * @see floorClass
- */
-void debug_print_floor_layout(Floor *floor, FILE *fp)
-{
-    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
-        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
-            fprintf(fp, "%c ", floor->floor_layout[x][y] == 1 ? '1' : ' ');
-        }
-        fprintf(fp, "\n");
-    }
-}
-
-/**
- * Takes a Floor pointer and prints its floor layout to the passed WINDOW pointer.
- * @see Floor
- * @see floorClass
- */
-void display_floor_layout(Floor *floor, WINDOW *win)
-{
-    if (win == NULL) {
-        log_tag("debug_log.txt", "[ERROR]",
-                "display_floor_layout():  win was NULL.");
-        exit(EXIT_FAILURE);
-    }
-    int isFull = -1;
-    int isColored = -1;
-    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
-        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
-            isFull = (floor->floor_layout[x][y] == 1 ? 1 : 0);
-            isColored = isFull;
-            if (isColored > 0) {
-#ifndef _WIN32
-                wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-#else
-                wattron(win, COLOR_PAIR(S4C_WIN_YELLOW));
-#endif
-            };
-            mvwprintw(win, y + 3, x + 3, "%c", (isFull == 1 ? 'X' : ' '));
-            if (isColored > 0) {
-#ifndef _WIN32
-                wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-#else
-                wattroff(win, COLOR_PAIR(S4C_WIN_YELLOW));
-#endif
-            };
-            wrefresh(win);
-        }
-    }
-    refresh();
-}
-
-/**
- * Takes a Floor pointer and prints its explored layout to the passed WINDOW pointer.
- * @see Floor
- * @see floorClass
- */
-void display_explored_layout(Floor *floor, WINDOW *win)
-{
-    if (win == NULL) {
-        log_tag("debug_log.txt", "[ERROR]",
-                "display_explored_layout():  win was NULL.");
-        exit(EXIT_FAILURE);
-    }
-    int isWalkable = -1;
-    int isExplored = -1;
-    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
-        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
-            isWalkable = (floor->explored_matrix[x][y] >= 0 ? 1 : 0);
-            isExplored = (floor->explored_matrix[x][y] > 0 ? 1 : 0);
-            if (isWalkable > 0) {
-#ifndef _WIN32
-                wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-#else
-                wattron(win, COLOR_PAIR(S4C_WIN_YELLOW));
-#endif
-                mvwprintw(win, y + 3, x + 3, "%c",
-                          (isExplored == 1 ? '1' : '0'));
-            };
-            if (isWalkable > 0) {
-#ifndef _WIN32
-                wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-#else
-                wattroff(win, COLOR_PAIR(S4C_WIN_YELLOW));
-#endif
-            };
-            wrefresh(win);
-        }
-    }
-    refresh();
-}
-
-/**
  * Takes a Floor pointer and tries walking randomly to initialises its floor_layout field.
  * If do_layout_clean is 1, it will reset floor layout when walked area ratio is below or above expectations.
  * @see Floor
@@ -617,6 +360,264 @@ void floor_set_room_types(Floor *floor)
     /*
        fclose(logfile);
      */
+}
+
+/**
+ * Takes a Floor pointer and initialises its explored_matrix using the values in floor_layout fields.
+ * @see Floor
+ * @see floorClass
+ */
+void load_floor_explored(Floor *floor)
+{
+    // Initialize the explored_matrix to 0 (unexplored), for cells with a 1 in floor_layout, or -1 for empty cells
+    for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+        for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+            floor->explored_matrix[x][y] =
+                floor->floor_layout[x][y] == 1 ? 0 : -1;
+        }
+    }
+}
+
+/**
+ * Takes a Floor pointer and prints its roomClass layout to the passed FILE pointer.
+ * @see Floor
+ * @see floorClass
+ * @see roomClass
+ */
+void debug_print_roomclass_layout(Floor *floor, FILE *fp)
+{
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            char ch = '.';
+            switch (floor->roomclass_layout[x][y]) {
+            case HOME: {
+                ch = 'H';
+            }
+            break;
+            case ENEMIES: {
+                ch = 'E';
+            }
+            break;
+            case BOSS: {
+                ch = 'B';
+            }
+            break;
+            case SHOP: {
+                ch = '$';
+            }
+            break;
+            case TREASURE: {
+                ch = '*';
+            }
+            break;
+            case WALL: {
+                ch = '#';
+            }
+            break;
+            case BASIC: {
+                ch = ' ';
+            }
+            break;
+            default: {
+                ch = '?';
+            }
+            break;
+            }
+            fprintf(fp, "%c ", ch);
+        }
+        fprintf(fp, "\n");
+    }
+}
+
+/**
+ * Takes a Floor pointer and prints its floor layout to the passed FILE pointer.
+ * @see Floor
+ * @see floorClass
+ */
+void debug_print_floor_layout(Floor *floor, FILE *fp)
+{
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            fprintf(fp, "%c ", floor->floor_layout[x][y] == 1 ? '1' : ' ');
+        }
+        fprintf(fp, "\n");
+    }
+}
+
+#ifdef HELAPORDO_CURSES_BUILD
+/**
+ * Takes a Floor pointer and prints its roomClass layout to the passed WINDOW pointer.
+ * @see Floor
+ * @see floorClass
+ * @see roomClass
+ */
+void display_roomclass_layout(Floor *floor, WINDOW *win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "display_roomclass_layout:  win was NULL");
+        exit(EXIT_FAILURE);
+    }
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            char ch = '.';
+            int isColored = -1;
+            switch (floor->roomclass_layout[x][y]) {
+            case HOME: {
+                ch = 'H';
+#ifndef _WIN32
+                isColored = S4C_BRIGHT_GREEN;
+#else
+                isColored = S4C_WIN_GREEN;
+#endif
+            }
+            break;
+            case ENEMIES: {
+                ch = 'E';
+#ifndef _WIN32
+                isColored = S4C_PURPLE;
+#else
+                isColored = S4C_WIN_BLUE;
+#endif
+            }
+            break;
+            case BOSS: {
+                ch = 'B';
+#ifndef _WIN32
+                isColored = S4C_RED;
+#else
+                isColored = S4C_WIN_RED;
+#endif
+            }
+            break;
+            case SHOP: {
+                ch = '$';
+#ifndef _WIN32
+                isColored = S4C_CYAN;
+#else
+                isColored = S4C_WIN_CYAN;
+#endif
+            }
+            break;
+            case TREASURE: {
+                ch = '*';
+#ifndef _WIN32
+                isColored = S4C_ORANGE;
+#else
+                isColored = S4C_WIN_WHITE_ON_RED;
+#endif
+            }
+            break;
+            case WALL: {
+                ch = '#';
+#ifndef _WIN32
+                isColored = S4C_BRIGHT_YELLOW;
+#else
+                isColored = S4C_WIN_WHITE;
+#endif
+            }
+            break;
+            case BASIC: {
+                ch = ' ';
+            }
+            break;
+            default: {
+                ch = '?';
+            }
+            break;
+            }
+
+            if (isColored >= 0)
+                wattron(win, COLOR_PAIR(isColored));
+            mvwprintw(win, y + 3, x + 3, "%c", ch);
+            if (isColored >= 0) {
+                wattroff(win, COLOR_PAIR(isColored));
+                isColored = -1;
+            };
+            wrefresh(win);
+        }
+    }
+
+    refresh();
+}
+
+/**
+ * Takes a Floor pointer and prints its floor layout to the passed WINDOW pointer.
+ * @see Floor
+ * @see floorClass
+ */
+void display_floor_layout(Floor *floor, WINDOW *win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "display_floor_layout():  win was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    int isFull = -1;
+    int isColored = -1;
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            isFull = (floor->floor_layout[x][y] == 1 ? 1 : 0);
+            isColored = isFull;
+            if (isColored > 0) {
+#ifndef _WIN32
+                wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+#else
+                wattron(win, COLOR_PAIR(S4C_WIN_YELLOW));
+#endif
+            };
+            mvwprintw(win, y + 3, x + 3, "%c", (isFull == 1 ? 'X' : ' '));
+            if (isColored > 0) {
+#ifndef _WIN32
+                wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+#else
+                wattroff(win, COLOR_PAIR(S4C_WIN_YELLOW));
+#endif
+            };
+            wrefresh(win);
+        }
+    }
+    refresh();
+}
+
+/**
+ * Takes a Floor pointer and prints its explored layout to the passed WINDOW pointer.
+ * @see Floor
+ * @see floorClass
+ */
+void display_explored_layout(Floor *floor, WINDOW *win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "display_explored_layout():  win was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    int isWalkable = -1;
+    int isExplored = -1;
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            isWalkable = (floor->explored_matrix[x][y] >= 0 ? 1 : 0);
+            isExplored = (floor->explored_matrix[x][y] > 0 ? 1 : 0);
+            if (isWalkable > 0) {
+#ifndef _WIN32
+                wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+#else
+                wattron(win, COLOR_PAIR(S4C_WIN_YELLOW));
+#endif
+                mvwprintw(win, y + 3, x + 3, "%c",
+                          (isExplored == 1 ? '1' : '0'));
+            };
+            if (isWalkable > 0) {
+#ifndef _WIN32
+                wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+#else
+                wattroff(win, COLOR_PAIR(S4C_WIN_YELLOW));
+#endif
+            };
+            wrefresh(win);
+        }
+    }
+    refresh();
 }
 
 /**
@@ -978,3 +979,5 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
         }
     }
 }
+
+#endif // HELAPORDO_CURSES_BUILD

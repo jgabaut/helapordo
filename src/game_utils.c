@@ -84,6 +84,7 @@ void log_Win_EnvVars(void)
 }
 #endif
 
+#ifdef HELAPORDO_CURSES_BUILD
 bool set_Saveslot_name(FILE *file, Saveslot *sv)
 {
 
@@ -186,6 +187,19 @@ bool set_Saveslot_name(FILE *file, Saveslot *sv)
     sv->name[49] = '\0';
     return true;
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+bool set_Saveslot_name(FILE *file, Saveslot *sv)
+{
+    (void) file;
+    (void) sv;
+    printf("%s():    TODO - implement set_Saveslot_namefor rl-build.\n", __func__);
+    return false;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
@@ -503,6 +517,12 @@ void dbg_Gamestate(Gamestate *gmst)
     log_tag("debug_log.txt", "[DEBUG]", "Gamestate:{");
     log_tag("debug_log.txt", "[GAMESTATE]", "Current Gamemode: { %s } [ %i ]",
             stringFromGamemode(gmst->gamemode), gmst->gamemode);
+    log_tag("debug_log.txt", "[GAMESTATE]", "Start time: {%llu}",
+            (unsigned long long) gmst->start_time);
+    clock_t run_time = clock() - gmst->start_time;
+    int time_spent = run_time * 1000 / CLOCKS_PER_SEC;
+    log_tag("debug_log.txt", "[GAMESTATE]", "Current run time: %d s, %d ms.",
+            time_spent / 1000, time_spent % 1000);
     log_tag("debug_log.txt", "[GAMESTATE]", "Current fighters: { %i }",
             gmst->current_fighters);
     log_tag("debug_log.txt", "[GAMESTATE]", "Current room index: { %i }",
@@ -575,13 +595,14 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
 /**
  * Inits the passed (preallocated) Gamestate with the passed pointers.
  * @param gmst The allocated Gamestate to init.
+ * @param start_time The start time for current game.
  * @param stats Game stats.
  * @param wincon Game Wincon.
  * @param path Game Path.
  * @param player Game main player.
  * @param gamemode Picked gamemode.
  */
-void init_Gamestate(Gamestate *gmst, countStats *stats, Wincon *wincon,
+void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
                     Path *path, Fighter *player, Gamemode gamemode)
 {
     if (gmst == NULL) {
@@ -613,6 +634,7 @@ void init_Gamestate(Gamestate *gmst, countStats *stats, Wincon *wincon,
                 gamemode);
         exit(EXIT_FAILURE);
     }
+    gmst->start_time = start_time;
     gmst->stats = stats;
     gmst->current_fighters = -1;
     gmst->current_roomtype = -1;
@@ -624,6 +646,7 @@ void init_Gamestate(Gamestate *gmst, countStats *stats, Wincon *wincon,
     gmst->gamemode = gamemode;
 }
 
+#ifdef HELAPORDO_CURSES_BUILD
 /**
  * Allocates and prepares a turnOP_args and returns a pointer to it.
  * @see turnOP_args
@@ -671,6 +694,21 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
 
     return res;
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
+                              Room *room, loadInfo *load_info, Enemy *enemy,
+                              Boss *boss, FILE *save_file, Rectangle *notification_area,
+                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
+                              skillType picked_skill)
+{
+    printf("%s():    TODO - implement turnOP init for rl-build\n", __func__);
+    return NULL;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Takes a string and returns the corresponding saveType.
@@ -818,6 +856,7 @@ void lightCyan(void)
     printf("\033[0;36m");
 }
 
+#ifdef HELAPORDO_CURSES_BUILD
 /**
  * Initialises color pairs for the game.
  */
@@ -837,7 +876,19 @@ void init_game_color_pairs(void)
     init_pair(10, COLOR_WHITE, COLOR_MAGENTA);
 
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+void init_game_color_pairs(void)
+{
+    printf("%s():    TODO - Implement color pair init for rl-build\n", __func__);
+    return;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
+#ifdef HELAPORDO_CURSES_BUILD
 /**
  * Demoes color pairs from palette.c to the passed WINDOW.
  * @param win The Window pointer to print to.
@@ -886,6 +937,19 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
         }
     }
 }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+void test_game_color_pairs(Rectangle * win, int colors_per_row)
+{
+    (void) win;
+    (void) colors_per_row;
+    printf("%s():    TODO - Implement game color pairs test for rl-build\n", __func__);
+    return;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Sets the passed char array to the expected path for /static/ folder.
@@ -1200,6 +1264,45 @@ void printFormattedVersion(char *progName)
 }
 
 /**
+ * Prints configuration info.
+ */
+void hlpd_dbg_features(void)
+{
+
+#ifdef HELAPORDO_DEBUG_ACCESS
+    fprintf(stderr,"[HLP]    Debug access in enabled\n");
+#else
+    fprintf(stderr,"[HLP]    Debug access in not enabled\n");
+#endif
+
+#ifdef HELAPORDO_DEBUG_LOG
+    fprintf(stderr,"[HLP]    Debug log is enabled\n");
+#else
+    fprintf(stderr,"[HLP]    Debug log is off\n");
+#endif
+
+#ifdef ANVIL__helapordo__
+#ifdef INVIL__helapordo__HEADER__
+    fprintf(stderr,"[HLP]    Built with invil\n");
+#else
+    fprintf(stderr,"[HLP]    Built with amboso\n");
+#endif // INVIL
+#else
+    fprintf(stderr,"[HLP]    Built without anvil\n");
+#endif // ANVIL
+
+#ifdef HELAPORDO_CURSES_BUILD
+    fprintf(stderr,"[HLP]    ncurses build enabled\n");
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    fprintf(stderr,"[HLP]    raylib build enabled\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+}
+
+/**
  * Prints correct argument syntax for command line invocation.
  */
 void usage(char *progname)
@@ -1222,6 +1325,7 @@ void usage(char *progname)
     fprintf(stderr, "    -G        Enable godmode.\n");
     fprintf(stderr, "    -X        Enable experimental features.\n");
     fprintf(stderr, "    -v        Prints %s version.\n", progname);
+    fprintf(stderr, "    -V        Prints %s build info.\n", progname);
     fprintf(stderr, "    -a        Disable autosave.\n");
     fprintf(stderr, "    -L        Enable logging.\n");
     fprintf(stderr, "    -Q        Enable fast quit.\n");

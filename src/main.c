@@ -15,8 +15,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#ifdef HELAPORDO_CURSES_BUILD
 #include "helapordo.h"
 #include "floor_tester.h"
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+#include "helapordo_raylib.h"
+#endif //HELAPORDO_RAYLIB_BUILD
+#endif //HELAPORDO_CURSES_BUILD
 
 int G_PRELOAD_ANIMATIONS_ON = 0;
 int G_DEBUG_ON = 0;
@@ -48,11 +56,21 @@ int main(int argc, char **argv)
     //      Branches?
     //
     //test_floors();
+
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
     gameloop(argc, argv);
 #else
     gameloop_Win(argc, argv);
-#endif
+#endif // _WIN32
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+    gameloop_rl(argc, argv);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+
     //      Monsters
     //      Leveling
     //      Abilities?

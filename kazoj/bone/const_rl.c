@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#define HELAPORDO_CURSES_BUILD
+#define HELAPORDO_RAYLIB_BUILD
 #include "../../src/game_core.h"
+#include <raylib.h>
 
 void fail(char* msg, int ex, int val) {
   printf("[Fail]    %s, expected (%i), was %i\n",msg,ex,val);

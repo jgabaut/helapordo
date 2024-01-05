@@ -526,6 +526,14 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
         int frame_counter = 0;
         int animation_loops_done = 0;
 
+        char time_str[20] = {0};
+        clock_t run_time = {0};
+#ifndef _WIN32
+        long time_spent;
+#else
+        long long time_spent;
+#endif
+
         while (!
                (fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE
                 || choice == QUIT)) {
@@ -934,6 +942,23 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                                                           frame_counter, 1, 1,
                                                           60, 19, 19, 0, 0);
                     frame_counter++;
+
+                    if (G_EXPERIMENTAL_ON == 1) {
+                        run_time = clock() - gamestate->start_time;
+                        time_spent = run_time / CLOCKS_PER_SEC;
+                        //log_tag("debug_log.txt", "[DEBUG]", "Current run time: %d s, %d ms.",
+                        //    time_spent / 1000, time_spent % 1000);
+                        struct tm* time_tm = localtime(&time_spent);
+
+                        if (time_tm == NULL) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    time_tm was NULL.\n", __func__);
+                        } else {
+                            strftime(time_str, 20, "Time: %M:%S", time_tm);
+                            mvwprintw(notifications_win, 0, 0,time_str);
+                            wrefresh(notifications_win);
+                        }
+                    }
+
                     if (frame_counter > frame_tot) {
                         animation_loops_done++;
                         if (animation_loops_done == 1) {
@@ -1460,6 +1485,13 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
     int frame_counter = 0;
     int animation_loops_done = 0;
+    char time_str[20] = {0};
+    clock_t run_time = {0};
+#ifndef _WIN32
+    long time_spent;
+#else
+    long long time_spent;
+#endif
 
     while (!
            (fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE
@@ -1784,6 +1816,23 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                                                       frame_counter,
                                                       frame_counter, 1, 1, 60,
                                                       19, 19, 0, 0);
+
+                if (G_EXPERIMENTAL_ON == 1) {
+                    run_time = clock() - gamestate->start_time;
+                    time_spent = run_time / CLOCKS_PER_SEC;
+                    //log_tag("debug_log.txt", "[DEBUG]", "Current run time: %d s, %d ms.",
+                    //    time_spent / 1000, time_spent % 1000);
+                    struct tm* time_tm = localtime(&time_spent);
+
+                    if (time_tm == NULL) {
+                        log_tag("debug_log.txt", "[ERROR]", "%s():    time_tm was NULL.\n", __func__);
+                    } else {
+                        strftime(time_str, 20, "Time: %M:%S", time_tm);
+                        mvwprintw(notifications_win, 0, 0,time_str);
+                        wrefresh(notifications_win);
+                    }
+                }
+
                 frame_counter++;
                 if (frame_counter > frame_tot) {
                     animation_loops_done++;

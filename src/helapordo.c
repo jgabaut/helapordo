@@ -60,7 +60,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
     FILE *save_file = args->save_file;
     if (save_file == NULL)
         log_tag("debug_log.txt", "[WARN]", "turnOP_args->(save_file) was NULL");
+#ifdef HELAPORDO_CURSES_BUILD
     WINDOW *notify_win = args->notify_win;
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    Rectangle *notify_win = args->notify_win;
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
     if (notify_win == NULL)
         log_tag("debug_log.txt", "[WARN]",
                 "turnOP_args->(notify_win) was NULL");
@@ -12528,7 +12536,7 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsa")) != -1) {
+        while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsaV")) != -1) {
             switch (option) {
             case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
@@ -12631,6 +12639,53 @@ void gameloop(int argc, char **argv)
                 napms(200);
                 delwin(test_win);
                 endwin();
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 'V': {
+                printf("helapordo build: %s\n", helapordo_build_string);
+                hlpd_dbg_features();
+                printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
+                s4c_dbg_features();
+                printf("  using: koliseo v%s\n", string_koliseo_version());
+                kls_dbg_features();
+                printf("  using: ncurses v%s\n", NCURSES_VERSION);
+#ifdef ANVIL__helapordo__
+#ifndef INVIL__helapordo__HEADER__
+                printf("  Built with: amboso v%s\n",
+                       ANVIL__API_LEVEL__STRING);
+#else
+                printf("  Built with: invil v%s\n",
+                       INVIL__VERSION__STRING);
+                printf("Version Info: %.8s\n",
+                       get_ANVIL__VERSION__DESC__());
+                const char* anvil_date = get_ANVIL__VERSION__DATE__();
+                char* anvil_date_end;
+#ifndef _WIN32
+                time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
+#else
+                time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
+#endif //_WIN32
+
+                if (anvil_date_end == anvil_date) {
+                    //TODO: error
+                } else {
+                    char build_time_buff[20] = {0};
+                    struct tm* build_time_tm = localtime(&anvil_build_time);
+
+                    if (build_time_tm == NULL) {
+                        //TODO: error
+                    } else {
+                        strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
+                        printf("Date: %s\n", build_time_buff);
+                    }
+                }
+#endif // INVIL__helapordo__HEADER__
+#else
+                printf("  Built without anvil\n");
+#endif // ANVIL__helapordo__
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_SUCCESS);
@@ -12843,6 +12898,7 @@ void gameloop(int argc, char **argv)
             printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
             white();
         }
+        printf("\t\t\t\t\t\t\tncurses build\n");
         printf("\t\t\t\t\t\t");
         printFormattedVersion(whoami);
         int scanfres = scanf("%c", &c);
@@ -13195,7 +13251,8 @@ void gameloop(int argc, char **argv)
         //Handle side window for welcome info
         savepick_side_win = newwin(12, 32, 2, 2);
         scrollok(savepick_side_win, TRUE);
-        wprintw(savepick_side_win, "  \nhelapordo v%s", VERSION);
+        wprintw(savepick_side_win, "  \nhelapordo");
+        wprintw(savepick_side_win, "  \n  build: %s", helapordo_build_string);
         wprintw(savepick_side_win, "  \n  using: s4c-animate v%s",
                 S4C_ANIMATE_VERSION);
         wprintw(savepick_side_win, "  \n  using: koliseo v%s",
@@ -13216,7 +13273,7 @@ void gameloop(int argc, char **argv)
         time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
 #else
         time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
-#endif
+#endif //_WIN32
 
         if (anvil_date_end == anvil_date) {
             log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
@@ -13231,10 +13288,10 @@ void gameloop(int argc, char **argv)
                 wprintw(savepick_side_win, "  \nDate: %s", build_time_buff);
             }
         }
-#endif
+#endif // INVIL__helapordo__HEADER__
 #else
         wprintw(savepick_side_win, "  \nBuilt without anvil");
-#endif
+#endif // ANVIL__helapordo__
         //wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
         wrefresh(savepick_side_win);
         refresh();
@@ -13720,7 +13777,7 @@ void gameloop(int argc, char **argv)
         Gamestate *gamestate =
             KLS_PUSH_TYPED(default_kls, Gamestate, 1, HR_Gamestate, "Gamestate",
                            "Gamestate");
-        init_Gamestate(gamestate, player->stats, path->win_condition, path,
+        init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
                        player, GAMEMODE);
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
@@ -14599,7 +14656,7 @@ void gameloop_Win(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsa")) != -1) {
+        while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsaV")) != -1) {
             switch (option) {
             case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
@@ -14673,6 +14730,53 @@ void gameloop_Win(int argc, char **argv)
                 napms(800);
                 //TODO Win term color test?
                 //display_colorpairs();
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_SUCCESS);
+            }
+            break;
+            case 'V': {
+                printf("helapordo build: %s\n", helapordo_build_string);
+                hlpd_dbg_features();
+                printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
+                s4c_dbg_features();
+                printf("  using: koliseo v%s\n", string_koliseo_version());
+                kls_dbg_features();
+                printf("  using: ncurses v%s\n", NCURSES_VERSION);
+#ifdef ANVIL__helapordo__
+#ifndef INVIL__helapordo__HEADER__
+                printf("  Built with: amboso v%s\n",
+                       ANVIL__API_LEVEL__STRING);
+#else
+                printf("  Built with: invil v%s\n",
+                       INVIL__VERSION__STRING);
+                printf("Version Info: %.8s\n",
+                       get_ANVIL__VERSION__DESC__());
+                const char* anvil_date = get_ANVIL__VERSION__DATE__();
+                char* anvil_date_end;
+#ifndef _WIN32
+                time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
+#else
+                time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
+#endif //_WIN32
+
+                if (anvil_date_end == anvil_date) {
+                    //TODO: error
+                } else {
+                    char build_time_buff[20] = {0};
+                    struct tm* build_time_tm = localtime(&anvil_build_time);
+
+                    if (build_time_tm == NULL) {
+                        //TODO: error
+                    } else {
+                        strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
+                        printf("Date: %s\n", build_time_buff);
+                    }
+                }
+#endif // INVIL__helapordo__HEADER__
+#else
+                printf("  Built without anvil\n");
+#endif // ANVIL__helapordo__
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_SUCCESS);

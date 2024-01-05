@@ -8,7 +8,7 @@
 
   Here's a gif of a new game being started.
 
-  ![Gif of game screen](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHF0Y2ZkdnYzY3Y3MmxhYzQ2Y25tenA0ajgzMmRscTRobDU5YzcyZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/OxQAY7H9UwiXBUMt4h/giphy.gif)
+  ![Gif of game screen](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExZjgycTdlazZzbHJ4MnljZm1jOW9rOGY0Y3NydXlreWl4YTNlc212NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/DG0aoSpfx92NYjNOKO/source.gif)
 
 
 ## Table of Contents <a name = "index"></a>
@@ -144,15 +144,15 @@
 
 ## Latest Release <a name = "latest_release"></a>
 
-  I try to upload precompiled binaries for:
+  I try to upload precompiled binaries for the ncurses build:
 
-  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.6/helapordo-1.3.6-Linux-x86_64.zip)
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.0/helapordo-nc-1.4.0-Linux-x86_64.zip)
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.6/helapordo.exe-1.3.6-w64-mingw32-x86_64.zip)
+  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.0/helapordo.exe-nc-1.4.0-w64-mingw32-x86_64.zip)
 
   Some releases may offer a precompiled binary for:
 
-  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.5/helapordo-1.3.5-darwin-arm64.zip) (Available = `1.3.5`. Latest = `1.3.6`)
+  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.5/helapordo-1.3.5-darwin-arm64.zip) (Available = `1.3.5`. Latest = `1.4.0`)
 
-  📦 v1.3.6 03/01/2023
+  📦 v1.4.0 05/01/2023
   https://github.com/jgabaut/helapordo/releases

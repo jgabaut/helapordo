@@ -24,6 +24,12 @@ const char* helapordo_title_string = "     __  __  ____  __     ______  _____   
  / / / / / /_  / /_   / __  / / /     / /_/ / / /\\ |  / /_/ _/ / /_/ /\n\
 /_/ /_/ /____/ \\___/ /_/ /_/ /_/     /_____/ /_/ /_/ /_____/  /_____/\n";
 
+#ifdef HELAPORDO_BUILD_STR
+const char* helapordo_build_string = HELAPORDO_BUILD_STR "-" VERSION;
+#else
+const char* helapordo_build_string = "unknown-" VERSION;
+#endif
+
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
     "Standard",
     "Story",

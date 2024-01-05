@@ -17,11 +17,10 @@ SHELL := /bin/bash
 .ONESHELL:
 # Check system info
 MACHINE := $$(uname -m)
-PACK_NAME = $(TARGET)-$(VERSION)-$(OS)-$(MACHINE)
+PACK_NAME = $(TARGET)-$(HL_BUILD_STR)-$(VERSION)-$(OS)-$(MACHINE)
 PALETTE_PATH = "./static/palette.gpl"
 
 # Source files
-helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c src/palette.c
 
 # Linking rule
 LDADD = $(HELAPORDO_LDFLAGS)
@@ -38,7 +37,15 @@ KLS_LDFLAGS = -O2
 endif
 
 # Compiler flags
-AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11
+AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11 -DHELAPORDO_BUILD_STR=\"$(HL_BUILD_STR)\"
+
+if HL_RAYLIB_BUILD
+AM_CFLAGS += -DHELAPORDO_RAYLIB_BUILD
+helapordo_SOURCES = src/helapordo_raylib.c src/game_core.c src/game_utils.c src/game_rl.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c koliseo/src/koliseo.c sprites4curses/s4c-animate/animate.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c src/palette.c
+else
+AM_CFLAGS += -DHELAPORDO_CURSES_BUILD
+helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c src/palette.c
+endif
 
 if WINDOWS_BUILD
 helapordo_SOURCES += src/floor_tester.c
@@ -99,7 +106,12 @@ const.k:
 	$(CCOMP) kazoj/bone/const.c -o kazoj/bone/const.k
 	@echo -e "\n\033[1;32mDone.\e[0m"
 
-anviltest: const.k
+const_rl.k:
+	@echo -en "Building const_rl.k test"
+	$(CCOMP) kazoj/bone/const_rl.c -o kazoj/bone/const_rl.k -lraylib -DS4C_RAYLIB_EXTENSION
+	@echo -e "\n\033[1;32mDone.\e[0m"
+
+anviltest: const.k const_rl.k
 	@echo -en "Running anvil tests.\n"
 	./anvil -tX
 	@echo -e "\n\033[1;32mDone.\e[0m"

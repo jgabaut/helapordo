@@ -19,11 +19,20 @@
 #ifndef GAME_UTILS_H
 #define GAME_UTILS_H
 
+#ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #else
 #include <panel.h>
-#endif
+#endif // _WIN32
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+
+#endif // HELAPORDO_RAYLIB_BUILD
+
+#endif // HELAPORDO_CURSES_BUILD
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,7 +67,15 @@ void cyan(void);
 void lightCyan(void);
 
 void init_game_color_pairs(void);
+#ifdef HELAPORDO_CURSES_BUILD
 void test_game_color_pairs(WINDOW * win, int colors_per_row);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+void test_game_color_pairs(Rectangle * win, int colors_per_row);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 void resolve_staticPath(char static_path[500]);
 
 void dbg_print_floor_layout(Floor * floor);
@@ -70,7 +87,7 @@ void dbg_countStats(countStats * stats);
 void dbg_Wincon(Wincon * wc);
 void dbg_Path(Path * path);
 void dbg_Saveslot(Saveslot * saveslot);
-void init_Gamestate(Gamestate * gmst, countStats * stats, Wincon * wincon,
+void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
                     Path * path, Fighter * player, Gamemode gamemode);
 void update_Gamestate(Gamestate * gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
@@ -86,16 +103,29 @@ void printTitle(void);
 
 void printVersion(void);
 void printFormattedVersion(char *progName);
+void hlpd_dbg_features(void);
 
 void usage(char *progname);
 void log_tag(char *filename, char *header, const char *format, ...);
 void log_OP(turnOption_OP op);
 
+#ifdef HELAPORDO_CURSES_BUILD
 turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
                               WINDOW * notify_win, Koliseo_Temp * t_kls,
                               foeTurnOption_OP foe_op, skillType picked_skill);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
+                              Room * room, loadInfo * load_info, Enemy * enemy,
+                              Boss * boss, FILE * save_file,
+                              Rectangle * notification_area, Koliseo_Temp * t_kls,
+                              foeTurnOption_OP foe_op, skillType picked_skill);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 saveType saveTypeFrom_string(char *s);
 char *stringFrom_HLP_Region_Type(HLP_Region_Type t);

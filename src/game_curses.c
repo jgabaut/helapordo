@@ -4179,7 +4179,7 @@ void handleTutorial(void)
     mvwprintw(win, 14, 1, "%s",
               "When in floor map, you can open the menu with the \"m\" key.");
     mvwprintw(win, 16, 1, "%s",
-              "Rememeber, you can't really save in Rogue mode ! Run with \"-s\" to try Story mode.");
+              "Remember, you can't really save in Rogue mode ! Run with \"-s\" to try Story mode.");
 
     wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 

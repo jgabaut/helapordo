@@ -18,19 +18,24 @@
 
 #ifndef FLOORS_H
 #define FLOORS_H
-
 #include <stdlib.h>
 #include <math.h>
 #include "game_utils.h"
-#include "game_curses.h"
 
 void init_floor_layout(Floor * floor);
 float calc_distance(int x1, int y1, int x2, int y2);
 void init_floor_rooms(Floor * floor);
+void floor_random_walk(Floor * floor, int x, int y, int steps,
+                       int do_layout_clean);
+void floor_set_room_types(Floor * floor);
 void load_floor_explored(Floor * floor);
 void debug_print_roomclass_layout(Floor * floor, FILE * fp);
-void display_floor_layout(Floor * floor, WINDOW * win);
 void debug_print_floor_layout(Floor * floor, FILE * fp);
+
+#ifdef HELAPORDO_CURSES_BUILD
+#include "game_curses.h"
+
+void display_floor_layout(Floor * floor, WINDOW * win);
 void display_explored_layout(Floor * floor, WINDOW * win);
 void display_roomclass_layout(Floor * floor, WINDOW * win);
 
@@ -43,9 +48,12 @@ void move_update(Gamestate * gamestate, Floor * floor, int *current_x,
                  int *current_y, WINDOW * win, Path * path, Fighter * player,
                  Room * room, loadInfo * load_info, Koliseo * kls,
                  Koliseo_Temp * t_kls);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+#endif // HELAPORDO_RAYLIB_BUILD
 
-void floor_random_walk(Floor * floor, int x, int y, int steps,
-                       int do_layout_clean);
-void floor_set_room_types(Floor * floor);
+#endif // HELAPORDO_CURSES_BUILD
 
-#endif
+#endif // FLOORS_H

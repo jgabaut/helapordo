@@ -19,6 +19,7 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
 
+#ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #define S4C_WIN_BG 0
@@ -34,12 +35,22 @@
 #define S4C_WIN_WHITE_ON_PURPLE 10
 #else
 #include <panel.h>
-#endif
+#endif // _WIN32
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
+// Add more includes for rl-build here
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 #include "../koliseo/src/koliseo.h"
 #include "../sprites4curses/s4c-animate/animate.h"
 
 extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
+
+extern const char* helapordo_build_string;
 
 /**
  * Defines indexes for all types that are allocated with Koliseo.
@@ -158,17 +169,17 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current minor release.
  */
-#define HELAPORDO_MINOR_VERSION 3
+#define HELAPORDO_MINOR_VERSION 4
 
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 6
+#define HELAPORDO_PATCH_VERSION 0
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.3.6"
+#define VERSION "1.4.0"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
@@ -832,8 +843,17 @@ typedef void (*callback_turncounter_enemy_t)(struct Enemy *);
  * @see Path
  * @see SpecialSlot
  */
+#ifdef HELAPORDO_CURSES_BUILD
 typedef void (*callback_special_t)(WINDOW *, struct Fighter *, struct Enemy *,
                                    struct Boss *, struct Path *, int, int, int);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+typedef void (*callback_special_t)(Rectangle* r, struct Fighter *, struct Enemy *,
+                                   struct Boss *, struct Path *, int, int, int);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Defines a function pointer returning void and taking a Fighter, Enemy and Boss pointers; plus as int.
@@ -1659,6 +1679,8 @@ typedef struct loadInfo {
  */
 typedef struct {
 
+    clock_t start_time; /**< Keeps track of game start time.*/
+
     countStats *stats;	   /**< Keeps track of stats for the game.*/
 
     int current_fighters;     /**< Keeps track of Fighter number for the game.*/
@@ -1845,7 +1867,15 @@ typedef struct {
     Enemy *enemy;     /**< Pointer to Enemy for OP*/
     Boss *boss;	    /**< Pointer to Boss for OP*/
     FILE *save_file;	 /**< Pointer to savefile for OP*/
+#ifdef HELAPORDO_CURSES_BUILD
     WINDOW *notify_win;	    /**< Pointer to notification window for OP*/
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+    Rectangle *notify_win; /**< Pointer to notification area for OP*/
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
     Koliseo_Temp *t_kls;     /**< Pointer to Koliseo_Temp for OP*/
     Gamestate *gmst;	 /**< Pointer to Gamestate for OP*/
     foeTurnOption_OP foe_op;	 /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
