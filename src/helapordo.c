@@ -12647,7 +12647,9 @@ void gameloop(int argc, char **argv)
             case 'V': {
                 printf("helapordo build: %s\n", helapordo_build_string);
                 printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
+                s4c_dbg_features();
                 printf("  using: koliseo v%s\n", string_koliseo_version());
+                kls_dbg_features();
                 printf("  using: ncurses v%s\n", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
@@ -14735,7 +14737,9 @@ void gameloop_Win(int argc, char **argv)
             case 'V': {
                 printf("helapordo build: %s\n", helapordo_build_string);
                 printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
+                s4c_dbg_features();
                 printf("  using: koliseo v%s\n", string_koliseo_version());
+                kls_dbg_features();
                 printf("  using: ncurses v%s\n", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
