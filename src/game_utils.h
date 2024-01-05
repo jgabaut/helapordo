@@ -103,6 +103,7 @@ void printTitle(void);
 
 void printVersion(void);
 void printFormattedVersion(char *progName);
+void hlpd_dbg_features(void);
 
 void usage(char *progname);
 void log_tag(char *filename, char *header, const char *format, ...);

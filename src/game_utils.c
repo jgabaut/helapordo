@@ -1264,6 +1264,37 @@ void printFormattedVersion(char *progName)
 }
 
 /**
+ * Prints configuration info.
+ */
+void hlpd_dbg_features(void)
+{
+#ifdef HELAPORDO_DEBUG_ACCESS
+    fprintf(stderr,"[HLP]    Debug access in enabled\n");
+#else
+    fprintf(stderr,"[HLP]    Debug access in not enabled\n");
+#endif
+#ifdef ANVIL__helapordo__
+#ifdef INVIL__helapordo__HEADER__
+    fprintf(stderr,"[HLP]    Built with invil\n");
+#else
+    fprintf(stderr,"[HLP]    Built with amboso\n");
+#endif // INVIL
+#else
+    fprintf(stderr,"[HLP]    Built without anvil\n");
+#endif // ANVIL
+
+#ifdef HELAPORDO_CURSES_BUILD
+    fprintf(stderr,"[HLP]    ncurses build enabled\n");
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    fprintf(stderr,"[HLP]    raylib build enabled\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+}
+
+/**
  * Prints correct argument syntax for command line invocation.
  */
 void usage(char *progname)

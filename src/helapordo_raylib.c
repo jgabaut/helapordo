@@ -236,6 +236,7 @@ void gameloop_rl(int argc, char** argv)
         break;
         case 'V': {
             printf("helapordo build: %s\n", helapordo_build_string);
+            hlpd_dbg_features();
             printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
             s4c_dbg_features();
             printf("  using: koliseo v%s\n", string_koliseo_version());
