@@ -229,23 +229,24 @@ void gameloop_rl(int argc, char** argv)
         sprintf(path_to_debug_file, "%s/%s", static_path, "debug_log.txt");
         debug_file = fopen(path_to_debug_file, "w");
         if (!debug_file) {
-            endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
             fprintf(stderr,
                     "[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n",
                     static_path);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
             exit(EXIT_FAILURE);
         }
         fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
-        if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
-            && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR
-            && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH) {
+        if (RAYLIB_VERSION_MAJOR < EXPECTED_RAYLIB_VERSION_MAJOR
+            && RAYLIB_VERSION_MINOR < EXPECTED_RAYLIB_VERSION_MINOR
+            && RAYLIB_VERSION_PATCH < EXPECTED_RAYLIB_VERSION_PATCH) {
             fprintf(debug_file,
-                    "[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
-                    NCURSES_VERSION, NCURSES_VERSION_MAJOR,
-                    NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH,
-                    EXPECTED_NCURSES_VERSION_MAJOR,
-                    EXPECTED_NCURSES_VERSION_MINOR,
-                    EXPECTED_NCURSES_VERSION_PATCH);
+                    "[WARN]    raylib version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                    RAYLIB_VERSION, RAYLIB_VERSION_MAJOR,
+                    RAYLIB_VERSION_MINOR, RAYLIB_VERSION_PATCH,
+                    EXPECTED_RAYLIB_VERSION_MAJOR,
+                    EXPECTED_RAYLIB_VERSION_MINOR,
+                    EXPECTED_RAYLIB_VERSION_PATCH);
         }
         fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
         print_kls_2file(debug_file, default_kls);
@@ -270,9 +271,10 @@ void gameloop_rl(int argc, char** argv)
         sprintf(path_to_OPS_debug_file, "%s/%s", static_path, OPS_LOGFILE);
         OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
         if (!OPS_debug_file) {
-            endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
             fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s/%s).\n",
                     static_path, OPS_LOGFILE);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
             exit(EXIT_FAILURE);
         }
         fprintf(OPS_debug_file, "[OPLOG]    --New game--  \n");
@@ -612,5 +614,7 @@ void gameloop_rl(int argc, char** argv)
     }
 
     CloseWindow();
+    kls_free(default_kls);
+    kls_free(temporary_kls);
     return;
 }

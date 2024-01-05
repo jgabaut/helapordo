@@ -46,5 +46,9 @@
 #include "./animations/enter_door.h"
 #include "./animations/alt_chest_opening.h"
 
+#define EXPECTED_RAYLIB_VERSION_MAJOR 4 /**< Defines min expected major ncurses version.*/
+#define EXPECTED_RAYLIB_VERSION_MINOR 5 /**< Defines min expected minor ncurses version.*/
+#define EXPECTED_RAYLIB_VERSION_PATCH 0	/**< Defines min expected patch ncurses version.*/
+
 void handleTutorial(S4C_Color* palette);
 #endif // GAMECURSES_RL_H
