@@ -455,6 +455,9 @@ void gameloop_rl(int argc, char** argv)
     //
     int current_anim_frame = 0;
     bool pause_animation = false;
+    float scale_factor = sqrt(screenWidth * screenHeight);
+    float pixel_factor = 0.02;
+    float sprite_w_factor = pixel_factor * scale_factor;
 
     while (!WindowShouldClose()) {
         // Update
@@ -462,6 +465,8 @@ void gameloop_rl(int argc, char** argv)
 
         screenWidth = GetScreenWidth();
         screenHeight = GetScreenHeight();
+        scale_factor = sqrt(screenWidth * screenHeight);
+        sprite_w_factor = pixel_factor * scale_factor;
 
         switch(currentScreen) {
         case LOGO: {
@@ -524,6 +529,7 @@ void gameloop_rl(int argc, char** argv)
         case LOGO: {
             // TODO: Draw LOGO screen here!
             DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
+            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
             for (int i = 0;  i <  KLS_TITLEROWS+1; i++) {
                 DrawText(kls_title[i], 0, i*12, 12, BLACK);
@@ -534,6 +540,7 @@ void gameloop_rl(int argc, char** argv)
             // TODO: Draw TITLE screen here!
             DrawRectangle(0, 0, screenWidth, screenHeight, GREEN);
             DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
+            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
 
             char txt[30] = {0};
@@ -554,10 +561,8 @@ void gameloop_rl(int argc, char** argv)
             // TODO: Draw GAMEPLAY screen here!
             DrawRectangle(0, 0, screenWidth, screenHeight, RAYWHITE);
             DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
+            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
-            float scale_factor = sqrt(screenWidth * screenHeight);
-            float pixel_factor = 0.02;
-            float sprite_w_factor = pixel_factor * scale_factor;
             int pl_rect_Y = 20;
             int pl_frame_W = 17;
             int pl_frame_H = pl_frame_W;
@@ -601,6 +606,7 @@ void gameloop_rl(int argc, char** argv)
             // TODO: Draw ENDING screen here!
             DrawRectangle(0, 0, screenWidth, screenHeight, BLUE);
             DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
+            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
 
         }
