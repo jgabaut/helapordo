@@ -1278,6 +1278,7 @@ void usage(char *progname)
     fprintf(stderr, "    -G        Enable godmode.\n");
     fprintf(stderr, "    -X        Enable experimental features.\n");
     fprintf(stderr, "    -v        Prints %s version.\n", progname);
+    fprintf(stderr, "    -V        Prints %s build info.\n", progname);
     fprintf(stderr, "    -a        Disable autosave.\n");
     fprintf(stderr, "    -L        Enable logging.\n");
     fprintf(stderr, "    -Q        Enable fast quit.\n");

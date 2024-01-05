@@ -79,7 +79,7 @@ void gameloop_rl(int argc, char** argv)
     load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
     load_info->ptr_to_roomindex = &loaded_roomindex;
 
-    while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsa")) != -1) {
+    while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsaV")) != -1) {
         switch (option) {
         case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
@@ -199,6 +199,50 @@ void gameloop_rl(int argc, char** argv)
             */
             printf("TODO: add test_s4c_color_pairs() call");
             usage(whoami);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_SUCCESS);
+        }
+        break;
+        case 'V': {
+            printf("helapordo build: %s\n", helapordo_build_string);
+            printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
+            printf("  using: koliseo v%s\n", string_koliseo_version());
+            printf("  using: raylib v%s\n", RAYLIB_VERSION);
+#ifdef ANVIL__helapordo__
+#ifndef INVIL__helapordo__HEADER__
+            printf("  Built with: amboso v%s\n",
+                    ANVIL__API_LEVEL__STRING);
+#else
+            printf("  Built with: invil v%s\n",
+                    INVIL__VERSION__STRING);
+            printf("  Version Info: %.8s\n",
+                    get_ANVIL__VERSION__DESC__());
+            const char* anvil_date = get_ANVIL__VERSION__DATE__();
+            char* anvil_date_end;
+#ifndef _WIN32
+            time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
+#else
+            time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
+#endif //_WIN32
+
+            if (anvil_date_end == anvil_date) {
+                //TODO: error
+            } else {
+                char build_time_buff[20] = {0};
+                struct tm* build_time_tm = localtime(&anvil_build_time);
+
+                if (build_time_tm == NULL) {
+                    //TODO: error
+                } else {
+                    strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
+                    printf("  Date: %s\n", build_time_buff);
+                }
+            }
+#endif // INVIL__helapordo__HEADER__
+#else
+            printf("  Built without anvil\n");
+#endif // ANVIL__helapordo__
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_SUCCESS);
