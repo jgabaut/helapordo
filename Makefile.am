@@ -106,7 +106,12 @@ const.k:
 	$(CCOMP) kazoj/bone/const.c -o kazoj/bone/const.k
 	@echo -e "\n\033[1;32mDone.\e[0m"
 
-anviltest: const.k
+const_rl.k:
+	@echo -en "Building const_rl.k test"
+	$(CCOMP) kazoj/bone/const_rl.c -o kazoj/bone/const_rl.k -lraylib -DS4C_RAYLIB_EXTENSION
+	@echo -e "\n\033[1;32mDone.\e[0m"
+
+anviltest: const.k const_rl.k
 	@echo -en "Running anvil tests.\n"
 	./anvil -tX
 	@echo -e "\n\033[1;32mDone.\e[0m"
