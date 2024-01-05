@@ -572,13 +572,15 @@ void gameloop_rl(int argc, char** argv)
     while (!WindowShouldClose()) {
         // Update
         //----------------------------------------------------------------------------------
-
-        screenWidth = GetScreenWidth();
-        screenHeight = GetScreenHeight();
+        screenWidth = 800;
+        screenHeight = 450;
 
         if (IsKeyPressed(KEY_F) && IsKeyDown(KEY_LEFT_ALT)) {
             ToggleFullScreenWindow(screenWidth, screenHeight);
         }
+
+        screenWidth = GetScreenWidth();
+        screenHeight = GetScreenHeight();
 
         scale_factor = sqrt(screenWidth * screenHeight);
         sprite_w_factor = pixel_factor * scale_factor;
@@ -706,7 +708,8 @@ void gameloop_rl(int argc, char** argv)
                 screenWidth - en_rect_X,
                 screenHeight - en_rect_Y
             };
-            time_t framesTime = framesCounter / GetFPS();
+            //TODO: count time by real_clock difference from last frame
+            time_t framesTime = framesCounter / fps_target ;// GetFPS();
             struct tm* time_tm = localtime(&framesTime);
 
             if (time_tm == NULL) {
