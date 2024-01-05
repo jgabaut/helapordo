@@ -1268,11 +1268,19 @@ void printFormattedVersion(char *progName)
  */
 void hlpd_dbg_features(void)
 {
+
 #ifdef HELAPORDO_DEBUG_ACCESS
     fprintf(stderr,"[HLP]    Debug access in enabled\n");
 #else
     fprintf(stderr,"[HLP]    Debug access in not enabled\n");
 #endif
+
+#ifdef HELAPORDO_DEBUG_LOG
+    fprintf(stderr,"[HLP]    Debug log is enabled\n");
+#else
+    fprintf(stderr,"[HLP]    Debug log is off\n");
+#endif
+
 #ifdef ANVIL__helapordo__
 #ifdef INVIL__helapordo__HEADER__
     fprintf(stderr,"[HLP]    Built with invil\n");
