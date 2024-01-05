@@ -522,7 +522,7 @@ void dbg_Gamestate(Gamestate *gmst)
     clock_t run_time = clock() - gmst->start_time;
     int time_spent = run_time * 1000 / CLOCKS_PER_SEC;
     log_tag("debug_log.txt", "[GAMESTATE]", "Current run time: %d s, %d ms.",
-                time_spent / 1000, time_spent % 1000);
+            time_spent / 1000, time_spent % 1000);
     log_tag("debug_log.txt", "[GAMESTATE]", "Current fighters: { %i }",
             gmst->current_fighters);
     log_tag("debug_log.txt", "[GAMESTATE]", "Current room index: { %i }",
