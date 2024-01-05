@@ -13204,7 +13204,7 @@ void gameloop(int argc, char **argv)
         //Handle side window for welcome info
         savepick_side_win = newwin(12, 32, 2, 2);
         scrollok(savepick_side_win, TRUE);
-        wprintw(savepick_side_win, "  \nhelapordo v%s", VERSION);
+        wprintw(savepick_side_win, "  \nhelapordo");
         wprintw(savepick_side_win, "  \n  build: %s", helapordo_build_string);
         wprintw(savepick_side_win, "  \n  using: s4c-animate v%s",
                 S4C_ANIMATE_VERSION);
