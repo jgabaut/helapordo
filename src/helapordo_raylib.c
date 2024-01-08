@@ -251,7 +251,7 @@ void gameloop_rl(int argc, char** argv)
                    INVIL__VERSION__STRING);
             printf("Version Info: %.8s\n",
                    get_ANVIL__VERSION__DESC__());
-            printf("Last commit: {\t%s\n}\n", get_INVIL__COMMIT__DESC__());
+            printf("Last commit: %s", get_INVIL__COMMIT__DESC__());
             const char* anvil_date = get_ANVIL__VERSION__DATE__();
             char* anvil_date_end;
 #ifndef _WIN32
@@ -270,7 +270,7 @@ void gameloop_rl(int argc, char** argv)
                     //TODO: error
                 } else {
                     strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
-                    printf("Date: %s\n", build_time_buff);
+                    printf("\nDate: %s\n", build_time_buff);
                 }
             }
 #endif // INVIL__helapordo__HEADER__
