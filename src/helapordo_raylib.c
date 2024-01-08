@@ -743,7 +743,7 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangleRec(pl_r, pl_c);
             DrawRectangleRec(stats_label_r, st_c);
             */
-            if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)){
+            if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
                 DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
                 DrawText("Window too small.", 20, 20, 20, RAYWHITE);
                 DrawText("Please resize.", 20, 50, 20, RAYWHITE);
