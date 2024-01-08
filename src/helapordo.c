@@ -12661,7 +12661,7 @@ void gameloop(int argc, char **argv)
                        INVIL__VERSION__STRING);
                 printf("Version Info: %.8s\n",
                        get_ANVIL__VERSION__DESC__());
-                printf("Last commit: {%s}\n", get_INVIL__COMMIT__DESC__());
+                printf("Last commit: {\t%s\n}\n", get_INVIL__COMMIT__DESC__());
                 const char* anvil_date = get_ANVIL__VERSION__DATE__();
                 char* anvil_date_end;
 #ifndef _WIN32
@@ -14753,7 +14753,7 @@ void gameloop_Win(int argc, char **argv)
                        INVIL__VERSION__STRING);
                 printf("Version Info: %.8s\n",
                        get_ANVIL__VERSION__DESC__());
-                printf("Last commit: {%s}\n", get_INVIL__COMMIT__DESC__());
+                printf("Last commit: {\t%s\n}\n", get_INVIL__COMMIT__DESC__());
                 const char* anvil_date = get_ANVIL__VERSION__DATE__();
                 char* anvil_date_end;
 #ifndef _WIN32
