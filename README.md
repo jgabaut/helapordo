@@ -146,13 +146,11 @@
 
   I try to upload precompiled binaries for the ncurses build:
 
-  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.0/helapordo-nc-1.4.0-Linux-x86_64.zip)
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.1/helapordo-nc-1.4.1-Linux-x86_64.zip)
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.0/helapordo.exe-nc-1.4.0-w64-mingw32-x86_64.zip)
+  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.1/helapordo.exe-nc-1.4.1-w64-mingw32-x86_64.zip)
 
-  Some releases may offer a precompiled binary for:
+  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.0/helapordo-nc-1.4.0-darwin-arm64.zip) (Available = `1.4.0`. Latest = `1.4.1`)
 
-  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.3.5/helapordo-1.3.5-darwin-arm64.zip) (Available = `1.3.5`. Latest = `1.4.0`)
-
-  📦 v1.4.0 05/01/2023
+  📦 v1.4.1 22/01/2023
   https://github.com/jgabaut/helapordo/releases
