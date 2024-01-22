@@ -12683,6 +12683,27 @@ void gameloop(int argc, char **argv)
                         printf("\nDate: %s\n", build_time_buff);
                     }
                 }
+                const char* headergen_date = get_INVIL__HEADERGEN__TIME__();
+                char* headergen_date_end;
+#ifndef _WIN32
+                time_t headergen_time = strtol(headergen_date, &headergen_date_end, 10);
+#else
+                time_t headergen_time = strtoll(headergen_date, &headergen_date_end, 10);
+#endif //_WIN32
+
+                if (headergen_date_end == headergen_date) {
+                    //TODO: error
+                } else {
+                    char headergen_time_buff[20] = {0};
+                    struct tm* headergen_time_tm = localtime(&headergen_time);
+
+                    if (headergen_time_tm == NULL) {
+                        //TODO: error
+                    } else {
+                        strftime(headergen_time_buff, 20, "%Y-%m-%d %H:%M:%S", headergen_time_tm);
+                        printf("Anvil Gen Date: %s\n", headergen_time_buff);
+                    }
+                }
 #endif // INVIL__helapordo__HEADER__
 #else
                 printf("  Built without anvil\n");
