@@ -954,7 +954,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                             log_tag("debug_log.txt", "[ERROR]", "%s():    time_tm was NULL.\n", __func__);
                         } else {
                             strftime(time_str, 20, "Time: %M:%S", time_tm);
-                            mvwprintw(notifications_win, 0, 0,time_str);
+                            mvwprintw(notifications_win, 0, 0, "%s", time_str);
                             wrefresh(notifications_win);
                         }
                     }
@@ -1828,7 +1828,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                         log_tag("debug_log.txt", "[ERROR]", "%s():    time_tm was NULL.\n", __func__);
                     } else {
                         strftime(time_str, 20, "Time: %M:%S", time_tm);
-                        mvwprintw(notifications_win, 0, 0,time_str);
+                        mvwprintw(notifications_win, 0, 0, "%s", time_str);
                         wrefresh(notifications_win);
                     }
                 }

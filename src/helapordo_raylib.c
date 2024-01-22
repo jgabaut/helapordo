@@ -182,13 +182,11 @@ void gameloop_rl(int argc, char** argv)
             SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
             InitWindow(screenWidth, screenHeight, "helapordo Tutorial");
-            int framesCounter = 0;
             int fps_target = 30;
             SetTargetFPS(fps_target);
             while (!WindowShouldClose()) {
                 screenWidth = GetScreenWidth();
                 screenHeight = GetScreenHeight();
-                framesCounter++;
                 if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
                     break;
                 }
@@ -251,6 +249,7 @@ void gameloop_rl(int argc, char** argv)
                    INVIL__VERSION__STRING);
             printf("Version Info: %.8s\n",
                    get_ANVIL__VERSION__DESC__());
+            printf("Last commit: %s", get_INVIL__COMMIT__DESC__());
             const char* anvil_date = get_ANVIL__VERSION__DATE__();
             char* anvil_date_end;
 #ifndef _WIN32
@@ -269,7 +268,7 @@ void gameloop_rl(int argc, char** argv)
                     //TODO: error
                 } else {
                     strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
-                    printf("Date: %s\n", build_time_buff);
+                    printf("\nDate: %s\n", build_time_buff);
                 }
             }
 #endif // INVIL__helapordo__HEADER__
@@ -700,14 +699,14 @@ void gameloop_rl(int argc, char** argv)
             Rectangle pl_r = CLITERAL(Rectangle) {
                 pl_rect_X,
                 pl_rect_Y,
-                screenWidth - pl_rect_X,
-                screenHeight - pl_rect_Y
+                pl_frame_W * sprite_w_factor,
+                pl_frame_H * sprite_w_factor
             };
             Rectangle en_r = CLITERAL(Rectangle) {
                 en_rect_X,
                 en_rect_Y,
-                screenWidth - en_rect_X,
-                screenHeight - en_rect_Y
+                en_frame_W * sprite_w_factor,
+                en_frame_H * sprite_w_factor
             };
             //TODO: count time by real_clock difference from last frame
             time_t framesTime = framesCounter / fps_target ;// GetFPS();
@@ -722,7 +721,27 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
             int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
             int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
-            if (pl_res != 0 || en_res !=0) {
+            /*
+            Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);
+            Rectangle st_pl_coll = GetCollisionRec(stats_label_r,pl_r);
+            Rectangle st_en_coll = GetCollisionRec(stats_label_r,en_r);
+            */
+            // Draw collision boxes
+            //DrawRectangleRec(en_pl_coll, ColorFromS4CPalette(palette, S4C_TEAL));
+            //DrawRectangleRec(st_pl_coll, ColorFromS4CPalette(palette, S4C_MAGENTA));
+            //DrawRectangleRec(st_en_coll, ColorFromS4CPalette(palette, S4C_CYAN));
+            /* Draw expected boxes
+            Color en_c = ColorFromS4CPalette(palette, S4C_CYAN);
+            Color pl_c = ColorFromS4CPalette(palette, S4C_MAGENTA);
+            Color st_c = ColorFromS4CPalette(palette, S4C_TEAL);
+            en_c.a = 125;
+            pl_c.a = 125;
+            st_c.a = 125;
+            DrawRectangleRec(en_r, en_c);
+            DrawRectangleRec(pl_r, pl_c);
+            DrawRectangleRec(stats_label_r, st_c);
+            */
+            if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
                 DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
                 DrawText("Window too small.", 20, 20, 20, RAYWHITE);
                 DrawText("Please resize.", 20, 50, 20, RAYWHITE);

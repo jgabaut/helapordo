@@ -29,7 +29,7 @@ AM_LDFLAGS = -lm
 if DEBUG_BUILD
 AM_LDFLAGS += -ggdb -O0
 KLS_LDFLAGS = -ggdb -O0
-HELAPORDO_CFLAGS += -DHELAPORDO_DEBUG_LOG -DHELAPORDO_DEBUG_ACCESS -DKLS_DEBUG_CORE
+HELAPORDO_CFLAGS += -DHELAPORDO_DEBUG_LOG -DHELAPORDO_DEBUG_ACCESS
 else
 # Linker flag to strip symbols
 AM_LDFLAGS += -s -O2
@@ -45,6 +45,7 @@ helapordo_SOURCES = src/helapordo_raylib.c src/game_core.c src/game_utils.c src/
 else
 AM_CFLAGS += -DHELAPORDO_CURSES_BUILD
 helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c src/palette.c
+HELAPORDO_CFLAGS += -DKLS_DEBUG_CORE
 endif
 
 if WINDOWS_BUILD
@@ -75,8 +76,8 @@ endif
 
 ./src/palette.c:
 	@echo -en "\033[1;34m[Makefile]\e[0m    Using \033[1;33mpython3\e[0m to generate C [\033[1;34m./src/palette.c\e[0m and \033[1;34m./src/palette.h\e[0m] files from \033[1;35m[$(PALETTE_PATH)]:\e[0m  "
-	python3 ./sprites4curses/scripts/palette.py C-impl $(PALETTE_PATH) .. > ./src/palette.c
-	python3 ./sprites4curses/scripts/palette.py C-header $(PALETTE_PATH) .. > ./src/palette.h
+	python3 -m s4c-scripts.s4c.core.palette C-impl $(PALETTE_PATH) .. > ./src/palette.c
+	python3 -m s4c-scripts.s4c.core.palette C-header $(PALETTE_PATH) .. > ./src/palette.h
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for object files
