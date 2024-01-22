@@ -10,3 +10,6 @@
 [submodule "invil"]
 	path = invil
 	url = git@github.com:jgabaut/invil
+[submodule "s4c-scripts"]
+	path = s4c-scripts
+	url = git@github.com:jgabaut/s4c-scripts.git

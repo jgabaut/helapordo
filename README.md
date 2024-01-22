@@ -66,7 +66,7 @@
 
   You can initialise the submodules by running:
 
-    `git submodule update --init --recursive`
+    `git submodule update --init`
 
 ### Autoreconf and ./configure <a name = "autotools"></a>
 
