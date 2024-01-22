@@ -514,6 +514,24 @@ void dbg_Gamestate(Gamestate *gmst)
                 "Gamestate was NULL in dbg_Gamestate()");
         exit(EXIT_FAILURE);
     }
+#ifdef HELAPORDO_CURSES_BUILD
+    if (gmst->screen == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Screen was NULL in dbg_Gamestate()");
+    } else {
+        int y = 0;
+        int x = 0;
+	    getmaxyx(gmst->screen, y, x);
+        log_tag("debug_log.txt", "[CURSES]",
+                "Screen size: y->(%i), x->(%i)",
+                y, x);
+    }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
     log_tag("debug_log.txt", "[DEBUG]", "Gamestate:{");
     log_tag("debug_log.txt", "[GAMESTATE]", "Current Gamemode: { %s } [ %i ]",
             stringFromGamemode(gmst->gamemode), gmst->gamemode);
@@ -592,6 +610,72 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
     }
 }
 
+#ifdef HELAPORDO_CURSES_BUILD
+/**
+ * Inits the passed (preallocated) Gamestate with the passed pointers.
+ * @param gmst The allocated Gamestate to init.
+ * @param start_time The start time for current game.
+ * @param stats Game stats.
+ * @param wincon Game Wincon.
+ * @param path Game Path.
+ * @param player Game main player.
+ * @param gamemode Picked gamemode.
+ * @param screen The main screen from initscr().
+ */
+void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
+                    Path *path, Fighter *player, Gamemode gamemode, WINDOW* screen)
+{
+    if (gmst == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (stats == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "countStats was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (wincon == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Wincon was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (path == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Path was NULL in %s()", __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (player == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Player was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (gamemode != Story && gamemode != Rogue) {
+        log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
+                gamemode);
+        exit(EXIT_FAILURE);
+    }
+    if (screen == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Screen was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    gmst->start_time = start_time;
+    gmst->stats = stats;
+    gmst->current_fighters = -1;
+    gmst->current_roomtype = -1;
+    gmst->current_room_index = -1;
+    gmst->current_enemy_index = -1;
+    gmst->wincon = wincon;
+    gmst->path = path;
+    gmst->player = player;
+    gmst->gamemode = gamemode;
+    gmst->screen = screen;
+}
+
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
 /**
  * Inits the passed (preallocated) Gamestate with the passed pointers.
  * @param gmst The allocated Gamestate to init.
@@ -645,6 +729,8 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->player = player;
     gmst->gamemode = gamemode;
 }
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 #ifdef HELAPORDO_CURSES_BUILD
 /**

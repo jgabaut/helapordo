@@ -13198,7 +13198,26 @@ void gameloop(int argc, char **argv)
                 "Animation loading took %0.7f seconds.",
                 time_spent_loading_animations);
 
-        initscr();
+        WINDOW* screen = initscr();
+        bool screen_is_big_enough = false;
+        int screen_rows = 0;
+        int screen_cols = 0;
+        //TODO: factor this out to ensure the check is done for on any gien screen draw.
+        while (!screen_is_big_enough) {
+            getmaxyx(screen, screen_rows, screen_cols);
+            if (screen_rows >= HLPD_MIN_SCREEN_ROWS && screen_cols >= HLPD_MIN_SCREEN_COLS) {
+                screen_is_big_enough = true;
+                wclear(screen);
+                refresh();
+            } else if (screen_rows >= HLPD_DEFAULT_SCREEN_ROWS && screen_cols >= HLPD_MIN_SCREEN_COLS) {
+                mvwprintw(screen, 0, 0, "%s", "Current screen is too small to see battle notifications.");
+                mvwprintw(screen, 1, 0, "%s", "Enlarge vertically to fit it.");
+                refresh();
+            } else {
+                mvwprintw(screen, 0, 0, "%s", "Screen too small, please resize.");
+                refresh();
+            }
+        }
         // TODO
         //Select load or new game
         ITEM **savepick_items;
@@ -13800,7 +13819,7 @@ void gameloop(int argc, char **argv)
             KLS_PUSH_TYPED(default_kls, Gamestate, 1, HR_Gamestate, "Gamestate",
                            "Gamestate");
         init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                       player, GAMEMODE);
+                       player, GAMEMODE, screen);
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
             //NO. The update_gamestate call is instead performed later.

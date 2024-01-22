@@ -87,8 +87,17 @@ void dbg_countStats(countStats * stats);
 void dbg_Wincon(Wincon * wc);
 void dbg_Path(Path * path);
 void dbg_Saveslot(Saveslot * saveslot);
+#ifdef HELAPORDO_CURSES_BUILD
+void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
+                    Path * path, Fighter * player, Gamemode gamemode, WINDOW* screen);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
 void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
                     Path * path, Fighter * player, Gamemode gamemode);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif //HELAPORDO_CURSES_BUILD
 void update_Gamestate(Gamestate * gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
                       int current_enemy_index, Floor * current_floor);

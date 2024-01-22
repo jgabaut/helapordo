@@ -174,12 +174,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 1
+#define HELAPORDO_PATCH_VERSION 2
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.1"
+#define VERSION "1.4.2-dev"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
@@ -1697,6 +1697,14 @@ typedef struct {
     Gamemode gamemode;	   /**< Keeps track of current Gamemode.*/
 
     Floor *current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
+#ifdef HELAPORDO_CURSES_BUILD
+    WINDOW *screen; /**< Pointer to main screen, from initscr().*/
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 } Gamestate;
 
 /**
