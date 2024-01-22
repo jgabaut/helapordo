@@ -182,13 +182,11 @@ void gameloop_rl(int argc, char** argv)
             SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 
             InitWindow(screenWidth, screenHeight, "helapordo Tutorial");
-            int framesCounter = 0;
             int fps_target = 30;
             SetTargetFPS(fps_target);
             while (!WindowShouldClose()) {
                 screenWidth = GetScreenWidth();
                 screenHeight = GetScreenHeight();
-                framesCounter++;
                 if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
                     break;
                 }
