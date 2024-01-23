@@ -37,6 +37,9 @@
 #include <panel.h>
 #endif // _WIN32
 
+/**
+ * Defines GameScreen type, wrapping curses WINDOW.
+ */
 typedef struct GameScreen {
     WINDOW* win; /**< Pointer to window for the gamescreen.*/
     int colors; /**< Number of colors supported by the gamescreen.*/
@@ -51,6 +54,9 @@ typedef struct GameScreen {
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
+/**
+ * Defines GameScreen type, as an enum.
+ */
 typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
 // Add more includes for rl-build here
 #endif // HELAPORDO_RAYLIB_BUILD
