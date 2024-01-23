@@ -13227,8 +13227,6 @@ void gameloop(int argc, char **argv)
         gamescreen->tabsize = TABSIZE;
 
         gamescreen->win = screen;
-        // TODO
-        //Select load or new game
         ITEM **savepick_items;
         MENU *savepick_menu;
         WINDOW *savepick_menu_win;
