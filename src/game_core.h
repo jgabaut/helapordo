@@ -36,6 +36,17 @@
 #else
 #include <panel.h>
 #endif // _WIN32
+
+typedef struct GameScreen {
+    WINDOW* win; /**< Pointer to window for the gamescreen.*/
+    int colors; /**< Number of colors supported by the gamescreen.*/
+    int color_pairs; /**< Number of color pairs supported by the gamescreen.*/
+    int cols; /**< Number of columns for the gamescreen.*/
+    int rows; /**< Number of rows for the gamescreen.*/
+    int escape_delay; /**< Number of milliseconds to wait after reading an escape character, to distinguish between an individual escape character entered on the keyboard from escape sequences sent by cursor- and function-keys. See: https://manpages.debian.org/bullseye/ncurses-doc/curses_variables.3ncurses.en.html*/
+    int tabsize; /**< Number of columns used by curses to convert a tab to spaces when adding tab to a window.*/
+} GameScreen;
+
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
@@ -82,6 +93,7 @@ typedef enum HLP_Region_Type {
     HR_countStats,
     HR_Saveslot,
     HR_Gamestate,
+    HR_Gamescreen,
     HR_loadInfo,
 } HLP_Region_Type;
 
@@ -1698,7 +1710,7 @@ typedef struct {
 
     Floor *current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
 #ifdef HELAPORDO_CURSES_BUILD
-    WINDOW *screen; /**< Pointer to main screen, from initscr().*/
+    GameScreen *screen; /**< Pointer to main screen.*/
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"

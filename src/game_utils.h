@@ -82,6 +82,7 @@ void dbg_print_floor_layout(Floor * floor);
 void dbg_print_explored_layout(Floor * floor);
 void dbg_print_roomclass_layout(Floor * floor);
 void dbg_Gamestate(Gamestate * gmst);
+void dbg_GameScreen(GameScreen * scr);
 void dbg_Fighter(Fighter * fighter);
 void dbg_countStats(countStats * stats);
 void dbg_Wincon(Wincon * wc);
@@ -89,7 +90,7 @@ void dbg_Path(Path * path);
 void dbg_Saveslot(Saveslot * saveslot);
 #ifdef HELAPORDO_CURSES_BUILD
 void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
-                    Path * path, Fighter * player, Gamemode gamemode, WINDOW* screen);
+                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen);
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"

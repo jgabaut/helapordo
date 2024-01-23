@@ -519,12 +519,7 @@ void dbg_Gamestate(Gamestate *gmst)
         log_tag("debug_log.txt", "[ERROR]",
                 "Screen was NULL in dbg_Gamestate()");
     } else {
-        int y = 0;
-        int x = 0;
-	    getmaxyx(gmst->screen, y, x);
-        log_tag("debug_log.txt", "[CURSES]",
-                "Screen size: y->(%i), x->(%i)",
-                y, x);
+        dbg_GameScreen(gmst->screen);
     }
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
@@ -579,6 +574,36 @@ void dbg_Gamestate(Gamestate *gmst)
 }
 
 /**
+ * Debugs the passed (preallocated) GameScreen with log_tag().
+ * @param scr The allocated GameScreen to debug.
+ */
+void dbg_GameScreen(GameScreen * scr) {
+    int y = 0;
+    int x = 0;
+    if (scr->win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+            "win was NULL in %s()", __func__);
+    } else {
+        getmaxyx(scr->win, y, x);
+        log_tag("debug_log.txt", "[GAMESCREEN]",
+                "Screen size: y->(%i), x->(%i)",
+                y, x);
+    }
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+                "Cols: {%i}", scr->cols);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+                "Rows: {%i}", scr->rows);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+                "Colors: {%i}", scr->colors);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+                "Color pairs: {%i}", scr->color_pairs);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+                "Escape delay: {%i}", scr->escape_delay);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+                "Tab size: {%i}", scr->tabsize);
+}
+
+/**
  * Updates the passed (preallocated) Gamestate with the passed int values.
  * @param gmst The allocated Gamestate to update.
  * @param current_fighters Number of current Fighters.
@@ -623,7 +648,7 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
  * @param screen The main screen from initscr().
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, WINDOW* screen)
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",

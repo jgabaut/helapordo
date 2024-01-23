@@ -13207,7 +13207,7 @@ void gameloop(int argc, char **argv)
             getmaxyx(screen, screen_rows, screen_cols);
             if (screen_rows >= HLPD_MIN_SCREEN_ROWS && screen_cols >= HLPD_MIN_SCREEN_COLS) {
                 screen_is_big_enough = true;
-                wclear(screen);
+                clear();
                 refresh();
             } else if (screen_rows >= HLPD_DEFAULT_SCREEN_ROWS && screen_cols >= HLPD_MIN_SCREEN_COLS) {
                 mvwprintw(screen, 0, 0, "%s", "Current screen is too small to see battle notifications.");
@@ -13218,6 +13218,15 @@ void gameloop(int argc, char **argv)
                 refresh();
             }
         }
+        GameScreen* gamescreen = (GameScreen*) KLS_PUSH_TYPED(default_kls, GameScreen, 1, HR_Gamescreen, "Main GameScreen", "Wrap stdscr");
+        gamescreen->colors = COLORS;
+        gamescreen->color_pairs = COLOR_PAIRS;
+        gamescreen->cols = COLS;
+        gamescreen->rows = LINES;
+        gamescreen->escape_delay = ESCDELAY;
+        gamescreen->tabsize = TABSIZE;
+
+        gamescreen->win = screen;
         // TODO
         //Select load or new game
         ITEM **savepick_items;
@@ -13361,6 +13370,9 @@ void gameloop(int argc, char **argv)
         for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
             init_s4c_color_pair(&palette[i], 9 + i);
         }
+        log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
+        gamescreen->colors = COLORS;
+        gamescreen->color_pairs = COLOR_PAIRS;
 
         while (!savepick_picked
                && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
@@ -13819,7 +13831,7 @@ void gameloop(int argc, char **argv)
             KLS_PUSH_TYPED(default_kls, Gamestate, 1, HR_Gamestate, "Gamestate",
                            "Gamestate");
         init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                       player, GAMEMODE, screen);
+                       player, GAMEMODE, gamescreen);
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
             //NO. The update_gamestate call is instead performed later.
