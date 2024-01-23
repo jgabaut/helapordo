@@ -577,12 +577,13 @@ void dbg_Gamestate(Gamestate *gmst)
  * Debugs the passed (preallocated) GameScreen with log_tag().
  * @param scr The allocated GameScreen to debug.
  */
-void dbg_GameScreen(GameScreen * scr) {
+void dbg_GameScreen(GameScreen * scr)
+{
     int y = 0;
     int x = 0;
     if (scr->win == NULL) {
         log_tag("debug_log.txt", "[ERROR]",
-            "win was NULL in %s()", __func__);
+                "win was NULL in %s()", __func__);
     } else {
         getmaxyx(scr->win, y, x);
         log_tag("debug_log.txt", "[GAMESCREEN]",
@@ -590,17 +591,17 @@ void dbg_GameScreen(GameScreen * scr) {
                 y, x);
     }
     log_tag("debug_log.txt", "[GAMESCREEN]",
-                "Cols: {%i}", scr->cols);
+            "Cols: {%i}", scr->cols);
     log_tag("debug_log.txt", "[GAMESCREEN]",
-                "Rows: {%i}", scr->rows);
+            "Rows: {%i}", scr->rows);
     log_tag("debug_log.txt", "[GAMESCREEN]",
-                "Colors: {%i}", scr->colors);
+            "Colors: {%i}", scr->colors);
     log_tag("debug_log.txt", "[GAMESCREEN]",
-                "Color pairs: {%i}", scr->color_pairs);
+            "Color pairs: {%i}", scr->color_pairs);
     log_tag("debug_log.txt", "[GAMESCREEN]",
-                "Escape delay: {%i}", scr->escape_delay);
+            "Escape delay: {%i}", scr->escape_delay);
     log_tag("debug_log.txt", "[GAMESCREEN]",
-                "Tab size: {%i}", scr->tabsize);
+            "Tab size: {%i}", scr->tabsize);
 }
 
 /**
