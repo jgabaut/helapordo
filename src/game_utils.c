@@ -579,6 +579,7 @@ void dbg_Gamestate(Gamestate *gmst)
  */
 void dbg_GameScreen(GameScreen * scr)
 {
+#ifdef HELAPORDO_CURSES_BUILD
     int y = 0;
     int x = 0;
     if (scr->win == NULL) {
@@ -602,6 +603,13 @@ void dbg_GameScreen(GameScreen * scr)
             "Escape delay: {%i}", scr->escape_delay);
     log_tag("debug_log.txt", "[GAMESCREEN]",
             "Tab size: {%i}", scr->tabsize);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    printf("TODO: implement %s().\n", __func__);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 }
 
 /**
