@@ -150,7 +150,7 @@
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
   - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.1/helapordo.exe-nc-1.4.1-w64-mingw32-x86_64.zip)
 
-  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.0/helapordo-nc-1.4.0-darwin-arm64.zip) (Available = `1.4.0`. Latest = `1.4.1`)
+  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.1/helapordo-nc-1.4.1-darwin-arm64.zip) (Available = `1.4.1`. Latest = `1.4.1`)
 
   📦 v1.4.1 22/01/2023
   https://github.com/jgabaut/helapordo/releases
