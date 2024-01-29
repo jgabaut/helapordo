@@ -59,6 +59,18 @@ typedef struct GameScreen {
  */
 typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
 // Add more includes for rl-build here
+#ifdef _WIN32
+/**
+ * We need to turn off some part of Windows API to avoid clashes with raylib header redefinitions.
+ * Relevant links:
+ * https://learn.microsoft.com/en-us/windows/win32/winprog/using-the-windows-headers#faster-builds-with-smaller-header-files
+ * https://stackoverflow.com/a/1394929
+ * https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-rectangle
+ */
+#define WIN32_LEAN_AND_MEAN // We don't want no playsound
+#define NOGDI // We don't want Rectangle from Windows
+#define NOUSER // We don't want no user routines
+#endif // _WIN32
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
