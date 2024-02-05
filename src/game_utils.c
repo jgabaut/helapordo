@@ -1085,15 +1085,15 @@ void resolve_staticPath(char static_path[500])
 #endif
 
 #ifndef _WIN32
-    const char *static_folder_path_wd = "./static/";
+    const char *static_folder_path_wd = "./";
 #else
-    const char *static_folder_path_wd = ".\\static\\";
+    const char *static_folder_path_wd = ".\\";
 #endif
 
 #ifndef _WIN32
-    const char *local_install_static_folder_path = "/helapordo-local/static";
+    const char *local_install_static_folder_path = "/helapordo-local/";
 #else
-    const char *local_install_static_folder_path = "\\helapordo-local\\static";
+    const char *local_install_static_folder_path = "\\helapordo-local\\";
 #endif
     char static_folder_path_global[500];
     sprintf(static_folder_path_global, "%s", homedir_path);

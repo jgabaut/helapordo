@@ -14135,16 +14135,19 @@ void gameloop(int argc, char **argv)
 
             if (GAMEMODE == Rogue) {
                 log_tag("debug_log.txt", "[DEBUG]", "Doing a Rogue run.");
-                FILE *palette_file;
-                char path_to_palette[600];
                 char static_path[500];
-                char palette_name[50] = "palette.gpl";
 
                 // Set static_path value to the correct static dir path
                 resolve_staticPath(static_path);
 
+                /**
+                 * Legacy code for reading palette.gpl. Was it ever needed at runtime?
+                 * TODO check which tags may use the palette.gpl at runtime (other than trying to read it pointlessly).
+                 *
+                char path_to_palette[600];
+                FILE* palette_file = NULL;
+                char palette_name[50] = "palette.gpl";
                 sprintf(path_to_palette, "%s/%s", static_path, palette_name);
-
                 palette_file = fopen(path_to_palette, "r");
                 if (palette_file == NULL) {
                     fprintf(stderr,
@@ -14152,6 +14155,7 @@ void gameloop(int argc, char **argv)
                             static_path, palette_name);
                     exit(EXIT_FAILURE);
                 }
+                */
 
                 WINDOW *floor_win;
                 //TODO: store if we have done initsrc() or endwin(). Am sure we can get this from ncurses with some MACRO
