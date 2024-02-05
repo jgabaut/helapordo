@@ -796,7 +796,7 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
     kls_log(t_kls->kls, "DEBUG", "[TURNOP]",
             "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
     turnOP_args *res =
-        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, 1, HR_turnOP_args,
+        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, HR_turnOP_args,
                                          "turnOP_args", "turnOP_args");
 
     res->gmst = gmst;

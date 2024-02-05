@@ -87,7 +87,7 @@ void gameloop_rl(int argc, char** argv)
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
 
-    char *kls_progname = (char *)KLS_PUSH_TYPED(default_kls, char *, sizeof(whoami),
+    char *kls_progname = (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
                          KLS_None, "progname", whoami);
     strcpy(kls_progname, whoami);
 
@@ -99,7 +99,7 @@ void gameloop_rl(int argc, char** argv)
     // Parse command-line options
     int option;
     loadInfo *load_info =
-        (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo,
+        (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, HR_loadInfo,
                                     "loadInfo", "loadInfo");
 
     load_info->is_new_game = 1;	//By default we do a new game
