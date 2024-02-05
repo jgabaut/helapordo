@@ -3003,7 +3003,7 @@ void initRoom_Home(Room *r, int roomIndex, Fighter *f, loadInfo *load_info,
             sizeof("Home"));
     r->desc =
         (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *, sizeof("HOME"), HR_Room_desc,
-                                 "Room desc", "Room desc");
+                                     "Room desc", "Room desc");
     strcpy(r->desc, "Home");
     if (!(load_info->is_new_game)) {
         log_tag("debug_log.txt", "[DEBUG]",
@@ -3030,7 +3030,7 @@ void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
             sizeof("Enemies"));
     r->desc =
         (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *, sizeof("Enemies"), HR_Room_desc,
-                                 "Room desc", "Room desc");
+                                     "Room desc", "Room desc");
     strcpy(r->desc, "Enemies");
     if (enemyTotal <= ROOM_ENEMIES_MAX) {
         r->index = roomIndex;
@@ -3127,7 +3127,7 @@ void initRoom_Shop(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
             sizeof("Shop"));
     r->desc =
         (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *, sizeof("Shop"), HR_Room_desc,
-                                 "Room desc", "Room desc");
+                                     "Room desc", "Room desc");
     strcpy(r->desc, "Shop");
     log_tag("debug_log.txt", "[DEBUG]", "Allocated size %lu for Room Shop :",
             sizeof("Shop"));
@@ -3159,7 +3159,7 @@ void initRoom_Boss(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
             sizeof("Boss"));
     r->desc =
         (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *, sizeof("Boss"), HR_Room_desc,
-                                 "Room desc", "Room desc");
+                                     "Room desc", "Room desc");
     strcpy(r->desc, "Boss");
     log_tag("debug_log.txt", "[DEBUG]", "Allocated size %lu for Room Boss:",
             sizeof(Boss));
@@ -3190,7 +3190,7 @@ void initRoom_Treasure(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
             sizeof("Treasure"));
     r->desc =
         (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *, sizeof("Treasure"),
-                                 HR_Room_desc, "Room desc", "Room desc");
+                                     HR_Room_desc, "Room desc", "Room desc");
     strcpy(r->desc, "Treasure");
     log_tag("debug_log.txt", "[DEBUG]", "Allocated size %lu for Room Treasure:",
             sizeof(Treasure));
@@ -3221,7 +3221,7 @@ void initRoom_Roadfork(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
             sizeof("Roadfork"));
     r->desc =
         (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *, sizeof("Roadfork"),
-                                 HR_Room_desc, "Room desc", "Room desc");
+                                     HR_Room_desc, "Room desc", "Room desc");
     strcpy(r->desc, "Roadfork");
     log_tag("debug_log.txt", "[DEBUG]", "Allocated size %lu for Room Roadfork:",
             sizeof(Roadfork));
