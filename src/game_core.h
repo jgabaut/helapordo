@@ -209,7 +209,7 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.2-dev"
+#define VERSION "1.4.2"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
