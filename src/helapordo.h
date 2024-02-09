@@ -53,6 +53,9 @@
 #include <sys/stat.h>
 #include "game_core.h"
 #include "game_utils.h"
+#include "equips.h"
+#include "consumables.h"
+#include "saves.h"
 #include "rooms.h"
 #include "specials.h"
 #include "artifacts.h"
@@ -148,7 +151,6 @@ boost_b_fun getStatBoostCounterBossFun(Stat s);
 boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s);
 
 void initPerks(Fighter * f, Koliseo * kls);
-void applyEquipPerks(Equip * e, Fighter * f);
 void removeEquipPerks(Equip * e, Fighter * f);
 void printActivePerks(Fighter * f);
 
@@ -168,8 +170,6 @@ void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
                          Boss * b);
 void setCounter(Turncounter * c, int turns);
 
-void setSpecials(Fighter * f, Koliseo * kls);
-
 void setSkills(Fighter *f, Koliseo *kls);
 void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls);
 void setBossSkills(Boss *b, Koliseo_Temp *t_kls);
@@ -182,7 +182,6 @@ void applyArtifacts(Fighter * f, Enemy * e, Boss * b, int isBoss);
 
 void initEquipSlots(Fighter * f, Koliseo * kls);
 
-void initConsumableBag(Fighter * f, Koliseo * kls);
 void initArtifactsBag(Fighter * f, Koliseo * kls);
 
 void initWincon(Wincon * w, Path * p, winconClass class);
@@ -330,18 +329,6 @@ void emptyConsumables(Fighter * player);
 void emptyArtifacts(Fighter * player);
 
 void emptyEquips(Fighter * player);
-
-OP_res handleSave_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
-                          int enemyIndex, int roomTotalEnemies, int roomIndex);
-OP_res handleSave_Home(FILE * file, Fighter * f, Path * p, int roomIndex);
-
-OP_res handleLoadgame_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
-                              int *enemyIndex, int *roomTotalEnemies,
-                              int *roomIndex, int *total_foes,
-                              int *done_loading, Koliseo * kls);
-OP_res handleLoadgame_Home(FILE * file, Fighter * f, Path * p, int *roomIndex,
-                           int *done_loading, Koliseo * kls);
-saveType read_saveType(FILE * file);
 
 void death(Fighter * player, loadInfo * load_info);
 

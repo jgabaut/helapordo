@@ -51,4 +51,6 @@
 #define EXPECTED_RAYLIB_VERSION_PATCH 0	/**< Defines min expected patch ncurses version.*/
 
 void handleTutorial(S4C_Color* palette);
+void setEnemySprite(Enemy * e);
+void setEquipSprite(Equip * e);
 #endif // GAMECURSES_RL_H

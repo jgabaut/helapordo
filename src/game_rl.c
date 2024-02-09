@@ -61,3 +61,43 @@ void handleTutorial(S4C_Color* palette)
         //TODO: update win???
     }
 }
+
+/**
+ * Takes a Enemy pointer and prepares its sprite field by copying it line by line from enemies_sprites, defined in sprites.h header.
+ * @see Enemy
+ * @see initEnemyStats
+ * @see enemies_sprites
+ * @param e The Enemy pointer whose sprite field will be initialised.
+ */
+void setEnemySprite(Enemy *e)
+{
+    if (e->class < ENEMYCLASSESMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(e->sprite[i], enemies_sprites[e->class][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected enemyClass in setEnemySprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a Equip pointer and prepares its sprite field by copying it line by line from equips_sprites, defined in sprites.h header.
+ * @see Equip
+ * @see dropEquip
+ * @see equips_sprites
+ * @param e The Equip pointer whose sprite field will be initialised.
+ */
+void setEquipSprite(Equip *e)
+{
+    if (e->class < EQUIPSMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(e->sprite[i], equips_sprites[e->class][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected equipClass in setEquipSprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
