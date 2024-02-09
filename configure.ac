@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.4.1], [jgabaut@github.com])
+AC_INIT([helapordo], [1.4.2], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -60,7 +60,7 @@ case "${host_os}" in
             echo "Building with ncurses"
             #build_raylib=no
             #build_curses=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DKOLISEO_HAS_CURSES -DNCURSES_STATIC"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DKOLISEO_HAS_CURSES -DNCURSES_NO_PADDING -DNCURSES_STATIC -DS4C_UNCHECKED"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lpanelw -lmenuw -lncursesw -static"])
             AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
             AC_SUBST([OS], ["w64-mingw32"])
@@ -99,7 +99,7 @@ case "${host_os}" in
             echo "Building with ncurses"
             #build_raylib=no
             #build_curses=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/ncurses/include -DKOLISEO_HAS_CURSES"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/ncurses/include -DKOLISEO_HAS_CURSES -DNCURSES_NO_PADDING -DS4C_UNCHECKED"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/ncurses/lib -lmenu -lpanel -lncurses"])
             AC_SUBST([OS], ["darwin"])
             AC_SUBST([TARGET], ["helapordo"])
@@ -139,7 +139,7 @@ case "${host_os}" in
             echo "Building with ncurses"
             #build_raylib=no
             #build_curses=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-DKOLISEO_HAS_CURSES"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-DKOLISEO_HAS_CURSES -DNCURSES_NO_PADDING -DS4C_UNCHECKED"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-lmenu -lpanel -lncurses"])
             AC_SUBST([OS], ["Linux"])
             AC_SUBST([CCOMP], ["gcc"]) #Yes
@@ -169,7 +169,7 @@ AM_CONDITIONAL([LINUX_BUILD], [test "$build_linux" = "yes"])
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.4.1"
+  VERSION="1.4.2"
 fi
 
 # Output variables to the config.h header

@@ -36,12 +36,41 @@
 #else
 #include <panel.h>
 #endif // _WIN32
+
+/**
+ * Defines GameScreen type, wrapping curses WINDOW.
+ */
+typedef struct GameScreen {
+    WINDOW* win; /**< Pointer to window for the gamescreen.*/
+    int colors; /**< Number of colors supported by the gamescreen.*/
+    int color_pairs; /**< Number of color pairs supported by the gamescreen.*/
+    int cols; /**< Number of columns for the gamescreen.*/
+    int rows; /**< Number of rows for the gamescreen.*/
+    int escape_delay; /**< Number of milliseconds to wait after reading an escape character, to distinguish between an individual escape character entered on the keyboard from escape sequences sent by cursor- and function-keys. See: https://manpages.debian.org/bullseye/ncurses-doc/curses_variables.3ncurses.en.html*/
+    int tabsize; /**< Number of columns used by curses to convert a tab to spaces when adding tab to a window.*/
+} GameScreen;
+
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
+/**
+ * Defines GameScreen type, as an enum.
+ */
 typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
 // Add more includes for rl-build here
+#ifdef _WIN32
+/**
+ * We need to turn off some part of Windows API to avoid clashes with raylib header redefinitions.
+ * Relevant links:
+ * https://learn.microsoft.com/en-us/windows/win32/winprog/using-the-windows-headers#faster-builds-with-smaller-header-files
+ * https://stackoverflow.com/a/1394929
+ * https://learn.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-rectangle
+ */
+#define WIN32_LEAN_AND_MEAN // We don't want no playsound
+#define NOGDI // We don't want Rectangle from Windows
+#define NOUSER // We don't want no user routines
+#endif // _WIN32
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
@@ -82,6 +111,7 @@ typedef enum HLP_Region_Type {
     HR_countStats,
     HR_Saveslot,
     HR_Gamestate,
+    HR_Gamescreen,
     HR_loadInfo,
 } HLP_Region_Type;
 
@@ -174,12 +204,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 1
+#define HELAPORDO_PATCH_VERSION 2
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.1"
+#define VERSION "1.4.2"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
@@ -1697,6 +1727,14 @@ typedef struct {
     Gamemode gamemode;	   /**< Keeps track of current Gamemode.*/
 
     Floor *current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
+#ifdef HELAPORDO_CURSES_BUILD
+    GameScreen *screen; /**< Pointer to main screen.*/
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 } Gamestate;
 
 /**

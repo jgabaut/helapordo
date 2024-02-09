@@ -514,6 +514,19 @@ void dbg_Gamestate(Gamestate *gmst)
                 "Gamestate was NULL in dbg_Gamestate()");
         exit(EXIT_FAILURE);
     }
+#ifdef HELAPORDO_CURSES_BUILD
+    if (gmst->screen == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Screen was NULL in dbg_Gamestate()");
+    } else {
+        dbg_GameScreen(gmst->screen);
+    }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
     log_tag("debug_log.txt", "[DEBUG]", "Gamestate:{");
     log_tag("debug_log.txt", "[GAMESTATE]", "Current Gamemode: { %s } [ %i ]",
             stringFromGamemode(gmst->gamemode), gmst->gamemode);
@@ -561,6 +574,45 @@ void dbg_Gamestate(Gamestate *gmst)
 }
 
 /**
+ * Debugs the passed (preallocated) GameScreen with log_tag().
+ * @param scr The allocated GameScreen to debug.
+ */
+void dbg_GameScreen(GameScreen * scr)
+{
+#ifdef HELAPORDO_CURSES_BUILD
+    int y = 0;
+    int x = 0;
+    if (scr->win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "win was NULL in %s()", __func__);
+    } else {
+        getmaxyx(scr->win, y, x);
+        log_tag("debug_log.txt", "[GAMESCREEN]",
+                "Screen size: y->(%i), x->(%i)",
+                y, x);
+    }
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+            "Cols: {%i}", scr->cols);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+            "Rows: {%i}", scr->rows);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+            "Colors: {%i}", scr->colors);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+            "Color pairs: {%i}", scr->color_pairs);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+            "Escape delay: {%i}", scr->escape_delay);
+    log_tag("debug_log.txt", "[GAMESCREEN]",
+            "Tab size: {%i}", scr->tabsize);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    printf("TODO: implement %s().\n", __func__);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+}
+
+/**
  * Updates the passed (preallocated) Gamestate with the passed int values.
  * @param gmst The allocated Gamestate to update.
  * @param current_fighters Number of current Fighters.
@@ -592,6 +644,72 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
     }
 }
 
+#ifdef HELAPORDO_CURSES_BUILD
+/**
+ * Inits the passed (preallocated) Gamestate with the passed pointers.
+ * @param gmst The allocated Gamestate to init.
+ * @param start_time The start time for current game.
+ * @param stats Game stats.
+ * @param wincon Game Wincon.
+ * @param path Game Path.
+ * @param player Game main player.
+ * @param gamemode Picked gamemode.
+ * @param screen The main screen from initscr().
+ */
+void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen)
+{
+    if (gmst == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (stats == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "countStats was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (wincon == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Wincon was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (path == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Path was NULL in %s()", __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (player == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Player was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (gamemode != Story && gamemode != Rogue) {
+        log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
+                gamemode);
+        exit(EXIT_FAILURE);
+    }
+    if (screen == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Screen was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    gmst->start_time = start_time;
+    gmst->stats = stats;
+    gmst->current_fighters = -1;
+    gmst->current_roomtype = -1;
+    gmst->current_room_index = -1;
+    gmst->current_enemy_index = -1;
+    gmst->wincon = wincon;
+    gmst->path = path;
+    gmst->player = player;
+    gmst->gamemode = gamemode;
+    gmst->screen = screen;
+}
+
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
 /**
  * Inits the passed (preallocated) Gamestate with the passed pointers.
  * @param gmst The allocated Gamestate to init.
@@ -645,6 +763,8 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->player = player;
     gmst->gamemode = gamemode;
 }
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 
 #ifdef HELAPORDO_CURSES_BUILD
 /**
@@ -676,7 +796,7 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
     kls_log(t_kls->kls, "DEBUG", "[TURNOP]",
             "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
     turnOP_args *res =
-        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, 1, HR_turnOP_args,
+        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, HR_turnOP_args,
                                          "turnOP_args", "turnOP_args");
 
     res->gmst = gmst;
@@ -965,15 +1085,15 @@ void resolve_staticPath(char static_path[500])
 #endif
 
 #ifndef _WIN32
-    const char *static_folder_path_wd = "./static/";
+    const char *static_folder_path_wd = "./";
 #else
-    const char *static_folder_path_wd = ".\\static\\";
+    const char *static_folder_path_wd = ".\\";
 #endif
 
 #ifndef _WIN32
-    const char *local_install_static_folder_path = "/helapordo-local/static";
+    const char *local_install_static_folder_path = "/helapordo-local/";
 #else
-    const char *local_install_static_folder_path = "\\helapordo-local\\static";
+    const char *local_install_static_folder_path = "\\helapordo-local\\";
 #endif
     char static_folder_path_global[500];
     sprintf(static_folder_path_global, "%s", homedir_path);

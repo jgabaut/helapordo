@@ -1225,7 +1225,7 @@ void initPerks(Fighter *f, Koliseo *kls)
     for (int i = 0; i < total; i++) {
         kls_log(kls, "DEBUG", "Prepping Perk (%i)", i);
         Perk *p =
-            (Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
+            (Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
         p->class = i;
         char *name = nameStringFromPerk(i);
         char *desc = descStringFromPerk(i);
@@ -1398,15 +1398,15 @@ void initCounters(Fighter *f, Koliseo *kls)
         log_tag("debug_log.txt", "[DEBUG]", "Prepping Turncounter (%i)", i);
         kls_log(kls, "DEBUG", "Prepping Turncounter (%i)", i);
         Turncounter *c =
-            (Turncounter *) KLS_PUSH_TYPED(kls, Turncounter, 1, HR_Turncounter,
+            (Turncounter *) KLS_PUSH_TYPED(kls, Turncounter, HR_Turncounter,
                                            "Turncounter", "Turncounter");
 
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_TYPED(kls, char *, sizeof(stringFromStatus(i)),
-                                       HR_Turncounter_desc, "Turncounter desc",
-                                       "Turncounter desc");
+                (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof(stringFromStatus(i)),
+                                           HR_Turncounter_desc, "Turncounter desc",
+                                           "Turncounter desc");
             strcpy(c->desc, stringFromStatus(i));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Allocated size %lu for status counter: (%s)",
@@ -1432,10 +1432,10 @@ void initCounters(Fighter *f, Koliseo *kls)
             switch (i) {
             case TURNBOOST_ATK: {
                 c->desc =
-                    (char *)KLS_PUSH_TYPED(kls, char *, sizeof("ATK boost"),
-                                           HR_Turncounter_desc,
-                                           "Turncounter desc",
-                                           "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof("ATK boost"),
+                                               HR_Turncounter_desc,
+                                               "Turncounter desc",
+                                               "Turncounter desc");
                 strcpy(c->desc, "ATK boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1452,10 +1452,10 @@ void initCounters(Fighter *f, Koliseo *kls)
             break;
             case TURNBOOST_DEF: {
                 c->desc =
-                    (char *)KLS_PUSH_TYPED(kls, char *, sizeof("DEF boost"),
-                                           HR_Turncounter_desc,
-                                           "Turncounter desc",
-                                           "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof("DEF boost"),
+                                               HR_Turncounter_desc,
+                                               "Turncounter desc",
+                                               "Turncounter desc");
                 strcpy(c->desc, "DEF boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1472,10 +1472,10 @@ void initCounters(Fighter *f, Koliseo *kls)
             break;
             case TURNBOOST_VEL: {
                 c->desc =
-                    (char *)KLS_PUSH_TYPED(kls, char *, sizeof("VEL boost"),
-                                           HR_Turncounter_desc,
-                                           "Turncounter desc",
-                                           "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof("VEL boost"),
+                                               HR_Turncounter_desc,
+                                               "Turncounter desc",
+                                               "Turncounter desc");
                 strcpy(c->desc, "VEL boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1492,10 +1492,10 @@ void initCounters(Fighter *f, Koliseo *kls)
             break;
             case TURNBOOST_ENR: {
                 c->desc =
-                    (char *)KLS_PUSH_TYPED(kls, char *, sizeof("ENR boost"),
-                                           HR_Turncounter_desc,
-                                           "Turncounter desc",
-                                           "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof("ENR boost"),
+                                               HR_Turncounter_desc,
+                                               "Turncounter desc",
+                                               "Turncounter desc");
                 strcpy(c->desc, "ENR boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1548,18 +1548,18 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
                 i);
         kls_log(kls, "DEBUG", "Prepping enemy Turncounter (%i)", i);
         Turncounter *c =
-            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
+            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter,
                                              HR_Turncounter, "Turncounter",
                                              "Turncounter");
 
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                         sizeof(stringFromStatus(i)),
-                                         HR_Turncounter_desc,
-                                         "Turncounter desc",
-                                         "Turncounter desc");
+                (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                             sizeof(stringFromStatus(i)),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
             strcpy(c->desc, stringFromStatus(i));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Allocated size %lu for enemy status counter: (%s)",
@@ -1578,11 +1578,11 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             switch (i) {
             case TURNBOOST_ATK: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("ATK boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("ATK boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "ATK boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1599,11 +1599,11 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_DEF: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("DEF boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("DEF boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "DEF boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1620,11 +1620,11 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_VEL: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("VEL boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("VEL boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "VEL boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1641,11 +1641,11 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_ENR: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("ENR boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("ENR boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "ENR boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1696,18 +1696,18 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
         log_tag("debug_log.txt", "[DEBUG]", "Prepping boss counter %i", i);
         kls_log(kls, "DEBUG", "Prepping boss counter %i", i);
         Turncounter *c =
-            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
+            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter,
                                              HR_Turncounter, "Turncounter",
                                              "Turncounter");
 
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                         sizeof(stringFromStatus(i)),
-                                         HR_Turncounter_desc,
-                                         "Turncounter desc",
-                                         "Turncounter desc");
+                (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                             sizeof(stringFromStatus(i)),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
             strcpy(c->desc, stringFromStatus(i));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Allocated size %lu for boss status counter: (%s)",
@@ -1726,11 +1726,11 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             switch (i) {
             case TURNBOOST_ATK: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("ATK boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("ATK boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "ATK boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for boss stat counter: (%s)",
@@ -1747,11 +1747,11 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_DEF: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("DEF boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("DEF boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "DEF boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for boss stat counter: (%s)",
@@ -1768,11 +1768,11 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_VEL: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("VEL boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("VEL boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "VEL boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for boss stat counter: (%s)",
@@ -1789,11 +1789,11 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_ENR: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("ENR boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("ENR boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "ENR boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for boss stat counter: (%s)",
@@ -1844,18 +1844,18 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
         log_tag("debug_log.txt", "[DEBUG]", "Prepping foeparty counter %i", i);
         kls_log(kls, "DEBUG", "Prepping foeparty counter %i", i);
         Turncounter *c =
-            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter, 1,
+            (Turncounter *) KLS_PUSH_T_TYPED(t_kls, Turncounter,
                                              HR_Turncounter, "Turncounter",
                                              "Turncounter");
 
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                         sizeof(stringFromStatus(i)),
-                                         HR_Turncounter_desc,
-                                         "Turncounter desc",
-                                         "Turncounter desc");
+                (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                             sizeof(stringFromStatus(i)),
+                                             HR_Turncounter_desc,
+                                             "Turncounter desc",
+                                             "Turncounter desc");
             strcpy(c->desc, stringFromStatus(i));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Allocated size %lu for foeparty status counter: (%s)",
@@ -1874,11 +1874,11 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             switch (i) {
             case TURNBOOST_ATK: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("ATK boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("ATK boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "ATK boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1895,11 +1895,11 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_DEF: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("DEF boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("DEF boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "DEF boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1916,11 +1916,11 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_VEL: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("VEL boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("VEL boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "VEL boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -1937,11 +1937,11 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_ENR: {
                 c->desc =
-                    (char *)KLS_PUSH_T_TYPED(t_kls, char *,
-                                             sizeof("ENR boost"),
-                                             HR_Turncounter_desc,
-                                             "Turncounter desc",
-                                             "Turncounter desc");
+                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                                                 sizeof("ENR boost"),
+                                                 HR_Turncounter_desc,
+                                                 "Turncounter desc",
+                                                 "Turncounter desc");
                 strcpy(c->desc, "ENR boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
@@ -2167,7 +2167,7 @@ void setSpecials(Fighter *f, Koliseo *kls)
     for (int i = 0; i <= SPECIALSMAX; i++) {
         kls_log(kls, "DEBUG", "Prepping Specialslot (%i)", i);
         Specialslot *s =
-            (Specialslot *) KLS_PUSH_TYPED(kls, Specialslot, 1, HR_Specialslot,
+            (Specialslot *) KLS_PUSH_TYPED(kls, Specialslot, HR_Specialslot,
                                            "Specialslot", "Specialslot");
         s->enabled = 0;
         s->move = i + (f->class * (SPECIALSMAX + 1));	// Assign the i-th move offsetting by classNum * specialsMax
@@ -2200,7 +2200,7 @@ void setSkills(Fighter *f, Koliseo *kls)
     for (int i = 0; i <= FIGHTER_SKILL_SLOTS; i++) {
         kls_log(kls, "DEBUG", "Prepping Skillslot (%i)", i);
         Skillslot *s =
-            (Skillslot *) KLS_PUSH_TYPED(kls, Skillslot, 1, HR_Skillslot,
+            (Skillslot *) KLS_PUSH_TYPED(kls, Skillslot, HR_Skillslot,
                                          "Skillslot", "Skillslot");
         s->enabled = 0;
         s->class = i;
@@ -2233,7 +2233,7 @@ void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls)
     for (int i = 0; i < ENEMY_SKILL_SLOTS; i++) {
         kls_log(t_kls->kls, "DEBUG", "Prepping Enemy Skillslot (%i)", i);
         Skillslot *s =
-            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, 1, HR_Skillslot,
+            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, HR_Skillslot,
                                            "Enemy Skillslot", "Enemy Skillslot");
         s->enabled = 0;
         s->class = i;
@@ -2266,7 +2266,7 @@ void setBossSkills(Boss *b, Koliseo_Temp *t_kls)
     for (int i = 0; i < BOSS_SKILL_SLOTS; i++) {
         kls_log(t_kls->kls, "DEBUG", "Prepping Boss Skillslot (%i)", i);
         Skillslot *s =
-            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, 1, HR_Skillslot,
+            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, HR_Skillslot,
                                            "Boss Skillslot", "Boss Skillslot");
         s->enabled = 0;
         s->class = i;
@@ -2441,7 +2441,7 @@ void initEquipSlots(Fighter *f, Koliseo *kls)
     for (int i = 0; i <= EQUIPZONES; i++) {
         kls_log(kls, "DEBUG", "Prepping Equipslot (%i)", i);
         Equipslot *s =
-            (Equipslot *) KLS_PUSH_TYPED(kls, Equipslot, 1, HR_Equipslot,
+            (Equipslot *) KLS_PUSH_TYPED(kls, Equipslot, HR_Equipslot,
                                          "Equipslot", "Equipslot");
         s->active = 0;
         s->type = i;
@@ -2465,7 +2465,7 @@ void initConsumableBag(Fighter *f, Koliseo *kls)
     for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
         kls_log(kls, "DEBUG", "Prepping Consumable (%i)", i);
         Consumable *c =
-            (Consumable *) KLS_PUSH_TYPED(kls, Consumable, 1, HR_Consumable,
+            (Consumable *) KLS_PUSH_TYPED(kls, Consumable, HR_Consumable,
                                           "Consumable", "Consumable");
         c->class = i;
 
@@ -2497,7 +2497,7 @@ void initArtifactsBag(Fighter *f, Koliseo *kls)
     for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
         kls_log(kls, "DEBUG", "Prepping Artifact (%i)", i);
         Artifact *a =
-            (Artifact *) KLS_PUSH_TYPED(kls, Artifact, 1, HR_Artifact,
+            (Artifact *) KLS_PUSH_TYPED(kls, Artifact, HR_Artifact,
                                         "Artifact", "Artifact");
         a->class = i;
 
@@ -2551,7 +2551,7 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
 
     kls_log(kls, "DEBUG", "Prepping countStats");
     countStats *s =
-        (countStats *) KLS_PUSH_TYPED(kls, countStats, 1, HR_countStats,
+        (countStats *) KLS_PUSH_TYPED(kls, countStats, HR_countStats,
                                       "countStats", "countStats");
 
     s->enemieskilled = 0;
@@ -3154,7 +3154,7 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
             kls_log(kls, "DEBUG", "Prepping Equip (%i/%i) for Shop",
                     equip_index, equipsCount);
             Equip *e =
-                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
+                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, HR_Equip, "Equip",
                                            "Equip");
 
             //Randomise quality
@@ -3240,7 +3240,7 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
                             "Prepping Perk (%i) for Shop Equip (%i/%i)", i,
                             equip_index, equipsCount);
                     Perk *p =
-                        (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk,
+                        (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, HR_Perk,
                                                   "Perk", "Perk");
                     p->class = rand() % (PERKSMAX + 1);
                     //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
@@ -3302,7 +3302,7 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
                                 cons_prepared, uniqueConsumablesCount);
                         Consumable *cur =
                             (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable,
-                                                            1, HR_Consumable,
+                                                            HR_Consumable,
                                                             "Consumable",
                                                             "Consumable");
                         cur->class = curr;
@@ -3378,7 +3378,7 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
             kls_log(kls, "DEBUG", "Prepping Consumable (%i/%i) for Chest", i,
                     c->consumablesCount);
             Consumable *cns =
-                (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable, 1,
+                (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable,
                                                 HR_Consumable, "Consumable",
                                                 "Consumable");
             int drop = rand() % (CONSUMABLESMAX + 1);
@@ -3412,7 +3412,7 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
             kls_log(kls, "DEBUG", "Prepping Equip (%i/%i) for Chest", i,
                     c->equipsCount);
             Equip *e =
-                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
+                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, HR_Equip, "Equip",
                                            "Equip");
 
             //Get the base item and copy the stats to the drop
@@ -3498,7 +3498,7 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
                             "Prepping Perk (%i/%i) for Equip (%i/%i) for Chest",
                             j, e->perksCount, i, c->equipsCount);
                     Perk *p =
-                        (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk,
+                        (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, HR_Perk,
                                                   "Perk", "Perk");
                     p->class = rand() % (PERKSMAX + 1);
                     //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
@@ -3581,7 +3581,7 @@ void initTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
         kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Chest]:",
                 sizeof(Chest));
         Chest *c =
-            (Chest *) KLS_PUSH_T_TYPED(t_kls, Chest, 1, HR_Chest, "Chest",
+            (Chest *) KLS_PUSH_T_TYPED(t_kls, Chest, HR_Chest, "Chest",
                                        "Chest");
         prepareChest(c, f, t_kls);
         t->chest = c;
@@ -3595,7 +3595,7 @@ void initTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
         kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Consumable]:",
                 sizeof(Consumable));
         Consumable *cns =
-            (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable, 1,
+            (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable,
                                             HR_Consumable, "Consumable",
                                             "Consumable");
         int drop = rand() % (CONSUMABLESMAX + 1);
@@ -3620,7 +3620,7 @@ void initTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
         kls_log(kls, "DEBUG", "Allocated %lu for Treasure [Artifact]:",
                 sizeof(Artifact));
         Artifact *a =
-            (Artifact *) KLS_PUSH_T_TYPED(t_kls, Artifact, 1, HR_Artifact,
+            (Artifact *) KLS_PUSH_T_TYPED(t_kls, Artifact, HR_Artifact,
                                           "Artifact", "Artifact");
         int drop = -1;
         do {
@@ -3967,7 +3967,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         pickClass(player);
         kls_log(kls, "DEBUG", "Prepping Wincon");
         Wincon *w =
-            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
         if (GAMEMODE == Story) {
             //Path length must be already initialised before getting here.
@@ -4001,7 +4001,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         pickClass(player);
         kls_log(kls, "DEBUG", "Prepping Wincon");
         Wincon *w =
-            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
         if (GAMEMODE == Story) {
             //Path length must be already initialised before getting here.
@@ -4031,7 +4031,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         }
         kls_log(kls, "DEBUG", "Prepping Wincon");
         Wincon *w =
-            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, 1, HR_Wincon, "Wincon",
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
         if (GAMEMODE == Story) {
             //Path length must be already initialised before getting here.
@@ -4668,7 +4668,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     //Prepare the item
     kls_log(kls, "DEBUG", "Prepping dropped Equip");
     Equip *e =
-        (Equip *) KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
+        (Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
 
     //Get the base item and copy the stats to the drop
     Equip *base = &equips[drop];
@@ -4750,7 +4750,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
             kls_log(kls, "DEBUG", "Prepping Perk (%i) for dropped Equip)",
                     e->perksCount);
             Perk *p =
-                (Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
+                (Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
             p->class = rand() % (PERKSMAX + 1);
             //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
             strcpy(p->name, nameStringFromPerk(p->class));
@@ -8027,7 +8027,7 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
         log_tag("debug_log.txt", "[DEBUG]",
                 "Loadgame_Home(): Prepping Equip (%i)", i);
         kls_log(kls, "DEBUG", "Loadgame_Home(): Prepping Equip (%i)", i);
-        Equip *eq = KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
+        Equip *eq = KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
         scanres = fscanf(file, "%200s\n", buf);	//Skip equip_i heading
         if (scanres != 1) {
             log_tag("debug_log.txt", "[DEBUG]",
@@ -8228,7 +8228,7 @@ OP_res handleLoadgame_Home(FILE *file, Fighter *f, Path *p, int *roomIndex,
                     "Loadgame_Home(): Prepping Perk (%i)", j);
             kls_log(kls, "DEBUG", "Loadgame_Home(): Prepping Perk (%i)", j);
             Perk *pk =
-                (Perk *) KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
+                (Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
             //perkClass
             scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
             if (scanres != 2) {
@@ -9347,7 +9347,7 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
         log_tag("debug_log.txt", "[DEBUG]",
                 "Loadgame_Enemies(): Prepping Equip (%i)", i);
         kls_log(kls, "DEBUG", "Loadgame_Enemies(): Prepping Equip (%i)", i);
-        Equip *eq = KLS_PUSH_TYPED(kls, Equip, 1, HR_Equip, "Equip", "Equip");
+        Equip *eq = KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
         scanres = fscanf(file, "%200s\n", buf);	//Skip equip_i heading
         if (scanres != 1) {
             log_tag("debug_log.txt", "[DEBUG]",
@@ -9549,7 +9549,7 @@ OP_res handleLoadgame_Enemies(FILE *file, Fighter *f, Path *p, Enemy *e,
                     eq->perksCount);
             kls_log(kls, "DEBUG", "Loadgame_Enemies(): Prepping Perk (%i/%i)",
                     j, eq->perksCount);
-            Perk *pk = KLS_PUSH_TYPED(kls, Perk, 1, HR_Perk, "Perk", "Perk");
+            Perk *pk = KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
             //perkClass
             scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
             if (scanres != 2) {
@@ -10941,7 +10941,7 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
             log_tag("debug_log.txt", "[DEBUG]", msg);
             kls_log(kls, "DEBUG", msg);
             Floor *dbg_floor =
-                (Floor *) KLS_PUSH_T_TYPED(t_kls, Floor, 1, HR_Floor,
+                (Floor *) KLS_PUSH_T_TYPED(t_kls, Floor, HR_Floor,
                                            "Floor", msg);
             // Start the random walk from the center of the dungeon
             int center_x = FLOOR_MAX_COLS / 2;
@@ -12128,7 +12128,7 @@ void sell_all_equips(Fighter *f, Koliseo_Temp *t_kls)
             log_tag("debug_log.txt", "[DEBUG]", msg);
             kls_log(kls, "DEBUG", msg);
             Equip *saved =
-                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, 1, HR_Equip, "Equip",
+                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, HR_Equip, "Equip",
                                            msg);
             Equip *to_save = f->equipslots[i]->item;
 
@@ -12155,7 +12155,7 @@ void sell_all_equips(Fighter *f, Koliseo_Temp *t_kls)
                 log_tag("debug_log.txt", "[DEBUG]", msg);
                 kls_log(kls, "DEBUG", msg);
                 Perk *save_pk =
-                    (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, 1, HR_Perk, "Perk",
+                    (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, HR_Perk, "Perk",
                                               msg);
                 save_pk->class = to_save->perks[j]->class;
                 strcpy(save_pk->name, to_save->perks[j]->name);
@@ -12408,13 +12408,13 @@ Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
     char msg[200];
     sprintf(msg, "Prepping Path");
     kls_log(kls, "DEBUG", msg);
-    Path *p = (Path *) KLS_PUSH_TYPED(kls, Path, 1, HR_Path, "Path", msg);
+    Path *p = (Path *) KLS_PUSH_TYPED(kls, Path, HR_Path, "Path", msg);
     srand(seed);
     sprintf(msg, "Prepping Saveslot");
     kls_log(kls, "DEBUG", msg);
     sprintf(msg, "save_path: [%s]", path_to_savefile);
     Saveslot *save =
-        (Saveslot *) KLS_PUSH_TYPED(kls, Saveslot, 1, HR_Saveslot, "Saveslot",
+        (Saveslot *) KLS_PUSH_TYPED(kls, Saveslot, HR_Saveslot, "Saveslot",
                                     msg);
     sprintf(msg, "Seed: %i", seed);
     strcpy(save->name, msg);
@@ -12512,8 +12512,8 @@ void gameloop(int argc, char **argv)
 #endif
 
         char *kls_progname =
-            (char *)KLS_PUSH_TYPED(default_kls, char *, sizeof(whoami),
-                                   KLS_None, "progname", whoami);
+            (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
+                                       KLS_None, "progname", whoami);
         strcpy(kls_progname, whoami);
 
 #ifndef HELAPORDO_DEBUG_LOG
@@ -12524,7 +12524,7 @@ void gameloop(int argc, char **argv)
         // Parse command-line options
         int option;
         loadInfo *load_info =
-            (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo,
+            (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, HR_loadInfo,
                                         "loadInfo", "loadInfo");
 
         load_info->is_new_game = 1;	//By default we do a new game
@@ -13198,9 +13198,35 @@ void gameloop(int argc, char **argv)
                 "Animation loading took %0.7f seconds.",
                 time_spent_loading_animations);
 
-        initscr();
-        // TODO
-        //Select load or new game
+        WINDOW* screen = initscr();
+        bool screen_is_big_enough = false;
+        int screen_rows = 0;
+        int screen_cols = 0;
+        //TODO: factor this out to ensure the check is done for on any gien screen draw.
+        while (!screen_is_big_enough) {
+            getmaxyx(screen, screen_rows, screen_cols);
+            if (screen_rows >= HLPD_MIN_SCREEN_ROWS && screen_cols >= HLPD_MIN_SCREEN_COLS) {
+                screen_is_big_enough = true;
+                clear();
+                refresh();
+            } else if (screen_rows >= HLPD_DEFAULT_SCREEN_ROWS && screen_cols >= HLPD_MIN_SCREEN_COLS) {
+                mvwprintw(screen, 0, 0, "%s", "Current screen is too small to see battle notifications.");
+                mvwprintw(screen, 1, 0, "%s", "Enlarge vertically to fit it.");
+                refresh();
+            } else {
+                mvwprintw(screen, 0, 0, "%s", "Screen too small, please resize.");
+                refresh();
+            }
+        }
+        GameScreen* gamescreen = (GameScreen*) KLS_PUSH_TYPED(default_kls, GameScreen, HR_Gamescreen, "Main GameScreen", "Wrap stdscr");
+        gamescreen->colors = COLORS;
+        gamescreen->color_pairs = COLOR_PAIRS;
+        gamescreen->cols = COLS;
+        gamescreen->rows = LINES;
+        gamescreen->escape_delay = ESCDELAY;
+        gamescreen->tabsize = TABSIZE;
+
+        gamescreen->win = screen;
         ITEM **savepick_items;
         MENU *savepick_menu;
         WINDOW *savepick_menu_win;
@@ -13342,6 +13368,9 @@ void gameloop(int argc, char **argv)
         for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
             init_s4c_color_pair(&palette[i], 9 + i);
         }
+        log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
+        gamescreen->colors = COLORS;
+        gamescreen->color_pairs = COLOR_PAIRS;
 
         while (!savepick_picked
                && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
@@ -13516,7 +13545,7 @@ void gameloop(int argc, char **argv)
 
             kls_log(default_kls, "DEBUG", "Prepping Fighter");
             player =
-                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, 1, HR_Fighter,
+                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
                                            "Fighter", "Fighter");
 
             int optTot = optind;
@@ -13596,7 +13625,7 @@ void gameloop(int argc, char **argv)
             path = randomise_path(rand(), default_kls, current_save_path);
             kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
             player =
-                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, 1, HR_Fighter,
+                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
                                            "Fighter", "Loady Fighter");
             player->class = Knight;
 
@@ -13610,7 +13639,7 @@ void gameloop(int argc, char **argv)
 
             kls_log(default_kls, "DEBUG", "Prepping Loady Wincon");
             Wincon *w =
-                (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, 1, HR_Wincon,
+                (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
                                           "Wincon", "Loady Wincon");
             w->class = FULL_PATH;
             initWincon(w, path, w->class);
@@ -13621,7 +13650,7 @@ void gameloop(int argc, char **argv)
 
                 kls_log(default_kls, "DEBUG", "Prepping Loady Enemy");
                 load_info->loaded_enemy =
-                    (Enemy *) KLS_PUSH_TYPED(default_kls, Enemy, 1, HR_Enemy,
+                    (Enemy *) KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy,
                                              "Enemy", "Loaded Enemy");
                 //FIXME: the structs related to loaded enemy are not loaded on default_kls
                 prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1,
@@ -13797,10 +13826,10 @@ void gameloop(int argc, char **argv)
                 time_spent / 1000, time_spent % 1000);
 
         Gamestate *gamestate =
-            KLS_PUSH_TYPED(default_kls, Gamestate, 1, HR_Gamestate, "Gamestate",
+            KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                            "Gamestate");
         init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                       player, GAMEMODE);
+                       player, GAMEMODE, gamescreen);
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
             //NO. The update_gamestate call is instead performed later.
@@ -13844,7 +13873,7 @@ void gameloop(int argc, char **argv)
                         "Prepping Room for Story Gamemode. roomsDone=(%i)",
                         roomsDone);
                 Room *current_room =
-                    (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, 1, HR_Room,
+                    (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, HR_Room,
                                               "Room", "Story Room");
 
                 current_room->index = roomsDone;
@@ -14106,16 +14135,19 @@ void gameloop(int argc, char **argv)
 
             if (GAMEMODE == Rogue) {
                 log_tag("debug_log.txt", "[DEBUG]", "Doing a Rogue run.");
-                FILE *palette_file;
-                char path_to_palette[600];
                 char static_path[500];
-                char palette_name[50] = "palette.gpl";
 
                 // Set static_path value to the correct static dir path
                 resolve_staticPath(static_path);
 
+                /**
+                 * Legacy code for reading palette.gpl. Was it ever needed at runtime?
+                 * TODO check which tags may use the palette.gpl at runtime (other than trying to read it pointlessly).
+                 *
+                char path_to_palette[600];
+                FILE* palette_file = NULL;
+                char palette_name[50] = "palette.gpl";
                 sprintf(path_to_palette, "%s/%s", static_path, palette_name);
-
                 palette_file = fopen(path_to_palette, "r");
                 if (palette_file == NULL) {
                     fprintf(stderr,
@@ -14123,6 +14155,7 @@ void gameloop(int argc, char **argv)
                             static_path, palette_name);
                     exit(EXIT_FAILURE);
                 }
+                */
 
                 WINDOW *floor_win;
                 //TODO: store if we have done initsrc() or endwin(). Am sure we can get this from ncurses with some MACRO
@@ -14171,7 +14204,7 @@ void gameloop(int argc, char **argv)
                 log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
                 kls_log(default_kls, "DEBUG", "Prepping current_floor.");
                 Floor *current_floor =
-                    (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor, 1,
+                    (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor,
                                                HR_Floor, "Floor", "Floor");
                 update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
                                  current_floor);
@@ -14236,7 +14269,7 @@ void gameloop(int argc, char **argv)
                                 "Prepping Room for Rogue Gamemode. roomsDone=(%i)",
                                 roomsDone);
                         current_room =
-                            (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, 1,
+                            (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room,
                                                       HR_Room, "Room", msg);
 
                         current_room->index = roomsDone;
@@ -14454,7 +14487,7 @@ void gameloop(int argc, char **argv)
                                 current_floor =
                                     (Floor *)
                                     KLS_PUSH_T_TYPED(gamestate_kls, Floor,
-                                                     1, HR_Floor, "Floor",
+                                                     HR_Floor, "Floor",
                                                      "Floor");
                                 update_Gamestate(gamestate, 1, HOME,
                                                  roomsDone, -1,
@@ -14655,8 +14688,8 @@ void gameloop_Win(int argc, char **argv)
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, temporary_kls_conf);
         char *kls_progname =
-            (char *)KLS_PUSH_TYPED(default_kls, char *, sizeof(whoami),
-                                   KLS_None, "progname", whoami);
+            (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
+                                       KLS_None, "progname", whoami);
         strcpy(kls_progname, whoami);
 #ifndef HELAPORDO_DEBUG_LOG
 #else
@@ -14666,7 +14699,7 @@ void gameloop_Win(int argc, char **argv)
         // Parse command-line options
         int option;
         loadInfo *load_info =
-            (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, 1, HR_loadInfo,
+            (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, HR_loadInfo,
                                         "loadInfo", "loadInfo");
 
         load_info->is_new_game = 1;	//By default we do a new game

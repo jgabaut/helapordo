@@ -9,11 +9,11 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.4.1") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.4.2") ) == 0)) {
    fail("VERSION",0,check);
  };
- if ( ! (HLP_MAX_INDEX == 30) ) {
-   fail("HLP_MAX_INDEX",30,HLP_MAX_INDEX);
+ if ( ! (HLP_MAX_INDEX == 31) ) {
+   fail("HLP_MAX_INDEX",31,HLP_MAX_INDEX);
  }
  if ( ! (MAX_SAVESLOTS == 3) ) {
    fail("MAX_SAVESLOTS",3,MAX_SAVESLOTS);
