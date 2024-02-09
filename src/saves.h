@@ -3,8 +3,8 @@
 
 #include "game_utils.h"
 #include "equips.h"
-#include "consumables.h"
 #include "specials.h"
+#include "game_init.h"
 
 #ifdef HELAPORDO_CURSES_BUILD
 #include "game_curses.h"

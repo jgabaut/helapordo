@@ -101,3 +101,137 @@ void setEquipSprite(Equip *e)
         exit(EXIT_FAILURE);
     }
 }
+
+/**
+ * Takes a Consumable pointer and prepares its sprite field by copying it line by line from consumables_sprites, defined in sprites.h header.
+ * @see Consumable
+ * @see initPlayerStats
+ * @see consumables_sprites
+ * @param c The Consumable pointer whose sprite field will be initialised.
+ */
+void setConsumableSprite(Consumable *c)
+{
+    if (c->class < CONSUMABLESMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(c->sprite[i], consumables_sprites[c->class][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected consumableClass in setConsumableSprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a Boss pointer and prepares its sprite field by copying it line by line from bosses_sprites, defined in sprites.h header.
+ * @see Boss
+ * @see initBossStats
+ * @see bosses_sprites
+ * @param b The Boss pointer whose sprite field will be initialised.
+ */
+void setBossSprite(Boss *b)
+{
+    if (b->class < BOSSCLASSESMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(b->sprite[i], bosses_sprites[b->class][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected bossclass in setBossSprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a Fighter pointer and prepares its sprite field by copying it line by line.
+ * @see Fighter
+ * @see initPlayerStats
+ * @param f The Fighter pointer whose sprite field will be initialised.
+ */
+void setFighterSprite(Fighter *f)
+{
+    //TODO: this sprite is also present in misc_sprites, defined in sprites.h
+    //Should follow suit as the other setter functions and grab from there, not from this local copy.
+    switch (f->class) {
+    default: {
+        strcpy(f->sprite[0], "I    yy    I");
+        strcpy(f->sprite[1], "I    yy    I");
+        strcpy(f->sprite[2], "I   yyyy y I");
+        strcpy(f->sprite[3], "I yy yy y  I");
+        strcpy(f->sprite[4], "I    yy    I");
+        strcpy(f->sprite[5], "I   y  y   I");
+        strcpy(f->sprite[6], "I   y  y   I");
+        strcpy(f->sprite[7], "I    y y   I");
+    }
+    break;
+
+    };
+}
+
+/**
+ * Takes a Equipslot pointer and prepares its sprite field by copying it line by line from equipzones_sprites, defined in sprites.h header.
+ * @see Equipslot
+ * @see initEquipSlots()
+ * @see equipzones_sprites
+ * @param s The Equipslot pointer whose sprite field will be initialised.
+ */
+void setEquipslotSprite(Equipslot *s)
+{
+    if (s->type < EQUIPZONES + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(s->sprite[i], equipzones_sprites[s->type][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected Equipslot type in setEquipslotSprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a Chest pointer and prepares its sprite field by copying it line by line.
+ * @see Chest
+ * @see initChest
+ * @param c The Chest pointer whose sprite field will be initialised.
+ */
+void setChestSprite(Chest *c)
+{
+
+    switch (c->class) {
+    case CHEST_BASE: {
+        strcpy(c->sprite[0], "            ");
+        strcpy(c->sprite[1], "   bbbbbbb  ");
+        strcpy(c->sprite[2], "  bbcccccbb ");
+        strcpy(c->sprite[3], "  bcccccccb ");
+        strcpy(c->sprite[4], "  bbbbbbbbb ");
+        strcpy(c->sprite[5], "  bcccrcccb ");
+        strcpy(c->sprite[6], "  bcccccccb ");
+        strcpy(c->sprite[7], "  bbbbbbbbb ");
+    }
+    break;
+    case CHEST_BEAST: {
+        strcpy(c->sprite[0], "            ");
+        strcpy(c->sprite[1], "   rrrrrrr  ");
+        strcpy(c->sprite[2], "  rryyyyyrr ");
+        strcpy(c->sprite[3], "  ryyyyyyyr ");
+        strcpy(c->sprite[4], "  rrrrrrrrr ");
+        strcpy(c->sprite[5], "  ryyymyyyr ");
+        strcpy(c->sprite[6], "  ryyyyyyyr ");
+        strcpy(c->sprite[7], "  rrrrrrrrr ");
+    }
+    break;
+    default: {
+        strcpy(c->sprite[0], "I    yy    I");
+        strcpy(c->sprite[1], "I    yy    I");
+        strcpy(c->sprite[2], "I yyyyyyyy I");
+        strcpy(c->sprite[3], "I    yy    I");
+        strcpy(c->sprite[4], "I    yy    I");
+        strcpy(c->sprite[5], "I   yyyy   I");
+        strcpy(c->sprite[6], "I   y  y   I");
+        strcpy(c->sprite[7], "I    y y   I");
+    }
+    break;
+
+    };
+
+}

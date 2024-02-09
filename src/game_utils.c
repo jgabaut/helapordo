@@ -2129,3 +2129,494 @@ void copy_fighter(Fighter *source, Fighter *dest)
     dest->stats = source->stats;
     dest->balance = source->balance;
 }
+
+/**
+ * Takes a fighterStatus and returns the corresponding effect_fun pointer for the function relating to the status.
+ * @see fighterStatus
+ * @see effect_fun
+ * @param status The fighterStatus that the caller needs to match to a effect_fun pointer.
+ * @return The effect_fun pointer related to the status.
+ */
+effect_fun getStatusCounterFun(fighterStatus status)
+{
+    switch (status) {
+    //case Normal: {
+    default: {
+        return &resetFighterStatus;
+    }
+    break;
+    };
+}
+
+/**
+ * Takes a fighterStatus and returns the corresponding effect_e_fun pointer for the function relating to the status.
+ * @see fighterStatus
+ * @see effect_e_fun
+ * @param status The fighterStatus that the caller needs to match to a effect_e_fun pointer.
+ * @return The effect_e_fun pointer related to the status.
+ */
+effect_e_fun getStatusCounterEnemyFun(fighterStatus status)
+{
+    switch (status) {
+    //case Normal: {
+    default: {
+        return &resetEnemyStatus;
+    }
+    break;
+    };
+}
+
+/**
+ * Takes a fighterStatus and returns the corresponding effect_e_fun pointer for the function relating to the status.
+ * @see fighterStatus
+ * @see effect_e_fun
+ * @param status The fighterStatus that the caller needs to match to a effect_e_fun pointer.
+ * @return The effect_e_fun pointer related to the status.
+ */
+effect_b_fun getStatusCounterBossFun(fighterStatus status)
+{
+    switch (status) {
+    //case Normal: {
+    default: {
+        return &resetBossStatus;
+    }
+    break;
+    };
+}
+
+//Counter callback getters
+
+/**
+ * Takes a Stat and returns the corresponding boost_fun pointer for the function relating to the stat.
+ * @see Stat
+ * @see boost_fun
+ * @param s The Stat that the caller needs to match to a boost_fun pointer.
+ * @return The boost_fun pointer related to the stat.
+ */
+boost_fun getStatBoostCounterFun(Stat s)
+{
+
+    switch (s) {
+    case ATK: {
+        return &set_turnboost_atk;
+    }
+    break;
+    case DEF: {
+        return &set_turnboost_def;
+    }
+    break;
+    case VEL: {
+        return &set_turnboost_vel;
+    }
+    break;
+    case ENR: {
+        return &set_turnboost_enr;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Invalid stat value in getStatBoostCounterFun()");
+        exit(EXIT_FAILURE);
+    }
+    break;
+    };
+}
+
+/**
+ * Takes a Stat and returns the corresponding boost_e_fun pointer for the function relating to the stat.
+ * @see Stat
+ * @see boost_e_fun
+ * @param s The Stat that the caller needs to match to a boost_e_fun pointer.
+ * @return The boost_e_fun pointer related to the stat.
+ */
+boost_e_fun getStatBoostCounterEnemyFun(Stat s)
+{
+
+    switch (s) {
+    case ATK: {
+        return &set_enemy_turnboost_atk;
+    }
+    break;
+    case DEF: {
+        return &set_enemy_turnboost_def;
+    }
+    break;
+    case VEL: {
+        return &set_enemy_turnboost_vel;
+    }
+    break;
+    case ENR: {
+        return &set_enemy_turnboost_enr;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Invalid stat value in getStatBoostCounterEnemyFun()");
+        exit(EXIT_FAILURE);
+    }
+    break;
+    };
+}
+
+/**
+ * Takes a Stat and returns the corresponding boost_b_fun pointer for the function relating to the stat.
+ * @see Stat
+ * @see boost_b_fun
+ * @param s The Stat that the caller needs to match to a boost_b_fun pointer.
+ * @return The boost_b_fun pointer related to the stat.
+ */
+boost_b_fun getStatBoostCounterBossFun(Stat s)
+{
+
+    switch (s) {
+    case ATK: {
+        return &set_boss_turnboost_atk;
+    }
+    break;
+    case DEF: {
+        return &set_boss_turnboost_def;
+    }
+    break;
+    case VEL: {
+        return &set_boss_turnboost_vel;
+    }
+    break;
+    case ENR: {
+        return &set_boss_turnboost_enr;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Invalid stat value in getStatBoostCounterBossFun()");
+        exit(EXIT_FAILURE);
+    }
+    break;
+    };
+}
+
+/**
+ * Takes a Stat and returns the corresponding boost_fp_fun pointer for the function relating to the stat.
+ * @see Stat
+ * @see boost_fp_fun
+ * @param s The Stat that the caller needs to match to a boost_fp_fun pointer.
+ * @return The boost_fp_fun pointer related to the stat.
+ */
+boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s)
+{
+
+    switch (s) {
+    case ATK: {
+        return &set_foeparty_turnboost_atk;
+    }
+    break;
+    case DEF: {
+        return &set_foeparty_turnboost_def;
+    }
+    break;
+    case VEL: {
+        return &set_foeparty_turnboost_vel;
+    }
+    break;
+    case ENR: {
+        return &set_foeparty_turnboost_enr;
+    }
+    break;
+    default: {
+        log_tag("debug_log.txt", "[ERROR]",
+                "Invalid stat value in getStatBoostCounter_FoeParty_Fun()");
+        exit(EXIT_FAILURE);
+    }
+    break;
+    };
+}
+
+//Stat boost functions
+
+/**
+ * Takes a Fighter pointer and an integer, used to set the turnboost_atk value at the pointer.
+ * @see Fighter
+ * @see Turncounter
+ * @param f The Fighter pointer whose turnboost_atk value will be set.
+ * @param boost The value that will be set.
+ */
+void set_turnboost_atk(Fighter *f, int boost)
+{
+    //Straight addition of the boost
+    f->turnboost_atk = boost;
+}
+
+/**
+ * Takes a Fighter pointer and an integer, used to set the turnboost_def value at the pointer.
+ * @see Fighter
+ * @see Turncounter
+ * @param f The Fighter pointer whose turnboost_def value will be set.
+ * @param boost The value that will be set.
+ */
+void set_turnboost_def(Fighter *f, int boost)
+{
+    //Straight addition of the boost
+    f->turnboost_def = boost;
+}
+
+/**
+ * Takes a Fighter pointer and an integer, used to set the turnboost_vel value at the pointer.
+ * @see Fighter
+ * @see Turncounter
+ * @param f The Fighter pointer whose turnboost_vel value will be set.
+ * @param boost The value that will be set.
+ */
+void set_turnboost_vel(Fighter *f, int boost)
+{
+    //Straight addition of the boost
+    f->turnboost_vel = boost;
+}
+
+/**
+ * Takes a Fighter pointer and an integer, used to set the turnboost_enr value at the pointer.
+ * @see Fighter
+ * @see Turncounter
+ * @param f The Fighter pointer whose turnboost_enr value will be set.
+ * @param boost The value that will be set.
+ */
+void set_turnboost_enr(Fighter *f, int boost)
+{
+    //Straight addition of the boost
+    f->turnboost_enr = boost;
+}
+
+/**
+ * Takes a Enemy pointer and an integer, used to set the turnboost_atk value at the pointer.
+ * @see Enemy
+ * @see Turncounter
+ * @param e The Enemy pointer whose turnboost_atk value will be set.
+ * @param boost The value that will be set.
+ */
+void set_enemy_turnboost_atk(Enemy *e, int boost)
+{
+    //Straight addition of the boost
+    e->turnboost_atk = boost;
+}
+
+/**
+ * Takes a Enemy pointer and an integer, used to set the turnboost_def value at the pointer.
+ * @see Enemy
+ * @see Turncounter
+ * @param e The Enemy pointer whose turnboost_def value will be set.
+ * @param boost The value that will be set.
+ */
+void set_enemy_turnboost_def(Enemy *e, int boost)
+{
+    //Straight addition of the boost
+    e->turnboost_def = boost;
+}
+
+/**
+ * Takes a Enemy pointer and an integer, used to set the turnboost_vel value at the pointer.
+ * @see Enemy
+ * @see Turncounter
+ * @param e The Enemy pointer whose turnboost_vel value will be set.
+ * @param boost The value that will be set.
+ */
+void set_enemy_turnboost_vel(Enemy *e, int boost)
+{
+    //Straight addition of the boost
+    e->turnboost_vel = boost;
+}
+
+/**
+ * Takes a Enemy pointer and an integer, used to set the turnboost_enr value at the pointer.
+ * @see Enemy
+ * @see Turncounter
+ * @param e The Enemy pointer whose turnboost_enr value will be set.
+ * @param boost The value that will be set.
+ */
+void set_enemy_turnboost_enr(Enemy *e, int boost)
+{
+    //Straight addition of the boost
+    e->turnboost_enr = boost;
+}
+
+/**
+ * Takes a Boss pointer and an integer, used to set the turnboost_atk value at the pointer.
+ * @see Boss
+ * @see Turncounter
+ * @param b The Boss pointer whose turnboost_atk value will be set.
+ * @param boost The value that will be set.
+ */
+void set_boss_turnboost_atk(Boss *b, int boost)
+{
+    //Straight addition of the boost
+    b->turnboost_atk = boost;
+}
+
+/**
+ * Takes a Boss pointer and an integer, used to set the turnboost_def value at the pointer.
+ * @see Boss
+ * @see Turncounter
+ * @param b The Boss pointer whose turnboost_def value will be set.
+ * @param boost The value that will be set.
+ */
+void set_boss_turnboost_def(Boss *b, int boost)
+{
+    //Straight addition of the boost
+    b->turnboost_def = boost;
+}
+
+/**
+ * Takes a Boss pointer and an integer, used to set the turnboost_vel value at the pointer.
+ * @see Boss
+ * @see Turncounter
+ * @param b The Boss pointer whose turnboost_vel value will be set.
+ * @param boost The value that will be set.
+ */
+void set_boss_turnboost_vel(Boss *b, int boost)
+{
+    //Straight addition of the boost
+    b->turnboost_vel = boost;
+}
+
+/**
+ * Takes a Boss pointer and an integer, used to set the turnboost_enr value at the pointer.
+ * @see Boss
+ * @see Turncounter
+ * @param b The Boss pointer whose turnboost_enr value will be set.
+ * @param boost The value that will be set.
+ */
+void set_boss_turnboost_enr(Boss *b, int boost)
+{
+    //Straight addition of the boost
+    b->turnboost_enr = boost;
+}
+
+/**
+ * Takes a FoeParty pointer and an integer, used to set the turnboost_atk value at the pointer.
+ * @see FoeParty
+ * @see Turncounter
+ * @param fp The FoeParty pointer whose turnboost_atk value will be set.
+ * @param boost The value that will be set.
+ */
+void set_foeparty_turnboost_atk(FoeParty *fp, int boost)
+{
+    //Straight addition of the boost
+    fp->turnboost_atk = boost;
+}
+
+/**
+ * Takes a FoeParty pointer and an integer, used to set the turnboost_def value at the pointer.
+ * @see FoeParty
+ * @see Turncounter
+ * @param fp The FoeParty pointer whose turnboost_def value will be set.
+ * @param boost The value that will be set.
+ */
+void set_foeparty_turnboost_def(FoeParty *fp, int boost)
+{
+    //Straight addition of the boost
+    fp->turnboost_def = boost;
+}
+
+/**
+ * Takes a FoeParty pointer and an integer, used to set the turnboost_vel value at the pointer.
+ * @see FoeParty
+ * @see Turncounter
+ * @param fp The FoeParty pointer whose turnboost_vel value will be set.
+ * @param boost The value that will be set.
+ */
+void set_foeparty_turnboost_vel(FoeParty *fp, int boost)
+{
+    //Straight addition of the boost
+    fp->turnboost_vel = boost;
+}
+
+/**
+ * Takes a FoeParty pointer and an integer, used to set the turnboost_enr value at the pointer.
+ * @see FoeParty
+ * @see Turncounter
+ * @param fp The FoeParty pointer whose turnboost_enr value will be set.
+ * @param boost The value that will be set.
+ */
+void set_foeparty_turnboost_enr(FoeParty *fp, int boost)
+{
+    //Straight addition of the boost
+    fp->turnboost_atk = boost;
+}
+
+//Status effect functions
+
+/**
+ * Takes a Fighter pointer and resets its status value to Normal.
+ * @see Fighter
+ * @see fighterStatus
+ * @param f The pointer whose status value will be reset.
+ */
+void resetFighterStatus(Fighter *f)
+{
+    f->status = Normal;
+}
+
+/**
+ * Takes a Enemy pointer and resets its status value to Normal.
+ * @see Enemy
+ * @see fighterStatus
+ * @param e The pointer whose status value will be reset.
+ */
+void resetEnemyStatus(Enemy *e)
+{
+    e->status = Normal;
+}
+
+/**
+ * Takes a Boss pointer and resets its status value to Normal.
+ * @see Boss
+ * @see fighterStatus
+ * @param b The pointer whose status value will be reset.
+ */
+void resetBossStatus(Boss *b)
+{
+    b->status = Normal;
+}
+
+/**
+ * Takes a size int and a pointer to integer array, initialises all the prices, depending on stats from the Equips array pointer.
+ * @see initShop()
+ * @see Equip
+ * @param size Size of both arrays.
+ * @param equipPrices Pointer to integer array for prices.
+ * @param equips Pointer to Equip pointer to influence pricing.
+ */
+void setEquipPrices(int size, int *equipPrices, Equip *equips[])
+{
+
+    for (int i = 0; i < size; i++) {
+        int *cur_price = &equipPrices[i];
+        Equip *e = equips[i];
+
+        int baseprice = e->cost;
+        int price = baseprice;
+
+        *cur_price = price;
+    }
+
+}
+
+/**
+ * Takes a size int and a pointer to integer array, initialises all the prices.
+ * @see initShop()
+ * @param size Size of both arrays.
+ * @param consumablePrices Pointer to integer array for prices.
+ * @param consumables Pointer to Consumable pointer to influence pricing.
+ */
+void setConsumablePrices(int size, int *consumablePrices,
+                         Consumable **consumables)
+{
+
+    for (int i = 0; i < size; i++) {
+        int *cur_price = &consumablePrices[i];
+        //Consumable* c = consumables[i];
+
+        //Price evaluation
+        int baseprice = 4;
+        int price = baseprice + (rand() % 5) - 1;
+
+        *cur_price = price;
+    }
+}

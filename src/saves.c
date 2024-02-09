@@ -3344,7 +3344,9 @@ saveType read_saveType(FILE *file)
     log_tag("debug_log.txt", "[DEBUG]", "Reading save type from text file.");
 
     if (file == NULL) {
+#ifdef HELAPORDO_CURSES_BUILD
         endwin();
+#endif // HELAPORDO_CURSES_BUILD
         printf("Error with file while trying to read save type!\n");
         return -1;
     }

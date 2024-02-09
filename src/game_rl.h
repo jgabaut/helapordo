@@ -53,4 +53,9 @@
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);
 void setEquipSprite(Equip * e);
+void setEquipslotSprite(Equipslot * s);
+void setConsumableSprite(Consumable * c);
+void setBossSprite(Boss * b);
+void setFighterSprite(Fighter * f);
+void setChestSprite(Chest * c);
 #endif // GAMECURSES_RL_H

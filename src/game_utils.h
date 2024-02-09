@@ -189,4 +189,47 @@ void pickName(Fighter * player);
 
 void copy_fighter(Fighter * source, Fighter * dest);
 
+effect_fun getStatusCounterFun(fighterStatus status);
+
+effect_e_fun getStatusCounterEnemyFun(fighterStatus status);
+
+effect_b_fun getStatusCounterBossFun(fighterStatus status);
+
+effect_fp_fun get_StatusCounter_FoeParty_Fun(fighterStatus status);
+
+boost_fun getStatBoostCounterFun(Stat s);
+boost_e_fun getStatBoostCounterEnemyFun(Stat s);
+boost_b_fun getStatBoostCounterBossFun(Stat s);
+boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s);
+
+void set_turnboost_atk(Fighter * f, int boost);
+void set_turnboost_def(Fighter * f, int boost);
+void set_turnboost_vel(Fighter * f, int boost);
+void set_turnboost_enr(Fighter * f, int boost);
+
+void set_enemy_turnboost_atk(Enemy * e, int boost);
+void set_enemy_turnboost_def(Enemy * e, int boost);
+void set_enemy_turnboost_vel(Enemy * e, int boost);
+void set_enemy_turnboost_enr(Enemy * e, int boost);
+
+void set_boss_turnboost_atk(Boss * b, int boost);
+void set_boss_turnboost_def(Boss * b, int boost);
+void set_boss_turnboost_vel(Boss * b, int boost);
+void set_boss_turnboost_enr(Boss * b, int boost);
+
+void set_foeparty_turnboost_atk(FoeParty * fp, int boost);
+void set_foeparty_turnboost_def(FoeParty * fp, int boost);
+void set_foeparty_turnboost_vel(FoeParty * fp, int boost);
+void set_foeparty_turnboost_enr(FoeParty * fp, int boost);
+
+void resetFighterStatus(Fighter * f);
+
+void resetEnemyStatus(Enemy * e);
+
+void resetBossStatus(Boss * b);
+
+void setEquipPrices(int size, int *equipPrices, Equip * equips[]);
+void setConsumablePrices(int size, int *consumablePrices,
+                         Consumable ** consumables);
+
 #endif

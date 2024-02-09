@@ -53,8 +53,8 @@
 #include <sys/stat.h>
 #include "game_core.h"
 #include "game_utils.h"
+#include "game_init.h"
 #include "equips.h"
-#include "consumables.h"
 #include "saves.h"
 #include "rooms.h"
 #include "specials.h"
@@ -111,56 +111,8 @@ fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Pa
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 */
 
-void resetFighterStatus(Fighter * f);
-
-void resetEnemyStatus(Enemy * e);
-
-void resetBossStatus(Boss * b);
-
-effect_fun getStatusCounterFun(fighterStatus status);
-
-effect_e_fun getStatusCounterEnemyFun(fighterStatus status);
-
-effect_b_fun getStatusCounterBossFun(fighterStatus status);
-
-effect_fp_fun get_StatusCounter_FoeParty_Fun(fighterStatus status);
-
-void set_turnboost_atk(Fighter * f, int boost);
-void set_turnboost_def(Fighter * f, int boost);
-void set_turnboost_vel(Fighter * f, int boost);
-void set_turnboost_enr(Fighter * f, int boost);
-
-void set_enemy_turnboost_atk(Enemy * e, int boost);
-void set_enemy_turnboost_def(Enemy * e, int boost);
-void set_enemy_turnboost_vel(Enemy * e, int boost);
-void set_enemy_turnboost_enr(Enemy * e, int boost);
-
-void set_boss_turnboost_atk(Boss * b, int boost);
-void set_boss_turnboost_def(Boss * b, int boost);
-void set_boss_turnboost_vel(Boss * b, int boost);
-void set_boss_turnboost_enr(Boss * b, int boost);
-
-void set_foeparty_turnboost_atk(FoeParty * fp, int boost);
-void set_foeparty_turnboost_def(FoeParty * fp, int boost);
-void set_foeparty_turnboost_vel(FoeParty * fp, int boost);
-void set_foeparty_turnboost_enr(FoeParty * fp, int boost);
-
-boost_fun getStatBoostCounterFun(Stat s);
-boost_e_fun getStatBoostCounterEnemyFun(Stat s);
-boost_b_fun getStatBoostCounterBossFun(Stat s);
-boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s);
-
-void initPerks(Fighter * f, Koliseo * kls);
 void removeEquipPerks(Equip * e, Fighter * f);
 void printActivePerks(Fighter * f);
-
-void initCounters(Fighter * f, Koliseo * kls);
-
-void initECounters(Enemy * e, Koliseo_Temp * t_kls);
-
-void initBCounters(Boss * b, Koliseo_Temp * t_kls);
-
-void initFoePartyCounters(FoeParty * fp, Koliseo_Temp * t_kls);
 
 void printCounters(Turncounter * counters[]);
 
@@ -170,7 +122,6 @@ void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
                          Boss * b);
 void setCounter(Turncounter * c, int turns);
 
-void setSkills(Fighter *f, Koliseo *kls);
 void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls);
 void setBossSkills(Boss *b, Koliseo_Temp *t_kls);
 
@@ -180,26 +131,9 @@ void applyPermboosts(Fighter * f);
 void resetArtifactsState(Fighter * f);
 void applyArtifacts(Fighter * f, Enemy * e, Boss * b, int isBoss);
 
-void initEquipSlots(Fighter * f, Koliseo * kls);
-
-void initArtifactsBag(Fighter * f, Koliseo * kls);
-
-void initWincon(Wincon * w, Path * p, winconClass class);
-
-void initPlayerStats(Fighter * player, Path * path, Koliseo * kls);
-
-void initEnemyStats(Enemy * e, Koliseo_Temp * t_kls);
-
 int getBossBoost(int lvl, bossClass bclass);
 
 void statResetBoss(Boss * b, int force);
-
-void initBossStats(Boss * b, Koliseo_Temp * t_kls);
-void prepareBoss(Boss * b, Koliseo_Temp * t_kls);
-
-void initFoePartyStats(FoeParty * fp, Koliseo_Temp * t_kls);
-void prepareFoeParty(FoeParty * fp, int total_foes, int roomindex,
-                     Koliseo_Temp * t_kls);
 
 int getEnemyBoost(int lvl, enemyClass eclass);
 
@@ -208,15 +142,7 @@ void statResetEnemy(Enemy * e, int force);
 void prepareRoomEnemy(Enemy * e, int roomindex, int enemiesInRoom,
                       int enemyindex, Koliseo_Temp * t_kls);
 
-void setEquipPrices(int size, int *equipPrices, Equip * equips[]);
-void setConsumablePrices(int size, int *consumablePrices,
-                         Consumable ** consumables);
-void initShop(Shop * s, int indexWeight, Fighter * player,
-              Koliseo_Temp * t_kls);
-void initChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
-void prepareChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
 
-void initTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
 void prepareTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
 
 void prepareRoadfork(Roadfork * r);
