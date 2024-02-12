@@ -1,6 +1,5 @@
 #include "game_debug.h"
 
-
 #ifdef HELAPORDO_CURSES_BUILD
 /**
  * Takes a Fighter and a Path pointers (and an integer for current room index) and asks user input to execute debug actions.

@@ -63,5 +63,4 @@ int handleRoom_Roadfork(Room * room, int *roadFork_value, int roomsDone,
 
 #endif // HELAPORDO_CURSES_BUILD
 
-
 #endif // GAME_ROOMS_H_

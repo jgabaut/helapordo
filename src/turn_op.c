@@ -75,7 +75,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
     int isBoss = -1;
 #ifdef HELAPORDO_RAYLIB_BUILD
     log_tag("debug_log.txt", "[DEBUG]",
-                "Logging isBoss: {%i}", isBoss);
+            "Logging isBoss: {%i}", isBoss);
 #endif
     int room_index = -1;
     int enemy_index = -1;

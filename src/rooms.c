@@ -17,7 +17,6 @@
 */
 #include "rooms.h"
 
-
 #ifdef HELAPORDO_CURSES_BUILD
 /**
  * Takes an integer for room index and a Fighter and a Path pointers and handles the progression of the room.
