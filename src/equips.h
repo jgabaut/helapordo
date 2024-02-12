@@ -4,5 +4,6 @@
 #include "game_core.h"
 
 void applyEquipPerks(Equip * e, Fighter * f);
+void removeEquipPerks(Equip * e, Fighter * f);
 
 #endif // EQUIPS_H_

@@ -4819,3 +4819,91 @@ void setCounter(Turncounter *c, int turns)
         //Handle counters already activ
     }
 }
+
+/**
+ * Takes a Fighter, an Enemy and a Boss pointers, a string denoting the consumableClass and an int for use on enemy or boss.
+ * If qty value for the Consumable is 0, we have an early return. Otherise effect is applied and qty is decreased.
+ * @see Fighter
+ * @see Enemy
+ * @see Boss
+ * @see Consumable
+ * @see consumableClass
+ * @param f The Fighter pointer at hand.
+ * @param e The Enemy pointer at hand.
+ * @param b The Boss pointer at hand.
+ * @param string The string value of consumable to use.
+ * @param isBoss The mode of use (on boss if == 1)
+ */
+void useConsumable(Fighter *f, Enemy *e, Boss *b, char *string, int isBoss)
+{
+    //Mountain of ifs? Where are my damn maps
+
+    int i = 0;
+    int check;
+    for (int j = 0; j < CONSUMABLESMAX + 1; j++) {
+        if ((check = strcmp(consumablestrings[j], string)) == 0) {
+            i = j;
+        }
+    };
+
+    Consumable *c = (Consumable *) f->consumablesBag[i];
+
+    if (c->qty == 0) {
+        return;
+    }
+    if (c->class == Potion) {
+        f->hp = f->totalhp;
+        //green();
+        //printf("\n\n\n\tYour health was restored.\n\n");
+        //white();
+    } else if (c->class == Rock) {
+        if (isBoss) {
+            b->def -= 8;
+            b->hp -= 2;
+            //printf("\n\n\n\t%s got smacked.",stringFromBossClass(b->class));
+        } else {
+            e->def -= 8;
+            e->hp -= 2;
+            //printf("\n\n\n\t%s got smacked.",stringFromEClass(e->class));
+        }
+        //red();
+        //printf("\t-8 DEF and -2 HP.\n\n");
+        //white();
+    } else if (c->class == Bread) {
+        f->vel -= 1;
+        f->def += 6;
+        f->atk += 4;
+        //printf("\n\n\n\tYou ate elvish bread.");
+        //green();
+        //printf("\t+6 DEF , +4 ATK, ");
+        //yellow();
+        //printf("-1 VEL\n\n");
+        //white();
+    } else if (c->class == Coffee) {
+        f->vel += 6;
+        f->atk += 2;
+        f->def -= 2;
+        //printf("\n\n\n\tYou drank hot coffee.");
+        //green();
+        //printf("\t+6 SPE , +2 ATK, ");
+        //yellow();
+        //printf("-2 DEF\n\n");
+        //white();
+    } else if (c->class == Powergem) {
+        //printf("\n\n\n\tYou became wiser.");
+        //green();
+        //printf("\t+25 XP\n\n");
+        //white();
+        checkremainder(f, 25);
+    } else if (c->class == Magicbean) {
+        //printf("\n\n\n\tYou aren't tired anymore.");
+        //green();
+        //printf("\tEnergy was restored\n\n");
+        //white();
+        f->energy = f->totalenergy;	//Refill energy
+    } else {
+        return;
+    }
+
+    c->qty--;
+}

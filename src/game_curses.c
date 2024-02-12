@@ -16,7 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "game_curses.h"
-#include "helapordo.h"
 
 callback_void_t callback_func_ptrs[SPECIALSMAX];
 callback_void_t callback_artifact_ptrs[ARTIFACTSMAX];

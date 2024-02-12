@@ -52,8 +52,6 @@
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 */
 
-void removeEquipPerks(Equip * e, Fighter * f);
-
 void printStats(Fighter * f);
 
 void printEStats(Enemy * e);
@@ -64,8 +62,6 @@ void printArtifactStats(Artifact * a);
 
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
-
-void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
 int getConsumableQty(Fighter * f, int n);
 

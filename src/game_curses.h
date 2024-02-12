@@ -39,8 +39,8 @@
 #include <string.h>
 #include <locale.h>
 
-#include "game_utils.h"
 #include "palette.h"
+#include "turn_op.h"
 
 #include "./animations/knight_tapis.h"
 #include "./animations/mage_spark.h"
