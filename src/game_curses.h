@@ -36,7 +36,6 @@
 #define HLPD_MIN_SCREEN_ROWS (HLPD_DEFAULT_SCREEN_ROWS+4) /**< Defines minimum y size for game screen.*/
 #define HLPD_MIN_SCREEN_COLS (HLPD_DEFAULT_SCREEN_COLS) /**< Defines minimum x size for game screen.*/
 
-#include <string.h>
 #include <locale.h>
 
 #include "palette.h"
