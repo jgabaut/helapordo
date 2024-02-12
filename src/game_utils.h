@@ -262,6 +262,7 @@ void unlockSpecial(Fighter * f);
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
 #else
 void dropEquip(Fighter * player, int beast, Rectangle* notification_window, Koliseo * kls);
+void unlockSpecial(Fighter * f);
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 #endif
@@ -285,3 +286,5 @@ int getBoost(int lvl, int luck);
 void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
 
 turnOption getTurnChoice(char *ch);
+foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
+foeTurnOption bossTurnPick(Boss * b, Fighter * f);

@@ -129,10 +129,6 @@ void printArtifactStats(Artifact * a);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
 
-foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
-
-foeTurnOption bossTurnPick(Boss * b, Fighter * f);
-
 void statReset(Fighter * player, int force);
 
 #ifdef HELAPORDO_CURSES_BUILD
