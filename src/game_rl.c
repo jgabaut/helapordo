@@ -16,7 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "game_rl.h"
-#include "helapordo_raylib.h"
 
 callback_void_t callback_func_ptrs[SPECIALSMAX];
 callback_void_t callback_artifact_ptrs[ARTIFACTSMAX];
