@@ -1,7 +1,6 @@
 #ifndef TURNOP_H_
 #define TURNOP_H_
 
-#include "game_utils.h"
 #include "game_debug.h"
 #include "game_fight.h"
 #include "saves.h"
