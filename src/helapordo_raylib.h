@@ -34,13 +34,8 @@
 #endif
 #include <locale.h>
 #include <sys/stat.h>
-#include "game_core.h"
-#include "game_utils.h"
-#include "specials.h"
-#include "artifacts.h"
 #include "game_rl.h"
-#include "sprites.h"
-#include "floors.h"
+#include "rooms.h"
 #include "anvil__helapordo.h"
 #include "game_lore.h"
 #include "game_lore_alt.h"

@@ -73,6 +73,10 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
     }
 
     int isBoss = -1;
+#ifdef HELAPORDO_RAYLIB_BUILD
+    log_tag("debug_log.txt", "[DEBUG]",
+                "Logging isBoss: {%i}", isBoss);
+#endif
     int room_index = -1;
     int enemy_index = -1;
 
@@ -332,8 +336,16 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
 
         }
         }
+#ifdef HELAPORDO_CURSES_BUILD
         handleSpecials(actor, enemy, boss, path, room_index, enemy_index,
                        isBoss);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+        assert(0 && "Implement handleSpecials() for raylib build\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         res = OP_OK;
     }
     break;
@@ -382,7 +394,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
 
         }
         }
+#ifdef HELAPORDO_CURSES_BUILD
         handleConsumables(actor, enemy, boss, isBoss);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+        assert(0 && "Implement handleConsumables() for raylib build\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         res = OP_OK;
     }
     break;
@@ -518,10 +538,18 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                     "Setting enemy_index to (%i) (OP_DEBUG), isBoss == -1",
                     enemy_index);
             isBoss = -1;
+#ifdef HELAPORDO_CURSES_BUILD
             log_tag("debug_log.txt", "[TURNOP]",
                     "Doing endwin() before debug_generic()");
             endwin();
             debug_generic(gmst, actor, path, room_index, kls, t_kls);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+            assert(0 && "Implement debug_generic() for raylib build.\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
             res = OP_OK;
         }
         break;
@@ -531,8 +559,16 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                     "Setting enemy_index to (%i) (OP_DEBUG), isBoss == 0",
                     enemy->index);
             isBoss = 0;
+#ifdef HELAPORDO_CURSES_BUILD
             debug_enemies_room(gmst, room, actor, enemy, path,
                                room_index, enemy_index, kls, t_kls);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+            assert(0 && "Implement debug_enemies_room() for raylib build.\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
             res = OP_OK;
         }
         break;
@@ -541,10 +577,18 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             log_tag("debug_log.txt", "[TURNOP]",
                     "Setting enemy_index to (0) (OP_DEBUG), isBoss == 1");
             isBoss = 1;
+#ifdef HELAPORDO_CURSES_BUILD
             log_tag("debug_log.txt", "[TURNOP]",
                     "Doing endwin() before debug_generic()");
             endwin();
             debug_generic(gmst, actor, path, room_index, kls, t_kls);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+            assert(0 && "Implement debug_generic() for raylib build.\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
             res = OP_OK;
         }
         break;
@@ -569,7 +613,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
             return res;
         }
+#ifdef HELAPORDO_CURSES_BUILD
         handleEquips(actor, path);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+        assert(0 && "Implement handleEquips() for raylib build\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         res = OP_OK;
     };
     break;
@@ -581,7 +633,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
             return res;
         }
+#ifdef HELAPORDO_CURSES_BUILD
         printActivePerks(actor);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+        assert(0 && "Implement printActivePerks() for raylib build\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         res = OP_OK;
     }
     break;
@@ -593,7 +653,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
             return res;
         }
+#ifdef HELAPORDO_CURSES_BUILD
         handleStats(actor);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+        assert(0 && "Implement handleStats() for raylib build\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         res = OP_OK;
     }
     break;
@@ -605,7 +673,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
             return res;
         }
+#ifdef HELAPORDO_CURSES_BUILD
         handleArtifacts(actor);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+        assert(0 && "Implement handleArtifacts() for raylib build\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         res = OP_OK;
     }
     break;

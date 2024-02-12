@@ -23,6 +23,7 @@
 #include "game_core.h"
 #include "game_utils.h"
 #include "palette.h"
+#include "sprites.h"
 
 #include "./animations/knight_tapis.h"
 #include "./animations/mage_spark.h"

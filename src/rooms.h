@@ -16,8 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef GAME_ROOMS_H
-#define GAME_ROOMS_H
+#ifndef GAME_ROOMS_H_
+#define GAME_ROOMS_H_
 #include "artifacts.h"
 #include "turn_op.h"
 
@@ -34,6 +34,7 @@ void initRoom_Treasure(Room * r, int roomIndex, Fighter * f,
 void initRoom_Roadfork(Room * r, int roomIndex, Fighter * f,
                        Koliseo_Temp * t_kls);
 
+#ifdef HELAPORDO_CURSES_BUILD
 int handleRoom_Home(Gamestate * gamestate, Room * room, int index, Path * p,
                     Fighter * player, loadInfo * load_info,
                     char fighter_sprites[CLASSESMAX +
@@ -60,4 +61,7 @@ int handleRoom_Treasure(Room * room, int roomsDone, Path * path, Fighter * f,
 int handleRoom_Roadfork(Room * room, int *roadFork_value, int roomsDone,
                         Path * path, Fighter * f);
 
-#endif
+#endif // HELAPORDO_CURSES_BUILD
+
+
+#endif // GAME_ROOMS_H_

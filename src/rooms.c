@@ -17,6 +17,8 @@
 */
 #include "rooms.h"
 
+
+#ifdef HELAPORDO_CURSES_BUILD
 /**
  * Takes an integer for room index and a Fighter and a Path pointers and handles the progression of the room.
  * It also takes a loadInfo pointer to a struct used for loading a game, and a 4D char array containing animations for all fighters, preloaded in the prep section of gameloop().
@@ -2983,6 +2985,8 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
 
     return FIGHTRES_NO_DMG;
 }
+
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Takes one Room pointer of class HOME and initialises all the fields.

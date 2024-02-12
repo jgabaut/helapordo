@@ -1990,4 +1990,64 @@ fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Pa
     return FIGHTRES_NO_DMG;
 }
 
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
+                      Rectangle * notification_area, Koliseo * kls)
+{
+    return -1;
+}
+
+int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
+                      Rectangle * notification_area, Koliseo * kls)
+{
+    return -1;
+}
+
+int fight(Fighter * player, Enemy * e, Rectangle * notification_area, Koliseo * kls)
+{
+    return -1;
+}
+
+int enemy_attack(Enemy * e, Fighter * target, Rectangle * notification_area,
+                 Koliseo * kls)
+{
+    return -1;
+}
+
+int defer_fight_boss(Fighter * player, Boss * b, Path * p,
+                     foeTurnOption_OP foe_op, Rectangle * notification_area,
+                     Koliseo * kls)
+{
+    return -1;
+}
+
+int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
+                     Rectangle * notification_area, Koliseo *kls)
+{
+    return -1;
+}
+
+int boss_fight(Fighter * player, Boss * b, Path * p, Rectangle * notification_area,
+               Koliseo * kls)
+{
+    return -1;
+}
+
+int boss_attack(Boss * b, Fighter * target, Path * p, Rectangle * notification_area,
+                Koliseo * kls)
+{
+    return -1;
+}
+fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, Rectangle * notification_area, Koliseo * kls)
+{
+    return FIGHTRES_NO_DMG;
+}
+fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, Rectangle * notification_area, Koliseo * kls)
+{
+    return FIGHTRES_NO_DMG;
+}
+#endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
