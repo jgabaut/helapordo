@@ -31,49 +31,11 @@
 #include <time.h>
 #include <pthread.h>
 #include <unistd.h>
-
-#ifdef HELAPORDO_CURSES_BUILD
-#ifdef _WIN32
-#include <ncursesw/panel.h>
-#include <ncursesw/menu.h>
-#include "floor_tester.h"
-#else
-#include <panel.h>
-#include <menu.h>
-#include <sys/utsname.h>
-#endif // _WIN32
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined"
-#else
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
 #include <locale.h>
 #include <sys/stat.h>
-#include "game_core.h"
-#include "game_utils.h"
-#include "game_init.h"
-#include "equips.h"
-#include "saves.h"
 #include "rooms.h"
-#include "specials.h"
-#include "artifacts.h"
-
-#ifdef HELAPORDO_CURSES_BUILD
-#include "game_curses.h"
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined"
-#else
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
-#include "sprites.h"
-#include "floors.h"
 #include "anvil__helapordo.h"
 #include "game_lore.h"
-#include "game_lore_alt.h"
 
 /*! \mainpage Helapordo index page
  *
@@ -86,37 +48,11 @@
  * Check it out on [github](https://github.com/jgabaut/helapordo).
  */
 
-/**
- * Call function associated with the passed turnOption_OP.
- * @param op The turnOption_OP to execute.
- * @param args Pointer to turnOP_args object.
- * @param kls The Koliseo used for allocations.
- */
-OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,
-              Koliseo_Temp * t_kls);
-
-#ifdef HELAPORDO_CURSES_BUILD
-fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, WINDOW * notify_win, Koliseo * kls);
-fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, WINDOW * notify_win, Koliseo * kls);
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, Rectangle * notification_area, Koliseo * kls);
-fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, Rectangle * notification_area, Koliseo * kls);
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
 /*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 */
 
 void removeEquipPerks(Equip * e, Fighter * f);
-void printActivePerks(Fighter * f);
-
-void printCounters(Turncounter * counters[]);
-
-void setCounter(Turncounter * c, int turns);
 
 void printStats(Fighter * f);
 
@@ -129,60 +65,6 @@ void printArtifactStats(Artifact * a);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
 
-void statReset(Fighter * player, int force);
-
-#ifdef HELAPORDO_CURSES_BUILD
-int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
-                      WINDOW * notify_win, Koliseo * kls);
-int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
-                      WINDOW * notify_win, Koliseo * kls);
-
-int fight(Fighter * player, Enemy * e, WINDOW * notify_win, Koliseo * kls);
-
-int enemy_attack(Enemy * e, Fighter * target, WINDOW * notify_win,
-                 Koliseo * kls);
-
-int defer_fight_boss(Fighter * player, Boss * b, Path * p,
-                     foeTurnOption_OP foe_op, WINDOW * notify_win,
-                     Koliseo * kls);
-
-int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
-                     WINDOW *notify_win, Koliseo *kls);
-
-int boss_fight(Fighter * player, Boss * b, Path * p, WINDOW * notify_win,
-               Koliseo * kls);
-
-int boss_attack(Boss * b, Fighter * target, Path * p, WINDOW * notify_win,
-                Koliseo * kls);
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
-                      Rectangle * notification_area, Koliseo * kls);
-int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
-                      Rectangle * notification_area, Koliseo * kls);
-
-int fight(Fighter * player, Enemy * e, Rectangle * notification_area, Koliseo * kls);
-
-int enemy_attack(Enemy * e, Fighter * target, Rectangle * notification_area,
-                 Koliseo * kls);
-
-int defer_fight_boss(Fighter * player, Boss * b, Path * p,
-                     foeTurnOption_OP foe_op, Rectangle * notification_area,
-                     Koliseo * kls);
-
-int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
-                     Rectangle * notification_area, Koliseo *kls);
-
-int boss_fight(Fighter * player, Boss * b, Path * p, Rectangle * notification_area,
-               Koliseo * kls);
-
-int boss_attack(Boss * b, Fighter * target, Path * p, Rectangle * notification_area,
-                Koliseo * kls);
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
 int getConsumableQty(Fighter * f, int n);
@@ -194,14 +76,6 @@ void emptyArtifacts(Fighter * player);
 void emptyEquips(Fighter * player);
 
 int retry(void);
-
-void debug_generic(Gamestate * gmst, Fighter * player, Path * p, int roomIndex,
-                   Koliseo * kls, Koliseo_Temp * t_kls);
-void debug_enemies_room(Gamestate * gmst, Room * room, Fighter * player,
-                        Enemy * e, Path * p, int roomIndex, int currentEnemyNum,
-                        Koliseo * kls, Koliseo_Temp * t_kls);
-
-void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 
 #ifdef HELAPORDO_CURSES_BUILD
 void open_chest(WINDOW * w, Chest * c, Fighter * f, Koliseo * kls,

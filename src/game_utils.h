@@ -234,6 +234,7 @@ void setEquipPrices(int size, int *equipPrices, Equip * equips[]);
 void setConsumablePrices(int size, int *consumablePrices,
                          Consumable ** consumables);
 
+void statReset(Fighter * player, int force);
 void statResetBoss(Boss * b, int force);
 void statResetEnemy(Enemy * e, int force);
 int getBossBoost(int lvl, bossClass bclass);
@@ -257,6 +258,12 @@ void printEquipStats(Equip * e);
 void printQualityColor(quality q);
 void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
 void unlockSpecial(Fighter * f);
+void printCounters(Turncounter * counters[]);
+void printActivePerks(Fighter * f);
+void applyStatus(WINDOW * notify_win, Fighter * f);
+void applyEStatus(WINDOW * notify_win, Enemy * e);
+void applyBStatus(WINDOW * notify_win, Boss * b);
+void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
@@ -288,3 +295,5 @@ void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
 turnOption getTurnChoice(char *ch);
 foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
 foeTurnOption bossTurnPick(Boss * b, Fighter * f);
+void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
+void setCounter(Turncounter * c, int turns);

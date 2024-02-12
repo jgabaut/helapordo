@@ -85,14 +85,6 @@ void boss_win_show(WINDOW * win, Boss * b, Fighter * f, int isBoss, int border);
 void boss_print_in_panel(WINDOW * win, int starty, int startx, int width,
                          Boss * b, Fighter * f, int isBoss);
 
-void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
-
-void applyStatus(WINDOW * notify_win, Fighter * f);
-
-void applyEStatus(WINDOW * notify_win, Enemy * e);
-
-void applyBStatus(WINDOW * notify_win, Boss * b);
-
 void setConsumableSprite(Consumable * c);
 void setArtifactSprite(Artifact * a);
 void setEquipslotSprite(Equipslot * s);

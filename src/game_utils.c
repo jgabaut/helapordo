@@ -2622,6 +2622,47 @@ void setConsumablePrices(int size, int *consumablePrices,
 }
 
 /**
+ * Takes a Fighter pointer and an integer used to force execution.
+ * If the force parameter is true, all checks are ignored.
+ * If enemy's hp value is at least 50% of total, and none of atk, def or vel is 0 or less, nothing happens with an early return.
+ * Otherwise, getBoost() is called to calc the level stat boost for each stat.
+ * The BaseStats pointer for the fighter's fighterClass is loaded and each one of atk, def and vel is checked accounting for level boost.
+ * If none of them is below the respective treshold of 35, 18 and 30 % of total, nothing happens.
+ * Otherwise, all of them are reset to full amount accounting for permboosts and level boost.
+ * @see Fighter
+ * @see fighterClass
+ * @see getBoost()
+ * @param player The Fighter pointer to check the stats for.
+ * @param force The integer to bypass all checks if true.
+ */
+void statReset(Fighter *player, int force)
+{
+    log_tag("debug_log.txt", "[DEBUG]",
+            "Call to statReset() with ($force) == (%i)", force);
+    if (!force && (player->hp >= 0.5 * player->totalhp)
+        && !(player->atk <= 0 || player->def <= 0 || player->vel <= 0)) {
+        return;
+    }
+
+    int boost = getBoost(player->level, player->luck);
+
+    BaseStats *base = &basestats[player->class];
+    if (force || player->vel <= 0.3 * (base->vel + boost)
+        || player->atk <= 0.35 * (base->atk + boost)
+        || player->def <= 0.18 * (base->def + boost)) {
+        player->vel = base->vel + boost + player->permboost_vel;
+        player->atk = base->atk + boost + player->permboost_atk;
+        player->def = base->def + boost + player->permboost_def;
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",player->name);
+            //white();
+        }
+    }
+}
+
+/**
  * Takes a Boss pointer and an integer used to force execution.
  * If the force parameter is true, all checks are ignored.
  * If boss's hp value is at least 40% of total, and none of atk, def or vel is 0 or less, nothing happens with an early return.
@@ -3587,6 +3628,341 @@ void unlockSpecial(Fighter *f)
     f->stats->specialsunlocked += 1;
 }
 
+//TODO update this to actually handle different types of counters and reliably print them, maybe to a ncurses window
+/**
+ * Takes a Turncounter array.
+ * For every Turncounter in the array, the values of count, innerVal, type and all the function pointers fields are printed.
+ * @see Turncounter
+ * @param counters The Turncounter array to be printed.
+ */
+void printCounters(Turncounter *counters[])
+{
+    yellow();
+    printf
+    ("%-10.10s\t%-10.10s\t%-3.3s\t%-3.3s\t%-11.11s\t%-11.11s\t%-11.11s\t%-11.11s\n",
+     "Count", "Desc", "Val", "Typ", "*(eff())", "*(eff_e())", "*(boost())",
+     "*(boost_e())");
+    for (int i = 0; i < (COUNTERSMAX + 1); i++) {
+        Turncounter *c = counters[i];
+        lightBlue();
+        printf("%-10.10i\t%-10.10s\t", c->count, c->desc);
+        strongWhite();
+        printf("(%-3.3i)\t(%-3.3i)\t", c->innerValue, c->type);
+        purple();
+        //printf("[%-11.11i]\t[%-11.11i]\t",*(c->effect_fun),*(c->effect_e_fun));
+        cyan();
+        //printf("[%-11.11i]\t[%-11.11i]\n",*(c->boost_fun), *(c->boost_e_fun));
+    };
+    white();
+}
+
+/**
+ * Takes a Figher pointer and prints all of its active perks formatted.
+ * @see Fighter
+ * @see Perk
+ * @see Equip
+ * @param f The Fighter pointer with perks to print.
+ */
+void printActivePerks(Fighter *f)
+{
+
+    WINDOW *win;
+
+    /* Initialize curses */
+    //initscr();
+    clear();
+    refresh();
+    start_color();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
+    /* Create the windows for player stats and lifetime counters */
+    win = newwin(22, 65, 1, 2);
+    keypad(win, TRUE);
+
+    /* Print a border around the windows and print a title */
+    box(win, 0, 0);
+    print_label(win, 1, 0, 35, "Perks", COLOR_PAIR(S4C_BRIGHT_YELLOW));
+    mvwaddch(win, 2, 0, ACS_LTEE);
+    mvwhline(win, 2, 1, ACS_HLINE, 63);
+    mvwaddch(win, 2, 64, ACS_RTEE);
+
+    wrefresh(win);
+
+    //attron(COLOR_PAIR(3));
+    mvprintw(23, 0, "(Press q or Enter to Exit)");
+    //attroff(COLOR_PAIR(3));
+
+    int y = 4;
+    int x = 2;
+    //int startx = 2;
+    //int width = 65;
+
+    int empty = 1;
+
+    int count = PERKSMAX + 1;
+
+    for (int i = 0; i < count; i++) {
+        Perk *p = f->perks[i];
+        if (p->innerValue > 0) {
+            empty = 0;
+
+            wattron(win, COLOR_PAIR(S4C_CYAN));
+            mvwprintw(win, y, x, " x%i %s ", p->innerValue,
+                      nameStringFromPerk(p->class));
+            wattroff(win, COLOR_PAIR(S4C_CYAN));
+            char s[250];
+            sprintf(s, " x%i %s", p->innerValue, nameStringFromPerk(p->class));
+            int l = strlen(s);
+            wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+            mvwprintw(win, y, x + l + 2, "\"%s\"",
+                      descStringFromPerk(p->class));
+            wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+            y++;
+        }
+    };
+
+    if (empty) {		//No perks are active
+        wattron(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+        mvwprintw(win, y, x, "You don't have any special power yet.");
+        wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+    }
+
+    refresh();
+
+    int picked = 0;
+    int c = -1;
+    wrefresh(win);
+
+    while (!picked && (c = wgetch(win)) != 'q') {
+        switch (c) {
+        case 10: {		/*Enter */
+            picked = 1;
+
+        };
+        break;
+        }
+    }
+    delwin(win);
+    endwin();
+}
+
+/**
+ * Takes a WINDOW pointer to print notifications to, a Fighter pointer value and applies the effect pertaining to its status value.
+ * @see Fighter
+ * @see fighterStatus
+ * @see printStatusText()
+ * @param notify_win The WINDOW pointer to call display_notification() on.
+ * @param f The Fighter pointer at hand.
+ */
+void applyStatus(WINDOW *notify_win, Fighter *f)
+{
+
+    switch (f->status) {
+    case Normal: {
+        break;
+    }
+    break;
+    case Poison: {
+
+        //Account for penicillin perk
+        //ATM multiples don't stack
+        int penicillin = f->perks[PENICILLIN]->innerValue;
+        if (penicillin > 0) {
+            return;
+        }
+
+        if (f->hp >= 4) {
+            f->hp -= 3;
+        } else {
+            f->hp = 1;	//Will this be a problem?
+        }
+        printStatusText(notify_win, Poison, f->name);
+    }
+    break;
+    case Burned: {
+        printStatusText(notify_win, Burned, f->name);
+    }
+    break;
+    case Frozen: {
+        printStatusText(notify_win, Frozen, f->name);
+    }
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
+}
+
+/**
+ * Takes a WINDOW pointer to print notifications to, a Enemy pointer value and applies the effect pertaining to its status value.
+ * @see Enemy
+ * @see fighterStatus
+ * @see printStatusText()
+ * @see stringFromEClass()
+ * @param notify_win The window pointer to call display_notification() on.
+ * @param e The Enemy pointer at hand.
+ * @see display_notification()
+ */
+void applyEStatus(WINDOW *notify_win, Enemy *e)
+{
+
+    wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
+
+    switch (e->status) {
+    case Normal: {
+        break;
+    }
+    break;
+    case Poison: {
+        if (e->hp >= 4) {
+            e->hp -= 3;
+        } else {
+            e->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(notify_win, Poison, stringFromEClass(e->class));
+    }
+    break;
+    case Burned: {
+        if (e->hp >= 5) {
+            e->hp -= 4;
+        } else {
+            e->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+
+        if (e->atk >= 3) {
+            e->atk -= 3;
+        } else {
+            e->atk = 1;
+        }
+        printStatusText(notify_win, Burned, stringFromEClass(e->class));
+    }
+    break;
+    case Frozen: {
+        if (e->vel >= 3) {
+            e->vel -= 1;
+        } else {
+            e->vel = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(notify_win, Frozen, stringFromEClass(e->class));
+    }
+
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
+
+    wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
+}
+
+/**
+ * Takes a WINDOW pointer to print notifications to, a Boss pointer value and applies the effect pertaining to its status value.
+ * @see Boss
+ * @see fighterStatus
+ * @see printStatusText()
+ * @see stringFromBossClass()
+ * @param notify_win The window pointer to call disaply_notification() on.
+ * @param b The Boss pointer at hand.
+ */
+void applyBStatus(WINDOW *notify_win, Boss *b)
+{
+
+    wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
+
+    switch (b->status) {
+    case Normal: {
+        break;
+    }
+    break;
+    case Poison: {
+        if (b->hp >= 4) {
+            b->hp -= 3;
+        } else {
+            b->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(notify_win, Poison, stringFromBossClass(b->class));
+    }
+    break;
+    case Burned: {
+        if (b->hp >= 5) {
+            b->hp -= 4;
+        } else {
+            b->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+
+        if (b->atk >= 3) {
+            b->atk -= 3;
+        } else {
+            b->atk = 1;
+        }
+        printStatusText(notify_win, Burned, stringFromBossClass(b->class));
+    }
+    break;
+    case Frozen: {
+        if (b->vel >= 3) {
+            b->vel -= 1;
+        } else {
+            b->vel = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(notify_win, Frozen, stringFromBossClass(b->class));
+    }
+
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
+
+    wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
+}
+
+/**
+ * Takes a WINDOW pointer to print notifications to, a fighterStatus value and a string of who's the entity to print the respective status message.
+ * @see fighterStatus
+ * @param notify_win The pointer to the window to use display_notification() on.
+ * @param status The fighterStatus at hand.
+ * @param subject A string with name of entity owning the fighterStatus.
+ */
+void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
+{
+    char msg[500];
+    switch (status) {
+    case Normal: {
+        return;
+    };
+    break;
+    case Poison:
+    case Burned: {
+        sprintf(msg, "%s is hurt by its %s.", subject,
+                stringFromStatus(status));
+        display_notification(notify_win, msg, 500);
+    }
+    break;
+    case Weak:
+    case Strong: {
+        sprintf(msg, "%s is feeling %s.", subject,
+                stringFromStatus(status));
+        display_notification(notify_win, msg, 500);
+    }
+    break;
+    case Frozen: {
+        sprintf(msg, "%s is frozen cold.", subject);
+        display_notification(notify_win, msg, 500);
+    }
+    break;
+    }
+}
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
@@ -4379,4 +4755,67 @@ foeTurnOption bossTurnPick(Boss *b, Fighter *f)
         exit(EXIT_FAILURE);
     }
     return pick;
+}
+
+/**
+ * Takes a Fighter, a Room and a loadInfo pointers, and prints fighter stats and a quitting message, before quitting the program and freeing Room.
+ *
+ * @see Fighter
+ * @see printStats()
+ * @see death()
+ * @param p The Fighter pointer at hand.
+ * @param room The Room pointer at hand.
+ * @param load_info The loadInfo pointer at hand.
+ * @param t_kls The Koliseo_Temp to end if possible.
+ */
+void quit(Fighter *p, Room *room, loadInfo *load_info, Koliseo_Temp *t_kls)
+{
+    char msg[500];
+    Koliseo *kls = t_kls->kls;
+#ifdef HELAPORDO_CURSES_BUILD
+    endwin();
+#endif
+    int res = system("reset");
+    sprintf(msg, "quit() system(\"reset\") res was (%i)", res);
+    log_tag("debug_log.txt", "[DEBUG]", msg);
+    //printf("\n\n\tTHANKS 4 PLAYING\n");
+    //FIXME
+    //dropping out of the Koliseo scope might render stat pointer invalid.
+    //Can't we print stats and clear the kls?
+    //printStats(p);
+    //printf("\n");
+#ifndef _WIN32
+    sprintf(msg, "Resetting Koliseo_Temp from: (%li)", t_kls->kls->offset);
+#else
+    sprintf(msg, "Resetting Koliseo_Temp from: (%lli)", t_kls->kls->offset);
+#endif
+    kls_log(kls, "DEBUG", msg);
+    death(p, load_info);
+    //FIXME
+    //I think we should free those?
+    //May cause a crash?
+    //kls_free(default_kls);
+    //kls_free(temporary_kls);
+    //FIXME:
+    //Calling this segfaults?
+    //freeRoom(room);
+    log_tag("debug_log.txt", "[DEBUG]", "Quitting program.");
+    exit(EXIT_SUCCESS);
+}
+
+/**
+ * Takes a Turncounter pointer and an integer.
+ * If the count value at the pointer is 0 (counter is inactive), the turns valueis assigned.
+ * @see Turncounter
+ * @param c The Turncounter whose count value will be set.
+ * @param turns The value to be assigned.
+ */
+void setCounter(Turncounter *c, int turns)
+{
+
+    if (c->count == 0) {	// Counter is NOT already active
+        c->count = turns;
+    } else {
+        //Handle counters already activ
+    }
 }
