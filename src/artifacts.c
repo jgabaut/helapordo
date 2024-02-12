@@ -192,3 +192,52 @@ void artifact_giantfossile(Fighter *f, Enemy *e, Boss *b, int isBoss)
         f->artifactsBag[GIANTFOSSILE]->active = 1;
     }
 }
+
+/**
+ * Takes a Fighter, a Enemy and a Boss pointer; plus an integer indicating if effects should be applied to enemy (==0) or boss (==1=.
+ * Iterates over artifacts bag and calls the inner function pointer if an artifact has positive qty and its active member is false.
+ * @see Artifact
+ * @param f A Fighter pointer.
+ * @param e An Enemy pointer.
+ * @param b The Boss pointer.
+ * @param isBoss The integer defining who is receiving the effect.
+ */
+void applyArtifacts(Fighter *f, Enemy *e, Boss *b, int isBoss)
+{
+
+    for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
+        Artifact *a = f->artifactsBag[i];
+        if (a->qty != 0 && !(a->active)) {	//We only apply the ones we have unlocked && aren't active already
+            switch (a->class) {
+            case THKSKULL: {
+                artifact_thinkingskull(f, e, b, isBoss);
+            }
+            break;
+            case TWINKIE: {
+                artifact_twinkie(f, e, b, isBoss);
+            }
+            break;
+            case WRISTBAND: {
+                artifact_wristband(f, e, b, isBoss);
+            }
+            break;
+            case BOARTAIL: {
+                artifact_boartail(f, e, b, isBoss);
+            }
+            break;
+            case CHAOSORB: {
+                artifact_chaosorb(f, e, b, isBoss);
+            }
+            break;
+            case POWERSYPHON: {
+                artifact_powersyphon(f, e, b, isBoss);
+            }
+            break;
+            case GIANTFOSSILE: {
+                artifact_giantfossile(f, e, b, isBoss);
+            }
+            break;
+            };
+        };
+    };
+}

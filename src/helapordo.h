@@ -122,31 +122,6 @@ void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
                          Boss * b);
 void setCounter(Turncounter * c, int turns);
 
-void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls);
-void setBossSkills(Boss *b, Koliseo_Temp *t_kls);
-
-void resetPermboosts(Fighter * f);
-void applyPermboosts(Fighter * f);
-
-void resetArtifactsState(Fighter * f);
-void applyArtifacts(Fighter * f, Enemy * e, Boss * b, int isBoss);
-
-int getBossBoost(int lvl, bossClass bclass);
-
-void statResetBoss(Boss * b, int force);
-
-int getEnemyBoost(int lvl, enemyClass eclass);
-
-void statResetEnemy(Enemy * e, int force);
-
-void prepareRoomEnemy(Enemy * e, int roomindex, int enemiesInRoom,
-                      int enemyindex, Koliseo_Temp * t_kls);
-
-
-void prepareTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
-
-void prepareRoadfork(Roadfork * r);
-
 void printStats(Fighter * f);
 
 void printEStats(Enemy * e);

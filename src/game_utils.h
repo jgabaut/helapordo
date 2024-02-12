@@ -232,4 +232,13 @@ void setEquipPrices(int size, int *equipPrices, Equip * equips[]);
 void setConsumablePrices(int size, int *consumablePrices,
                          Consumable ** consumables);
 
+void statResetBoss(Boss * b, int force);
+void statResetEnemy(Enemy * e, int force);
+int getBossBoost(int lvl, bossClass bclass);
+int getEnemyBoost(int lvl, enemyClass eclass);
+
+void resetPermboosts(Fighter * f);
+void applyPermboosts(Fighter * f);
+
+void resetArtifactsState(Fighter * f);
 #endif

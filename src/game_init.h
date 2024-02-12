@@ -44,4 +44,12 @@ void initShop(Shop * s, int indexWeight, Fighter * player,
               Koliseo_Temp * t_kls);
 void initTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
 void prepareChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
+void prepareRoomEnemy(Enemy * e, int roomindex, int enemiesInRoom,
+                      int enemyindex, Koliseo_Temp * t_kls);
+
+void prepareTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
+
+void prepareRoadfork(Roadfork * r);
+void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls);
+void setBossSkills(Boss *b, Koliseo_Temp *t_kls);
 #endif // GAME_INIT_H_

@@ -2620,3 +2620,258 @@ void setConsumablePrices(int size, int *consumablePrices,
         *cur_price = price;
     }
 }
+
+/**
+ * Takes a Boss pointer and an integer used to force execution.
+ * If the force parameter is true, all checks are ignored.
+ * If boss's hp value is at least 40% of total, and none of atk, def or vel is 0 or less, nothing happens with an early return.
+ * Otherwise, getBossBoost() is called to calc the level stat boost for each stat.
+ * The BossBaseStats pointer for the boss's bossClass is loaded and each one of atk, def and vel is checked accounting for level boost.
+ * If none of them is below the respective treshold of 30, 30 and 20 % of total, nothing happens.
+ * Otherwise, all of them are reset to full amount accounting for beast boost and level boost.
+ * @see Boss
+ * @see bossClass
+ * @see getBossBoost()
+ * @see BSTFACTOR
+ * @see BossBaseStats
+ * @param b The Boss pointer to check the stats for.
+ * @param force The integer to bypass all checks if true.
+ */
+void statResetBoss(Boss *b, int force)
+{
+    if (!force && (b->hp >= 0.4 * b->totalhp)
+        && !(b->atk <= 0 || b->def <= 0 || b->vel <= 0)) {
+        return;
+    }
+    int boost = getBossBoost(b->level, b->class);
+
+    float beastf = 1;
+
+    if (b->beast) {
+        beastf = BSTFACTOR;
+    }
+    BossBaseStats *base = &basebossstats[b->class];
+
+    if (force) {		//We also update hp values
+        int hpBoost =
+            boost + round(base->level * 0.75) + (base->hp / 10) +
+            ((base->def / 4) % 10);
+        b->hp = round(beastf * (base->hp + hpBoost));
+        b->totalhp = b->hp;
+    }
+
+    if (force || b->vel <= (0.3 * (base->vel + boost))
+        || (b->atk <= (0.3 * (base->atk + boost)))
+        || b->def <= (0.2 * (base->def + boost))) {
+        b->vel = round(beastf * (base->vel + boost));
+        b->atk = round(beastf * (base->atk + boost));
+        b->def = round(beastf * (base->def + boost));
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",stringFromEClass(e->class));
+            //white();
+        }
+    }
+}
+
+/**
+ * Takes an Enemy pointer and an integer used to force execution.
+ * If the force parameter is true, all checks are ignored.
+ * If enemy's hp value is at least 40% of total, and none of atk, def or vel is 0 or less, nothing happens with an early return.
+ * Otherwise, getEnemyBoost() is called to calc the level stat boost for each stat.
+ * The EnemyBaseStats pointer for the enemy's enemyClass is loaded and each one of atk, def and vel is checked accounting for level boost.
+ * If none of them is below the respective treshold of 30, 30 and 20 % of total, nothing happens.
+ * Otherwise, all of them are reset to full amount accounting for beast boost and level boost.
+ * @see Enemy
+ * @see enemyClass
+ * @see getEnemyBoost()
+ * @see BSTFACTOR
+ * @see EnemyBaseStats
+ * @param e The Enemy pointer to check the stats for.
+ * @param force The integer to bypass all checks if true.
+ */
+void statResetEnemy(Enemy *e, int force)
+{
+    log_tag("debug_log.txt", "[DEBUG]",
+            "Call to statResetEnemy() with ($force) == (%i)", force);
+    if (!force && (e->hp >= 0.4 * e->totalhp)
+        && !(e->atk <= 0 || e->def <= 0 || e->vel <= 0)) {
+        return;
+    }
+    int boost = getEnemyBoost(e->level, e->class);
+
+    float beastf = 1;
+
+    if (e->beast) {
+        beastf = BSTFACTOR;
+    }
+    EnemyBaseStats *base = &baseenemystats[e->class];
+
+    if (force) {		//We also update hp values
+        int hpBoost =
+            floor(0.5 * boost + round(base->level * 0.75) + (base->hp / 10) +
+                  ((base->def / 4) % 10));
+        e->hp = round(beastf * (base->hp + hpBoost));
+        e->totalhp = e->hp;
+    }
+
+    if (force || e->vel <= (0.3 * (base->vel + boost))
+        || (e->atk <= (0.3 * (base->atk + boost)))
+        || e->def <= (0.2 * (base->def + boost))) {
+        e->vel = round(beastf * (base->vel + boost));
+        e->atk = round(beastf * (base->atk + boost));
+        e->def = round(beastf * (base->def + boost));
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",stringFromEClass(e->class));
+            //white();
+        }
+    }
+}
+
+/**
+ * Takes one integer and a bossClass and returns the boost relative to the level delta with base boss stats, as an integer.
+ * The EnemyBossStats pointer for the boss's bossClass is loaded.
+ * If the boost is negative, returns 0.
+ * @see Boss
+ * @see bossClass
+ * @see BossBaseStats
+ * @param lvl The level to check the boost against.
+ * @param bclass The bossClass used to determine base level.
+ * @return int The boost for any given stat, at the level passed as argument.
+ */
+int getBossBoost(int lvl, bossClass bclass)
+{
+
+    BossBaseStats *base = &basebossstats[bclass];
+
+    float boost = ((lvl - base->level) * 1.25);
+    if (boost <= 0) {
+        boost = 0;
+    }
+
+    return (int)boost;
+}
+
+/**
+ * Takes one integer and an enemyClass and returns the boost relative to the level delta with base enemy stats, as an integer.
+ * The EnemyBaseStats pointer for the enemy's enemyClass is loaded.
+ * If the boost is negative, returns 0.
+ * @see Enemy
+ * @see enemyClass
+ * @see EnemyBaseStats
+ * @param lvl The level to check the boost against.
+ * @param eclass The enemyClass used to determine base level.
+ * @return int The boost for any given stat, at the level passed as argument.
+ */
+int getEnemyBoost(int lvl, enemyClass eclass)
+{
+
+    EnemyBaseStats *base = &baseenemystats[eclass];
+
+    float boost = ((lvl - base->level) * 1.25);
+    if (boost <= 0) {
+        boost = 0;
+    }
+
+    return (int)boost;
+}
+
+/**
+ * Takes a Fighter pointer and resets all of its permboost_STAT values to 0, also correctly updating the current stat values.
+ * @see Fighter
+ * @param f The fighter pointer whose permboosts will be reset.
+ */
+void resetPermboosts(Fighter *f)
+{
+    for (int i = 0; i < STATMAX + 1; i++) {
+        switch (i) {
+        case ATK: {
+            f->atk -= f->permboost_atk;
+            if (f->atk < 0) {
+                f->atk = 0;
+            };
+            f->permboost_atk = 0;
+        }
+        break;
+        case DEF: {
+            f->def -= f->permboost_def;
+            if (f->def < 0) {
+                f->def = 0;
+            };
+            f->permboost_def = 0;
+        }
+        break;
+        case VEL: {
+            f->vel -= f->permboost_vel;
+            if (f->vel < 0) {
+                f->vel = 0;
+            };
+            f->permboost_vel = 0;
+        }
+        break;
+        case ENR: {
+            f->totalenergy -= f->permboost_enr;
+            f->energy -= f->permboost_enr;
+            if (f->energy < 0) {
+                f->energy = 0;
+            };
+            f->permboost_enr = 0;
+        }
+        break;
+        };
+    };
+}
+
+/**
+ * Takes a Fighter pointer and applies all of its permboost_STAT values by adding them to the current stat values.
+ * @see Fighter
+ * @param f The fighter pointer whose permboosts will be applied.
+ */
+void applyPermboosts(Fighter *f)
+{
+    for (int i = 0; i < STATMAX + 1; i++) {
+        switch (i) {
+        case ATK: {
+            f->atk += f->permboost_atk;
+        }
+        break;
+        case DEF: {
+            f->def += f->permboost_def;
+        }
+        break;
+        case VEL: {
+            f->vel += f->permboost_vel;
+        }
+        break;
+        case ENR: {
+            f->totalenergy += f->permboost_enr;
+            f->energy += f->permboost_enr;
+        }
+        break;
+        };
+    };
+}
+
+/**
+ * Takes a Fighter pointer and Resets the active value for each Artifact in the fighter's artifactsBag array that doesn't have an always active trait.
+ * At the moment, this only excludes CHAOSORB.
+ * @see Artifact
+ * @see artifactClass
+ * @see Fighter
+ */
+void resetArtifactsState(Fighter *f)
+{
+    for (int i = 0; i < (ARTIFACTSMAX + 1); i++) {
+
+        //if (i == CHAOSORB) { //Chaosorb never gets reset
+        //      continue;
+        //};
+
+        if (f->artifactsBag[i]->qty != 0) {	//We only reset the ones we have
+            f->artifactsBag[i]->active = 0;
+        };
+    };
+}

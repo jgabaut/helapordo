@@ -32,4 +32,5 @@ void artifact_chaosorb(Fighter * f, Enemy * e, Boss * b, int mode);
 void artifact_powersyphon(Fighter * f, Enemy * e, Boss * b, int mode);
 void artifact_giantfossile(Fighter * f, Enemy * e, Boss * b, int mode);
 
+void applyArtifacts(Fighter * f, Enemy * e, Boss * b, int isBoss);
 #endif

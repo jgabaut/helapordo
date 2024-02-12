@@ -1574,3 +1574,224 @@ void prepareChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
     initChest(c, f, t_kls);
 
 }
+
+/**
+ * Takes a Boss pointer and initialises all the fields making it ready for use in battle.
+ * Calls initBossStats() after setting class and level, then forces a stat reset to update the stats
+ * with the level boost.
+ * @see Boss
+ * @see initBossStats()
+ * @param b The allocated Boss pointer to initialise.
+ * @param t_kls The Koliseo_Temp used for allocations.
+ */
+void prepareBoss(Boss *b, Koliseo_Temp *t_kls)
+{
+
+    //Randomise boss class
+    b->class = rand() % (BOSSCLASSESMAX + 1);
+
+    b->beast = 0;
+    BossBaseStats *base = &basebossstats[b->class];
+
+    b->level = base->level;
+
+    //Enemies get 1 level every 2 rooms
+    //e->level += floor(roomindex / 2) ;
+
+    //Load boss stats
+    initBossStats(b, t_kls);
+
+    //Set skill slots
+    setBossSkills(b, t_kls);
+
+    //Force load of level bonuses
+    statResetBoss(b, 1);
+
+}
+
+/**
+ * Takes a Enemy and three integers denoting current room index, how many enemies are in the room and current enemy index.
+ * The class field of the enemy is randomised according to ENEMYCLASSESMAX.
+ * If the room index is multiple of BEASTROOM and the enemy is the last one in he room, its beast field is set to 1.
+ * The EnemyBaseStats pointer for the enemy's enemyClass is loaded and the level field for the enemy is set to base level, before increasing.
+ * initEnemyStats() is called to set all stat fields and statResetEnemy() is called with force=true to apply the boosted stats to leveled enemies.
+ * @see Enemy
+ * @see enemyClass
+ * @see ENEMYCLASSESMAX
+ * @see BEASTROOM
+ * @see BSTFACTOR
+ * @see ENEMYLVLRATIO
+ * @see EnemyBaseStats
+ * @see initEnemyStats()
+ * @see statResetEnemy()
+ * @param e The Enemy pointer to prepare.
+ * @param roomindex The index of current room.
+ * @param enemiesInRoom The number of enemies in current room.
+ * @param enemyindex The index of current enemy.
+ * @param t_kls The Koliseo_Temp used for allocations.
+ */
+void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
+                      int enemyindex, Koliseo_Temp *t_kls)
+{
+
+    //Randomise enemy class
+    e->class = rand() % (ENEMYCLASSESMAX + 1);
+
+    if (G_DEBUG_ON && G_DEBUG_ENEMYTYPE_ON && (GAMEMODE != Rogue)) {	//Debug flag has a fixed enemy class when used outside of Rogue gamemode
+        log_tag("debug_log.txt", "[DEBUG]",
+                "prepareRoomEnemy(): Enemy debug flag was asserted outside of story mode, will always spawn a G_DEBUG_ENEMYTYPE (%s).",
+                stringFromEClass(G_DEBUG_ENEMYTYPE));
+        e->class = G_DEBUG_ENEMYTYPE;
+    }
+
+    //Check for spawning beast enemies
+    if ((roomindex % BEASTROOM == 0) && (enemyindex == (enemiesInRoom - 1))) {
+        //TODO: better mechanic for spawning beast enemies
+        if (((rand() % 5) == 0)) {
+            log_tag("debug_log.txt", "[DEBUG]", "Setting e->beast to 1.");
+            e->beast = 1;
+        }
+    } else {
+        e->beast = 0;
+    };
+
+    EnemyBaseStats *base = &baseenemystats[e->class];
+
+    e->level = base->level;
+
+    //Enemies get 1 level every 2 rooms
+    e->level += floor(roomindex / 2);
+
+    //Set current enemy index
+    e->index = enemyindex;
+
+    //Load enemy stats
+    initEnemyStats(e, t_kls);
+
+    //Load enemy skills
+    //
+    setEnemySkills(e, t_kls);
+
+    //Force load of level bonuses
+    statResetEnemy(e, 1);
+}
+
+/**
+ * Takes a Treasure and Fighter pointer and initialises all the treasure fields making it ready for use in battle, based on the fighter stats.
+ * Calls initTreasure() after setting class.
+ * @see Treasure
+ * @see initTreasure()
+ * @param t The allocated Treasure pointer to initialise.
+ * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for allocations.
+ */
+void prepareTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
+{
+
+    //Init treasure class
+
+    int roll = (rand() % 100) + 1;
+
+    if (roll > 70) {
+        t->class = TREASURE_CHEST;
+    } else if (roll > 50) {
+        t->class = TREASURE_ARTIFACT;
+    } else {
+        t->class = TREASURE_CONSUMABLE;
+    }
+
+    //Load Treasure stats
+    initTreasure(t, f, t_kls);
+
+}
+
+/**
+ * Takes a Roadfork pointer and initialises all the fields making it ready for use in battle.
+ * Calls initRoadfork() after setting class.
+ * @see Roadfork
+ * @see initRoadfork()
+ * @param r The allocated Roadfork pointer to initialise.
+ */
+void prepareRoadfork(Roadfork *r)
+{
+
+    //Randomise options
+    r->options[0] = rand() % (ROADFORK_OPTIONS_MAX + 1);
+    int previous = r->options[0];
+    int new = -1;
+
+    do {
+        new = rand() % (ROADFORK_OPTIONS_MAX + 1);
+
+    } while (new == previous);
+
+    previous = new;
+    r->options[1] = new;
+
+}
+
+/**
+ * Takes a Enemy pointer and prepares its skillSlot fields by allocating ENEMY_SKILL_SLOTS slots.
+ * Skill slots are initialised.
+ * @see Enemy
+ * @see Skilllot
+ * @see ENEMY_SKILL_SLOTS
+ * @see SKILLSTOTAL
+ * @see costFromSkill()
+ * @see stringFromSkill()
+ * @param t_kls The Koliseo_Temp used for allocations.
+ * @param e The Enemy pointer whose skill slots will be initialised.
+ */
+void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls)
+{
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i < ENEMY_SKILL_SLOTS; i++) {
+        kls_log(t_kls->kls, "DEBUG", "Prepping Enemy Skillslot (%i)", i);
+        Skillslot *s =
+            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, HR_Skillslot,
+                                           "Enemy Skillslot", "Enemy Skillslot");
+        s->enabled = 0;
+        s->class = i;
+        s->cost = costFromSkill(i);
+        strcpy(movename, nameStringFromSkill(i));
+        strcpy(movedesc, descStringFromSkill(i));
+        //printf("DEBUG\n%i\t%s\n",(i),stringFromSkill(i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        e->skills[i] = s;
+    };
+}
+
+/**
+ * Takes a Boss pointer and prepares its skillSlot fields by allocating BOSS_SKILL_SLOTS slots.
+ * Skill slots are initialised.
+ * @see Boss
+ * @see Skilllot
+ * @see Boss_SKILL_SLOTS
+ * @see SKILLSTOTAL
+ * @see costFromSkill()
+ * @see stringFromSkill()
+ * @param t_kls The Koliseo_Temp used for allocations.
+ * @param b The Boss pointer whose skill slots will be initialised.
+ */
+void setBossSkills(Boss *b, Koliseo_Temp *t_kls)
+{
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i < BOSS_SKILL_SLOTS; i++) {
+        kls_log(t_kls->kls, "DEBUG", "Prepping Boss Skillslot (%i)", i);
+        Skillslot *s =
+            (Skillslot *) KLS_PUSH_T_TYPED(t_kls, Skillslot, HR_Skillslot,
+                                           "Boss Skillslot", "Boss Skillslot");
+        s->enabled = 0;
+        s->class = i;
+        s->cost = costFromSkill(i);
+        strcpy(movename, nameStringFromSkill(i));
+        strcpy(movedesc, descStringFromSkill(i));
+        //printf("DEBUG\n%i\t%s\n",(i),stringFromSkill(i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        b->skills[i] = s;
+    };
+}
