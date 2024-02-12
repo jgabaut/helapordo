@@ -134,12 +134,6 @@ void printConsumablesStats(Consumable * c);
 
 void printArtifactStats(Artifact * a);
 
-void printQualityColor(quality q);
-
-void printEquipStats(Equip * e);
-
-void printSpawnMessage(Enemy * e, int roomIndex, int enemyIndex);
-
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
 
@@ -162,12 +156,7 @@ void giveXp_Boss(Fighter * player, Boss * b);
 
 void statReset(Fighter * player, int force);
 
-int dropConsumable(Fighter * player);
-int dropArtifact(Fighter * player);
-
 #ifdef HELAPORDO_CURSES_BUILD
-void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
-
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
                       WINDOW * notify_win, Koliseo * kls);
 int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
@@ -194,8 +183,6 @@ int boss_attack(Boss * b, Fighter * target, Path * p, WINDOW * notify_win,
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
 #else
-void dropEquip(Fighter * player, int beast, Rectangle * notification_area, Koliseo * kls);
-
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
                       Rectangle * notification_area, Koliseo * kls);
 int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,

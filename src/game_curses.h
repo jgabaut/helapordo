@@ -96,11 +96,8 @@ void applyEStatus(WINDOW * notify_win, Enemy * e);
 
 void applyBStatus(WINDOW * notify_win, Boss * b);
 
-void display_notification(WINDOW * w, char *text, int time);
-
 void setConsumableSprite(Consumable * c);
 void setArtifactSprite(Artifact * a);
-void setEquipSprite(Equip * e);
 void setEquipslotSprite(Equipslot * s);
 void setEnemySprite(Enemy * e);
 void setBossSprite(Boss * b);

@@ -1886,22 +1886,6 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
 }
 
 /**
- * Takes a WINDOW pointer and prints the passed text to it ith wprintw(), before sleeping for the specified amount of milliseconds.
- * @see handleRoom_Enemies()
- * @see handleRoom_Boss()
- * @param w The WINDOW pointer to print to.
- * @param text The contents of the notification.
- * @param time The display time in milliseconds
- */
-void display_notification(WINDOW *w, char *text, int time)
-{
-    wprintw(w, "\n  %s", text);
-    wrefresh(w);
-    //refresh();
-    napms(time);
-}
-
-/**
  * Takes a Enemy pointer and prepares its sprite field by copying it line by line from enemies_sprites, defined in sprites.h header.
  * @see Enemy
  * @see initEnemyStats
@@ -2003,26 +1987,6 @@ void setArtifactSprite(Artifact *a)
     } else {
         fprintf(stderr,
                 "[ERROR]    Unexpected artifactClass in setArtifactSprite().\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
- * Takes a Equip pointer and prepares its sprite field by copying it line by line from equips_sprites, defined in sprites.h header.
- * @see Equip
- * @see dropEquip
- * @see equips_sprites
- * @param e The Equip pointer whose sprite field will be initialised.
- */
-void setEquipSprite(Equip *e)
-{
-    if (e->class < EQUIPSMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(e->sprite[i], equips_sprites[e->class][i]);
-        }
-    } else {
-        fprintf(stderr,
-                "[ERROR]    Unexpected equipClass in setEquipSprite().\n");
         exit(EXIT_FAILURE);
     }
 }

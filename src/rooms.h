@@ -20,6 +20,7 @@
 #define GAME_ROOMS_H
 #include "helapordo.h"
 //#include "game_init.h"
+//#include "artifacts.h"
 
 void initRoom(Room * r, Fighter * f, int index, roomClass type, int enemyTotal,
               loadInfo * load_info, Koliseo_Temp * t_kls);

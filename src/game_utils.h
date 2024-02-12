@@ -20,6 +20,7 @@
 #define GAME_UTILS_H
 
 #ifdef HELAPORDO_CURSES_BUILD
+#include "sprites.h"
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #else
@@ -241,4 +242,22 @@ void resetPermboosts(Fighter * f);
 void applyPermboosts(Fighter * f);
 
 void resetArtifactsState(Fighter * f);
+
+void printSpawnMessage(Enemy * e, int roomIndex, int enemyIndex);
+int dropConsumable(Fighter * player);
+int dropArtifact(Fighter * player);
+
+#ifdef HELAPORDO_CURSES_BUILD
+void display_notification(WINDOW * w, char *text, int time);
+void setEquipSprite(Equip * e);
+void printEquipStats(Equip * e);
+void printQualityColor(quality q);
+void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+void dropEquip(Fighter * player, int beast, Rectangle* notification_window, Koliseo * kls);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
 #endif
