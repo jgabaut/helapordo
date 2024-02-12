@@ -1,7 +1,6 @@
 #ifndef GAME_DEBUG_H
 #define GAME_DEBUG_H
 
-#include "game_utils.h"
 #include "floors.h"
 
 #ifdef _WIN32

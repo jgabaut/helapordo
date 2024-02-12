@@ -1,9 +1,7 @@
 #ifndef SAVES_H_
 #define SAVES_H_
 
-#include "game_utils.h"
 #include "equips.h"
-#include "specials.h"
 #include "game_init.h"
 
 #ifdef HELAPORDO_CURSES_BUILD
