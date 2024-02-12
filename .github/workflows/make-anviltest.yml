@@ -13,15 +13,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: recursive
-        
+
     - name: Run sudo apt update
       run: sudo apt update -y
     - name: Install astyle
       run: sudo apt install astyle -y
-      
+
     - name: Run aclocal
       run: aclocal
     - name: Run autoconf
