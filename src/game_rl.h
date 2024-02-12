@@ -19,7 +19,6 @@
 #ifndef GAMECURSES_RL_H
 #define GAMECURSES_RL_H
 
-#include <string.h>
 #include "game_utils.h"
 #include "sprites.h"
 #include "game_animations.h"

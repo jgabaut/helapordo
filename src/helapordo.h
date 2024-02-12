@@ -24,15 +24,6 @@
 #define _POSIX_C_SOURCE 200809L
 #endif
 
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <locale.h>
-#include <sys/stat.h>
 #include "rooms.h"
 #include "anvil__helapordo.h"
 #include "game_lore.h"

@@ -18,7 +18,6 @@
 
 #ifndef FLOORS_H
 #define FLOORS_H
-#include <stdlib.h>
 #include <math.h>
 #include "game_utils.h"
 
