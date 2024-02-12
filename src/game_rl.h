@@ -20,7 +20,6 @@
 #define GAMECURSES_RL_H
 
 #include <string.h>
-#include "game_core.h"
 #include "game_utils.h"
 #include "palette.h"
 #include "sprites.h"

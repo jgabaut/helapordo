@@ -39,9 +39,7 @@
 #include <string.h>
 #include <locale.h>
 
-#include "game_core.h"
 #include "game_utils.h"
-
 #include "palette.h"
 
 #include "./animations/knight_tapis.h"
