@@ -76,6 +76,7 @@ typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
 
 #include "../koliseo/src/koliseo.h"
 #include "../sprites4curses/s4c-animate/animate.h"
+#include "palette.h" /**< Defines the color palette used for the s4c functions.*/
 
 extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
 

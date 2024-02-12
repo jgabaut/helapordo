@@ -21,7 +21,6 @@
 
 #include <string.h>
 #include "game_utils.h"
-#include "palette.h"
 #include "sprites.h"
 #include "game_animations.h"
 

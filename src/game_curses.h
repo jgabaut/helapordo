@@ -38,7 +38,6 @@
 
 #include <locale.h>
 
-#include "palette.h"
 #include "turn_op.h"
 #include "game_animations.h"
 
