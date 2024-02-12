@@ -116,19 +116,11 @@ void printActivePerks(Fighter * f);
 
 void printCounters(Turncounter * counters[]);
 
-void updateCounters(Turncounter * counters[], int isEnemy, Fighter * f,
-                    Enemy * e);
-void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
-                         Boss * b);
 void setCounter(Turncounter * c, int turns);
 
 void printStats(Fighter * f);
 
 void printEStats(Enemy * e);
-
-int getEnemyXpGain(Enemy * e);
-
-int getBossXpGain(Boss * b);
 
 void printConsumablesStats(Consumable * c);
 
@@ -137,22 +129,9 @@ void printArtifactStats(Artifact * a);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
 
-turnOption getTurnChoice(char *ch);
-
 foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
 
 foeTurnOption bossTurnPick(Boss * b, Fighter * f);
-
-int getBoost(int lvl, int luck);
-
-void unlockSpecial(Fighter * f);
-
-void onLevelUp(Fighter * player);
-
-void checkremainder(Fighter * player, int xp);
-
-void giveXp(Fighter * player, Enemy * e);
-void giveXp_Boss(Fighter * player, Boss * b);
 
 void statReset(Fighter * player, int force);
 
@@ -218,12 +197,6 @@ void emptyArtifacts(Fighter * player);
 
 void emptyEquips(Fighter * player);
 
-void death(Fighter * player, loadInfo * load_info);
-
-void e_death(Enemy * e);
-
-void b_death(Boss * b);
-
 int retry(void);
 
 void debug_generic(Gamestate * gmst, Fighter * player, Path * p, int roomIndex,
@@ -233,8 +206,6 @@ void debug_enemies_room(Gamestate * gmst, Room * room, Fighter * player,
                         Koliseo * kls, Koliseo_Temp * t_kls);
 
 void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
-
-void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
 
 #ifdef HELAPORDO_CURSES_BUILD
 void open_chest(WINDOW * w, Chest * c, Fighter * f, Koliseo * kls,

@@ -2979,6 +2979,44 @@ void display_notification(WINDOW *w, char *text, int time)
 }
 
 /**
+ * Takes a WINDOW pointer and prints to it the passed string with the passed color.
+ * Additional parameters set coordinates for the output.
+ * @param win The WINDOW pointer to print to.
+ * @param starty The integer indicating starting y coordinate.
+ * @param startx The integer indicating starting x coordinate.
+ * @param width The integer indicating panel width.
+ * @param string The string to print to the window.
+ * @param color The color to print in.
+ */
+void print_label(WINDOW *win, int starty, int startx, int width, char *string,
+                 chtype color)
+{
+    int length, x, y;
+    float temp;
+
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[CURSES]",
+                "win was NULL in boss_print_in_panel().");
+        exit(EXIT_FAILURE);
+    }
+    getyx(win, y, x);
+    if (startx != 0)
+        x = startx;
+    if (starty != 0)
+        y = starty;
+    if (width == 0)
+        width = 80;
+
+    length = strlen(string);
+    temp = (width - length) / 2;
+    x = startx + (int)temp;
+    wattron(win, color);
+    mvwprintw(win, y, x, "%s", string);
+    wattroff(win, color);
+    refresh();
+}
+
+/**
  * Takes a Equip pointer and prepares its sprite field by copying it line by line from equips_sprites, defined in sprites.h header.
  * @see Equip
  * @see dropEquip
@@ -3331,6 +3369,224 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     player->stats->equipsfound++;
 }
 
+/**
+ * Takes a Fighter pointer and asks the user to select a specialMove to unlock with a formatted text menu.
+ * From the specials field of fighter, only the SpecialSlot with the enabled falg not set are printed and selectable by user.
+ * For the Fighter, the equipboost values are also displayed.
+ * @see Fighter
+ * @see SpecialSlot
+ * @see SPECIALSMAX
+ * @see setSpecials()
+ * @see stringFromSpecial()
+ * @param f The Fighter pointer that get one of his not yet unlocked specials.
+ */
+void unlockSpecial(Fighter *f)
+{
+
+    //Thanks to u/skeeto for the suggestions.
+    ITEM *my_items[SPECIALSMAX + 2] = { 0 };
+    MENU *my_menu;
+    WINDOW *my_menu_win;
+    WINDOW *display_win;
+
+    int n_choices = 0;
+    int selection = -1;
+    int currentIndexed = -1;
+    ITEM *cur;
+
+    /* Initialize curses */
+    //initscr();
+    clear();
+    refresh();
+    start_color();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
+    /* Create menu items */
+    for (int i = 0; i < SPECIALSMAX + 1; i++) {
+        if (!(f->specials[i]->enabled)) {
+            my_items[n_choices++] =
+                new_item(nameStringFromSpecial(f->class, i), "  ");
+        }
+    }
+
+    /* Create menu */
+    my_menu = new_menu(my_items);
+
+    /* Set description off */
+    menu_opts_off(my_menu, O_SHOWDESC);
+
+    /* Create the window to be associated with the menu */
+    my_menu_win = newwin(18, 28, 2, 2);
+    keypad(my_menu_win, TRUE);
+
+    /* Set main window and sub window */
+    set_menu_win(my_menu, my_menu_win);
+    set_menu_sub(my_menu, derwin(my_menu_win, 12, 26, 4, 2));
+    set_menu_format(my_menu, 12, 1);
+
+    /* Set menu mark to the string " > " */
+    set_menu_mark(my_menu, " > ");
+
+    /* Print a border around the main window and print a title */
+    box(my_menu_win, 0, 0);
+    print_label(my_menu_win, 1, 0, 20, "New move unlocked",
+                COLOR_PAIR(S4C_CYAN));
+    mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
+    mvwhline(my_menu_win, 2, 1, ACS_HLINE, 26);
+    mvwaddch(my_menu_win, 2, 27, ACS_RTEE);
+
+    /* Post the menu */
+    post_menu(my_menu);
+    wrefresh(my_menu_win);
+
+    //attron(COLOR_PAIR(2));
+    //mvprintw(LINES - 2, 0, "Use PageUp and PageDown to scoll down or up a page of items");
+    mvprintw(23, 0, "Select a new special move to learn.");
+    //attroff(COLOR_PAIR(2));
+    //refresh();
+
+    refresh();
+
+    /* Prepare selection display window */
+    display_win = newwin(18, 40, 3, 32);
+    box(display_win, 0, 0);
+    //Update selected window
+    cur = current_item(my_menu);
+    for (int i = 0; i < SPECIALSMAX + 1; i++) {
+        int check = -1;
+        if ((check =
+                 strcmp(nameStringFromSpecial(f->class, i), item_name(cur))) == 0) {
+            currentIndexed = i;
+            break;
+        }
+    }
+    mvwprintw(display_win, 2, 2, "%s",
+              descStringFromSpecial(f->class,
+                                    f->specials[currentIndexed]->move));
+    mvwprintw(display_win, 4, 2, "Energy Cost %i",
+              f->specials[currentIndexed]->cost);
+    wrefresh(my_menu_win);
+    wrefresh(display_win);
+
+    int picked = 0;
+    int c;
+
+    while (!picked && (c = wgetch(my_menu_win))) {
+        switch (c) {
+        case KEY_DOWN: {
+            menu_driver(my_menu, REQ_DOWN_ITEM);
+            cur = current_item(my_menu);
+            //Update selected window
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    currentIndexed = i;
+                    break;
+                }
+            }
+        }
+        break;
+        case KEY_UP: {
+            menu_driver(my_menu, REQ_UP_ITEM);
+            cur = current_item(my_menu);
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    currentIndexed = i;
+                    break;
+                }
+            }
+        }
+        break;
+        case KEY_NPAGE: {
+            menu_driver(my_menu, REQ_SCR_DPAGE);
+            cur = current_item(my_menu);
+            //Update selected window
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    currentIndexed = i;
+                    break;
+                }
+            }
+        }
+        break;
+        case KEY_PPAGE: {
+            menu_driver(my_menu, REQ_SCR_UPAGE);
+            cur = current_item(my_menu);
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    currentIndexed = i;
+                    break;
+                }
+            }
+        }
+        break;
+        case 10: {		/*Enter */
+            picked = 1;
+            cur = current_item(my_menu);
+            for (int i = 0; i < SPECIALSMAX + 1; i++) {
+                int check = -1;
+                if ((check =
+                         strcmp(nameStringFromSpecial(f->class, i),
+                                item_name(cur))) == 0) {
+                    selection = i;
+                    break;
+                }
+
+                pos_menu_cursor(my_menu);
+                refresh();
+            };
+            break;
+        }
+        }
+        wclear(display_win);
+        wrefresh(display_win);
+        box(display_win, 0, 0);
+        mvwprintw(display_win, 2, 2, "%s",
+                  descStringFromSpecial(f->class,
+                                        f->specials[currentIndexed]->move));
+        mvwprintw(display_win, 4, 2, "Energy Cost %i",
+                  f->specials[currentIndexed]->cost);
+        wrefresh(my_menu_win);
+        wrefresh(display_win);
+        refresh();
+    }
+    /* Unpost and free all the memory taken up */
+    unpost_menu(my_menu);
+    free_menu(my_menu);
+    for (int k = 0; k <= n_choices; k++) {
+        free_item(my_items[k]);
+    }
+    delwin(my_menu_win);
+    delwin(display_win);
+    endwin();
+
+    int num = selection;
+
+    if (num < SPECIALSMAX + 1) {	//Check if selected move number is lower than the maximum
+        Specialslot *selected = f->specials[num];
+
+        //Check if the selected move is NOT enabled
+        if (!(selected->enabled)) {
+            //Enable the move
+            selected->enabled = 1;
+        }
+    }
+    f->stats->specialsunlocked += 1;
+}
+
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
@@ -3338,3 +3594,677 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
+
+/**
+ * Takes a Fighter and loadInfo pointers and prints fighter stats and a game over message.
+ * Consumables and Artifacts are emptied before freeing the player's specials, counters, perks and stats field.
+ * At last, the player pointer is freed.
+ * @see Fighter
+ * @see handleStats()
+ * @see emptyConsumables()
+ * @see emptyArtifacts()
+ * @param player The Fighter pointer to free.
+ * @param load_info The loadInfo pointer to free.
+ */
+void death(Fighter *player, loadInfo *load_info)
+{
+
+    //FIXME:
+    //dropping out of the Koliseo scope might render stat pointer invalid.
+    //handleStats(player);
+
+    //Free default kls
+    kls_free(default_kls);
+    //kls_log(kls,"DEBUG","Freed default KLS");
+    log_tag("debug_log.txt", "[DEBUG-KLS]", "Freed default KLS");
+
+    //Free temporary kls
+    kls_free(temporary_kls);
+    //kls_log(kls,"DEBUG","Freed temporary KLS");
+    log_tag("debug_log.txt", "[DEBUG-KLS]", "Freed temporary KLS");
+
+    /*
+       free(load_info);
+       sprintf(msg,"Freed loadInfo.\n");
+       log_tag("debug_log.txt","[FREE]",msg);
+     */
+
+    //emptyConsumables(player);
+    //emptyArtifacts(player);
+    /*
+       //Free player special slots
+       for (int i=0; i < (SPECIALSMAX + 1) ; i++) {
+       free(player->specials[i]);
+       sprintf(msg,"Freed player special %i.",i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+       log_tag("debug_log.txt","[FREE]","Done.\n");
+     */
+
+    /*
+       //Free player equipbag
+       int total = player->equipsBagOccupiedSlots;
+       for (int i=0; i < (total ) ; i++) {
+       Equip* e = (Equip*) player->equipsBag[i];
+       int perkscount = e->perksCount;
+       if (perkscount > 0) {
+       for (int j=0; j < perkscount; j++) {
+       free(e->perks[j]);
+       sprintf(msg,"Freed equip %i perk %i.", i, j);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+       }
+       free(e);
+       sprintf(msg,"Freed equip %i.\n", i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+       log_tag("debug_log.txt","[FREE]","Done.\n");
+     */
+
+    /*
+       //Free player consumablebag
+       int cons_total = CONSUMABLESMAX+1;
+       for (int i=0; i < cons_total ; i++) {
+       Consumable* c = (Consumable*) player->consumablesBag[i];
+       sprintf(msg,"Freed consumable %i.", i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       free(c);
+       }
+       log_tag("debug_log.txt","[FREE]","Done.\n");
+     */
+
+    /*
+       //Free player equip slots
+       for (int i=0; i < (EQUIPZONES + 1) ; i++) {
+       Equipslot* s = (Equipslot*) player->equipslots[i];
+
+       int perkscount = -1;
+
+       if (s->active) { perkscount = s->item->perksCount;};
+       if (perkscount > 0) {
+       for (int i=0; i < perkscount; i++) {
+       free(s->item->perks[i]);
+       }
+       free(s->item);
+       }
+
+       free(s);
+       sprintf(msg,"Freed equipslot %i.", i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+       log_tag("debug_log.txt","[FREE]","Done.\n");
+     */
+
+    /*
+       //Free player artifactsbag
+       int art_total = CONSUMABLESMAX+1;
+       for (int i=0; i < art_total ; i++) {
+       Artifact* a = (Artifact*) player->artifactsBag[i];
+       free(a);
+       sprintf(msg,"Freed artifact %i.", i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+       log_tag("debug_log.txt","[FREE]","Done.\n");
+     */
+
+    /*
+       //Free player turnCounters
+       for (int i=0; i < (COUNTERSMAX + 1) ; i++) {
+       Turncounter* c = (Turncounter*) player->counters[i];
+       free(c->desc);
+       sprintf(msg,"Freed turncounter %i desc.", i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       free(c);
+       sprintf(msg,"Freed turncounter %i.\n", i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+       log_tag("debug_log.txt","[FREE]","Done.\n");
+     */
+
+    /*
+       //Free player perks
+       for (int i=0; i < (PERKSMAX + 1) ; i++) {
+       free(player->perks[i]);
+       sprintf(msg,"Freed player perk %i.", i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+       log_tag("debug_log.txt","[FREE]","Done.\n");
+     */
+
+    //free(player->stats);
+    //log_tag("debug_log.txt","[FREE]","Freed player stats.\n");
+}
+
+/**
+ * Takes a Enemy pointer and frees its allocated memory.
+ * The counters field is freed before the enemy pointer.
+ * @see Enemy
+ * @param e The Enemy pointer to free.
+ */
+void e_death(Enemy *e)
+{
+
+    //Free enemy special slots
+    //for (int i=0; i < SPECIALSMAX + 1 ; i++) {
+    //      free(player->specials[i]);
+    //}
+
+    /*
+       //Free enemy turnCounters
+       for (int i=0; i < (COUNTERSMAX + 1) ; i++) {
+       Turncounter* c = (Turncounter*) e->counters[i];
+       sprintf(msg,"Freed enemy turncounter %i desc:    %s.",i, c->desc);
+       log_tag("debug_log.txt","[FREE]",msg);
+       if (c->desc == NULL) {
+       log_tag("debug_log.txt","[ERROR]", "Enemy turncounter desc was null.\n");
+       } else {
+       char* desc_to_free = c->desc;
+       free(desc_to_free);
+       }
+       free(c);
+       sprintf(msg,"Freed enemy turncounter %i.\n",i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+     */
+
+    //sprintf(msg,"Freeing enemy %s",stringFromEClass(e->class));
+    //log_tag("debug_log.txt","[FREE]",msg);
+    //free(e);
+    log_tag("debug_log.txt", "[TODO]", "[%s]: remove this empty function.",
+            __func__);
+}
+
+/**
+ * Takes a Boss pointer and frees its allocated memory.
+ * The counters field is freed before the boss pointer.
+ * @see Boss
+ * @param b The Boss pointer to free.
+ */
+void b_death(Boss *b)
+{
+
+    //TODO
+    //Remove this bs
+    log_tag("debug_log.txt", "[DEBUG]", "b_death():  I'm doing nothing.");
+
+    //Free boss special slots
+    //for (int i=0; i < SPECIALSMAX + 1 ; i++) {
+    //      free(player->specials[i]);
+    //}
+    //Free boss turnCounters
+    /*
+       for (int i=0; i < (COUNTERSMAX + 1) ; i++) {
+       Turncounter* c = (Turncounter*) b->counters[i];
+       sprintf(msg,"Freed boss turncounter %i desc:    %s.",i, c->desc);
+       log_tag("debug_log.txt","[FREE]",msg);
+       free(c->desc);
+       free(c);
+       sprintf(msg,"Freed boss turncounter %i.\n",i);
+       log_tag("debug_log.txt","[FREE]",msg);
+       }
+     */
+    //free(b);
+}
+
+/**
+ * Takes a Turncounter array, an integer, a Fighter pointer and an Enemy pointer.
+ * For every Turncounter in the array count value is checked, and when it's equal to 1, the function pointer relevant to the type value of the Counter is called. Depending on the isEnemy input value, the function call will be for the Fighter or Enemy version (and the according pointer from the input will be passed to the called function).
+ * When the count value is 0, counters are considered inactive, so when the count value is not 1, it is lowered by 1 if it's positive.
+ * @see Fighter
+ * @see Enemy
+ * @see Turncounter
+ * @see Countertype
+ * @see COUNTERSMAX
+ * @see counterIndexes
+ * @param counters The Turncounter array to be updated.
+ * @param isEnemy Dictates if the check is done for an Enemy or a Fighter.
+ * @param f The Fighter pointer whose counters field will be updated if isEnemy is false.
+ * @param e The Enemy pointer whose counters field will be updated if isEnemy is true.
+ */
+void updateCounters(Turncounter *counters[], int isEnemy, Fighter *f, Enemy *e)
+{
+    for (int i = 0; i < COUNTERSMAX + 1; i++) {
+
+        Turncounter *c = counters[i];
+        if (c->count == 1) {	//Counter is about to expire so we call the correct function:
+            switch (c->type) {
+            case CNT_STATUS: {	//Callback for status counters
+
+                if (!isEnemy) {
+                    (c->effect_fun) (f);
+                    //green();
+                    //printf("\t%s status returned to normal.\n",f->name);
+                    //white();
+                } else {	//Enemy function
+                    (c->effect_e_fun) (e);
+                    //lightRed();
+                    //printf("\t%s status returned to normal.\n",stringFromEClass(e->class));
+                    //white();
+                    //TODO
+                    //Display notification to win
+                    log_tag("debug_log.txt", "[DEBUG-COUNTER]",
+                            "Status reset for %s.",
+                            stringFromEClass(e->class));
+                }
+            }
+            break;
+            case CNT_ATKBOOST:
+            case CNT_DEFBOOST:
+            case CNT_VELBOOST:
+            case CNT_ENRBOOST: { //Callback for stat boosts
+                if (!isEnemy) {
+                    (c->boost_fun) (f, 0);	//Call ~setPermBoost(STAT)~ with value 0
+                    log_tag("debug_log.txt", "[DEBUG-COUNTER]",
+                            "Applied boost function for Fighter.");
+                } else {
+                    assert(0 && "UNACCESSIBLE CALL.\n");
+                    (c->boost_e_fun) (e, 0);	//Call ~setPermBoost(STAT)~ with value 0
+                }
+            }
+            break;
+            }
+
+            //Set counter to zero
+            c->count = 0;
+            c->innerValue = 0;
+        } else if (c->count > 1) {	//We simply advance the count
+            log_tag("debug_log.txt", "[DEBUG-COUNTER]",
+                    "Advancing counter %i for %s.", i,
+                    (isEnemy ? "Enemy" : "Fighter"));
+            c->count -= 1;
+        }
+    };
+}
+
+/**
+ * Takes a Turncounter array, an integer, a Fighter pointer and a Boss pointer.
+ * For every Turncounter in the array count value is checked, and when it's equal to 1, the function pointer relevant to the type value of the Counter is called. Depending on the isBoss input value, the function call will be for the Fighter or Boss version (and the according pointer from the input will be passed to the called function).
+ * When the count value is 0 Counters are considered inactive, so when the count value is not 1, it is lowered by 1 if it's positive.
+ * @see Fighter
+ * @see Boss
+ * @see Turncounter
+ * @see Countertype
+ * @see COUNTERSMAX
+ * @see counterIndexes
+ * @param counters The Turncounter array to be updated.
+ * @param isBoss Dictates if the check is done for a Boss or a Fighter.
+ * @param f The Fighter pointer whose counters field will be updated if isBoss is false.
+ * @param b The Boss pointer whose counters field will be updated if isBoss is true.
+ */
+void updateCounters_Boss(Turncounter *counters[], int isBoss, Fighter *f,
+                         Boss *b)
+{
+    for (int i = 0; i < COUNTERSMAX + 1; i++) {
+
+        Turncounter *c = counters[i];
+        if (c->count == 1) {	//Counter is about to expire so we call the correct function:
+            switch (c->type) {
+            case CNT_STATUS: {	//Callback for status counters
+
+                //TODO
+                //Add notification to window
+                if (!isBoss) {
+                    (c->effect_fun) (f);
+                    //green();
+                    //printf("\t%s status returned to normal.\n",f->name);
+                    //white();
+                } else {	//Boss function
+                    (c->effect_b_fun) (b);
+                    //lightRed();
+                    //printf("\t%s status returned to normal.\n",stringFromBossClass(b->class));
+                    //white();
+                }
+            }
+            break;
+            case CNT_ATKBOOST:
+            case CNT_DEFBOOST:
+            case CNT_VELBOOST:
+            case CNT_ENRBOOST: { //Callback for stat boosts
+                if (!isBoss) {
+                    (c->boost_fun) (f, 0);	//Invoke ~setPermBoost(STAT)~ with value 0
+                } else {
+                    assert(0 && "UNACCESSIBLE CALL.\n");
+                    (c->boost_b_fun) (b, 0);	//Call ~setPermBoost(STAT)~ with value 0
+                }
+            }
+            break;
+            }
+
+            //Set counter to zero
+            c->count = 0;
+            c->innerValue = 0;
+        } else if (c->count > 1) {	//We simply advance the count
+            c->count -= 1;
+        }
+    };
+}
+
+/**
+ * Takes a Fighter pointer and the amount of xp to add.
+ * Current level xp is managed by this function, including how much xp is needed to level up again. The values are stored in the fighter struct.
+ * Thresholds for each level are checked and eventually onLevelUp() is called, with recursion on this function after.
+ * @see Fighter
+ * @see onLevelUp()
+ * @param player The Fighter pointer that gets xp.
+ * @param xp The amount of xp.
+ */
+void checkremainder(Fighter *player, int xp)
+{
+    int curr = player->currentlevelxp;
+    int tot = player->totallevelxp;
+
+    //TODO: Print notifications to a passed WINDOW
+
+    if (curr + xp >= tot) {
+        player->totalxp += xp;
+        //if (xp !=0) printf("\n\t%s obtained %i xp.", player->name, xp);
+        player->level++;
+
+        //cyan();
+        //printf("\n\t%s reached Lvl. %i !", player->name, player->level);
+        //white();
+
+        //Stats gains on level up
+        onLevelUp(player);
+
+        player->currentlevelxp = abs((tot - curr - xp));
+        int nextLevelMoreXp =
+            round(1.75 * (player->level + 1)) + player->level + 1;
+        player->totallevelxp = (tot / player->level) + nextLevelMoreXp;
+        checkremainder(player, 0);
+    } else {
+        player->currentlevelxp += xp;
+        player->totalxp += xp;
+        if (xp != 0) {
+            //printf("\n\t%s obtained %i xp.", player->name, xp);
+        }
+    }
+}
+
+/**
+ * Takes a Fighter and a Enemy pointers and handles xp gain by fighter.
+ * @see Fighter
+ * @see Enemy
+ * @see getEnemyXpGain()
+ * @see checkremainder()
+ * @param player The Fighter pointer that gets xp.
+ * @param e The Enemy pointer that gives xp.
+ */
+void giveXp(Fighter *player, Enemy *e)
+{
+
+    int xp = getEnemyXpGain(e);
+
+    checkremainder(player, xp);
+}
+
+/**
+ * Takes a Fighter and a Boss pointers and handles xp gain by fighter.
+ * @see Fighter
+ * @see Boss
+ * @see getBossXpGain()
+ * @see checkremainder()
+ * @param player The Fighter pointer that gets xp.
+ * @param b The Boss pointer that gives xp.
+ */
+void giveXp_Boss(Fighter *player, Boss *b)
+{
+
+    int xp = getBossXpGain(b);
+
+    checkremainder(player, xp);
+}
+
+/**
+ * Takes a Enemy pointer and returns its xp gain as sum of xp field value and level.
+ * @see Enemy
+ * @param e The Enemy pointer.
+ * @return int The xp gain.
+ */
+int getEnemyXpGain(Enemy *e)
+{
+
+    int xp = e->xp + e->level;
+    return xp;
+}
+
+/**
+ * Takes a Boss pointer and returns its xp gain as sum of xp field value and level.
+ * @see Boss
+ * @param b The Boss pointer.
+ * @return int The xp gain.
+ */
+int getBossXpGain(Boss *b)
+{
+
+    int xp = b->xp + b->level;
+    return xp;
+}
+
+/**
+ * Takes a Fighter pointer and updated its stats.
+ * getBoost() is called to get the stat boost for current level, which is then applyed to atk, def and vel; while hp gets first multiplied by 1.13 and then gets the boost added.
+ * The totalenergy value is increased by player level over 5.
+ * Hp and energy are replenished.
+ * If the level is multiple of SPECIALLVLRATIO and the player still has at least one SpecialSlot not enabled, unlockSpecial() is called.
+ * @see Fighter
+ * @see getBoost()
+ * @see BaseStats
+ * @see SpecialSlot
+ * @see SPECIALSMAX
+ * @see SPECIALLVLRATIO
+ * @see unlockSpecial()
+ * @param player The Fighter pointer that levels up.
+ */
+void onLevelUp(Fighter *player)
+{
+    int boost = getBoost(player->level, player->luck);
+
+    BaseStats *base = &basestats[player->class];
+
+    player->atk = (base->atk + boost);
+    player->def = (base->def + boost);
+    player->vel = (base->vel + boost);
+    player->totalhp = (base->hp * 1.13) + boost;
+
+    int energyboost = player->level / 5;	//Energy grows by lvl/5 on each lvl up
+    player->totalenergy =
+        base->totalenergy + energyboost + player->permboost_enr;
+
+    player->hp = player->totalhp;	//Cure on level up
+    player->energy = player->totalenergy;	//Refill energy on level up
+
+    //Check if you get a new special move
+    if (player->level % SPECIALLVLRATIO == 0
+        && (player->stats->specialsunlocked < (SPECIALSMAX + 1))) {
+        unlockSpecial(player);
+    }
+
+    log_tag("debug_log.txt", "[LEVELUP]", "Player leveled up.");
+
+    /*
+       lightCyan();
+       printf("\n\n\tYour wounds were healed.");
+       printf("\n\tYour energy is replenished.");
+       white();
+     */
+}
+
+/**
+ * Takes two integers for level to calc against and luck, and returns the boost relative to the level with luck variations, as an integer.
+ * At level 1, returns 0.
+ * @param lvl The level to check the boost against.
+ * @param luck The luck value to influence calcs.
+ * @return int The boost for any given stat, at the level passed as argument.
+ */
+int getBoost(int lvl, int luck)
+{
+
+    float boost = (lvl * 1.25F) + ((luck % 2) * 2);
+
+    if (lvl < 2) {
+        boost = 1.0;		// Evitare conflitti
+    }
+
+    return (int)boost;
+}
+
+/**
+ * Takes a Fighter pointer and deleted all the equips not in use, granting a payment to the Fighter balance.
+ * @see Shop
+ * @see handleRoom_Shop()
+ * @see Fighter
+ * @param f The Fighter pointer at hand.
+ */
+void sell_all_equips(Fighter *f, Koliseo_Temp *t_kls)
+{
+    char msg[200];
+
+    Equip *saved_equips[EQUIPZONES + 1];
+    int saved_count = 0;
+    Koliseo *kls = t_kls->kls;
+
+    for (int i = 0; i < EQUIPZONES + 1; i++) {
+        if (f->equipslots[i]->active) {
+            sprintf(msg,
+                    "sell_all_equips(): Prepping Equip to save f->equipslot[%i]",
+                    i);
+            log_tag("debug_log.txt", "[DEBUG]", msg);
+            kls_log(kls, "DEBUG", msg);
+            Equip *saved =
+                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, HR_Equip, "Equip",
+                                           msg);
+            Equip *to_save = f->equipslots[i]->item;
+
+            saved->class = to_save->class;
+            saved->type = to_save->type;
+            strcpy(saved->name, to_save->name);
+            strcpy(saved->desc, to_save->desc);
+            saved->qty = to_save->qty;
+            saved->equipped = 0;	//Will be set after when re-equipped
+            saved->level = to_save->level;
+            saved->atk = to_save->atk;
+            saved->def = to_save->def;
+            saved->vel = to_save->vel;
+            saved->enr = to_save->enr;
+            saved->bonus = to_save->bonus;
+            saved->perksCount = 0;	//Will be set during perks copy
+            saved->qual = to_save->qual;
+            saved->equip_fun = to_save->equip_fun;
+
+            for (int j = 0; j < to_save->perksCount; j++) {
+                sprintf(msg,
+                        "sell_all_equips(): Prepping Perk (%i) to save f->equipslot[%i]",
+                        j, i);
+                log_tag("debug_log.txt", "[DEBUG]", msg);
+                kls_log(kls, "DEBUG", msg);
+                Perk *save_pk =
+                    (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, HR_Perk, "Perk",
+                                              msg);
+                save_pk->class = to_save->perks[j]->class;
+                strcpy(save_pk->name, to_save->perks[j]->name);
+                strcpy(save_pk->desc, to_save->perks[j]->desc);
+                save_pk->innerValue = to_save->perks[j]->innerValue;
+                saved->perks[saved->perksCount] = save_pk;
+                saved->perksCount++;
+            }
+
+            for (int j = 0; j < 8; j++) {
+                strcpy(saved->sprite[j], to_save->sprite[j]);
+            }
+
+            saved_equips[saved_count] = saved;
+            saved_count++;
+        }
+    }
+
+    int deleted_count = 0;
+    int pay = 0;
+
+    for (int i = 0; i < f->equipsBagOccupiedSlots; i++) {
+        Equip *toDel = f->equipsBag[i];
+        pay += toDel->cost / 2;
+        //int perksTot = toDel->perksCount;
+        /*
+           for (int j = 0; j < perksTot; j++) {
+           Perk* pk = toDel->perks[j];
+           free(pk);
+           }
+         */
+        //FIXME: are we deleting this correctly?
+        //free(toDel);
+        deleted_count++;
+    }
+
+    f->equipsBagOccupiedSlots -= deleted_count;
+
+    for (int i = 0; i < saved_count; i++) {
+        f->equipsBag[i] = saved_equips[i];
+        f->equipslots[i]->item = saved_equips[i];
+        saved_equips[i]->equipped = 1;
+        f->equipsBagOccupiedSlots++;
+    }
+    f->earliestBagSlot = f->equipsBagOccupiedSlots;
+
+    f->balance += pay;
+
+}
+
+/**
+ * Returns the chosen option as a turnOption.
+ * @param ch A string representing the turn choice.
+ * @return The chosen turnOption value representing turn action.
+ */
+turnOption getTurnChoice(char *ch)
+{
+    int comp = 999;
+
+    log_tag("debug_log.txt", "[TURNPICK]", "Turnchoice string was (%s)", ch);
+    turnOption pick = INVALID;
+
+    while (pick == INVALID) {
+        if ((comp = strcmp(ch, "Fight")) == 0) {
+            pick = FIGHT;
+        } else if ((comp = strcmp(ch, "New game")) == 0) {
+            pick = NEW_GAME;
+        } else if ((comp = strcmp(ch, "Load save")) == 0) {
+            pick = LOAD_GAME;
+        } else if ((comp = strcmp(ch, "Special")) == 0) {
+            pick = SPECIAL;
+        } else if ((comp = strcmp(ch, "Consumables")) == 0) {
+            pick = CONSUMABLE;
+        } else if ((comp = strcmp(ch, "Artifacts")) == 0) {
+            pick = ARTIFACTS;
+        } else if ((comp = strcmp(ch, "Equips")) == 0) {
+            pick = EQUIPS;
+        } else if ((comp = strcmp(ch, "Perks")) == 0) {
+            pick = PERKS;
+        } else if ((comp = strcmp(ch, "Stats")) == 0) {
+            pick = STATS;
+        } else if ((comp = strcmp(ch, "Save")) == 0) {
+            pick = SAVE;
+        } else if ((comp = strcmp(ch, "Debug")) == 0) {
+            pick = DEBUG;
+        } else if ((comp = strcmp(ch, "Quit")) == 0) {
+            pick = QUIT;
+        } else if ((comp = strcmp(ch, "Explore")) == 0) {
+            pick = EXPLORE;
+        } else if ((comp = strcmp(ch, "Tutorial")) == 0) {
+            pick = TUTORIAL;
+        } else if ((comp = strcmp(ch, "Close")) == 0) {
+            pick = CLOSE_MENU;
+        } else {
+            pick = INVALID;
+        }
+    }
+
+    log_tag("debug_log.txt", "[TURNOPT]", "Pick was: (%i)", pick);
+
+    if (pick == INVALID) {
+        fprintf(stderr, "Error: unexpected turn choice value");
+        log_tag("debug_log.txt", "[ERROR]",
+                "Unexpected turn choice in getTurnChoice(), quitting");
+        exit(EXIT_FAILURE);
+    }
+    return pick;
+}

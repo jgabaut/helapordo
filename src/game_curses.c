@@ -1632,44 +1632,6 @@ void boss_print_in_panel(WINDOW *win, int starty, int startx, int width,
 }
 
 /**
- * Takes a WINDOW pointer and prints to it the passed string with the passed color.
- * Additional parameters set coordinates for the output.
- * @param win The WINDOW pointer to print to.
- * @param starty The integer indicating starting y coordinate.
- * @param startx The integer indicating starting x coordinate.
- * @param width The integer indicating panel width.
- * @param string The string to print to the window.
- * @param color The color to print in.
- */
-void print_label(WINDOW *win, int starty, int startx, int width, char *string,
-                 chtype color)
-{
-    int length, x, y;
-    float temp;
-
-    if (win == NULL) {
-        log_tag("debug_log.txt", "[CURSES]",
-                "win was NULL in boss_print_in_panel().");
-        exit(EXIT_FAILURE);
-    }
-    getyx(win, y, x);
-    if (startx != 0)
-        x = startx;
-    if (starty != 0)
-        y = starty;
-    if (width == 0)
-        width = 80;
-
-    length = strlen(string);
-    temp = (width - length) / 2;
-    x = startx + (int)temp;
-    wattron(win, color);
-    mvwprintw(win, y, x, "%s", string);
-    wattroff(win, color);
-    refresh();
-}
-
-/**
  * Takes a WINDOW pointer to print notifications to, a fighterStatus value and a string of who's the entity to print the respective status message.
  * @see fighterStatus
  * @param notify_win The pointer to the window to use display_notification() on.

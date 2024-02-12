@@ -24,6 +24,7 @@
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #else
+#include <menu.h>
 #include <panel.h>
 #endif // _WIN32
 #else
@@ -249,10 +250,13 @@ int dropArtifact(Fighter * player);
 
 #ifdef HELAPORDO_CURSES_BUILD
 void display_notification(WINDOW * w, char *text, int time);
+void print_label(WINDOW * win, int starty, int startx, int width, char *string,
+                 chtype color);
 void setEquipSprite(Equip * e);
 void printEquipStats(Equip * e);
 void printQualityColor(quality q);
 void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
+void unlockSpecial(Fighter * f);
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
@@ -261,3 +265,23 @@ void dropEquip(Fighter * player, int beast, Rectangle* notification_window, Koli
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 #endif
+
+void death(Fighter * player, loadInfo * load_info);
+void e_death(Enemy * e);
+void b_death(Boss * b);
+
+void updateCounters(Turncounter * counters[], int isEnemy, Fighter * f,
+                    Enemy * e);
+void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
+                         Boss * b);
+
+void checkremainder(Fighter * player, int xp);
+void giveXp(Fighter * player, Enemy * e);
+void giveXp_Boss(Fighter * player, Boss * b);
+int getEnemyXpGain(Enemy * e);
+int getBossXpGain(Boss * b);
+void onLevelUp(Fighter * player);
+int getBoost(int lvl, int luck);
+void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
+
+turnOption getTurnChoice(char *ch);

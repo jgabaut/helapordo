@@ -85,9 +85,6 @@ void boss_win_show(WINDOW * win, Boss * b, Fighter * f, int isBoss, int border);
 void boss_print_in_panel(WINDOW * win, int starty, int startx, int width,
                          Boss * b, Fighter * f, int isBoss);
 
-void print_label(WINDOW * win, int starty, int startx, int width, char *string,
-                 chtype color);
-
 void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
 
 void applyStatus(WINDOW * notify_win, Fighter * f);
