@@ -16,6 +16,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/*! \mainpage Helapordo index page
+ *
+ * \section intro_sec Intro
+ *
+ * Helapordo is roguelike terminal game, using ncurses.
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ *
+ * Check it out on [github](https://github.com/jgabaut/helapordo).
+ */
+
 #ifndef HELAPORDO_H
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) //We need C11
 #define HELAPORDO_H
@@ -29,17 +40,6 @@
 #include "rooms.h"
 #include "anvil__helapordo.h"
 #include "game_lore.h"
-
-/*! \mainpage Helapordo index page
- *
- * \section intro_sec Intro
- *
- * Helapordo is roguelike terminal game, using ncurses.
- *
- * SPDX-License-Identifier: GPL-3.0-only
- *
- * Check it out on [github](https://github.com/jgabaut/helapordo).
- */
 
 /*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
