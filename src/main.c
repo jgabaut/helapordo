@@ -17,7 +17,6 @@
 */
 #ifdef HELAPORDO_CURSES_BUILD
 #include "helapordo.h"
-#include "floor_tester.h"
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."

@@ -22,7 +22,9 @@
 
 #ifndef _WIN32
 #define _POSIX_C_SOURCE 200809L
-#endif
+#else
+#include "floor_tester.h"
+#endif // _WIN32
 
 #include "rooms.h"
 #include "anvil__helapordo.h"

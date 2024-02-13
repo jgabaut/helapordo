@@ -23,6 +23,7 @@
 #include "sprites.h"
 #ifdef _WIN32
 #include <ncursesw/panel.h>
+#include <ncursesw/menu.h>
 #else
 #include <menu.h>
 #include <panel.h>
