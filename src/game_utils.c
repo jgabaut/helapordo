@@ -644,192 +644,6 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
     }
 }
 
-#ifdef HELAPORDO_CURSES_BUILD
-/**
- * Inits the passed (preallocated) Gamestate with the passed pointers.
- * @param gmst The allocated Gamestate to init.
- * @param start_time The start time for current game.
- * @param stats Game stats.
- * @param wincon Game Wincon.
- * @param path Game Path.
- * @param player Game main player.
- * @param gamemode Picked gamemode.
- * @param screen The main screen from initscr().
- */
-void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen)
-{
-    if (gmst == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (stats == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "countStats was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (wincon == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Wincon was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (path == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Path was NULL in %s()", __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (player == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Player was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (gamemode != Story && gamemode != Rogue) {
-        log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
-                gamemode);
-        exit(EXIT_FAILURE);
-    }
-    if (screen == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Screen was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    gmst->start_time = start_time;
-    gmst->stats = stats;
-    gmst->current_fighters = -1;
-    gmst->current_roomtype = -1;
-    gmst->current_room_index = -1;
-    gmst->current_enemy_index = -1;
-    gmst->wincon = wincon;
-    gmst->path = path;
-    gmst->player = player;
-    gmst->gamemode = gamemode;
-    gmst->screen = screen;
-}
-
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-/**
- * Inits the passed (preallocated) Gamestate with the passed pointers.
- * @param gmst The allocated Gamestate to init.
- * @param start_time The start time for current game.
- * @param stats Game stats.
- * @param wincon Game Wincon.
- * @param path Game Path.
- * @param player Game main player.
- * @param gamemode Picked gamemode.
- */
-void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode)
-{
-    if (gmst == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (stats == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "countStats was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (wincon == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Wincon was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (path == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Path was NULL in %s()", __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (player == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Player was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (gamemode != Story && gamemode != Rogue) {
-        log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
-                gamemode);
-        exit(EXIT_FAILURE);
-    }
-    gmst->start_time = start_time;
-    gmst->stats = stats;
-    gmst->current_fighters = -1;
-    gmst->current_roomtype = -1;
-    gmst->current_room_index = -1;
-    gmst->current_enemy_index = -1;
-    gmst->wincon = wincon;
-    gmst->path = path;
-    gmst->player = player;
-    gmst->gamemode = gamemode;
-}
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
-#ifdef HELAPORDO_CURSES_BUILD
-/**
- * Allocates and prepares a turnOP_args and returns a pointer to it.
- * @see turnOP_args
- * @see turnOption_OP
- * @see turnOption
- * @see turnOP()
- * @param gmst The Gamestate pointer to assign to turnOP_args->gmst.
- * @param actor The Fighter pointer to assign to turnOP_args->actor.
- * @param path The Path pointer to assign to turnOP_args->path.
- * @param room The Room pointer to assign to turnOP_args->room.
- * @param Enemy The Enemy pointer to assign to turnOP_args->enemy.
- * @param Boss The Boss pointer to assign to turnOP_args->boss.
- * @param save_file The FILE pointer to assign to turnOP_args->save_file.
- * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
- * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
- * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
- * @param picked_skill The skillType to assign to turnOP_args->picked_skill.
- */
-turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
-                              Room *room, loadInfo *load_info, Enemy *enemy,
-                              Boss *boss, FILE *save_file, WINDOW *notify_win,
-                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
-                              skillType picked_skill)
-{
-    log_tag("debug_log.txt", "[TURNOP]",
-            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
-    kls_log(t_kls->kls, "DEBUG", "[TURNOP]",
-            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
-    turnOP_args *res =
-        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, HR_turnOP_args,
-                                         "turnOP_args", "turnOP_args");
-
-    res->gmst = gmst;
-    res->actor = actor;
-    res->path = path;
-    res->room = room;
-    res->load_info = load_info;
-    res->enemy = enemy;
-    res->boss = boss;
-    res->save_file = save_file;
-    res->notify_win = notify_win;
-    res->t_kls = t_kls;
-    res->foe_op = foe_op;
-    res->picked_skill = picked_skill;
-
-    return res;
-}
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
-                              Room *room, loadInfo *load_info, Enemy *enemy,
-                              Boss *boss, FILE *save_file, Rectangle *notification_area,
-                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
-                              skillType picked_skill)
-{
-    printf("%s():    TODO - implement turnOP init for rl-build\n", __func__);
-    return NULL;
-}
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
 /**
  * Takes a string and returns the corresponding saveType.
  * Will return -1 if no match is found.
@@ -1003,69 +817,6 @@ void init_game_color_pairs(void)
 void init_game_color_pairs(void)
 {
     printf("%s():    TODO - Implement color pair init for rl-build\n", __func__);
-    return;
-}
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
-#ifdef HELAPORDO_CURSES_BUILD
-/**
- * Demoes color pairs from palette.c to the passed WINDOW.
- * @param win The Window pointer to print to.
- * @param colors_per_row How many colors to print in each row.
- */
-void test_game_color_pairs(WINDOW *win, int colors_per_row)
-{
-    if (win == NULL) {
-        fprintf(stderr, "[%s]:  Passed Window was NULL.", __func__);
-        log_tag("debug_log.txt", "[ERROR]", "[%s]:  Passed Window was NULL.",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-
-    int x = 1;
-    int y = 1;
-    int x_offset = 0;
-
-    for (int i = S4C_MIN_COLOR_INDEX; i < S4C_MAX_COLOR_INDEX + 1; i++) {
-        int color_index = i;
-        if (color_index >= 0) {
-            wattron(win, COLOR_PAIR(color_index));
-            mvwaddch(win, y, x + x_offset, ' ' | A_REVERSE);
-            wattroff(win, COLOR_PAIR(color_index));
-        }
-        x_offset++;
-        if ((color_index - S4C_MIN_COLOR_INDEX + 1) % colors_per_row == 0) {
-            x = 1;
-            x_offset = 0;
-            y++;
-        }
-    }
-
-    int picked = 0;
-    int c = -1;
-    wrefresh(win);
-    refresh();
-
-    while (!picked && (c = wgetch(win)) != 'q') {
-        switch (c) {
-        case 10: {		/*Enter */
-            picked = 1;
-
-        };
-        break;
-        }
-    }
-}
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
-#else
-void test_game_color_pairs(Rectangle * win, int colors_per_row)
-{
-    (void) win;
-    (void) colors_per_row;
-    printf("%s():    TODO - Implement game color pairs test for rl-build\n", __func__);
     return;
 }
 #endif // HELAPORDO_RAYLIB_BUILD
@@ -3002,6 +2753,163 @@ int dropArtifact(Fighter *player)
 }
 
 #ifdef HELAPORDO_CURSES_BUILD
+/**
+ * Demoes color pairs from palette.c to the passed WINDOW.
+ * @param win The Window pointer to print to.
+ * @param colors_per_row How many colors to print in each row.
+ */
+void test_game_color_pairs(WINDOW *win, int colors_per_row)
+{
+    if (win == NULL) {
+        fprintf(stderr, "[%s]:  Passed Window was NULL.", __func__);
+        log_tag("debug_log.txt", "[ERROR]", "[%s]:  Passed Window was NULL.",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    int x = 1;
+    int y = 1;
+    int x_offset = 0;
+
+    for (int i = S4C_MIN_COLOR_INDEX; i < S4C_MAX_COLOR_INDEX + 1; i++) {
+        int color_index = i;
+        if (color_index >= 0) {
+            wattron(win, COLOR_PAIR(color_index));
+            mvwaddch(win, y, x + x_offset, ' ' | A_REVERSE);
+            wattroff(win, COLOR_PAIR(color_index));
+        }
+        x_offset++;
+        if ((color_index - S4C_MIN_COLOR_INDEX + 1) % colors_per_row == 0) {
+            x = 1;
+            x_offset = 0;
+            y++;
+        }
+    }
+
+    int picked = 0;
+    int c = -1;
+    wrefresh(win);
+    refresh();
+
+    while (!picked && (c = wgetch(win)) != 'q') {
+        switch (c) {
+        case 10: {		/*Enter */
+            picked = 1;
+
+        };
+        break;
+        }
+    }
+}
+
+/**
+ * Inits the passed (preallocated) Gamestate with the passed pointers.
+ * @param gmst The allocated Gamestate to init.
+ * @param start_time The start time for current game.
+ * @param stats Game stats.
+ * @param wincon Game Wincon.
+ * @param path Game Path.
+ * @param player Game main player.
+ * @param gamemode Picked gamemode.
+ * @param screen The main screen from initscr().
+ */
+void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen)
+{
+    if (gmst == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (stats == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "countStats was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (wincon == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Wincon was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (path == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Path was NULL in %s()", __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (player == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Player was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (gamemode != Story && gamemode != Rogue) {
+        log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
+                gamemode);
+        exit(EXIT_FAILURE);
+    }
+    if (screen == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Screen was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    gmst->start_time = start_time;
+    gmst->stats = stats;
+    gmst->current_fighters = -1;
+    gmst->current_roomtype = -1;
+    gmst->current_room_index = -1;
+    gmst->current_enemy_index = -1;
+    gmst->wincon = wincon;
+    gmst->path = path;
+    gmst->player = player;
+    gmst->gamemode = gamemode;
+    gmst->screen = screen;
+}
+
+/**
+ * Allocates and prepares a turnOP_args and returns a pointer to it.
+ * @see turnOP_args
+ * @see turnOption_OP
+ * @see turnOption
+ * @see turnOP()
+ * @param gmst The Gamestate pointer to assign to turnOP_args->gmst.
+ * @param actor The Fighter pointer to assign to turnOP_args->actor.
+ * @param path The Path pointer to assign to turnOP_args->path.
+ * @param room The Room pointer to assign to turnOP_args->room.
+ * @param Enemy The Enemy pointer to assign to turnOP_args->enemy.
+ * @param Boss The Boss pointer to assign to turnOP_args->boss.
+ * @param save_file The FILE pointer to assign to turnOP_args->save_file.
+ * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
+ * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
+ * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
+ * @param picked_skill The skillType to assign to turnOP_args->picked_skill.
+ */
+turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
+                              Room *room, loadInfo *load_info, Enemy *enemy,
+                              Boss *boss, FILE *save_file, WINDOW *notify_win,
+                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
+                              skillType picked_skill)
+{
+    log_tag("debug_log.txt", "[TURNOP]",
+            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+    kls_log(t_kls->kls, "DEBUG", "[TURNOP]",
+            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+    turnOP_args *res =
+        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, HR_turnOP_args,
+                                         "turnOP_args", "turnOP_args");
+
+    res->gmst = gmst;
+    res->actor = actor;
+    res->path = path;
+    res->room = room;
+    res->load_info = load_info;
+    res->enemy = enemy;
+    res->boss = boss;
+    res->save_file = save_file;
+    res->notify_win = notify_win;
+    res->t_kls = t_kls;
+    res->foe_op = foe_op;
+    res->picked_skill = picked_skill;
+
+    return res;
+}
 
 /**
  * Takes a WINDOW pointer and prints the passed text to it ith wprintw(), before sleeping for the specified amount of milliseconds.
@@ -3967,6 +3875,78 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
 #else
+
+void test_game_color_pairs(Rectangle * win, int colors_per_row)
+{
+    (void) win;
+    (void) colors_per_row;
+    printf("%s():    TODO - Implement game color pairs test for rl-build\n", __func__);
+    return;
+}
+
+/**
+ * Inits the passed (preallocated) Gamestate with the passed pointers.
+ * @param gmst The allocated Gamestate to init.
+ * @param start_time The start time for current game.
+ * @param stats Game stats.
+ * @param wincon Game Wincon.
+ * @param path Game Path.
+ * @param player Game main player.
+ * @param gamemode Picked gamemode.
+ */
+void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
+                    Path *path, Fighter *player, Gamemode gamemode)
+{
+    if (gmst == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (stats == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "countStats was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (wincon == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Wincon was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (path == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Path was NULL in %s()", __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (player == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Player was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (gamemode != Story && gamemode != Rogue) {
+        log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
+                gamemode);
+        exit(EXIT_FAILURE);
+    }
+    gmst->start_time = start_time;
+    gmst->stats = stats;
+    gmst->current_fighters = -1;
+    gmst->current_roomtype = -1;
+    gmst->current_room_index = -1;
+    gmst->current_enemy_index = -1;
+    gmst->wincon = wincon;
+    gmst->path = path;
+    gmst->player = player;
+    gmst->gamemode = gamemode;
+}
+
+turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
+                              Room *room, loadInfo *load_info, Enemy *enemy,
+                              Boss *boss, FILE *save_file, Rectangle *notification_area,
+                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
+                              skillType picked_skill)
+{
+    printf("%s():    TODO - implement turnOP init for rl-build\n", __func__);
+    return NULL;
+}
 
 /**
  * Takes a Fighter pointer and asks the user to select a specialMove to unlock with a formatted text menu.
