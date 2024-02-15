@@ -252,7 +252,6 @@ void dropEquip(Fighter * player, int beast, Rectangle* notification_window, Koli
 void unlockSpecial(Fighter * f);
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
-#endif
 
 void death(Fighter * player, loadInfo * load_info);
 void e_death(Enemy * e);
@@ -278,3 +277,4 @@ foeTurnOption bossTurnPick(Boss * b, Fighter * f);
 void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 void setCounter(Turncounter * c, int turns);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
+#endif
