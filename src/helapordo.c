@@ -825,9 +825,10 @@ void gameloop(int argc, char **argv)
 #else
                 printf("  Built with: invil v%s\n",
                        INVIL__VERSION__STRING);
+                printf("Last commit: %s", get_INVIL__COMMIT__DESC__());
+#endif // INVIL__helapordo__HEADER__
                 printf("Version Info: %.8s\n",
                        get_ANVIL__VERSION__DESC__());
-                printf("Last commit: %s", get_INVIL__COMMIT__DESC__());
                 const char* anvil_date = get_ANVIL__VERSION__DATE__();
                 char* anvil_date_end;
 #ifndef _WIN32
@@ -849,7 +850,7 @@ void gameloop(int argc, char **argv)
                         printf("\nDate: %s\n", build_time_buff);
                     }
                 }
-                const char* headergen_date = get_INVIL__HEADERGEN__TIME__();
+                const char* headergen_date = get_ANVIL__HEADER__GENTIME__();
                 char* headergen_date_end;
 #ifndef _WIN32
                 time_t headergen_time = strtol(headergen_date, &headergen_date_end, 10);
@@ -869,8 +870,7 @@ void gameloop(int argc, char **argv)
                         strftime(headergen_time_buff, 20, "%Y-%m-%d %H:%M:%S", headergen_time_tm);
                         printf("Anvil Gen Date: %s\n", headergen_time_buff);
                     }
-                }
-#endif // INVIL__helapordo__HEADER__
+               }
 #else
                 printf("  Built without anvil\n");
 #endif // ANVIL__helapordo__
