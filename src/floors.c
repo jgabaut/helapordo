@@ -980,4 +980,144 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
     }
 }
 
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+
+/**
+ * Takes a Floor pointer and prints its roomClass layout using the passed Rectangle as reference position.
+ * @see Floor
+ * @see floorClass
+ * @see roomClass
+ */
+void display_roomclass_layout(Floor *floor, Rectangle *win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "display_roomclass_layout:  win was NULL");
+        exit(EXIT_FAILURE);
+    }
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            char ch = '.';
+            int isColored = -1;
+            switch (floor->roomclass_layout[x][y]) {
+            case HOME: {
+                ch = 'H';
+                isColored = S4C_BRIGHT_GREEN;
+            }
+            break;
+            case ENEMIES: {
+                ch = 'E';
+                isColored = S4C_PURPLE;
+            }
+            break;
+            case BOSS: {
+                ch = 'B';
+                isColored = S4C_RED;
+            }
+            break;
+            case SHOP: {
+                ch = '$';
+                isColored = S4C_CYAN;
+            }
+            break;
+            case TREASURE: {
+                ch = '*';
+                isColored = S4C_ORANGE;
+            }
+            break;
+            case WALL: {
+                ch = '#';
+                isColored = S4C_BRIGHT_YELLOW;
+            }
+            break;
+            case BASIC: {
+                ch = ' ';
+                isColored = S4C_LIGHT_BROWN;
+            }
+            break;
+            default: {
+                ch = '?';
+            }
+            break;
+            }
+
+            Color color = {0};
+            int pixelSize = 15;
+            if (isColored >= 0) {
+                color = ColorFromS4CPalette(palette, isColored);
+            }
+            DrawRectangle(win->x + (x * (pixelSize)), win->y + (y * pixelSize), pixelSize, pixelSize, color);
+            if (isColored >= 0) {
+                isColored = -1;
+            };
+            (void) ch;
+        }
+    }
+
+}
+
+/**
+ * Takes a Floor pointer and prints its floor layout using the passed Rectangle as reference position.
+ * @see Floor
+ * @see floorClass
+ */
+void display_floor_layout(Floor * floor, Rectangle * win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "display_floor_layout():  win was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    int isFull = -1;
+    int isColored = -1;
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            isFull = (floor->floor_layout[x][y] == 1 ? 1 : 0);
+            isColored = isFull;
+            Color color = {0};
+            int pixelSize = 15;
+            if (isColored > 0) {
+                color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
+            }
+            DrawRectangle(win->x + (x * (pixelSize)), win->y + (y * pixelSize), pixelSize, pixelSize, color);
+            //mvwprintw(win, y + 3, x + 3, "%c", (isFull == 1 ? 'X' : ' '));
+        }
+    }
+}
+
+/**
+ * Takes a Floor pointer and prints its explored layout using the passed Rectangle as reference position.
+ * @see Floor
+ * @see floorClass
+ */
+void display_explored_layout(Floor *floor, Rectangle *win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "display_explored_layout():  win was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    int isWalkable = -1;
+    int isExplored = -1;
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            isWalkable = (floor->explored_matrix[x][y] >= 0 ? 1 : 0);
+            isExplored = (floor->explored_matrix[x][y] > 0 ? 1 : 0);
+            Color color = {0};
+            int pixelSize = 15;
+            if (isWalkable > 0) {
+                if (isExplored == 1) {
+                    color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
+                } else {
+                    color = ColorFromS4CPalette(palette, S4C_PURPLE);
+                }
+                DrawRectangle(win->x + (x * (pixelSize)), win->y + (y * pixelSize), pixelSize, pixelSize, color);
+            }
+        }
+    }
+}
+#endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD

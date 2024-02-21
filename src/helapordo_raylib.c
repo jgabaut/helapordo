@@ -545,6 +545,36 @@ void gameloop_rl(int argc, char** argv)
     log_tag("debug_log.txt", "[DEBUG]", "gameloop() scanf() res was (%i)",
             scanfres);
 
+    log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
+    kls_log(default_kls, "DEBUG", "Prepping current_floor.");
+    Floor *current_floor =
+        (Floor *) KLS_PUSH_TYPED(default_kls, Floor,
+                                   HR_Floor, "Floor", "Floor");
+    // Start the random walk from the center of the dungeon
+    int center_x = FLOOR_MAX_COLS / 2;
+    int center_y = FLOOR_MAX_ROWS / 2;
+
+    // Init dbg_floor
+    init_floor_layout(current_floor);
+
+    //Set center as filled
+    current_floor->floor_layout[center_x][center_y] = 1;
+
+    //Init floor rooms
+    init_floor_rooms(current_floor);
+
+    //Random walk #1
+    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+    //Random walk #2
+    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+
+    //Set floor explored matrix
+    load_floor_explored(current_floor);
+
+    //Set room types
+    floor_set_room_types(current_floor);
+
+
     int screenWidth = 800;
     int screenHeight = 450;
 
@@ -722,6 +752,16 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
             int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
             int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
+
+            Rectangle floor_r = CLITERAL(Rectangle) {
+                stats_label_r.x,
+                stats_label_r.y + (13 * sprite_w_factor),
+                FLOOR_MAX_COLS * sprite_w_factor,
+                FLOOR_MAX_ROWS * sprite_w_factor,
+            };
+            display_roomclass_layout(current_floor, &floor_r);
+            //display_floor_layout(current_floor, &floor_r);
+            //display_explored_layout(current_floor, &floor_r);
             /*
             Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);
             Rectangle st_pl_coll = GetCollisionRec(stats_label_r,pl_r);

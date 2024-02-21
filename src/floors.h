@@ -51,6 +51,9 @@ void move_update(Gamestate * gamestate, Floor * floor, int *current_x,
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
+void display_roomclass_layout(Floor *floor, Rectangle *win);
+void display_floor_layout(Floor * floor, Rectangle * win);
+void display_explored_layout(Floor *floor, Rectangle *win);
 #endif // HELAPORDO_RAYLIB_BUILD
 
 #endif // HELAPORDO_CURSES_BUILD
