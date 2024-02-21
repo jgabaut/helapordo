@@ -87,6 +87,8 @@ void gameloop_rl(int argc, char** argv)
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
 
+    bool is_localexe = ( argv[0][0] == '.');
+
     char *kls_progname = (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
                          KLS_None, "progname", whoami);
     strcpy(kls_progname, whoami);
@@ -367,6 +369,7 @@ void gameloop_rl(int argc, char** argv)
                 G_DEBUG_ON);
         log_tag("debug_log.txt", "[DEBUG]", "kls_progname == (%s)",
                 kls_progname);
+        log_tag("debug_log.txt", "[DEBUG]", "is_localexe == (%s)", (is_localexe ? "true" : "false"));
         log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
         log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
         log_tag("debug_log.txt", "[DEBUG]",

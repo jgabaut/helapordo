@@ -1735,6 +1735,8 @@ typedef struct {
 #else
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
+
+    bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
 } Gamestate;
 
 /**

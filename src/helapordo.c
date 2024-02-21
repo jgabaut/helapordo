@@ -676,6 +676,7 @@ void gameloop(int argc, char **argv)
 #else
         (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
+        bool is_localexe = ( argv[0][0] == '.');
 
         char *kls_progname =
             (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
@@ -967,6 +968,7 @@ void gameloop(int argc, char **argv)
                     G_DEBUG_ON);
             log_tag("debug_log.txt", "[DEBUG]", "kls_progname == (%s)",
                     kls_progname);
+            log_tag("debug_log.txt", "[DEBUG]", "is_localexe == (%s)", (is_localexe ? "true" : "false"));
             log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
             log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
             log_tag("debug_log.txt", "[DEBUG]",
@@ -1995,7 +1997,7 @@ void gameloop(int argc, char **argv)
             KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                            "Gamestate");
         init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                       player, GAMEMODE, gamescreen);
+                       player, GAMEMODE, gamescreen, is_localexe);
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
             //NO. The update_gamestate call is instead performed later.
@@ -2849,6 +2851,7 @@ void gameloop_Win(int argc, char **argv)
         .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
     };
 
+    bool is_localexe = ( argv[0][0] == '.');
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
     do {
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, default_kls_conf);
@@ -3070,6 +3073,7 @@ void gameloop_Win(int argc, char **argv)
             //FIXME we should have same behaviour as gameloop(), and actually log kls_progname...
             //Doesn't matter for now, kls_progname is declared later
             log_tag("debug_log.txt", "[DEBUG]", "whoami == (%s)", whoami);
+            log_tag("debug_log.txt", "[DEBUG]", "is_localexe == (%s)", (is_localexe ? "true" : "false"));
             log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
             log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
             log_tag("debug_log.txt", "[DEBUG]",

@@ -570,6 +570,7 @@ void dbg_Gamestate(Gamestate *gmst)
         dbg_print_roomclass_layout(gmst->current_floor);
         log_tag("debug_log.txt", "[GAMESTATE]", "  }");
     }
+    log_tag("debug_log.txt", "[GAMESTATE]", "is_localexe == (%s)", (gmst->is_localexe ? "true" : "false"));
     log_tag("debug_log.txt", "[GAMESTATE]", "}");
 }
 
@@ -2812,9 +2813,10 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
  * @param player Game main player.
  * @param gamemode Picked gamemode.
  * @param screen The main screen from initscr().
+ * @param is_localexe Denotes if current game was started from a relative path.
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen)
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_localexe)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
@@ -2861,6 +2863,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->player = player;
     gmst->gamemode = gamemode;
     gmst->screen = screen;
+    gmst->is_localexe = is_localexe;
 }
 
 /**

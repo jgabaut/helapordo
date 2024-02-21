@@ -216,7 +216,7 @@ int dropArtifact(Fighter * player);
 #ifdef HELAPORDO_CURSES_BUILD
 void test_game_color_pairs(WINDOW * win, int colors_per_row);
 void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
-                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen);
+                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen, bool is_localexe);
 turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
