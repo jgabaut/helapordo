@@ -1116,5 +1116,165 @@ void display_explored_layout(Floor *floor, Rectangle *win, float pixelSize)
         }
     }
 }
+
+/**
+ * Takes a Floor pointer and cell x and y position. Draws render using the passed Rectangle as reference position.
+ * @see Floor
+ * @see floorClass
+ */
+void draw_cell(Floor *floor, int cell_x, int cell_y, Rectangle *win,
+               int drawcorner_x, int drawcorner_y, int x_size, int y_size, float pixelSize,
+               int recurse)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "draw_cell():  win was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    int xSize = x_size;
+    int ySize = y_size;
+
+    if (floor->floor_layout[cell_x][cell_y] == 0) {
+        if (floor->roomclass_layout[cell_x][cell_y] != WALL) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "draw_cell(): floor->floor_layout[%i][%i] was (%i).",
+                    cell_x, cell_y, floor->floor_layout[cell_x][cell_y]);
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "draw_cell(): floor->roomclass_layout[%i][%i] was (%s).",
+                    cell_x, cell_y,
+                    stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        }
+        for (int i = 0; i < xSize; i++) {
+            for (int j = 0; j < ySize; j++) {
+                char ch = '?';
+                int isWall = -1;
+                int isColored = -1;
+                Color color = {0};
+                isWall =
+                    floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
+                if (isWall > 0) {
+                    ch = '#';
+                    isColored = S4C_PURPLE;
+                } else {
+                    ch = '?';
+                }
+                if (isColored >= 0) {
+                    color = ColorFromS4CPalette(palette, isColored);
+                };
+                DrawRectangle(win->x + ((j + drawcorner_x) * ((int)pixelSize) ), win->y + ((i + drawcorner_y) * ((int)pixelSize)), pixelSize, pixelSize, color);
+                if (isColored >= 0) {
+                    isColored = -1;
+                };
+                if (isWall > 0) {
+                    isWall = -1;
+                    ch = '?';
+                };
+                (void) ch;
+            }
+        }
+    } else if (floor->floor_layout[cell_x][cell_y] == 1) {
+        for (int i = 0; i < xSize; i++) {
+            for (int j = 0; j < ySize; j++) {
+                char ch = '?';
+                int isColored = -1;
+                Color color = {0};
+                switch (floor->roomclass_layout[cell_x][cell_y]) {
+                case WALL: {
+                    ch = '#';
+                    isColored = S4C_BLUE;
+                }
+                break;
+                case BASIC: {
+                    ch = '.';
+                    isColored = S4C_LIGHT_BROWN;
+                }
+                break;
+                case HOME: {
+                    ch = 'H';
+                    isColored = S4C_WHITE;
+                }
+                break;
+                case BOSS: {
+                    ch = 'B';
+                    isColored = S4C_RED;
+                }
+                break;
+                case TREASURE: {
+                    ch = '*';
+                    isColored = S4C_ORANGE;
+                }
+                break;
+                case SHOP: {
+                    ch = '$';
+                    isColored = S4C_MAGENTA;
+                }
+                break;
+                case ENEMIES: {
+                    ch = '^';
+                    isColored = S4C_CYAN;
+                }
+                break;
+                default: {
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "draw_cell(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
+                            cell_x, cell_y);
+                    ch = '?';
+                    isColored = S4C_DARK_GREEN;
+                }
+                break;
+                }
+                if (isColored >= 0) {
+                    color = ColorFromS4CPalette(palette, isColored);
+                };
+                DrawRectangle(win->x + ((j + drawcorner_x) * ((int)pixelSize) ), win->y + ((i + drawcorner_y) * ((int)pixelSize)), pixelSize, pixelSize, color);
+                if (isColored >= 0) {
+                    isColored = -1;
+                };
+                (void) ch;
+            }
+        }
+        if (recurse > 0 && cell_x < FLOOR_MAX_COLS - 1)
+            draw_cell(floor, cell_x + 1, cell_y, win, drawcorner_x + 3,
+                      drawcorner_y, x_size, y_size, pixelSize, recurse - 1);
+        if (recurse > 0 && cell_x > 0)
+            draw_cell(floor, cell_x - 1, cell_y, win, drawcorner_x - 3,
+                      drawcorner_y, x_size, y_size, pixelSize, recurse - 1);
+        if (recurse > 0 && cell_y < FLOOR_MAX_ROWS - 1)
+            draw_cell(floor, cell_x, cell_y + 1, win, drawcorner_x,
+                      drawcorner_y + 3, x_size, y_size, pixelSize, recurse - 1);
+        if (recurse > 0 && cell_y > 0)
+            draw_cell(floor, cell_x, cell_y - 1, win, drawcorner_x,
+                      drawcorner_y - 3, x_size, y_size, pixelSize, recurse - 1);
+    } else {
+        log_tag("debug_log.txt", "[ERROR]",
+                "draw_cell(): floor->floor_layout[%i][%i] was (%i).", cell_x,
+                cell_y, floor->floor_layout[cell_x][cell_y]);
+        log_tag("debug_log.txt", "[ERROR]",
+                "draw_cell(): floor->roomclass_layout[%i][%i] was (%s).",
+                cell_x, cell_y,
+                stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a Floor pointer and current x and y position. Draws render using the passed Rectangle as reference position.
+ * @see Floor
+ * @see floorClass
+ */
+void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize, Rectangle *win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "draw_view():  win was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    int xSize = 3;
+    int ySize = 3;
+
+    //Center
+    draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, pixelSize, 3);
+
+    //Draw player char
+    //mvwprintw(win, FLOOR_MAX_COLS / 2 - 1, FLOOR_MAX_ROWS / 2 - 1, "%c", '@');
+}
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD

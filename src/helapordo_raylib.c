@@ -786,6 +786,13 @@ void gameloop_rl(int argc, char** argv)
                 FLOOR_MAX_COLS * sprite_w_factor,
                 FLOOR_MAX_ROWS * sprite_w_factor,
             };
+
+
+            /*
+            int center_x = FLOOR_MAX_COLS / 2;
+            int center_y = FLOOR_MAX_ROWS / 2;
+            draw_floor_view(current_floor, center_x, center_y, sprite_w_factor, &floor_r);
+            */
             display_roomclass_layout(current_floor, &floor_r, sprite_w_factor);
             //display_floor_layout(current_floor, &floor_r, sprite_w_factor);
             //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
