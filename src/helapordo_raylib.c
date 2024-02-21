@@ -548,7 +548,7 @@ void gameloop_rl(int argc, char** argv)
     log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
     kls_log(default_kls, "DEBUG", "Prepping current_floor.");
     Floor *current_floor =
-        (Floor *) KLS_PUSH_TYPED(default_kls, Floor,
+        (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
                                    HR_Floor, "Floor", "Floor");
     // Start the random walk from the center of the dungeon
     int center_x = FLOOR_MAX_COLS / 2;
@@ -647,6 +647,33 @@ void gameloop_rl(int argc, char** argv)
             }
             if (IsKeyPressed(KEY_P)) {
                 pause_animation = !pause_animation;
+            }
+            if (IsKeyPressed(KEY_R)) {
+                fprintf(stderr,"%s\n", "Regenerating current floor");
+                kls_free(temporary_kls);
+                temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
+                current_floor =
+                    (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
+                                               HR_Floor, "Floor", "Floor");
+                // Init dbg_floor
+                init_floor_layout(current_floor);
+
+                //Set center as filled
+                current_floor->floor_layout[center_x][center_y] = 1;
+
+                //Init floor rooms
+                init_floor_rooms(current_floor);
+
+                //Random walk #1
+                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                //Random walk #2
+                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+
+                //Set floor explored matrix
+                load_floor_explored(current_floor);
+
+                //Set room types
+                floor_set_room_types(current_floor);
             }
             if (!pause_animation) {
                 current_anim_frame = framesCounter%60;
