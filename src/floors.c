@@ -991,7 +991,7 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
  * @see floorClass
  * @see roomClass
  */
-void display_roomclass_layout(Floor *floor, Rectangle *win)
+void display_roomclass_layout(Floor *floor, Rectangle *win, float pixelSize)
 {
     if (win == NULL) {
         log_tag("debug_log.txt", "[ERROR]",
@@ -1045,11 +1045,10 @@ void display_roomclass_layout(Floor *floor, Rectangle *win)
             }
 
             Color color = {0};
-            int pixelSize = 15;
             if (isColored >= 0) {
                 color = ColorFromS4CPalette(palette, isColored);
             }
-            DrawRectangle(win->x + (x * (pixelSize)), win->y + (y * pixelSize), pixelSize, pixelSize, color);
+            DrawRectangle(win->x + (x * ((int)pixelSize) ), win->y + (y * ((int)pixelSize)), pixelSize, pixelSize, color);
             if (isColored >= 0) {
                 isColored = -1;
             };
@@ -1064,7 +1063,7 @@ void display_roomclass_layout(Floor *floor, Rectangle *win)
  * @see Floor
  * @see floorClass
  */
-void display_floor_layout(Floor * floor, Rectangle * win)
+void display_floor_layout(Floor * floor, Rectangle * win, float pixelSize)
 {
     if (win == NULL) {
         log_tag("debug_log.txt", "[ERROR]",
@@ -1078,11 +1077,10 @@ void display_floor_layout(Floor * floor, Rectangle * win)
             isFull = (floor->floor_layout[x][y] == 1 ? 1 : 0);
             isColored = isFull;
             Color color = {0};
-            int pixelSize = 15;
             if (isColored > 0) {
                 color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
             }
-            DrawRectangle(win->x + (x * (pixelSize)), win->y + (y * pixelSize), pixelSize, pixelSize, color);
+            DrawRectangle(win->x + (x * ((int)pixelSize) ), win->y + (y * ((int)pixelSize)), pixelSize, pixelSize, color);
             //mvwprintw(win, y + 3, x + 3, "%c", (isFull == 1 ? 'X' : ' '));
         }
     }
@@ -1093,7 +1091,7 @@ void display_floor_layout(Floor * floor, Rectangle * win)
  * @see Floor
  * @see floorClass
  */
-void display_explored_layout(Floor *floor, Rectangle *win)
+void display_explored_layout(Floor *floor, Rectangle *win, float pixelSize)
 {
     if (win == NULL) {
         log_tag("debug_log.txt", "[ERROR]",
@@ -1107,14 +1105,13 @@ void display_explored_layout(Floor *floor, Rectangle *win)
             isWalkable = (floor->explored_matrix[x][y] >= 0 ? 1 : 0);
             isExplored = (floor->explored_matrix[x][y] > 0 ? 1 : 0);
             Color color = {0};
-            int pixelSize = 15;
             if (isWalkable > 0) {
                 if (isExplored == 1) {
                     color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
                 } else {
                     color = ColorFromS4CPalette(palette, S4C_PURPLE);
                 }
-                DrawRectangle(win->x + (x * (pixelSize)), win->y + (y * pixelSize), pixelSize, pixelSize, color);
+                DrawRectangle(win->x + (x * ((int)pixelSize) ), win->y + (y * ((int)pixelSize)), pixelSize, pixelSize, color);
             }
         }
     }

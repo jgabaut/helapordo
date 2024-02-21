@@ -786,9 +786,9 @@ void gameloop_rl(int argc, char** argv)
                 FLOOR_MAX_COLS * sprite_w_factor,
                 FLOOR_MAX_ROWS * sprite_w_factor,
             };
-            display_roomclass_layout(current_floor, &floor_r);
-            //display_floor_layout(current_floor, &floor_r);
-            //display_explored_layout(current_floor, &floor_r);
+            display_roomclass_layout(current_floor, &floor_r, sprite_w_factor);
+            //display_floor_layout(current_floor, &floor_r, sprite_w_factor);
+            //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
             /*
             Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);
             Rectangle st_pl_coll = GetCollisionRec(stats_label_r,pl_r);
