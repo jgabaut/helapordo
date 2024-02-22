@@ -681,18 +681,38 @@ void gameloop_rl(int argc, char** argv)
             if (IsKeyPressed(KEY_UP)) {
                 step_floor(current_floor, &current_x,
                  &current_y, KEY_UP);
+                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
+                    currentScreen = DOOR_ANIM;
+                    current_anim_frame = 0;
+                    break;
+                }
             }
             if (IsKeyPressed(KEY_DOWN)) {
                 step_floor(current_floor, &current_x,
                  &current_y, KEY_DOWN);
+                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
+                    currentScreen = DOOR_ANIM;
+                    current_anim_frame = 0;
+                    break;
+                }
             }
             if (IsKeyPressed(KEY_LEFT)) {
                 step_floor(current_floor, &current_x,
                  &current_y, KEY_LEFT);
+                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
+                    currentScreen = DOOR_ANIM;
+                    current_anim_frame = 0;
+                    break;
+                }
             }
             if (IsKeyPressed(KEY_RIGHT)) {
                 step_floor(current_floor, &current_x,
                  &current_y, KEY_RIGHT);
+                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
+                    currentScreen = DOOR_ANIM;
+                    current_anim_frame = 0;
+                    break;
+                }
             }
             if (!pause_animation) {
                 current_anim_frame = framesCounter%60;
@@ -706,6 +726,17 @@ void gameloop_rl(int argc, char** argv)
             if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
                 currentScreen = TITLE;
             }
+        }
+        break;
+        case DOOR_ANIM: {
+            // TODO: Update DOOR_ANIM screen variables here!
+            framesCounter++;    // Count frames
+            // Press enter to return to gameplay screen
+            if (current_anim_frame == 59 || IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                currentScreen = GAMEPLAY;
+                break;
+            }
+            current_anim_frame++;
         }
         break;
         default:
@@ -800,7 +831,8 @@ void gameloop_rl(int argc, char** argv)
             int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
 
             Rectangle floor_r = CLITERAL(Rectangle) {
-                stats_label_r.x,
+                screenWidth / 2 - (5 * sprite_w_factor),
+                //screenHeight / 2,
                 stats_label_r.y + (13 * sprite_w_factor),
                 FLOOR_MAX_COLS * sprite_w_factor,
                 FLOOR_MAX_ROWS * sprite_w_factor,
@@ -850,7 +882,32 @@ void gameloop_rl(int argc, char** argv)
             DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
             DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
+        }
+        break;
+        case DOOR_ANIM: {
+            // TODO: Draw ENDING screen here!
+            DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
+            DrawText("DOOR SCREEN", 20, 20, 40, DARKBLUE);
+            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+            DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
 
+            int door_rect_Y = 20;
+            int door_frame_W = 21;
+            int door_frame_H = 21;
+            int door_rect_X = 20;
+            Rectangle door_r = CLITERAL(Rectangle) {
+                door_rect_X,
+                door_rect_Y,
+                door_frame_W * sprite_w_factor,
+                door_frame_H * sprite_w_factor,
+            };
+            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
+            if (door_res != 0 ) {
+                DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+                DrawText("Please resize.", 20, 50, 20, RAYWHITE);
+                current_anim_frame--;
+            }
         }
         break;
         default:

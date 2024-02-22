@@ -57,7 +57,7 @@ typedef struct GameScreen {
 /**
  * Defines GameScreen type, as an enum.
  */
-typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
+typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING, DOOR_ANIM } GameScreen;
 // Add more includes for rl-build here
 #ifdef _WIN32
 /**
