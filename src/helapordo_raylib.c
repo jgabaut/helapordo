@@ -554,6 +554,9 @@ void gameloop_rl(int argc, char** argv)
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
 
+    int current_x = center_x;
+    int current_y = center_y;
+
     // Init dbg_floor
     init_floor_layout(current_floor);
 
@@ -675,6 +678,46 @@ void gameloop_rl(int argc, char** argv)
                 //Set room types
                 floor_set_room_types(current_floor);
             }
+            if (IsKeyPressed(KEY_UP)) {
+                Rectangle update_r = CLITERAL(Rectangle) {
+                    20,
+                    20,
+                    200,
+                    200
+                };
+                move_update(NULL, current_floor, &current_x,
+                 &current_y, KEY_UP, sprite_w_factor, &update_r);
+            }
+            if (IsKeyPressed(KEY_DOWN)) {
+                Rectangle update_r = CLITERAL(Rectangle) {
+                    20,
+                    20,
+                    200,
+                    200
+                };
+                move_update(NULL, current_floor, &current_x,
+                 &current_y, KEY_DOWN, sprite_w_factor, &update_r);
+            }
+            if (IsKeyPressed(KEY_LEFT)) {
+                Rectangle update_r = CLITERAL(Rectangle) {
+                    20,
+                    20,
+                    200,
+                    200
+                };
+                move_update(NULL, current_floor, &current_x,
+                 &current_y, KEY_LEFT, sprite_w_factor, &update_r);
+            }
+            if (IsKeyPressed(KEY_RIGHT)) {
+                Rectangle update_r = CLITERAL(Rectangle) {
+                    20,
+                    20,
+                    200,
+                    200
+                };
+                move_update(NULL, current_floor, &current_x,
+                 &current_y, KEY_RIGHT, sprite_w_factor, &update_r);
+            }
             if (!pause_animation) {
                 current_anim_frame = framesCounter%60;
             }
@@ -787,13 +830,15 @@ void gameloop_rl(int argc, char** argv)
                 FLOOR_MAX_ROWS * sprite_w_factor,
             };
 
+            draw_floor_view(current_floor, current_x, current_y, sprite_w_factor, &floor_r);
+
 
             /*
             int center_x = FLOOR_MAX_COLS / 2;
             int center_y = FLOOR_MAX_ROWS / 2;
             draw_floor_view(current_floor, center_x, center_y, sprite_w_factor, &floor_r);
             */
-            display_roomclass_layout(current_floor, &floor_r, sprite_w_factor);
+            //display_roomclass_layout(current_floor, &floor_r, sprite_w_factor);
             //display_floor_layout(current_floor, &floor_r, sprite_w_factor);
             //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
             /*
