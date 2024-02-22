@@ -34,7 +34,7 @@
   - `aarch64-apple-darwin`
   - `Windows` (through `x86_64-w64-mingw32`)
 
-  **DISCLAIMER:**  The `Windows` build is proof-of-concept as:
+  **DISCLAIMER:**  The `Windows` ncurses build is proof-of-concept as:
 
   - The gameplay loop is a simplified version of `Rogue` gamemode from the main build.
     - Work in progress on running the original gameloop.
@@ -49,15 +49,15 @@
 
   - Some source files are expected to be generated at build time, by a symlink executable named `anvil`. By default, the configuration will pick an implementation for `anvil` depending on passed host:
     - `darwin*`: default is `repo_invil`. This means you need the Rust build toolchain to be installed.
-    - `linux*`, `mingw*`: default is `repo_amboso`. This means you need `bash >=4.x`, and your `awk` should not be `mawk`.
+    - `linux*`, `mingw*`: default is `repo_amboso`. This means you need `bash >=4.x`, and `gawk`.
   - To readily override the default implementation for `anvil`, you can pass `--enable-anvilpick` to the `./configure` script:
     `./configure --enable-anvilpick`
     This will ensure you get an interactive prompt to pick an implementation (and can still use the default one by pressing Enter without typing anything), whenever `make` needs to create `./anvil`.
 
   - Needed programs, depending on chosen `ANVIL_IMPL`:
-    - `awk` is needed by `amboso` to generate `./src/anvil__helapordo.h`.
+    - `gawk` is needed by `amboso` to generate `./src/anvil__helapordo.h`.
       - `bash >=4` is needed to run `amboso`.
-      - Unfortunately, `mawk` is not compatible with `amboso`.
+      - Unfortunately, `nawk` and `mawk` are not compatible with `amboso`.
     - If you dont' have those, you can use `invil` to generate `./src/anvil__helapordo.h`.
       - You will need `cargo` to build `invil`.
     - If you want to just build the code without `./src/anvil__helapordo.h`., you can apply the patch file provided at [this link](https://github.com/jgabaut/helapordo/issues/52#issuecomment-1871877437).
@@ -146,11 +146,11 @@
 
   I try to upload precompiled binaries for the ncurses build:
 
-  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.2/helapordo-nc-1.4.2-Linux-x86_64.zip)
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.3/helapordo-nc-1.4.3-Linux-x86_64.zip)
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.2/helapordo.exe-nc-1.4.2-w64-mingw32-x86_64.zip)
+  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.3/helapordo.exe-nc-1.4.3-w64-mingw32-x86_64.zip)
 
-  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.1/helapordo-nc-1.4.1-darwin-arm64.zip) (Available = `1.4.1`. Latest = `1.4.2`)
+  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.2/helapordo-nc-1.4.2-darwin-arm64.zip) (Available = `1.4.2`. Latest = `1.4.3`)
 
-  📦 v1.4.2 09/02/2024
+  📦 v1.4.3 22/02/2024
   https://github.com/jgabaut/helapordo/releases

@@ -18,7 +18,7 @@ jobs:
 
     name: Generate ./docs/docs.pdf
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
@@ -31,7 +31,7 @@ jobs:
       - name: Install doxygen-latex
         run: |
           sudo apt install doxygen-latex -y
-          
+
       - name: Run aclocal
         run: aclocal
       - name: Run autoconf

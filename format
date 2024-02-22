@@ -8,8 +8,13 @@ else
 	exit 1
 fi
 SRC_DIR="src"
+SRC_CORE_DIR="src/core"
+SRC_UTILS_DIR="src/utils"
+SRC_BUILD_NC_DIR="src/build-nc"
+SRC_BUILD_NC_W64_DIR="src/build-nc-w64"
+SRC_BUILD_RL_DIR="src/build-rl"
 
-hlpd_SOURCES=("$SRC_DIR"/*.c "$SRC_DIR"/*.h)
+hlpd_SOURCES=("$SRC_DIR"/*.c "$SRC_DIR"/*.h "$SRC_CORE_DIR"/*.c "$SRC_CORE_DIR"/*.h "$SRC_UTILS_DIR"/*.c "$SRC_UTILS_DIR"/*.h "$SRC_BUILD_NC_DIR"/*.c "$SRC_BUILD_NC_DIR"/*.h "$SRC_BUILD_NC_W64_DIR"/*.c "$SRC_BUILD_NC_W64_DIR"/*.h "$SRC_BUILD_RL_DIR"/*.c "$SRC_BUILD_RL_DIR"/*.h )
 CONFIG_FILE=".astylerc"
 
 printf "Running \033[1;34mastyle -s4 --style=linux\e[0m for all source files.\n"

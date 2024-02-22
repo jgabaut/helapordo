@@ -17,6 +17,7 @@
 */
 #include "rooms.h"
 
+#ifdef HELAPORDO_CURSES_BUILD
 /**
  * Takes an integer for room index and a Fighter and a Path pointers and handles the progression of the room.
  * It also takes a loadInfo pointer to a struct used for loading a game, and a 4D char array containing animations for all fighters, preloaded in the prep section of gameloop().
@@ -2493,6 +2494,192 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
 }
 
 /**
+ * Takes a Room pointer and a Fighter pointer, displays a choice for the next room and sets it at *roadFork_value.
+ * @see Roadfork
+ * @see Fighter
+ * @param room The pointer to current room.
+ * @param roadFork_value The pointer to the value for next room's class.
+ * @param roomsDone The total of rooms completed.
+ * @param path The Path pointer.
+ * @param f The Fighter pointer at hand.
+ * @return When room is exited, should return NO_DMG.
+ */
+int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
+                        Path *path, Fighter *f)
+{
+    //Strings for turn menu choices
+    char choices[ROADFORK_OPTIONS_MAX + 1][80] = {
+        "One",
+        "Two"
+    };
+    //TODO: the choices array had a '(char) NULL' value which was giving a obvious warning about pointer to integer casting.
+    //Was it needed as a sentinel value??
+
+    char msg[200];
+
+    for (int i = 0; i < 2; i++) {
+        char c[80];
+        switch (room->roadfork->options[i]) {
+        case ROADFORK_BOSS: {
+            strcpy(c, "Boss Room");
+        }
+        break;
+        case ROADFORK_SHOP: {
+            strcpy(c, "Shop Room");
+        }
+        break;
+        case ROADFORK_TREASURE: {
+            strcpy(c, "Treasure Room");
+        }
+        break;
+        case ROADFORK_ENEMIES: {
+            strcpy(c, "Enemies");
+        }
+        break;
+        case ROADFORK_ROADFORK: {
+            strcpy(c, "Roadfork");
+        }
+        break;
+        }
+        strcpy(choices[i], c);
+    }
+    sprintf(msg, "Entered Roadfork with %s and %s.\n", choices[0], choices[1]);
+    log_tag("debug_log.txt", "[ROADFORK]", msg);
+
+    ITEM **my_items;
+    MENU *my_menu;
+    WINDOW *my_menu_win;
+    int n_choices, c;
+
+    /* Initialize curses */
+    //initscr();
+    start_color();
+    clear();
+    refresh();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
+    /* Create items */
+    n_choices = ARRAY_SIZE(choices);
+    sprintf(msg, "n_choices size was: (%i)\n", n_choices);
+    log_tag("debug_log.txt", "[ROADFORK]", msg);
+    my_items = (ITEM **) calloc(n_choices, sizeof(ITEM *));
+    for (int k = 0; k < n_choices; k++) {
+        my_items[k] = new_item(choices[k], choices[k]);
+        /* Set the user pointer */
+        //set_item_userptr(my_items[i]);
+    }
+
+    /* Create menu */
+    my_menu = new_menu((ITEM **) my_items);
+
+    /* Set description off */
+    menu_opts_off(my_menu, O_SHOWDESC);
+
+    /* Create the window to be associated with the menu */
+    my_menu_win = newwin(12, 28, 1, 1);
+    keypad(my_menu_win, TRUE);
+
+    /* Set main window and sub window */
+    set_menu_win(my_menu, my_menu_win);
+    set_menu_sub(my_menu, derwin(my_menu_win, 4, 26, 3, 2));
+    set_menu_format(my_menu, 3, 1);
+
+    /* Set menu mark to the string " >  " */
+    set_menu_mark(my_menu, " >  ");
+
+    char label[25];
+    sprintf(label, "Road Fork");
+
+    /* Print a border around the main window and print a title */
+    box(my_menu_win, 0, 0);
+    print_label(my_menu_win, 1, 0, 28, label, COLOR_PAIR(S4C_MAGENTA));
+    mvwaddch(my_menu_win, 2, 0, ACS_LTEE);
+    mvwhline(my_menu_win, 2, 1, ACS_HLINE, 26);
+    mvwaddch(my_menu_win, 2, 27, ACS_RTEE);
+
+    /* Post the menu */
+    post_menu(my_menu);
+    wrefresh(my_menu_win);
+
+    /* Create the items window */
+    //win = newwin(22, 54, 1, 23);
+    //keypad(win, TRUE);
+    //box(win, 0, 0);
+
+    //print_label(win, 1, 0, 54, "Option", COLOR_PAIR(6));
+    //mvwaddch(win, 2, 0, ACS_LTEE);
+    //mvwhline(win, 2, 1, ACS_HLINE, 52);
+    //mvwaddch(win, 2, 53, ACS_RTEE);
+
+    attron(COLOR_PAIR(S4C_CYAN));
+    mvprintw(20, 2, "Arrows to move");
+    mvprintw(21, 2, "(q to Exit)");
+    attroff(COLOR_PAIR(S4C_CYAN));
+    refresh();
+
+    int end_room = 0;
+    int check = -1;
+
+    while (!end_room && (c = wgetch(my_menu_win)) != KEY_F(1)) {
+        switch (c) {
+        case KEY_DOWN:
+            menu_driver(my_menu, REQ_DOWN_ITEM);
+            break;
+        case KEY_UP:
+            menu_driver(my_menu, REQ_UP_ITEM);
+            break;
+        case KEY_NPAGE:
+            menu_driver(my_menu, REQ_SCR_DPAGE);
+            break;
+        case KEY_PPAGE:
+            menu_driver(my_menu, REQ_SCR_UPAGE);
+            break;
+        case 10: {	// Enter
+            ITEM *cur;
+
+            cur = current_item(my_menu);
+            sprintf(msg, "Picked %s.\n", item_name(cur));
+            log_tag("debug_log.txt", "[ROADFORK]", msg);
+            if ((check = strcmp("Boss Room", item_name(cur))) == 0) {
+                *roadFork_value = BOSS;
+                end_room = 1;
+            } else if ((check = strcmp("Shop Room", item_name(cur)) == 0)) {
+                *roadFork_value = SHOP;
+                end_room = 1;
+            } else if ((check =
+                            strcmp("Treasure Room", item_name(cur)) == 0)) {
+                *roadFork_value = TREASURE;
+                end_room = 1;
+            } else if ((check = strcmp("Enemies", item_name(cur)) == 0)) {
+                *roadFork_value = ENEMIES;
+                end_room = 1;
+            } else if ((check = strcmp("Roadfork", item_name(cur)) == 0)) {
+                *roadFork_value = ROADFORK;
+                end_room = 1;
+            }
+            pos_menu_cursor(my_menu);
+            refresh();
+        };
+        break;
+        }
+        wrefresh(my_menu_win);
+    }
+    /* Unpost and free all the memory taken up */
+    unpost_menu(my_menu);
+    free_menu(my_menu);
+    for (int k = 0; k < n_choices; k++) {
+        free_item(my_items[k]);
+    }
+    endwin();
+
+    //FIXME
+    //Why are we relying on this?
+    return FIGHTRES_NO_DMG;
+}
+
+/**
  * Takes a WINDOW, a Chest and a Fighter pointer and opens the chest adding the contents to the fighter's bags.
  * Prints result to the passed window.
  * @see handleRoom_Treasure()
@@ -2983,6 +3170,8 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
 
     return FIGHTRES_NO_DMG;
 }
+
+#endif // HELAPORDO_CURSES_BUILD
 
 /**
  * Takes one Room pointer of class HOME and initialises all the fields.

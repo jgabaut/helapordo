@@ -18,7 +18,7 @@
 
 #ifndef SPECIALS_H
 #define SPECIALS_H
-#include "game_core.h"
+#include "game_utils.h"
 
 #ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
@@ -74,6 +74,7 @@ void assassinSpecial_Disguise(WINDOW * w, Fighter * f, Enemy * e, Boss * b,
 void assassinSpecial_Venomblade(WINDOW * w, Fighter * f, Enemy * e, Boss * b,
                                 Path * p, int roomIndex, int enemyIndex,
                                 int isBoss);
+void setSpecials(Fighter * f, Koliseo * kls);
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
@@ -120,6 +121,7 @@ void assassinSpecial_Disguise(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
 void assassinSpecial_Venomblade(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                                 Path * p, int roomIndex, int enemyIndex,
                                 int isBoss);
+void setSpecials(Fighter * f, Koliseo * kls);
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 #endif // SPECIALS_H

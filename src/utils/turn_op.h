@@ -16,9 +16,19 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef FLOOR_TEST_H
-#define FLOOR_TEST_H
+#ifndef TURNOP_H_
+#define TURNOP_H_
 
-int test_floors(void);
+#include "game_debug.h"
+#include "game_fight.h"
+#include "saves.h"
 
-#endif
+/**
+ * Call function associated with the passed turnOption_OP.
+ * @param op The turnOption_OP to execute.
+ * @param args Pointer to turnOP_args object.
+ * @param kls The Koliseo used for allocations.
+ */
+OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,
+              Koliseo_Temp * t_kls);
+#endif // TURNOP_H_

@@ -16,20 +16,30 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef ARTIFACTS_H
-#define ARTIFACTS_H
+/*! \mainpage Helapordo index page
+ *
+ * \section intro_sec Intro
+ *
+ * Helapordo is roguelike terminal game, using ncurses.
+ *
+ * SPDX-License-Identifier: GPL-3.0-only
+ *
+ * Check it out on [github](https://github.com/jgabaut/helapordo).
+ */
 
-#include "game_core.h"
-#include "game_utils.h"
-#include <stdio.h>
-#include <unistd.h>
+#ifndef HELAPORDO_H
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) //We need C11
+#define HELAPORDO_H
 
-void artifact_thinkingskull(Fighter * f, Enemy * e, Boss * b, int mode);
-void artifact_twinkie(Fighter * f, Enemy * e, Boss * b, int mode);
-void artifact_wristband(Fighter * f, Enemy * e, Boss * b, int mode);
-void artifact_boartail(Fighter * f, Enemy * e, Boss * b, int mode);
-void artifact_chaosorb(Fighter * f, Enemy * e, Boss * b, int mode);
-void artifact_powersyphon(Fighter * f, Enemy * e, Boss * b, int mode);
-void artifact_giantfossile(Fighter * f, Enemy * e, Boss * b, int mode);
+#include "floor_tester.h"
 
+#include "../utils/rooms.h"
+#include "../anvil__helapordo.h"
+#include "../core/game_lore.h"
+
+void gameloop_Win(int argc, char **argv);
+
+#else
+#error "This code requires C11.\n    _Alignof\n"
 #endif
+#endif //HELAPORDO_H

@@ -39,16 +39,23 @@ endif
 # Compiler flags
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11 -DHELAPORDO_BUILD_STR=\"$(HL_BUILD_STR)\"
 
+helapordo_SOURCES = src/core/game_core.c src/utils/game_utils.c src/utils/game_init.c src/utils/game_fight.c src/utils/game_debug.c src/core/equips.c src/utils/saves.c src/utils/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/utils/specials.c src/main.c src/core/sprites.c src/utils/floors.c koliseo/src/koliseo.c sprites4curses/s4c-animate/animate.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/core/game_lore.c src/core/game_lore_alt.c src/palette.c
 if HL_RAYLIB_BUILD
 AM_CFLAGS += -DHELAPORDO_RAYLIB_BUILD
-helapordo_SOURCES = src/helapordo_raylib.c src/game_core.c src/game_utils.c src/game_rl.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c koliseo/src/koliseo.c sprites4curses/s4c-animate/animate.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c src/palette.c
+helapordo_SOURCES += src/build-rl/helapordo_raylib.c src/build-rl/game_rl.c
 else
 AM_CFLAGS += -DHELAPORDO_CURSES_BUILD
-helapordo_SOURCES = src/helapordo.c src/game_core.c src/game_utils.c src/game_curses.c src/rooms.c src/artifacts.c src/specials.c src/main.c src/sprites.c src/floors.c sprites4curses/s4c-animate/animate.c koliseo/src/koliseo.c src/anvil__helapordo.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/game_lore.c src/game_lore_alt.c src/palette.c
+helapordo_SOURCES += src/build-nc/game_curses.c
 endif
 
 if WINDOWS_BUILD
-helapordo_SOURCES += src/floor_tester.c
+if !HL_RAYLIB_BUILD
+helapordo_SOURCES += src/build-nc-w64/helapordo_win.c src/build-nc-w64/floor_tester.c
+endif
+else
+if HL_CURSES_BUILD
+helapordo_SOURCES += src/build-nc/helapordo.c
+endif
 endif
 
 ./anvil:
@@ -191,6 +198,9 @@ clean:
 	-rm $(TARGET)
 	-rm sprites4curses/s4c-animate/*.o
 	-rm src/*.o
+	-rm src/build-*/*.o
+	-rm src/core/*.o
+	-rm src/utils/*.o
 	-rm src/animations/*.o
 	-rm src/palette.*
 	-rm koliseo/src/*.o
@@ -204,6 +214,9 @@ cleanob:
 	-rm sprites4curses/s4c-animate/*.o
 	-rm koliseo/src/*.o
 	-rm src/*.o
+	-rm src/build-*/*.o
+	-rm src/core/*.o
+	-rm src/utils/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)

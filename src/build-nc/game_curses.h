@@ -36,35 +36,10 @@
 #define HLPD_MIN_SCREEN_ROWS (HLPD_DEFAULT_SCREEN_ROWS+4) /**< Defines minimum y size for game screen.*/
 #define HLPD_MIN_SCREEN_COLS (HLPD_DEFAULT_SCREEN_COLS) /**< Defines minimum x size for game screen.*/
 
-#include <string.h>
 #include <locale.h>
 
-#include "game_core.h"
-#include "game_utils.h"
-
-#include "palette.h"
-
-#include "./animations/knight_tapis.h"
-#include "./animations/mage_spark.h"
-#include "./animations/archer_drop.h"
-#include "./animations/assassin_poof.h"
-
-#include "./animations/mummy_shuffle.h"
-#include "./animations/ghost_spell.h"
-#include "./animations/boar_scream.h"
-#include "./animations/troll_club.h"
-#include "./animations/goblin_shoot.h"
-#include "./animations/zombie_walk.h"
-#include "./animations/imp_fireball.h"
-#include "./animations/werewolf_transform.h"
-
-#include "./animations/crawlingdude_crawl.h"
-#include "./animations/srwarthog_square.h"
-#include "./animations/headlessninja_throw.h"
-#include "./animations/bluetroll_wonder.h"
-
-#include "./animations/enter_door.h"
-#include "./animations/alt_chest_opening.h"
+#include "../utils/turn_op.h"
+#include "../core/game_animations.h"
 
 int display_colorpairs(void);
 void print_encoded_char(WINDOW * w, int y, int x, char c);
@@ -85,22 +60,8 @@ void boss_win_show(WINDOW * win, Boss * b, Fighter * f, int isBoss, int border);
 void boss_print_in_panel(WINDOW * win, int starty, int startx, int width,
                          Boss * b, Fighter * f, int isBoss);
 
-void print_label(WINDOW * win, int starty, int startx, int width, char *string,
-                 chtype color);
-
-void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
-
-void applyStatus(WINDOW * notify_win, Fighter * f);
-
-void applyEStatus(WINDOW * notify_win, Enemy * e);
-
-void applyBStatus(WINDOW * notify_win, Boss * b);
-
-void display_notification(WINDOW * w, char *text, int time);
-
 void setConsumableSprite(Consumable * c);
 void setArtifactSprite(Artifact * a);
-void setEquipSprite(Equip * e);
 void setEquipslotSprite(Equipslot * s);
 void setEnemySprite(Enemy * e);
 void setBossSprite(Boss * b);

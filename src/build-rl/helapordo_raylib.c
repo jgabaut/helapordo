@@ -87,6 +87,8 @@ void gameloop_rl(int argc, char** argv)
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
 
+    bool is_localexe = ( argv[0][0] == '.');
+
     char *kls_progname = (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
                          KLS_None, "progname", whoami);
     strcpy(kls_progname, whoami);
@@ -367,6 +369,7 @@ void gameloop_rl(int argc, char** argv)
                 G_DEBUG_ON);
         log_tag("debug_log.txt", "[DEBUG]", "kls_progname == (%s)",
                 kls_progname);
+        log_tag("debug_log.txt", "[DEBUG]", "is_localexe == (%s)", (is_localexe ? "true" : "false"));
         log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
         log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
         log_tag("debug_log.txt", "[DEBUG]",
@@ -542,6 +545,38 @@ void gameloop_rl(int argc, char** argv)
     log_tag("debug_log.txt", "[DEBUG]", "gameloop() scanf() res was (%i)",
             scanfres);
 
+    log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
+    kls_log(default_kls, "DEBUG", "Prepping current_floor.");
+    Floor *current_floor =
+        (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
+                                 HR_Floor, "Floor", "Floor");
+    // Start the random walk from the center of the dungeon
+    int center_x = FLOOR_MAX_COLS / 2;
+    int center_y = FLOOR_MAX_ROWS / 2;
+
+    int current_x = center_x;
+    int current_y = center_y;
+
+    // Init dbg_floor
+    init_floor_layout(current_floor);
+
+    //Set center as filled
+    current_floor->floor_layout[center_x][center_y] = 1;
+
+    //Init floor rooms
+    init_floor_rooms(current_floor);
+
+    //Random walk #1
+    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+    //Random walk #2
+    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+
+    //Set floor explored matrix
+    load_floor_explored(current_floor);
+
+    //Set room types
+    floor_set_room_types(current_floor);
+
     int screenWidth = 800;
     int screenHeight = 450;
 
@@ -615,6 +650,69 @@ void gameloop_rl(int argc, char** argv)
             if (IsKeyPressed(KEY_P)) {
                 pause_animation = !pause_animation;
             }
+            if (IsKeyPressed(KEY_R)) {
+                fprintf(stderr,"%s\n", "Regenerating current floor");
+                kls_free(temporary_kls);
+                temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
+                current_floor =
+                    (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
+                                             HR_Floor, "Floor", "Floor");
+                // Init dbg_floor
+                init_floor_layout(current_floor);
+
+                //Set center as filled
+                current_floor->floor_layout[center_x][center_y] = 1;
+
+                //Init floor rooms
+                init_floor_rooms(current_floor);
+
+                //Random walk #1
+                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                //Random walk #2
+                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+
+                //Set floor explored matrix
+                load_floor_explored(current_floor);
+
+                //Set room types
+                floor_set_room_types(current_floor);
+            }
+            if (IsKeyPressed(KEY_UP)) {
+                step_floor(current_floor, &current_x,
+                           &current_y, KEY_UP);
+                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
+                    currentScreen = DOOR_ANIM;
+                    current_anim_frame = 0;
+                    break;
+                }
+            }
+            if (IsKeyPressed(KEY_DOWN)) {
+                step_floor(current_floor, &current_x,
+                           &current_y, KEY_DOWN);
+                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
+                    currentScreen = DOOR_ANIM;
+                    current_anim_frame = 0;
+                    break;
+                }
+            }
+            if (IsKeyPressed(KEY_LEFT)) {
+                step_floor(current_floor, &current_x,
+                           &current_y, KEY_LEFT);
+                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
+                    currentScreen = DOOR_ANIM;
+                    current_anim_frame = 0;
+                    break;
+                }
+            }
+            if (IsKeyPressed(KEY_RIGHT)) {
+                step_floor(current_floor, &current_x,
+                           &current_y, KEY_RIGHT);
+                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
+                    currentScreen = DOOR_ANIM;
+                    current_anim_frame = 0;
+                    break;
+                }
+            }
             if (!pause_animation) {
                 current_anim_frame = framesCounter%60;
             }
@@ -627,6 +725,17 @@ void gameloop_rl(int argc, char** argv)
             if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
                 currentScreen = TITLE;
             }
+        }
+        break;
+        case DOOR_ANIM: {
+            // TODO: Update DOOR_ANIM screen variables here!
+            framesCounter++;    // Count frames
+            // Press enter to return to gameplay screen
+            if (current_anim_frame == 59 || IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                currentScreen = GAMEPLAY;
+                break;
+            }
+            current_anim_frame++;
         }
         break;
         default:
@@ -719,6 +828,25 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
             int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
             int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
+
+            Rectangle floor_r = CLITERAL(Rectangle) {
+                screenWidth / 2 - (5 * sprite_w_factor),
+                            //screenHeight / 2,
+                            stats_label_r.y + (13 * sprite_w_factor),
+                            FLOOR_MAX_COLS * sprite_w_factor,
+                            FLOOR_MAX_ROWS * sprite_w_factor,
+            };
+
+            draw_floor_view(current_floor, current_x, current_y, sprite_w_factor, &floor_r);
+
+            /*
+            int center_x = FLOOR_MAX_COLS / 2;
+            int center_y = FLOOR_MAX_ROWS / 2;
+            draw_floor_view(current_floor, center_x, center_y, sprite_w_factor, &floor_r);
+            */
+            //display_roomclass_layout(current_floor, &floor_r, sprite_w_factor);
+            //display_floor_layout(current_floor, &floor_r, sprite_w_factor);
+            //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
             /*
             Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);
             Rectangle st_pl_coll = GetCollisionRec(stats_label_r,pl_r);
@@ -752,7 +880,32 @@ void gameloop_rl(int argc, char** argv)
             DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
             DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
+        }
+        break;
+        case DOOR_ANIM: {
+            // TODO: Draw ENDING screen here!
+            DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
+            DrawText("DOOR SCREEN", 20, 20, 40, DARKBLUE);
+            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+            DrawText("PRESS ENTER or TAP to RETURN to GAMEPLAY SCREEN", 120, 220, 20, DARKBLUE);
 
+            int door_frame_W = 21;
+            int door_frame_H = 21;
+            int door_rect_X = (screenWidth/2) - ((door_frame_W * sprite_w_factor * 1.5) /2);
+            int door_rect_Y = (screenHeight/2) - ((door_frame_H * sprite_w_factor * 1.5) /2);
+            Rectangle door_r = CLITERAL(Rectangle) {
+                door_rect_X,
+                door_rect_Y,
+                door_frame_W * sprite_w_factor * 1.5,
+                door_frame_H * sprite_w_factor * 1.5,
+            };
+            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, sprite_w_factor*1.5, palette, PALETTE_S4C_H_TOTCOLORS);
+            if (door_res != 0 ) {
+                DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+                DrawText("Please resize.", 20, 50, 20, RAYWHITE);
+                current_anim_frame--;
+            }
         }
         break;
         default:

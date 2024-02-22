@@ -18,7 +18,6 @@
 
 #ifndef FLOORS_H
 #define FLOORS_H
-#include <stdlib.h>
 #include <math.h>
 #include "game_utils.h"
 
@@ -33,11 +32,11 @@ void debug_print_roomclass_layout(Floor * floor, FILE * fp);
 void debug_print_floor_layout(Floor * floor, FILE * fp);
 
 #ifdef HELAPORDO_CURSES_BUILD
-#include "game_curses.h"
+#include "../build-nc/game_curses.h"
 
+void display_roomclass_layout(Floor * floor, WINDOW * win);
 void display_floor_layout(Floor * floor, WINDOW * win);
 void display_explored_layout(Floor * floor, WINDOW * win);
-void display_roomclass_layout(Floor * floor, WINDOW * win);
 
 void draw_cell(Floor * floor, int cell_x, int cell_y, WINDOW * win,
                int drawcorner_x, int drawcorner_y, int x_size, int y_size,
@@ -52,6 +51,15 @@ void move_update(Gamestate * gamestate, Floor * floor, int *current_x,
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
+void display_roomclass_layout(Floor *floor, Rectangle *win, float pixelSize);
+void display_floor_layout(Floor * floor, Rectangle * win, float pixelSize);
+void display_explored_layout(Floor *floor, Rectangle *win, float pixelSize);
+void draw_cell(Floor * floor, int cell_x, int cell_y, Rectangle * win,
+               int drawcorner_x, int drawcorner_y, int x_size, int y_size, float pixelSize,
+               int recurse);
+void draw_floor_view(Floor * floor, int current_x, int current_y, float pixelSize, Rectangle * win);
+void step_floor(Floor * floor, int *current_x,
+                int *current_y, int control);
 #endif // HELAPORDO_RAYLIB_BUILD
 
 #endif // HELAPORDO_CURSES_BUILD

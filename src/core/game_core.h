@@ -57,7 +57,7 @@ typedef struct GameScreen {
 /**
  * Defines GameScreen type, as an enum.
  */
-typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
+typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING, DOOR_ANIM } GameScreen;
 // Add more includes for rl-build here
 #ifdef _WIN32
 /**
@@ -74,8 +74,8 @@ typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING } GameScreen;
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
-#include "../koliseo/src/koliseo.h"
-#include "../sprites4curses/s4c-animate/animate.h"
+#include "../../koliseo/src/koliseo.h"
+#include "../palette.h" /**< Defines the color palette used for the s4c functions, includes animate.h.*/
 
 extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
 
@@ -204,12 +204,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 2
+#define HELAPORDO_PATCH_VERSION 3
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.2"
+#define VERSION "1.4.3"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
@@ -1735,6 +1735,8 @@ typedef struct {
 #else
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
+
+    bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
 } Gamestate;
 
 /**

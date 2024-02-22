@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #define HELAPORDO_CURSES_BUILD
-#include "../../src/game_core.h"
+#include "../../src/core/game_core.h"
 
 void fail(char* msg, int ex, int val) {
   printf("[Fail]    %s, expected (%i), was %i\n",msg,ex,val);
@@ -9,7 +9,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.4.2") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.4.3") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (HLP_MAX_INDEX == 31) ) {

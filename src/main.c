@@ -16,13 +16,16 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #ifdef HELAPORDO_CURSES_BUILD
-#include "helapordo.h"
-#include "floor_tester.h"
+#ifndef _WIN32
+#include "build-nc/helapordo.h"
+#else
+#include "build-nc-w64/helapordo_win.h"
+#endif // _WIN32
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
-#include "helapordo_raylib.h"
+#include "build-rl/helapordo_raylib.h"
 #endif //HELAPORDO_RAYLIB_BUILD
 #endif //HELAPORDO_CURSES_BUILD
 
