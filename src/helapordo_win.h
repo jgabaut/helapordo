@@ -31,20 +31,13 @@
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) //We need C11
 #define HELAPORDO_H
 
-#ifndef _WIN32
-#define _POSIX_C_SOURCE 200809L
-#endif // _WIN32
+#include "floor_tester.h"
 
 #include "rooms.h"
 #include "anvil__helapordo.h"
 #include "game_lore.h"
 
-/*
-void register_counter_callback(int index, callback_void_t ptr, Fighter*);
-*/
-
-void gameloop(int argc, char **argv);
-
+void gameloop_Win(int argc, char **argv);
 
 #else
 #error "This code requires C11.\n    _Alignof\n"
