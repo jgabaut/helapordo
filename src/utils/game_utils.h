@@ -20,7 +20,7 @@
 #define GAME_UTILS_H
 
 #ifdef HELAPORDO_CURSES_BUILD
-#include "sprites.h"
+#include "../core/sprites.h"
 #ifdef _WIN32
 #include <ncursesw/panel.h>
 #include <ncursesw/menu.h>
@@ -43,7 +43,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
-#include "game_core.h"
+#include "../core/game_core.h"
 
 void initWincon(Wincon * w, Path * p, winconClass class);
 void printGlobVars(void);

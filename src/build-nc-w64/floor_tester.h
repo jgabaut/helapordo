@@ -15,17 +15,11 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifndef HELAPORDO_H
-#define HELAPORDO_H
 
-#ifndef _WIN32
-#define _POSIX_C_SOURCE 200809L
-#endif
+#ifndef FLOOR_TEST_H
+#define FLOOR_TEST_H
+#include "../utils/floors.h"
 
-#include "game_rl.h"
-#include "rooms.h"
-#include "anvil__helapordo.h"
-#include "game_lore.h"
+int test_floors(void);
 
-void gameloop_rl(int argc, char** argv);
 #endif

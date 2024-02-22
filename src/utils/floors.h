@@ -32,7 +32,7 @@ void debug_print_roomclass_layout(Floor * floor, FILE * fp);
 void debug_print_floor_layout(Floor * floor, FILE * fp);
 
 #ifdef HELAPORDO_CURSES_BUILD
-#include "game_curses.h"
+#include "../build-nc/game_curses.h"
 
 void display_roomclass_layout(Floor * floor, WINDOW * win);
 void display_floor_layout(Floor * floor, WINDOW * win);

@@ -19,9 +19,9 @@
 #ifndef GAMECURSES_RL_H
 #define GAMECURSES_RL_H
 
-#include "game_utils.h"
-#include "sprites.h"
-#include "game_animations.h"
+#include "../utils/game_utils.h"
+#include "../core/sprites.h"
+#include "../core/game_animations.h"
 
 #define EXPECTED_RAYLIB_VERSION_MAJOR 4 /**< Defines min expected major ncurses version.*/
 #define EXPECTED_RAYLIB_VERSION_MINOR 5 /**< Defines min expected minor ncurses version.*/

@@ -23,12 +23,12 @@
 #include "specials.h"
 
 #ifdef HELAPORDO_CURSES_BUILD
-#include "game_curses.h"
+#include "../build-nc/game_curses.h"
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
 #else
-#include "game_rl.h"
+#include "../build-rl/game_rl.h"
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 

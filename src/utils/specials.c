@@ -15,15 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#ifdef HELAPORDO_CURSES_BUILD
-#include "helapordo.h"
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-#include "helapordo_raylib.h"
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
 #include "specials.h"
 
 #ifdef HELAPORDO_CURSES_BUILD

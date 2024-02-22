@@ -74,8 +74,8 @@ typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING, DOOR_ANIM } GameScr
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
-#include "../koliseo/src/koliseo.h"
-#include "palette.h" /**< Defines the color palette used for the s4c functions, includes animate.h.*/
+#include "../../koliseo/src/koliseo.h"
+#include "../palette.h" /**< Defines the color palette used for the s4c functions, includes animate.h.*/
 
 extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
 

@@ -17,15 +17,15 @@
 */
 #ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
-#include "helapordo.h"
+#include "build-nc/helapordo.h"
 #else
-#include "helapordo_win.h"
+#include "build-nc-w64/helapordo_win.h"
 #endif // _WIN32
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
-#include "helapordo_raylib.h"
+#include "build-rl/helapordo_raylib.h"
 #endif //HELAPORDO_RAYLIB_BUILD
 #endif //HELAPORDO_CURSES_BUILD
 

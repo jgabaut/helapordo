@@ -18,7 +18,7 @@
 
 #ifndef SPECIALS_H
 #define SPECIALS_H
-#include "game_core.h"
+#include "game_utils.h"
 
 #ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32

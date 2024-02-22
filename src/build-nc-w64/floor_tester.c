@@ -16,7 +16,6 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 #include "floor_tester.h"
-#include "floors.h"
 
 #ifdef HELAPORDO_CURSES_BUILD
 int test_floors(void)

@@ -38,8 +38,8 @@
 
 #include <locale.h>
 
-#include "turn_op.h"
-#include "game_animations.h"
+#include "../utils/turn_op.h"
+#include "../core/game_animations.h"
 
 
 int display_colorpairs(void);
