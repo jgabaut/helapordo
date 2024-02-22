@@ -152,5 +152,5 @@
 
   - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.2/helapordo-nc-1.4.2-darwin-arm64.zip) (Available = `1.4.2`. Latest = `1.4.3`)
 
-  📦 v1.4.2 22/02/2024
+  📦 v1.4.3 22/02/2024
   https://github.com/jgabaut/helapordo/releases
