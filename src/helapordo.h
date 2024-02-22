@@ -66,18 +66,6 @@ void emptyEquips(Fighter * player);
 
 int retry(void);
 
-#ifdef HELAPORDO_CURSES_BUILD
-void open_chest(WINDOW * w, Chest * c, Fighter * f, Koliseo * kls,
-                Koliseo_Temp * t_kls);
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-void open_chest(Rectangle * notification_area, Chest * c, Fighter * f, Koliseo * kls,
-                Koliseo_Temp * t_kls);
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
 Path *randomise_path(int seed, Koliseo * kls, const char *path_to_savefile);
 
 void gameloop(int argc, char **argv);
