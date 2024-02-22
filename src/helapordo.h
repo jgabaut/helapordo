@@ -45,29 +45,6 @@
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 */
 
-void printStats(Fighter * f);
-
-void printEStats(Enemy * e);
-
-void printConsumablesStats(Consumable * c);
-
-void printArtifactStats(Artifact * a);
-
-void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
-               Koliseo * kls);
-
-int getConsumableQty(Fighter * f, int n);
-
-void emptyConsumables(Fighter * player);
-
-void emptyArtifacts(Fighter * player);
-
-void emptyEquips(Fighter * player);
-
-int retry(void);
-
-Path *randomise_path(int seed, Koliseo * kls, const char *path_to_savefile);
-
 void gameloop(int argc, char **argv);
 
 #ifdef _WIN32

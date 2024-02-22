@@ -33,8 +33,6 @@ void initEquipSlots(Fighter * f, Koliseo * kls);
 
 void initArtifactsBag(Fighter * f, Koliseo * kls);
 
-void initWincon(Wincon * w, Path * p, winconClass class);
-
 void initPlayerStats(Fighter * player, Path * path, Koliseo * kls);
 
 void initEnemyStats(Enemy * e, Koliseo_Temp * t_kls);

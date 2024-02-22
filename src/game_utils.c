@@ -20,6 +20,48 @@
 //
 
 /**
+ * Takes a Wincon and a Path pointers and a winconClass and initialises the passed Wincon.
+ * @see Wincon
+ * @see Path
+ * @see winconClass
+ * @see WINCON_CLASS_MAX
+ * @param w The Wincon pointer to initialise.
+ * @param p The Path to use to initialise Wincon.
+ * @param class The winconClass to use to initialise.
+ */
+void initWincon(Wincon *w, Path *p, winconClass class)
+{
+
+    w->class = class;
+
+    switch (w->class) {
+    case ALL_BOSSES: {
+        w->current_val = 0;
+        w->target_val = BOSSCLASSESMAX + 1;
+
+    };
+    break;
+    case ALL_ARTIFACTS: {
+        w->current_val = 0;
+        w->target_val = ARTIFACTSMAX + 1;
+
+    };
+    break;
+    case FULL_PATH: {
+        w->current_val = 0;
+        w->target_val = p->length;
+    };
+    break;
+    default: {
+        fprintf(stderr, "\nUnexpected Wincon Class %i\n", w->class);
+        w->class = -1;
+        w->current_val = 0;
+        w->target_val = 1;
+    }
+    }
+}
+
+/**
  * Prints global vars to stdout.
  */
 void printGlobVars(void)
@@ -2753,6 +2795,218 @@ int dropArtifact(Fighter *player)
     return drop;
 }
 
+/**
+ * Takes a Fighter pointer and an integer denoting the consumableClass and returns the respective qty value from player's consumablesBag at the provided index.
+ * @see Fighter
+ * @see Consumable
+ * @see consumableClass
+ * @param f The Fighter pointer.
+ * @param n The consumableClass value.
+ * @return int The qty value in consumablesBag for selected consumableClass.
+ */
+int getConsumableQty(Fighter *f, int n)
+{
+    Consumable *c = (Consumable *) f->consumablesBag[n];
+    return c->qty;
+}
+
+/**
+ * Sets the qty value to 0 for all Consumable in f's consumablesBag with positive qty.
+ * @see Consumable
+ * @see consumableClass
+ * @see CONSUMABLESMAX
+ * @see getConsumableQty()
+ * @param f The Fighter pointer at hand.
+ */
+void emptyConsumables(Fighter *f)
+{
+    for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
+        if (getConsumableQty(f, i) > 0) {
+            Consumable *c = (Consumable *) f->consumablesBag[i];
+            c->qty = 0;
+        }
+    };
+}
+
+/**
+ * Takes a Fighter pointer and sets the qty value to 0 and the active flag to false for all Artifacts in the fighter's artifactsBag with positive qty.
+ * @see Artifact
+ * @see artifactClass
+ * @see ARTIFACTSMAX
+ * @param f The Fighter pointer at hand.
+ */
+void emptyArtifacts(Fighter *f)
+{
+    for (int i = 0; i < ARTIFACTSMAX + 1; i++) {
+        if (f->artifactsBag[i]->qty > 0) {
+            f->artifactsBag[i]->qty = 0;
+            f->artifactsBag[i]->active = 0;
+        }
+    };
+}
+
+/**
+ * Takes a Fighter pointer and, for all Equip in equipsBag field with positive qty, sets qty to 0 and frees the Equip pointer.
+ * @see Fighter
+ * @see Equip
+ * @param player The fighter pointer whose equipsbag will be emptied.
+ */
+void emptyEquips(Fighter *player)
+{
+    //We REALLY need to be sure the items are in successive cells
+    //Still thinking linked lists would be better than an array
+    int occupied = player->equipsBagOccupiedSlots;
+
+    for (int i = 0; i < occupied; i++) {
+
+        Equip *e = (Equip *) player->equipsBag[i];
+        if (e->qty > 0) {
+            //free(e);
+            e->qty = 0;
+            log_tag("debug_log.txt", "[FIXME]",
+                    "emptyEquips():  how do I empty them semantically?");
+        }
+    };
+}
+
+/**
+ * Takes an integer seed and returns a Path pointer.
+ * The seed provided is used to set the random seed and initialise the path values.
+ * @see Path
+ * @see MAXLENGTH
+ * @see MAXLUCK
+ * @param seed An integer seed.
+ * @param kls The Koliseo used for allocation.
+ * @param current_saveslot The Saveslot used to init the Path.
+ * @return A Path pointer with stats.
+ */
+Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
+{
+    char msg[200];
+    sprintf(msg, "Prepping Path");
+    kls_log(kls, "DEBUG", msg);
+    Path *p = (Path *) KLS_PUSH_TYPED(kls, Path, HR_Path, "Path", msg);
+    srand(seed);
+    sprintf(msg, "Prepping Saveslot");
+    kls_log(kls, "DEBUG", msg);
+    sprintf(msg, "save_path: [%s]", path_to_savefile);
+    Saveslot *save =
+        (Saveslot *) KLS_PUSH_TYPED(kls, Saveslot, HR_Saveslot, "Saveslot",
+                                    msg);
+    sprintf(msg, "Seed: %i", seed);
+    strcpy(save->name, msg);
+    sprintf(msg, "%s", path_to_savefile);
+    strcpy(save->save_path, msg);
+    p->current_saveslot = save;
+    kls_log(kls, "DEBUG",
+            "Prepped Saveslot:  path->current_saveslot->save_path == [%s]",
+            p->current_saveslot->save_path);
+    log_tag("debug_log.txt", "[SAVESLOT]",
+            "Prepped Saveslot:  path->current_saveslot->save_path == [%s]",
+            p->current_saveslot->save_path);
+
+    switch (GAMEMODE) {
+    case Standard: {
+        p->length = (rand() % MAXLENGTH) + 1;
+        p->luck = (rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (rand() % 150) + 500;
+    }
+    break;
+    case Story: {
+        p->length = 41;
+        p->luck = (rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (rand() % 150) + 500;
+    }
+    break;
+    case Rogue: {
+        p->length = 1;
+        p->luck = (rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (rand() % 150) + 500;
+    }
+    break;
+    default: {
+        fprintf(stderr, "\nUnexpected GAMEMODE value %i.\n", GAMEMODE);
+        exit(EXIT_FAILURE);
+    }
+    }
+    return p;
+}
+
+/**
+ * Takes a Fighter pointer and prints most of its values formatted.
+ * @see Fighter
+ * @see stringFromClass()
+ * @see stringFromStatus()
+ * @param f The Fighter pointer with stats to print.
+ */
+void printStats(Fighter *f)
+{
+
+    printf("\t%s's stats:\n\n", f->name);
+    printf("\t\tClass:\t%s\n", stringFromClass(f->class));
+    printf("\t\tHp:\t%i/%i\n", f->hp, f->totalhp);
+    printf("\t\tEnergy:\t%i/%i\n", f->energy, f->totalenergy);
+    printf("\t\tAtk:\t%i\n", f->atk);
+    printf("\t\tDef:\t%i\n", f->def);
+    printf("\t\tVel:\t%i\n", f->vel);
+    printf("\t\tLvl:\t%i\n", f->level);
+    printf("\t\tCurrent Level exp:\t%i/%i\n", f->currentlevelxp,
+           f->totallevelxp);
+    printf("\t\tTotal exp:\t%i\n", f->totalxp);
+    printf("\t\tStatus:\t%s\n", stringFromStatus(f->status));
+}
+
+/**
+ * Takes a Enemy pointer and prints most of its values formatted.
+ * @see Enemy
+ * @see stringFromEClass()
+ * @see stringFromStatus()
+ * @param e The Enemy pointer with stats to print.
+ */
+void printEStats(Enemy *e)
+{
+    if (e->beast) {
+        lightRed();
+    }
+    printf("\t%s's stats:\n", stringFromEClass(e->class));
+    if (e->beast) {
+        white();
+    }
+    printf("\tHp:\t%i/%i\n", e->hp, e->totalhp);
+    printf("\tEnergy:\t%i/%i\n", e->energy, e->totalenergy);
+    printf("\tAtk:\t%i\n", e->atk);
+    printf("\tDef:\t%i\n", e->def);
+    printf("\tVel:\t%i\n", e->vel);
+    printf("\tLvl:\t%i\n", e->level);
+    printf("\tXp:\t%i\n", e->xp);
+    printf("\tStatus:\t%s\n", stringFromStatus(e->status));
+}
+
+/**
+ * Takes a Consumable pointer and prints most of its values formatted.
+ * @see Consumable
+ * @param c The Consumable pointer with stats to print.
+ */
+void printConsumablesStats(Consumable *c)
+{
+    printf("  (%i)\t%i\t%s\t\"%s\"\n", c->class, c->qty, c->name, c->desc);
+}
+
+/**
+ * Takes a Artifact pointer and prints most of its values formatted.
+ * @see Artifact
+ * @param a The Artifact pointer with stats to print.
+ */
+void printArtifactStats(Artifact *a)
+{
+    printf("  (%i)\t\t", a->class);
+    purple();
+    printf("%s\t", a->name);
+    yellow();
+    printf("\"%s\"\n", a->desc);
+    white();
+}
+
 #ifdef HELAPORDO_CURSES_BUILD
 /**
  * Demoes color pairs from palette.c to the passed WINDOW.
@@ -3872,6 +4126,153 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
         display_notification(notify_win, msg, 500);
     }
     break;
+    }
+}
+
+/**
+ * Asks the user is they want to continue and returns the choice.
+ * @return int True for trying again, false otherwise.
+ */
+int retry(void)
+{
+    lightGreen();
+    printf("\n\nYou died. Want to try again?\n\n\t\t[type no / yes]\n\n");
+    white();
+    char c[25] = { 0 };
+    if (fgets(c, sizeof(c), stdin) != NULL) {
+        log_tag("debug_log.txt", "[DEBUG]", "Read input for %s().", __func__);
+        if (c[strlen(c) - 1] == '\n') {
+            c[strlen(c) - 1] = '\0';
+        }
+
+        for (char *ptr = c; *ptr; ++ptr) {
+            *ptr = tolower(*ptr);
+        }
+
+        if ( (c[0] == '\0') || (strcmp(c, "no") == 0) || (strcmp(c, "n") == 0) ) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s(): input was no.",
+                    __func__);
+            return 0;
+        } else if ((strcmp(c, "yes") == 0) || (strcmp(c, "y") == 0) ){
+            log_tag("debug_log.txt", "[DEBUG]", "%s(): input was yes.",
+                    __func__);
+            return 1;
+        } else {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "%s(): Invalid input, defaulting to 0.", __func__);
+
+            return 0;
+        }
+    } else {
+        log_tag("debug_log.txt", "[DEBUG]", "Failed reading input for %s.",
+                __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a integer and a string array (possibly from main), a Fighter pointer and a Path pointer to set some values.
+ * Depending on argc value, the arguments in argv may be used instead of calling the functions to get user input.
+ * @see Fighter
+ * @see pickName()
+ * @see pickClass()
+ * @see pickWincon()
+ * @param argc The number of argv values + 1 (0 is program name?).
+ * @param argv Array of strings with argc - 1 values.
+ * @param player The Fighter of which we set name and class.
+ * @param path The Path pointer used for the game.
+ * @param kls The Koliseo used for allocation.
+ */
+void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
+               Koliseo *kls)
+{
+
+    int argTot = argc - optTot;
+    if (argTot == 0) {
+        pickName(player);
+        pickClass(player);
+        kls_log(kls, "DEBUG", "Prepping Wincon");
+        Wincon *w =
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
+                                      "Wincon");
+        if (GAMEMODE == Story) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, FULL_PATH);
+        } else if (GAMEMODE == Rogue) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, ALL_ARTIFACTS);
+        } else {
+            pickWincon(w);
+            initWincon(w, path, w->class);
+        }
+        path->win_condition = w;
+    } else if (argTot == 1 || argTot == 2) {
+        char read_name[25];
+        int i = 0, len = 0;
+        len = strlen(argv[optTot]);
+        if (len < 20) {
+            for (; i < len; i++) {
+                read_name[i] = argv[optTot][i];
+            }
+            read_name[i] = '\0';
+            strcpy(player->name, read_name);
+        } else {
+            pickName(player);
+        }
+    } else {
+        usage(argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    if (argTot == 1) {
+        pickClass(player);
+        kls_log(kls, "DEBUG", "Prepping Wincon");
+        Wincon *w =
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
+                                      "Wincon");
+        if (GAMEMODE == Story) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, FULL_PATH);
+        } else if (GAMEMODE == Rogue) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, ALL_ARTIFACTS);
+        } else {
+            pickWincon(w);
+            initWincon(w, path, w->class);
+        }
+        path->win_condition = w;
+    }
+
+    if (argTot == 2) {
+        int c = -1;
+        int i = 0;
+        for (i = 0; i <= CLASSESMAX; i++) {
+            if (strcmp(argv[optTot + 1], classesstrings[i]) == 0) {
+                c = 1;
+                player->class = i;
+                break;
+            }
+        }
+        if (c < 0) {
+            pickClass(player);
+        }
+        kls_log(kls, "DEBUG", "Prepping Wincon");
+        Wincon *w =
+            (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
+                                      "Wincon");
+        if (GAMEMODE == Story) {
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, FULL_PATH);
+        } else if (GAMEMODE == Rogue) {
+            //TODO: what do we set as path length? Number of floors?
+            //Path length must be already initialised before getting here.
+            initWincon(w, path, ALL_ARTIFACTS);
+        } else {
+            pickWincon(w);
+            initWincon(w, path, w->class);
+        }
+        path->win_condition = w;
     }
 }
 #else

@@ -45,6 +45,7 @@
 #include <time.h>
 #include "game_core.h"
 
+void initWincon(Wincon * w, Path * p, winconClass class);
 void printGlobVars(void);
 
 #ifdef _WIN32
@@ -213,6 +214,16 @@ void printSpawnMessage(Enemy * e, int roomIndex, int enemyIndex);
 int dropConsumable(Fighter * player);
 int dropArtifact(Fighter * player);
 
+int getConsumableQty(Fighter * f, int n);
+void emptyConsumables(Fighter * player);
+void emptyArtifacts(Fighter * player);
+void emptyEquips(Fighter * player);
+Path *randomise_path(int seed, Koliseo * kls, const char *path_to_savefile);
+void printStats(Fighter * f);
+void printEStats(Enemy * e);
+void printConsumablesStats(Consumable * c);
+void printArtifactStats(Artifact * a);
+
 #ifdef HELAPORDO_CURSES_BUILD
 void test_game_color_pairs(WINDOW * win, int colors_per_row);
 void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
@@ -236,6 +247,9 @@ void applyStatus(WINDOW * notify_win, Fighter * f);
 void applyEStatus(WINDOW * notify_win, Enemy * e);
 void applyBStatus(WINDOW * notify_win, Boss * b);
 void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
+int retry(void);
+void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
+               Koliseo * kls);
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
