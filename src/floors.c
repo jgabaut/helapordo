@@ -1283,13 +1283,9 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
  * @see Floor
  * @see floorClass
  */
-void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
-                 int *current_y, int control, float pixelSize, Rectangle *win)
+void step_floor(Gamestate *gamestate, Floor *floor, int *current_x,
+                 int *current_y, int control)
 {
-    if (win == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "move_update():  win was NULL.");
-        exit(EXIT_FAILURE);
-    }
 
     int picked = 0;
     int target_x = *current_x;
@@ -1361,7 +1357,7 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
                 }
                 *current_x = target_x;
                 *current_y = target_y;
-                draw_floor_view(floor, *current_x, *current_y, pixelSize, win);
+                //draw_floor_view(floor, *current_x, *current_y, pixelSize, win);
             } else {
                 picked = 0;
                 log_tag("debug_log.txt", "[DEBUG]",

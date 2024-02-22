@@ -679,44 +679,20 @@ void gameloop_rl(int argc, char** argv)
                 floor_set_room_types(current_floor);
             }
             if (IsKeyPressed(KEY_UP)) {
-                Rectangle update_r = CLITERAL(Rectangle) {
-                    20,
-                    20,
-                    200,
-                    200
-                };
-                move_update(NULL, current_floor, &current_x,
-                 &current_y, KEY_UP, sprite_w_factor, &update_r);
+                step_floor(NULL, current_floor, &current_x,
+                 &current_y, KEY_UP);
             }
             if (IsKeyPressed(KEY_DOWN)) {
-                Rectangle update_r = CLITERAL(Rectangle) {
-                    20,
-                    20,
-                    200,
-                    200
-                };
-                move_update(NULL, current_floor, &current_x,
-                 &current_y, KEY_DOWN, sprite_w_factor, &update_r);
+                step_floor(NULL, current_floor, &current_x,
+                 &current_y, KEY_DOWN);
             }
             if (IsKeyPressed(KEY_LEFT)) {
-                Rectangle update_r = CLITERAL(Rectangle) {
-                    20,
-                    20,
-                    200,
-                    200
-                };
-                move_update(NULL, current_floor, &current_x,
-                 &current_y, KEY_LEFT, sprite_w_factor, &update_r);
+                step_floor(NULL, current_floor, &current_x,
+                 &current_y, KEY_LEFT);
             }
             if (IsKeyPressed(KEY_RIGHT)) {
-                Rectangle update_r = CLITERAL(Rectangle) {
-                    20,
-                    20,
-                    200,
-                    200
-                };
-                move_update(NULL, current_floor, &current_x,
-                 &current_y, KEY_RIGHT, sprite_w_factor, &update_r);
+                step_floor(NULL, current_floor, &current_x,
+                 &current_y, KEY_RIGHT);
             }
             if (!pause_animation) {
                 current_anim_frame = framesCounter%60;
