@@ -889,19 +889,19 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
             DrawText("DOOR SCREEN", 20, 20, 40, DARKBLUE);
             DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
+            DrawText("PRESS ENTER or TAP to RETURN to GAMEPLAY SCREEN", 120, 220, 20, DARKBLUE);
 
-            int door_rect_Y = 20;
             int door_frame_W = 21;
             int door_frame_H = 21;
-            int door_rect_X = 20;
+            int door_rect_X = (screenWidth/2) - ((door_frame_W * sprite_w_factor * 1.5) /2);
+            int door_rect_Y = (screenHeight/2) - ((door_frame_H * sprite_w_factor * 1.5) /2);
             Rectangle door_r = CLITERAL(Rectangle) {
                 door_rect_X,
                 door_rect_Y,
-                door_frame_W * sprite_w_factor,
-                door_frame_H * sprite_w_factor,
+                door_frame_W * sprite_w_factor * 1.5,
+                door_frame_H * sprite_w_factor * 1.5,
             };
-            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
+            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, sprite_w_factor*1.5, palette, PALETTE_S4C_H_TOTCOLORS);
             if (door_res != 0 ) {
                 DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
                 DrawText("Window too small.", 20, 20, 20, RAYWHITE);
