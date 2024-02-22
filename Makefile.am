@@ -49,9 +49,8 @@ helapordo_SOURCES += src/game_curses.c
 endif
 
 if WINDOWS_BUILD
-helapordo_SOURCES += src/floor_tester.c
 if !HL_RAYLIB_BUILD
-helapordo_SOURCES += src/helapordo_win.c
+helapordo_SOURCES += src/helapordo_win.c src/floor_tester.c
 endif
 else
 if HL_CURSES_BUILD
