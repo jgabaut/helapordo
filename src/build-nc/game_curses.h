@@ -41,7 +41,6 @@
 #include "../utils/turn_op.h"
 #include "../core/game_animations.h"
 
-
 int display_colorpairs(void);
 void print_encoded_char(WINDOW * w, int y, int x, char c);
 int get_saveslot_index(void);

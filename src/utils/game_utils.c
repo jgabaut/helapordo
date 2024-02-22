@@ -4153,7 +4153,7 @@ int retry(void)
             log_tag("debug_log.txt", "[DEBUG]", "%s(): input was no.",
                     __func__);
             return 0;
-        } else if ((strcmp(c, "yes") == 0) || (strcmp(c, "y") == 0) ){
+        } else if ((strcmp(c, "yes") == 0) || (strcmp(c, "y") == 0) ) {
             log_tag("debug_log.txt", "[DEBUG]", "%s(): input was yes.",
                     __func__);
             return 1;

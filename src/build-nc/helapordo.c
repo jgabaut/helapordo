@@ -282,7 +282,7 @@ void gameloop(int argc, char **argv)
                         strftime(headergen_time_buff, 20, "%Y-%m-%d %H:%M:%S", headergen_time_tm);
                         printf("Anvil Gen Date: %s\n", headergen_time_buff);
                     }
-               }
+                }
 #else
                 printf("  Built without anvil\n");
 #endif // ANVIL__helapordo__

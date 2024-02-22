@@ -45,7 +45,6 @@ void register_counter_callback(int index, callback_void_t ptr, Fighter*);
 
 void gameloop(int argc, char **argv);
 
-
 #else
 #error "This code requires C11.\n    _Alignof\n"
 #endif

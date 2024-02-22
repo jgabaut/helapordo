@@ -549,7 +549,7 @@ void gameloop_rl(int argc, char** argv)
     kls_log(default_kls, "DEBUG", "Prepping current_floor.");
     Floor *current_floor =
         (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
-                                   HR_Floor, "Floor", "Floor");
+                                 HR_Floor, "Floor", "Floor");
     // Start the random walk from the center of the dungeon
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
@@ -576,7 +576,6 @@ void gameloop_rl(int argc, char** argv)
 
     //Set room types
     floor_set_room_types(current_floor);
-
 
     int screenWidth = 800;
     int screenHeight = 450;
@@ -657,7 +656,7 @@ void gameloop_rl(int argc, char** argv)
                 temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
                 current_floor =
                     (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
-                                               HR_Floor, "Floor", "Floor");
+                                             HR_Floor, "Floor", "Floor");
                 // Init dbg_floor
                 init_floor_layout(current_floor);
 
@@ -680,7 +679,7 @@ void gameloop_rl(int argc, char** argv)
             }
             if (IsKeyPressed(KEY_UP)) {
                 step_floor(current_floor, &current_x,
-                 &current_y, KEY_UP);
+                           &current_y, KEY_UP);
                 if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
                     currentScreen = DOOR_ANIM;
                     current_anim_frame = 0;
@@ -689,7 +688,7 @@ void gameloop_rl(int argc, char** argv)
             }
             if (IsKeyPressed(KEY_DOWN)) {
                 step_floor(current_floor, &current_x,
-                 &current_y, KEY_DOWN);
+                           &current_y, KEY_DOWN);
                 if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
                     currentScreen = DOOR_ANIM;
                     current_anim_frame = 0;
@@ -698,7 +697,7 @@ void gameloop_rl(int argc, char** argv)
             }
             if (IsKeyPressed(KEY_LEFT)) {
                 step_floor(current_floor, &current_x,
-                 &current_y, KEY_LEFT);
+                           &current_y, KEY_LEFT);
                 if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
                     currentScreen = DOOR_ANIM;
                     current_anim_frame = 0;
@@ -707,7 +706,7 @@ void gameloop_rl(int argc, char** argv)
             }
             if (IsKeyPressed(KEY_RIGHT)) {
                 step_floor(current_floor, &current_x,
-                 &current_y, KEY_RIGHT);
+                           &current_y, KEY_RIGHT);
                 if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
                     currentScreen = DOOR_ANIM;
                     current_anim_frame = 0;
@@ -832,14 +831,13 @@ void gameloop_rl(int argc, char** argv)
 
             Rectangle floor_r = CLITERAL(Rectangle) {
                 screenWidth / 2 - (5 * sprite_w_factor),
-                //screenHeight / 2,
-                stats_label_r.y + (13 * sprite_w_factor),
-                FLOOR_MAX_COLS * sprite_w_factor,
-                FLOOR_MAX_ROWS * sprite_w_factor,
+                            //screenHeight / 2,
+                            stats_label_r.y + (13 * sprite_w_factor),
+                            FLOOR_MAX_COLS * sprite_w_factor,
+                            FLOOR_MAX_ROWS * sprite_w_factor,
             };
 
             draw_floor_view(current_floor, current_x, current_y, sprite_w_factor, &floor_r);
-
 
             /*
             int center_x = FLOOR_MAX_COLS / 2;

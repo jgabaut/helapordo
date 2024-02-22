@@ -59,7 +59,7 @@ void draw_cell(Floor * floor, int cell_x, int cell_y, Rectangle * win,
                int recurse);
 void draw_floor_view(Floor * floor, int current_x, int current_y, float pixelSize, Rectangle * win);
 void step_floor(Floor * floor, int *current_x,
-                 int *current_y, int control);
+                int *current_y, int control);
 #endif // HELAPORDO_RAYLIB_BUILD
 
 #endif // HELAPORDO_CURSES_BUILD

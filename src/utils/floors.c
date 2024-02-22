@@ -1284,7 +1284,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
  * @see floorClass
  */
 void step_floor(Floor *floor, int *current_x,
-                 int *current_y, int control)
+                int *current_y, int control)
 {
 
     int picked = 0;
@@ -1294,8 +1294,8 @@ void step_floor(Floor *floor, int *current_x,
         target_x = *current_x;
         target_y = *current_y;
         switch (control) {
-            //TODO
-            //Implement a working menu for the Windows build
+        //TODO
+        //Implement a working menu for the raylib build
         case KEY_DOWN: {
             picked = 1;
             target_y += 1;
