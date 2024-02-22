@@ -679,19 +679,19 @@ void gameloop_rl(int argc, char** argv)
                 floor_set_room_types(current_floor);
             }
             if (IsKeyPressed(KEY_UP)) {
-                step_floor(NULL, current_floor, &current_x,
+                step_floor(current_floor, &current_x,
                  &current_y, KEY_UP);
             }
             if (IsKeyPressed(KEY_DOWN)) {
-                step_floor(NULL, current_floor, &current_x,
+                step_floor(current_floor, &current_x,
                  &current_y, KEY_DOWN);
             }
             if (IsKeyPressed(KEY_LEFT)) {
-                step_floor(NULL, current_floor, &current_x,
+                step_floor(current_floor, &current_x,
                  &current_y, KEY_LEFT);
             }
             if (IsKeyPressed(KEY_RIGHT)) {
-                step_floor(NULL, current_floor, &current_x,
+                step_floor(current_floor, &current_x,
                  &current_y, KEY_RIGHT);
             }
             if (!pause_animation) {

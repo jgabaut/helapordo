@@ -58,7 +58,7 @@ void draw_cell(Floor * floor, int cell_x, int cell_y, Rectangle * win,
                int drawcorner_x, int drawcorner_y, int x_size, int y_size, float pixelSize,
                int recurse);
 void draw_floor_view(Floor * floor, int current_x, int current_y, float pixelSize, Rectangle * win);
-void step_floor(Gamestate * gamestate, Floor * floor, int *current_x,
+void step_floor(Floor * floor, int *current_x,
                  int *current_y, int control);
 #endif // HELAPORDO_RAYLIB_BUILD
 

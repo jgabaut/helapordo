@@ -1283,7 +1283,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
  * @see Floor
  * @see floorClass
  */
-void step_floor(Gamestate *gamestate, Floor *floor, int *current_x,
+void step_floor(Floor *floor, int *current_x,
                  int *current_y, int control)
 {
 
