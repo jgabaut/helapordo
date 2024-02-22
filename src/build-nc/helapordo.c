@@ -83,6 +83,7 @@ void gameloop(int argc, char **argv)
         //Init default_kls
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
+        seed = rand();
 
 #ifndef _WIN32
         (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
@@ -308,6 +309,9 @@ void gameloop(int argc, char **argv)
                    }
                    exit(exitcode);
                  */
+#ifdef HELAPORDO_DEBUG_ACCESS
+                printf("\nSeed: [%i]\n", seed);
+#endif
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_SUCCESS);
@@ -1119,8 +1123,6 @@ void gameloop(int argc, char **argv)
                 load_info->is_new_game);
 
         Koliseo_Temp *gamestate_kls = kls_temp_start(temporary_kls);
-
-        seed = rand();
 
         if (load_info->is_new_game) {	// We prepare path and fighter
             path = randomise_path(seed, default_kls, current_save_path);
