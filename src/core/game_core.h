@@ -204,12 +204,12 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 3
+#define HELAPORDO_PATCH_VERSION 4
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.3"
+#define VERSION "1.4.4-dev"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 

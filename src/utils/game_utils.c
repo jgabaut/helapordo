@@ -4133,10 +4133,10 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
  * Asks the user is they want to continue and returns the choice.
  * @return int True for trying again, false otherwise.
  */
-int retry(void)
+int retry(int seed)
 {
     lightGreen();
-    printf("\n\nYou died. Want to try again?\n\n\t\t[type no / yes]\n\n");
+    printf("\n\nYou died. Want to try again?\n\nSeed: [%i]\n\n\n\t\t[type no / yes]\n\n", seed);
     white();
     char c[25] = { 0 };
     if (fgets(c, sizeof(c), stdin) != NULL) {

@@ -247,7 +247,7 @@ void applyStatus(WINDOW * notify_win, Fighter * f);
 void applyEStatus(WINDOW * notify_win, Enemy * e);
 void applyBStatus(WINDOW * notify_win, Boss * b);
 void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
-int retry(void);
+int retry(int seed);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
 #else

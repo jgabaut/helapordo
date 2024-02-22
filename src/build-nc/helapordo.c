@@ -77,6 +77,8 @@ void gameloop(int argc, char **argv)
         .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
     };
 
+    int seed = -1;
+
     do {
         //Init default_kls
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
@@ -1118,8 +1120,10 @@ void gameloop(int argc, char **argv)
 
         Koliseo_Temp *gamestate_kls = kls_temp_start(temporary_kls);
 
+        seed = rand();
+
         if (load_info->is_new_game) {	// We prepare path and fighter
-            path = randomise_path(rand(), default_kls, current_save_path);
+            path = randomise_path(seed, default_kls, current_save_path);
             path->loreCounter = -1;
 
             kls_log(default_kls, "DEBUG", "Prepping Fighter");
@@ -1200,8 +1204,12 @@ void gameloop(int argc, char **argv)
             log_tag("debug_log.txt", "[TURNOP]",
                     "Assigned load_info->save_type: [%s]",
                     stringFrom_saveType(load_info->save_type));
-
-            path = randomise_path(rand(), default_kls, current_save_path);
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Old seed: [%i]", seed);
+            seed = rand();
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "New seed: [%i]", seed);
+            path = randomise_path(seed, default_kls, current_save_path);
             kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
             player =
                 (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
@@ -2218,7 +2226,7 @@ void gameloop(int argc, char **argv)
             }
         }
         //kls_temp_end(gamestate_kls);
-    } while (retry());
+    } while (retry(seed));
 
     //TODO
     //What is this?

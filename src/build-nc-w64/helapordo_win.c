@@ -51,6 +51,7 @@ void gameloop_Win(int argc, char **argv)
 
     bool is_localexe = ( argv[0][0] == '.');
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+    int seed = -1;
     do {
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, temporary_kls_conf);
@@ -77,6 +78,8 @@ void gameloop_Win(int argc, char **argv)
         int loaded_roomindex = -1;
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
+
+        seed = rand();
 
         while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsaV")) != -1) {
             switch (option) {
@@ -316,7 +319,7 @@ void gameloop_Win(int argc, char **argv)
         test_floors();
         kls_free(temporary_kls);
         kls_free(default_kls);
-    } while (retry());
+    } while (retry(seed));
 
     //TODO
     //What is this?
