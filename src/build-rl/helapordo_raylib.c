@@ -89,7 +89,7 @@ void gameloop_rl(int argc, char** argv)
 
     bool is_localexe = ( argv[0][0] == '.');
 
-    char *kls_progname = (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
+    char *kls_progname = (char *)KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami),
                          KLS_None, "progname", whoami);
     strcpy(kls_progname, whoami);
 

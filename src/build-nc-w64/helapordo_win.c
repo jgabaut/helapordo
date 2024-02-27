@@ -56,7 +56,7 @@ void gameloop_Win(int argc, char **argv)
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, temporary_kls_conf);
         char *kls_progname =
-            (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
+            (char *)KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami),
                                        KLS_None, "progname", whoami);
         strcpy(kls_progname, whoami);
 #ifndef HELAPORDO_DEBUG_LOG
