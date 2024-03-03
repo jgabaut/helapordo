@@ -32,24 +32,36 @@ void gameloop_Win(int argc, char **argv)
 
     //Truncate "debug_log.txt"
     sprintf(path_to_kls_debug_file, "%s\\%s", static_path, "kls_debug_log.txt");
-    KLS_Conf default_kls_conf = {
-        .kls_autoset_regions = 1,
-        .kls_autoset_temp_regions = 1,
-        .kls_verbose_lvl = 1,
-        .kls_log_filepath = path_to_kls_debug_file,
-        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
-        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
-    };
-    KLS_Conf temporary_kls_conf = {
-        .kls_autoset_regions = 1,
-        .kls_autoset_temp_regions = 1,
-        .kls_verbose_lvl = 0,
-        .kls_log_fp = stderr,
-        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
-        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
-    };
 
-    bool is_localexe = ( argv[0][0] == '.');
+#ifdef KOLISEO_HAS_REGION
+    KLS_RegList_Alloc_Backend reglist_backend = KLS_REGLIST_ALLOC_KLS_BASIC;
+#else
+    int reglist_backend = -1;
+#endif
+
+    KLS_Conf default_kls_conf = kls_conf_init(
+        1, //kls_autoset_regions
+        reglist_backend, //kls_reglist_alloc_backend
+        KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
+        1, //kls_autoset_temp_regions
+        1, //collect_stats
+        1, //kls_verbose_lvl
+        NULL, //kls_log_fp
+        path_to_kls_debug_file //.kls_log_filepath
+    );
+    KLS_Conf temporary_kls_conf = kls_conf_init(
+        1, //kls_autoset_regions
+        reglist_backend, //kls_reglist_alloc_backend
+        KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
+        1, //kls_autoset_temp_regions
+        1, //collect_stats
+        0, //kls_verbose_lvl
+        stderr, //kls_log_fp
+        NULL
+    );
+
+    //TODO: catch this?
+    //bool is_localexe = ( argv[0][0] == '.');
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
     int seed = -1;
     do {
