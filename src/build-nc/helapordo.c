@@ -321,8 +321,10 @@ void gameloop(int argc, char **argv)
                    }
                    exit(exitcode);
                  */
+#if 0
 #ifdef HELAPORDO_DEBUG_ACCESS
                 printf("\nSeed: [%i]\n", seed);
+#endif
 #endif
                 kls_free(default_kls);
                 kls_free(temporary_kls);
