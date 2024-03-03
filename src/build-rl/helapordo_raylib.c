@@ -755,9 +755,11 @@ void gameloop_rl(int argc, char** argv)
             DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
             DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
+#ifdef KOLISEO_HAS_TITLE
             for (int i = 0;  i <  KLS_TITLEROWS+1; i++) {
                 DrawText(kls_title[i], 0, i*12, 12, BLACK);
             }
+#endif // KOLISEO_HAS_TITLE
         }
         break;
         case TITLE: {
