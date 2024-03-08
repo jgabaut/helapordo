@@ -19,6 +19,14 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
 
+#ifndef HELAPORDO_OS
+#define HELAPORDO_OS "unknown"
+#endif
+
+#ifndef HELAPORDO_MACHINE
+#define HELAPORDO_MACHINE "unknown"
+#endif
+
 #ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
@@ -212,6 +220,14 @@ extern int G_DOTUTORIAL_ON;
 #define VERSION "1.4.4-dev"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
+
+/**
+ * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
+ */
+static const int HELAPORDO_API_VERSION_INT =
+    (HELAPORDO_MAJOR_VERSION * 1000000 + HELAPORDO_MINOR_VERSION * 10000 + HELAPORDO_PATCH_VERSION * 100);
+/**< Represents current version with numeric format.*/
+
 
 /**
  * Default savepath.
@@ -2001,5 +2017,8 @@ OP_res OP_res_from_fightResult(fightResult fr);
 #define CHEST_ROWS 18 /**< Defines the number of rows for the chest animation.*/
 #define CHEST_COLS 18 /**< Defines the number of cols for the chest animation.*/
 #define CHEST_FRAMETIME 67 /**< Defines for how many millisecs a sprite should stay on screen for the chest animation.*/
+
+#define CURSES_BINSAVE_NAME "save-nc.bin" /**< Defines file name used for binary save. */
+#define RL_BINSAVE_NAME "save-rl.bin" /**< Defines file name used for binary save. */
 
 #endif

@@ -797,6 +797,12 @@ void gameloop(int argc, char **argv)
                 "Animation loading took %0.7f seconds.",
                 time_spent_loading_animations);
 
+        if (G_EXPERIMENTAL_ON == 1) {
+            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls);
+
+            log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+        }
+
         WINDOW* screen = initscr();
         bool screen_is_big_enough = false;
         int screen_rows = 0;

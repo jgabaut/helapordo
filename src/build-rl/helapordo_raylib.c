@@ -97,8 +97,7 @@ void gameloop_rl(int argc, char** argv)
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
 
-    //TODO: catch this?
-    //bool is_localexe = ( argv[0][0] == '.');
+    bool is_localexe = ( argv[0][0] == '.');
 
     char *kls_progname = (char *)KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami),
                          KLS_None, "progname", whoami);
@@ -335,6 +334,9 @@ void gameloop_rl(int argc, char** argv)
     }
 
 #ifndef HELAPORDO_DEBUG_LOG
+        //TODO use is_localexe
+        if (is_localexe) {
+        }
 #else
     // Open log file if log flag is set and reset it
     if (G_LOG_ON == 1) {
@@ -496,6 +498,12 @@ void gameloop_rl(int argc, char** argv)
     log_tag("debug_log.txt", "[DEBUG]",
             "gameloop() system(\"cls\") res was (%i)", clearres);
 #endif
+
+    if (G_EXPERIMENTAL_ON == 1) {
+        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls);
+
+        log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+    }
 
     printf("\n\tDISCLAIMER: THIS BUILD IS STILL WIP.\n\n\tNO GUARANTEES ARE MADE.\n\n");
     printf("helapordo\n");

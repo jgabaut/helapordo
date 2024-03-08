@@ -60,8 +60,7 @@ void gameloop_Win(int argc, char **argv)
         NULL
     );
 
-    //TODO: catch this?
-    //bool is_localexe = ( argv[0][0] == '.');
+    bool is_localexe = ( argv[0][0] == '.');
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
     int seed = -1;
     do {
@@ -250,6 +249,9 @@ void gameloop_Win(int argc, char **argv)
         }
 
 #ifndef HELAPORDO_DEBUG_LOG
+        //TODO use is_localexe
+        if (is_localexe) {
+        }
 #else
         // Open log file if log flag is set and reset it
         if (G_LOG_ON == 1) {
@@ -322,6 +324,14 @@ void gameloop_Win(int argc, char **argv)
         printf("\n  Press Enter to proceed.\n");
         scanf("%*c");
         system("cls");
+
+
+        if (G_EXPERIMENTAL_ON == 1) {
+            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls);
+
+            log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+        }
+
         printGlobVars();
         printWin_EnvVars();
         printf("\n\n  Press Enter to demo a minimal rogue floor.\n");
