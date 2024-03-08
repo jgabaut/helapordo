@@ -2002,4 +2002,6 @@ OP_res OP_res_from_fightResult(fightResult fr);
 #define CHEST_COLS 18 /**< Defines the number of cols for the chest animation.*/
 #define CHEST_FRAMETIME 67 /**< Defines for how many millisecs a sprite should stay on screen for the chest animation.*/
 
+#define MAX_NOTIFY 6 /**< Used to size the notifications window.*/
+
 #endif

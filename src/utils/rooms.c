@@ -644,7 +644,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 fighter_animation_win = newwin(19, 19, 3, 58);
 
                 // Prepare notifications window
-                notifications_win = newwin(2, 70, 24, 4);
+                notifications_win = newwin(MAX_NOTIFY, 70, 24, 4);
                 // Set notifications window to be scrolling
                 scrollok(notifications_win, TRUE);
                 //Update turnOP_args->notify_win pointer
@@ -1051,6 +1051,19 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                     return OP_RES_DEATH;
                 } else if (fightStatus == OP_RES_KILL_DONE) {
+                    bool pressed_enter = false;
+                    int control = -1;
+                    wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+                    display_notification(notifications_win, "Press [Enter] to continue.", 0);
+                    wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+                    while (!pressed_enter && (control = wgetch(notifications_win)) != KEY_F(1)) {
+                        switch(control) {
+                            case 10: {	/* Enter */
+                                pressed_enter = true;
+                            };
+                            break;
+                        }
+                    }
                     int dropch;
                     int dropped_chars = 0;
                     while ((dropch = wgetch(my_menu_win)) != ERR) {
@@ -1589,7 +1602,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             // Prepare fighter animation window
             fighter_animation_win = newwin(19, 19, 3, 58);
             // Prepare notifications window
-            notifications_win = newwin(2, 70, 24, 4);
+            notifications_win = newwin(MAX_NOTIFY, 70, 24, 4);
             // Set notifications window to be scrolling
             scrollok(notifications_win, TRUE);
 
@@ -1913,6 +1926,19 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
                 return OP_RES_DEATH;
             } else if (fightStatus == OP_RES_KILL_DONE) {
+                bool pressed_enter = false;
+                int control = -1;
+                wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+                display_notification(notifications_win, "Press [Enter] to continue.", 0);
+                wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+                while (!pressed_enter && (control = wgetch(notifications_win)) != KEY_F(1)) {
+                    switch(control) {
+                        case 10: {	/* Enter */
+                            pressed_enter = true;
+                        };
+                        break;
+                    }
+                }
                 int dropch;
                 int dropped_chars = 0;
                 while ((dropch = wgetch(my_menu_win)) != ERR) {

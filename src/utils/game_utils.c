@@ -3179,9 +3179,9 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
 void display_notification(WINDOW *w, char *text, int time)
 {
     wprintw(w, "\n  %s", text);
-    wrefresh(w);
-    //refresh();
-    napms(time);
+    //wrefresh(w);
+    refresh();
+    //napms(time);
 }
 
 /**
