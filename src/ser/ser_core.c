@@ -299,3 +299,217 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
     }
     return true;
 }
+
+bool deser_Equipslot(SerEquipslot* ser, Equipslot* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquipslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equipslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->type = ser->type;
+    deser->active = ser->active;
+    return true;
+}
+
+bool ser_Equipslot(Equipslot* deser, SerEquipslot* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquipslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equipslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->type = deser->type;
+    ser->active = deser->active;
+    return true;
+}
+
+bool deser_Specialslot(SerSpecialslot* ser, Specialslot* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSpecialslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Specialslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->enabled = ser->enabled;
+    deser->move = ser->move;
+    deser->cost = ser->cost;
+    return true;
+}
+
+bool ser_Specialslot(Specialslot* deser, SerSpecialslot* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSpecialslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Specialslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->enabled = deser->enabled;
+    ser->move = deser->move;
+    ser->cost = deser->cost;
+    return true;
+}
+
+bool deser_Consumable(SerConsumable* ser, Consumable* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerConsumable was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Consumable was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->class = ser->class;
+    deser->qty = ser->qty;
+    return true;
+}
+
+bool ser_Consumable(Consumable* deser, SerConsumable* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerConsumable was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Consumable was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->class = deser->class;
+    ser->qty = deser->qty;
+    return true;
+}
+
+bool deser_Artifact(SerArtifact* ser, Artifact* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerArtifact was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Artifact was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->class = ser->class;
+    deser->qty = ser->qty;
+    deser->active = ser->active;
+    deser->innerValue = ser->innerValue;
+    return true;
+}
+
+bool ser_Artifact(Artifact* deser, SerArtifact* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerArtifact was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Artifact was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->class = deser->class;
+    ser->qty = deser->qty;
+    ser->active = deser->active;
+    ser->innerValue = deser->innerValue;
+    return true;
+}
+
+bool deser_countStats(SerCountstats* ser, countStats* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerCountstats was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed countStats was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->enemieskilled = ser->enemieskilled;
+    deser->consumablesfound = ser->consumablesfound;
+    deser->equipsfound = ser->equipsfound;
+    deser->artifactsfound = ser->artifactsfound;
+    deser->criticalhits = ser->criticalhits;
+    deser->roomscompleted = ser->roomscompleted;
+    deser->floorscompleted = ser->floorscompleted;
+    deser->specialsunlocked = ser->specialsunlocked;
+    deser->coinsfound = ser->coinsfound;
+    deser->bosseskilled = ser->bosseskilled;
+    deser->unique_bosseskilled = ser->unique_bosseskilled;
+    for (size_t i=0; i<BOSSCLASSESMAX+1; i++) {
+        deser->killed_bosses[i] = ser->killed_bosses[i];
+    }
+    deser->keysfound = ser->keysfound;
+    return true;
+}
+
+bool ser_countStats(countStats* deser, SerCountstats* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerCountstats was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed countStats was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->enemieskilled = deser->enemieskilled;
+    ser->consumablesfound = deser->consumablesfound;
+    ser->equipsfound = deser->equipsfound;
+    ser->artifactsfound = deser->artifactsfound;
+    ser->criticalhits = deser->criticalhits;
+    ser->roomscompleted = deser->roomscompleted;
+    ser->floorscompleted = deser->floorscompleted;
+    ser->specialsunlocked = deser->specialsunlocked;
+    ser->coinsfound = deser->coinsfound;
+    ser->bosseskilled = deser->bosseskilled;
+    ser->unique_bosseskilled = deser->unique_bosseskilled;
+    for (size_t i=0; i<BOSSCLASSESMAX+1; i++) {
+        ser->killed_bosses[i] = deser->killed_bosses[i];
+    }
+    ser->keysfound = deser->keysfound;
+    return true;
+}

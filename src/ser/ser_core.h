@@ -758,4 +758,18 @@ bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser);
 bool deser_Equip(SerEquip* ser, Equip* deser);
 bool ser_Equip(Equip* deser, SerEquip* ser);
 
+bool deser_Equipslot(SerEquipslot* ser, Equipslot* deser);
+bool ser_Equipslot(Equipslot* deser, SerEquipslot* ser);
+
+bool deser_Specialslot(SerSpecialslot* ser, Specialslot* deser);
+bool ser_Specialslot(Specialslot* deser, SerSpecialslot* ser);
+
+bool deser_Consumable(SerConsumable* ser, Consumable* deser);
+bool ser_Consumable(Consumable* deser, SerConsumable* ser);
+
+bool deser_Artifact(SerArtifact* ser, Artifact* deser);
+bool ser_Artifact(Artifact* deser, SerArtifact* ser);
+
+bool deser_countStats(SerCountstats* ser, countStats* deser);
+bool ser_countStats(countStats* deser, SerCountstats* ser);
 #endif // SER_CORE_H
