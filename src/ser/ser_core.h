@@ -24,8 +24,10 @@
 /**
  * Serialized Turncounter. Packed struct.
  * Can be turned into a Turncounter with deser_turnCounter().
+ * Can be obtained from a Turncounter with ser_turnCounter().
  * @see Turncounter
  * @see deser_turnCounter()
+ * @see ser_turnCounter()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerTurncounter {
@@ -46,8 +48,10 @@ typedef struct SerTurncounter {
 /**
  * Serialized Perk. Packed struct.
  * Can be turned into a Perk with deser_Perk().
+ * Can be obtained from a Perk with ser_Perk().
  * @see Perk
  * @see deser_Perk()
+ * @see ser_Perk()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerPerk {
@@ -67,8 +71,10 @@ typedef struct SerPerk {
 /**
  * Serialized Skillslot. Packed struct.
  * Can be turned into a Skillslot with deser_Skillslot().
+ * Can be obtained from a Skillslot with ser_Skillslot().
  * @see Skillslot
  * @see deser_Skillslot()
+ * @see ser_Skillslot()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerSkillslot {
@@ -88,8 +94,10 @@ typedef struct SerSkillslot {
 /**
  * Serialized Equip. Packed struct.
  * Can be turned into an Equip with deser_Equip().
+ * Can be obtained from an Equip with ser_Equip().
  * @see Equip
  * @see deser_Equip()
+ * @see ser_Equip()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerEquip {
@@ -120,8 +128,10 @@ typedef struct SerEquip {
 /**
  * Serialized Equipslot. Packed struct.
  * Can be turned into an Equipslot with deser_Equipslot().
+ * Can be obtained from an Equipslot with ser_Equipslot().
  * @see Equipslot
  * @see deser_Equipslot()
+ * @see ser_Equipslot()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerEquipslot {
@@ -141,8 +151,10 @@ typedef struct SerEquipslot {
 /**
  * Serialized Specialslot. Packed struct.
  * Can be turned into a Specialslot with deser_Specialslot().
+ * Can be obtained from a Specialslot with ser_Speciaslot().
  * @see Specialslot
  * @see deser_Specialslot()
+ * @see ser_Specialslot()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerSpecialslot {
@@ -163,8 +175,10 @@ typedef struct SerSpecialslot {
 /**
  * Serialized Consumable. Packed struct.
  * Can be turned into a Consumable with deser_Consumable().
+ * Can be obtained from a Consumable with ser_Consumable().
  * @see Consumable
  * @see deser_Consumable()
+ * @see ser_Consumable()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerConsumable {
@@ -184,8 +198,10 @@ typedef struct SerConsumable {
 /**
  * Serialized Artifact. Packed struct.
  * Can be turned into a Artifact with deser_Artifact().
+ * Can be obtained from an Artifact with ser_Artifact().
  * @see Artifact
  * @see deser_Artifact()
+ * @see ser_Artifact()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerArtifact {
@@ -207,8 +223,10 @@ typedef struct SerArtifact {
 /**
  * Serialized countStats. Packed struct.
  * Can be turned into a countStats with deser_countStats().
+ * Can be obtained from a countStats with ser_countStats().
  * @see countStats
  * @see deser_countStats()
+ * @see ser_countStats()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerCountstats {
@@ -239,8 +257,10 @@ typedef struct SerCountstats {
 /**
  * Serialized Enemy. Packed struct.
  * Can be turned into an Enemy with deser_Enemy().
+ * Can be obtained from a Enemy with ser_Enemy().
  * @see Enemy
  * @see deser_Enemy()
+ * @see ser_Enemy()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerEnemy {
@@ -287,8 +307,10 @@ typedef struct SerEnemy {
 /**
  * Serialized Boss. Packed struct.
  * Can be turned into an Boss with deser_Boss().
+ * Can be obtained from a Boss with ser_Boss().
  * @see Boss
  * @see deser_Boss()
+ * @see ser_Boss()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerBoss {
@@ -333,8 +355,10 @@ typedef struct SerBoss {
 /**
  * Serialized Fighter. Packed struct.
  * Can be turned into an Fighter with deser_Fighter().
+ * Can be obtained from a Fighter with ser_Fighter().
  * @see Fighter
  * @see deser_Fighter()
+ * @see ser_Fighter()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerFighter {
@@ -404,8 +428,10 @@ typedef struct SerFighter {
 /**
  * Serialized FoeParty. Packed struct.
  * Can be turned into an FoeParty with deser_FoeParty().
+ * Can be obtained from a FoeParty with ser_FoeParty().
  * @see FoeParty
  * @see deser_FoeParty()
+ * @see ser_FoeParty()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerFoeParty {
@@ -438,8 +464,10 @@ typedef struct SerFoeParty {
 /**
  * Serialized Chest. Packed struct.
  * Can be turned into a Chest with deser_Chest().
+ * Can be obtained from a Chest with ser_Chest().
  * @see Chest
  * @see deser_Chest()
+ * @see ser_Chest()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerChest {
@@ -464,8 +492,10 @@ typedef struct SerChest {
 /**
  * Serialized Treasure. Packed struct.
  * Can be turned into a Treasure with deser_Treasure().
+ * Can be obtained from a Treasure with ser_Treasure().
  * @see Treasure
  * @see deser_Treasure()
+ * @see ser_Treasure()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerTreasure {
@@ -487,6 +517,7 @@ typedef struct SerTreasure {
 /**
  * Serialized Shop. Packed struct.
  * Can be turned into a Shop with deser_Shop().
+ * Can be obtained from a Shop with ser_Shop().
  * @see Shop
  * @see deser_Shop()
  */
@@ -516,8 +547,10 @@ typedef struct SerShop {
 /**
  * Serialized Roadfork. Packed struct.
  * Can be turned into a Roadfork with deser_Roadfork().
+ * Can be obtained from a Roadfork with ser_Roadfork().
  * @see Roadfork
  * @see deser_Roadfork()
+ * @see ser_Roadfork()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerRoadfork {
@@ -536,8 +569,10 @@ typedef struct SerRoadfork {
 /**
  * Serialized Room. Packed struct.
  * Can be turned into a Room with deser_Room().
+ * Can be obtained from a Room with ser_Room().
  * @see Room
  * @see deser_Room()
+ * @see ser_Room()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerRoom {
@@ -565,8 +600,10 @@ typedef struct SerRoom {
 /**
  * Serialized Floor. Packed struct.
  * Can be turned into a Floor with deser_Floor().
+ * Can be obtained from a Floor with ser_Floor().
  * @see Floor
  * @see deser_Floor()
+ * @see ser_Floor()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerFloor {
@@ -593,8 +630,10 @@ typedef struct SerFloor {
 /**
  * Serialized Wincon. Packed struct.
  * Can be turned into a Wincon with deser_Wincon().
+ * Can be obtained from a Wincon with ser_Wincon().
  * @see Wincon
  * @see deser_Wincon()
+ * @see ser_Wincon()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerWincon {
@@ -615,8 +654,10 @@ typedef struct SerWincon {
 /**
  * Serialized Saveslot. Packed struct.
  * Can be turned into a Saveslot with deser_Saveslot().
+ * Can be obtained from a Saveslot with ser_Saveslot().
  * @see Saveslot
  * @see deser_Saveslot()
+ * @see ser_Saveslot()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerSaveslot {
@@ -636,8 +677,10 @@ typedef struct SerSaveslot {
 /**
  * Serialized SerPath. Packed struct.
  * Can be turned into a Path with deser_Path().
+ * Can be obtained from a Path with ser_Path().
  * @see Path
  * @see deser_Path()
+ * @see ser_Path()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerPath {
@@ -661,8 +704,10 @@ typedef struct SerPath {
 /**
  * Serialized Gamestate. Packed struct.
  * Can be turned into a Gamestate with deser_Gamestate().
+ * Can be obtained from a Gamestate with ser_Gamestate().
  * @see Gamestate
  * @see deser_Gamestate()
+ * @see ser_Gamestate()
  */
 #ifdef __GNUC__
 typedef struct __attribute__((packed)) SerGamestate {
