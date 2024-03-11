@@ -230,7 +230,6 @@ static const int HELAPORDO_API_VERSION_INT =
     (HELAPORDO_MAJOR_VERSION * 1000000 + HELAPORDO_MINOR_VERSION * 10000 + HELAPORDO_PATCH_VERSION * 100);
 /**< Represents current version with numeric format.*/
 
-
 /**
  * Default savepath.
  * @see handleRoom_Home()

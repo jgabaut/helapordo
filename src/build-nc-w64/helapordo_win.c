@@ -40,25 +40,25 @@ void gameloop_Win(int argc, char **argv)
 #endif
 
     KLS_Conf default_kls_conf = kls_conf_init(
-        1, //kls_autoset_regions
-        reglist_backend, //kls_reglist_alloc_backend
-        KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
-        1, //kls_autoset_temp_regions
-        1, //collect_stats
-        1, //kls_verbose_lvl
-        NULL, //kls_log_fp
-        path_to_kls_debug_file //.kls_log_filepath
-    );
+                                    1, //kls_autoset_regions
+                                    reglist_backend, //kls_reglist_alloc_backend
+                                    KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
+                                    1, //kls_autoset_temp_regions
+                                    1, //collect_stats
+                                    1, //kls_verbose_lvl
+                                    NULL, //kls_log_fp
+                                    path_to_kls_debug_file //.kls_log_filepath
+                                );
     KLS_Conf temporary_kls_conf = kls_conf_init(
-        1, //kls_autoset_regions
-        reglist_backend, //kls_reglist_alloc_backend
-        KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
-        1, //kls_autoset_temp_regions
-        1, //collect_stats
-        0, //kls_verbose_lvl
-        stderr, //kls_log_fp
-        NULL
-    );
+                                      1, //kls_autoset_regions
+                                      reglist_backend, //kls_reglist_alloc_backend
+                                      KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
+                                      1, //kls_autoset_temp_regions
+                                      1, //collect_stats
+                                      0, //kls_verbose_lvl
+                                      stderr, //kls_log_fp
+                                      NULL
+                                  );
 
     bool is_localexe = ( argv[0][0] == '.');
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
@@ -324,7 +324,6 @@ void gameloop_Win(int argc, char **argv)
         printf("\n  Press Enter to proceed.\n");
         scanf("%*c");
         system("cls");
-
 
         if (G_EXPERIMENTAL_ON == 1) {
             SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls);

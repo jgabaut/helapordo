@@ -34,10 +34,10 @@
  * @see deser_SaveHeader()
  */
 #ifdef __GNUC__
-    typedef struct __attribute__((packed)) SerSaveHeader {
+typedef struct __attribute__((packed)) SerSaveHeader {
 #else
-    #pragma pack(push, 1)
-    typedef struct SerSaveHeader {
+#pragma pack(push, 1)
+typedef struct SerSaveHeader {
 #endif
     int32_t api_level;
     char game_version[SERSAVEHEADER_BUFSIZE+1];
@@ -45,10 +45,10 @@
     char os[SERSAVEHEADER_BUFSIZE+1];
     char machine[SERSAVEHEADER_BUFSIZE+1];
 #ifdef __GNUC__
-    } SerSaveHeader;
+} SerSaveHeader;
 #else
-    } SerSaveHeader;
-    #pragma pack(pop)
+} SerSaveHeader;
+#pragma pack(pop)
 #endif
 
 /**

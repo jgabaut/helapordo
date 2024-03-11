@@ -24,7 +24,8 @@
  * @see SerSaveHeader
  * @return True on success
  */
-bool writeSerSaveHeader(const char* filename, SerSaveHeader* data) {
+bool writeSerSaveHeader(const char* filename, SerSaveHeader* data)
+{
     FILE* file = fopen(filename, "wb");
 
     if (file != NULL) {
@@ -52,7 +53,8 @@ bool writeSerSaveHeader(const char* filename, SerSaveHeader* data) {
  * @see SerSaveHeader
  * @return True on success
  */
-bool readSerSaveHeader(const char* filename, SerSaveHeader* data) {
+bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
+{
     FILE* file = fopen(filename, "rb");
 
     if (file != NULL) {
@@ -104,14 +106,14 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data) {
 
         if (length < header_size) {
 #ifdef WIN_32
-                log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%lli} is less than stored header size {%lli}.", __func__, length, header_size);
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%lli} is less than stored header size {%lli}.", __func__, length, header_size);
 #else
-                log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, length, header_size);
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, length, header_size);
 #endif
-                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
         }
 
 #ifdef WIN_32
@@ -167,7 +169,8 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data) {
  * @see SaveHeader
  * @return True on success
  */
-bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser) {
+bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser)
+{
     // ALL strings in the SerSaveHeader should be NULL-terminated
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveHeader as NULL.", __func__);
@@ -213,7 +216,8 @@ bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser) {
  * @return The newly allocated SaveHeader.
  * TODO Contract should meaningfully capture case of read failure + init.
  */
-SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls) {
+SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls)
+{
     if (kls == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
         kls_free(default_kls);
@@ -279,7 +283,7 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls) {
         //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
         return save_head;
     } else {
-        SerSaveHeader tmp = (SerSaveHeader){
+        SerSaveHeader tmp = (SerSaveHeader) {
             .api_level = read_SSH->api_level,
         };
         read_SSH->save_version[SERSAVEHEADER_BUFSIZE] = '\0';
