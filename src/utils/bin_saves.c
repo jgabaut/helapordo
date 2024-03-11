@@ -17,7 +17,13 @@
 */
 #include "bin_saves.h"
 
-// Write packed structure to a binary file
+/**
+ * Writes passed SerSaveHeader to passed file path.
+ * @param filename The path to write to.
+ * @param data The structure to write.
+ * @see SerSaveHeader
+ * @return True on success
+ */
 bool writeSerSaveHeader(const char* filename, SerSaveHeader* data) {
     FILE* file = fopen(filename, "wb");
 
@@ -39,7 +45,13 @@ bool writeSerSaveHeader(const char* filename, SerSaveHeader* data) {
     return true;
 }
 
-// Read packed structure from a binary file
+/**
+ * Reads SerSaveHeader from passed file path into passed structure.
+ * @param filename The path to read from.
+ * @param data The structure to read into.
+ * @see SerSaveHeader
+ * @return True on success
+ */
 bool readSerSaveHeader(const char* filename, SerSaveHeader* data) {
     FILE* file = fopen(filename, "rb");
 
@@ -147,6 +159,14 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data) {
     return true;
 }
 
+/**
+ * Converts passed SerSaveHeader into a SaveHeader.
+ * @param ser The SerSaveHeader to convert.
+ * @param deser The SaveHeader destination.
+ * @see SerSaveHeader
+ * @see SaveHeader
+ * @return True on success
+ */
 bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser) {
     // ALL strings in the SerSaveHeader should be NULL-terminated
     if (ser == NULL) {
@@ -184,6 +204,15 @@ bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser) {
     return true;
 }
 
+/**
+ * Tries reading binary save from passed path.
+ * @param static_path The path to which we append to find our file.
+ * @param kls Koliseo used for allocation.
+ * @see SerSaveHeader
+ * @see SaveHeader
+ * @return The newly allocated SaveHeader.
+ * TODO Contract should meaningfully capture case of read failure + init.
+ */
 SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls) {
     if (kls == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);

@@ -22,8 +22,17 @@
 #include <inttypes.h>
 #include "game_utils.h"
 
+/**
+ * Defines size for all SerSaveHeader char buffers.
+ * @see SerSaveHeader
+ */
 #define SERSAVEHEADER_BUFSIZE 15
 
+/**
+ * Serialized save header. Packed struct.
+ * Can be turned into a SaveHeader with deser_SaveHeader().
+ * @see deser_SaveHeader()
+ */
 #ifdef __GNUC__
     typedef struct __attribute__((packed)) SerSaveHeader {
 #else
@@ -42,8 +51,18 @@
     #pragma pack(pop)
 #endif
 
+/**
+ * Defines size for all SaveHeader char buffers.
+ * @see SaveHeader
+ */
 #define SAVEHEADER_BUFSIZE SERSAVEHEADER_BUFSIZE
 
+/**
+ * Save header. Normal struct.
+ * Can be obtained from a SerSaveHeader with deser_SaveHeader().
+ * @see deser_SaveHeader()
+ * @see SerSaveHeader
+ */
 typedef struct SaveHeader {
     int32_t api_level;
     char game_version[SAVEHEADER_BUFSIZE+1];
