@@ -138,6 +138,104 @@ typedef struct SerEquipslot {
 #pragma pack(pop)
 #endif
 
+/**
+ * Serialized Specialslot. Packed struct.
+ * Can be turned into a Specialslot with deser_Specialslot().
+ * @see Specialslot
+ * @see deser_Specialslot()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerSpecialslot {
+#else
+#pragma pack(push, 1)
+typedef struct SerSpecialslot {
+#endif
+    int32_t enabled;     /**< Flag defining if the current slot is initialised*/
+    specialMove move;	  /**< Defines which kind of specialMove the slot is holding*/
+    int32_t cost;	  /**< Cost of use*/
+#ifdef __GNUC__
+} SerSpecialslot;
+#else
+} SerSpecialslot;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Consumable. Packed struct.
+ * Can be turned into a Consumable with deser_Consumable().
+ * @see Consumable
+ * @see deser_Consumable()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerConsumable {
+#else
+#pragma pack(push, 1)
+typedef struct SerConsumable {
+#endif
+    consumableClass class;     /**< Defines which kind of Consumable this is*/
+    int qty;	 /**< Indicates how many copies of the consumable the instance of this class holds*/
+#ifdef __GNUC__
+} SerConsumable;
+#else
+} SerConsumable;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Artifact. Packed struct.
+ * Can be turned into a Artifact with deser_Artifact().
+ * @see Artifact
+ * @see deser_Artifact()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerArtifact {
+#else
+#pragma pack(push, 1)
+typedef struct SerArtifact {
+#endif
+    artifactClass class;     /**< Defines which kind of artifactClass the instance relates to*/
+    int qty;	 /**< Indicates how many copies of the artifact the instance of this class holds*/
+    int active;	    /**< Flag used to mark instance whose function pointer has been called already*/
+    int innerValue;	/**< Indicates interal state of the item when needed*/
+#ifdef __GNUC__
+} SerArtifact;
+#else
+} SerArtifact;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized countStats. Packed struct.
+ * Can be turned into a countStats with deser_countStats().
+ * @see countStats
+ * @see deser_countStats()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerCountstats {
+#else
+#pragma pack(push, 1)
+typedef struct SerCountstats {
+#endif
+    int32_t enemieskilled;	   /**< How many enemies were defeated*/
+    int32_t consumablesfound;     /**< How many consumabls were found*/
+    int32_t equipsfound;	 /**< How many equips were found*/
+    int32_t artifactsfound;	    /**< How many artifacts were found*/
+    int32_t criticalhits;	  /**< How many criticals were dealt*/
+    int32_t roomscompleted;	    /**< How many rooms were completed*/
+    int32_t floorscompleted;     /**< How many floors were completed*/
+    int32_t specialsunlocked;     /**< How many special move were unlocked*/
+    int32_t coinsfound;	/**< How many coins you found in total*/
+    int32_t bosseskilled;	  /**< How many bosses were defeated*/
+    int32_t unique_bosseskilled;	 /**< How many unique bosses were defeated*/
+    int32_t killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
+    int32_t keysfound;     /**< How many keys you found in total*/
+#ifdef __GNUC__
+} SerCountstats;
+#else
+} SerCountstats;
+#pragma pack(pop)
+#endif
+
 bool appendSerTurncounter(const char* filename, SerTurncounter* data);
 
 bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data);
