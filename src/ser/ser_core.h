@@ -236,6 +236,254 @@ typedef struct SerCountstats {
 #pragma pack(pop)
 #endif
 
+/**
+ * Serialized Enemy. Packed struct.
+ * Can be turned into an Enemy with deser_Enemy().
+ * @see Enemy
+ * @see deser_Enemy()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerEnemy {
+#else
+#pragma pack(push, 1)
+typedef struct SerEnemy {
+#endif
+    int32_t index;	   /**< Defines position inside containing foeParty.*/
+    enemyClass class;	  /**< Defines which kind of enemyClass the instance relates to*/
+    int32_t hp;	/**< Current hp value*/
+    int32_t atk;	 /**< Current atk value*/
+    int32_t def;	 /**< Current def value*/
+    int32_t vel;	 /**< Current vel value*/
+    int32_t level;	   /**< Level value*/
+    int32_t luck;	  /**< Luck value*/
+    int32_t xp;	/**< Xp value given on death*/
+    int32_t totalhp;     /**< Full hp value*/
+
+    int32_t energy;	    /**< Current energy value*/
+    int32_t totalenergy;	 /**< Full energy value*/
+
+    int32_t stamina;     /**< Current stamina value*/
+    int32_t totalstamina;	  /**< Full stamina value*/
+
+    fighterStatus status;     /**< Defines active fighterStatus*/
+    int32_t beast;	   /**< Flag defining the instance as "beast" if set*/
+
+    SerSkillslot skills[ENEMY_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
+
+    SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
+    int32_t turnboost_atk;	   /**< Current temp boost value for atk*/
+    int32_t turnboost_def;	   /**< Current temp boost value for def*/
+    int32_t turnboost_vel;	   /**< Current temp boost value for vel*/
+    int32_t turnboost_enr;	   /**< Current temp boost value for enr*/
+
+    int32_t prize;	   /**< Amount of currency dropped on defeat*/
+#ifdef __GNUC__
+} SerEnemy;
+#else
+} SerEnemy;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Boss. Packed struct.
+ * Can be turned into an Boss with deser_Boss().
+ * @see Boss
+ * @see deser_Boss()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerBoss {
+#else
+#pragma pack(push, 1)
+typedef struct SerBoss {
+#endif
+    bossClass class;	 /**< Defines which kind of enemyClass the instance relates to*/
+    int32_t hp;	/**< Current hp value*/
+    int32_t atk;	 /**< Current atk value*/
+    int32_t def;	 /**< Current def value*/
+    int32_t vel;	 /**< Current vel value*/
+    int32_t level;	   /**< Level value*/
+    int32_t luck;	  /**< Luck value*/
+    int32_t xp;	/**< Xp value given on death*/
+    int32_t totalhp;     /**< Full hp value*/
+
+    int32_t energy;	    /**< Current energy value*/
+    int32_t totalenergy;	 /**< Full energy value*/
+
+    int32_t stamina;     /**< Current stamina value*/
+    int32_t totalstamina;	  /**< Full stamina value*/
+
+    fighterStatus status;     /**< Defines active fighterStatus*/
+    int32_t beast;	   /**< Flag defining the instance as "beast" if set*/
+
+    SerSkillslot skills[BOSS_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
+    SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
+    int32_t turnboost_atk;	   /**< Current temp boost value for atk*/
+    int32_t turnboost_def;	   /**< Current temp boost value for def*/
+    int32_t turnboost_vel;	   /**< Current temp boost value for vel*/
+    int32_t turnboost_enr;	   /**< Current temp boost value for enr*/
+
+    int32_t prize;	   /**< Amount of currency dropped on defeat*/
+#ifdef __GNUC__
+} SerBoss;
+#else
+} SerBoss;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Fighter. Packed struct.
+ * Can be turned into an Fighter with deser_Fighter().
+ * @see Fighter
+ * @see deser_Fighter()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerFighter {
+#else
+#pragma pack(push, 1)
+typedef struct SerFighter {
+#endif
+    char name[50];     /**< Name string*/
+    fighterClass class;	    /**< Defines which kind of fighterClass the instance relates to*/
+    int32_t hp;	/**< Current hp value*/
+    int32_t atk;	 /**< Current atk value*/
+    int32_t def;	 /**< Current def value*/
+    int32_t vel;	 /**< Current vel value*/
+    int32_t level;	   /**< Current level value*/
+    int32_t luck;	  /**< Current luck value*/
+    int32_t totalxp;     /**< Lifetime xp value*/
+    int32_t currentlevelxp;	    /**< Xp gained for the current level*/
+    int32_t totallevelxp;	  /**< Xp needed to level up*/
+    int32_t totalhp;     /**< Full hp value*/
+    fighterStatus status;     /**< Defines active fighterStatus*/
+
+    int32_t energy;	    /**< Current energy value*/
+    int32_t totalenergy;	 /**< Full energy value*/
+    int32_t stamina;     /**< Current stamina value*/
+    int32_t totalstamina;	  /**< Full stamina value*/
+    SerSpecialslot specials[SPECIALSMAX + 1];   /**< Array with all the SerSpecialslot*/
+    SerSkillslot skills[FIGHTER_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
+
+    SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
+    int32_t turnboost_atk;	   /**< Current temp boost value for atk*/
+    int32_t turnboost_def;	   /**< Current temp boost value for def*/
+    int32_t turnboost_vel;	   /**< Current temp boost value for vel*/
+    int32_t turnboost_enr;	   /**< Current temp boost value for enr*/
+
+    int32_t perksCount;	/**< Keeps track of how many perks are active.*/
+    SerPerk perks[PERKSMAX + 1];	 /**< Array with all the SerPerk*/
+
+    SerEquipslot equipslots[EQUIPZONES + 1];   /**< Array with all the SerEquipslot*/
+    SerEquip equipsBag[EQUIPSBAGSIZE + 1];	  /**< Array with all the SerEquip found*/
+    SerConsumable consumablesBag[CONSUMABLESMAX + 1];   /**< Array with all the Consumables found*/
+    SerArtifact artifactsBag[ARTIFACTSMAX + 1];   /**< Array with all the Artifacts found*/
+
+    int32_t equipsBagOccupiedSlots;	    /**< Keeps track of how many slots are occupied.*/
+    int32_t earliestBagSlot;	/**< Keeps track of first available spot.*///TODO To always use the array efficiently (???) I sense linked lists may be better
+
+    int32_t permboost_atk;	   /**< Current temp boost value for atk.*/
+    int32_t permboost_def;	   /**< Current temp boost value for def.*/
+    int32_t permboost_vel;	   /**< Current temp boost value for vel.*/
+    int32_t permboost_enr;	   /**< Current temp boost value for enr.*/
+
+    int32_t equipboost_atk;	    /**< Current equip boost value for atk.*/
+    int32_t equipboost_def;	    /**< Current equip boost value for def.*/
+    int32_t equipboost_vel;	    /**< Current equip boost value for vel.*/
+    int32_t equipboost_enr;	    /**< Current equip boost value for enr.*/
+
+    SerCountstats stats;	    /**< SerCountstats instance*/
+
+    int32_t balance;     /**< Amount of currency owned*/
+    int32_t keys_balance;	  /**< Amount of keys owned*/
+#ifdef __GNUC__
+} SerFighter;
+#else
+} SerFighter;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized FoeParty. Packed struct.
+ * Can be turned into an FoeParty with deser_FoeParty().
+ * @see FoeParty
+ * @see deser_FoeParty()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerFoeParty {
+#else
+#pragma pack(push, 1)
+typedef struct SerFoeParty {
+#endif
+    foePartyClass class;     /**< Defines which kind of foePartyClass the instance relates to*/
+    int32_t level;	   /**< Level for the whole FoeParty*/
+    SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
+    int32_t turnboost_atk;	   /**< Current temp boost value for atk*/
+    int32_t turnboost_def;	   /**< Current temp boost value for def*/
+    int32_t turnboost_vel;	   /**< Current temp boost value for vel*/
+    int32_t turnboost_enr;	   /**< Current temp boost value for enr*/
+    SerEnemy enemy_foes[ROOM_ENEMIES_MAX + 1];   /**< Array for all enemies in a room*/
+    //TODO: this is not ideal. Could we ever need to have a different max for enemy_foes? Only if the group is not in a Room??
+    SerBoss boss_foes[FOES_BOSSES_MAX + 1];   /**< Array of for all bosses in a room*/
+    int32_t size;	  /**<  Number of members in the FoeParty.*/
+    int32_t tot_alive;     /**<  Number of alive members of the FoeParty.*/
+    int32_t current_index;	   /**< Index of current foe advancement*/
+    int32_t alive_enemies[ROOM_ENEMIES_MAX + 1];   /**< Array of integers with 1 for alive enemies in that position*/
+    int32_t alive_bosses[FOES_BOSSES_MAX + 1];   /**< Array of integers with 1 for alive bosses in that position*/
+#ifdef __GNUC__
+} SerFoeParty;
+#else
+} SerFoeParty;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Chest. Packed struct.
+ * Can be turned into a Chest with deser_Chest().
+ * @see Chest
+ * @see deser_Chest()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerChest {
+#else
+#pragma pack(push, 1)
+typedef struct SerChest {
+#endif
+    chestClass class;	  /**< Defines which kind of chesteClass the instance relates to*/
+    int consumablesCount;     /**< Defines how many consumables the chest contains.*/
+
+    SerConsumable consumables[CHEST_CONSUMABLES_MAX];	/**< The contained consumables.*/
+    int equipsCount;	 /**< Defines how many equips the chest contains.*/
+
+    SerEquip equips[CHEST_EQUIPS_MAX];	 /**< The contained equips.*/
+#ifdef __GNUC__
+} SerChest;
+#else
+} SerChest;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Treasure. Packed struct.
+ * Can be turned into a Treasure with deser_Treasure().
+ * @see Treasure
+ * @see deser_Treasure()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerTreasure {
+#else
+#pragma pack(push, 1)
+typedef struct SerTreasure {
+#endif
+    treasureClass class;     /**< Defines which kind of treasureClass the instance relates to*/
+    SerChest chest;     /**< The treasure SerChest, initialised if class == TREASURE_CHEST*/
+    SerConsumable consumable;	/**< The treasure SerConsumable, initialised if class == TREASURE_CONSUMABLE*/
+    SerArtifact artifact;	    /**< The treasure SerArtifact, initialised if class == TREASURE_ARTIFACT*/
+#ifdef __GNUC__
+} SerTreasure;
+#else
+} SerTreasure;
+#pragma pack(pop)
+#endif
+
 bool appendSerTurncounter(const char* filename, SerTurncounter* data);
 
 bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data);
