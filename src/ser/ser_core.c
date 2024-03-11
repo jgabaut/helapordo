@@ -143,7 +143,7 @@ bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser) {
         exit(EXIT_FAILURE);
     }
     if (deser == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo was NULL.", __func__);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Turncounter was NULL.", __func__);
         kls_free(default_kls);
         kls_free(temporary_kls);
         exit(EXIT_FAILURE);
@@ -152,5 +152,150 @@ bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser) {
     deser->innerValue = ser->innerValue;
     //TODO: check type here?
     deser->type = ser->type;
+    return true;
+}
+
+bool deser_Perk(SerPerk* ser, Perk* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPerk was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Perk was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->class = ser->class;
+    deser->innerValue = ser->innerValue;
+    return true;
+}
+bool ser_Perk(Perk* deser, SerPerk* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPerk was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Perk was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->class = deser->class;
+    ser->innerValue = deser->innerValue;
+    return true;
+}
+
+bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSkillslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Skillslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->class = ser->class;
+    deser->enabled = ser->enabled;
+    return true;
+}
+
+bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSkillslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Skillslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->class = deser->class;
+    ser->enabled = deser->enabled;
+    return true;
+}
+
+bool deser_Equip(SerEquip* ser, Equip* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquip was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equip was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->class = ser->class;
+    deser->type = ser->type;
+    deser->equipped = ser->equipped;
+    deser->level = ser->level;
+    deser->atk = ser->atk;
+    deser->def = ser->def;
+    deser->vel = ser->vel;
+    deser->enr = ser->enr;
+    deser->perksCount = ser->perksCount;
+    deser->cost = ser->cost;
+    deser->qual = ser->qual;
+    bool perk_deser_res = false;
+    for (size_t i=0; i<EQUIPPERKSMAX; i++) {
+        perk_deser_res = deser_Perk(&ser->perks[i], deser->perks[i]);
+        if (!perk_deser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Perk(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+    return true;
+}
+
+bool ser_Equip(Equip* deser, SerEquip* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquip was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equip was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->class = deser->class;
+    ser->type = deser->type;
+    ser->equipped = deser->equipped;
+    ser->level = deser->level;
+    ser->atk = deser->atk;
+    ser->def = deser->def;
+    ser->vel = deser->vel;
+    ser->enr = deser->enr;
+    ser->perksCount = deser->perksCount;
+    ser->cost = deser->cost;
+    ser->qual = deser->qual;
+    bool perk_ser_res = false;
+    for (size_t i=0; i<EQUIPPERKSMAX; i++) {
+        perk_ser_res = ser_Perk(deser->perks[i], &ser->perks[i]);
+        if (!perk_ser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Perk(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
     return true;
 }

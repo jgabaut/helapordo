@@ -749,4 +749,13 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
 
 bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser);
 
+bool deser_Perk(SerPerk* ser, Perk* deser);
+bool ser_Perk(Perk* deser, SerPerk* ser);
+
+bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser);
+bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser);
+
+bool deser_Equip(SerEquip* ser, Equip* deser);
+bool ser_Equip(Equip* deser, SerEquip* ser);
+
 #endif // SER_CORE_H
