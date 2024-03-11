@@ -39,6 +39,7 @@
 #include "../utils/bin_saves.h"
 #include "../anvil__helapordo.h"
 #include "../core/game_lore.h"
+#include "../core/ser_core.h"
 
 /*
 void register_counter_callback(int index, callback_void_t ptr, Fighter*);
