@@ -484,6 +484,181 @@ typedef struct SerTreasure {
 #pragma pack(pop)
 #endif
 
+/**
+ * Serialized Shop. Packed struct.
+ * Can be turned into a Shop with deser_Shop().
+ * @see Shop
+ * @see deser_Shop()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerShop {
+#else
+#pragma pack(push, 1)
+typedef struct SerShop {
+#endif
+    int32_t itemCount;     /**< Total number of items for sale*/
+
+    int32_t equipsCount;	 /**< Total number of equips for sale*/
+    SerEquip equips[EQUIP_SHOP_MAX];     /**< Array for equips on sale*/
+    int32_t equipPrices[EQUIP_SHOP_MAX];	 /**< Array for equips prices*/
+
+    int32_t consumablesCount;     /**< Total number of consumables for sale, includes quantity for each kind of consumable*/
+    int32_t uniqueConsumablesCount;	    /**< Total of unique consumables for sale*/
+    SerConsumable consumables[CONSUMABLE_SHOP_MAX];     /**< Array for consumables on sale*/
+    int32_t consumablePrices[CONSUMABLE_SHOP_MAX];	   /**< Array for consumables prices. They assume to a consumable with qty == 1*/
+#ifdef __GNUC__
+} SerShop;
+#else
+} SerShop;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Roadfork. Packed struct.
+ * Can be turned into a Roadfork with deser_Roadfork().
+ * @see Roadfork
+ * @see deser_Roadfork()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerRoadfork {
+#else
+#pragma pack(push, 1)
+typedef struct SerRoadfork {
+#endif
+    roadforkOption options[2];	   /**< Defines which choices the fork has.*/
+#ifdef __GNUC__
+} SerRoadfork;
+#else
+} SerRoadfork;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Room. Packed struct.
+ * Can be turned into a Room with deser_Room().
+ * @see Room
+ * @see deser_Room()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerRoom {
+#else
+#pragma pack(push, 1)
+typedef struct SerRoom {
+#endif
+    int32_t index;	   /**< The room's own number.*/
+    roomClass class;	 /**< Defines which kind of roomClass the instance relates to*/
+    SerShop shop;	    /**< The SerShop, initialised for rooms of class SHOP.*/
+    SerRoadfork roadfork;	    /**< The SerRoadfork, initialised for rooms of class ROADFORK.*/
+    SerTreasure treasure;	    /**< The SerTreasure, initialised for rooms of class TREASURE.*/
+
+    SerBoss boss;	    /**< The SerBoss, initialised for rooms of class BOSS.*/
+    int32_t enemyTotal;	/**< Total number of enemies initialised in enemies array.*/
+    SerEnemy enemies[ROOM_ENEMIES_MAX];	  /**< Array for enemies.*/
+    SerFoeParty foes;	/**< The SerFoeParty pointer, initialised for rooms of class ENEMIES.*/
+#ifdef __GNUC__
+} SerRoom;
+#else
+} SerRoom;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Floor. Packed struct.
+ * Can be turned into a Floor with deser_Floor().
+ * @see Floor
+ * @see deser_Floor()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerFloor {
+#else
+#pragma pack(push, 1)
+typedef struct SerFloor {
+#endif
+    int32_t index;	   /**< The floor's own number.*/
+
+    floorClass class;	  /**< Defines which kind of floorClass the instance relates to*/
+    int32_t floor_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	  /**< Defines the layout for the Floor (which cells are actually filled).*/
+    int32_t area;	  /**< Holds how many cells we succesfully random walked.*/
+    SerRoom rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< SerRoom matrix for rooms of this floor.*/
+    roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
+    int32_t explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
+    int32_t explored_area;	   /**< Holds how many cells we explored.*/
+#ifdef __GNUC__
+} SerFloor;
+#else
+} SerFloor;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Wincon. Packed struct.
+ * Can be turned into a Wincon with deser_Wincon().
+ * @see Wincon
+ * @see deser_Wincon()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerWincon {
+#else
+#pragma pack(push, 1)
+typedef struct SerWincon {
+#endif
+    winconClass class;	   /**< Defines which kind of winconClass the instance relates to.*/
+    int32_t current_val;	 /**< Defines the current progress.*/
+    int32_t target_val;	/**< Defines the total progress.*/
+#ifdef __GNUC__
+} SerWincon;
+#else
+} SerWincon;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized Saveslot. Packed struct.
+ * Can be turned into a Saveslot with deser_Saveslot().
+ * @see Saveslot
+ * @see deser_Saveslot()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerSaveslot {
+#else
+#pragma pack(push, 1)
+typedef struct SerSaveslot {
+#endif
+    char name[50];     /**< Name string for the saveslot.*/
+    char save_path[255];     /**< Path to savefile*/
+#ifdef __GNUC__
+} SerSaveslot;
+#else
+} SerSaveslot;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized SerPath. Packed struct.
+ * Can be turned into a Path with deser_Path().
+ * @see Path
+ * @see deser_Path()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerPath {
+#else
+#pragma pack(push, 1)
+typedef struct SerPath {
+#endif
+    int32_t length;	    /**< Defines how many rooms there are in total.*/
+    int32_t luck;	  /**< Defines global luck value.*/
+    int32_t prize;	   /**< Defines the reward for getting to length*/
+    int32_t loreCounter;	 /**< Counts how many lore prompts have been displayed*/
+    SerWincon win_condition;     /**> Defines the win condition for the current game.*/
+    SerSaveslot current_saveslot;	    /** Defines current SerSaveslot for the game.*/
+#ifdef __GNUC__
+} SerPath;
+#else
+} SerPath;
+#pragma pack(pop)
+#endif
+
+
 bool appendSerTurncounter(const char* filename, SerTurncounter* data);
 
 bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data);
