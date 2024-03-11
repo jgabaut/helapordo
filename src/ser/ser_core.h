@@ -658,6 +658,45 @@ typedef struct SerPath {
 #pragma pack(pop)
 #endif
 
+/**
+ * Serialized Gamestate. Packed struct.
+ * Can be turned into a Gamestate with deser_Gamestate().
+ * @see Gamestate
+ * @see deser_Gamestate()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerGamestate {
+#else
+#pragma pack(push, 1)
+typedef struct SerGamestate {
+#endif
+    clock_t start_time; /**< Keeps track of game start time.*/
+
+    SerCountstats stats;	   /**< Keeps track of stats for the game.*/
+
+    int32_t current_fighters;     /**< Keeps track of Fighter number for the game.*/
+    roomClass current_roomtype;	    /**< Keeps track of current room type.*/
+    int32_t current_room_index;	/**< Keeps track of current room index.*/
+
+    int32_t current_enemy_index;	 /**< Keeps track of current enemy index.*/
+    SerWincon wincon;	/**< Keeps track of current Wincon.*/
+
+    SerPath path;	    /**< Keeps track of current Path.*/
+
+    SerFighter player;	 /**< Keeps track of current Player.*/
+
+    Gamemode gamemode;	   /**< Keeps track of current Gamemode.*/
+
+    SerFloor current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
+
+    bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
+#ifdef __GNUC__
+} SerGamestate;
+#else
+} SerGamestate;
+#pragma pack(pop)
+#endif
+
 
 bool appendSerTurncounter(const char* filename, SerTurncounter* data);
 
