@@ -65,23 +65,24 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
 
         int64_t header_size = -1;
         fread(&header_size, sizeof(header_size), 1, file);
+        size_t sersh_size = sizeof(SerSaveHeader);
 
 #ifdef WIN_32
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Read header size: {%lli}", __func__, header_size);
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%lli}", __func__, sizeof(SerSaveHeader));
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%lli}", __func__, sersh_size);
 #else
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Read header size: {%li}", __func__, header_size);
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%li}", __func__, sizeof(SerSaveHeader));
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%li}", __func__, sersh_size);
 #endif
 
-        if (header_size != sizeof(SerSaveHeader)) {
+        if (header_size != sersh_size) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Header size from {%s} doesn't match SemSaveHeader size.", __func__, filename);
-            if (header_size < sizeof(SerSaveHeader)) {
+            if (header_size < sersh_size) {
 
 #ifdef WIN_32
-                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, header_size, sizeof(SerSaveHeader));
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, header_size, sersh_size);
 #else
-                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, header_size, sizeof(SerSaveHeader));
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, header_size, sersh_size);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
                 kls_free(default_kls);
@@ -90,9 +91,9 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
             } else {
 
 #ifdef WIN_32
-                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, header_size, sizeof(SerSaveHeader));
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, header_size, sersh_size);
 #else
-                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, header_size, sizeof(SerSaveHeader));
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, header_size, sersh_size);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
                 kls_free(default_kls);
@@ -118,10 +119,10 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
 
 #ifdef WIN_32
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Read file size: {%lli}", __func__, length);
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%lli}", __func__, sizeof(SerSaveHeader));
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%lli}", __func__, sersh_size);
 #else
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Read file size: {%li}", __func__, length);
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%li}", __func__, sizeof(SerSaveHeader));
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%li}", __func__, sersh_size);
 #endif
 
         size_t expected_len = sizeof(SerSaveHeader);
@@ -173,19 +174,13 @@ bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser)
 {
     // ALL strings in the SerSaveHeader should be NULL-terminated
     if (ser == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveHeader as NULL.", __func__);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveHeader was NULL.", __func__);
         kls_free(default_kls);
         kls_free(temporary_kls);
         exit(EXIT_FAILURE);
     }
     if (deser == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
-    }
-    if (deser == NULL ) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): failed KLS_PUSH().", __func__);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo was NULL.", __func__);
         kls_free(default_kls);
         kls_free(temporary_kls);
         exit(EXIT_FAILURE);
