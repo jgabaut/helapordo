@@ -219,7 +219,7 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls) {
         SerSaveHeader ser_saveheader = {
             .api_level = HELAPORDO_API_VERSION_INT,
             .game_version = VERSION,
-            .save_version = HELAPORDO_SAVEFILE_VERSION,
+            .save_version = HELAPORDO_BINSAVEFILE_VERSION,
             .os = HELAPORDO_OS,
             .machine = HELAPORDO_MACHINE,
         };
@@ -264,9 +264,9 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls) {
         memcpy(tmp.machine, read_SSH->machine, SERSAVEHEADER_BUFSIZE);
         kls_temp_end(kls_t);
 
-        if ((strcmp(tmp.save_version, HELAPORDO_SAVEFILE_VERSION) != 0)) {
+        if ((strcmp(tmp.save_version, HELAPORDO_BINSAVEFILE_VERSION) != 0)) {
             log_tag("debug_log.txt", "[BINSAVE]", "%s(): mismatch on read_SSH->save_version.", __func__);
-            log_tag("debug_log.txt", "[BINSAVE]", "%s(): Expected {%s}, found {%s}", __func__, HELAPORDO_SAVEFILE_VERSION, tmp.save_version);
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): Expected {%s}, found {%s}", __func__, HELAPORDO_BINSAVEFILE_VERSION, tmp.save_version);
         }
 
         if ((strcmp(tmp.game_version, VERSION) != 0)) {
