@@ -2418,7 +2418,16 @@ void display_printFoeParty(FoeParty *fp)
         log_tag("debug_log.txt", "[FOEPARTY]", "Cell (%i) status was (%i)", i,
                 isalive);
         if (isalive == 1) {
-            Enemy *curr_foe = fp->enemy_foes[fp->current_index];
+            int show_next = G_DEBUG_ON;
+            //TODO: add ability to show next foes in advance
+            Enemy *curr_foe = NULL;
+            if (show_next == 0) {
+                log_tag("debug_log.txt", "[FOEPARTY]", "Hiding upcoming enemies: setting curr_foe to fp->enemy_foes[fp->current_index] (index {%i})", fp->current_index);
+                curr_foe = fp->enemy_foes[fp->current_index];
+            } else {
+                log_tag("debug_log.txt", "[FOEPARTY]", "Setting curr_foe to fp->enemy_foes[%i]", i);
+                curr_foe = fp->enemy_foes[i];
+            }
             mvwprintw(wins[i], 2, 2, "%s", stringFromEClass(curr_foe->class));
             mvwprintw(wins[i], 4, 2, "Hp: (%i/%i)", curr_foe->hp,
                       curr_foe->totalhp);
