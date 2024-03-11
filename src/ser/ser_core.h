@@ -748,6 +748,7 @@ bool appendSerTurncounter(const char* filename, SerTurncounter* data);
 bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data);
 
 bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser);
+bool ser_Turncounter(Turncounter* deser, SerTurncounter* ser);
 
 bool deser_Perk(SerPerk* ser, Perk* deser);
 bool ser_Perk(Perk* deser, SerPerk* ser);
@@ -772,4 +773,7 @@ bool ser_Artifact(Artifact* deser, SerArtifact* ser);
 
 bool deser_countStats(SerCountstats* ser, countStats* deser);
 bool ser_countStats(countStats* deser, SerCountstats* ser);
+
+bool deser_Enemy(SerEnemy* ser, Enemy* deser);
+bool ser_Enemy(Enemy* deser, SerEnemy* ser);
 #endif // SER_CORE_H

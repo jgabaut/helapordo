@@ -155,6 +155,26 @@ bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser) {
     return true;
 }
 
+bool ser_Turncounter(Turncounter* deser, SerTurncounter* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTurncounter was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Turncounter was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->count = deser->count;
+    ser->innerValue = deser->innerValue;
+    //TODO: check type here?
+    ser->type = deser->type;
+    return true;
+}
+
 bool deser_Perk(SerPerk* ser, Perk* deser) {
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPerk was NULL.", __func__);
@@ -512,4 +532,119 @@ bool ser_countStats(countStats* deser, SerCountstats* ser) {
     }
     ser->keysfound = deser->keysfound;
     return true;
+}
+
+bool deser_Enemy(SerEnemy* ser, Enemy* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEnemy was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Enemy was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->index = ser->index;
+    deser->class = ser->class;
+    deser->hp = ser->hp;
+    deser->atk = ser->atk;
+    deser->def = ser->def;
+    deser->vel = ser->vel;
+    deser->level = ser->level;
+    deser->luck = ser->luck;
+    deser->xp = ser->xp;
+    deser->totalhp = ser->totalhp;
+    deser->energy = ser->energy;
+    deser->totalenergy = ser->totalenergy;
+    deser->stamina = ser->stamina;
+    deser->totalstamina = ser->totalstamina;
+    deser->status = ser->status;
+    deser->beast = ser->beast;
+    bool skillslot_deser_res = false;
+    for (size_t i=0; i<ENEMY_SKILL_SLOTS+1; i++) {
+        skillslot_deser_res = deser_Skillslot(&ser->skills[i], deser->skills[i]);
+        if (!skillslot_deser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Skillslot(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+    bool turncounter_deser_res = false;
+    for (size_t i=0; i<COUNTERSMAX+1; i++) {
+        turncounter_deser_res = deser_Turncounter(&ser->counters[i], deser->counters[i]);
+        if (!turncounter_deser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Turncounter(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+    deser->turnboost_atk = ser->turnboost_atk;
+    deser->turnboost_def = ser->turnboost_def;
+    deser->turnboost_vel = ser->turnboost_vel;
+    deser->turnboost_enr = ser->turnboost_enr;
+    deser->prize = ser->prize;
+    return true;
+}
+
+bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEnemy was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Enemy was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->index = deser->index;
+    ser->class = deser->class;
+    ser->hp = deser->hp;
+    ser->atk = deser->atk;
+    ser->def = deser->def;
+    ser->vel = deser->vel;
+    ser->level = deser->level;
+    ser->luck = deser->luck;
+    ser->xp = deser->xp;
+    ser->totalhp = deser->totalhp;
+    ser->energy = deser->energy;
+    ser->totalenergy = deser->totalenergy;
+    ser->stamina = deser->stamina;
+    ser->totalstamina = deser->totalstamina;
+    ser->status = deser->status;
+    ser->beast = deser->beast;
+    bool skillslot_ser_res = false;
+    for (size_t i=0; i<ENEMY_SKILL_SLOTS+1; i++) {
+        skillslot_ser_res = ser_Skillslot(deser->skills[i], &ser->skills[i]);
+        if (!skillslot_ser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Skillslot(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+    bool turncounter_ser_res = false;
+    for (size_t i=0; i<COUNTERSMAX+1; i++) {
+        turncounter_ser_res = ser_Turncounter(deser->counters[i], &ser->counters[i]);
+        if (!turncounter_ser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Turncounter(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+    ser->turnboost_atk = deser->turnboost_atk;
+    ser->turnboost_def = deser->turnboost_def;
+    ser->turnboost_vel = deser->turnboost_vel;
+    ser->turnboost_enr = deser->turnboost_enr;
+    ser->prize = deser->prize;
+    return true;
+
 }
