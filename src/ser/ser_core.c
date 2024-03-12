@@ -1901,3 +1901,137 @@ bool ser_Path(Path* deser, SerPath* ser) {
 
     return true;
 }
+
+bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGamestate was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Gamestate was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->start_time = ser->start_time;
+
+    bool stats_deser_res = deser_countStats(&ser->stats, deser->stats);
+    if (!stats_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_countStats()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->current_fighters = ser->current_fighters;
+
+    deser->current_roomtype = deser->current_roomtype;
+    deser->current_room_index = ser->current_room_index;
+
+
+    bool wincon_deser_res = deser_Wincon(&ser->wincon, deser->wincon);
+    if (!wincon_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Wincon()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool path_deser_res = deser_Path(&ser->path, deser->path);
+    if (!path_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Path()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    bool fighter_deser_res = deser_Fighter(&ser->player, deser->player);
+    if (!fighter_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Fighter()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->gamemode = ser->gamemode;
+
+    bool floor_deser_res = deser_Floor(&ser->current_floor, deser->current_floor);
+    if (!floor_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Floor()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->is_localexe = ser->is_localexe;
+    return true;
+}
+
+bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGamestate was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Gamestate was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->start_time = deser->start_time;
+
+    bool stats_ser_res = ser_countStats(deser->stats, &ser->stats);
+    if (!stats_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_countStats()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->current_fighters = deser->current_fighters;
+
+    ser->current_roomtype = deser->current_roomtype;
+    ser->current_room_index = deser->current_room_index;
+
+
+    bool wincon_ser_res = ser_Wincon(deser->wincon, &ser->wincon);
+    if (!wincon_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Wincon()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool path_ser_res = ser_Path(deser->path, &ser->path);
+    if (!path_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Path()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    bool fighter_ser_res = ser_Fighter(deser->player, &ser->player);
+    if (!fighter_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Fighter()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->gamemode = deser->gamemode;
+
+    bool floor_ser_res = ser_Floor(deser->current_floor, &ser->current_floor);
+    if (!floor_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Floor()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->is_localexe = deser->is_localexe;
+    return true;
+}

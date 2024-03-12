@@ -818,4 +818,7 @@ bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser);
 
 bool deser_Path(SerPath* ser, Path* deser);
 bool ser_Path(Path* deser, SerPath* ser);
+
+bool deser_Gamestate(SerGamestate* ser, Gamestate* deser);
+bool ser_Gamestate(Gamestate* deser, SerGamestate* ser);
 #endif // SER_CORE_H
