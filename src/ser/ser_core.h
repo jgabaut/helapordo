@@ -788,4 +788,13 @@ bool ser_Boss(Boss* deser, SerBoss* ser);
 
 bool deser_Fighter(SerFighter* ser, Fighter* deser);
 bool ser_Fighter(Fighter* deser, SerFighter* ser);
+
+bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser);
+bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser);
+
+bool deser_Chest(SerChest* ser, Chest* deser);
+bool ser_Chest(Chest* deser, SerChest* ser);
+
+bool deser_Treasure(SerTreasure* ser, Treasure* deser);
+bool ser_Treasure(Treasure* deser, SerTreasure* ser);
 #endif // SER_CORE_H
