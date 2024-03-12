@@ -1348,3 +1348,556 @@ bool ser_Treasure(Treasure* deser, SerTreasure* ser) {
     }
     return true;
 }
+
+bool deser_Shop(SerShop* ser, Shop* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerShop was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Shop was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->itemCount = ser->itemCount;
+    deser->equipsCount = ser->equipsCount;
+
+    bool equips_deser_res = false;
+    for (size_t i=0; i<EQUIPSBAGSIZE+1; i++) {
+        equips_deser_res = deser_Equip(&ser->equips[i], deser->equips[i]);
+        if (!equips_deser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Equip(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (size_t i=0; i<EQUIP_SHOP_MAX; i++) {
+        deser->equipPrices[i] = ser->equipPrices[i];
+    }
+
+    deser->consumablesCount = ser->consumablesCount;
+    deser->uniqueConsumablesCount = ser->uniqueConsumablesCount;
+
+    bool consumables_deser_res = false;
+    for (size_t i=0; i<CONSUMABLESMAX+1; i++) {
+        consumables_deser_res = deser_Consumable(&ser->consumables[i], deser->consumables[i]);
+        if (!consumables_deser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Consumable(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (size_t i=0; i<CONSUMABLE_SHOP_MAX; i++) {
+        deser->consumablePrices[i] = ser->consumablePrices[i];
+    }
+    return true;
+}
+bool ser_Shop(Shop* deser, SerShop* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerShop was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Shop was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->itemCount = deser->itemCount;
+    ser->equipsCount = deser->equipsCount;
+
+    bool equips_ser_res = false;
+    for (size_t i=0; i<EQUIPSBAGSIZE+1; i++) {
+        equips_ser_res = ser_Equip(deser->equips[i], &ser->equips[i]);
+        if (!equips_ser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Equip(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (size_t i=0; i<EQUIP_SHOP_MAX; i++) {
+        ser->equipPrices[i] = deser->equipPrices[i];
+    }
+
+    ser->consumablesCount = deser->consumablesCount;
+    ser->uniqueConsumablesCount = deser->uniqueConsumablesCount;
+
+    bool consumables_ser_res = false;
+    for (size_t i=0; i<CONSUMABLESMAX+1; i++) {
+        consumables_ser_res = ser_Consumable(deser->consumables[i], &ser->consumables[i]);
+        if (!consumables_ser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Consumable(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (size_t i=0; i<CONSUMABLE_SHOP_MAX; i++) {
+        ser->consumablePrices[i] = deser->consumablePrices[i];
+    }
+    return true;
+}
+
+bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoadfork was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Roadfork was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    for (size_t i=0; i<2; i++) {
+        deser->options[i] = ser->options[i];
+    }
+    return true;
+}
+
+bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoadfork was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Roadfork was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    for (size_t i=0; i<2; i++) {
+        ser->options[i] = deser->options[i];
+    }
+    return true;
+}
+
+bool deser_Room(SerRoom* ser, Room* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoom was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Room was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->index = ser->index;
+    deser->class = ser->class;
+    bool shop_deser_res = deser_Shop(&ser->shop, deser->shop);
+    if (!shop_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Shop().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool roadfork_deser_res = deser_Roadfork(&ser->roadfork, deser->roadfork);
+    if (!roadfork_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Roadfork().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool treasure_deser_res = deser_Treasure(&ser->treasure, deser->treasure);
+    if (!treasure_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Treasure().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    bool boss_deser_res = deser_Boss(&ser->boss, deser->boss);
+    if (!boss_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Boss().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->enemyTotal = ser->enemyTotal;
+    bool enemies_deser_res = false;
+    for (size_t i=0; i<ROOM_ENEMIES_MAX; i++) {
+        enemies_deser_res = deser_Enemy(&ser->enemies[i], deser->enemies[i]);
+        if (!enemies_deser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Enemy(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    bool foeparty_deser_res = deser_FoeParty(&ser->foes, deser->foes);
+    if (!foeparty_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_FoeParty().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    return true;
+}
+
+bool ser_Room(Room* deser, SerRoom* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoom was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Room was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->index = deser->index;
+    ser->class = deser->class;
+    bool shop_ser_res = ser_Shop(deser->shop, &ser->shop);
+    if (!shop_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Shop().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool roadfork_ser_res = ser_Roadfork(deser->roadfork, &ser->roadfork);
+    if (!roadfork_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Roadfork().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool treasure_ser_res = ser_Treasure(deser->treasure, &ser->treasure);
+    if (!treasure_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Treasure().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    bool boss_ser_res = ser_Boss(deser->boss, &ser->boss);
+    if (!boss_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->enemyTotal = deser->enemyTotal;
+    bool enemies_ser_res = false;
+    for (size_t i=0; i<ROOM_ENEMIES_MAX; i++) {
+        enemies_ser_res = ser_Enemy(deser->enemies[i], &ser->enemies[i]);
+        if (!enemies_ser_res) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Index: {%li}", __func__, i);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    bool foeparty_ser_res = ser_FoeParty(deser->foes, &ser->foes);
+    if (!foeparty_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_FoeParty().", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    return true;
+}
+
+bool deser_Floor(SerFloor* ser, Floor* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFloor was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Floor was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->index = ser->index;
+    deser->class = ser->class;
+
+    for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
+        for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
+            deser->floor_layout[i][k] = ser->floor_layout[i][k];
+        }
+    }
+
+    deser->area = ser->area;
+
+    bool rooms_deser_res = false;
+    for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
+        for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
+            rooms_deser_res = deser_Room(&ser->rooms_matrix[i][k],deser->rooms_matrix[i][k]);
+            if (!rooms_deser_res) {
+                log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Room(). Index: {%li}", __func__, i);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+
+    for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
+        for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
+            deser->roomclass_layout[i][k] = ser->roomclass_layout[i][k];
+        }
+    }
+
+    for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
+        for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
+            deser->explored_matrix[i][k] = ser->explored_matrix[i][k];
+        }
+    }
+
+    deser->explored_area = ser->explored_area;
+
+    return true;
+}
+bool ser_Floor(Floor* deser, SerFloor* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFloor was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Floor was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->index = deser->index;
+    ser->class = deser->class;
+
+    for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
+        for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
+            ser->floor_layout[i][k] = deser->floor_layout[i][k];
+        }
+    }
+
+    ser->area = deser->area;
+
+    bool rooms_ser_res = false;
+    for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
+        for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
+            rooms_ser_res = ser_Room(deser->rooms_matrix[i][k],&ser->rooms_matrix[i][k]);
+            if (!rooms_ser_res) {
+                log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room(). Index: {%li}", __func__, i);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+        }
+    }
+
+    for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
+        for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
+            ser->roomclass_layout[i][k] = deser->roomclass_layout[i][k];
+        }
+    }
+
+    for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
+        for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
+            ser->explored_matrix[i][k] = deser->explored_matrix[i][k];
+        }
+    }
+
+    ser->explored_area = deser->explored_area;
+
+    return true;
+}
+
+bool deser_Wincon(SerWincon* ser, Wincon* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerWincon was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Wincon was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->class = ser->class;
+    deser->current_val = ser->current_val;
+    deser->target_val = ser->target_val;
+    return true;
+}
+
+bool ser_Wincon(Wincon* deser, SerWincon* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerWincon was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Wincon was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->class = deser->class;
+    ser->current_val = deser->current_val;
+    ser->target_val = deser->target_val;
+    return true;
+}
+
+bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Saveslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->name[49] = '\0';
+    memcpy(deser->name, ser->name, 49);
+    deser->name[49] = '\0';
+
+    ser->save_path[244] = '\0';
+    memcpy(deser->save_path, ser->save_path, 244);
+    deser->save_path[244] = '\0';
+    return true;
+}
+
+bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Saveslot was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->name[49] = '\0';
+    memcpy(ser->name, deser->name, 49);
+    ser->name[49] = '\0';
+
+    deser->save_path[244] = '\0';
+    memcpy(ser->save_path, deser->save_path, 244);
+    ser->save_path[244] = '\0';
+    return true;
+}
+
+bool deser_Path(SerPath* ser, Path* deser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPath was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Path was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->length = ser->length;
+    deser->luck = ser->luck;
+    deser->prize = ser->prize;
+    deser->loreCounter = ser->loreCounter;
+
+    bool wincon_deser_res = deser_Wincon(&ser->win_condition, deser->win_condition);
+    if (!wincon_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Wincon()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool saveslot_deser_res = deser_Saveslot(&ser->current_saveslot, deser->current_saveslot);
+    if (!saveslot_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Saveslot()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    return true;
+}
+bool ser_Path(Path* deser, SerPath* ser) {
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPath was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Path was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->length = deser->length;
+    ser->luck = deser->luck;
+    ser->prize = deser->prize;
+    ser->loreCounter = deser->loreCounter;
+
+    bool wincon_ser_res = ser_Wincon(deser->win_condition, &ser->win_condition);
+    if (!wincon_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Wincon()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool saveslot_ser_res = ser_Saveslot(deser->current_saveslot, &ser->current_saveslot);
+    if (!saveslot_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Saveslot()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    return true;
+}

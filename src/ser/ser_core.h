@@ -797,4 +797,25 @@ bool ser_Chest(Chest* deser, SerChest* ser);
 
 bool deser_Treasure(SerTreasure* ser, Treasure* deser);
 bool ser_Treasure(Treasure* deser, SerTreasure* ser);
+
+bool deser_Shop(SerShop* ser, Shop* deser);
+bool ser_Shop(Shop* deser, SerShop* ser);
+
+bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser);
+bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser);
+
+bool deser_Room(SerRoom* ser, Room* deser);
+bool ser_Room(Room* deser, SerRoom* ser);
+
+bool deser_Floor(SerFloor* ser, Floor* deser);
+bool ser_Floor(Floor* deser, SerFloor* ser);
+
+bool deser_Wincon(SerWincon* ser, Wincon* deser);
+bool ser_Wincon(Wincon* deser, SerWincon* ser);
+
+bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser);
+bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser);
+
+bool deser_Path(SerPath* ser, Path* deser);
+bool ser_Path(Path* deser, SerPath* ser);
 #endif // SER_CORE_H
