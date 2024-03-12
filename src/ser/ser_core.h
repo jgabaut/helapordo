@@ -353,6 +353,12 @@ typedef struct SerBoss {
 #endif
 
 /**
+ * Defines size for SerFighter name buffer.
+ * @see SerFighter
+ */
+#define SERFIGHTER_NAME_BUFSIZE FIGHTER_NAME_BUFSIZE
+
+/**
  * Serialized Fighter. Packed struct.
  * Can be turned into an Fighter with deser_Fighter().
  * Can be obtained from a Fighter with ser_Fighter().
@@ -366,7 +372,7 @@ typedef struct __attribute__((packed)) SerFighter {
 #pragma pack(push, 1)
 typedef struct SerFighter {
 #endif
-    char name[50];     /**< Name string*/
+    char name[SERFIGHTER_NAME_BUFSIZE];     /**< Name string*/
     fighterClass class;	    /**< Defines which kind of fighterClass the instance relates to*/
     int32_t hp;	/**< Current hp value*/
     int32_t atk;	 /**< Current atk value*/
@@ -776,4 +782,10 @@ bool ser_countStats(countStats* deser, SerCountstats* ser);
 
 bool deser_Enemy(SerEnemy* ser, Enemy* deser);
 bool ser_Enemy(Enemy* deser, SerEnemy* ser);
+
+bool deser_Boss(SerBoss* ser, Boss* deser);
+bool ser_Boss(Boss* deser, SerBoss* ser);
+
+bool deser_Fighter(SerFighter* ser, Fighter* deser);
+bool ser_Fighter(Fighter* deser, SerFighter* ser);
 #endif // SER_CORE_H

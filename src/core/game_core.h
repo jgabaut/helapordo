@@ -917,6 +917,8 @@ typedef void (*callback_artifact_t)(struct Fighter *, struct Enemy *,
  */
 typedef void (*callback_void_t)(void);
 
+#define FIGHTER_NAME_BUFSIZE 50
+
 /**
  * Represents the entity initialised from a fighterClass.
  * @see fighterClass
@@ -928,7 +930,7 @@ typedef void (*callback_void_t)(void);
  * @see countStats
  */
 typedef struct Fighter {
-    char name[50];     /**< Name string*/
+    char name[FIGHTER_NAME_BUFSIZE];     /**< Name string*/
     fighterClass class;	    /**< Defines which kind of fighterClass the instance relates to*/
     int hp;	/**< Current hp value*/
     int atk;	 /**< Current atk value*/
@@ -960,7 +962,7 @@ typedef struct Fighter {
 
     struct Equipslot *equipslots[EQUIPZONES + 1];   /**< Array with all the Equipslot*/
     struct Equip *equipsBag[EQUIPSBAGSIZE + 1];	  /**< Array with all the Equip found*/
-    struct Consumable *consumablesBag[CONSUMABLESMAX + 1];   /**< Array with all the Consumables found*/
+    Consumable *consumablesBag[CONSUMABLESMAX + 1];   /**< Array with all the Consumables found*/
     struct Artifact *artifactsBag[ARTIFACTSMAX + 1];   /**< Array with all the Artifacts found*/
 
     int equipsBagOccupiedSlots;	    /**< Keeps track of how many slots are occupied.*/

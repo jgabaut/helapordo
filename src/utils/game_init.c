@@ -80,7 +80,7 @@ void initConsumableBag(Fighter *f, Koliseo *kls)
         }
         c->qty = 0;
 
-        f->consumablesBag[i] = (struct Consumable *)c;
+        f->consumablesBag[i] = (Consumable *)c;
     }
 
 }
