@@ -1452,8 +1452,15 @@ void gameloop(int argc, char **argv)
         dbg_Gamestate(gamestate);
 
         if (G_EXPERIMENTAL_ON == 1) {
-            prep_Gamestate(gamestate, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
-            log_tag("debug_log.txt", "[DEBUG]", "Read Gamestate.");
+            bool prep_res = prep_Gamestate(gamestate, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                                                                                                                            if (prep_res) {
+                log_tag("debug_log.txt", "[DEBUG]", "Read Gamestate.");
+                                                                                                                            } else {
+                log_tag("debug_log.txt", "[ERROR]", "Failed reading Gamestate.");
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+                                                                                                                            }
         }
 
         if (GAMEMODE == Story || GAMEMODE == Standard) {
@@ -1668,6 +1675,9 @@ void gameloop(int argc, char **argv)
                 if (res == OP_RES_DEATH) {
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Room resulted in DEATH.\n");
+                    if (G_EXPERIMENTAL_ON == 1) {
+                        //TODO: delete savefile?
+                    }
                     //Free room memory
                     //freeRoom(current_room);
                     break;
@@ -2044,6 +2054,9 @@ void gameloop(int argc, char **argv)
                         if (res == OP_RES_DEATH) {
                             log_tag("debug_log.txt", "[DEBUG]",
                                     "Room resulted in DEATH.");
+                            if (G_EXPERIMENTAL_ON == 1) {
+                                //TODO: delete savefile?
+                            }
                             //Free room memory
                             //freeRoom(current_room);
                             break;
