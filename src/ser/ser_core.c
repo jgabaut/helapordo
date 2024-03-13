@@ -288,10 +288,9 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
         exit(EXIT_FAILURE);
     }
     if (deser == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equip was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equip was NULL. Putting zeros.", __func__);
+        *ser = (SerEquip){0};
+        return true;
     }
     ser->class = deser->class;
     ser->type = deser->type;
@@ -1687,10 +1686,9 @@ bool ser_Floor(Floor* deser, SerFloor* ser) {
         exit(EXIT_FAILURE);
     }
     if (deser == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Floor was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Floor was NULL. Putting zeros.", __func__);
+        *ser = (SerFloor){0};
+        return true;
     }
 
     ser->index = deser->index;
@@ -2214,6 +2212,14 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
     if (force_init) {
         log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forced init of SerGamestate.", __func__);
         SerGamestate ser_gmst = {0};
+        if (!gmst_null) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s():    using passed Gamestate.", __func__);
+            bool ser_res = ser_Gamestate(gmst, &ser_gmst);
+            if (!ser_res) {
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed serializing passed Gamestate.", __func__);
+                return false;
+            }
+        }
 
         // Write packed structure to a binary file
         bool write_res = appendSerGamestate(path_to_bin_savefile, &ser_gmst);
@@ -2254,6 +2260,14 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         log_tag("debug_log.txt", "[BINSAVE]", "Failed reading binsave at {%s}, creating a new one.", path_to_bin_savefile);
         // Failed reading existing binsave, create a new one
         SerGamestate ser_gmst = {0};
+        if (!gmst_null) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s():    using passed Gamestate.", __func__);
+            bool ser_res = ser_Gamestate(gmst, &ser_gmst);
+            if (!ser_res) {
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed serializing passed Gamestate.", __func__);
+                return false;
+            }
+        }
 
         // Write packed structure to a binary file
         bool write_res = appendSerGamestate(path_to_bin_savefile, &ser_gmst);

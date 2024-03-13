@@ -1452,9 +1452,7 @@ void gameloop(int argc, char **argv)
         dbg_Gamestate(gamestate);
 
         if (G_EXPERIMENTAL_ON == 1) {
-            Gamestate gmst_copy = *gamestate;
-            prep_Gamestate(&gmst_copy, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
-            dbg_Gamestate(&gmst_copy);
+            prep_Gamestate(gamestate, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
             log_tag("debug_log.txt", "[DEBUG]", "Read Gamestate.");
         }
 
