@@ -819,6 +819,10 @@ bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser);
 bool deser_Path(SerPath* ser, Path* deser);
 bool ser_Path(Path* deser, SerPath* ser);
 
+bool appendSerGamestate(const char* filename, SerGamestate* data);
+bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data);
+
 bool deser_Gamestate(SerGamestate* ser, Gamestate* deser);
 bool ser_Gamestate(Gamestate* deser, SerGamestate* ser);
+bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Koliseo* kls, bool force_init);
 #endif // SER_CORE_H

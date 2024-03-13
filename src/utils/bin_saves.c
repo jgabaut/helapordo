@@ -39,7 +39,7 @@ bool writeSerSaveHeader(const char* filename, SerSaveHeader* data)
         // Close the file
         fclose(file);
     } else {
-        fprintf(stderr, "%s(): Error opening file {%s} for writing", __func__, filename);
+        fprintf(stderr, "%s(): Error opening file {%s} for writing\n", __func__, filename);
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for writing", __func__, filename);
         return false;
     }
@@ -155,7 +155,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         // Close the file
         fclose(file);
     } else {
-        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        fprintf(stderr, "%s(): Error opening file {%s} for reading\n", __func__, filename);
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
     }
@@ -206,12 +206,13 @@ bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser)
  * Tries reading binary save from passed path.
  * @param static_path The path to which we append to find our file.
  * @param kls Koliseo used for allocation.
+ * @param did_init Set to true when a new saveHeader is written.
  * @see SerSaveHeader
  * @see SaveHeader
  * @return The newly allocated SaveHeader.
  * TODO Contract should meaningfully capture case of read failure + init.
  */
-SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls)
+SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool* did_init)
 {
     if (kls == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
@@ -243,6 +244,7 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls)
     if (!read_res) {
         kls_temp_end(kls_t);
         log_tag("debug_log.txt", "[BINSAVE]", "Failed reading binsave at {%s}, creating a new one.", path_to_bin_savefile);
+        *did_init = true;
         // Failed reading existing binsave, create a new one
         SerSaveHeader ser_saveheader = {
             .api_level = HELAPORDO_API_VERSION_INT,

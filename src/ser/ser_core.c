@@ -50,19 +50,19 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         fread(&blob_size, sizeof(blob_size), 1, file);
         size_t sertc_size = sizeof(SerTurncounter);
 
-#ifdef WIN_32
+#ifdef _WIN32
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Read blob size: {%lli}", __func__, blob_size);
         log_tag("debug_log.txt", "[DEBUG]", "%s():    SerTurncounter size: {%lli}", __func__, sizeof(SerTurncounter));
 #else
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Read header size: {%li}", __func__, blob_size);
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%li}", __func__, sizeof(SerTurncounter));
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerTurncounter size: {%li}", __func__, sizeof(SerTurncounter));
 #endif
 
         if (blob_size != sertc_size) {
-            log_tag("debug_log.txt", "[ERROR]", "%s():    Header size from {%s} doesn't match SemTurnCounter size.", __func__, filename);
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Header size from {%s} doesn't match SerTurnCounter size.", __func__, filename);
             if (blob_size < sertc_size) {
 
-#ifdef WIN_32
+#ifdef _WIN32
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, blob_size, sertc_size);
 #else
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, blob_size, sertc_size);
@@ -71,9 +71,9 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
-            } else {
+            } else if (blob_size > sertc_size) {
 
-#ifdef WIN_32
+#ifdef _WIN32
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, blob_size, sertc_size);
 #else
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, blob_size, sertc_size);
@@ -88,9 +88,9 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         remaining_length -= sizeof(blob_size);
 
 
-        if (remaining_length <= blob_size) {
+        if (remaining_length < blob_size) {
 
-#ifdef WIN_32
+#ifdef _WIN32
             log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%lli} is less than stored header size {%lli}.", __func__, remaining_length, blob_size);
 #else
             log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, remaining_length, blob_size);
@@ -104,7 +104,7 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         size_t expected_len = sizeof(SerTurncounter);
         if (remaining_length < expected_len) {
 
-#ifdef WIN_32
+#ifdef _WIN32
             log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, remaining_length, expected_len);
 #else
             log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, remaining_length, expected_len);
@@ -113,9 +113,8 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
-        } else {
-
-#ifdef WIN_32
+        } else if (remaining_length > expected_len) {
+#ifdef _WIN32
             log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, remaining_length, expected_len);
 #else
             log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, remaining_length, expected_len);
@@ -255,9 +254,7 @@ bool deser_Equip(SerEquip* ser, Equip* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equip was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     deser->class = ser->class;
     deser->type = ser->type;
@@ -856,9 +853,7 @@ bool deser_Fighter(SerFighter* ser, Fighter* deser) {
         equips_deser_res = deser_Equip(&ser->equipsBag[i], deser->equipsBag[i]);
         if (!equips_deser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Equip(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            deser->equipsBag[i] = NULL;
         }
     }
 
@@ -1641,9 +1636,7 @@ bool deser_Floor(SerFloor* ser, Floor* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Floor was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     deser->index = ser->index;
@@ -1902,6 +1895,147 @@ bool ser_Path(Path* deser, SerPath* ser) {
     return true;
 }
 
+bool appendSerGamestate(const char* filename, SerGamestate* data) {
+    FILE* file = fopen(filename, "ab");
+
+    if (file != NULL) {
+        // Write the structure to the file
+        //
+        int64_t ser_gmst_size = sizeof(SerGamestate);
+
+        fwrite(&ser_gmst_size, sizeof(ser_gmst_size), 1, file);
+        fwrite(data, sizeof(SerGamestate), 1, file);
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for writing", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for writing", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
+bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
+    FILE* file = fopen(filename, "rb");
+
+    if (file != NULL) {
+        size_t tot_length = -1;
+        fseek(file, 0, SEEK_END);
+        tot_length = ftell(file);
+
+        int64_t blob_size = -1;
+
+        if (tot_length < offset ) {
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%lli} is less than passed offset {%lli}", __func__, tot_length, offset);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%li} is less than passed offset {%li}", __func__, tot_length, offset);
+#endif
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        size_t remaining_length = -1;
+        fseek(file, offset, SEEK_SET);
+        remaining_length = tot_length - offset;
+
+#ifdef _WIN32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Total file size: {%lli}, Offset: {%lli}, Remaining: {%lli}", __func__, tot_length, offset, remaining_length);
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Total file size: {%li}, Offset: {%lli}, Remaining: {%li}", __func__, tot_length, offset, remaining_length);
+#endif
+
+        fread(&blob_size, sizeof(blob_size), 1, file);
+        size_t sergmst_size = sizeof(SerGamestate);
+
+#ifdef _WIN32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read blob size: {%lli}", __func__, blob_size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerGamestate size: {%lli}", __func__, sizeof(SerGamestate));
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read header size: {%li}", __func__, blob_size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerGamestate size: {%li}", __func__, sizeof(SerGamestate));
+#endif
+
+        if (blob_size != sergmst_size) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Header size from {%s} doesn't match SerGamestate size.", __func__, filename);
+            if (blob_size < sergmst_size) {
+
+#ifdef _WIN32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, blob_size, sergmst_size);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, blob_size, sergmst_size);
+#endif
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            } else if (blob_size > sergmst_size) {
+
+#ifdef _WIN32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, blob_size, sergmst_size);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, blob_size, sergmst_size);
+#endif
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+        }
+        // Update len
+        remaining_length -= sizeof(blob_size);
+
+
+        if (remaining_length < blob_size) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%lli} is less than stored header size {%lli}.", __func__, remaining_length, blob_size);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, remaining_length, blob_size);
+#endif
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        size_t expected_len = sizeof(SerGamestate);
+        if (remaining_length < expected_len) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, remaining_length, expected_len);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, remaining_length, expected_len);
+#endif
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else if (remaining_length > expected_len) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, remaining_length, expected_len);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, remaining_length, expected_len);
+#endif
+        }
+
+        // Read the structure from the file
+        fread(data, sizeof(SerGamestate), 1, file);
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
 bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGamestate was NULL.", __func__);
@@ -1960,9 +2094,7 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
     bool floor_deser_res = deser_Floor(&ser->current_floor, deser->current_floor);
     if (!floor_deser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Floor()", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        deser->current_floor = NULL;
     }
 
     deser->is_localexe = ser->is_localexe;
@@ -2034,4 +2166,149 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
 
     ser->is_localexe = deser->is_localexe;
     return true;
+}
+
+/**
+ * Tries reading binary gamestate from passed path, at passed offset.
+ * @param static_path The path to which we append to find our file.
+ * @param offset The offset of the SerGameState into passed file.
+ * @param kls Koliseo used for allocation.
+ * @param force_init Used to force writing a new SerGamestate.
+ * @see SerGamestate
+ * @see Gamestate
+ * @return The newly allocated Gamestate.
+ * TODO Contract should meaningfully capture case of read failure + init.
+ */
+bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Koliseo* kls, bool force_init)
+{
+    if (kls == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    bool gmst_null = false;
+    if (gmst != NULL) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s(): passed Gamestate is not NULL.", __func__);
+    } else {
+        gmst_null = true;
+        log_tag("debug_log.txt", "[DEBUG]", "%s(): passed Gamestate is NULL, will be allocated.", __func__);
+    }
+
+    char path_to_bin_savefile[1000];
+    char bin_savefile_name[300];
+
+    //Copy current_save_path
+#ifdef HELAPORDO_CURSES_BUILD
+    sprintf(bin_savefile_name, "%s", CURSES_BINSAVE_NAME);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    sprintf(bin_savefile_name, "%s", RL_BINSAVE_NAME);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+
+    sprintf(path_to_bin_savefile, "%s/%s", static_path, bin_savefile_name);
+
+    if (force_init) {
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forced init of SerGamestate.", __func__);
+        SerGamestate ser_gmst = {0};
+
+        // Write packed structure to a binary file
+        bool write_res = appendSerGamestate(path_to_bin_savefile, &ser_gmst);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for appendSerGamestate()", __func__);
+        }
+
+        if (gmst_null) {
+            gmst = KLS_PUSH(kls, Gamestate);
+        }
+        bool deser_result = deser_Gamestate(&ser_gmst, gmst);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_Gamestate().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_Gamestate()", __func__);
+        }
+        //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
+        return true;
+    }
+
+    Koliseo_Temp* kls_t = kls_temp_start(kls);
+    // Try reading an existing binsave
+    SerGamestate* read_gmst = KLS_PUSH_T(kls_t, SerGamestate);
+    bool read_res = readSerGamestate(path_to_bin_savefile, offset, read_gmst);
+
+    if (!read_res) {
+        kls_temp_end(kls_t);
+        log_tag("debug_log.txt", "[BINSAVE]", "Failed reading binsave at {%s}, creating a new one.", path_to_bin_savefile);
+        // Failed reading existing binsave, create a new one
+        SerGamestate ser_gmst = {0};
+
+        // Write packed structure to a binary file
+        bool write_res = appendSerGamestate(path_to_bin_savefile, &ser_gmst);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for appendSerGamestate()", __func__);
+        }
+
+        if (gmst_null) {
+            gmst = KLS_PUSH(kls, Gamestate);
+        }
+        bool deser_result = deser_Gamestate(&ser_gmst, gmst);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_Gamestate().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_Gamestate()", __func__);
+        }
+        //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
+        return true;
+    } else {
+        SerGamestate tmp = (SerGamestate) {0};
+        tmp = *read_gmst;
+        kls_temp_end(kls_t);
+
+        if (gmst_null) {
+            gmst = KLS_PUSH(kls, Gamestate);
+        }
+
+        bool deser_result = deser_Gamestate(&tmp, gmst);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_Gamestate().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_Gamestate()", __func__);
+        }
+
+        if (gmst == NULL) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): gmst was NULL after deser_Gamestate().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        //log_tag("debug_log.txt", "[BINSAVE]", "Read Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
+        return true;
+    }
 }

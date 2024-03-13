@@ -92,7 +92,7 @@ void gameloop(int argc, char **argv)
 
     do {
         //Init default_kls
-        default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
+        default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 256, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
         seed = rand();
 
@@ -796,8 +796,9 @@ void gameloop(int argc, char **argv)
                 "Animation loading took %0.7f seconds.",
                 time_spent_loading_animations);
 
+        bool did_exper_init = false;
         if (G_EXPERIMENTAL_ON == 1) {
-            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls);
+            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, &did_exper_init);
 
             log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
         }
@@ -1449,6 +1450,13 @@ void gameloop(int argc, char **argv)
         }
         log_tag("debug_log.txt", "[DEBUG]", "Initialised Gamestate.");
         dbg_Gamestate(gamestate);
+
+        if (G_EXPERIMENTAL_ON == 1) {
+            Gamestate gmst_copy = *gamestate;
+            prep_Gamestate(&gmst_copy, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+            dbg_Gamestate(&gmst_copy);
+            log_tag("debug_log.txt", "[DEBUG]", "Read Gamestate.");
+        }
 
         if (GAMEMODE == Story || GAMEMODE == Standard) {
 
