@@ -2895,6 +2895,7 @@ Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
                                     msg);
     sprintf(msg, "Seed: %i", seed);
     strcpy(save->name, msg);
+    p->seed = seed;
     sprintf(msg, "%s", path_to_savefile);
     strcpy(save->save_path, msg);
     p->current_saveslot = save;

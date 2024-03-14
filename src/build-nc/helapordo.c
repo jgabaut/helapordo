@@ -1206,6 +1206,7 @@ void gameloop(int argc, char **argv)
                 }
 
                 load_info->enemy_index = gamestate->current_enemy_index;
+                seed = gamestate->path->seed;
                 //TODO: set the other load_info fields properly?
                 load_info->done_loading = 1;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Set load_info->done_loading to 1.", __func__);

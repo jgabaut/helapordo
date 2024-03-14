@@ -1821,6 +1821,7 @@ bool deser_Path(SerPath* ser, Path* deser) {
     deser->luck = ser->luck;
     deser->prize = ser->prize;
     deser->loreCounter = ser->loreCounter;
+    deser->seed = ser->seed;
 
     bool wincon_deser_res = deser_Wincon(&ser->win_condition, deser->win_condition);
     if (!wincon_deser_res) {
@@ -1857,6 +1858,7 @@ bool ser_Path(Path* deser, SerPath* ser) {
     ser->luck = deser->luck;
     ser->prize = deser->prize;
     ser->loreCounter = deser->loreCounter;
+    ser->seed = deser->seed;
 
     bool wincon_ser_res = ser_Wincon(deser->win_condition, &ser->win_condition);
     if (!wincon_ser_res) {
