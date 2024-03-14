@@ -1191,9 +1191,9 @@ void gameloop(int argc, char **argv)
 
                 gamestate =
                     KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
-                                "Gamestate");
+                                   "Gamestate");
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                        player, GAMEMODE, gamescreen, is_localexe);
+                               player, GAMEMODE, gamescreen, is_localexe);
 
                 bool prep_res = prep_Gamestate(gamestate, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                 if (prep_res) {
@@ -1375,9 +1375,9 @@ void gameloop(int argc, char **argv)
                 break;
                 }
 
-            //e_death(loaded_enemy);
-            //death(player);
-            //exit(0)
+                //e_death(loaded_enemy);
+                //death(player);
+                //exit(0)
             } // End text load else
         }
 
@@ -1493,9 +1493,9 @@ void gameloop(int argc, char **argv)
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Pushing a new gamestate", __func__);
             gamestate =
                 KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
-                            "Gamestate");
+                               "Gamestate");
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                        player, GAMEMODE, gamescreen, is_localexe);
+                           player, GAMEMODE, gamescreen, is_localexe);
         }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
