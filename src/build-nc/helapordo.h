@@ -37,7 +37,9 @@
 
 #include "../utils/rooms.h"
 #include "../utils/bin_saves.h"
+#ifdef ANVIL_BUILD
 #include "../anvil__helapordo.h"
+#endif
 #include "../core/game_lore.h"
 #include "../ser/ser_core.h"
 

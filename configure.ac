@@ -34,6 +34,12 @@ AC_ARG_ENABLE([raylib],
   [enable_raylib=$enableval],
   [enable_raylib=no])
 
+AC_ARG_ENABLE([anvil],
+  [AS_HELP_STRING([--enable-anvil], [Enable anvil-backed build])],
+  [enable_anvil=$enableval],
+  [enable_anvil=yes])
+
+
 # Define the include and library paths based on the host system
 case "${host_os}" in
     mingw*)
@@ -162,6 +168,7 @@ esac
 AM_CONDITIONAL([HL_RAYLIB_BUILD], [test "$build_raylib" = "yes"])
 AM_CONDITIONAL([HL_CURSES_BUILD], [test "$build_curses" = "yes"])
 AM_CONDITIONAL([ANVILPICK_BUILD], [test "$build_anvilpick" = "yes"])
+AM_CONDITIONAL([USE_ANVIL_BUILD], [test "$enable_anvil" = "yes"])
 AM_CONDITIONAL([WINDOWS_BUILD], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([DARWIN_BUILD], [test "$build_mac" = "yes"])
 AM_CONDITIONAL([LINUX_BUILD], [test "$build_linux" = "yes"])
