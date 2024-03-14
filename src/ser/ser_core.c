@@ -200,9 +200,7 @@ bool ser_Perk(Perk* deser, SerPerk* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Perk was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     ser->class = deser->class;
     ser->innerValue = deser->innerValue;
@@ -307,10 +305,8 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
     for (size_t i=0; i<EQUIPPERKSMAX; i++) {
         perk_ser_res = ser_Perk(deser->perks[i], &ser->perks[i]);
         if (!perk_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Perk(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Perk(). Index: {%li}. Putting zeros.", __func__, i);
+            ser->perks[i] = (SerPerk){0};
         }
     }
     return true;
