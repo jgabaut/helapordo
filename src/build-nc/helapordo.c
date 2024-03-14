@@ -1164,10 +1164,7 @@ void gameloop(int argc, char **argv)
             if (G_EXPERIMENTAL_ON == 1) { //Bin load
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    TODO bin load", __func__);
                 log_tag("debug_log.txt", "[TURNOP]",
-                        "Old seed: [%i]", seed);
-                seed = rand();
-                log_tag("debug_log.txt", "[TURNOP]",
-                        "New seed: [%i]", seed);
+                        "Seed before loading, used to init path: [%i]", seed);
                 path = randomise_path(seed, default_kls, current_save_path);
                 kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
                 player =
@@ -1207,6 +1204,8 @@ void gameloop(int argc, char **argv)
 
                 load_info->enemy_index = gamestate->current_enemy_index;
                 seed = gamestate->path->seed;
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Seed after loading: [%i]", seed);
                 //TODO: set the other load_info fields properly?
                 load_info->done_loading = 1;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Set load_info->done_loading to 1.", __func__);
