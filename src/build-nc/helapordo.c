@@ -1453,14 +1453,14 @@ void gameloop(int argc, char **argv)
 
         if (G_EXPERIMENTAL_ON == 1) {
             bool prep_res = prep_Gamestate(gamestate, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
-                                                                                                                            if (prep_res) {
+            if (prep_res) {
                 log_tag("debug_log.txt", "[DEBUG]", "Read Gamestate.");
-                                                                                                                            } else {
+            } else {
                 log_tag("debug_log.txt", "[ERROR]", "Failed reading Gamestate.");
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
-                                                                                                                            }
+            }
         }
 
         if (GAMEMODE == Story || GAMEMODE == Standard) {
