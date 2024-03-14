@@ -1495,9 +1495,7 @@ bool deser_Room(SerRoom* ser, Room* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Room was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return NULL;
     }
 
     deser->index = ser->index;
@@ -1565,9 +1563,7 @@ bool ser_Room(Room* deser, SerRoom* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Room was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     ser->index = deser->index;
@@ -1608,7 +1604,7 @@ bool ser_Room(Room* deser, SerRoom* ser) {
     for (size_t i=0; i<ROOM_ENEMIES_MAX; i++) {
         enemies_ser_res = ser_Enemy(deser->enemies[i], &ser->enemies[i]);
         if (!enemies_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Index: {%li}", __func__, i);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Index: {%li}{%li}", __func__, i);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -1654,10 +1650,8 @@ bool deser_Floor(SerFloor* ser, Floor* deser) {
         for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
             rooms_deser_res = deser_Room(&ser->rooms_matrix[i][k],deser->rooms_matrix[i][k]);
             if (!rooms_deser_res) {
-                log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Room(). Index: {%li}", __func__, i);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Room(). Index: {%li}{%li}", __func__, i, k);
+                deser->rooms_matrix[i][k] = NULL;
             }
         }
     }
@@ -1707,10 +1701,8 @@ bool ser_Floor(Floor* deser, SerFloor* ser) {
         for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
             rooms_ser_res = ser_Room(deser->rooms_matrix[i][k],&ser->rooms_matrix[i][k]);
             if (!rooms_ser_res) {
-                log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room(). Index: {%li}", __func__, i);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room(). Index: {%li}{%li}. Putting zeros.", __func__, i, k);
+                ser->rooms_matrix[i][k] = (SerRoom){0};
             }
         }
     }

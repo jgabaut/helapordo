@@ -206,13 +206,14 @@ bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser)
  * Tries reading binary save from passed path.
  * @param static_path The path to which we append to find our file.
  * @param kls Koliseo used for allocation.
+ * @param force_init When true, forces the write of a new SerSaveHeader.
  * @param did_init Set to true when a new saveHeader is written.
  * @see SerSaveHeader
  * @see SaveHeader
  * @return The newly allocated SaveHeader.
  * TODO Contract should meaningfully capture case of read failure + init.
  */
-SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool* did_init)
+SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_init, bool* did_init)
 {
     if (kls == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
@@ -235,6 +236,44 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool* did_ini
 #endif // HELAPORDO_CURSES_BUILD
 
     sprintf(path_to_bin_savefile, "%s/%s", static_path, bin_savefile_name);
+    if (force_init) {
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forcing init of binsave at {%s}.", __func__, path_to_bin_savefile);
+        *did_init = true;
+        // Failed reading existing binsave, create a new one
+        SerSaveHeader ser_saveheader = {
+            .api_level = HELAPORDO_API_VERSION_INT,
+            .game_version = VERSION,
+            .save_version = HELAPORDO_BINSAVEFILE_VERSION,
+            .os = HELAPORDO_OS,
+            .machine = HELAPORDO_MACHINE,
+        };
+
+        // Write packed structure to a binary file
+        bool write_res = writeSerSaveHeader(path_to_bin_savefile, &ser_saveheader);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for forced writeSerSaveHeader()", __func__);
+        }
+
+        SaveHeader* save_head = KLS_PUSH(kls, SaveHeader);
+        bool deser_result = deser_SaveHeader(&ser_saveheader, save_head);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_SaveHeader().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_SaveHeader()", __func__);
+        }
+        //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
+        return save_head;
+    }
 
     Koliseo_Temp* kls_t = kls_temp_start(kls);
     // Try reading an existing binsave

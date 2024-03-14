@@ -798,7 +798,7 @@ void gameloop(int argc, char **argv)
 
         bool did_exper_init = false;
         if (G_EXPERIMENTAL_ON == 1) {
-            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, &did_exper_init);
+            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init);
 
             log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
         }
