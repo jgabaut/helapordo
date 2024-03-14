@@ -326,7 +326,8 @@ void gameloop_Win(int argc, char **argv)
         system("cls");
 
         if (G_EXPERIMENTAL_ON == 1) {
-            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls);
+            bool did_init = false;
+            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init);
 
             log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
         }

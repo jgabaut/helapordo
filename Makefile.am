@@ -214,6 +214,7 @@ clean:
 	-rm src/utils/*.o
 	-rm src/animations/*.o
 	-rm src/palette.*
+	-rm src/ser/*.o
 	-rm koliseo/src/*.o
 	-rm ./*.o
 	-rm src/anvil__helapordo.*
@@ -228,6 +229,7 @@ cleanob:
 	-rm src/build-*/*.o
 	-rm src/core/*.o
 	-rm src/utils/*.o
+	-rm src/ser/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)
