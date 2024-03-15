@@ -2025,4 +2025,7 @@ OP_res OP_res_from_fightResult(fightResult fr);
 #define CURSES_BINSAVE_NAME "save-nc.bin" /**< Defines file name used for binary save. */
 #define RL_BINSAVE_NAME "save-rl.bin" /**< Defines file name used for binary save. */
 
+extern const wchar_t HEAD_CHAR_ICON;
+extern const wchar_t TORSO_CHAR_ICON;
+extern const wchar_t LEGS_CHAR_ICON;
 #endif

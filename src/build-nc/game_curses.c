@@ -743,9 +743,26 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy *e,
            mvwprintw(win, y, x, "%s",stringFromClass(f->class));
          */
 
+        x = startx +2;
+        y += 2;
+
+        if (G_EXPERIMENTAL_ON == 1) {
+            wchar_t equip_chars[3] = {
+                [HEAD] = HEAD_CHAR_ICON,
+                [TORSO] = TORSO_CHAR_ICON,
+                [LEGS] = LEGS_CHAR_ICON,
+            };
+            for (int i=0; i< EQUIPZONES+1; i++) {
+                if (f->equipslots[i]->active) {
+                    mvwprintw(win, y, x, "%lc", equip_chars[i]);
+                    x += 3;
+                }
+            }
+        }
+
         temp = (width - (f->hp / 10)) / 2;
         x = startx + 2;
-        y += 4;
+        y += 2;
         if ((f->hp / (f->totalhp / 1.0)) <= 0.25) {
             wattron(win, COLOR_PAIR(S4C_RED));
             resetColor = 1;
