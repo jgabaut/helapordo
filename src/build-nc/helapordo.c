@@ -1192,7 +1192,7 @@ void gameloop(int argc, char **argv)
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
                                player, GAMEMODE, gamescreen, is_localexe);
 
-                bool prep_res = prep_Gamestate(gamestate, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                bool prep_res = prep_Gamestate(gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                 if (prep_res) {
                     log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
                 } else {
@@ -1236,7 +1236,7 @@ void gameloop(int argc, char **argv)
                 // Set static_path value to the correct static dir path
                 resolve_staticPath(static_path);
 
-                sprintf(path_to_savefile, "%s/%s", static_path, savefile_name);
+                sprintf(path_to_savefile, "%s/%s/save.txt", static_path, savefile_name);
 
                 save_file = fopen(path_to_savefile, "r");
                 if (!save_file) {

@@ -434,7 +434,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                 resolve_staticPath(static_path);
                 SaveHeader* current_saveHeader = prep_saveHeader(static_path, kls, true, &did_saveheader_init);
                 log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
-                bool prep_res = prep_Gamestate(gmst, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, true); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                bool prep_res = prep_Gamestate(gmst, static_path, 0, default_kls, true); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                 if (prep_res) {
                     log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
                 } else {

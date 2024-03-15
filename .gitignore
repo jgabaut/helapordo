@@ -7,6 +7,9 @@ helapordo-save-3.txt
 save-nc.bin
 save-rl.bin
 
+# ignore hlpd-1 dir
+hlpd-1
+
 # ignore the MacOS DS_Store file
 .DS_Store
 

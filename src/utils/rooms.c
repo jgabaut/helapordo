@@ -83,7 +83,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     if (GS_AUTOSAVE_ON == 1 && GAMEMODE != Rogue) {
         log_tag("debug_log.txt", "[DEBUG]", "Doing autosave.");
 
-        char path_to_autosave_file[800];
+        char path_to_autosave_file[820];
         char autosave_static_path[500];
         char autosave_file_name[300];
         strcpy(autosave_file_name, p->current_saveslot->save_path);
@@ -91,8 +91,8 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
         // Set static_path value to the correct static dir path
         resolve_staticPath(autosave_static_path);
 
-        sprintf(path_to_autosave_file, "%s/%s", autosave_static_path,
-                autosave_file_name);
+        sprintf(path_to_autosave_file, "%s/%s/%s", autosave_static_path,
+                autosave_file_name, "save.txt");
 
         autosave_file = fopen(path_to_autosave_file, "w");
         if (autosave_file == NULL) {
@@ -291,7 +291,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     picked_explore = 1;
                 }
                 if (choice == SAVE) {
-                    char path_to_savefile[800];
+                    char path_to_savefile[820];
                     char static_path[500];
                     char savefile_name[300];
                     sprintf(savefile_name, "%s",
@@ -303,8 +303,8 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                             "handleRoom_Home:  savefile_name is [%s].",
                             savefile_name);
 
-                    sprintf(path_to_savefile, "%s/%s", static_path,
-                            savefile_name);
+                    sprintf(path_to_savefile, "%s/%s/%s", static_path,
+                            savefile_name, "save.txt");
 
                     save_file = fopen(path_to_savefile, "w");
                     if (save_file == NULL) {
@@ -1239,7 +1239,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 turnOP(OP_STATS, args, kls, t_kls);
             } else if (choice == SAVE) {
                 FILE *save_file;
-                char path_to_savefile[800];
+                char path_to_savefile[820];
                 char static_path[500];
                 char savefile_name[300];
                 sprintf(savefile_name, "%s", p->current_saveslot->save_path);
@@ -1250,7 +1250,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 // Set static_path value to the correct static dir path
                 resolve_staticPath(static_path);
 
-                sprintf(path_to_savefile, "%s/%s", static_path, savefile_name);
+                sprintf(path_to_savefile, "%s/%s/%s", static_path, savefile_name, "save.txt");
 
                 save_file = fopen(path_to_savefile, "w");
                 if (save_file == NULL) {

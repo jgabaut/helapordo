@@ -820,6 +820,7 @@ bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser);
 bool deser_Path(SerPath* ser, Path* deser);
 bool ser_Path(Path* deser, SerPath* ser);
 
+bool writeSerGamestate(const char* filename, SerGamestate* data);
 bool appendSerGamestate(const char* filename, SerGamestate* data);
 bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data);
 

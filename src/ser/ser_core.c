@@ -1879,6 +1879,28 @@ bool ser_Path(Path* deser, SerPath* ser) {
     return true;
 }
 
+bool writeSerGamestate(const char* filename, SerGamestate* data) {
+    FILE* file = fopen(filename, "wb");
+
+    if (file != NULL) {
+        // Write the structure to the file
+        //
+        int64_t ser_gmst_size = sizeof(SerGamestate);
+
+        fwrite(&ser_gmst_size, sizeof(ser_gmst_size), 1, file);
+        fwrite(data, sizeof(SerGamestate), 1, file);
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for writing", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for writing", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
+
 bool appendSerGamestate(const char* filename, SerGamestate* data) {
     FILE* file = fopen(filename, "ab");
 
@@ -2180,20 +2202,21 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
     }
 
     char path_to_bin_savefile[1000];
-    char bin_savefile_name[300];
+    char bin_gmstfile_name[300];
 
     //Copy current_save_path
 #ifdef HELAPORDO_CURSES_BUILD
-    sprintf(bin_savefile_name, "%s", CURSES_BINSAVE_NAME);
+    sprintf(bin_gmstfile_name, "%s", CURSES_GMSTSAVE_NAME);
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
 #else
-    sprintf(bin_savefile_name, "%s", RL_BINSAVE_NAME);
+    sprintf(bin_gmstfile_name, "%s", RL_GMSTSAVE_NAME);
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
-    sprintf(path_to_bin_savefile, "%s/%s", static_path, bin_savefile_name);
+    //TODO use separate dirs?
+    sprintf(path_to_bin_savefile, "%s/hlpd-1/%s", static_path, bin_gmstfile_name);
 
     if (force_init) {
         log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forced init of SerGamestate.", __func__);
@@ -2208,7 +2231,7 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         }
 
         // Write packed structure to a binary file
-        bool write_res = appendSerGamestate(path_to_bin_savefile, &ser_gmst);
+        bool write_res = writeSerGamestate(path_to_bin_savefile, &ser_gmst);
 
         if (!write_res) {
             // Failed writing new binsave

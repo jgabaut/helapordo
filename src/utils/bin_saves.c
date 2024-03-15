@@ -235,7 +235,7 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
-    sprintf(path_to_bin_savefile, "%s/%s", static_path, bin_savefile_name);
+    sprintf(path_to_bin_savefile, "%s/hlpd-1/%s", static_path, bin_savefile_name);
     if (force_init) {
         log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forcing init of binsave at {%s}.", __func__, path_to_bin_savefile);
         *did_init = true;

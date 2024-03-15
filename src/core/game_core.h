@@ -2022,8 +2022,11 @@ OP_res OP_res_from_fightResult(fightResult fr);
 #define CHEST_COLS 18 /**< Defines the number of cols for the chest animation.*/
 #define CHEST_FRAMETIME 67 /**< Defines for how many millisecs a sprite should stay on screen for the chest animation.*/
 
-#define CURSES_BINSAVE_NAME "save-nc.bin" /**< Defines file name used for binary save. */
-#define RL_BINSAVE_NAME "save-rl.bin" /**< Defines file name used for binary save. */
+#define CURSES_BINSAVE_NAME "save-nc.bin" /**< Defines file name used for saveheader binary save. */
+#define RL_BINSAVE_NAME "save-rl.bin" /**< Defines file name used for saveheader binary save. */
+
+#define CURSES_GMSTSAVE_NAME "run-nc.bin" /**< Defines file name used for gamestate binary save. */
+#define RL_GMSTSAVE_NAME "run-rl.bin" /**< Defines file name used for gamestate binary save. */
 
 extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;
