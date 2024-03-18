@@ -469,7 +469,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
     for (int i = 0; i < enemies;) {
 
         update_Gamestate(gamestate, 1, room->class, room->index, i,
-                         gamestate->current_floor);
+                         gamestate->current_floor, room);
 
         fightStatus = OP_RES_NO_DMG;
         Enemy *e = room->enemies[i];
@@ -1346,7 +1346,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
         }			//End while current enemy
     }				//End for all enemies
     update_Gamestate(gamestate, 1, -1, room->index, -1,
-                     gamestate->current_floor);
+                     gamestate->current_floor, NULL); //Set current_room to NULL
     log_tag("debug_log.txt", "[ROOM]", "End of room %i", room->index);
     //free(args);
     //log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
@@ -1482,7 +1482,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     int debug_n_choices = 0;
 
     update_Gamestate(gamestate, 1, room->class, room->index - 1, 1,
-                     gamestate->current_floor);
+                     gamestate->current_floor, room);
 
     int frame_counter = 0;
     int animation_loops_done = 0;
@@ -2072,7 +2072,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
 
     update_Gamestate(gamestate, 1, -1, room->index, -1,
-                     gamestate->current_floor);
+                     gamestate->current_floor, NULL); // Setting current room to NULL
     return fightStatus;
 }
 

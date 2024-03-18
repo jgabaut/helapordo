@@ -1145,6 +1145,7 @@ void gameloop(int argc, char **argv)
         Koliseo_Temp *gamestate_kls = kls_temp_start(temporary_kls);
 
         Gamestate* gamestate = NULL;
+        Room* current_room = NULL;
 
         if (load_info->is_new_game) {	// We prepare path and fighter
             path = randomise_path(seed, default_kls, current_save_path);
@@ -1207,6 +1208,33 @@ void gameloop(int argc, char **argv)
                 log_tag("debug_log.txt", "[TURNOP]",
                         "Seed after loading: [%i]", seed);
                 //TODO: set the other load_info fields properly?
+                if (gamestate->current_room != NULL) {
+                    current_room = gamestate->current_room;
+                    *(load_info->ptr_to_roomindex) = gamestate->current_room->index;
+                    *(load_info->ptr_to_roomtotalenemies) = gamestate->current_room->enemyTotal;
+                    if (gamestate->current_room->class == ENEMIES) {
+                        // TODO Load && Store current enemy somewhere.
+                        /*
+                        kls_log(default_kls, "DEBUG", "Prepping Loady Enemy");
+                        load_info->loaded_enemy =
+                            (Enemy *) KLS_PUSH_T_TYPED(gamestate_kls, Enemy, HR_Enemy,
+                                                     "Enemy", "Loaded Enemy");
+                        //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                        prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1,
+                                         gamestate_kls);
+
+                        //Update loading_room_turn_args->enemy pointer
+                        loading_room_turn_args->enemy = load_info->loaded_enemy;
+                        log_tag("debug_log.txt", "[TURNOP]",
+                                "Assigned load_info->loaded_enemy->class == [%s]. loading_room_turn_args->loaded_enemy->class == [%s]",
+                                stringFromEClass(load_info->loaded_enemy->class),
+                                stringFromEClass(loading_room_turn_args->enemy->class));
+                        */
+                    }
+                } else {
+                    log_tag("debug_log.txt", "[WARN-TURNOP]",
+                            "%s():    gamestate->room was NULL. Not setting load_info's room info.", __func__);
+                }
                 load_info->done_loading = 1;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Set load_info->done_loading to 1.", __func__);
             } else {
@@ -1502,9 +1530,11 @@ void gameloop(int argc, char **argv)
             //NO. The update_gamestate call is instead performed later.
             //Floor* current_floor = KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Init Curr floor");
             //NO. We pass NULL now.
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+            //
+            //We also pass NULL for current room.
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL);
         } else {
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL);
         }
         log_tag("debug_log.txt", "[DEBUG]", "Initialised Gamestate.");
         dbg_Gamestate(gamestate);
@@ -1558,9 +1588,13 @@ void gameloop(int argc, char **argv)
                 kls_log(temporary_kls, "DEBUG",
                         "Prepping Room for Story Gamemode. roomsDone=(%i)",
                         roomsDone);
-                Room *current_room =
-                    (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, HR_Room,
-                                              "Room", "Story Room");
+                if (current_room == NULL) {
+                    current_room =
+                        (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, HR_Room,
+                                                "Room", "Story Room");
+                } else {
+                   log_tag("debug_log.txt", "DEBUG", "%s():    current_room was not NULL. Not updating it.", __func__);
+                }
 
                 current_room->index = roomsDone;
                 setRoomType(path, &roadFork_value, &room_type, roomsDone);
@@ -1693,7 +1727,7 @@ void gameloop(int argc, char **argv)
                 endwin();
 
                 update_Gamestate(gamestate, 1, current_room->class, roomsDone,
-                                 -1, NULL);
+                                 -1, NULL, current_room);
 
                 if (current_room->class == HOME) {
                     res =
@@ -1896,7 +1930,7 @@ void gameloop(int argc, char **argv)
                     (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor,
                                                HR_Floor, "Floor", "Floor");
                 update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
-                                 current_floor);
+                                 current_floor, NULL); // NULL for current_room
                 // Start the random walk from the center of the dungeon
                 int center_x = FLOOR_MAX_COLS / 2;
                 int center_y = FLOOR_MAX_ROWS / 2;
@@ -2067,7 +2101,7 @@ void gameloop(int argc, char **argv)
 
                         update_Gamestate(gamestate, 1, current_room->class,
                                          current_room->index, -1,
-                                         current_floor);
+                                         current_floor, current_room);
 
                         if (current_room->class == HOME) {
                             res =
@@ -2183,7 +2217,7 @@ void gameloop(int argc, char **argv)
                                                      "Floor");
                                 update_Gamestate(gamestate, 1, HOME,
                                                  roomsDone, -1,
-                                                 current_floor);
+                                                 current_floor, NULL); // Passing NULL for current_room
 
                                 //Regenerate floor
                                 log_tag("debug_log.txt", "[DEBUG]",

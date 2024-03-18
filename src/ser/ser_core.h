@@ -83,7 +83,7 @@ typedef struct __attribute__((packed)) SerSkillslot {
 typedef struct SerSkillslot {
 #endif
     skillType class;	  /**< Defines which kind of Skillslot the instance relates to*/
-    int32_t enabled;	/**< Flag defining if the slot is initialised.*/
+    int8_t enabled;	/**< Flag defining if the slot is initialised.*/
 #ifdef __GNUC__
 } SerSkillslot;
 #else
@@ -107,15 +107,15 @@ typedef struct SerEquip {
 #endif
     equipClass class;	  /**< Defines which kind of Equip the instance relates to*/
     Equipzone type;	/**< Defines which kind of Equipzone the instance relates to*/
-    int32_t equipped; /**< Flag indicating the instance as currently in use if set.*/
-    int32_t level;
-    int32_t atk;
-    int32_t def;
-    int32_t vel;
-    int32_t enr;
-    int32_t bonus;
-    int32_t perksCount;
-    int32_t cost;
+    int8_t equipped; /**< Flag indicating the instance as currently in use if set.*/
+    int8_t level;
+    int8_t atk;
+    int8_t def;
+    int8_t vel;
+    int8_t enr;
+    int8_t bonus;
+    int8_t perksCount;
+    int8_t cost;
     quality qual;
     SerPerk perks[EQUIPPERKSMAX];
 #ifdef __GNUC__
@@ -140,7 +140,7 @@ typedef struct __attribute__((packed)) SerEquipslot {
 typedef struct SerEquipslot {
 #endif
     Equipzone type;	/**< Defines which kind of Equipzone the instance relates to*/
-    int32_t active; /**< Flag indicating the instance as currently in use if set.*/
+    int8_t active; /**< Flag indicating the instance as currently in use if set.*/
 #ifdef __GNUC__
 } SerEquipslot;
 #else
@@ -162,9 +162,9 @@ typedef struct __attribute__((packed)) SerSpecialslot {
 #pragma pack(push, 1)
 typedef struct SerSpecialslot {
 #endif
-    int32_t enabled;     /**< Flag defining if the current slot is initialised*/
+    int8_t enabled;     /**< Flag defining if the current slot is initialised*/
     specialMove move;	  /**< Defines which kind of specialMove the slot is holding*/
-    int32_t cost;	  /**< Cost of use*/
+    int8_t cost;	  /**< Cost of use*/
 #ifdef __GNUC__
 } SerSpecialslot;
 #else
@@ -234,19 +234,19 @@ typedef struct __attribute__((packed)) SerCountstats {
 #pragma pack(push, 1)
 typedef struct SerCountstats {
 #endif
-    int32_t enemieskilled;	   /**< How many enemies were defeated*/
-    int32_t consumablesfound;     /**< How many consumabls were found*/
-    int32_t equipsfound;	 /**< How many equips were found*/
-    int32_t artifactsfound;	    /**< How many artifacts were found*/
-    int32_t criticalhits;	  /**< How many criticals were dealt*/
-    int32_t roomscompleted;	    /**< How many rooms were completed*/
-    int32_t floorscompleted;     /**< How many floors were completed*/
-    int32_t specialsunlocked;     /**< How many special move were unlocked*/
-    int32_t coinsfound;	/**< How many coins you found in total*/
-    int32_t bosseskilled;	  /**< How many bosses were defeated*/
-    int32_t unique_bosseskilled;	 /**< How many unique bosses were defeated*/
-    int32_t killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
-    int32_t keysfound;     /**< How many keys you found in total*/
+    int8_t enemieskilled;	   /**< How many enemies were defeated*/
+    int8_t consumablesfound;     /**< How many consumabls were found*/
+    int8_t equipsfound;	 /**< How many equips were found*/
+    int8_t artifactsfound;	    /**< How many artifacts were found*/
+    int8_t criticalhits;	  /**< How many criticals were dealt*/
+    int8_t roomscompleted;	    /**< How many rooms were completed*/
+    int8_t floorscompleted;     /**< How many floors were completed*/
+    int8_t specialsunlocked;     /**< How many special move were unlocked*/
+    int8_t coinsfound;	/**< How many coins you found in total*/
+    int8_t bosseskilled;	  /**< How many bosses were defeated*/
+    int8_t unique_bosseskilled;	 /**< How many unique bosses were defeated*/
+    int8_t killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
+    int8_t keysfound;     /**< How many keys you found in total*/
 #ifdef __GNUC__
 } SerCountstats;
 #else
@@ -268,35 +268,35 @@ typedef struct __attribute__((packed)) SerEnemy {
 #pragma pack(push, 1)
 typedef struct SerEnemy {
 #endif
-    int32_t index;	   /**< Defines position inside containing foeParty.*/
+    int8_t index;	   /**< Defines position inside containing foeParty.*/
     enemyClass class;	  /**< Defines which kind of enemyClass the instance relates to*/
-    int32_t hp;	/**< Current hp value*/
-    int32_t atk;	 /**< Current atk value*/
-    int32_t def;	 /**< Current def value*/
-    int32_t vel;	 /**< Current vel value*/
-    int32_t level;	   /**< Level value*/
-    int32_t luck;	  /**< Luck value*/
-    int32_t xp;	/**< Xp value given on death*/
-    int32_t totalhp;     /**< Full hp value*/
+    int8_t hp;	/**< Current hp value*/
+    int8_t atk;	 /**< Current atk value*/
+    int8_t def;	 /**< Current def value*/
+    int8_t vel;	 /**< Current vel value*/
+    int8_t level;	   /**< Level value*/
+    int8_t luck;	  /**< Luck value*/
+    int8_t xp;	/**< Xp value given on death*/
+    int8_t totalhp;     /**< Full hp value*/
 
-    int32_t energy;	    /**< Current energy value*/
-    int32_t totalenergy;	 /**< Full energy value*/
+    int8_t energy;	    /**< Current energy value*/
+    int8_t totalenergy;	 /**< Full energy value*/
 
-    int32_t stamina;     /**< Current stamina value*/
-    int32_t totalstamina;	  /**< Full stamina value*/
+    int8_t stamina;     /**< Current stamina value*/
+    int8_t totalstamina;	  /**< Full stamina value*/
 
     fighterStatus status;     /**< Defines active fighterStatus*/
-    int32_t beast;	   /**< Flag defining the instance as "beast" if set*/
+    int8_t beast;	   /**< Flag defining the instance as "beast" if set*/
 
     SerSkillslot skills[ENEMY_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
 
     SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
-    int32_t turnboost_atk;	   /**< Current temp boost value for atk*/
-    int32_t turnboost_def;	   /**< Current temp boost value for def*/
-    int32_t turnboost_vel;	   /**< Current temp boost value for vel*/
-    int32_t turnboost_enr;	   /**< Current temp boost value for enr*/
+    int8_t turnboost_atk;	   /**< Current temp boost value for atk*/
+    int8_t turnboost_def;	   /**< Current temp boost value for def*/
+    int8_t turnboost_vel;	   /**< Current temp boost value for vel*/
+    int8_t turnboost_enr;	   /**< Current temp boost value for enr*/
 
-    int32_t prize;	   /**< Amount of currency dropped on defeat*/
+    int8_t prize;	   /**< Amount of currency dropped on defeat*/
 #ifdef __GNUC__
 } SerEnemy;
 #else
@@ -319,32 +319,32 @@ typedef struct __attribute__((packed)) SerBoss {
 typedef struct SerBoss {
 #endif
     bossClass class;	 /**< Defines which kind of enemyClass the instance relates to*/
-    int32_t hp;	/**< Current hp value*/
-    int32_t atk;	 /**< Current atk value*/
-    int32_t def;	 /**< Current def value*/
-    int32_t vel;	 /**< Current vel value*/
-    int32_t level;	   /**< Level value*/
-    int32_t luck;	  /**< Luck value*/
-    int32_t xp;	/**< Xp value given on death*/
-    int32_t totalhp;     /**< Full hp value*/
+    int8_t hp;	/**< Current hp value*/
+    int8_t atk;	 /**< Current atk value*/
+    int8_t def;	 /**< Current def value*/
+    int8_t vel;	 /**< Current vel value*/
+    int8_t level;	   /**< Level value*/
+    int8_t luck;	  /**< Luck value*/
+    int8_t xp;	/**< Xp value given on death*/
+    int8_t totalhp;     /**< Full hp value*/
 
-    int32_t energy;	    /**< Current energy value*/
-    int32_t totalenergy;	 /**< Full energy value*/
+    int8_t energy;	    /**< Current energy value*/
+    int8_t totalenergy;	 /**< Full energy value*/
 
-    int32_t stamina;     /**< Current stamina value*/
-    int32_t totalstamina;	  /**< Full stamina value*/
+    int8_t stamina;     /**< Current stamina value*/
+    int8_t totalstamina;	  /**< Full stamina value*/
 
     fighterStatus status;     /**< Defines active fighterStatus*/
-    int32_t beast;	   /**< Flag defining the instance as "beast" if set*/
+    int8_t beast;	   /**< Flag defining the instance as "beast" if set*/
 
     SerSkillslot skills[BOSS_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
     SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
-    int32_t turnboost_atk;	   /**< Current temp boost value for atk*/
-    int32_t turnboost_def;	   /**< Current temp boost value for def*/
-    int32_t turnboost_vel;	   /**< Current temp boost value for vel*/
-    int32_t turnboost_enr;	   /**< Current temp boost value for enr*/
+    int8_t turnboost_atk;	   /**< Current temp boost value for atk*/
+    int8_t turnboost_def;	   /**< Current temp boost value for def*/
+    int8_t turnboost_vel;	   /**< Current temp boost value for vel*/
+    int8_t turnboost_enr;	   /**< Current temp boost value for enr*/
 
-    int32_t prize;	   /**< Amount of currency dropped on defeat*/
+    int8_t prize;	   /**< Amount of currency dropped on defeat*/
 #ifdef __GNUC__
 } SerBoss;
 #else
@@ -374,32 +374,32 @@ typedef struct SerFighter {
 #endif
     char name[SERFIGHTER_NAME_BUFSIZE];     /**< Name string*/
     fighterClass class;	    /**< Defines which kind of fighterClass the instance relates to*/
-    int32_t hp;	/**< Current hp value*/
-    int32_t atk;	 /**< Current atk value*/
-    int32_t def;	 /**< Current def value*/
-    int32_t vel;	 /**< Current vel value*/
-    int32_t level;	   /**< Current level value*/
-    int32_t luck;	  /**< Current luck value*/
-    int32_t totalxp;     /**< Lifetime xp value*/
-    int32_t currentlevelxp;	    /**< Xp gained for the current level*/
-    int32_t totallevelxp;	  /**< Xp needed to level up*/
-    int32_t totalhp;     /**< Full hp value*/
+    int8_t hp;	/**< Current hp value*/
+    int8_t atk;	 /**< Current atk value*/
+    int8_t def;	 /**< Current def value*/
+    int8_t vel;	 /**< Current vel value*/
+    int8_t level;	   /**< Current level value*/
+    int8_t luck;	  /**< Current luck value*/
+    int8_t totalxp;     /**< Lifetime xp value*/
+    int8_t currentlevelxp;	    /**< Xp gained for the current level*/
+    int8_t totallevelxp;	  /**< Xp needed to level up*/
+    int8_t totalhp;     /**< Full hp value*/
     fighterStatus status;     /**< Defines active fighterStatus*/
 
-    int32_t energy;	    /**< Current energy value*/
-    int32_t totalenergy;	 /**< Full energy value*/
-    int32_t stamina;     /**< Current stamina value*/
-    int32_t totalstamina;	  /**< Full stamina value*/
+    int8_t energy;	    /**< Current energy value*/
+    int8_t totalenergy;	 /**< Full energy value*/
+    int8_t stamina;     /**< Current stamina value*/
+    int8_t totalstamina;	  /**< Full stamina value*/
     SerSpecialslot specials[SPECIALSMAX + 1];   /**< Array with all the SerSpecialslot*/
     SerSkillslot skills[FIGHTER_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
 
     SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
-    int32_t turnboost_atk;	   /**< Current temp boost value for atk*/
-    int32_t turnboost_def;	   /**< Current temp boost value for def*/
-    int32_t turnboost_vel;	   /**< Current temp boost value for vel*/
-    int32_t turnboost_enr;	   /**< Current temp boost value for enr*/
+    int8_t turnboost_atk;	   /**< Current temp boost value for atk*/
+    int8_t turnboost_def;	   /**< Current temp boost value for def*/
+    int8_t turnboost_vel;	   /**< Current temp boost value for vel*/
+    int8_t turnboost_enr;	   /**< Current temp boost value for enr*/
 
-    int32_t perksCount;	/**< Keeps track of how many perks are active.*/
+    int8_t perksCount;	/**< Keeps track of how many perks are active.*/
     SerPerk perks[PERKSMAX + 1];	 /**< Array with all the SerPerk*/
 
     SerEquipslot equipslots[EQUIPZONES + 1];   /**< Array with all the SerEquipslot*/
@@ -407,23 +407,23 @@ typedef struct SerFighter {
     SerConsumable consumablesBag[CONSUMABLESMAX + 1];   /**< Array with all the Consumables found*/
     SerArtifact artifactsBag[ARTIFACTSMAX + 1];   /**< Array with all the Artifacts found*/
 
-    int32_t equipsBagOccupiedSlots;	    /**< Keeps track of how many slots are occupied.*/
-    int32_t earliestBagSlot;	/**< Keeps track of first available spot.*///TODO To always use the array efficiently (???) I sense linked lists may be better
+    int8_t equipsBagOccupiedSlots;	    /**< Keeps track of how many slots are occupied.*/
+    int8_t earliestBagSlot;	/**< Keeps track of first available spot.*///TODO To always use the array efficiently (???) I sense linked lists may be better
 
-    int32_t permboost_atk;	   /**< Current temp boost value for atk.*/
-    int32_t permboost_def;	   /**< Current temp boost value for def.*/
-    int32_t permboost_vel;	   /**< Current temp boost value for vel.*/
-    int32_t permboost_enr;	   /**< Current temp boost value for enr.*/
+    int8_t permboost_atk;	   /**< Current temp boost value for atk.*/
+    int8_t permboost_def;	   /**< Current temp boost value for def.*/
+    int8_t permboost_vel;	   /**< Current temp boost value for vel.*/
+    int8_t permboost_enr;	   /**< Current temp boost value for enr.*/
 
-    int32_t equipboost_atk;	    /**< Current equip boost value for atk.*/
-    int32_t equipboost_def;	    /**< Current equip boost value for def.*/
-    int32_t equipboost_vel;	    /**< Current equip boost value for vel.*/
-    int32_t equipboost_enr;	    /**< Current equip boost value for enr.*/
+    int8_t equipboost_atk;	    /**< Current equip boost value for atk.*/
+    int8_t equipboost_def;	    /**< Current equip boost value for def.*/
+    int8_t equipboost_vel;	    /**< Current equip boost value for vel.*/
+    int8_t equipboost_enr;	    /**< Current equip boost value for enr.*/
 
     SerCountstats stats;	    /**< SerCountstats instance*/
 
-    int32_t balance;     /**< Amount of currency owned*/
-    int32_t keys_balance;	  /**< Amount of keys owned*/
+    int8_t balance;     /**< Amount of currency owned*/
+    int8_t keys_balance;	  /**< Amount of keys owned*/
 #ifdef __GNUC__
 } SerFighter;
 #else
@@ -446,20 +446,20 @@ typedef struct __attribute__((packed)) SerFoeParty {
 typedef struct SerFoeParty {
 #endif
     foePartyClass class;     /**< Defines which kind of foePartyClass the instance relates to*/
-    int32_t level;	   /**< Level for the whole FoeParty*/
+    int8_t level;	   /**< Level for the whole FoeParty*/
     SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
-    int32_t turnboost_atk;	   /**< Current temp boost value for atk*/
-    int32_t turnboost_def;	   /**< Current temp boost value for def*/
-    int32_t turnboost_vel;	   /**< Current temp boost value for vel*/
-    int32_t turnboost_enr;	   /**< Current temp boost value for enr*/
+    int8_t turnboost_atk;	   /**< Current temp boost value for atk*/
+    int8_t turnboost_def;	   /**< Current temp boost value for def*/
+    int8_t turnboost_vel;	   /**< Current temp boost value for vel*/
+    int8_t turnboost_enr;	   /**< Current temp boost value for enr*/
     SerEnemy enemy_foes[ROOM_ENEMIES_MAX + 1];   /**< Array for all enemies in a room*/
     //TODO: this is not ideal. Could we ever need to have a different max for enemy_foes? Only if the group is not in a Room??
     SerBoss boss_foes[FOES_BOSSES_MAX + 1];   /**< Array of for all bosses in a room*/
-    int32_t size;	  /**<  Number of members in the FoeParty.*/
-    int32_t tot_alive;     /**<  Number of alive members of the FoeParty.*/
-    int32_t current_index;	   /**< Index of current foe advancement*/
-    int32_t alive_enemies[ROOM_ENEMIES_MAX + 1];   /**< Array of integers with 1 for alive enemies in that position*/
-    int32_t alive_bosses[FOES_BOSSES_MAX + 1];   /**< Array of integers with 1 for alive bosses in that position*/
+    int8_t size;	  /**<  Number of members in the FoeParty.*/
+    int8_t tot_alive;     /**<  Number of alive members of the FoeParty.*/
+    int8_t current_index;	   /**< Index of current foe advancement*/
+    int8_t alive_enemies[ROOM_ENEMIES_MAX + 1];   /**< Array of integers with 1 for alive enemies in that position*/
+    int8_t alive_bosses[FOES_BOSSES_MAX + 1];   /**< Array of integers with 1 for alive bosses in that position*/
 #ifdef __GNUC__
 } SerFoeParty;
 #else
@@ -533,16 +533,16 @@ typedef struct __attribute__((packed)) SerShop {
 #pragma pack(push, 1)
 typedef struct SerShop {
 #endif
-    int32_t itemCount;     /**< Total number of items for sale*/
+    int8_t itemCount;     /**< Total number of items for sale*/
 
-    int32_t equipsCount;	 /**< Total number of equips for sale*/
+    int8_t equipsCount;	 /**< Total number of equips for sale*/
     SerEquip equips[EQUIP_SHOP_MAX];     /**< Array for equips on sale*/
-    int32_t equipPrices[EQUIP_SHOP_MAX];	 /**< Array for equips prices*/
+    int8_t equipPrices[EQUIP_SHOP_MAX];	 /**< Array for equips prices*/
 
-    int32_t consumablesCount;     /**< Total number of consumables for sale, includes quantity for each kind of consumable*/
-    int32_t uniqueConsumablesCount;	    /**< Total of unique consumables for sale*/
+    int8_t consumablesCount;     /**< Total number of consumables for sale, includes quantity for each kind of consumable*/
+    int8_t uniqueConsumablesCount;	    /**< Total of unique consumables for sale*/
     SerConsumable consumables[CONSUMABLE_SHOP_MAX];     /**< Array for consumables on sale*/
-    int32_t consumablePrices[CONSUMABLE_SHOP_MAX];	   /**< Array for consumables prices. They assume to a consumable with qty == 1*/
+    int8_t consumablePrices[CONSUMABLE_SHOP_MAX];	   /**< Array for consumables prices. They assume to a consumable with qty == 1*/
 #ifdef __GNUC__
 } SerShop;
 #else
@@ -586,14 +586,14 @@ typedef struct __attribute__((packed)) SerRoom {
 #pragma pack(push, 1)
 typedef struct SerRoom {
 #endif
-    int32_t index;	   /**< The room's own number.*/
+    int8_t index;	   /**< The room's own number.*/
     roomClass class;	 /**< Defines which kind of roomClass the instance relates to*/
     SerShop shop;	    /**< The SerShop, initialised for rooms of class SHOP.*/
     SerRoadfork roadfork;	    /**< The SerRoadfork, initialised for rooms of class ROADFORK.*/
     SerTreasure treasure;	    /**< The SerTreasure, initialised for rooms of class TREASURE.*/
 
     SerBoss boss;	    /**< The SerBoss, initialised for rooms of class BOSS.*/
-    int32_t enemyTotal;	/**< Total number of enemies initialised in enemies array.*/
+    int8_t enemyTotal;	/**< Total number of enemies initialised in enemies array.*/
     SerEnemy enemies[ROOM_ENEMIES_MAX];	  /**< Array for enemies.*/
     SerFoeParty foes;	/**< The SerFoeParty pointer, initialised for rooms of class ENEMIES.*/
 #ifdef __GNUC__
@@ -617,15 +617,15 @@ typedef struct __attribute__((packed)) SerFloor {
 #pragma pack(push, 1)
 typedef struct SerFloor {
 #endif
-    int32_t index;	   /**< The floor's own number.*/
+    int8_t index;	   /**< The floor's own number.*/
 
     floorClass class;	  /**< Defines which kind of floorClass the instance relates to*/
-    int32_t floor_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	  /**< Defines the layout for the Floor (which cells are actually filled).*/
-    int32_t area;	  /**< Holds how many cells we succesfully random walked.*/
-    SerRoom rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< SerRoom matrix for rooms of this floor.*/
+    int8_t floor_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	  /**< Defines the layout for the Floor (which cells are actually filled).*/
+    int8_t area;	  /**< Holds how many cells we succesfully random walked.*/
+    //SerRoom rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< SerRoom matrix for rooms of this floor.*/
     roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
-    int32_t explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
-    int32_t explored_area;	   /**< Holds how many cells we explored.*/
+    int8_t explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
+    int8_t explored_area;	   /**< Holds how many cells we explored.*/
 #ifdef __GNUC__
 } SerFloor;
 #else
@@ -648,8 +648,8 @@ typedef struct __attribute__((packed)) SerWincon {
 typedef struct SerWincon {
 #endif
     winconClass class;	   /**< Defines which kind of winconClass the instance relates to.*/
-    int32_t current_val;	 /**< Defines the current progress.*/
-    int32_t target_val;	/**< Defines the total progress.*/
+    int8_t current_val;	 /**< Defines the current progress.*/
+    int8_t target_val;	/**< Defines the total progress.*/
 #ifdef __GNUC__
 } SerWincon;
 #else
@@ -694,10 +694,10 @@ typedef struct __attribute__((packed)) SerPath {
 #pragma pack(push, 1)
 typedef struct SerPath {
 #endif
-    int32_t length;	    /**< Defines how many rooms there are in total.*/
-    int32_t luck;	  /**< Defines global luck value.*/
-    int32_t prize;	   /**< Defines the reward for getting to length*/
-    int32_t loreCounter;	 /**< Counts how many lore prompts have been displayed*/
+    int8_t length;	    /**< Defines how many rooms there are in total.*/
+    int8_t luck;	  /**< Defines global luck value.*/
+    int8_t prize;	   /**< Defines the reward for getting to length*/
+    int8_t loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     SerWincon win_condition;     /**> Defines the win condition for the current game.*/
     SerSaveslot current_saveslot;	    /** Defines current SerSaveslot for the game.*/
     int32_t seed; /** Holds seed for current run.*/
@@ -726,11 +726,11 @@ typedef struct SerGamestate {
 
     SerCountstats stats;	   /**< Keeps track of stats for the game.*/
 
-    int32_t current_fighters;     /**< Keeps track of Fighter number for the game.*/
+    int8_t current_fighters;     /**< Keeps track of Fighter number for the game.*/
     roomClass current_roomtype;	    /**< Keeps track of current room type.*/
-    int32_t current_room_index;	/**< Keeps track of current room index.*/
+    int8_t current_room_index;	/**< Keeps track of current room index.*/
 
-    int32_t current_enemy_index;	 /**< Keeps track of current enemy index.*/
+    int8_t current_enemy_index;	 /**< Keeps track of current enemy index.*/
     SerWincon wincon;	/**< Keeps track of current Wincon.*/
 
     SerPath path;	    /**< Keeps track of current Path.*/
@@ -741,6 +741,7 @@ typedef struct SerGamestate {
 
     SerFloor current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
 
+    SerRoom current_room; /**< Pointer to current room.*/
     bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
 #ifdef __GNUC__
 } SerGamestate;

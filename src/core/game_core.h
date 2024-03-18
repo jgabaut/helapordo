@@ -1747,6 +1747,7 @@ typedef struct {
     Gamemode gamemode;	   /**< Keeps track of current Gamemode.*/
 
     Floor *current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
+    Room *current_room; /**< Pointer to current room.*/
 #ifdef HELAPORDO_CURSES_BUILD
     GameScreen *screen; /**< Pointer to main screen.*/
 #else

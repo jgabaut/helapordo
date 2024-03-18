@@ -214,9 +214,7 @@ bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Skillslot was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     deser->class = ser->class;
     deser->enabled = ser->enabled;
@@ -232,9 +230,7 @@ bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Skillslot was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     ser->class = deser->class;
     ser->enabled = deser->enabled;
@@ -531,9 +527,7 @@ bool deser_Enemy(SerEnemy* ser, Enemy* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Enemy was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     deser->index = ser->index;
     deser->class = ser->class;
@@ -552,7 +546,7 @@ bool deser_Enemy(SerEnemy* ser, Enemy* deser) {
     deser->status = ser->status;
     deser->beast = ser->beast;
     bool skillslot_deser_res = false;
-    for (size_t i=0; i<ENEMY_SKILL_SLOTS+1; i++) {
+    for (size_t i=0; i<ENEMY_SKILL_SLOTS; i++) {
         skillslot_deser_res = deser_Skillslot(&ser->skills[i], deser->skills[i]);
         if (!skillslot_deser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Skillslot(). Index: {%li}", __func__, i);
@@ -588,9 +582,7 @@ bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Enemy was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     ser->index = deser->index;
     ser->class = deser->class;
@@ -609,20 +601,18 @@ bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
     ser->status = deser->status;
     ser->beast = deser->beast;
     bool skillslot_ser_res = false;
-    for (size_t i=0; i<ENEMY_SKILL_SLOTS+1; i++) {
+    for (size_t i=0; i<ENEMY_SKILL_SLOTS; i++) {
         skillslot_ser_res = ser_Skillslot(deser->skills[i], &ser->skills[i]);
         if (!skillslot_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Skillslot(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Skillslot(). Putting zeros. Index: {%li}", __func__, i);
+            ser->skills[i] = (SerSkillslot){0};
         }
     }
     bool turncounter_ser_res = false;
     for (size_t i=0; i<COUNTERSMAX+1; i++) {
         turncounter_ser_res = ser_Turncounter(deser->counters[i], &ser->counters[i]);
         if (!turncounter_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Turncounter(). Index: {%li}", __func__, i);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Turncounter(). Index: {%li}", __func__, i);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -645,9 +635,7 @@ bool deser_Boss(SerBoss* ser, Boss* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Boss was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     deser->class = ser->class;
     deser->hp = ser->hp;
@@ -665,7 +653,7 @@ bool deser_Boss(SerBoss* ser, Boss* deser) {
     deser->status = ser->status;
     deser->beast = ser->beast;
     bool skillslot_deser_res = false;
-    for (size_t i=0; i<ENEMY_SKILL_SLOTS+1; i++) {
+    for (size_t i=0; i<ENEMY_SKILL_SLOTS; i++) {
         skillslot_deser_res = deser_Skillslot(&ser->skills[i], deser->skills[i]);
         if (!skillslot_deser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Skillslot(). Index: {%li}", __func__, i);
@@ -701,9 +689,7 @@ bool ser_Boss(Boss* deser, SerBoss* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Boss was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     ser->class = deser->class;
     ser->hp = deser->hp;
@@ -721,7 +707,7 @@ bool ser_Boss(Boss* deser, SerBoss* ser) {
     ser->status = deser->status;
     ser->beast = deser->beast;
     bool skillslot_ser_res = false;
-    for (size_t i=0; i<ENEMY_SKILL_SLOTS+1; i++) {
+    for (size_t i=0; i<ENEMY_SKILL_SLOTS; i++) {
         skillslot_ser_res = ser_Skillslot(deser->skills[i], &ser->skills[i]);
         if (!skillslot_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Skillslot(). Index: {%li}", __func__, i);
@@ -791,7 +777,7 @@ bool deser_Fighter(SerFighter* ser, Fighter* deser) {
         }
     }
     bool skillslot_deser_res = false;
-    for (size_t i=0; i<ENEMY_SKILL_SLOTS+1; i++) {
+    for (size_t i=0; i<ENEMY_SKILL_SLOTS; i++) {
         skillslot_deser_res = deser_Skillslot(&ser->skills[i], deser->skills[i]);
         if (!skillslot_deser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Skillslot(). Index: {%li}", __func__, i);
@@ -939,7 +925,7 @@ bool ser_Fighter(Fighter* deser, SerFighter* ser) {
         }
     }
     bool skillslot_ser_res = false;
-    for (size_t i=0; i<ENEMY_SKILL_SLOTS+1; i++) {
+    for (size_t i=0; i<ENEMY_SKILL_SLOTS; i++) {
         skillslot_ser_res = ser_Skillslot(deser->skills[i], &ser->skills[i]);
         if (!skillslot_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Skillslot(). Index: {%li}", __func__, i);
@@ -1081,10 +1067,8 @@ bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser) {
     for (size_t i=0; i<ROOM_ENEMIES_MAX+1; i++) {
         enemies_deser_res = deser_Enemy(&ser->enemy_foes[i], deser->enemy_foes[i]);
         if (!enemies_deser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Enemy(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Enemy(). Putting NULL. Index: {%li}", __func__, i);
+            deser->enemy_foes[i] = NULL;
         }
     }
 
@@ -1092,10 +1076,8 @@ bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser) {
     for (size_t i=0; i<FOES_BOSSES_MAX+1; i++) {
         bosses_deser_res = deser_Boss(&ser->boss_foes[i], deser->boss_foes[i]);
         if (!bosses_deser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Boss(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Boss(). Putting NULL. Index: {%li}", __func__, i);
+            deser->boss_foes[i] = NULL;
         }
     }
 
@@ -1145,10 +1127,8 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
     for (size_t i=0; i<ROOM_ENEMIES_MAX+1; i++) {
         enemies_ser_res = ser_Enemy(deser->enemy_foes[i], &ser->enemy_foes[i]);
         if (!enemies_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Putting zeros. Index: {%li}", __func__, i);
+            ser->enemy_foes[i] = (SerEnemy){0};
         }
     }
 
@@ -1156,10 +1136,8 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
     for (size_t i=0; i<FOES_BOSSES_MAX+1; i++) {
         bosses_ser_res = ser_Boss(deser->boss_foes[i], &ser->boss_foes[i]);
         if (!bosses_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss(). Putting zeros. Index: {%li}", __func__, i);
+            ser->boss_foes[i] = (SerBoss){0};
         }
     }
 
@@ -1268,9 +1246,7 @@ bool deser_Treasure(SerTreasure* ser, Treasure* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Treasure was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     deser->class = ser->class;
     bool chest_deser_res = deser_Chest(&ser->chest, deser->chest);
@@ -1306,9 +1282,7 @@ bool ser_Treasure(Treasure* deser, SerTreasure* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Treasure was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     ser->class = deser->class;
     bool chest_ser_res = ser_Chest(deser->chest, &ser->chest);
@@ -1344,9 +1318,7 @@ bool deser_Shop(SerShop* ser, Shop* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Shop was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     deser->itemCount = ser->itemCount;
@@ -1395,9 +1367,7 @@ bool ser_Shop(Shop* deser, SerShop* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Shop was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     ser->itemCount = deser->itemCount;
@@ -1447,9 +1417,7 @@ bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Roadfork was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     for (size_t i=0; i<2; i++) {
@@ -1467,9 +1435,7 @@ bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Roadfork was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     for (size_t i=0; i<2; i++) {
@@ -1494,33 +1460,25 @@ bool deser_Room(SerRoom* ser, Room* deser) {
     deser->class = ser->class;
     bool shop_deser_res = deser_Shop(&ser->shop, deser->shop);
     if (!shop_deser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Shop().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Shop(). Putting NULL.", __func__);
+        deser->shop = NULL;
     }
 
     bool roadfork_deser_res = deser_Roadfork(&ser->roadfork, deser->roadfork);
     if (!roadfork_deser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Roadfork().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Roadfork(). Putting NULL.", __func__);
+        deser->roadfork = NULL;
     }
 
     bool treasure_deser_res = deser_Treasure(&ser->treasure, deser->treasure);
     if (!treasure_deser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Treasure().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Treasure(). Putting NULL.", __func__);
+        deser->treasure = NULL;
     }
     bool boss_deser_res = deser_Boss(&ser->boss, deser->boss);
     if (!boss_deser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Boss().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Boss(). Putting NULL.", __func__);
+        deser->boss = NULL;
     }
 
     deser->enemyTotal = ser->enemyTotal;
@@ -1528,10 +1486,8 @@ bool deser_Room(SerRoom* ser, Room* deser) {
     for (size_t i=0; i<ROOM_ENEMIES_MAX; i++) {
         enemies_deser_res = deser_Enemy(&ser->enemies[i], deser->enemies[i]);
         if (!enemies_deser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Enemy(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Enemy(). Putting NULL. Index: {%li}", __func__, i);
+            deser->enemies[i] = NULL;
         }
     }
 
@@ -1562,33 +1518,25 @@ bool ser_Room(Room* deser, SerRoom* ser) {
     ser->class = deser->class;
     bool shop_ser_res = ser_Shop(deser->shop, &ser->shop);
     if (!shop_ser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Shop().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Shop(). Putting zeros.", __func__);
+        ser->shop = (SerShop){0};
     }
 
     bool roadfork_ser_res = ser_Roadfork(deser->roadfork, &ser->roadfork);
     if (!roadfork_ser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Roadfork().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Roadfork(). Putting zeros.", __func__);
+        ser->roadfork = (SerRoadfork){0};
     }
 
     bool treasure_ser_res = ser_Treasure(deser->treasure, &ser->treasure);
     if (!treasure_ser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Treasure().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Treasure(). Putting zeros.", __func__);
+        ser->treasure = (SerTreasure){0};
     }
     bool boss_ser_res = ser_Boss(deser->boss, &ser->boss);
     if (!boss_ser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss(). Putting zeros.", __func__);
+        ser->boss = (SerBoss){0};
     }
 
     ser->enemyTotal = deser->enemyTotal;
@@ -1596,10 +1544,8 @@ bool ser_Room(Room* deser, SerRoom* ser) {
     for (size_t i=0; i<ROOM_ENEMIES_MAX; i++) {
         enemies_ser_res = ser_Enemy(deser->enemies[i], &ser->enemies[i]);
         if (!enemies_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Index: {%li}{%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Putting zeros. Index: {%li}", __func__, i);
+            ser->enemies[i] = (SerEnemy){0};
         }
     }
 
@@ -1637,6 +1583,7 @@ bool deser_Floor(SerFloor* ser, Floor* deser) {
 
     deser->area = ser->area;
 
+    /*
     bool rooms_deser_res = false;
     for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
         for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
@@ -1647,6 +1594,7 @@ bool deser_Floor(SerFloor* ser, Floor* deser) {
             }
         }
     }
+    */
 
     for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
         for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
@@ -1688,6 +1636,7 @@ bool ser_Floor(Floor* deser, SerFloor* ser) {
 
     ser->area = deser->area;
 
+    /*
     bool rooms_ser_res = false;
     for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
         for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
@@ -1698,6 +1647,7 @@ bool ser_Floor(Floor* deser, SerFloor* ser) {
             }
         }
     }
+    */
 
     for (size_t i=0; i<FLOOR_MAX_COLS; i++) {
         for(size_t k=0; k<FLOOR_MAX_ROWS; k++) {
@@ -2103,6 +2053,12 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
         deser->current_floor = NULL;
     }
 
+    bool room_deser_res = deser_Room(&ser->current_room, deser->current_room);
+    if (!room_deser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Room()", __func__);
+        deser->current_room = NULL;
+    }
+
     deser->is_localexe = ser->is_localexe;
     return true;
 }
@@ -2165,6 +2121,14 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
     bool floor_ser_res = ser_Floor(deser->current_floor, &ser->current_floor);
     if (!floor_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Floor()", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    bool room_ser_res = ser_Room(deser->current_room, &ser->current_room);
+    if (!room_ser_res) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room()", __func__);
         kls_free(default_kls);
         kls_free(temporary_kls);
         exit(EXIT_FAILURE);

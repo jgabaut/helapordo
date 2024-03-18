@@ -86,7 +86,7 @@ void dbg_Saveslot(Saveslot * saveslot);
 
 void update_Gamestate(Gamestate * gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
-                      int current_enemy_index, Floor * current_floor);
+                      int current_enemy_index, Floor * current_floor, Room* current_room);
 
 void loadLore(char **lore_strings, int loreKind);
 

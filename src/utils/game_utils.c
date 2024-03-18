@@ -663,10 +663,11 @@ void dbg_GameScreen(GameScreen * scr)
  * @param current_room_index Index for current Room.
  * @param current_enemy_index Index for current Enemy.
  * @param current_floor Pointer to current Floor, initialised if gmst->gamemode == Rogue.
+ * @param current_room Pointer to current Room.
  */
 void update_Gamestate(Gamestate *gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
-                      int current_enemy_index, Floor *current_floor)
+                      int current_enemy_index, Floor *current_floor, Room* current_room)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s().",
@@ -685,6 +686,7 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
             gmst->current_floor = current_floor;
         }
     }
+    gmst->current_room = current_room;
 }
 
 /**
