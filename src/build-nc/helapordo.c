@@ -92,7 +92,7 @@ void gameloop(int argc, char **argv)
 
     do {
         //Init default_kls
-        default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 256, default_kls_conf);
+        default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
         seed = rand();
 
