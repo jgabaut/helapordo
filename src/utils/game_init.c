@@ -734,6 +734,26 @@ void initArtifactsBag(Fighter *f, Koliseo *kls)
 }
 
 /**
+ * Takes a Fighter pointer and prepares its equipsBag field by allocating an Equip for each array slot.
+ * @see Fighter
+ * @see Equip
+ * @see ARTIFACTSMAX
+ * @param kls The Koliseo used for allocations.
+ * @param f The Fighter pointer whose equipsBag field will be initialised.
+ */
+void initEquipsBag(Fighter * f, Koliseo * kls)
+{
+    for (int i = 0; i < EQUIPSBAGSIZE; i++) {
+        kls_log(kls, "DEBUG", "Allocating space for Equip (%i)", i);
+        Equip *e =
+            (Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip,
+                                        "Equip", "Fighter bag equip");
+        e->class = -1; // Setting an invalid class
+        f->equipsBag[i] = e;
+    }
+}
+
+/**
  * Takes one Fighter and one Path pointers and initialises the fighter fields.
  * Luck value is set as path luck value modulo MAXPLAYERLUCK.
  * The BaseStats pointer for the fighter's figtherClass is loaded.
@@ -796,6 +816,7 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
 
     initConsumableBag(player, kls);
     initArtifactsBag(player, kls);
+    initEquipsBag(player, kls);
 
     initEquipSlots(player, kls);
     player->equipsBagOccupiedSlots = 0;	//Keeps track of how many slots are occupied.
@@ -831,6 +852,9 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
     player->stamina = player->totalstamina;
 
     setFighterSprite(player);
+
+    player->floor_x = -1;
+    player->floor_y = -1;
 }
 
 /**

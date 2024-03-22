@@ -424,6 +424,9 @@ typedef struct SerFighter {
 
     int8_t balance;     /**< Amount of currency owned*/
     int8_t keys_balance;	  /**< Amount of keys owned*/
+
+    int8_t floor_x; /**< Current x position in floor.*/
+    int8_t floor_y; /**< Current y position in floor.*/
 #ifdef __GNUC__
 } SerFighter;
 #else

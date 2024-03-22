@@ -51,6 +51,8 @@ void initEquipSlots(Fighter * f, Koliseo * kls);
 
 void initArtifactsBag(Fighter * f, Koliseo * kls);
 
+void initEquipsBag(Fighter * f, Koliseo * kls);
+
 void initPlayerStats(Fighter * player, Path * path, Koliseo * kls);
 
 void initEnemyStats(Enemy * e, Koliseo_Temp * t_kls);

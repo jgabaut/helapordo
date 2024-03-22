@@ -337,6 +337,11 @@ void dbg_Fighter(Fighter *fighter)
             fighter->balance);
     log_tag("debug_log.txt", "[FIGHTER]", "Fighter keys balance: { %i }",
             fighter->keys_balance);
+
+    log_tag("debug_log.txt", "[FIGHTER]", "Fighter floor X position: { %i }",
+            fighter->floor_x);
+    log_tag("debug_log.txt", "[FIGHTER]", "Fighter floor Y position: { %i }",
+            fighter->floor_y);
 }
 
 /**
@@ -687,6 +692,25 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
         }
     }
     gmst->current_room = current_room;
+}
+
+/**
+ * Updates the passed Fighter's Equipslots item fields, by reading the equipsBag field and setting the equipped ones.
+ * @param f The Fighter to update.
+ */
+void update_Equipslots(Fighter* f)
+{
+    for (int i=0; i < f->equipsBagOccupiedSlots; i++) {
+        Equip* e = f->equipsBag[i];
+        if (e == NULL) {
+            log_tag("debug_log.txt", "[WARN]", "%s():    equipsBag at index [%i] is NULL.", __func__, i);
+            continue;
+        }
+        if (e->equipped) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting Equip [%s] [bag idx: %i] to Fighter's equipslot.", __func__, stringFromEquips(e->class), i);
+            f->equipslots[e->type]->item = e;
+        }
+    }
 }
 
 /**
@@ -3341,6 +3365,14 @@ void printEquipStats(Equip *e)
 void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 {
 
+    assert(player->equipsBagOccupiedSlots >= 0);
+
+    if (player->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {
+        // TODO: Handle full bag by asking player if we throw something away
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Player equip bag was full. Not dropping.", __func__);
+        return;
+    }
+
     //Select a basic item from the list
     int drop = rand() % (EQUIPSMAX + 1);
     //Randomise quality
@@ -3348,8 +3380,10 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
     //Prepare the item
     kls_log(kls, "DEBUG", "Prepping dropped Equip");
-    Equip *e =
-        (Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
+
+    int equip_pos = player->equipsBagOccupiedSlots;
+    Equip *e = player->equipsBag[equip_pos];
+        //(Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
 
     //Get the base item and copy the stats to the drop
     Equip *base = &equips[drop];
@@ -3471,6 +3505,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     log_tag("debug_log.txt", "[DEBUG-DROPS]", "Found Equip:    %s.",
             stringFromEquips(drop));
 
+    /*
     if (player->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {	//Handle full bag by asking player if we throw something away
         //FIXME: The handling of full bag event is a mess as it does not support curses.
         lightRed();
@@ -3527,15 +3562,13 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
         if (n != 0) {		//Abort deletion, drop will not be awared.
 
-            /*
-               int perkscount = e->perksCount;
-               if (perkscount > 0) {
-               for (int i=0; i < perkscount; i++) {
-               free(e->perks[i]);
-               }
-               }
-               free(e);
-             */
+               //int perkscount = e->perksCount;
+               //if (perkscount > 0) {
+               //for (int i=0; i < perkscount; i++) {
+               //free(e->perks[i]);
+               //}
+               //}
+               //free(e);
             log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
                     "Equip was not taken.\n");
             return;
@@ -3543,20 +3576,16 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
         Equip *toDelete = (Equip *) player->equipsBag[selected];
         int perkscount = toDelete->perksCount;
-        /*
-           if (perkscount > 0) {
-           for (int i=0; i < perkscount; i++) {
-           free(toDelete->perks[i]);
-           }
-           }
-         */
+           //if (perkscount > 0) {
+           //for (int i=0; i < perkscount; i++) {
+           //free(toDelete->perks[i]);
+           //}
+           //}
         log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
                 "Equip %s (%i Perks) was taken by deleting %s.\n",
                 stringFromEquips(e->class), perkscount,
                 stringFromEquips(toDelete->class));
-        /*
-           free(toDelete);
-         */
+           //free(toDelete);
 
         //Add drop to player bag replacing the one at the selected index
         player->equipsBag[selected] = (struct Equip *)e;
@@ -3567,8 +3596,9 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
         napms(500);
         return;
     };				//End if bag is full
+    */
 
-    //Add drop to player bag
+    //Add drop to player bag -- Unnecessary
     player->equipsBag[player->earliestBagSlot] = (struct Equip *)e;
 
     player->earliestBagSlot += 1;	//Advance equips bage pointer

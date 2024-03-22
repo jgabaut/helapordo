@@ -257,13 +257,14 @@ bool deser_Equip(SerEquip* ser, Equip* deser) {
     deser->vel = ser->vel;
     deser->enr = ser->enr;
     deser->perksCount = ser->perksCount;
+    assert(deser->perksCount < EQUIPPERKSMAX);
     deser->cost = ser->cost;
     deser->qual = ser->qual;
     bool perk_deser_res = false;
-    for (size_t i=0; i<EQUIPPERKSMAX; i++) {
+    for (size_t i=0; i < ser->perksCount; i++) {
         perk_deser_res = deser_Perk(&ser->perks[i], deser->perks[i]);
         if (!perk_deser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Perk(). Index: {%li}", __func__, i);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Perk(). Putting NULL. Index: {%li}", __func__, i);
             deser->perks[i] = NULL;
         }
     }
@@ -278,9 +279,8 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
         exit(EXIT_FAILURE);
     }
     if (deser == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equip was NULL. Putting zeros.", __func__);
-        *ser = (SerEquip){0};
-        return true;
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed Equip was NULL.", __func__);
+        return false;
     }
     ser->class = deser->class;
     ser->type = deser->type;
@@ -291,13 +291,14 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
     ser->vel = deser->vel;
     ser->enr = deser->enr;
     ser->perksCount = deser->perksCount;
+    assert(ser->perksCount < EQUIPPERKSMAX);
     ser->cost = deser->cost;
     ser->qual = deser->qual;
     bool perk_ser_res = false;
-    for (size_t i=0; i<EQUIPPERKSMAX; i++) {
+    for (size_t i=0; i < deser->perksCount; i++) {
         perk_ser_res = ser_Perk(deser->perks[i], &ser->perks[i]);
         if (!perk_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Perk(). Index: {%li}. Putting zeros.", __func__, i);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Perk() for {%s}. Index: {%li}. Putting zeros.", __func__, stringFromEquips(deser->class), i);
             ser->perks[i] = (SerPerk){0};
         }
     }
@@ -829,7 +830,7 @@ bool deser_Fighter(SerFighter* ser, Fighter* deser) {
     for (size_t i=0; i<EQUIPSBAGSIZE+1; i++) {
         equips_deser_res = deser_Equip(&ser->equipsBag[i], deser->equipsBag[i]);
         if (!equips_deser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Equip(). Index: {%li}", __func__, i);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Equip(). Putting NULL. Index: {%li}", __func__, i);
             deser->equipsBag[i] = NULL;
         }
     }
@@ -879,6 +880,8 @@ bool deser_Fighter(SerFighter* ser, Fighter* deser) {
 
     deser->balance = ser->balance;
     deser->keys_balance = ser->keys_balance;
+    deser->floor_x = ser->floor_x;
+    deser->floor_y = ser->floor_y;
     return true;
 }
 
@@ -977,10 +980,8 @@ bool ser_Fighter(Fighter* deser, SerFighter* ser) {
     for (size_t i=0; i<EQUIPSBAGSIZE+1; i++) {
         equips_ser_res = ser_Equip(deser->equipsBag[i], &ser->equipsBag[i]);
         if (!equips_ser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Equip(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Equip(). Putting zeros. Index: {%li}", __func__, i);
+            ser->equipsBag[i] = (SerEquip){0};
         }
     }
 
@@ -1029,6 +1030,8 @@ bool ser_Fighter(Fighter* deser, SerFighter* ser) {
 
     ser->balance = deser->balance;
     ser->keys_balance = deser->keys_balance;
+    ser->floor_x = deser->floor_x;
+    ser->floor_y = deser->floor_y;
     return true;
 }
 
@@ -1041,9 +1044,7 @@ bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed FoeParty was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     deser->class = ser->class;
     deser->level = ser->level;
@@ -1101,9 +1102,7 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed FoeParty was NULL.", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        return false;
     }
     ser->class = deser->class;
     ser->level = deser->level;
@@ -1493,10 +1492,8 @@ bool deser_Room(SerRoom* ser, Room* deser) {
 
     bool foeparty_deser_res = deser_FoeParty(&ser->foes, deser->foes);
     if (!foeparty_deser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_FoeParty().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_FoeParty(). Putting NULL.", __func__);
+        deser->foes = NULL;
     }
 
     return true;
@@ -1551,10 +1548,8 @@ bool ser_Room(Room* deser, SerRoom* ser) {
 
     bool foeparty_ser_res = ser_FoeParty(deser->foes, &ser->foes);
     if (!foeparty_ser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_FoeParty().", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_FoeParty(). Putting zeros.", __func__);
+        ser->foes = (SerFoeParty){0};
     }
 
     return true;
@@ -2204,7 +2199,7 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
         } else {
-            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for appendSerGamestate()", __func__);
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for writeSerGamestate()", __func__);
         }
 
         if (gmst_null) {

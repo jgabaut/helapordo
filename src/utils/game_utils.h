@@ -88,6 +88,8 @@ void update_Gamestate(Gamestate * gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
                       int current_enemy_index, Floor * current_floor, Room* current_room);
 
+void update_Equipslots(Fighter* f);
+
 void loadLore(char **lore_strings, int loreKind);
 
 void setRoomType(Path * path, int *roadFork_value, roomClass * room_type,

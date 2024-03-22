@@ -2052,6 +2052,14 @@ void updateEquipslotsWin(WINDOW *w, Fighter *f)
         }
 
         if (selected->active) {
+            if (selected->item == NULL) {
+                endwin();
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Equipslot {%s} [%i] was active but Equip was NULL.", __func__, stringFromEquipzones(k), k);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+
             wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
             mvwprintw(w, y + 1, x, "    %s",
                       stringFromEquipzones(selected->type));

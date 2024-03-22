@@ -1146,6 +1146,7 @@ void gameloop(int argc, char **argv)
 
         Gamestate* gamestate = NULL;
         Room* current_room = NULL;
+        Floor* current_floor = NULL;
 
         if (load_info->is_new_game) {	// We prepare path and fighter
             path = randomise_path(seed, default_kls, current_save_path);
@@ -1193,6 +1194,10 @@ void gameloop(int argc, char **argv)
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
                                player, GAMEMODE, gamescreen, is_localexe);
 
+                current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
+                        "Loading floor");
+                gamestate->current_floor = current_floor;
+
                 bool prep_res = prep_Gamestate(gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                 if (prep_res) {
                     log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
@@ -1235,8 +1240,6 @@ void gameloop(int argc, char **argv)
                     log_tag("debug_log.txt", "[WARN-TURNOP]",
                             "%s():    gamestate->room was NULL. Not setting load_info's room info.", __func__);
                 }
-                load_info->done_loading = 1;
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Set load_info->done_loading to 1.", __func__);
             } else {
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing text file loading", __func__);
                 //Declar turnOP_args
@@ -1492,7 +1495,7 @@ void gameloop(int argc, char **argv)
         //printStats(player);
         //white();
 
-        int roomsDone = load_info->is_new_game ? 1 : loaded_roomindex;
+        int roomsDone = (load_info->is_new_game == 1 ? 1 : loaded_roomindex);
         OP_res res = OP_RES_NO_DMG;
         int roadFork_value = -1;	//0 may be used as a value, so
 
@@ -1532,7 +1535,7 @@ void gameloop(int argc, char **argv)
             //NO. We pass NULL now.
             //
             //We also pass NULL for current room.
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor, NULL);
         } else {
             update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL);
         }
@@ -1924,43 +1927,59 @@ void gameloop(int argc, char **argv)
                 int res = -1;
                 char msg[500];
 
-                log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
-                kls_log(default_kls, "DEBUG", "Prepping current_floor.");
-                Floor *current_floor =
-                    (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor,
-                                               HR_Floor, "Floor", "Floor");
+                bool is_bin_load_floor = (G_EXPERIMENTAL_ON == 1 && load_info->is_new_game == 0 && load_info->done_loading == 0);
+
+                if (is_bin_load_floor) {
+                    update_Equipslots(player);
+                    log_tag("debug_log.txt", "[DEBUG]", "Using current_floor from loaded gamestate.");
+                    load_info->done_loading = 1;
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Set load_info->done_loading to 1.");
+                } else {
+                    log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
+                    kls_log(default_kls, "DEBUG", "Prepping current_floor.");
+                    current_floor =
+                        (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor,
+                                                HR_Floor, "Floor", "Floor");
+                }
                 update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
                                  current_floor, NULL); // NULL for current_room
                 // Start the random walk from the center of the dungeon
                 int center_x = FLOOR_MAX_COLS / 2;
                 int center_y = FLOOR_MAX_ROWS / 2;
 
-                // Init dbg_floor
-                init_floor_layout(current_floor);
+                if (is_bin_load_floor) {
+                    log_tag("debug_log.txt", "[DEBUG]", "Skipping current_floor init.");
+                } else {
+                    // Init dbg_floor
+                    init_floor_layout(current_floor);
 
-                //Set center as filled
-                current_floor->floor_layout[center_x][center_y] = 1;
+                    //Set center as filled
+                    current_floor->floor_layout[center_x][center_y] = 1;
 
-                //Init floor rooms
-                init_floor_rooms(current_floor);
+                    //Init floor rooms
+                    init_floor_rooms(current_floor);
 
-                //Random walk #1
-                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                //Random walk #2
-                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                    //Random walk #1
+                    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                    //Random walk #2
+                    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
 
-                //Set floor explored matrix
-                load_floor_explored(current_floor);
+                    //Set floor explored matrix
+                    load_floor_explored(current_floor);
 
-                //Set room types
-                floor_set_room_types(current_floor);
+                    //Set room types
+                    floor_set_room_types(current_floor);
 
-                int current_x = center_x;
-                int current_y = center_y;
+                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                    player->floor_x = center_x;
+                    player->floor_y = center_y;
+                }
 
                 //TODO: handle finishing all floors
                 path->length = MAX_ROGUE_FLOORS;
 
+                //TODO: restore floors_done from loaded gamestate
                 int floors_done = 0;
 
                 //Loop till wincon reached
@@ -1986,7 +2005,7 @@ void gameloop(int argc, char **argv)
                     Room *current_room = NULL;
 
                     //Check if current room needs to be played
-                    if (current_floor->roomclass_layout[current_x][current_y] !=
+                    if (current_floor->roomclass_layout[player->floor_x][player->floor_y] !=
                         BASIC) {
                         kls_log(temporary_kls, "DEBUG",
                                 "Prepping Room for Rogue Gamemode. roomsDone=(%i)",
@@ -2000,7 +2019,7 @@ void gameloop(int argc, char **argv)
 
                         room_type =
                             current_floor->
-                            roomclass_layout[current_x][current_y];
+                            roomclass_layout[player->floor_x][player->floor_y];
                         log_tag("debug_log.txt", "[ROOM]",
                                 "Set Room #%i type:    (%s)\n", roomsDone,
                                 stringFromRoom(room_type));
@@ -2186,16 +2205,16 @@ void gameloop(int argc, char **argv)
 
                             //Update floor's roomclass layout for finished rooms which should not be replayed
                             switch (current_floor->
-                                    roomclass_layout[current_x][current_y]) {
+                                    roomclass_layout[player->floor_x][player->floor_y]) {
                             case ENEMIES: {
                                 current_floor->
-                                roomclass_layout[current_x][current_y] =
+                                roomclass_layout[player->floor_x][player->floor_y] =
                                     BASIC;
                             }
                             break;
                             case BOSS: {
                                 current_floor->
-                                roomclass_layout[current_x][current_y] =
+                                roomclass_layout[player->floor_x][player->floor_y] =
                                     BASIC;
                                 floors_done++;
                                 player->stats->floorscompleted++;
@@ -2239,21 +2258,21 @@ void gameloop(int argc, char **argv)
                                 floor_set_room_types(current_floor);
 
                                 //Center current coords
-                                current_x = center_x;
-                                current_y = center_y;
+                                player->floor_x = center_x;
+                                player->floor_y = center_y;
                                 continue;	//Check win condition for loop
 
                             }
                             break;
                             case SHOP: {
                                 current_floor->
-                                roomclass_layout[current_x][current_y] =
+                                roomclass_layout[player->floor_x][player->floor_y] =
                                     BASIC;
                             }
                             break;
                             case TREASURE: {
                                 current_floor->
-                                roomclass_layout[current_x][current_y] =
+                                roomclass_layout[player->floor_x][player->floor_y] =
                                     BASIC;
                             }
                             break;
@@ -2267,12 +2286,12 @@ void gameloop(int argc, char **argv)
                                 log_tag("debug_log.txt", "[ERROR]",
                                         "Unexpected roomclass value in Rogue loop: [%i] [%s]",
                                         current_floor->
-                                        roomclass_layout[current_x]
-                                        [current_y],
+                                        roomclass_layout[player->floor_x]
+                                        [player->floor_x],
                                         stringFromRoom(current_floor->
                                                        roomclass_layout
-                                                       [current_x]
-                                                       [current_y]));
+                                                       [player->floor_x]
+                                                       [player->floor_y]));
                                 kls_free(default_kls);
                                 kls_free(temporary_kls);
                                 exit(EXIT_FAILURE);
@@ -2284,18 +2303,18 @@ void gameloop(int argc, char **argv)
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "Current room class was [%s] (val: %i), not playable.",
                                 stringFromRoom(current_floor->
-                                               roomclass_layout[current_x]
-                                               [current_y]),
+                                               roomclass_layout[player->floor_x]
+                                               [player->floor_y]),
                                 current_floor->
-                                roomclass_layout[current_x][current_y]);
+                                roomclass_layout[player->floor_x][player->floor_y]);
                     }
 
                     //Draw current FOV
-                    draw_floor_view(current_floor, current_x, current_y,
+                    draw_floor_view(current_floor, player->floor_x, player->floor_y,
                                     floor_win);
                     //Take a step and update screen
-                    move_update(gamestate, current_floor, &current_x,
-                                &current_y, floor_win, path, player,
+                    move_update(gamestate, current_floor, &(player->floor_x),
+                                &(player->floor_y), floor_win, path, player,
                                 current_room, load_info, default_kls,
                                 gamestate_kls);
                 }		// Win condition loop
