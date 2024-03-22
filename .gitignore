@@ -9,6 +9,10 @@ save-rl.bin
 
 # ignore hlpd-1 dir
 hlpd-1
+# ignore hlpd-2 dir
+hlpd-2
+# ignore hlpd-3 dir
+hlpd-3
 
 # ignore the MacOS DS_Store file
 .DS_Store

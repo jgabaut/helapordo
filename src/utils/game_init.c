@@ -749,6 +749,9 @@ void initEquipsBag(Fighter * f, Koliseo * kls)
             (Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip,
                                         "Equip", "Fighter bag equip");
         e->class = -1; // Setting an invalid class
+        for (int pix = 0; pix < (EQUIPPERKSMAX); pix++) {
+            e->perks[pix] = (Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Fighter bag perk");
+        }
         f->equipsBag[i] = e;
     }
 }

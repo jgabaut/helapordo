@@ -268,6 +268,7 @@ bool deser_Equip(SerEquip* ser, Equip* deser) {
             deser->perks[i] = NULL;
         }
     }
+    setEquipSprite(deser);
     return true;
 }
 
@@ -394,6 +395,7 @@ bool deser_Consumable(SerConsumable* ser, Consumable* deser) {
     }
     deser->class = ser->class;
     deser->qty = ser->qty;
+    setConsumableSprite(deser);
     return true;
 }
 
@@ -432,6 +434,7 @@ bool deser_Artifact(SerArtifact* ser, Artifact* deser) {
     deser->qty = ser->qty;
     deser->active = ser->active;
     deser->innerValue = ser->innerValue;
+    setArtifactSprite(deser);
     return true;
 }
 
@@ -2044,13 +2047,13 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
 
     bool floor_deser_res = deser_Floor(&ser->current_floor, deser->current_floor);
     if (!floor_deser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Floor()", __func__);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Floor(). Putting NULL.", __func__);
         deser->current_floor = NULL;
     }
 
     bool room_deser_res = deser_Room(&ser->current_room, deser->current_room);
     if (!room_deser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Room()", __func__);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Room(). Putting NULL.", __func__);
         deser->current_room = NULL;
     }
 

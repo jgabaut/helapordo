@@ -1198,6 +1198,10 @@ void gameloop(int argc, char **argv)
                         "Loading floor");
                 gamestate->current_floor = current_floor;
 
+                current_room = KLS_PUSH_TYPED(default_kls, Room, HR_Floor, "Room",
+                        "Loading room");
+                gamestate->current_room = current_room;
+
                 bool prep_res = prep_Gamestate(gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                 if (prep_res) {
                     log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
@@ -1215,7 +1219,9 @@ void gameloop(int argc, char **argv)
                 //TODO: set the other load_info fields properly?
                 if (gamestate->current_room != NULL) {
                     current_room = gamestate->current_room;
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, gamestate->current_room->index);
                     *(load_info->ptr_to_roomindex) = gamestate->current_room->index;
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomtotalenemies) to {%i}.", __func__, gamestate->current_room->enemyTotal);
                     *(load_info->ptr_to_roomtotalenemies) = gamestate->current_room->enemyTotal;
                     if (gamestate->current_room->class == ENEMIES) {
                         // TODO Load && Store current enemy somewhere.

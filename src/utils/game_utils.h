@@ -239,6 +239,8 @@ void display_notification(WINDOW * w, char *text, int time);
 void print_label(WINDOW * win, int starty, int startx, int width, char *string,
                  chtype color);
 void setEquipSprite(Equip * e);
+void setConsumableSprite(Consumable * c);
+void setArtifactSprite(Artifact * a);
 void printEquipStats(Equip * e);
 void printQualityColor(quality q);
 void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
