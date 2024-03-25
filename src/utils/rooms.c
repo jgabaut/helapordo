@@ -3420,6 +3420,7 @@ void initRoom_Treasure(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
  * @param r The Room whose fields will be initialised.
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
  */
 void initRoom_Roadfork(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
 {

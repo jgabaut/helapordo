@@ -268,7 +268,7 @@ void dbg_Path(Path *path)
 
 /**
  * Debugs the passed (preallocated) Wincon with log_tag().
- * @param gmst The allocated countStats to debug.
+ * @param wc The allocated countStats to debug.
  */
 void dbg_Wincon(Wincon *wc)
 {
@@ -286,7 +286,7 @@ void dbg_Wincon(Wincon *wc)
 
 /**
  * Debugs the passed (preallocated) countStats with log_tag().
- * @param gmst The allocated countStats to debug.
+ * @param stats The allocated countStats to debug.
  */
 void dbg_countStats(countStats *stats)
 {
@@ -871,6 +871,7 @@ void loadLore(char **lore_strings, int loreKind)
 /**
  * Takes a path pointer, a roadFork value pointer, a room type pointer, and an integer.
  * Depending on GAMEMODE (and eventually roadFork value), sets the room type pointer to a roomClass value.
+ * @param path Pointer to Path.
  * @param roadFork_value The pointer value of the roadfork that we must use as result.
  * @param room_type The pointer value of the room type to set.
  * @param roomsDone The total of rooms completed.
@@ -1558,7 +1559,7 @@ char *descStringFromChest(int c)
  * Takes a integer and returns the corresponding FoeParty desc string by the inner array position.
  * Correct result is only possible by having the enum values in a consistent order with the string array.
  * @see foePartyClass
- * @param c The integer/foePartyClass.
+ * @param fp The integer/foePartyClass.
  * @return String corresponding to the FoeParty desc.
  */
 char *stringFromFoePartyClass(foePartyClass fp)
@@ -2792,7 +2793,7 @@ void emptyEquips(Fighter *player)
  * @see MAXLUCK
  * @param seed An integer seed.
  * @param kls The Koliseo used for allocation.
- * @param current_saveslot The Saveslot used to init the Path.
+ * @param path_to_savefile Path to savefile.
  * @return A Path pointer with stats.
  */
 Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
@@ -4854,6 +4855,7 @@ int getBoost(int lvl, int luck)
  * @see handleRoom_Shop()
  * @see Fighter
  * @param f The Fighter pointer at hand.
+ * @param t_kls The Koliseo_Temp used for temp allocations.
  */
 void sell_all_equips(Fighter *f, Koliseo_Temp *t_kls)
 {

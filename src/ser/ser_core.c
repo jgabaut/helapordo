@@ -2180,6 +2180,7 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
 
 /**
  * Tries reading binary gamestate from passed path, at passed offset.
+ * @param gmst Pointer to Gamestate.
  * @param static_path The path to which we append to find our file.
  * @param offset The offset of the SerGameState into passed file.
  * @param kls Koliseo used for allocation.

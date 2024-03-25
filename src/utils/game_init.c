@@ -1046,6 +1046,8 @@ void initFoePartyStats(FoeParty *fp, Koliseo_Temp *t_kls)
  * @see FoeParty
  * @see initFoePartyStats()
  * @param fp The allocated FoeParty pointer to initialise.
+ * @param partysize Size of party.
+ * @param roomindex Index of current room.
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void prepareFoeParty(FoeParty *fp, int partysize, int roomindex,

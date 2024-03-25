@@ -3917,6 +3917,7 @@ void handleTutorial(void)
  * User is asked for turn choice and according to the input, the corresponding action will be called.
  * @see Fighter
  * @see Path
+ * @param gmst Pointer to Gamestate.
  * @param p The Path pointer.
  * @param player The Fighter pointer at hand.
  * @param room The Room pointer for current room.

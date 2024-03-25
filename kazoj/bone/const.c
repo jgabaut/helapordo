@@ -3,6 +3,7 @@
 #define HELAPORDO_CURSES_BUILD
 #include "../../src/core/game_core.h"
 #include "../../src/ser/ser_core.h"
+#include "../../src/utils/bin_saves.h"
 
 void fail(char* msg, int ex, int val) {
   printf("[Fail]    %s, expected (%i), was %i\n",msg,ex,val);
@@ -105,6 +106,12 @@ int main(void) {
  };
  if ( ! SERFIGHTER_NAME_BUFSIZE == 50 ) {
    fail("SERFIGHTER_NAME_BUFSIZE",50,SERFIGHTER_NAME_BUFSIZE);
+ };
+ if ( ! SERSAVEHEADER_BUFSIZE == 15 ) {
+   fail("SERSAVEHEADER_BUFSIZE", 15, SERSAVEHEADER_BUFSIZE);
+ };
+ if ( ! SAVEHEADER_BUFSIZE == 15 ) {
+   fail("SAVEHEADER_BUFSIZE", 15, SAVEHEADER_BUFSIZE);
  };
  if ( ! (EQUIPPERKSMAX == 2) ) {
    fail("EQUIPPERKSMAX",2,EQUIPPERKSMAX);
