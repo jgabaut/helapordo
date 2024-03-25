@@ -32,6 +32,7 @@ void setEnemySprite(Enemy * e);
 void setEquipSprite(Equip * e);
 void setEquipslotSprite(Equipslot * s);
 void setConsumableSprite(Consumable * c);
+void setArtifactSprite(Artifact* a);
 void setBossSprite(Boss * b);
 void setFighterSprite(Fighter * f);
 void setChestSprite(Chest * c);

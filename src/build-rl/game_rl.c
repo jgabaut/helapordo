@@ -122,6 +122,26 @@ void setConsumableSprite(Consumable *c)
 }
 
 /**
+ * Takes a Artifact pointer and prepares its sprite field by copying it line by line from artifacts_sprites, defined in sprites.h header.
+ * @see Artifact
+ * @see gameloop()
+ * @see artifacts_sprites
+ * @param a The Artifact pointer whose sprite field will be initialised.
+ */
+void setArtifactSprite(Artifact* a)
+{
+    if (a->class < ARTIFACTSMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(a->sprite[i], artifacts_sprites[a->class][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected artifactClass in setArtifactSprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
  * Takes a Boss pointer and prepares its sprite field by copying it line by line from bosses_sprites, defined in sprites.h header.
  * @see Boss
  * @see initBossStats

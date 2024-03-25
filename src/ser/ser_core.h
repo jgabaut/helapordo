@@ -21,6 +21,10 @@
 #include <inttypes.h>
 #include "../utils/game_utils.h"
 
+#ifdef HELAPORDO_RAYLIB_BUILD
+#include "../build-rl/game_rl.h"
+#endif
+
 /**
  * Serialized Turncounter. Packed struct.
  * Can be turned into a Turncounter with deser_turnCounter().
