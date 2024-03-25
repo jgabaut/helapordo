@@ -22,7 +22,7 @@ jobs:
       run: autoconf
     - name: Run automake --add-missing
       run: automake --add-missing
-    - name: Run ./configure
+    - name: Run ./configure --enable-debug
       run: ./configure --enable-debug
     - name: Run make
       run: make
