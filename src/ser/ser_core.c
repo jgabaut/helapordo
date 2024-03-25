@@ -553,10 +553,8 @@ bool deser_Enemy(SerEnemy* ser, Enemy* deser) {
     for (size_t i=0; i<ENEMY_SKILL_SLOTS; i++) {
         skillslot_deser_res = deser_Skillslot(&ser->skills[i], deser->skills[i]);
         if (!skillslot_deser_res) {
-            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Skillslot(). Index: {%li}", __func__, i);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Skillslot(). Putting NULL. Index: {%li}", __func__, i);
+            deser->skills[i] = NULL;
         }
     }
     bool turncounter_deser_res = false;
@@ -2018,6 +2016,7 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
 
     deser->current_roomtype = deser->current_roomtype;
     deser->current_room_index = ser->current_room_index;
+    deser->current_enemy_index = ser->current_enemy_index;
 
 
     bool wincon_deser_res = deser_Wincon(&ser->wincon, deser->wincon);
@@ -2089,6 +2088,7 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
 
     ser->current_roomtype = deser->current_roomtype;
     ser->current_room_index = deser->current_room_index;
+    ser->current_enemy_index = deser->current_enemy_index;
 
 
     bool wincon_ser_res = ser_Wincon(deser->wincon, &ser->wincon);
@@ -2126,10 +2126,8 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
 
     bool room_ser_res = ser_Room(deser->current_room, &ser->current_room);
     if (!room_ser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room()", __func__);
-        kls_free(default_kls);
-        kls_free(temporary_kls);
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room() for current room. Putting zeros.", __func__);
+        ser->current_room = (SerRoom){0};
     }
 
     ser->is_localexe = deser->is_localexe;

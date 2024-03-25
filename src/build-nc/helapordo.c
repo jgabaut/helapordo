@@ -1202,45 +1202,92 @@ void gameloop(int argc, char **argv)
                         "Loading room");
                 gamestate->current_room = current_room;
 
+                // TODO Prep loading room memory
+
+                for (int e_idx=0; e_idx < ROOM_ENEMIES_MAX; e_idx++) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing loading room enemy {%i}", __func__, e_idx);
+                    current_room->enemies[e_idx] = KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy, "Enemy", "Loading room enemy");
+                    prepareRoomEnemy(current_room->enemies[e_idx], 1, 3, 1,
+                                         gamestate_kls);
+                }
+
                 bool prep_res = prep_Gamestate(gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                 if (prep_res) {
                     log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
                 } else {
-                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamesate().");
+                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
                     kls_free(default_kls);
                     kls_free(temporary_kls);
                     exit(EXIT_FAILURE);
                 }
 
                 load_info->enemy_index = gamestate->current_enemy_index;
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
                 seed = gamestate->path->seed;
                 log_tag("debug_log.txt", "[TURNOP]",
                         "Seed after loading: [%i]", seed);
                 //TODO: set the other load_info fields properly?
                 if (gamestate->current_room != NULL) {
                     current_room = gamestate->current_room;
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, gamestate->current_room->index);
-                    *(load_info->ptr_to_roomindex) = gamestate->current_room->index;
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomtotalenemies) to {%i}.", __func__, gamestate->current_room->enemyTotal);
-                    *(load_info->ptr_to_roomtotalenemies) = gamestate->current_room->enemyTotal;
-                    if (gamestate->current_room->class == ENEMIES) {
-                        // TODO Load && Store current enemy somewhere.
-                        /*
-                        kls_log(default_kls, "DEBUG", "Prepping Loady Enemy");
-                        load_info->loaded_enemy =
-                            (Enemy *) KLS_PUSH_T_TYPED(gamestate_kls, Enemy, HR_Enemy,
-                                                     "Enemy", "Loaded Enemy");
-                        //FIXME: the structs related to loaded enemy are not loaded on default_kls
-                        prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1,
-                                         gamestate_kls);
+                    switch (current_room->class) {
+                        case ENEMIES: {
+                            assert(load_info->enemy_index >= 0);
+                            load_info->save_type = ENEMIES_SAVE;
+                        }
+                        break;
+                        case HOME: {
+                            load_info->save_type = HOME_SAVE;
+                        }
+                        break;
+                        default: {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    unexpected class for current room. {%i}", __func__, current_room->class);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                            break;
+                        }
+                    }
 
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    save_type: [%s]", __func__, stringFrom_saveType(load_info->save_type));
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, current_room->index);
+                    *(load_info->ptr_to_roomindex) = current_room->index;
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomtotalenemies) to {%i}.", __func__, current_room->enemyTotal);
+                    *(load_info->ptr_to_roomtotalenemies) = current_room->enemyTotal;
+
+                    if (current_room->class == ENEMIES) {
+                        // TODO Load && Store current enemy somewhere.
+                        kls_log(default_kls, "DEBUG", "Prepping Loady Enemy: gamestate->current_room->enemies[%i]", gamestate->current_enemy_index);
+                        if (gamestate->current_enemy_index >= current_room->enemyTotal) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    gmst current_enemy_idex > gmst enemyTotal.", __func__);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                        Enemy** loady_room_enemies = current_room->enemies;
+                        if (loady_room_enemies == NULL) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    Loady room_enemies is NULL.", __func__);
+                            log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", gamestate->current_enemy_index, current_room->enemyTotal);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+
+                        Enemy* loady_enemy = loady_room_enemies[gamestate->current_enemy_index];
+                        if (loady_enemy == NULL) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    Loady enemy_idx is NULL.", __func__);
+                            log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", gamestate->current_enemy_index, current_room->enemyTotal);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        } else {
+                            //log_tag("debug_log.txt", "[DEBUG]", "%s():    Loady enemy: {%s}", __func__, stringFromEClass(loady_enemy->class));
+                        }
+                        load_info->loaded_enemy = loady_enemy;
+                            //(Enemy *) KLS_PUSH_T_TYPED(gamestate_kls, Enemy, HR_Enemy,
+                            //                         "Enemy", "Loaded Enemy");
+                        //FIXME: the structs related to loaded enemy are not loaded on default_kls
                         //Update loading_room_turn_args->enemy pointer
-                        loading_room_turn_args->enemy = load_info->loaded_enemy;
-                        log_tag("debug_log.txt", "[TURNOP]",
-                                "Assigned load_info->loaded_enemy->class == [%s]. loading_room_turn_args->loaded_enemy->class == [%s]",
-                                stringFromEClass(load_info->loaded_enemy->class),
-                                stringFromEClass(loading_room_turn_args->enemy->class));
-                        */
+                        //loading_room_turn_args->enemy = load_info->loaded_enemy;
                     }
                 } else {
                     log_tag("debug_log.txt", "[WARN-TURNOP]",
@@ -1938,9 +1985,6 @@ void gameloop(int argc, char **argv)
                 if (is_bin_load_floor) {
                     update_Equipslots(player);
                     log_tag("debug_log.txt", "[DEBUG]", "Using current_floor from loaded gamestate.");
-                    load_info->done_loading = 1;
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "Set load_info->done_loading to 1.");
                 } else {
                     log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
                     kls_log(default_kls, "DEBUG", "Prepping current_floor.");

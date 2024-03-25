@@ -873,7 +873,7 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
         case 'm': {
             picked = 0;
             handleRogueMenu(gamestate, path, player, room, load_info, kls,
-                            t_kls);
+                                t_kls);
             //Draw current FOV
             draw_floor_view(floor, *current_x, *current_y, win);
             continue;

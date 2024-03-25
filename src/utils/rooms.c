@@ -3213,6 +3213,12 @@ void initRoom_Home(Room *r, int roomIndex, Fighter *f, loadInfo *load_info,
 void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
                       loadInfo *load_info, Koliseo_Temp *t_kls)
 {
+    if (r == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Passed Room was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
     log_tag("debug_log.txt", "[DEBUG]", "Allocated size %lu for Room desc:",
             sizeof("Enemies"));
     kls_log(t_kls->kls, "DEBUG", "Allocated size %lu for Room desc:",
@@ -3238,10 +3244,12 @@ void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
         foes->class = Enemies;
         int enemyIndex = 0;
         int total_foes = r->enemyTotal;
-        if (!(load_info->is_new_game) && !(load_info->done_loading)
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    total_foes: {%i}", __func__, total_foes);
+        if ((load_info->is_new_game == 0) && (load_info->done_loading == 0)
             && (load_info->save_type == ENEMIES_SAVE)) {
             //enemyIndex = load_info->enemy_index;
             r->enemies[enemyIndex] = load_info->loaded_enemy;
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
             total_foes = load_info->total_foes - load_info->enemy_index;
             log_tag("debug_log.txt", "[DEBUG-LOAD]",
                     "Set total_foes to %i, will be used to prepare FoeParty.",
@@ -3273,7 +3281,7 @@ void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
             kls_log(t_kls->kls, "DEBUG",
                     "Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy),
                     enemyIndex, enemyTotal);
-            Enemy *e = KLS_PUSH_T_TYPED(t_kls, Enemy, HR_Enemy, "Enemy", "Enemy");	//&room_enemies[enemyIndex];
+            Enemy* e = KLS_PUSH_T_TYPED(t_kls, Enemy, HR_Enemy, "Enemy", "Enemy");	//&room_enemies[enemyIndex];
             prepareRoomEnemy(e, r->index, r->enemyTotal, enemyIndex, t_kls);
             r->enemies[enemyIndex] = e;
             //Set FoeParty links

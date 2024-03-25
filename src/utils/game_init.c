@@ -1678,6 +1678,12 @@ void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
                       int enemyindex, Koliseo_Temp *t_kls)
 {
 
+    if (e == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Passed Enemy was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
     //Randomise enemy class
     e->class = rand() % (ENEMYCLASSESMAX + 1);
 
