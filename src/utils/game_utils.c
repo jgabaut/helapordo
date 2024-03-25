@@ -3423,7 +3423,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
     int equip_pos = player->equipsBagOccupiedSlots;
     Equip *e = player->equipsBag[equip_pos];
-        //(Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
+    //(Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
 
     //Get the base item and copy the stats to the drop
     Equip *base = &equips[drop];
@@ -3505,7 +3505,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
             kls_log(kls, "DEBUG", "Prepping Perk (%i) for dropped Equip)",
                     e->perksCount);
             Perk *p = e->perks[e->perksCount-1];
-                //(Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
+            //(Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
             p->class = rand() % (PERKSMAX + 1);
             //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
             strcpy(p->name, nameStringFromPerk(p->class));
