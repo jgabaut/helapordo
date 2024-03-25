@@ -1221,6 +1221,12 @@ void hlpd_dbg_features(void)
     fprintf(stderr,"[HLP]    Debug log is off\n");
 #endif
 
+#ifdef HELAPORDO_EMOJI_ICONS
+    fprintf(stderr,"[HLP]    Emoji icons are enabled\n");
+#else
+    fprintf(stderr,"[HLP]    Emoji icons are not enabled\n");
+#endif
+
 #ifdef ANVIL__helapordo__
 #ifdef INVIL__helapordo__HEADER__
     fprintf(stderr,"[HLP]    Built with invil\n");

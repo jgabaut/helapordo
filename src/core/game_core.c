@@ -534,9 +534,16 @@ FoePartyBaseStats basefoepartystats[FOEPARTY_CLASS_MAX + 1] = {
 };
 
 #ifndef _WIN32
+
+#ifdef HELAPORDO_EMOJI_ICONS
 const wchar_t HEAD_CHAR_ICON = 0x1F3A9;
 const wchar_t TORSO_CHAR_ICON = 0x1F455;
 const wchar_t LEGS_CHAR_ICON = 0x1F45F;
+#else
+const wchar_t HEAD_CHAR_ICON = 'H';
+const wchar_t TORSO_CHAR_ICON = 'T';
+const wchar_t LEGS_CHAR_ICON = 'L';
+#endif // HELAPORDO_EMOJI_ICONS
 #else
 const wchar_t HEAD_CHAR_ICON = 'H';
 const wchar_t TORSO_CHAR_ICON = 'T';

@@ -39,6 +39,11 @@ AC_ARG_ENABLE([anvil],
   [enable_anvil=$enableval],
   [enable_anvil=yes])
 
+AC_ARG_ENABLE([emoji],
+  [AS_HELP_STRING([--enable-emoji], [Enable emoji icons of equips])],
+  [enable_emoji=$enableval],
+  [enable_emoji=yes])
+
 
 # Define the include and library paths based on the host system
 case "${host_os}" in
@@ -172,6 +177,7 @@ AM_CONDITIONAL([USE_ANVIL_BUILD], [test "$enable_anvil" = "yes"])
 AM_CONDITIONAL([WINDOWS_BUILD], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([DARWIN_BUILD], [test "$build_mac" = "yes"])
 AM_CONDITIONAL([LINUX_BUILD], [test "$build_linux" = "yes"])
+AM_CONDITIONAL([USE_EMOJI_BUILD], [test "$enable_emoji" = "yes"])
 
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
