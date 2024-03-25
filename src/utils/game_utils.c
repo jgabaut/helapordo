@@ -126,123 +126,6 @@ void log_Win_EnvVars(void)
 }
 #endif
 
-#ifdef HELAPORDO_CURSES_BUILD
-bool set_Saveslot_name(FILE *file, Saveslot *sv)
-{
-
-    //printf("\nLoading game...\n");
-    log_tag("debug_log.txt", "[LOAD]", "Starting loading from text file.");
-
-//      FILE* file = fopen("save.txt", "r");
-    if (file == NULL) {
-        endwin();
-        printf("Error with file while trying to load!\n");
-        return false;
-    }
-    char buf[500];
-    char comment[300];
-    int num_value = -1;
-    const char version[] = "v0.1.6";
-
-    int scanres = -1;
-    /* File version scanning */
-    scanres = fscanf(file, "%200s\n", buf);
-    if (scanres != 1) {
-        log_tag("debug_log.txt", "[DEBUG]",
-                "Bad fscanf() result in %s(), expected [%i] was (%i)", __func__,
-                1, scanres);
-        endwin();
-        fprintf(stderr, "Error while loading game.");
-        return false;
-    }
-
-    int check = -1;
-    if (!((check = strcmp(buf, version)) == 0)) {
-        log_tag("debug_log.txt", "[LOAD-ERROR]",
-                "Failed save format version check. Was [%s]. Quitting.", buf);
-        endwin();
-        fprintf(stderr, "[ERROR]    File version mismatch on load.\n");
-        return false;
-    };
-    log_tag("debug_log.txt", "[LOAD]", "Loaded save format version: (%s).",
-            buf);
-
-    /* Save type scanning */
-    scanres = fscanf(file, "%200s\n", buf);
-    if (scanres != 1) {
-        log_tag("debug_log.txt", "[DEBUG]",
-                "Bad fscanf() result in %s(), expected [%i] was (%i)", __func__,
-                1, scanres);
-        endwin();
-        fprintf(stderr, "Error while loading game.");
-        return false;
-    }
-
-    check = -1;
-    if (!
-        (((check = strcmp(buf, stringFrom_saveType(ENEMIES_SAVE)) == 0))
-         || ((check = strcmp(buf, stringFrom_saveType(HOME_SAVE))) == 0))) {
-        log_tag("debug_log.txt", "[LOAD-ERROR]",
-                "%s():  Failed save type check, was [%s]. Quitting.", buf);
-        endwin();
-        fprintf(stderr, "[ERROR]    Save type version mismatch on load.\n");
-        return false;
-    };
-    log_tag("debug_log.txt", "[LOAD]", "Loaded save type: (%s).", buf);
-
-    /* Gamemode scanning */
-    scanres = fscanf(file, "%200[^#]# %s\n", buf, comment);
-    if (scanres != 2) {
-        log_tag("debug_log.txt", "[DEBUG]",
-                "Bad fscanf() result in %s(), expected [%i] was (%i)", __func__,
-                2, scanres);
-        endwin();
-        fprintf(stderr, "Error while loading game.");
-        return false;
-    }
-    log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-    sscanf(buf, "%3i", &num_value);
-    int gmd = num_value;
-    log_tag("debug_log.txt", "[LOAD]", "Gamemode was: {%i}", gmd);
-
-    /* Fighter scanning */
-    scanres = fscanf(file, "%200s\n", buf);
-    if (scanres != 1) {
-        log_tag("debug_log.txt", "[DEBUG]",
-                "Bad fscanf() result in %s(), expected [%i] was (%i)", __func__,
-                1, scanres);
-        endwin();
-        fprintf(stderr, "Error while loading game.");
-        return false;
-    }
-    scanres = fscanf(file, "%200[^#]# %200s\n", buf, comment);
-    if (scanres != 2) {
-        log_tag("debug_log.txt", "[DEBUG]",
-                "Bad fscanf() result in %s(), expected [%i] was (%i)", __func__,
-                2, scanres);
-        endwin();
-        fprintf(stderr, "Error while loading game.");
-        return false;
-    }
-    log_tag("debug_log.txt", "[LOAD]", "Loaded %s: %s.", comment, buf);
-    strncpy(sv->name, buf, 50);
-    sv->name[49] = '\0';
-    return true;
-}
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
-#else
-bool set_Saveslot_name(FILE *file, Saveslot *sv)
-{
-    (void) file;
-    (void) sv;
-    printf("%s():    TODO - implement set_Saveslot_namefor rl-build.\n", __func__);
-    return false;
-}
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
  * @param fighter The allocated Fighter to debug.
@@ -337,6 +220,11 @@ void dbg_Fighter(Fighter *fighter)
             fighter->balance);
     log_tag("debug_log.txt", "[FIGHTER]", "Fighter keys balance: { %i }",
             fighter->keys_balance);
+
+    log_tag("debug_log.txt", "[FIGHTER]", "Fighter floor X position: { %i }",
+            fighter->floor_x);
+    log_tag("debug_log.txt", "[FIGHTER]", "Fighter floor Y position: { %i }",
+            fighter->floor_y);
 }
 
 /**
@@ -380,7 +268,7 @@ void dbg_Path(Path *path)
 
 /**
  * Debugs the passed (preallocated) Wincon with log_tag().
- * @param gmst The allocated countStats to debug.
+ * @param wc The allocated countStats to debug.
  */
 void dbg_Wincon(Wincon *wc)
 {
@@ -398,7 +286,7 @@ void dbg_Wincon(Wincon *wc)
 
 /**
  * Debugs the passed (preallocated) countStats with log_tag().
- * @param gmst The allocated countStats to debug.
+ * @param stats The allocated countStats to debug.
  */
 void dbg_countStats(countStats *stats)
 {
@@ -663,10 +551,11 @@ void dbg_GameScreen(GameScreen * scr)
  * @param current_room_index Index for current Room.
  * @param current_enemy_index Index for current Enemy.
  * @param current_floor Pointer to current Floor, initialised if gmst->gamemode == Rogue.
+ * @param current_room Pointer to current Room.
  */
 void update_Gamestate(Gamestate *gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
-                      int current_enemy_index, Floor *current_floor)
+                      int current_enemy_index, Floor *current_floor, Room* current_room)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s().",
@@ -683,6 +572,26 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
                     "Passed current floor was NULL in %s().", __func__);
         } else {
             gmst->current_floor = current_floor;
+        }
+    }
+    gmst->current_room = current_room;
+}
+
+/**
+ * Updates the passed Fighter's Equipslots item fields, by reading the equipsBag field and setting the equipped ones.
+ * @param f The Fighter to update.
+ */
+void update_Equipslots(Fighter* f)
+{
+    for (int i=0; i < f->equipsBagOccupiedSlots; i++) {
+        Equip* e = f->equipsBag[i];
+        if (e == NULL) {
+            log_tag("debug_log.txt", "[WARN]", "%s():    equipsBag at index [%i] is NULL.", __func__, i);
+            continue;
+        }
+        if (e->equipped) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting Equip [%s] [bag idx: %i] to Fighter's equipslot.", __func__, stringFromEquips(e->class), i);
+            f->equipslots[e->type]->item = e;
         }
     }
 }
@@ -894,7 +803,7 @@ void resolve_staticPath(char static_path[500])
     strncat(static_folder_path_global, local_install_static_folder_path, 50);
     struct stat sb;
 
-    if (stat(static_folder_path_wd, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+    if (G_USE_CURRENTDIR == 1 && stat(static_folder_path_wd, &sb) == 0 && S_ISDIR(sb.st_mode)) {
         //sprintf(msg, "[DEBUG]    resolve_staticPath(): Found \"/static/\" dir in working directory (%s).\n",static_folder_path_wd);
         strcpy(static_path, static_folder_path_wd);
     } else {
@@ -962,6 +871,7 @@ void loadLore(char **lore_strings, int loreKind)
 /**
  * Takes a path pointer, a roadFork value pointer, a room type pointer, and an integer.
  * Depending on GAMEMODE (and eventually roadFork value), sets the room type pointer to a roomClass value.
+ * @param path Pointer to Path.
  * @param roadFork_value The pointer value of the roadfork that we must use as result.
  * @param room_type The pointer value of the room type to set.
  * @param roomsDone The total of rooms completed.
@@ -1193,6 +1103,12 @@ void hlpd_dbg_features(void)
     fprintf(stderr,"[HLP]    Debug log is enabled\n");
 #else
     fprintf(stderr,"[HLP]    Debug log is off\n");
+#endif
+
+#ifdef HELAPORDO_EMOJI_ICONS
+    fprintf(stderr,"[HLP]    Emoji icons are enabled\n");
+#else
+    fprintf(stderr,"[HLP]    Emoji icons are not enabled\n");
 #endif
 
 #ifdef ANVIL__helapordo__
@@ -1643,7 +1559,7 @@ char *descStringFromChest(int c)
  * Takes a integer and returns the corresponding FoeParty desc string by the inner array position.
  * Correct result is only possible by having the enum values in a consistent order with the string array.
  * @see foePartyClass
- * @param c The integer/foePartyClass.
+ * @param fp The integer/foePartyClass.
  * @return String corresponding to the FoeParty desc.
  */
 char *stringFromFoePartyClass(foePartyClass fp)
@@ -2877,7 +2793,7 @@ void emptyEquips(Fighter *player)
  * @see MAXLUCK
  * @param seed An integer seed.
  * @param kls The Koliseo used for allocation.
- * @param current_saveslot The Saveslot used to init the Path.
+ * @param path_to_savefile Path to savefile.
  * @return A Path pointer with stats.
  */
 Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
@@ -2895,6 +2811,7 @@ Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
                                     msg);
     sprintf(msg, "Seed: %i", seed);
     strcpy(save->name, msg);
+    p->seed = seed;
     sprintf(msg, "%s", path_to_savefile);
     strcpy(save->save_path, msg);
     p->current_saveslot = save;
@@ -3236,8 +3153,48 @@ void setEquipSprite(Equip *e)
             strcpy(e->sprite[i], equips_sprites[e->class][i]);
         }
     } else {
+        log_tag("debug_log.txt", "[WARN]",
+                "%s():    Unexpected equipClass {%i}.", __func__, e->class);
+        return;
+    }
+}
+
+/**
+ * Takes a Consumable pointer and prepares its sprite field by copying it line by line from consumables_sprites, defined in sprites.h header.
+ * @see Consumable
+ * @see initPlayerStats
+ * @see consumables_sprites
+ * @param c The Consumable pointer whose sprite field will be initialised.
+ */
+void setConsumableSprite(Consumable *c)
+{
+    if (c->class < CONSUMABLESMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(c->sprite[i], consumables_sprites[c->class][i]);
+        }
+    } else {
         fprintf(stderr,
-                "[ERROR]    Unexpected equipClass in setEquipSprite().\n");
+                "[ERROR]    Unexpected consumableClass in setConsumableSprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a Artifact pointer and prepares its sprite field by copying it line by line from artifacts_sprites, defined in sprites.h header.
+ * @see Artifact
+ * @see gameloop()
+ * @see artifacts_sprites
+ * @param a The Artifact pointer whose sprite field will be initialised.
+ */
+void setArtifactSprite(Artifact *a)
+{
+    if (a->class < ARTIFACTSMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(a->sprite[i], artifacts_sprites[a->class][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected artifactClass in setArtifactSprite().\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -3338,6 +3295,14 @@ void printEquipStats(Equip *e)
 void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 {
 
+    assert(player->equipsBagOccupiedSlots >= 0);
+
+    if (player->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {
+        // TODO: Handle full bag by asking player if we throw something away
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Player equip bag was full. Not dropping.", __func__);
+        return;
+    }
+
     //Select a basic item from the list
     int drop = rand() % (EQUIPSMAX + 1);
     //Randomise quality
@@ -3345,8 +3310,10 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
     //Prepare the item
     kls_log(kls, "DEBUG", "Prepping dropped Equip");
-    Equip *e =
-        (Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
+
+    int equip_pos = player->equipsBagOccupiedSlots;
+    Equip *e = player->equipsBag[equip_pos];
+    //(Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip", "Equip");
 
     //Get the base item and copy the stats to the drop
     Equip *base = &equips[drop];
@@ -3427,14 +3394,15 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
                     "Prepping Perk (%i) for dropped Equip)", e->perksCount);
             kls_log(kls, "DEBUG", "Prepping Perk (%i) for dropped Equip)",
                     e->perksCount);
-            Perk *p =
-                (Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
+            Perk *p = e->perks[e->perksCount-1];
+            //(Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
             p->class = rand() % (PERKSMAX + 1);
             //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
             strcpy(p->name, nameStringFromPerk(p->class));
             //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
             strcpy(p->desc, descStringFromPerk(p->class));
             p->innerValue = 1;
+            // Set perk -- Unnecessary
             e->perks[(e->perksCount - 1)] = p;
         }
     }
@@ -3468,6 +3436,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     log_tag("debug_log.txt", "[DEBUG-DROPS]", "Found Equip:    %s.",
             stringFromEquips(drop));
 
+    /*
     if (player->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {	//Handle full bag by asking player if we throw something away
         //FIXME: The handling of full bag event is a mess as it does not support curses.
         lightRed();
@@ -3524,15 +3493,13 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
         if (n != 0) {		//Abort deletion, drop will not be awared.
 
-            /*
-               int perkscount = e->perksCount;
-               if (perkscount > 0) {
-               for (int i=0; i < perkscount; i++) {
-               free(e->perks[i]);
-               }
-               }
-               free(e);
-             */
+               //int perkscount = e->perksCount;
+               //if (perkscount > 0) {
+               //for (int i=0; i < perkscount; i++) {
+               //free(e->perks[i]);
+               //}
+               //}
+               //free(e);
             log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
                     "Equip was not taken.\n");
             return;
@@ -3540,20 +3507,16 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
         Equip *toDelete = (Equip *) player->equipsBag[selected];
         int perkscount = toDelete->perksCount;
-        /*
-           if (perkscount > 0) {
-           for (int i=0; i < perkscount; i++) {
-           free(toDelete->perks[i]);
-           }
-           }
-         */
+           //if (perkscount > 0) {
+           //for (int i=0; i < perkscount; i++) {
+           //free(toDelete->perks[i]);
+           //}
+           //}
         log_tag("debug_log.txt", "[DEBUG-EQUIPS]",
                 "Equip %s (%i Perks) was taken by deleting %s.\n",
                 stringFromEquips(e->class), perkscount,
                 stringFromEquips(toDelete->class));
-        /*
-           free(toDelete);
-         */
+           //free(toDelete);
 
         //Add drop to player bag replacing the one at the selected index
         player->equipsBag[selected] = (struct Equip *)e;
@@ -3564,8 +3527,9 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
         napms(500);
         return;
     };				//End if bag is full
+    */
 
-    //Add drop to player bag
+    //Add drop to player bag -- Unnecessary
     player->equipsBag[player->earliestBagSlot] = (struct Equip *)e;
 
     player->earliestBagSlot += 1;	//Advance equips bage pointer
@@ -4133,10 +4097,10 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
  * Asks the user is they want to continue and returns the choice.
  * @return int True for trying again, false otherwise.
  */
-int retry(void)
+int retry(int seed)
 {
     lightGreen();
-    printf("\n\nYou died. Want to try again?\n\n\t\t[type no / yes]\n\n");
+    printf("\n\nYou died. Want to try again?\n\nSeed: [%i]\n\n\n\t\t[type no / yes]\n\n", seed);
     white();
     char c[25] = { 0 };
     if (fgets(c, sizeof(c), stdin) != NULL) {
@@ -4891,6 +4855,7 @@ int getBoost(int lvl, int luck)
  * @see handleRoom_Shop()
  * @see Fighter
  * @param f The Fighter pointer at hand.
+ * @param t_kls The Koliseo_Temp used for temp allocations.
  */
 void sell_all_equips(Fighter *f, Koliseo_Temp *t_kls)
 {

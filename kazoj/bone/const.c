@@ -2,6 +2,8 @@
 #include <string.h>
 #define HELAPORDO_CURSES_BUILD
 #include "../../src/core/game_core.h"
+#include "../../src/ser/ser_core.h"
+#include "../../src/utils/bin_saves.h"
 
 void fail(char* msg, int ex, int val) {
   printf("[Fail]    %s, expected (%i), was %i\n",msg,ex,val);
@@ -9,7 +11,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.4.3") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.4.4-dev") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (HLP_MAX_INDEX == 31) ) {
@@ -48,6 +50,9 @@ int main(void) {
  if ( ! (MAX_ROGUE_FLOORS == 17) ) {
    fail("MAX_ROGUE_FLOORS",17,MAX_ROGUE_FLOORS);
  };
+ if ( ! (SAVETYPE_MAX == 2) ) {
+   fail("SAVETYPE_MAX",2, SAVETYPE_MAX);
+ }
  if ( ! (CONSUMABLESMAX == 5) ) {
    fail("CONSUMABLESMAX",5,CONSUMABLESMAX);
  };
@@ -95,6 +100,18 @@ int main(void) {
  };
  if ( ! (PERKSMAX == 8) ) {
    fail("PERKSMAX",8,PERKSMAX);
+ };
+ if ( ! FIGHTER_NAME_BUFSIZE == 50 ) {
+   fail("FIGHTER_NAME_BUFSIZE",50,FIGHTER_NAME_BUFSIZE);
+ };
+ if ( ! SERFIGHTER_NAME_BUFSIZE == 50 ) {
+   fail("SERFIGHTER_NAME_BUFSIZE",50,SERFIGHTER_NAME_BUFSIZE);
+ };
+ if ( ! SERSAVEHEADER_BUFSIZE == 15 ) {
+   fail("SERSAVEHEADER_BUFSIZE", 15, SERSAVEHEADER_BUFSIZE);
+ };
+ if ( ! SAVEHEADER_BUFSIZE == 15 ) {
+   fail("SAVEHEADER_BUFSIZE", 15, SAVEHEADER_BUFSIZE);
  };
  if ( ! (EQUIPPERKSMAX == 2) ) {
    fail("EQUIPPERKSMAX",2,EQUIPPERKSMAX);

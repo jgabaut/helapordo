@@ -19,6 +19,14 @@
 #ifndef GAME_CORE_H
 #define GAME_CORE_H
 
+#ifndef HELAPORDO_OS
+#define HELAPORDO_OS "unknown"
+#endif
+
+#ifndef HELAPORDO_MACHINE
+#define HELAPORDO_MACHINE "unknown"
+#endif
+
 #ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
@@ -191,6 +199,12 @@ extern int GS_AUTOSAVE_ON;
  * Global variable for a tutorial launch.
  */
 extern int G_DOTUTORIAL_ON;
+
+/**
+ * Global variable for using current directory to store game run files.
+ */
+extern int G_USE_CURRENTDIR;
+
 /**
  * Current major release.
  */
@@ -204,14 +218,23 @@ extern int G_DOTUTORIAL_ON;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 3
+#define HELAPORDO_PATCH_VERSION 4
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.3"
+#define VERSION "1.4.4"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
+
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.1"
+
+/**
+ * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
+ */
+static const int HELAPORDO_API_VERSION_INT =
+    (HELAPORDO_MAJOR_VERSION * 1000000 + HELAPORDO_MINOR_VERSION * 10000 + HELAPORDO_PATCH_VERSION * 100);
+/**< Represents current version with numeric format.*/
 
 /**
  * Default savepath.
@@ -231,6 +254,7 @@ extern int G_DOTUTORIAL_ON;
 typedef struct {
     char name[50];     /**< Name string for the saveslot.*/
     char save_path[255];     /**< Path to savefile*/
+    int index; /**< Index of saveslot.*/
 } Saveslot;
 
 /**
@@ -900,6 +924,8 @@ typedef void (*callback_artifact_t)(struct Fighter *, struct Enemy *,
  */
 typedef void (*callback_void_t)(void);
 
+#define FIGHTER_NAME_BUFSIZE 50
+
 /**
  * Represents the entity initialised from a fighterClass.
  * @see fighterClass
@@ -911,7 +937,7 @@ typedef void (*callback_void_t)(void);
  * @see countStats
  */
 typedef struct Fighter {
-    char name[50];     /**< Name string*/
+    char name[FIGHTER_NAME_BUFSIZE];     /**< Name string*/
     fighterClass class;	    /**< Defines which kind of fighterClass the instance relates to*/
     int hp;	/**< Current hp value*/
     int atk;	 /**< Current atk value*/
@@ -943,7 +969,7 @@ typedef struct Fighter {
 
     struct Equipslot *equipslots[EQUIPZONES + 1];   /**< Array with all the Equipslot*/
     struct Equip *equipsBag[EQUIPSBAGSIZE + 1];	  /**< Array with all the Equip found*/
-    struct Consumable *consumablesBag[CONSUMABLESMAX + 1];   /**< Array with all the Consumables found*/
+    Consumable *consumablesBag[CONSUMABLESMAX + 1];   /**< Array with all the Consumables found*/
     struct Artifact *artifactsBag[ARTIFACTSMAX + 1];   /**< Array with all the Artifacts found*/
 
     int equipsBagOccupiedSlots;	    /**< Keeps track of how many slots are occupied.*/
@@ -964,6 +990,9 @@ typedef struct Fighter {
     int balance;     /**< Amount of currency owned*/
     int keys_balance;	  /**< Amount of keys owned*/
     char sprite[8][20];	    /**< Char matrix to hold the encoded sprite.*/
+
+    int floor_x; /**< Current x position in floor.*/
+    int floor_y; /**< Current y position in floor.*/
 
     //TODO eval this callback bit if we need to have some without nesting in another turncounter
     //callback_void_t callback_counter_ptrs[COUNTERSMAX]; /**< Array of callbacks for turnCounter functions.*/
@@ -1176,6 +1205,7 @@ typedef struct Path {
     int loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     Wincon *win_condition;     /**> Defines the win condition for the current game.*/
     Saveslot *current_saveslot;	    /** Defines current Saveslot for the game.*/
+    int seed; /** Contains seed for current run.*/
 } Path;
 
 /**
@@ -1665,13 +1695,14 @@ typedef struct Floor {
 typedef enum saveType {
     HOME_SAVE = 0,
     ENEMIES_SAVE = 1,
+    FLOORMENU_SAVE = 2,
 } saveType;
 
 /**
  * Maximum value of saveType values.
  * @see saveType
  */
-#define SAVETYPE_MAX 1
+#define SAVETYPE_MAX 2
 
 /**
  * Array with the name strings for saveType.
@@ -1727,6 +1758,7 @@ typedef struct {
     Gamemode gamemode;	   /**< Keeps track of current Gamemode.*/
 
     Floor *current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
+    Room *current_room; /**< Pointer to current room.*/
 #ifdef HELAPORDO_CURSES_BUILD
     GameScreen *screen; /**< Pointer to main screen.*/
 #else
@@ -2002,4 +2034,13 @@ OP_res OP_res_from_fightResult(fightResult fr);
 #define CHEST_COLS 18 /**< Defines the number of cols for the chest animation.*/
 #define CHEST_FRAMETIME 67 /**< Defines for how many millisecs a sprite should stay on screen for the chest animation.*/
 
+#define CURSES_BINSAVE_NAME "save-nc.bin" /**< Defines file name used for saveheader binary save. */
+#define RL_BINSAVE_NAME "save-rl.bin" /**< Defines file name used for saveheader binary save. */
+
+#define CURSES_GMSTSAVE_NAME "run-nc.bin" /**< Defines file name used for gamestate binary save. */
+#define RL_GMSTSAVE_NAME "run-rl.bin" /**< Defines file name used for gamestate binary save. */
+
+extern const wchar_t HEAD_CHAR_ICON;
+extern const wchar_t TORSO_CHAR_ICON;
+extern const wchar_t LEGS_CHAR_ICON;
 #endif

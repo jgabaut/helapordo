@@ -427,6 +427,23 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
         if (GAMEMODE == Rogue) {
             log_tag("debug_log.txt", "[WARN]",
                     "GAMEMODE was [Rogue] in turnOP(OP_SAVE)");
+            if (G_EXPERIMENTAL_ON == 1) {
+                bool did_saveheader_init = false;
+                char static_path[500];
+                // Set static_path value to the correct static dir path
+                resolve_staticPath(static_path);
+                SaveHeader* current_saveHeader = prep_saveHeader(static_path, kls, true, &did_saveheader_init, path->current_saveslot->index);
+                log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+                bool prep_res = prep_Gamestate(gmst, static_path, 0, default_kls, true); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                if (prep_res) {
+                    log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+                } else {
+                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamesate().");
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+            }
             res = NO_OP;
             break;
         }
@@ -493,6 +510,17 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             load_info->save_type = HOME_SAVE;
             log_tag("debug_log.txt", "[TURNOP]",
                     "Setting save_type to HOME_SAVE. [%s]",
+                    stringFrom_saveType(load_info->save_type));
+        }
+        break;
+        case BASIC: {
+            enemy_index = -1;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (-1) (OP_SAVE), isBoss == -1");
+            isBoss = -1;
+            load_info->save_type = FLOORMENU_SAVE;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting save_type to FLOORMENU_SAVE. [%s]",
                     stringFrom_saveType(load_info->save_type));
         }
         break;

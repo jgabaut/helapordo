@@ -194,26 +194,34 @@ int get_saveslot_index(void)
         // Set static_path value to the correct static dir path
         resolve_staticPath(static_path);
 
+        FILE* svfile = NULL;
+        if (G_EXPERIMENTAL_ON == 0) {
 #ifndef _WIN32
-        sprintf(path_to_sv_file, "%s/%s", static_path,
-                default_saveslots[i].save_path);
+            sprintf(path_to_sv_file, "%s/%s/%s", static_path,
+                    default_saveslots[i].save_path, "save.txt");
 #else
-        sprintf(path_to_sv_file, "%s\\%s", static_path,
-                default_saveslots[i].save_path);
+            sprintf(path_to_sv_file, "%s\\%s\\%s", static_path,
+                    default_saveslots[i].save_path, "save.txt");
 #endif
-        FILE *svfile = fopen(path_to_sv_file, "r");
+            svfile = fopen(path_to_sv_file, "r");
+        }
         if (!svfile) {
-            log_tag("debug_log.txt", "[WARN]",
-                    "%s(): Failed opening savefile {%i} at \"%s\".", __func__,
-                    i, path_to_sv_file);
-            continue;
+            if (G_EXPERIMENTAL_ON == 0) {
+                log_tag("debug_log.txt", "[WARN]",
+                        "%s(): Failed opening savefile {%i} at \"%s\".", __func__,
+                        i, path_to_sv_file);
+                continue;
+            } else {
+                log_tag("debug_log.txt", "[LOAD]",
+                        "%s():    Deferring file opening to ser_Saveslot_name().", __func__);
+            }
         }
         if (!set_Saveslot_name(svfile, &default_saveslots[i])) {
             log_tag("debug_log.txt", "[WARN]",
                     "%s(): Failed reading savefile {%i} at \"%s\".", __func__,
                     i, path_to_sv_file);
         };
-        fclose(svfile);
+        if (svfile) fclose(svfile);
     }
 
     saveslots_win = newwin(12, 24, 2, 5);
@@ -743,9 +751,26 @@ void print_in_panel(WINDOW *win, int starty, int startx, int width, Enemy *e,
            mvwprintw(win, y, x, "%s",stringFromClass(f->class));
          */
 
+        x = startx +2;
+        y += 2;
+
+        if (G_EXPERIMENTAL_ON == 1) {
+            wchar_t equip_chars[3] = {
+                [HEAD] = HEAD_CHAR_ICON,
+                [TORSO] = TORSO_CHAR_ICON,
+                [LEGS] = LEGS_CHAR_ICON,
+            };
+            for (int i=0; i< EQUIPZONES+1; i++) {
+                if (f->equipslots[i]->active) {
+                    mvwprintw(win, y, x, "%lc", equip_chars[i]);
+                    x += 3;
+                }
+            }
+        }
+
         temp = (width - (f->hp / 10)) / 2;
         x = startx + 2;
-        y += 4;
+        y += 2;
         if ((f->hp / (f->totalhp / 1.0)) <= 0.25) {
             wattron(win, COLOR_PAIR(S4C_RED));
             resetColor = 1;
@@ -1697,46 +1722,6 @@ void setFighterSprite(Fighter *f)
 }
 
 /**
- * Takes a Consumable pointer and prepares its sprite field by copying it line by line from consumables_sprites, defined in sprites.h header.
- * @see Consumable
- * @see initPlayerStats
- * @see consumables_sprites
- * @param c The Consumable pointer whose sprite field will be initialised.
- */
-void setConsumableSprite(Consumable *c)
-{
-    if (c->class < CONSUMABLESMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(c->sprite[i], consumables_sprites[c->class][i]);
-        }
-    } else {
-        fprintf(stderr,
-                "[ERROR]    Unexpected consumableClass in setConsumableSprite().\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
- * Takes a Artifact pointer and prepares its sprite field by copying it line by line from artifacts_sprites, defined in sprites.h header.
- * @see Artifact
- * @see gameloop()
- * @see artifacts_sprites
- * @param a The Artifact pointer whose sprite field will be initialised.
- */
-void setArtifactSprite(Artifact *a)
-{
-    if (a->class < ARTIFACTSMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(a->sprite[i], artifacts_sprites[a->class][i]);
-        }
-    } else {
-        fprintf(stderr,
-                "[ERROR]    Unexpected artifactClass in setArtifactSprite().\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
  * Takes a Equipslot pointer and prepares its sprite field by copying it line by line from equipzones_sprites, defined in sprites.h header.
  * @see Equipslot
  * @see initEquipSlots()
@@ -2035,6 +2020,14 @@ void updateEquipslotsWin(WINDOW *w, Fighter *f)
         }
 
         if (selected->active) {
+            if (selected->item == NULL) {
+                endwin();
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Equipslot {%s} [%i] was active but Equip was NULL.", __func__, stringFromEquipzones(k), k);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+
             wattron(w, COLOR_PAIR(S4C_BRIGHT_GREEN));
             mvwprintw(w, y + 1, x, "    %s",
                       stringFromEquipzones(selected->type));
@@ -2330,6 +2323,14 @@ void printLoadout(Fighter *f)
             for (int i = 0; i < count; i++) {
                 Perk *p = selected->perks[i];
 
+                if (p == NULL) {
+                    endwin();
+                    log_tag("debug_log.txt", "[ERROR]", "%s():    equip {%s} Perk {%s} [idx:%i] was NULL.", __func__, stringFromEquips(selected->class), nameStringFromPerk(i), i);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+
                 mvwprintw(w, y + 9 + i, x, " x%i %s", p->innerValue,
                           nameStringFromPerk(p->class));
             };
@@ -2418,7 +2419,16 @@ void display_printFoeParty(FoeParty *fp)
         log_tag("debug_log.txt", "[FOEPARTY]", "Cell (%i) status was (%i)", i,
                 isalive);
         if (isalive == 1) {
-            Enemy *curr_foe = fp->enemy_foes[fp->current_index];
+            int show_next = G_DEBUG_ON;
+            //TODO: add ability to show next foes in advance
+            Enemy *curr_foe = NULL;
+            if (show_next == 0) {
+                log_tag("debug_log.txt", "[FOEPARTY]", "Hiding upcoming enemies: setting curr_foe to fp->enemy_foes[fp->current_index] (index {%i})", fp->current_index);
+                curr_foe = fp->enemy_foes[fp->current_index];
+            } else {
+                log_tag("debug_log.txt", "[FOEPARTY]", "Setting curr_foe to fp->enemy_foes[%i]", i);
+                curr_foe = fp->enemy_foes[i];
+            }
             mvwprintw(wins[i], 2, 2, "%s", stringFromEClass(curr_foe->class));
             mvwprintw(wins[i], 4, 2, "Hp: (%i/%i)", curr_foe->hp,
                       curr_foe->totalhp);
@@ -3907,6 +3917,7 @@ void handleTutorial(void)
  * User is asked for turn choice and according to the input, the corresponding action will be called.
  * @see Fighter
  * @see Path
+ * @param gmst Pointer to Gamestate.
  * @param p The Path pointer.
  * @param player The Fighter pointer at hand.
  * @param room The Room pointer for current room.

@@ -80,35 +80,47 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     fightResult fightStatus = FIGHTRES_NO_DMG;
     log_tag("debug_log.txt", "[ROOM]", "New HOME room, index %i", room->index);
 
-    if (GS_AUTOSAVE_ON == 1 && GAMEMODE != Rogue) {
+    if (GS_AUTOSAVE_ON == 1) {
+        bool do_autosave = false;
+        if (GAMEMODE == Rogue) {
+            if (G_EXPERIMENTAL_ON == 1) {
+                do_autosave = true;
+            } else {
+                do_autosave = false;
+            }
+        } else {
+            do_autosave = true;
+        }
         log_tag("debug_log.txt", "[DEBUG]", "Doing autosave.");
 
-        char path_to_autosave_file[800];
-        char autosave_static_path[500];
-        char autosave_file_name[300];
-        strcpy(autosave_file_name, p->current_saveslot->save_path);
+        if (do_autosave) {
+            char path_to_autosave_file[820];
+            char autosave_static_path[500];
+            char autosave_file_name[300];
+            strcpy(autosave_file_name, p->current_saveslot->save_path);
 
-        // Set static_path value to the correct static dir path
-        resolve_staticPath(autosave_static_path);
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(autosave_static_path);
 
-        sprintf(path_to_autosave_file, "%s/%s", autosave_static_path,
-                autosave_file_name);
+            sprintf(path_to_autosave_file, "%s/%s/%s", autosave_static_path,
+                    autosave_file_name, "save.txt");
 
-        autosave_file = fopen(path_to_autosave_file, "w");
-        if (autosave_file == NULL) {
-            fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                    path_to_autosave_file);
-            exit(EXIT_FAILURE);
-        } else {
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Assigning autosave_file pointer to args->save_file. Path: [%s]",
-                    path_to_autosave_file);
-            args->save_file = autosave_file;
+            autosave_file = fopen(path_to_autosave_file, "w");
+            if (autosave_file == NULL) {
+                fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
+                        path_to_autosave_file);
+                exit(EXIT_FAILURE);
+            } else {
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Assigning autosave_file pointer to args->save_file. Path: [%s]",
+                        path_to_autosave_file);
+                args->save_file = autosave_file;
+            }
+            turnOP(turnOP_from_turnOption(SAVE), args, kls, t_kls);
+            fclose(autosave_file);
+            log_tag("debug_log.txt", "[DEBUG]", "Closed autosave_file pointer.");
+            log_tag("debug_log.txt", "[DEBUG]", "Done autosave.");
         }
-        turnOP(turnOP_from_turnOption(SAVE), args, kls, t_kls);
-        fclose(autosave_file);
-        log_tag("debug_log.txt", "[DEBUG]", "Closed autosave_file pointer.");
-        log_tag("debug_log.txt", "[DEBUG]", "Done autosave.");
     }
 
     turnOption choice = 999;
@@ -291,7 +303,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     picked_explore = 1;
                 }
                 if (choice == SAVE) {
-                    char path_to_savefile[800];
+                    char path_to_savefile[820];
                     char static_path[500];
                     char savefile_name[300];
                     sprintf(savefile_name, "%s",
@@ -303,8 +315,8 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                             "handleRoom_Home:  savefile_name is [%s].",
                             savefile_name);
 
-                    sprintf(path_to_savefile, "%s/%s", static_path,
-                            savefile_name);
+                    sprintf(path_to_savefile, "%s/%s/%s", static_path,
+                            savefile_name, "save.txt");
 
                     save_file = fopen(path_to_savefile, "w");
                     if (save_file == NULL) {
@@ -469,7 +481,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
     for (int i = 0; i < enemies;) {
 
         update_Gamestate(gamestate, 1, room->class, room->index, i,
-                         gamestate->current_floor);
+                         gamestate->current_floor, room);
 
         fightStatus = OP_RES_NO_DMG;
         Enemy *e = room->enemies[i];
@@ -1239,7 +1251,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 turnOP(OP_STATS, args, kls, t_kls);
             } else if (choice == SAVE) {
                 FILE *save_file;
-                char path_to_savefile[800];
+                char path_to_savefile[820];
                 char static_path[500];
                 char savefile_name[300];
                 sprintf(savefile_name, "%s", p->current_saveslot->save_path);
@@ -1250,7 +1262,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 // Set static_path value to the correct static dir path
                 resolve_staticPath(static_path);
 
-                sprintf(path_to_savefile, "%s/%s", static_path, savefile_name);
+                sprintf(path_to_savefile, "%s/%s/%s", static_path, savefile_name, "save.txt");
 
                 save_file = fopen(path_to_savefile, "w");
                 if (save_file == NULL) {
@@ -1346,7 +1358,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
         }			//End while current enemy
     }				//End for all enemies
     update_Gamestate(gamestate, 1, -1, room->index, -1,
-                     gamestate->current_floor);
+                     gamestate->current_floor, NULL); //Set current_room to NULL
     log_tag("debug_log.txt", "[ROOM]", "End of room %i", room->index);
     //free(args);
     //log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
@@ -1482,7 +1494,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     int debug_n_choices = 0;
 
     update_Gamestate(gamestate, 1, room->class, room->index - 1, 1,
-                     gamestate->current_floor);
+                     gamestate->current_floor, room);
 
     int frame_counter = 0;
     int animation_loops_done = 0;
@@ -2072,7 +2084,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
 
     update_Gamestate(gamestate, 1, -1, room->index, -1,
-                     gamestate->current_floor);
+                     gamestate->current_floor, NULL); // Setting current room to NULL
     return fightStatus;
 }
 
@@ -3213,6 +3225,12 @@ void initRoom_Home(Room *r, int roomIndex, Fighter *f, loadInfo *load_info,
 void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
                       loadInfo *load_info, Koliseo_Temp *t_kls)
 {
+    if (r == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Passed Room was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
     log_tag("debug_log.txt", "[DEBUG]", "Allocated size %lu for Room desc:",
             sizeof("Enemies"));
     kls_log(t_kls->kls, "DEBUG", "Allocated size %lu for Room desc:",
@@ -3238,10 +3256,12 @@ void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
         foes->class = Enemies;
         int enemyIndex = 0;
         int total_foes = r->enemyTotal;
-        if (!(load_info->is_new_game) && !(load_info->done_loading)
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    total_foes: {%i}", __func__, total_foes);
+        if ((load_info->is_new_game == 0) && (load_info->done_loading == 0)
             && (load_info->save_type == ENEMIES_SAVE)) {
             //enemyIndex = load_info->enemy_index;
             r->enemies[enemyIndex] = load_info->loaded_enemy;
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
             total_foes = load_info->total_foes - load_info->enemy_index;
             log_tag("debug_log.txt", "[DEBUG-LOAD]",
                     "Set total_foes to %i, will be used to prepare FoeParty.",
@@ -3273,7 +3293,7 @@ void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
             kls_log(t_kls->kls, "DEBUG",
                     "Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy),
                     enemyIndex, enemyTotal);
-            Enemy *e = KLS_PUSH_T_TYPED(t_kls, Enemy, HR_Enemy, "Enemy", "Enemy");	//&room_enemies[enemyIndex];
+            Enemy* e = KLS_PUSH_T_TYPED(t_kls, Enemy, HR_Enemy, "Enemy", "Enemy");	//&room_enemies[enemyIndex];
             prepareRoomEnemy(e, r->index, r->enemyTotal, enemyIndex, t_kls);
             r->enemies[enemyIndex] = e;
             //Set FoeParty links
@@ -3400,6 +3420,7 @@ void initRoom_Treasure(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
  * @param r The Room whose fields will be initialised.
  * @param roomIndex The index of the room to initialise.
  * @param f The Fighter pointer to influence item generation.
+ * @param t_kls The Koliseo_Temp used for temporary allocations.
  */
 void initRoom_Roadfork(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
 {

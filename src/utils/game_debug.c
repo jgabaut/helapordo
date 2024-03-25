@@ -270,6 +270,7 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
             log_tag("debug_log.txt", "[DEBUG]", "Done logging Gamestate");
         }
         break;
+#ifdef KOLISEO_HAS_REGION
         case 'T': {
             char path_to_kls_file[600];
             char static_path[500];
@@ -444,6 +445,7 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
             fclose(kls_file);
         }
         break;
+#endif // KOLISEO_HAS_REGION
         case 'Q': {
             G_FASTQUIT_ON = (G_FASTQUIT_ON == 1 ? 0 : 1);
             sprintf(msg, "Toggled G_FASTQUIT_ON, new value: (%i)",
@@ -938,6 +940,7 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
             log_tag("debug_log.txt", "[DEBUG]", "Done logging Gamestate");
         }
         break;
+#ifdef KOLISEO_HAS_REGION
         case 'T': {
             char path_to_kls_file[600];
             char static_path[500];
@@ -1111,6 +1114,7 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
             fclose(kls_file);
         }
         break;
+#endif // KOLISEO_HAS_REGION
         case 'A': {
             GS_AUTOSAVE_ON = (GS_AUTOSAVE_ON == 1 ? 0 : 1);
             sprintf(msg, "Toggled G_AUTOSAVE_ON, new value: (%i)",

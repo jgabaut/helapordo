@@ -80,7 +80,7 @@ void initConsumableBag(Fighter *f, Koliseo *kls)
         }
         c->qty = 0;
 
-        f->consumablesBag[i] = (struct Consumable *)c;
+        f->consumablesBag[i] = (Consumable *)c;
     }
 
 }
@@ -734,6 +734,29 @@ void initArtifactsBag(Fighter *f, Koliseo *kls)
 }
 
 /**
+ * Takes a Fighter pointer and prepares its equipsBag field by allocating an Equip for each array slot.
+ * @see Fighter
+ * @see Equip
+ * @see ARTIFACTSMAX
+ * @param kls The Koliseo used for allocations.
+ * @param f The Fighter pointer whose equipsBag field will be initialised.
+ */
+void initEquipsBag(Fighter * f, Koliseo * kls)
+{
+    for (int i = 0; i < EQUIPSBAGSIZE; i++) {
+        kls_log(kls, "DEBUG", "Allocating space for Equip (%i)", i);
+        Equip *e =
+            (Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip,
+                                     "Equip", "Fighter bag equip");
+        e->class = -1; // Setting an invalid class
+        for (int pix = 0; pix < (EQUIPPERKSMAX); pix++) {
+            e->perks[pix] = (Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Fighter bag perk");
+        }
+        f->equipsBag[i] = e;
+    }
+}
+
+/**
  * Takes one Fighter and one Path pointers and initialises the fighter fields.
  * Luck value is set as path luck value modulo MAXPLAYERLUCK.
  * The BaseStats pointer for the fighter's figtherClass is loaded.
@@ -796,6 +819,7 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
 
     initConsumableBag(player, kls);
     initArtifactsBag(player, kls);
+    initEquipsBag(player, kls);
 
     initEquipSlots(player, kls);
     player->equipsBagOccupiedSlots = 0;	//Keeps track of how many slots are occupied.
@@ -831,6 +855,9 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
     player->stamina = player->totalstamina;
 
     setFighterSprite(player);
+
+    player->floor_x = -1;
+    player->floor_y = -1;
 }
 
 /**
@@ -1019,6 +1046,8 @@ void initFoePartyStats(FoeParty *fp, Koliseo_Temp *t_kls)
  * @see FoeParty
  * @see initFoePartyStats()
  * @param fp The allocated FoeParty pointer to initialise.
+ * @param partysize Size of party.
+ * @param roomindex Index of current room.
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void prepareFoeParty(FoeParty *fp, int partysize, int roomindex,
@@ -1651,6 +1680,12 @@ void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
                       int enemyindex, Koliseo_Temp *t_kls)
 {
 
+    if (e == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Passed Enemy was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
     //Randomise enemy class
     e->class = rand() % (ENEMYCLASSESMAX + 1);
 

@@ -60,27 +60,41 @@ void gameloop(int argc, char **argv)
 
     //Truncate "debug_log.txt"
     sprintf(path_to_kls_debug_file, "%s/%s", static_path, "kls_debug_log.txt");
-    KLS_Conf default_kls_conf = {
-        .kls_autoset_regions = 1,
-        .kls_autoset_temp_regions = 1,
-        .kls_verbose_lvl = 1,
-        .kls_log_filepath = path_to_kls_debug_file,
-        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
-        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
-    };
-    KLS_Conf temporary_kls_conf = {
-        .kls_autoset_regions = 1,
-        .kls_autoset_temp_regions = 1,
-        .kls_verbose_lvl = 0,
-        .kls_log_fp = stderr,
-        .kls_reglist_kls_size = KLS_DEFAULT_SIZE * 16,
-        .kls_reglist_alloc_backend = KLS_REGLIST_ALLOC_KLS_BASIC,
-    };
+
+#ifdef KOLISEO_HAS_REGION
+    KLS_RegList_Alloc_Backend reglist_backend = KLS_REGLIST_ALLOC_KLS_BASIC;
+#else
+    int reglist_backend = -1;
+#endif
+
+    KLS_Conf default_kls_conf = kls_conf_init(
+                                    1, //kls_autoset_regions
+                                    reglist_backend, //kls_reglist_alloc_backend
+                                    KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
+                                    1, //kls_autoset_temp_regions
+                                    1, //collect_stats
+                                    1, //kls_verbose_lvl
+                                    NULL, //kls_log_fp
+                                    path_to_kls_debug_file //.kls_log_filepath
+                                );
+    KLS_Conf temporary_kls_conf = kls_conf_init(
+                                      1, //kls_autoset_regions
+                                      reglist_backend, //kls_reglist_alloc_backend
+                                      KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
+                                      1, //kls_autoset_temp_regions
+                                      1, //collect_stats
+                                      0, //kls_verbose_lvl
+                                      stderr, //kls_log_fp
+                                      NULL
+                                  );
+
+    int seed = -1;
 
     do {
         //Init default_kls
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
+        seed = rand();
 
 #ifndef _WIN32
         (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
@@ -89,8 +103,10 @@ void gameloop(int argc, char **argv)
 #endif
         bool is_localexe = ( argv[0][0] == '.');
 
+        G_USE_CURRENTDIR = (is_localexe ? 1 : G_USE_CURRENTDIR);
+
         char *kls_progname =
-            (char *)KLS_PUSH_ARR_TYPED(default_kls, char *, sizeof(whoami),
+            (char *)KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami),
                                        KLS_None, "progname", whoami);
         strcpy(kls_progname, whoami);
 
@@ -306,6 +322,11 @@ void gameloop(int argc, char **argv)
                    }
                    exit(exitcode);
                  */
+#if 0
+#ifdef HELAPORDO_DEBUG_ACCESS
+                printf("\nSeed: [%i]\n", seed);
+#endif
+#endif
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_SUCCESS);
@@ -950,6 +971,7 @@ void gameloop(int argc, char **argv)
         log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
         gamescreen->colors = COLORS;
         gamescreen->color_pairs = COLOR_PAIRS;
+        int picked_saveslot_index = -1;
 
         while (!savepick_picked
                && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
@@ -1025,7 +1047,7 @@ void gameloop(int argc, char **argv)
             }
             wrefresh(savepick_menu_win);
             if (savepick_choice == NEW_GAME) {
-                int picked_saveslot_index = get_saveslot_index();
+                picked_saveslot_index = get_saveslot_index();
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Saveslot index picked: [%i]", picked_saveslot_index);
                 sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
@@ -1040,7 +1062,7 @@ void gameloop(int argc, char **argv)
                 turnOP(OP_NEW_GAME, savepick_turn_args, default_kls,
                        savepick_kls);
             } else if (savepick_choice == LOAD_GAME) {
-                int picked_saveslot_index = get_saveslot_index();
+                picked_saveslot_index = get_saveslot_index();
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Saveslot index picked: [%i]", picked_saveslot_index);
                 sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
@@ -1118,9 +1140,14 @@ void gameloop(int argc, char **argv)
 
         Koliseo_Temp *gamestate_kls = kls_temp_start(temporary_kls);
 
+        Gamestate* gamestate = NULL;
+        Room* current_room = NULL;
+        Floor* current_floor = NULL;
+
         if (load_info->is_new_game) {	// We prepare path and fighter
-            path = randomise_path(rand(), default_kls, current_save_path);
+            path = randomise_path(seed, default_kls, current_save_path);
             path->loreCounter = -1;
+            path->current_saveslot->index = picked_saveslot_index;
 
             kls_log(default_kls, "DEBUG", "Prepping Fighter");
             player =
@@ -1133,169 +1160,316 @@ void gameloop(int argc, char **argv)
             initPlayerStats(player, path, default_kls);
         } else {		//Handle loading of gamestate
 
-            //Declar turnOP_args
-            Room *fakeroom = NULL;
-            Enemy *fakeenemy = NULL;
-            Boss *fakeboss = NULL;
-            FILE *fakesavefile = NULL;
-            WINDOW *fakenotifywin = NULL;
-            Gamestate *fakegmst = NULL;
-            foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
-            skillType fake_skill = -1;
-            turnOP_args *loading_room_turn_args =
-                init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
-                                 fakeenemy, fakeboss, fakesavefile,
-                                 fakenotifywin, gamestate_kls, fake_foe_op,
-                                 fake_skill);
-            FILE *save_file;
-            char path_to_savefile[1000];
-            char static_path[500];
-            char savefile_name[300];
+            if (G_EXPERIMENTAL_ON == 1) { //Bin load
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    TODO bin load", __func__);
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Seed before loading, used to init path: [%i]", seed);
+                path = randomise_path(seed, default_kls, current_save_path);
+                kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
+                player =
+                    (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
+                                               "Fighter", "Loady Fighter");
+                player->class = Knight;
 
-            //Copy current_save_path
-            sprintf(savefile_name, "%s", current_save_path);
+                strcpy(player->name, "Loady");
 
-            // Set static_path value to the correct static dir path
-            resolve_staticPath(static_path);
+                kls_log(default_kls, "DEBUG", "Prepping Loady Wincon");
+                Wincon *w =
+                    (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
+                                              "Wincon", "Loady Wincon");
+                w->class = FULL_PATH;
+                initWincon(w, path, w->class);
+                initPlayerStats(player, path, default_kls);
+                path->win_condition = w;
+                path->current_saveslot->index = picked_saveslot_index;
+                char static_path[500];
+                // Set static_path value to the correct static dir path
+                resolve_staticPath(static_path);
 
-            sprintf(path_to_savefile, "%s/%s", static_path, savefile_name);
+                gamestate =
+                    KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
+                                   "Gamestate");
+                init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
+                               player, GAMEMODE, gamescreen, is_localexe);
 
-            save_file = fopen(path_to_savefile, "r");
-            if (!save_file) {
-                //User error
-                fprintf(stderr,
-                        "[ERROR]    Can't open savefile for loading game.\n");
-                fprintf(stderr, "[ERROR]    Expected at path [%s].\n",
+                current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
+                                               "Loading floor");
+                gamestate->current_floor = current_floor;
+
+                current_room = KLS_PUSH_TYPED(default_kls, Room, HR_Floor, "Room",
+                                              "Loading room");
+                gamestate->current_room = current_room;
+
+                // TODO Prep loading room memory
+
+                for (int e_idx=0; e_idx < ROOM_ENEMIES_MAX; e_idx++) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing loading room enemy {%i}", __func__, e_idx);
+                    current_room->enemies[e_idx] = KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy, "Enemy", "Loading room enemy");
+                    prepareRoomEnemy(current_room->enemies[e_idx], 1, 3, 1,
+                                     gamestate_kls);
+                }
+                bool did_exper_init = false;
+                SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, path->current_saveslot->index);
+                log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
+
+                bool prep_res = prep_Gamestate(gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                if (prep_res) {
+                    log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+                } else {
+                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+
+                load_info->enemy_index = gamestate->current_enemy_index;
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
+                seed = gamestate->path->seed;
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Seed after loading: [%i]", seed);
+                //TODO: set the other load_info fields properly?
+                if (gamestate->current_room != NULL) {
+                    current_room = gamestate->current_room;
+                    switch (current_room->class) {
+                    case ENEMIES: {
+                        assert(load_info->enemy_index >= 0);
+                        load_info->save_type = ENEMIES_SAVE;
+                    }
+                    break;
+                    case HOME: {
+                        load_info->save_type = HOME_SAVE;
+                    }
+                    break;
+                    case BASIC: {
+                        load_info->save_type = FLOORMENU_SAVE;
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting load_info->done_loading to 1", __func__);
+                        load_info->done_loading = 1;
+                    }
+                    break;
+                    default: {
+                        log_tag("debug_log.txt", "[ERROR]", "%s():    unexpected class for current room. {%i}", __func__, current_room->class);
+                        kls_free(default_kls);
+                        kls_free(temporary_kls);
+                        exit(EXIT_FAILURE);
+                        break;
+                    }
+                    }
+
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    save_type: [%s]", __func__, stringFrom_saveType(load_info->save_type));
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, current_room->index);
+                    *(load_info->ptr_to_roomindex) = current_room->index;
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomtotalenemies) to {%i}.", __func__, current_room->enemyTotal);
+                    *(load_info->ptr_to_roomtotalenemies) = current_room->enemyTotal;
+
+                    if (current_room->class == ENEMIES) {
+                        // TODO Load && Store current enemy somewhere.
+                        kls_log(default_kls, "DEBUG", "Prepping Loady Enemy: gamestate->current_room->enemies[%i]", gamestate->current_enemy_index);
+                        if (gamestate->current_enemy_index >= current_room->enemyTotal) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    gmst current_enemy_idex > gmst enemyTotal.", __func__);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                        Enemy** loady_room_enemies = current_room->enemies;
+                        if (loady_room_enemies == NULL) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    Loady room_enemies is NULL.", __func__);
+                            log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", gamestate->current_enemy_index, current_room->enemyTotal);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+
+                        Enemy* loady_enemy = loady_room_enemies[gamestate->current_enemy_index];
+                        if (loady_enemy == NULL) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    Loady enemy_idx is NULL.", __func__);
+                            log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", gamestate->current_enemy_index, current_room->enemyTotal);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        } else {
+                            //log_tag("debug_log.txt", "[DEBUG]", "%s():    Loady enemy: {%s}", __func__, stringFromEClass(loady_enemy->class));
+                        }
+                        load_info->loaded_enemy = loady_enemy;
+                        //(Enemy *) KLS_PUSH_T_TYPED(gamestate_kls, Enemy, HR_Enemy,
+                        //                         "Enemy", "Loaded Enemy");
+                        //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                        //Update loading_room_turn_args->enemy pointer
+                        //loading_room_turn_args->enemy = load_info->loaded_enemy;
+                    }
+                } else {
+                    log_tag("debug_log.txt", "[WARN-TURNOP]",
+                            "%s():    gamestate->room was NULL. Not setting load_info's room info.", __func__);
+                }
+            } else {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing text file loading", __func__);
+                //Declar turnOP_args
+                Room *fakeroom = NULL;
+                Enemy *fakeenemy = NULL;
+                Boss *fakeboss = NULL;
+                FILE *fakesavefile = NULL;
+                WINDOW *fakenotifywin = NULL;
+                Gamestate *fakegmst = NULL;
+                foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
+                skillType fake_skill = -1;
+                turnOP_args *loading_room_turn_args =
+                    init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
+                                     fakeenemy, fakeboss, fakesavefile,
+                                     fakenotifywin, gamestate_kls, fake_foe_op,
+                                     fake_skill);
+                FILE *save_file;
+                char path_to_savefile[1000];
+                char static_path[500];
+                char savefile_name[300];
+
+                //Copy current_save_path
+                sprintf(savefile_name, "%s", current_save_path);
+
+                // Set static_path value to the correct static dir path
+                resolve_staticPath(static_path);
+
+                sprintf(path_to_savefile, "%s/%s/save.txt", static_path, savefile_name);
+
+                save_file = fopen(path_to_savefile, "r");
+                if (!save_file) {
+                    //User error
+                    fprintf(stderr,
+                            "[ERROR]    Can't open savefile for loading game.\n");
+                    fprintf(stderr, "[ERROR]    Expected at path [%s].\n",
+                            path_to_savefile);
+                    //Debug error
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "Could not load savefile at (%s)", path_to_savefile);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+                //Update loading_room_turn_args->save_file pointer
+                loading_room_turn_args->save_file = save_file;
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Assigned loading_room_turn_args->save_file: path [%s]",
                         path_to_savefile);
-                //Debug error
-                log_tag("debug_log.txt", "[ERROR]",
-                        "Could not load savefile at (%s)", path_to_savefile);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
-            }
-            //Update loading_room_turn_args->save_file pointer
-            loading_room_turn_args->save_file = save_file;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Assigned loading_room_turn_args->save_file: path [%s]",
-                    path_to_savefile);
 
-            //Read save type
-            //
-            saveType loaded_save_type = -1;
-            loaded_save_type = read_saveType(save_file);
-            log_tag("debug_log.txt", "[TURNOP]", "Read saveType, was [%s].",
-                    stringFrom_saveType(loaded_save_type));
+                //Read save type
+                //
+                saveType loaded_save_type = -1;
+                loaded_save_type = read_saveType(save_file);
+                log_tag("debug_log.txt", "[TURNOP]", "Read saveType, was [%s].",
+                        stringFrom_saveType(loaded_save_type));
 
-            if (loaded_save_type == -1) {
-                log_tag("debug_log.txt", "[ERROR]",
-                        "Failed setting loaded_save_type. Quitting.");
-                fprintf(stderr, "[ERROR]    Failed setting a save type.");
+                if (loaded_save_type == -1) {
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "Failed setting loaded_save_type. Quitting.");
+                    fprintf(stderr, "[ERROR]    Failed setting a save type.");
 
-                exit(EXIT_FAILURE);
-            }
+                    exit(EXIT_FAILURE);
+                }
 
-            load_info->save_type = loaded_save_type;
+                load_info->save_type = loaded_save_type;
 
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Assigned load_info->save_type: [%s]",
-                    stringFrom_saveType(load_info->save_type));
-
-            path = randomise_path(rand(), default_kls, current_save_path);
-            kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
-            player =
-                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
-                                           "Fighter", "Loady Fighter");
-            player->class = Knight;
-
-            strcpy(player->name, "Loady");
-
-            //Update loading_room_turn_args->actor pointer
-            loading_room_turn_args->actor = player;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Assigned Fighter [%s]. loading_room_turn_args->actor->name: [%s]",
-                    player->name, loading_room_turn_args->actor->name);
-
-            kls_log(default_kls, "DEBUG", "Prepping Loady Wincon");
-            Wincon *w =
-                (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
-                                          "Wincon", "Loady Wincon");
-            w->class = FULL_PATH;
-            initWincon(w, path, w->class);
-            initPlayerStats(player, path, default_kls);
-            path->win_condition = w;
-
-            if (load_info->save_type == ENEMIES_SAVE) {
-
-                kls_log(default_kls, "DEBUG", "Prepping Loady Enemy");
-                load_info->loaded_enemy =
-                    (Enemy *) KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy,
-                                             "Enemy", "Loaded Enemy");
-                //FIXME: the structs related to loaded enemy are not loaded on default_kls
-                prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1,
-                                 gamestate_kls);
-
-                //Update loading_room_turn_args->enemy pointer
-                loading_room_turn_args->enemy = load_info->loaded_enemy;
                 log_tag("debug_log.txt", "[TURNOP]",
-                        "Assigned load_info->loaded_enemy->class == [%s]. loading_room_turn_args->loaded_enemy->class == [%s]",
-                        stringFromEClass(load_info->loaded_enemy->class),
-                        stringFromEClass(loading_room_turn_args->enemy->class));
-            }
-            //Update loading_room_turn_args->path pointer
-            loading_room_turn_args->path = path;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Assigned loading_room_turn_args->path == [path] (len %i)",
-                    path->length);
+                        "Assigned load_info->save_type: [%s]",
+                        stringFrom_saveType(load_info->save_type));
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Old seed: [%i]", seed);
+                seed = rand();
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "New seed: [%i]", seed);
+                path = randomise_path(seed, default_kls, current_save_path);
+                kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
+                player =
+                    (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
+                                               "Fighter", "Loady Fighter");
+                player->class = Knight;
 
-            switch (load_info->save_type) {
-            case ENEMIES_SAVE: {
-                log_tag("debug_log.txt", "[TURNOP]",
-                        "Doing OP_LOAD_ENEMYROOM.");
-                //int* loadinfo_totfoes = &(load_info->total_foes);
-                //FIXME: the structs related to loaded enemy are not loaded on default_kls
-                OP_res load_op_result =
-                    turnOP(OP_LOAD_ENEMYROOM, loading_room_turn_args,
-                           default_kls, gamestate_kls);
-                log_tag("debug_log.txt", "[TURNOP]",
-                        "OP_LOAD_ENEMYROOM:  result was [%s].",
-                        stringFrom_OP_res(load_op_result));
-                log_tag("debug_log.txt", "[FREE]",
-                        "Freed loading_room_turn_args. Load result was [%s].",
-                        stringFrom_OP_res(load_op_result));
-                //free(loading_room_turn_args);
-            }
-            break;
-            case HOME_SAVE: {
-                log_tag("debug_log.txt", "[TURNOP]",
-                        "Doing OP_LOAD_HOMEROOM.");
-                //int* loadinfo_totfoes = &(load_info->total_foes);
-                //FIXME: the structs related to loaded enemy are not loaded on default_kls
-                OP_res load_op_result =
-                    turnOP(OP_LOAD_HOMEROOM, loading_room_turn_args,
-                           default_kls, gamestate_kls);
-                log_tag("debug_log.txt", "[TURNOP]",
-                        "OP_LOAD_HOMEROOM:  result was [%s].",
-                        stringFrom_OP_res(load_op_result));
-                //log_tag("debug_log.txt","[FREE]","Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
-                load_info->done_loading = 1;
-                log_tag("debug_log.txt", "[PREP]",
-                        "Set load_info->done_loading to 1.");
-                //free(loading_room_turn_args);
-            }
-            break;
-            default: {
-                log_tag("debug_log.txt", "[ERROR]",
-                        "gameloop():  Unexpected save type, value was (%i).",
-                        (int)load_info->save_type);
-                exit(EXIT_FAILURE);
-            }
-            break;
-            }
+                strcpy(player->name, "Loady");
 
-            //e_death(loaded_enemy);
-            //death(player);
-            //exit(0);
+                //Update loading_room_turn_args->actor pointer
+                loading_room_turn_args->actor = player;
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Assigned Fighter [%s]. loading_room_turn_args->actor->name: [%s]",
+                        player->name, loading_room_turn_args->actor->name);
+
+                kls_log(default_kls, "DEBUG", "Prepping Loady Wincon");
+                Wincon *w =
+                    (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
+                                              "Wincon", "Loady Wincon");
+                w->class = FULL_PATH;
+                initWincon(w, path, w->class);
+                initPlayerStats(player, path, default_kls);
+                path->win_condition = w;
+
+                if (load_info->save_type == ENEMIES_SAVE) {
+
+                    kls_log(default_kls, "DEBUG", "Prepping Loady Enemy");
+                    load_info->loaded_enemy =
+                        (Enemy *) KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy,
+                                                 "Enemy", "Loaded Enemy");
+                    //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                    prepareRoomEnemy(load_info->loaded_enemy, 1, 3, 1,
+                                     gamestate_kls);
+
+                    //Update loading_room_turn_args->enemy pointer
+                    loading_room_turn_args->enemy = load_info->loaded_enemy;
+                    log_tag("debug_log.txt", "[TURNOP]",
+                            "Assigned load_info->loaded_enemy->class == [%s]. loading_room_turn_args->loaded_enemy->class == [%s]",
+                            stringFromEClass(load_info->loaded_enemy->class),
+                            stringFromEClass(loading_room_turn_args->enemy->class));
+                }
+                //Update loading_room_turn_args->path pointer
+                loading_room_turn_args->path = path;
+                log_tag("debug_log.txt", "[TURNOP]",
+                        "Assigned loading_room_turn_args->path == [path] (len %i)",
+                        path->length);
+
+                switch (load_info->save_type) {
+                case ENEMIES_SAVE: {
+                    log_tag("debug_log.txt", "[TURNOP]",
+                            "Doing OP_LOAD_ENEMYROOM.");
+                    //int* loadinfo_totfoes = &(load_info->total_foes);
+                    //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                    OP_res load_op_result =
+                        turnOP(OP_LOAD_ENEMYROOM, loading_room_turn_args,
+                               default_kls, gamestate_kls);
+                    log_tag("debug_log.txt", "[TURNOP]",
+                            "OP_LOAD_ENEMYROOM:  result was [%s].",
+                            stringFrom_OP_res(load_op_result));
+                    log_tag("debug_log.txt", "[FREE]",
+                            "Freed loading_room_turn_args. Load result was [%s].",
+                            stringFrom_OP_res(load_op_result));
+                    //free(loading_room_turn_args);
+                }
+                break;
+                case HOME_SAVE: {
+                    log_tag("debug_log.txt", "[TURNOP]",
+                            "Doing OP_LOAD_HOMEROOM.");
+                    //int* loadinfo_totfoes = &(load_info->total_foes);
+                    //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                    OP_res load_op_result =
+                        turnOP(OP_LOAD_HOMEROOM, loading_room_turn_args,
+                               default_kls, gamestate_kls);
+                    log_tag("debug_log.txt", "[TURNOP]",
+                            "OP_LOAD_HOMEROOM:  result was [%s].",
+                            stringFrom_OP_res(load_op_result));
+                    //log_tag("debug_log.txt","[FREE]","Freed loading_room_turn_args. Load result was [%s].",stringFrom_OP_res(load_op_result));
+                    load_info->done_loading = 1;
+                    log_tag("debug_log.txt", "[PREP]",
+                            "Set load_info->done_loading to 1.");
+                    //free(loading_room_turn_args);
+                }
+                break;
+                default: {
+                    log_tag("debug_log.txt", "[ERROR]",
+                            "gameloop():  Unexpected save type, value was (%i).",
+                            (int)load_info->save_type);
+                    exit(EXIT_FAILURE);
+                }
+                break;
+                }
+
+                //e_death(loaded_enemy);
+                //death(player);
+                //exit(0)
+            } // End text load else
         }
 
         /*
@@ -1381,7 +1555,7 @@ void gameloop(int argc, char **argv)
         //printStats(player);
         //white();
 
-        int roomsDone = load_info->is_new_game ? 1 : loaded_roomindex;
+        int roomsDone = (load_info->is_new_game == 1 ? 1 : loaded_roomindex);
         OP_res res = OP_RES_NO_DMG;
         int roadFork_value = -1;	//0 may be used as a value, so
 
@@ -1404,22 +1578,48 @@ void gameloop(int argc, char **argv)
         log_tag("debug_log.txt", "[DEBUG]", "Prep took %d s, %d ms.",
                 time_spent / 1000, time_spent % 1000);
 
-        Gamestate *gamestate =
-            KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
-                           "Gamestate");
-        init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                       player, GAMEMODE, gamescreen, is_localexe);
+        if (!load_info->is_new_game && G_EXPERIMENTAL_ON == 1) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Not pushing a new gamestate", __func__);
+        } else {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Pushing a new gamestate", __func__);
+            gamestate =
+                KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
+                               "Gamestate");
+            init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
+                           player, GAMEMODE, gamescreen, is_localexe);
+        }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
             //NO. The update_gamestate call is instead performed later.
             //Floor* current_floor = KLS_PUSH_T_TYPED(gamestate_kls,Floor,1,HR_Floor,"Floor","Init Curr floor");
             //NO. We pass NULL now.
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+            //
+            //We also pass NULL for current room.
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor, NULL);
         } else {
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL);
         }
         log_tag("debug_log.txt", "[DEBUG]", "Initialised Gamestate.");
         dbg_Gamestate(gamestate);
+
+        if (load_info->is_new_game) {
+            if (G_EXPERIMENTAL_ON == 1) {
+                //TODO: make sure to delete a matching savefile for this slot?
+                //
+                //Note: the code below is not to be added, since it would force a new game to reload an existing save.
+                /*
+                bool prep_res = prep_Gamestate(gamestate, static_path, sizeof(int64_t) + sizeof(SerSaveHeader), default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                if (prep_res) {
+                    log_tag("debug_log.txt", "[DEBUG]", "Read Gamestate.");
+                } else {
+                    log_tag("debug_log.txt", "[ERROR]", "Failed reading Gamestate.");
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+                */
+            }
+        }
 
         if (GAMEMODE == Story || GAMEMODE == Standard) {
 
@@ -1443,17 +1643,22 @@ void gameloop(int argc, char **argv)
                 int enemyTotal = -1;
                 roomClass room_type = -1;
 
-                if (!(load_info->is_new_game) && !(load_info->done_loading)
+                if ((load_info->is_new_game == 0) && (load_info->done_loading == 0)
                     && (load_info->save_type == ENEMIES_SAVE)) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    setting enemyTotal to loaded_roomtotalenemies: {%i}", __func__, loaded_roomtotalenemies);
                     enemyTotal = loaded_roomtotalenemies;
                 }
 
                 kls_log(temporary_kls, "DEBUG",
                         "Prepping Room for Story Gamemode. roomsDone=(%i)",
                         roomsDone);
-                Room *current_room =
-                    (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, HR_Room,
-                                              "Room", "Story Room");
+                if (current_room == NULL) {
+                    current_room =
+                        (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room, HR_Room,
+                                                  "Room", "Story Room");
+                } else {
+                    log_tag("debug_log.txt", "DEBUG", "%s():    current_room was not NULL. Not updating it.", __func__);
+                }
 
                 current_room->index = roomsDone;
                 setRoomType(path, &roadFork_value, &room_type, roomsDone);
@@ -1586,7 +1791,7 @@ void gameloop(int argc, char **argv)
                 endwin();
 
                 update_Gamestate(gamestate, 1, current_room->class, roomsDone,
-                                 -1, NULL);
+                                 -1, NULL, current_room);
 
                 if (current_room->class == HOME) {
                     res =
@@ -1633,6 +1838,9 @@ void gameloop(int argc, char **argv)
                 if (res == OP_RES_DEATH) {
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Room resulted in DEATH.\n");
+                    if (G_EXPERIMENTAL_ON == 1) {
+                        //TODO: delete savefile?
+                    }
                     //Free room memory
                     //freeRoom(current_room);
                     break;
@@ -1780,43 +1988,56 @@ void gameloop(int argc, char **argv)
                 int res = -1;
                 char msg[500];
 
-                log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
-                kls_log(default_kls, "DEBUG", "Prepping current_floor.");
-                Floor *current_floor =
-                    (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor,
-                                               HR_Floor, "Floor", "Floor");
+                bool is_bin_load_floor = (G_EXPERIMENTAL_ON == 1 && load_info->is_new_game == 0 && load_info->done_loading == 0);
+
+                if (is_bin_load_floor) {
+                    update_Equipslots(player);
+                    log_tag("debug_log.txt", "[DEBUG]", "Using current_floor from loaded gamestate.");
+                } else {
+                    log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
+                    kls_log(default_kls, "DEBUG", "Prepping current_floor.");
+                    current_floor =
+                        (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor,
+                                                   HR_Floor, "Floor", "Floor");
+                }
                 update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
-                                 current_floor);
+                                 current_floor, NULL); // NULL for current_room
                 // Start the random walk from the center of the dungeon
                 int center_x = FLOOR_MAX_COLS / 2;
                 int center_y = FLOOR_MAX_ROWS / 2;
 
-                // Init dbg_floor
-                init_floor_layout(current_floor);
+                if (is_bin_load_floor) {
+                    log_tag("debug_log.txt", "[DEBUG]", "Skipping current_floor init.");
+                } else {
+                    // Init dbg_floor
+                    init_floor_layout(current_floor);
 
-                //Set center as filled
-                current_floor->floor_layout[center_x][center_y] = 1;
+                    //Set center as filled
+                    current_floor->floor_layout[center_x][center_y] = 1;
 
-                //Init floor rooms
-                init_floor_rooms(current_floor);
+                    //Init floor rooms
+                    init_floor_rooms(current_floor);
 
-                //Random walk #1
-                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                //Random walk #2
-                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                    //Random walk #1
+                    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                    //Random walk #2
+                    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
 
-                //Set floor explored matrix
-                load_floor_explored(current_floor);
+                    //Set floor explored matrix
+                    load_floor_explored(current_floor);
 
-                //Set room types
-                floor_set_room_types(current_floor);
+                    //Set room types
+                    floor_set_room_types(current_floor);
 
-                int current_x = center_x;
-                int current_y = center_y;
+                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                    player->floor_x = center_x;
+                    player->floor_y = center_y;
+                }
 
                 //TODO: handle finishing all floors
                 path->length = MAX_ROGUE_FLOORS;
 
+                //TODO: restore floors_done from loaded gamestate
                 int floors_done = 0;
 
                 //Loop till wincon reached
@@ -1837,12 +2058,16 @@ void gameloop(int argc, char **argv)
                     if (!(load_info->is_new_game) && !(load_info->done_loading)
                         && (load_info->save_type == ENEMIES_SAVE)) {
                         enemyTotal = loaded_roomtotalenemies;
+                    } else {
+                        load_info->done_loading = 1;
+                        log_tag("debug_log.txt", "[DEBUG-PREP]",
+                                "Set load_info->done_loading to 1.");
                     }
 
                     Room *current_room = NULL;
 
                     //Check if current room needs to be played
-                    if (current_floor->roomclass_layout[current_x][current_y] !=
+                    if (current_floor->roomclass_layout[player->floor_x][player->floor_y] !=
                         BASIC) {
                         kls_log(temporary_kls, "DEBUG",
                                 "Prepping Room for Rogue Gamemode. roomsDone=(%i)",
@@ -1856,7 +2081,7 @@ void gameloop(int argc, char **argv)
 
                         room_type =
                             current_floor->
-                            roomclass_layout[current_x][current_y];
+                            roomclass_layout[player->floor_x][player->floor_y];
                         log_tag("debug_log.txt", "[ROOM]",
                                 "Set Room #%i type:    (%s)\n", roomsDone,
                                 stringFromRoom(room_type));
@@ -1957,7 +2182,7 @@ void gameloop(int argc, char **argv)
 
                         update_Gamestate(gamestate, 1, current_room->class,
                                          current_room->index, -1,
-                                         current_floor);
+                                         current_floor, current_room);
 
                         if (current_room->class == HOME) {
                             res =
@@ -2009,6 +2234,9 @@ void gameloop(int argc, char **argv)
                         if (res == OP_RES_DEATH) {
                             log_tag("debug_log.txt", "[DEBUG]",
                                     "Room resulted in DEATH.");
+                            if (G_EXPERIMENTAL_ON == 1) {
+                                //TODO: delete savefile?
+                            }
                             //Free room memory
                             //freeRoom(current_room);
                             break;
@@ -2039,16 +2267,16 @@ void gameloop(int argc, char **argv)
 
                             //Update floor's roomclass layout for finished rooms which should not be replayed
                             switch (current_floor->
-                                    roomclass_layout[current_x][current_y]) {
+                                    roomclass_layout[player->floor_x][player->floor_y]) {
                             case ENEMIES: {
                                 current_floor->
-                                roomclass_layout[current_x][current_y] =
+                                roomclass_layout[player->floor_x][player->floor_y] =
                                     BASIC;
                             }
                             break;
                             case BOSS: {
                                 current_floor->
-                                roomclass_layout[current_x][current_y] =
+                                roomclass_layout[player->floor_x][player->floor_y] =
                                     BASIC;
                                 floors_done++;
                                 player->stats->floorscompleted++;
@@ -2070,7 +2298,7 @@ void gameloop(int argc, char **argv)
                                                      "Floor");
                                 update_Gamestate(gamestate, 1, HOME,
                                                  roomsDone, -1,
-                                                 current_floor);
+                                                 current_floor, NULL); // Passing NULL for current_room
 
                                 //Regenerate floor
                                 log_tag("debug_log.txt", "[DEBUG]",
@@ -2092,21 +2320,21 @@ void gameloop(int argc, char **argv)
                                 floor_set_room_types(current_floor);
 
                                 //Center current coords
-                                current_x = center_x;
-                                current_y = center_y;
+                                player->floor_x = center_x;
+                                player->floor_y = center_y;
                                 continue;	//Check win condition for loop
 
                             }
                             break;
                             case SHOP: {
                                 current_floor->
-                                roomclass_layout[current_x][current_y] =
+                                roomclass_layout[player->floor_x][player->floor_y] =
                                     BASIC;
                             }
                             break;
                             case TREASURE: {
                                 current_floor->
-                                roomclass_layout[current_x][current_y] =
+                                roomclass_layout[player->floor_x][player->floor_y] =
                                     BASIC;
                             }
                             break;
@@ -2120,12 +2348,12 @@ void gameloop(int argc, char **argv)
                                 log_tag("debug_log.txt", "[ERROR]",
                                         "Unexpected roomclass value in Rogue loop: [%i] [%s]",
                                         current_floor->
-                                        roomclass_layout[current_x]
-                                        [current_y],
+                                        roomclass_layout[player->floor_x]
+                                        [player->floor_x],
                                         stringFromRoom(current_floor->
                                                        roomclass_layout
-                                                       [current_x]
-                                                       [current_y]));
+                                                       [player->floor_x]
+                                                       [player->floor_y]));
                                 kls_free(default_kls);
                                 kls_free(temporary_kls);
                                 exit(EXIT_FAILURE);
@@ -2137,18 +2365,18 @@ void gameloop(int argc, char **argv)
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "Current room class was [%s] (val: %i), not playable.",
                                 stringFromRoom(current_floor->
-                                               roomclass_layout[current_x]
-                                               [current_y]),
+                                               roomclass_layout[player->floor_x]
+                                               [player->floor_y]),
                                 current_floor->
-                                roomclass_layout[current_x][current_y]);
+                                roomclass_layout[player->floor_x][player->floor_y]);
                     }
 
                     //Draw current FOV
-                    draw_floor_view(current_floor, current_x, current_y,
+                    draw_floor_view(current_floor, player->floor_x, player->floor_y,
                                     floor_win);
                     //Take a step and update screen
-                    move_update(gamestate, current_floor, &current_x,
-                                &current_y, floor_win, path, player,
+                    move_update(gamestate, current_floor, &(player->floor_x),
+                                &(player->floor_y), floor_win, path, player,
                                 current_room, load_info, default_kls,
                                 gamestate_kls);
                 }		// Win condition loop
@@ -2218,7 +2446,7 @@ void gameloop(int argc, char **argv)
             }
         }
         //kls_temp_end(gamestate_kls);
-    } while (retry());
+    } while (retry(seed));
 
     //TODO
     //What is this?

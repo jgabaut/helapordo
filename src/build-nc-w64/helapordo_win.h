@@ -34,6 +34,7 @@
 #include "floor_tester.h"
 
 #include "../utils/rooms.h"
+#include "../utils/bin_saves.h"
 #include "../anvil__helapordo.h"
 #include "../core/game_lore.h"
 

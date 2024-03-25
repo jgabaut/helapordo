@@ -1,0 +1,30 @@
+name: Build CI with make (No anvil), with debug features
+
+on:
+  push:
+    branches: [ "master" , "devel" ]
+  pull_request:
+    branches: [ "master" , "devel"]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Run aclocal
+      run: aclocal
+    - name: Run autoconf
+      run: autoconf
+    - name: Run automake --add-missing
+      run: automake --add-missing
+    - name: Run ./configure --enable-anvil=no --enable-debug
+      run: ./configure --enable-anvil=no --enable-debug
+    - name: Run make
+      run: make
+    - name: Run make check
+      run: make check

@@ -71,9 +71,9 @@ char *hlp_regiontype_strings[HLP_MAX_INDEX + 1] = {
 };
 
 Saveslot default_saveslots[MAX_SAVESLOTS + 1] = {
-    {"default_1", "helapordo-save.txt"},
-    {"default_2", "helapordo-save-2.txt"},
-    {"default_3", "helapordo-save-3.txt"},
+    {"default_1", "hlpd-1", 0},
+    {"default_2", "hlpd-2", 1},
+    {"default_3", "hlpd-3", 2},
 };
 
 turnOption_OP turnOP_from_turnOption(turnOption t)
@@ -225,6 +225,7 @@ OP_res OP_res_from_fightResult(fightResult fr)
 char *savetypestrings[SAVETYPE_MAX + 1] = {
     "Home_Room",
     "Enemies_Room",
+    "Floor_Menu",
 };
 
 char *opresstrings[OP_RES_MAX + 1] = {
@@ -531,3 +532,20 @@ FoePartyBaseStats basefoepartystats[FOEPARTY_CLASS_MAX + 1] = {
     {Enemies, 1},
     {Bosses, 1}
 };
+
+#ifndef _WIN32
+
+#ifdef HELAPORDO_EMOJI_ICONS
+const wchar_t HEAD_CHAR_ICON = 0x1F3A9;
+const wchar_t TORSO_CHAR_ICON = 0x1F455;
+const wchar_t LEGS_CHAR_ICON = 0x1F45F;
+#else
+const wchar_t HEAD_CHAR_ICON = 'H';
+const wchar_t TORSO_CHAR_ICON = 'T';
+const wchar_t LEGS_CHAR_ICON = 'L';
+#endif // HELAPORDO_EMOJI_ICONS
+#else
+const wchar_t HEAD_CHAR_ICON = 'H';
+const wchar_t TORSO_CHAR_ICON = 'T';
+const wchar_t LEGS_CHAR_ICON = 'L';
+#endif // _WIN32

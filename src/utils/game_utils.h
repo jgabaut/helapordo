@@ -53,8 +53,6 @@ void printWin_EnvVars(void);
 void log_Win_EnvVars(void);
 #endif
 
-bool set_Saveslot_name(FILE * file, Saveslot * sv);
-
 void red(void);
 void lightRed(void);
 void strongWhite(void);
@@ -86,7 +84,9 @@ void dbg_Saveslot(Saveslot * saveslot);
 
 void update_Gamestate(Gamestate * gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
-                      int current_enemy_index, Floor * current_floor);
+                      int current_enemy_index, Floor * current_floor, Room* current_room);
+
+void update_Equipslots(Fighter* f);
 
 void loadLore(char **lore_strings, int loreKind);
 
@@ -237,6 +237,8 @@ void display_notification(WINDOW * w, char *text, int time);
 void print_label(WINDOW * win, int starty, int startx, int width, char *string,
                  chtype color);
 void setEquipSprite(Equip * e);
+void setConsumableSprite(Consumable * c);
+void setArtifactSprite(Artifact * a);
 void printEquipStats(Equip * e);
 void printQualityColor(quality q);
 void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
@@ -247,7 +249,7 @@ void applyStatus(WINDOW * notify_win, Fighter * f);
 void applyEStatus(WINDOW * notify_win, Enemy * e);
 void applyBStatus(WINDOW * notify_win, Boss * b);
 void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
-int retry(void);
+int retry(int seed);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
 #else

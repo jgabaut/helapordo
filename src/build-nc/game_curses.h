@@ -60,8 +60,6 @@ void boss_win_show(WINDOW * win, Boss * b, Fighter * f, int isBoss, int border);
 void boss_print_in_panel(WINDOW * win, int starty, int startx, int width,
                          Boss * b, Fighter * f, int isBoss);
 
-void setConsumableSprite(Consumable * c);
-void setArtifactSprite(Artifact * a);
 void setEquipslotSprite(Equipslot * s);
 void setEnemySprite(Enemy * e);
 void setBossSprite(Boss * b);
