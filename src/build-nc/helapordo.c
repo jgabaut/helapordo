@@ -2062,7 +2062,7 @@ void gameloop(int argc, char **argv)
                     } else {
                         load_info->done_loading = 1;
                         log_tag("debug_log.txt", "[DEBUG-PREP]",
-                            "Set load_info->done_loading to 1.");
+                                "Set load_info->done_loading to 1.");
                     }
 
                     Room *current_room = NULL;
