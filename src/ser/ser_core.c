@@ -38,6 +38,7 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
             log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%li} is less than passed offset {%li}", __func__, tot_length, offset);
 #endif
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -47,7 +48,14 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         fseek(file, offset, SEEK_SET);
         remaining_length = ftell(file);
 
-        fread(&blob_size, sizeof(blob_size), 1, file);
+        size_t read_blobs = fread(&blob_size, sizeof(blob_size), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
         size_t sertc_size = sizeof(SerTurncounter);
 
 #ifdef _WIN32
@@ -68,6 +76,7 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, blob_size, sertc_size);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
@@ -79,6 +88,7 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, blob_size, sertc_size);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
@@ -96,6 +106,7 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
             log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, remaining_length, blob_size);
 #endif
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -110,6 +121,7 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
             log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, remaining_length, expected_len);
 #endif
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -122,7 +134,14 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         }
 
         // Read the structure from the file
-        fread(data, sizeof(SerTurncounter), 1, file);
+        read_blobs = fread(data, sizeof(SerTurncounter), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
 
         // Close the file
         fclose(file);
@@ -1888,6 +1907,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%li} is less than passed offset {%li}", __func__, tot_length, offset);
 #endif
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -1903,7 +1923,14 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Total file size: {%li}, Offset: {%lli}, Remaining: {%li}", __func__, tot_length, offset, remaining_length);
 #endif
 
-        fread(&blob_size, sizeof(blob_size), 1, file);
+        size_t read_blobs = fread(&blob_size, sizeof(blob_size), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
         size_t sergmst_size = sizeof(SerGamestate);
 
 #ifdef _WIN32
@@ -1924,6 +1951,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, blob_size, sergmst_size);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
@@ -1935,6 +1963,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, blob_size, sergmst_size);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
@@ -1952,6 +1981,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, remaining_length, blob_size);
 #endif
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -1966,6 +1996,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, remaining_length, expected_len);
 #endif
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -1979,7 +2010,14 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
         }
 
         // Read the structure from the file
-        fread(data, sizeof(SerGamestate), 1, file);
+        read_blobs = fread(data, sizeof(SerGamestate), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
 
         // Close the file
         fclose(file);

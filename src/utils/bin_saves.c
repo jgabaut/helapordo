@@ -64,7 +64,14 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         fseek(file, 0, SEEK_SET);
 
         int64_t header_size = -1;
-        fread(&header_size, sizeof(header_size), 1, file);
+        size_t read_blobs = fread(&header_size, sizeof(header_size), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
         size_t sersh_size = sizeof(SerSaveHeader);
 
 #ifdef WIN_32
@@ -85,6 +92,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, header_size, sersh_size);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
@@ -96,6 +104,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, header_size, sersh_size);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
@@ -112,6 +121,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
             log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, length, header_size);
 #endif
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -136,6 +146,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, length, expected_len);
 #endif
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
                 kls_free(default_kls);
                 kls_free(temporary_kls);
                 exit(EXIT_FAILURE);
@@ -150,7 +161,14 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         }
 
         // Read the structure from the file
-        fread(data, sizeof(SerSaveHeader), 1, file);
+        read_blobs = fread(data, sizeof(SerSaveHeader), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
 
         // Close the file
         fclose(file);
