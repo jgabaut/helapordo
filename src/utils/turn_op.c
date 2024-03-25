@@ -513,6 +513,17 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                     stringFrom_saveType(load_info->save_type));
         }
         break;
+        case BASIC: {
+            enemy_index = -1;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting enemy_index to (-1) (OP_SAVE), isBoss == -1");
+            isBoss = -1;
+            load_info->save_type = FLOORMENU_SAVE;
+            log_tag("debug_log.txt", "[TURNOP]",
+                    "Setting save_type to FLOORMENU_SAVE. [%s]",
+                    stringFrom_saveType(load_info->save_type));
+        }
+        break;
         default: {
             log_tag("debug_log.txt", "[TURNOP]",
                     "Invalid room value in turnOP(OP_SAVE): [%s (%i)]",

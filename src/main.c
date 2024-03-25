@@ -45,6 +45,8 @@ char *G_DEBUG_ENEMYTYPE_ARG = NULL;
 int G_DOTUTORIAL_ON = 0;
 
 int GS_AUTOSAVE_ON = 1;
+
+int G_USE_CURRENTDIR = 0;
 Gamemode GAMEMODE = Rogue;
 Koliseo *default_kls = NULL;
 Koliseo *temporary_kls = NULL;

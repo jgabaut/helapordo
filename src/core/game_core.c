@@ -225,6 +225,7 @@ OP_res OP_res_from_fightResult(fightResult fr)
 char *savetypestrings[SAVETYPE_MAX + 1] = {
     "Home_Room",
     "Enemies_Room",
+    "Floor_Menu",
 };
 
 char *opresstrings[OP_RES_MAX + 1] = {

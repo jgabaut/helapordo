@@ -199,6 +199,12 @@ extern int GS_AUTOSAVE_ON;
  * Global variable for a tutorial launch.
  */
 extern int G_DOTUTORIAL_ON;
+
+/**
+ * Global variable for using current directory to store game run files.
+ */
+extern int G_USE_CURRENTDIR;
+
 /**
  * Current major release.
  */
@@ -1688,13 +1694,14 @@ typedef struct Floor {
 typedef enum saveType {
     HOME_SAVE = 0,
     ENEMIES_SAVE = 1,
+    FLOORMENU_SAVE = 2,
 } saveType;
 
 /**
  * Maximum value of saveType values.
  * @see saveType
  */
-#define SAVETYPE_MAX 1
+#define SAVETYPE_MAX 2
 
 /**
  * Array with the name strings for saveType.

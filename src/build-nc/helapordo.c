@@ -103,6 +103,8 @@ void gameloop(int argc, char **argv)
 #endif
         bool is_localexe = ( argv[0][0] == '.');
 
+        G_USE_CURRENTDIR = (is_localexe ? 1 : G_USE_CURRENTDIR);
+
         char *kls_progname =
             (char *)KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami),
                                        KLS_None, "progname", whoami);
@@ -1239,6 +1241,12 @@ void gameloop(int argc, char **argv)
                         load_info->save_type = HOME_SAVE;
                     }
                     break;
+                    case BASIC: {
+                        load_info->save_type = FLOORMENU_SAVE;
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting load_info->done_loading to 1", __func__);
+                        load_info->done_loading = 1;
+                    }
+                    break;
                     default: {
                         log_tag("debug_log.txt", "[ERROR]", "%s():    unexpected class for current room. {%i}", __func__, current_room->class);
                         kls_free(default_kls);
@@ -1636,8 +1644,9 @@ void gameloop(int argc, char **argv)
                 int enemyTotal = -1;
                 roomClass room_type = -1;
 
-                if (!(load_info->is_new_game) && !(load_info->done_loading)
+                if ((load_info->is_new_game == 0) && (load_info->done_loading == 0)
                     && (load_info->save_type == ENEMIES_SAVE)) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    setting enemyTotal to loaded_roomtotalenemies: {%i}", __func__, loaded_roomtotalenemies);
                     enemyTotal = loaded_roomtotalenemies;
                 }
 
@@ -2050,6 +2059,10 @@ void gameloop(int argc, char **argv)
                     if (!(load_info->is_new_game) && !(load_info->done_loading)
                         && (load_info->save_type == ENEMIES_SAVE)) {
                         enemyTotal = loaded_roomtotalenemies;
+                    } else {
+                        load_info->done_loading = 1;
+                        log_tag("debug_log.txt", "[DEBUG-PREP]",
+                            "Set load_info->done_loading to 1.");
                     }
 
                     Room *current_room = NULL;

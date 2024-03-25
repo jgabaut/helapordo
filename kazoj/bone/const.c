@@ -49,6 +49,9 @@ int main(void) {
  if ( ! (MAX_ROGUE_FLOORS == 17) ) {
    fail("MAX_ROGUE_FLOORS",17,MAX_ROGUE_FLOORS);
  };
+ if ( ! (SAVETYPE_MAX == 2) ) {
+   fail("SAVETYPE_MAX",2, SAVETYPE_MAX);
+ }
  if ( ! (CONSUMABLESMAX == 5) ) {
    fail("CONSUMABLESMAX",5,CONSUMABLESMAX);
  };

@@ -920,7 +920,7 @@ void resolve_staticPath(char static_path[500])
     strncat(static_folder_path_global, local_install_static_folder_path, 50);
     struct stat sb;
 
-    if (stat(static_folder_path_wd, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+    if (G_USE_CURRENTDIR == 1 && stat(static_folder_path_wd, &sb) == 0 && S_ISDIR(sb.st_mode)) {
         //sprintf(msg, "[DEBUG]    resolve_staticPath(): Found \"/static/\" dir in working directory (%s).\n",static_folder_path_wd);
         strcpy(static_path, static_folder_path_wd);
     } else {

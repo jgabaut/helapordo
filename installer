@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-  echo -e "\n  Usage: installer [-i/u] [VERSION] [TARGET-DIR] [SOURCE-DIR] [STATIC-DIR-NAME] [LOG-FILE]"
+  echo -e "\n  Usage: installer [-i/u] [VERSION] [TARGET-DIR] [SOURCE-DIR] [STATIC-DIR-NAME] [SLOT1_DIRNAME] [SLOT2_DIRNAME] [SLOT3_DIRNAME] [LOG-FILE]"
 }
 
 install_flag=0
@@ -39,18 +39,21 @@ fi
 
 #
 
-if [[ $# -ne 6 ]] ; then {
+if [[ $# -ne 9 ]] ; then {
   usage
   exit 1
 }
 fi
 
-INSTALLER_VERSION="0.1.1"
+INSTALLER_VERSION="0.1.2"
 VERSION="$2"
 TARGET_INSTALL_DIR="$3"
 SOURCE_INSTALL_DIR="$4"
 STATIC_DIR_NAME="$5"
-LOG_FILE="$6"
+SLOT1_DIRNAME="$6"
+SLOT2_DIRNAME="$7"
+SLOT3_DIRNAME="$8"
+LOG_FILE="$9"
 
 
 truncate_log() {
@@ -103,11 +106,11 @@ depcheck() {
 
     log_msg "\n  Done checking local files."
 
-
 }
 
 mkdirs() {
-	dirs=("$TARGET_INSTALL_DIR" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME") #Legacy code for installing animations and lores # "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore")
+	dirs=("$TARGET_INSTALL_DIR" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/$SLOT1_DIRNAME" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/$SLOT2_DIRNAME" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/$SLOT3_DIRNAME")
+    #Legacy code for installing animations and lores >>> # "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/animations" "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/lore")
     totalDirs=${#dirs[@]}  # Total number of dirs to make
     currentDirTask=0  # Current dir task being executed
     log_msg "\n  Creating directories."

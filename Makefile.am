@@ -7,7 +7,10 @@ AUTOMAKE_OPTIONS = foreign
 CFLAGS = @CFLAGS@
 TARGET_INSTALL_DIR = $(HOME)/helapordo-local
 SOURCE_INSTALL_DIR = "."
-STATIC_DIR_NAME = "static"
+STATIC_DIR_NAME = "."
+SLOT1_DIR_NAME = "hlpd-1"
+SLOT2_DIR_NAME = "hlpd-2"
+SLOT3_DIR_NAME = "hlpd-3"
 INSTALLER_LOG_FILE = "./installer.log"
 # Check local version
 RUN_VERSION := $$(./$(TARGET) -v)
@@ -190,7 +193,7 @@ run: helapordo
 
 install: helapordo
 	@echo -en "Installing helapordo $(VERSION):  "
-	./installer "-i" $(VERSION) $(TARGET_INSTALL_DIR) $(SOURCE_INSTALL_DIR) $(STATIC_DIR_NAME) $(INSTALLER_LOG_FILE)
+	./installer "-i" $(VERSION) $(TARGET_INSTALL_DIR) $(SOURCE_INSTALL_DIR) $(STATIC_DIR_NAME) $(SLOT1_DIR_NAME) $(SLOT2_DIR_NAME) $(SLOT3_DIR_NAME) $(INSTALLER_LOG_FILE)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 do_alias:
