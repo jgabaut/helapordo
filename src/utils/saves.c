@@ -128,10 +128,10 @@ bool set_Saveslot_name(FILE *file, Saveslot *sv)
 
 #ifndef _WIN32
         sprintf(path_to_sv_file, "%s/%s/%s", static_path,
-                    sv->save_path, "run-nc.bin");
+                sv->save_path, "run-nc.bin");
 #else
         sprintf(path_to_sv_file, "%s\\%s\\%s", static_path,
-                    sv->save_path, "run-nc.bin");
+                sv->save_path, "run-nc.bin");
 #endif
         SerGamestate ser_gmst = {0};
         bool read_res = readSerGamestate(path_to_sv_file, 0, &ser_gmst);
