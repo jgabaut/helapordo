@@ -2181,7 +2181,11 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
+#ifndef _WIN32
     sprintf(path_to_bin_savefile, "%s/%s/%s", static_path, default_saveslots[gmst->path->current_saveslot->index].save_path,bin_gmstfile_name);
+#else
+    sprintf(path_to_bin_savefile, "%s\\%s\\%s", static_path, default_saveslots[gmst->path->current_saveslot->index].save_path,bin_gmstfile_name);
+#endif
 
     if (force_init) {
         log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forced init of SerGamestate.", __func__);

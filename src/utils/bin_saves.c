@@ -236,7 +236,11 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
+#ifndef _WIN32
     sprintf(path_to_bin_savefile, "%s/%s/%s", static_path, default_saveslots[saveslot_index].save_path, bin_savefile_name);
+#else
+    sprintf(path_to_bin_savefile, "%s\\%s\\%s", static_path, default_saveslots[saveslot_index].save_path, bin_savefile_name);
+#endif
     if (force_init) {
         log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forcing init of binsave at {%s}.", __func__, path_to_bin_savefile);
         *did_init = true;
