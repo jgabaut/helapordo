@@ -1981,7 +1981,10 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
         // Close the file
         fclose(file);
     } else {
-        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        //TODO: Print notice for error. It shouldn't disrupt the screen for saveslot name setting.
+        if (G_EXPERIMENTAL_ON == 0) {
+            fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        }
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
     }

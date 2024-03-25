@@ -129,8 +129,11 @@ mkdirs() {
         ((currentDirTask++))  # Increment current task count
     done
 
-    log_msg "\n  Done Creating directories."
+    touch "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/$SLOT1_DIRNAME/save.txt"
+    touch "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/$SLOT2_DIRNAME/save.txt"
+    touch "$TARGET_INSTALL_DIR/$STATIC_DIR_NAME/$SLOT3_DIRNAME/save.txt"
 
+    log_msg "\n  Done Creating directories."
 }
 
 installgame() {

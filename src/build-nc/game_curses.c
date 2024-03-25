@@ -194,26 +194,34 @@ int get_saveslot_index(void)
         // Set static_path value to the correct static dir path
         resolve_staticPath(static_path);
 
+        FILE* svfile = NULL;
+        if (G_EXPERIMENTAL_ON == 0) {
 #ifndef _WIN32
-        sprintf(path_to_sv_file, "%s/%s", static_path,
-                default_saveslots[i].save_path);
+            sprintf(path_to_sv_file, "%s/%s/%s", static_path,
+                    default_saveslots[i].save_path, "save.txt");
 #else
-        sprintf(path_to_sv_file, "%s\\%s", static_path,
-                default_saveslots[i].save_path);
+            sprintf(path_to_sv_file, "%s\\%s\\%s", static_path,
+                    default_saveslots[i].save_path, "save.txt");
 #endif
-        FILE *svfile = fopen(path_to_sv_file, "r");
+            svfile = fopen(path_to_sv_file, "r");
+        }
         if (!svfile) {
-            log_tag("debug_log.txt", "[WARN]",
-                    "%s(): Failed opening savefile {%i} at \"%s\".", __func__,
-                    i, path_to_sv_file);
-            continue;
+            if (G_EXPERIMENTAL_ON == 0) {
+                log_tag("debug_log.txt", "[WARN]",
+                        "%s(): Failed opening savefile {%i} at \"%s\".", __func__,
+                        i, path_to_sv_file);
+                continue;
+            } else {
+                log_tag("debug_log.txt", "[LOAD]",
+                        "%s():    Deferring file opening to ser_Saveslot_name().", __func__);
+            }
         }
         if (!set_Saveslot_name(svfile, &default_saveslots[i])) {
             log_tag("debug_log.txt", "[WARN]",
                     "%s(): Failed reading savefile {%i} at \"%s\".", __func__,
                     i, path_to_sv_file);
         };
-        fclose(svfile);
+        if (svfile) fclose(svfile);
     }
 
     saveslots_win = newwin(12, 24, 2, 5);
