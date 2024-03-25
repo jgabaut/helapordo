@@ -16,6 +16,7 @@
 + [Building](#building)
   + [Dependencies](#dependencies)
   + [Initialitising Submodules](#init_submodules)
+  + [Anvil](#dependencies)
   + [Autoreconf and ./configure](#autotools)
   + [Enable game debug](#debug_access)
   + [Build with mingw32](#mingw32_build)
@@ -47,7 +48,22 @@
   - `ncurses-dev` is needed as a library dependecy.
   - `python3` is needed to generate `./src/palette.c` and `./src/palette.h`.
 
-  - Some source files are expected to be generated at build time, by a symlink executable named `anvil`. By default, the configuration will pick an implementation for `anvil` depending on passed host:
+### Initialising submodules <a name = "init_submodules"></a>
+
+  You can initialise the submodules by running:
+
+    `git submodule update --init`
+
+### Anvil <a name = "anvil"></a>
+
+  - Some source files are expected to be generated at build time, by a symlink executable named `anvil`.
+
+  - This dependency can be disabled entirely by running
+    `./configure --enable-anvil=no`
+    - This can be useful when missing some of the required programs to bootstrap/use `anvil`.
+    - See [this section](#autotools) for info about generating the `./configure` script in the first place.
+
+  - By default, the configuration will pick an implementation for `anvil` depending on passed host:
     - `darwin*`: default is `repo_invil`. This means you need the Rust build toolchain to be installed.
     - `linux*`, `mingw*`: default is `repo_amboso`. This means you need `bash >=4.x`, and `gawk`.
   - To readily override the default implementation for `anvil`, you can pass `--enable-anvilpick` to the `./configure` script:
@@ -61,12 +77,6 @@
     - If you dont' have those, you can use `invil` to generate `./src/anvil__helapordo.h`.
       - You will need `cargo` to build `invil`.
     - If you want to just build the code without `./src/anvil__helapordo.h`., you can apply the patch file provided at [this link](https://github.com/jgabaut/helapordo/issues/52#issuecomment-1871877437).
-
-### Initialising submodules <a name = "init_submodules"></a>
-
-  You can initialise the submodules by running:
-
-    `git submodule update --init`
 
 ### Autoreconf and ./configure <a name = "autotools"></a>
 
@@ -146,11 +156,12 @@
 
   I try to upload precompiled binaries for the ncurses build:
 
-  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.3/helapordo-nc-1.4.3-Linux-x86_64.zip)
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.4/helapordo-nc-1.4.4-Linux-x86_64.zip)
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.3/helapordo.exe-nc-1.4.3-w64-mingw32-x86_64.zip)
+  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.4/helapordo.exe-nc-1.4.4-w64-mingw32-x86_64.zip)
 
-  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.2/helapordo-nc-1.4.2-darwin-arm64.zip) (Available = `1.4.2`. Latest = `1.4.3`)
+  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.3/helapordo-nc-1.4.3-darwin-arm64.zip) (Available = `1.4.3`. Latest = `1.4.4`)
+    - You should always check if the releases page has a newer build for you than the one linked here.
 
-  📦 v1.4.3 22/02/2024
+  📦 v1.4.4 25/03/2024
   https://github.com/jgabaut/helapordo/releases
