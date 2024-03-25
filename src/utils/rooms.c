@@ -80,7 +80,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     fightResult fightStatus = FIGHTRES_NO_DMG;
     log_tag("debug_log.txt", "[ROOM]", "New HOME room, index %i", room->index);
 
-    if (GS_AUTOSAVE_ON == 1 && GAMEMODE != Rogue) {
+    if (GS_AUTOSAVE_ON == 1) {
         log_tag("debug_log.txt", "[DEBUG]", "Doing autosave.");
 
         char path_to_autosave_file[820];
