@@ -254,6 +254,7 @@ static const int HELAPORDO_API_VERSION_INT =
 typedef struct {
     char name[50];     /**< Name string for the saveslot.*/
     char save_path[255];     /**< Path to savefile*/
+    int index; /**< Index of saveslot.*/
 } Saveslot;
 
 /**

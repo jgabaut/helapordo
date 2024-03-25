@@ -77,5 +77,5 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data);
 
 bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser);
 
-SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_init, bool* did_init);
+SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_init, bool* did_init, int saveslot_index);
 #endif // BINSAVES_H_

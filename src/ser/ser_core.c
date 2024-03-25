@@ -1723,6 +1723,8 @@ bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser) {
     ser->save_path[244] = '\0';
     memcpy(deser->save_path, ser->save_path, 244);
     deser->save_path[244] = '\0';
+
+    deser->index = ser->index;
     return true;
 }
 
@@ -1747,6 +1749,7 @@ bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser) {
     deser->save_path[244] = '\0';
     memcpy(ser->save_path, deser->save_path, 244);
     ser->save_path[244] = '\0';
+    ser->index = deser->index;
     return true;
 }
 
@@ -2178,8 +2181,7 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
-    //TODO use separate dirs?
-    sprintf(path_to_bin_savefile, "%s/hlpd-1/%s", static_path, bin_gmstfile_name);
+    sprintf(path_to_bin_savefile, "%s/%s/%s", static_path, default_saveslots[gmst->path->current_saveslot->index].save_path,bin_gmstfile_name);
 
     if (force_init) {
         log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forced init of SerGamestate.", __func__);

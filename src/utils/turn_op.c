@@ -432,7 +432,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                 char static_path[500];
                 // Set static_path value to the correct static dir path
                 resolve_staticPath(static_path);
-                SaveHeader* current_saveHeader = prep_saveHeader(static_path, kls, true, &did_saveheader_init);
+                SaveHeader* current_saveHeader = prep_saveHeader(static_path, kls, true, &did_saveheader_init, path->current_saveslot->index);
                 log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                 bool prep_res = prep_Gamestate(gmst, static_path, 0, default_kls, true); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                 if (prep_res) {

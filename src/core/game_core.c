@@ -71,9 +71,9 @@ char *hlp_regiontype_strings[HLP_MAX_INDEX + 1] = {
 };
 
 Saveslot default_saveslots[MAX_SAVESLOTS + 1] = {
-    {"default_1", "hlpd-1"},
-    {"default_2", "hlpd-2"},
-    {"default_3", "hlpd-3"},
+    {"default_1", "hlpd-1", 0},
+    {"default_2", "hlpd-2", 1},
+    {"default_3", "hlpd-3", 2},
 };
 
 turnOption_OP turnOP_from_turnOption(turnOption t)

@@ -208,12 +208,13 @@ bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser)
  * @param kls Koliseo used for allocation.
  * @param force_init When true, forces the write of a new SerSaveHeader.
  * @param did_init Set to true when a new saveHeader is written.
+ * @param saveslot_index Used to pass current saveslot index.
  * @see SerSaveHeader
  * @see SaveHeader
  * @return The newly allocated SaveHeader.
  * TODO Contract should meaningfully capture case of read failure + init.
  */
-SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_init, bool* did_init)
+SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_init, bool* did_init, int saveslot_index)
 {
     if (kls == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
@@ -235,7 +236,7 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
-    sprintf(path_to_bin_savefile, "%s/hlpd-1/%s", static_path, bin_savefile_name);
+    sprintf(path_to_bin_savefile, "%s/%s/%s", static_path, default_saveslots[saveslot_index].save_path, bin_savefile_name);
     if (force_init) {
         log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forcing init of binsave at {%s}.", __func__, path_to_bin_savefile);
         *did_init = true;

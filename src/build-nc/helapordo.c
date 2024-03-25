@@ -798,13 +798,6 @@ void gameloop(int argc, char **argv)
                 "Animation loading took %0.7f seconds.",
                 time_spent_loading_animations);
 
-        bool did_exper_init = false;
-        if (G_EXPERIMENTAL_ON == 1) {
-            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init);
-
-            log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
-        }
-
         WINDOW* screen = initscr();
         bool screen_is_big_enough = false;
         int screen_rows = 0;
@@ -978,6 +971,7 @@ void gameloop(int argc, char **argv)
         log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
         gamescreen->colors = COLORS;
         gamescreen->color_pairs = COLOR_PAIRS;
+        int picked_saveslot_index = -1;
 
         while (!savepick_picked
                && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
@@ -1053,7 +1047,7 @@ void gameloop(int argc, char **argv)
             }
             wrefresh(savepick_menu_win);
             if (savepick_choice == NEW_GAME) {
-                int picked_saveslot_index = get_saveslot_index();
+                picked_saveslot_index = get_saveslot_index();
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Saveslot index picked: [%i]", picked_saveslot_index);
                 sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
@@ -1068,7 +1062,7 @@ void gameloop(int argc, char **argv)
                 turnOP(OP_NEW_GAME, savepick_turn_args, default_kls,
                        savepick_kls);
             } else if (savepick_choice == LOAD_GAME) {
-                int picked_saveslot_index = get_saveslot_index();
+                picked_saveslot_index = get_saveslot_index();
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Saveslot index picked: [%i]", picked_saveslot_index);
                 sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
@@ -1153,6 +1147,7 @@ void gameloop(int argc, char **argv)
         if (load_info->is_new_game) {	// We prepare path and fighter
             path = randomise_path(seed, default_kls, current_save_path);
             path->loreCounter = -1;
+            path->current_saveslot->index = picked_saveslot_index;
 
             kls_log(default_kls, "DEBUG", "Prepping Fighter");
             player =
@@ -1186,6 +1181,7 @@ void gameloop(int argc, char **argv)
                 initWincon(w, path, w->class);
                 initPlayerStats(player, path, default_kls);
                 path->win_condition = w;
+                path->current_saveslot->index = picked_saveslot_index;
                 char static_path[500];
                 // Set static_path value to the correct static dir path
                 resolve_staticPath(static_path);
@@ -1212,6 +1208,9 @@ void gameloop(int argc, char **argv)
                     prepareRoomEnemy(current_room->enemies[e_idx], 1, 3, 1,
                                      gamestate_kls);
                 }
+                bool did_exper_init = false;
+                SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, path->current_saveslot->index);
+                log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
 
                 bool prep_res = prep_Gamestate(gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                 if (prep_res) {

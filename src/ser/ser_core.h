@@ -680,6 +680,7 @@ typedef struct SerSaveslot {
 #endif
     char name[50];     /**< Name string for the saveslot.*/
     char save_path[255];     /**< Path to savefile*/
+    int8_t index; /**< Index of saveslot.*/
 #ifdef __GNUC__
 } SerSaveslot;
 #else
