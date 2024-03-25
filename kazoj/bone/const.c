@@ -2,6 +2,7 @@
 #include <string.h>
 #define HELAPORDO_CURSES_BUILD
 #include "../../src/core/game_core.h"
+#include "../../src/ser/ser_core.h"
 
 void fail(char* msg, int ex, int val) {
   printf("[Fail]    %s, expected (%i), was %i\n",msg,ex,val);
@@ -95,6 +96,12 @@ int main(void) {
  };
  if ( ! (PERKSMAX == 8) ) {
    fail("PERKSMAX",8,PERKSMAX);
+ };
+ if ( ! FIGHTER_NAME_BUFSIZE == 50 ) {
+   fail("FIGHTER_NAME_BUFSIZE",50,FIGHTER_NAME_BUFSIZE);
+ };
+ if ( ! SERFIGHTER_NAME_BUFSIZE == 50 ) {
+   fail("SERFIGHTER_NAME_BUFSIZE",50,SERFIGHTER_NAME_BUFSIZE);
  };
  if ( ! (EQUIPPERKSMAX == 2) ) {
    fail("EQUIPPERKSMAX",2,EQUIPPERKSMAX);
