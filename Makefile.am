@@ -75,6 +75,7 @@ helapordo_SOURCES += src/build-nc/helapordo.c
 endif
 endif
 
+hlpd_save2l_SOURCES = src/core/game_core.c src/core/sprites.c src/utils/game_utils.c src/utils/bin_saves.c scripts/save2l/save2l.c src/ser/ser_core.c koliseo/src/koliseo.c
 
 ./anvil:
 	@echo -e "\033[1;35m[Makefile]\e[0m    Bootstrapping \"./anvil\":"
@@ -118,6 +119,11 @@ $(TARGET): $(helapordo_SOURCES:.c=.o)
 	@echo -e "    \033[1;35mLDADD\e[0m: [ \"\033[1;34m$(LDADD)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]    Building [\033[1;35m $@ \033[1;34m]:\e[0m  "
 	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) $(helapordo_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
+	@echo -e "\033[1;33mDone.\e[0m"
+
+./hlpd-save2l: $(hlpd_save2l_SOURCES:.c=.o)
+	@echo -en "\033[1;34m[Makefile]    Building [\033[1;35m $@ \033[1;34m]:\e[0m  "
+	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) $(hlpd_save2l_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Targets for additional rules
@@ -226,6 +232,8 @@ clean:
 	-rm ./*.o
 	-rm src/anvil__helapordo.*
 	-rm ./anvil
+	-rm ./hlpd-save2l
+	-rm ./scripts/save2l/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 cleanob:
@@ -237,10 +245,11 @@ cleanob:
 	-rm src/core/*.o
 	-rm src/utils/*.o
 	-rm src/ser/*.o
+	-rm ./scripts/save2l/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)
-all: ./src/palette.c ./koliseo/src/koliseo.o ./sprites4curses/s4c-animate/animate.o $(TARGET)
+all: ./src/palette.c ./koliseo/src/koliseo.o ./sprites4curses/s4c-animate/animate.o $(TARGET) ./hlpd-save2l
 
 # Target to clean and rebuild
 rebuild: clean all
