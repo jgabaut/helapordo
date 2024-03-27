@@ -24,7 +24,7 @@ Koliseo* temporary_kls = NULL;
 
 void saverdr_usage(const char* progname)
 {
-    fprintf(stderr, "Usage:    %s <-s/-r> <savefile>\n", progname);
+    fprintf(stderr, "Usage:    %s <savedir>\n", progname);
 }
 
 #define RDR_SAVE_MODE 0
@@ -32,58 +32,42 @@ void saverdr_usage(const char* progname)
 int main(int argc, char** argv)
 {
 
-    if (argc != 3) {
+    if (argc != 2) {
         saverdr_usage(argv[0]);
         return 1;
     } else {
-        const char* mode_arg = argv[1];
-        int mode = -1;
-        if (strcmp(mode_arg, "-s") == 0) {
-            mode = RDR_SAVE_MODE;
-        } else if (strcmp(mode_arg, "-r") == 0) {
-            mode = RDR_RUN_MODE;
-        } else {
-            saverdr_usage(argv[0]);
+        const char* dir_arg = argv[1];
+        char meta_filepath[800];
+        char run_filepath[800];
+
+        snprintf(meta_filepath, 799, "%s/save-nc.bin", dir_arg);
+        snprintf(run_filepath, 799, "%s/run-nc.bin", dir_arg);
+
+        meta_filepath[799] = '\0';
+        run_filepath[799] = '\0';
+
+        SerSaveHeader s_hdr = {0};
+
+        bool read_res = readSerSaveHeader(meta_filepath, &s_hdr);
+        if (!read_res) {
+            fprintf(stderr, "Error while reading from {%s}.\n", meta_filepath);
             return 1;
+        } else {
+            printf("Save info: {\n    Api level: {%" PRId32 "}\n    Game version: {%s}\n    Save version: {%s}\n    Os: {%s}\n    Machine: {%s}\n}\n", s_hdr.api_level, s_hdr.game_version, s_hdr.save_version, s_hdr.os, s_hdr.machine);
         }
-        const char* filepath = argv[2];
+        SerGamestate s_gmst = {0};
 
-        switch(mode) {
-            case RDR_SAVE_MODE: {
-                SerSaveHeader s_hdr = {0};
+        bool run_read_res = readSerGamestate(run_filepath, 0, &s_gmst);
+        if (!run_read_res) {
+            fprintf(stderr, "Error while reading from {%s}.\n", run_filepath);
+            return 1;
+        } else {
 
-                bool read_res = readSerSaveHeader(filepath, &s_hdr);
-                if (!read_res) {
-                    fprintf(stderr, "Error while reading from {%s}.\n", filepath);
-                    return 1;
-                } else {
-                    printf("Save info: {\n    Api level: {%" PRId32 "}\n    Game version: {%s}\n    Save version: {%s}\n    Os: {%s}\n    Machine: {%s}\n}\n", s_hdr.api_level, s_hdr.game_version, s_hdr.save_version, s_hdr.os, s_hdr.machine);
-                }
-            }
-            break;
-            case RDR_RUN_MODE: {
-                SerGamestate s_gmst = {0};
-
-                bool read_res = readSerGamestate(filepath, 0, &s_gmst);
-                if (!read_res) {
-                    fprintf(stderr, "Error while reading from {%s}.\n", filepath);
-                    return 1;
-                } else {
-
-                    printf("Gamemode: {%s}\n", stringFromGamemode(s_gmst.gamemode));
-                    printf("Current room index: {%i}\n", s_gmst.current_room_index);
-                    printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
-                    printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
-                }
-            }
-            break;
-            default: {
-                fprintf(stderr, "%s():    Unexpected mode. {%i}\n", __func__, mode);
-                return 1;
-            }
-            break;
+            printf("Gamemode: {%s}\n", stringFromGamemode(s_gmst.gamemode));
+            printf("Current room index: {%i}\n", s_gmst.current_room_index);
+            printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
+            printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
         }
-
     }
     return 0;
 }
