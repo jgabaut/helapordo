@@ -25,6 +25,8 @@
 #include "../build-rl/game_rl.h"
 #endif
 
+#include "../../src/utils/bin_saves.h"
+
 /**
  * Serialized Turncounter. Packed struct.
  * Can be turned into a Turncounter with deser_turnCounter().
@@ -836,4 +838,5 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data);
 bool deser_Gamestate(SerGamestate* ser, Gamestate* deser);
 bool ser_Gamestate(Gamestate* deser, SerGamestate* ser);
 bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Koliseo* kls, bool force_init);
+bool read_savedir(const char* dirpath);
 #endif // SER_CORE_H

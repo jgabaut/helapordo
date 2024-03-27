@@ -2343,3 +2343,39 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         return true;
     }
 }
+
+bool read_savedir(const char* dirpath)
+{
+    char meta_filepath[800];
+    char run_filepath[800];
+
+    snprintf(meta_filepath, 799, "%s/save-nc.bin", dirpath);
+    snprintf(run_filepath, 799, "%s/run-nc.bin", dirpath);
+
+    meta_filepath[799] = '\0';
+    run_filepath[799] = '\0';
+
+    SerSaveHeader s_hdr = {0};
+
+    bool read_res = readSerSaveHeader(meta_filepath, &s_hdr);
+    if (!read_res) {
+        fprintf(stderr, "Error while reading from {%s}.\n", meta_filepath);
+        return false;
+    } else {
+        printf("Save info: {\n    Api level: {%" PRId32 "}\n    Game version: {%s}\n    Save version: {%s}\n    Os: {%s}\n    Machine: {%s}\n}\n", s_hdr.api_level, s_hdr.game_version, s_hdr.save_version, s_hdr.os, s_hdr.machine);
+    }
+    SerGamestate s_gmst = {0};
+
+    bool run_read_res = readSerGamestate(run_filepath, 0, &s_gmst);
+    if (!run_read_res) {
+        fprintf(stderr, "Error while reading from {%s}.\n", run_filepath);
+        return false;
+    } else {
+
+        printf("Gamemode: {%s}\n", stringFromGamemode(s_gmst.gamemode));
+        printf("Current room index: {%i}\n", s_gmst.current_room_index);
+        printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
+        printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
+    }
+    return true;
+}
