@@ -276,7 +276,7 @@ bool deser_Equip(SerEquip* ser, Equip* deser) {
     deser->vel = ser->vel;
     deser->enr = ser->enr;
     deser->perksCount = ser->perksCount;
-    assert(deser->perksCount < EQUIPPERKSMAX);
+    assert(deser->perksCount <= EQUIPPERKSMAX);
     deser->cost = ser->cost;
     deser->qual = ser->qual;
     bool perk_deser_res = false;
@@ -311,7 +311,7 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
     ser->vel = deser->vel;
     ser->enr = deser->enr;
     ser->perksCount = deser->perksCount;
-    assert(ser->perksCount < EQUIPPERKSMAX);
+    assert(ser->perksCount <= EQUIPPERKSMAX);
     ser->cost = deser->cost;
     ser->qual = deser->qual;
     bool perk_ser_res = false;
