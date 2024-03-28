@@ -43,6 +43,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <inttypes.h>
 #include "../core/game_core.h"
 
 void initWincon(Wincon * w, Path * p, winconClass class);
@@ -294,5 +295,5 @@ void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 void setCounter(Turncounter * c, int turns);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
-int hlpd_rand(int64_t modulo);
+int hlpd_rand(void);
 #endif

@@ -264,6 +264,7 @@ void dbg_Path(Path *path)
             path->loreCounter);
     dbg_Wincon(path->win_condition);
     dbg_Saveslot(path->current_saveslot);
+    log_tag("debug_log.txt", "[PATH]", "Rng advancements: { %" PRId64 "}", *(path->rng_advancements));
 }
 
 /**
@@ -897,9 +898,9 @@ void setRoomType(Path *path, int *roadFork_value, roomClass *room_type,
             *room_type = BOSS;
         } else if (roomsDone % SHOPROOM == 0) {
             *room_type = SHOP;
-        } else if (rand() % 5 == 0) {
+        } else if (hlpd_rand() % 5 == 0) {
             *room_type = TREASURE;
-        } else if (rand() % 4 == 0 && (roomsDone + 2 < path->length)) {
+        } else if (hlpd_rand() % 4 == 0 && (roomsDone + 2 < path->length)) {
             *room_type = ROADFORK;
         } else if (*room_type == -1) {
             *room_type = ENEMIES;
@@ -925,7 +926,7 @@ void setRoomType(Path *path, int *roadFork_value, roomClass *room_type,
             *room_type = BOSS;
         } else if (roomsDone % 4 == 0) {
             *room_type = SHOP;
-        } else if (rand() % 20 == 0) {
+        } else if (hlpd_rand() % 20 == 0) {
             *room_type = TREASURE;
         } else if (*room_type == -1) {
             *room_type = ENEMIES;
@@ -2325,7 +2326,7 @@ void setConsumablePrices(int size, int *consumablePrices,
 
         //Price evaluation
         int baseprice = 4;
-        int price = baseprice + (rand() % 5) - 1;
+        int price = baseprice + (hlpd_rand() % 5) - 1;
 
         *cur_price = price;
     }
@@ -2666,12 +2667,12 @@ void printSpawnMessage(Enemy *e, int roomIndex, int enemyIndex)
  */
 int dropConsumable(Fighter *player)
 {
-    int drop = rand() % (CONSUMABLESMAX + 1);
+    int drop = hlpd_rand() % (CONSUMABLESMAX + 1);
 
     //Special drop chances. Maybe a function for this?
     if (drop == Powergem) {
-        if (rand() % 3 == 0) {
-            drop = rand() % (CONSUMABLESMAX + 1);
+        if (hlpd_rand() % 3 == 0) {
+            drop = hlpd_rand() % (CONSUMABLESMAX + 1);
         }
     }
     // Powergem has 33% chance to be rerolled
@@ -2700,7 +2701,7 @@ int dropArtifact(Fighter *player)
 {
     int drop = 0;
     do {
-        drop = rand() % (ARTIFACTSMAX + 1);
+        drop = hlpd_rand() % (ARTIFACTSMAX + 1);
     } while (player->artifactsBag[drop]->qty != 0);	//We reroll to get one we don't have
 
     player->artifactsBag[drop]->qty++;
@@ -2802,7 +2803,8 @@ Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
     sprintf(msg, "Prepping Path");
     kls_log(kls, "DEBUG", msg);
     Path *p = (Path *) KLS_PUSH_TYPED(kls, Path, HR_Path, "Path", msg);
-    srand(seed);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting path->rng_advancements to point to G_RNG_ADVANCEMENTS. Value: {%i}", __func__, G_RNG_ADVANCEMENTS);
+    p->rng_advancements = &G_RNG_ADVANCEMENTS;
     sprintf(msg, "Prepping Saveslot");
     kls_log(kls, "DEBUG", msg);
     sprintf(msg, "save_path: [%s]", path_to_savefile);
@@ -2824,21 +2826,21 @@ Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
 
     switch (GAMEMODE) {
     case Standard: {
-        p->length = (rand() % MAXLENGTH) + 1;
-        p->luck = (rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (rand() % 150) + 500;
+        p->length = (hlpd_rand() % MAXLENGTH) + 1;
+        p->luck = (hlpd_rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
     }
     break;
     case Story: {
         p->length = 41;
-        p->luck = (rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (rand() % 150) + 500;
+        p->luck = (hlpd_rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
     }
     break;
     case Rogue: {
         p->length = 1;
-        p->luck = (rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (rand() % 150) + 500;
+        p->luck = (hlpd_rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
     }
     break;
     default: {
@@ -3304,9 +3306,9 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     }
 
     //Select a basic item from the list
-    int drop = rand() % (EQUIPSMAX + 1);
+    int drop = hlpd_rand() % (EQUIPSMAX + 1);
     //Randomise quality
-    quality q = rand() % (QUALITIESMAX + 1);
+    quality q = hlpd_rand() % (QUALITIESMAX + 1);
 
     //Prepare the item
     kls_log(kls, "DEBUG", "Prepping dropped Equip");
@@ -3335,9 +3337,9 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     e->level = base->level + round(player->level / EQUIPLVLBOOSTRATIO);
 
     //Chance for better leveled item
-    if ((rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
+    if ((hlpd_rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
         e->level += 1;		//At least a simple +1
-        if ((rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
+        if ((hlpd_rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
             e->level += 1;	//A bonus roll for another +1
 
         }
@@ -3355,15 +3357,15 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     //Bonus stats on better quality items? Simple for now
     //
     if (q == Good) {
-        e->atk += (rand() % 3);	//Should use a defined constant
-        e->def += (rand() % 3);	//Should use a defined constant
-        e->vel += (rand() % 3);	//Should use a defined constant
-        e->enr += (rand() % 2);	//Should use a defined constant
+        e->atk += (hlpd_rand() % 3);	//Should use a defined constant
+        e->def += (hlpd_rand() % 3);	//Should use a defined constant
+        e->vel += (hlpd_rand() % 3);	//Should use a defined constant
+        e->enr += (hlpd_rand() % 2);	//Should use a defined constant
     } else if (q == Bad) {
-        e->atk -= (rand() % 3);	//Should use a defined constant
-        e->def -= (rand() % 3);	//Should use a defined constant
-        e->vel -= (rand() % 3);	//Should use a defined constant
-        e->enr -= (rand() % 2);	//Should use a defined constant
+        e->atk -= (hlpd_rand() % 3);	//Should use a defined constant
+        e->def -= (hlpd_rand() % 3);	//Should use a defined constant
+        e->vel -= (hlpd_rand() % 3);	//Should use a defined constant
+        e->enr -= (hlpd_rand() % 2);	//Should use a defined constant
         if (e->atk < 0) {
             e->atk = 0;
         };
@@ -3386,7 +3388,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
             chance *= 1.5;
         }
 
-        if ((rand() % 100) < chance || (beast && e->perksCount == 0)) {
+        if ((hlpd_rand() % 100) < chance || (beast && e->perksCount == 0)) {
 
             e->perksCount += 1;
 
@@ -3396,7 +3398,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
                     e->perksCount);
             Perk *p = e->perks[e->perksCount-1];
             //(Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
-            p->class = rand() % (PERKSMAX + 1);
+            p->class = hlpd_rand() % (PERKSMAX + 1);
             //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
             strcpy(p->name, nameStringFromPerk(p->class));
             //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
@@ -5031,7 +5033,7 @@ foeTurnOption enemyTurnPick(Enemy *e, Fighter *f)
     foeTurnOption pick = FOE_INVALID;
 
     while (pick == FOE_INVALID) {
-        int rn = rand() % 101;
+        int rn = hlpd_rand() % 101;
         /*
            if (rn > 80) {
            //TODO
@@ -5079,7 +5081,7 @@ foeTurnOption bossTurnPick(Boss *b, Fighter *f)
     foeTurnOption pick = FOE_INVALID;
 
     while (pick == FOE_INVALID) {
-        int rn = rand() % 101;
+        int rn = hlpd_rand() % 101;
         /*
            if (rn > 80) {
            //TODO
@@ -5257,8 +5259,8 @@ void useConsumable(Fighter *f, Enemy *e, Boss *b, char *string, int isBoss)
     c->qty--;
 }
 
-int hlpd_rand(int64_t modulo)
+int hlpd_rand(void)
 {
     G_RNG_ADVANCEMENTS += 1;
-    return (rand() % modulo);
+    return rand();
 }

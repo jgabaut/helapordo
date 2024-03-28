@@ -2190,6 +2190,17 @@ bool deser_Path(SerPath* ser, Path* deser) {
     deser->loreCounter = ser->loreCounter;
     deser->seed = ser->seed;
 
+    //TODO: pass buffer to load rng advancements into?
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
+    srand(deser->seed);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting G_RNG_ADVANCEMENTS to 0 and advancing to {%" PRId64 "}", __func__, ser->rng_advancements);
+
+    G_RNG_ADVANCEMENTS = 0;
+    for (int i=0; i < ser->rng_advancements; i++) {
+        hlpd_rand();
+    }
+    deser->rng_advancements = &G_RNG_ADVANCEMENTS;
+
     bool wincon_deser_res = deser_Wincon(&ser->win_condition, deser->win_condition);
     if (!wincon_deser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed deser_Wincon()", __func__);
@@ -2226,6 +2237,14 @@ bool ser_Path(Path* deser, SerPath* ser) {
     ser->prize = deser->prize;
     ser->loreCounter = deser->loreCounter;
     ser->seed = deser->seed;
+
+    if (deser->rng_advancements == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): rng_advancements was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->rng_advancements = *(deser->rng_advancements);
 
     bool wincon_ser_res = ser_Wincon(deser->win_condition, &ser->win_condition);
     if (!wincon_ser_res) {

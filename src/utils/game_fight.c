@@ -44,10 +44,10 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
     //Stat comparisons
     //
 
-    int atkdelta = (player->atk + player->equipboost_atk) - e->atk - (rand() % 3) - 1;	//Skewed with defender
-    int defdelta = (player->def + player->equipboost_def) - e->def + (rand() % 2) + 1;	//Skewed with attacker
+    int atkdelta = (player->atk + player->equipboost_atk) - e->atk - (hlpd_rand() % 3) - 1;	//Skewed with defender
+    int defdelta = (player->def + player->equipboost_def) - e->def + (hlpd_rand() % 2) + 1;	//Skewed with attacker
     int veldelta =
-        (player->vel + player->equipboost_vel) - e->vel + (rand() % 3) + 1;
+        (player->vel + player->equipboost_vel) - e->vel + (hlpd_rand() % 3) + 1;
 
     int atkOnPlayer =
         e->atk - (player->def + player->equipboost_def + (player->vel / 6));
@@ -164,7 +164,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
         int hotbody_perks = player->perks[HOT_BODY]->innerValue;
         if (hotbody_perks > 0) {
             int burnchance = 11 - hotbody_perks;
-            if (rand() % burnchance == 0) {
+            if (hlpd_rand() % burnchance == 0) {
                 //TODO
                 //Handle multiple statuses
                 e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
@@ -177,7 +177,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
         int biohazard_perks = player->perks[BIOHAZARD]->innerValue;
         if (biohazard_perks > 0) {
             int poisonchance = 11 - biohazard_perks;
-            if (rand() % poisonchance == 0) {
+            if (hlpd_rand() % poisonchance == 0) {
                 e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
                 setCounter((Turncounter *) e->counters[POISON], 2);	//Give 2 turns of Poison status
                 log_tag("debug_log.txt", "[PERKS]",
@@ -212,7 +212,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
     int critboost_value = 1.5 * player->perks[CRITBOOST_CHANCE]->innerValue;
     int critMax = round(10.0 - floor(player->luck / 5) - (critboost_value));
 
-    int critRes = (rand() % critMax);
+    int critRes = (hlpd_rand() % critMax);
 
     if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
 
@@ -284,7 +284,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
 
     //Consumable drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
-        && (e->beast || ((rand() % 9) - (player->luck / 10) <= 0))) {
+        && (e->beast || ((hlpd_rand() % 9) - (player->luck / 10) <= 0))) {
         int drop = dropConsumable(player);
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
@@ -298,7 +298,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
     if ((player->stats->artifactsfound != ARTIFACTSMAX + 1)
         && res == FIGHTRES_KILL_DONE && (e->beast
                                          ||
-                                         ((rand() % ENEMY_ARTIFACTDROP_CHANCE) -
+                                         ((hlpd_rand() % ENEMY_ARTIFACTDROP_CHANCE) -
                                           (player->luck / 10) <= 0))) {
         int artifact_drop = dropArtifact(player);
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
@@ -314,7 +314,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
 
     //Equip drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
-        && (e->beast || ((rand() % 15) - (player->luck / 10) <= 0))) {
+        && (e->beast || ((hlpd_rand() % 15) - (player->luck / 10) <= 0))) {
         dropEquip(player, e->beast, notify_win, kls);
     }
     return res;
@@ -355,11 +355,11 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     //Stat comparisons
     //
 
-    int atkdelta = (e->atk + e->turnboost_atk) - (target->atk + target->equipboost_atk + target->turnboost_atk - (rand() % 3)) - 1;	//Skewed with defender
-    int defdelta = (e->def + e->turnboost_def) - (target->def + target->equipboost_def + target->turnboost_def) + (rand() % 2) + 1;	//Skewed with attacker
+    int atkdelta = (e->atk + e->turnboost_atk) - (target->atk + target->equipboost_atk + target->turnboost_atk - (hlpd_rand() % 3)) - 1;	//Skewed with defender
+    int defdelta = (e->def + e->turnboost_def) - (target->def + target->equipboost_def + target->turnboost_def) + (hlpd_rand() % 2) + 1;	//Skewed with attacker
     int veldelta =
         (e->vel + e->turnboost_vel) - (target->vel + target->equipboost_vel +
-                                       target->turnboost_vel) + (rand() % 3) +
+                                       target->turnboost_vel) + (hlpd_rand() % 3) +
         1;
 
     int atkOnPlayer =
@@ -487,7 +487,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
         int hotbody_perks = target->perks[HOT_BODY]->innerValue;
         if (hotbody_perks > 0) {
             int burnchance = 11 - hotbody_perks;
-            if (rand() % burnchance == 0) {
+            if (hlpd_rand() % burnchance == 0) {
                 //TODO
                 //Handle multiple statuses
                 e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
@@ -500,7 +500,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
         int biohazard_perks = target->perks[BIOHAZARD]->innerValue;
         if (biohazard_perks > 0) {
             int poisonchance = 11 - biohazard_perks;
-            if (rand() % poisonchance == 0) {
+            if (hlpd_rand() % poisonchance == 0) {
                 e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
                 setCounter((Turncounter *) e->counters[POISON], 2);	//Give 2 turns of Poison status
                 log_tag("debug_log.txt", "[PERKS]",
@@ -535,7 +535,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     int critboost_value = 1.5 * target->perks[CRITBOOST_CHANCE]->innerValue;
     int critMax = round(10.0 - floor(target->luck / 5) - (critboost_value));
 
-    int critRes = (rand() % critMax);
+    int critRes = (hlpd_rand() % critMax);
 
     if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
 
@@ -609,7 +609,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
 
     //Consumable drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
-        && (e->beast || ((rand() % 9) - (target->luck / 10) <= 0))) {
+        && (e->beast || ((hlpd_rand() % 9) - (target->luck / 10) <= 0))) {
         int drop = dropConsumable(target);
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
@@ -623,7 +623,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     if ((target->stats->artifactsfound != ARTIFACTSMAX + 1)
         && res == FIGHTRES_KILL_DONE && (e->beast
                                          ||
-                                         ((rand() % ENEMY_ARTIFACTDROP_CHANCE) -
+                                         ((hlpd_rand() % ENEMY_ARTIFACTDROP_CHANCE) -
                                           (target->luck / 10) <= 0))) {
         int artifact_drop = dropArtifact(target);
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
@@ -639,7 +639,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
 
     //Equip drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
-        && (e->beast || ((rand() % 15) - (target->luck / 10) <= 0))) {
+        && (e->beast || ((hlpd_rand() % 15) - (target->luck / 10) <= 0))) {
         dropEquip(target, e->beast, notify_win, kls);
     }
     return res;
@@ -1062,10 +1062,10 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
     //
     char msg[200];
 
-    int atkdelta = (player->atk + player->equipboost_atk) - b->atk - (rand() % 3) - 1;	//Skewed with defender
-    int defdelta = (player->def + player->equipboost_def) - b->def + (rand() % 2) + 1;	//Skewed with attacker
+    int atkdelta = (player->atk + player->equipboost_atk) - b->atk - (hlpd_rand() % 3) - 1;	//Skewed with defender
+    int defdelta = (player->def + player->equipboost_def) - b->def + (hlpd_rand() % 2) + 1;	//Skewed with attacker
     int veldelta =
-        (player->vel + player->equipboost_vel) - b->vel + (rand() % 3) + 1;
+        (player->vel + player->equipboost_vel) - b->vel + (hlpd_rand() % 3) + 1;
 
     int atkOnPlayer =
         b->atk - (player->def + player->equipboost_def + (player->vel / 6));
@@ -1187,7 +1187,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         int hotbody_perks = player->perks[HOT_BODY]->innerValue;
         if (hotbody_perks > 0) {
             int burnchance = 11 - hotbody_perks;
-            if (rand() % burnchance == 0) {
+            if (hlpd_rand() % burnchance == 0) {
                 b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
                 setCounter((Turncounter *) b->counters[Burned], 2);	//Give 2 turns of Burned status
                 sprintf(msg, "Hotbody proc on 1/%i chance.\n", burnchance);
@@ -1198,7 +1198,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         int biohazard_perks = player->perks[BIOHAZARD]->innerValue;
         if (biohazard_perks > 0) {
             int poisonchance = 11 - biohazard_perks;
-            if (rand() % poisonchance == 0) {
+            if (hlpd_rand() % poisonchance == 0) {
                 b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
                 setCounter((Turncounter *) b->counters[POISON], 2);	//Give 2 turns of Poison status
                 sprintf(msg, "Biohazard proc on 1/%i chance.\n", poisonchance);
@@ -1234,7 +1234,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         round(10.0 - floor(player->luck / 5) -
               (1.5 * player->perks[CRITBOOST_CHANCE]->innerValue));
 
-    int critRes = (rand() % critMax);
+    int critRes = (hlpd_rand() % critMax);
 
     if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
 
@@ -1365,11 +1365,11 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
     //
     char msg[200];
 
-    int atkdelta = (b->atk + b->turnboost_atk) - (target->atk + target->equipboost_atk + target->turnboost_atk - (rand() % 3)) - 1;	//Skewed with defender
-    int defdelta = (b->def + b->turnboost_def) - (target->def + target->equipboost_def + target->turnboost_def) + (rand() % 2) + 1;	//Skewed with attacker
+    int atkdelta = (b->atk + b->turnboost_atk) - (target->atk + target->equipboost_atk + target->turnboost_atk - (hlpd_rand() % 3)) - 1;	//Skewed with defender
+    int defdelta = (b->def + b->turnboost_def) - (target->def + target->equipboost_def + target->turnboost_def) + (hlpd_rand() % 2) + 1;	//Skewed with attacker
     int veldelta =
         (b->vel + b->turnboost_vel) - (target->vel + target->equipboost_vel +
-                                       target->turnboost_vel) + (rand() % 3) +
+                                       target->turnboost_vel) + (hlpd_rand() % 3) +
         1;
 
     int atkOnPlayer =
@@ -1490,7 +1490,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         int hotbody_perks = target->perks[HOT_BODY]->innerValue;
         if (hotbody_perks > 0) {
             int burnchance = 11 - hotbody_perks;
-            if (rand() % burnchance == 0) {
+            if (hlpd_rand() % burnchance == 0) {
                 b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
                 setCounter((Turncounter *) b->counters[Burned], 2);	//Give 2 turns of Burned status
                 log_tag("debug_log.txt", "[PERKS]",
@@ -1501,7 +1501,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         int biohazard_perks = target->perks[BIOHAZARD]->innerValue;
         if (biohazard_perks > 0) {
             int poisonchance = 11 - biohazard_perks;
-            if (rand() % poisonchance == 0) {
+            if (hlpd_rand() % poisonchance == 0) {
                 b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
                 setCounter((Turncounter *) b->counters[POISON], 2);	//Give 2 turns of Poison status
                 log_tag("debug_log.txt", "[PERKS]",
@@ -1537,7 +1537,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         round(10.0 - floor(target->luck / 5) -
               (1.5 * target->perks[CRITBOOST_CHANCE]->innerValue));
 
-    int critRes = (rand() % critMax);
+    int critRes = (hlpd_rand() % critMax);
 
     if (res == FIGHTRES_DMG_DEALT && (critRes <= 0)) {
 

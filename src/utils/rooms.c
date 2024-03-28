@@ -774,7 +774,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 player->stats->enemieskilled++;
 
                 //Consumable drop, guaranteed on killing a beast
-                if (e->beast || ((rand() % 9) - (player->luck / 10) <= 0)) {
+                if (e->beast || ((hlpd_rand() % 9) - (player->luck / 10) <= 0)) {
                     int consDrop = dropConsumable(player);
                     log_tag("debug_log.txt", "[DEBUG]", "consDrop was (%i)",
                             consDrop);
@@ -783,14 +783,14 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 //Artifact drop (if we don't have all of them), guaranteed on killing a beast
                 if ((player->stats->artifactsfound != ARTIFACTSMAX + 1)
                     && (e->beast
-                        || ((rand() % 1001) - (player->luck / 10) <= 0))) {
+                        || ((hlpd_rand() % 1001) - (player->luck / 10) <= 0))) {
                     int artifactDrop = dropArtifact(player);
                     log_tag("debug_log.txt", "[DEBUG]",
                             "artifactDrop was (%i) == [%s]", artifactDrop,
                             stringFromArtifacts(artifactDrop));
                 }
                 //Equip drop, guaranteed on killing a beast
-                if (e->beast || ((rand() % 15) - (player->luck / 10) <= 0)) {
+                if (e->beast || ((hlpd_rand() % 15) - (player->luck / 10) <= 0)) {
                     dropEquip(player, e->beast, notifications_win, kls);
                 }
                 //Get xp and free memory from enemy
@@ -3462,7 +3462,7 @@ void initRoom(Room *r, Fighter *f, int index, roomClass type, int enemyTotal,
 {
     //Init room
     if (load_info->is_new_game || load_info->done_loading) {
-        enemyTotal = (rand() % (ROOM_ENEMIES_MAX)) + 1;
+        enemyTotal = (hlpd_rand() % (ROOM_ENEMIES_MAX)) + 1;
     } else {			//We subtract how many enemies we have already done before loading
         enemyTotal -= load_info->enemy_index;
     }

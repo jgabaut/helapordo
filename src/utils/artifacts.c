@@ -134,7 +134,7 @@ void artifact_chaosorb(Fighter *f, Enemy *e, Boss *b, int isBoss)
         //white();
         f->artifactsBag[CHAOSORB]->active = 1;
         f->artifactsBag[CHAOSORB]->innerValue += 1;
-    } else if (!(f->artifactsBag[CHAOSORB]->active) && (f->artifactsBag[CHAOSORB]->innerValue > 0) && (rand() % 19 == 0)) {	//Every monster levels up 3 times if we roll a 20
+    } else if (!(f->artifactsBag[CHAOSORB]->active) && (f->artifactsBag[CHAOSORB]->innerValue > 0) && (hlpd_rand() % 19 == 0)) {	//Every monster levels up 3 times if we roll a 20
         for (int i = 0; i < ENEMYCLASSESMAX + 1; i++) {
             EnemyBaseStats *base = &baseenemystats[i];
             base->level += 3;

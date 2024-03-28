@@ -232,7 +232,7 @@ extern int64_t G_RNG_ADVANCEMENTS;
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.1"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.2"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -1211,6 +1211,7 @@ typedef struct Path {
     Wincon *win_condition;     /**> Defines the win condition for the current game.*/
     Saveslot *current_saveslot;	    /** Defines current Saveslot for the game.*/
     int seed; /** Contains seed for current run.*/
+    int64_t* rng_advancements; /** Pointer to current advancements for rng.*/
 } Path;
 
 /**

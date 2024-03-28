@@ -766,6 +766,7 @@ typedef struct SerPath {
     SerWincon win_condition;     /**> Defines the win condition for the current game.*/
     SerSaveslot current_saveslot;	    /** Defines current SerSaveslot for the game.*/
     int32_t seed; /** Holds seed for current run.*/
+    int64_t rng_advancements; /** Current advancements for rng.*/
 #ifdef __GNUC__
 } SerPath;
 #else
