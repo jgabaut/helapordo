@@ -25,7 +25,62 @@
 #include "../build-rl/game_rl.h"
 #endif
 
-#include "../../src/utils/bin_saves.h"
+/**
+ * Defines size for all SerSaveHeader char buffers.
+ * @see SerSaveHeader
+ */
+#define SERSAVEHEADER_BUFSIZE 15
+
+/**
+ * Serialized save header. Packed struct.
+ * Can be turned into a SaveHeader with deser_SaveHeader().
+ * @see deser_SaveHeader()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerSaveHeader {
+#else
+#pragma pack(push, 1)
+typedef struct SerSaveHeader {
+#endif
+    int32_t api_level;
+    char game_version[SERSAVEHEADER_BUFSIZE+1];
+    char save_version[SERSAVEHEADER_BUFSIZE+1];
+    char os[SERSAVEHEADER_BUFSIZE+1];
+    char machine[SERSAVEHEADER_BUFSIZE+1];
+#ifdef __GNUC__
+} SerSaveHeader;
+#else
+} SerSaveHeader;
+#pragma pack(pop)
+#endif
+
+/**
+ * Defines size for all SaveHeader char buffers.
+ * @see SaveHeader
+ */
+#define SAVEHEADER_BUFSIZE SERSAVEHEADER_BUFSIZE
+
+/**
+ * Save header. Normal struct.
+ * Can be obtained from a SerSaveHeader with deser_SaveHeader().
+ * @see deser_SaveHeader()
+ * @see SerSaveHeader
+ */
+typedef struct SaveHeader {
+    int32_t api_level;
+    char game_version[SAVEHEADER_BUFSIZE+1];
+    char save_version[SAVEHEADER_BUFSIZE+1];
+    char os[SAVEHEADER_BUFSIZE+1];
+    char machine[SAVEHEADER_BUFSIZE+1];
+} SaveHeader;
+
+bool writeSerSaveHeader(const char* filename, SerSaveHeader* data);
+
+bool readSerSaveHeader(const char* filename, SerSaveHeader* data);
+
+bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser);
+
+SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_init, bool* did_init, int saveslot_index);
 
 /**
  * Serialized Turncounter. Packed struct.

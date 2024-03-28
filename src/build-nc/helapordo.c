@@ -1232,7 +1232,14 @@ void gameloop(int argc, char **argv)
                     current_room = gamestate->current_room;
                     switch (current_room->class) {
                     case ENEMIES: {
-                        assert(load_info->enemy_index >= 0);
+                        if (load_info->enemy_index < 0) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    load_info->enemy_index was <0: {%i}", __func__, load_info->enemy_index);
+                            endwin();
+                            fprintf(stderr, "%s():    Failed preparing gamestate. Invalid enemy index.\n", __func__);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
                         load_info->save_type = ENEMIES_SAVE;
                     }
                     break;
