@@ -217,9 +217,15 @@ int get_saveslot_index(void)
             }
         }
         if (!set_Saveslot_name(svfile, &default_saveslots[i])) {
-            log_tag("debug_log.txt", "[WARN]",
-                    "%s(): Failed reading savefile {%i} at \"%s\".", __func__,
-                    i, path_to_sv_file);
+            if (G_EXPERIMENTAL_ON == 0) {
+                log_tag("debug_log.txt", "[WARN]",
+                        "%s(): Failed reading savefile {%i} at \"%s\".", __func__,
+                        i, path_to_sv_file);
+            } else {
+                log_tag("debug_log.txt", "[WARN]",
+                        "%s(): Failed reading binary savefile {%i} at \"%s\".", __func__,
+                        i, default_saveslots[i].save_path);
+            }
         };
         if (svfile) fclose(svfile);
     }
