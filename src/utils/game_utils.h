@@ -293,4 +293,6 @@ foeTurnOption bossTurnPick(Boss * b, Fighter * f);
 void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 void setCounter(Turncounter * c, int turns);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
+
+int hlpd_rand(int64_t modulo);
 #endif

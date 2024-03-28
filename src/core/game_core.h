@@ -206,6 +206,11 @@ extern int G_DOTUTORIAL_ON;
 extern int G_USE_CURRENTDIR;
 
 /**
+ * Global variable used to count advancements of the rng.
+ */
+extern int64_t G_RNG_ADVANCEMENTS;
+
+/**
  * Current major release.
  */
 #define HELAPORDO_MAJOR_VERSION 1

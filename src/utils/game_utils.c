@@ -5256,3 +5256,9 @@ void useConsumable(Fighter *f, Enemy *e, Boss *b, char *string, int isBoss)
 
     c->qty--;
 }
+
+int hlpd_rand(int64_t modulo)
+{
+    G_RNG_ADVANCEMENTS += 1;
+    return (rand() % modulo);
+}
