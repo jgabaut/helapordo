@@ -1871,7 +1871,7 @@ bool deser_Room(SerRoom* ser, Room* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Room was NULL.", __func__);
-        return NULL;
+        return false;
     }
 
     deser->index = ser->index;
@@ -2588,8 +2588,9 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
 
     bool room_ser_res = ser_Room(deser->current_room, &ser->current_room);
     if (!room_ser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room() for current room. Putting zeros.", __func__);
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room() for current room. Putting zeros, class BASIC.", __func__);
         ser->current_room = (SerRoom){0};
+        ser->current_room.class = BASIC;
     }
 
     ser->is_localexe = deser->is_localexe;

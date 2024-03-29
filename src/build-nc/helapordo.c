@@ -1225,9 +1225,11 @@ void gameloop(int argc, char **argv)
                 load_info->enemy_index = gamestate->current_enemy_index;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
                 seed = gamestate->path->seed;
-                log_tag("debug_log.txt", "[TURNOP]",
+                log_tag("debug_log.txt", "[DEBUG]",
                         "Seed after loading: [%i]", seed);
                 //TODO: set the other load_info fields properly?
+                //
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking save type", __func__);
                 if (gamestate->current_room != NULL) {
                     current_room = gamestate->current_room;
                     switch (current_room->class) {
@@ -1249,8 +1251,6 @@ void gameloop(int argc, char **argv)
                     break;
                     case BASIC: {
                         load_info->save_type = FLOORMENU_SAVE;
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting load_info->done_loading to 1", __func__);
-                        load_info->done_loading = 1;
                     }
                     break;
                     default: {
