@@ -2258,16 +2258,7 @@ bool deser_Path(SerPath* ser, Path* deser)
     deser->loreCounter = ser->loreCounter;
     deser->seed = ser->seed;
 
-    //TODO: pass buffer to load rng advancements into?
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
-    srand(deser->seed);
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting G_RNG_ADVANCEMENTS to 0 and advancing to {%" PRId64 "}", __func__, ser->rng_advancements);
-
-    G_RNG_ADVANCEMENTS = 0;
-    for (int i=0; i < ser->rng_advancements; i++) {
-        hlpd_rand();
-    }
-    deser->rng_advancements = &G_RNG_ADVANCEMENTS;
+    //Setting deser->rng_advancements is done by prep_Gamestate() later.
 
     bool wincon_deser_res = deser_Wincon(&ser->win_condition, deser->win_condition);
     if (!wincon_deser_res) {
@@ -2802,6 +2793,18 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         } else {
             log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_Gamestate()", __func__);
         }
+
+        //TODO: pass buffer to load rng advancements into?
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
+        srand(ser_gmst.path.seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting G_RNG_ADVANCEMENTS to 0 and advancing to {%" PRId64 "}", __func__, ser_gmst.path.rng_advancements);
+
+        G_RNG_ADVANCEMENTS = 0;
+        for (int i=0; i < ser_gmst.path.rng_advancements; i++) {
+            hlpd_rand();
+        }
+
+        gmst->path->rng_advancements = &G_RNG_ADVANCEMENTS;
         //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
         return true;
     } else {
@@ -2831,6 +2834,18 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
         }
+
+        //TODO: pass buffer to load rng advancements into?
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
+        srand(tmp.path.seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting G_RNG_ADVANCEMENTS to 0 and advancing to {%" PRId64 "}", __func__, tmp.path.rng_advancements);
+
+        G_RNG_ADVANCEMENTS = 0;
+        for (int i=0; i < tmp.path.rng_advancements; i++) {
+            hlpd_rand();
+        }
+
+        gmst->path->rng_advancements = &G_RNG_ADVANCEMENTS;
 
         //log_tag("debug_log.txt", "[BINSAVE]", "Read Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
         return true;
