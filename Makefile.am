@@ -77,6 +77,10 @@ endif
 
 hlpd_save2l_SOURCES = src/core/game_core.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c koliseo/src/koliseo.c
 
+if HL_RAYLIB_BUILD
+hlpd_save2l_SOURCES += sprites4curses/s4c-animate/animate.c src/build-rl/game_rl.c
+endif
+
 ./anvil:
 	@echo -e "\033[1;35m[Makefile]\e[0m    Bootstrapping \"./anvil\":"
 	./scripts/bootstrap_anvil.sh $(ANVIL_IMPL)

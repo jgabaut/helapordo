@@ -62,7 +62,7 @@ void gameloop_Win(int argc, char **argv)
 
     bool is_localexe = ( argv[0][0] == '.');
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
-    int seed = -1;
+    char seed[PATH_SEED_BUFSIZE] = {0};
     do {
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, temporary_kls_conf);
@@ -90,7 +90,7 @@ void gameloop_Win(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        seed = rand();
+        gen_random_seed(seed);
 
         while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsaV")) != -1) {
             switch (option) {
@@ -327,7 +327,9 @@ void gameloop_Win(int argc, char **argv)
 
         if (G_EXPERIMENTAL_ON == 1) {
             bool did_init = false;
-            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init);
+            int saveslot_idx = 0;
+            //TODO: manage saveslot selection instead of using 0
+            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, saveslot_idx);
 
             log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
         }
