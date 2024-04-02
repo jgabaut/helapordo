@@ -2256,7 +2256,10 @@ bool deser_Path(SerPath* ser, Path* deser)
     deser->luck = ser->luck;
     deser->prize = ser->prize;
     deser->loreCounter = ser->loreCounter;
-    deser->seed = ser->seed;
+
+    ser->seed[SERPATH_SEED_BUFSIZE-1] = '\0';
+    memcpy(deser->seed, ser->seed, PATH_SEED_BUFSIZE-1);
+    deser->seed[PATH_SEED_BUFSIZE-1] = '\0';
 
     //Setting deser->rng_advancements is done by prep_Gamestate() later.
 
@@ -2296,7 +2299,9 @@ bool ser_Path(Path* deser, SerPath* ser)
     ser->luck = deser->luck;
     ser->prize = deser->prize;
     ser->loreCounter = deser->loreCounter;
-    ser->seed = deser->seed;
+    deser->seed[PATH_SEED_BUFSIZE-1] = '\0';
+    memcpy(ser->seed, deser->seed, SERPATH_SEED_BUFSIZE-1);
+    ser->seed[SERPATH_SEED_BUFSIZE-1] = '\0';
 
     if (deser->rng_advancements == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): rng_advancements was NULL.", __func__);
@@ -2795,8 +2800,10 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         }
 
         //TODO: pass buffer to load rng advancements into?
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
-        srand(ser_gmst.path.seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(hashed_seed)", __func__);
+        int hashed_seed = hlpd_hash((unsigned char*) ser_gmst.path.seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Hashed seed: {%i}", __func__, hashed_seed);
+        srand(hashed_seed);
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting G_RNG_ADVANCEMENTS to 0 and advancing to {%" PRId64 "}", __func__, ser_gmst.path.rng_advancements);
 
         G_RNG_ADVANCEMENTS = 0;
@@ -2836,8 +2843,10 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         }
 
         //TODO: pass buffer to load rng advancements into?
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
-        srand(tmp.path.seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(hashed_seed)", __func__);
+        int hashed_seed = hlpd_hash((unsigned char*) tmp.path.seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Hashed seed: {%i}", __func__, hashed_seed);
+        srand(hashed_seed);
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting G_RNG_ADVANCEMENTS to 0 and advancing to {%" PRId64 "}", __func__, tmp.path.rng_advancements);
 
         G_RNG_ADVANCEMENTS = 0;

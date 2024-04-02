@@ -745,6 +745,8 @@ typedef struct SerSaveslot {
 #pragma pack(pop)
 #endif
 
+#define SERPATH_SEED_BUFSIZE PATH_SEED_BUFSIZE
+
 /**
  * Serialized SerPath. Packed struct.
  * Can be turned into a Path with deser_Path().
@@ -765,7 +767,7 @@ typedef struct SerPath {
     int8_t loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     SerWincon win_condition;     /**> Defines the win condition for the current game.*/
     SerSaveslot current_saveslot;	    /** Defines current SerSaveslot for the game.*/
-    int32_t seed; /** Holds seed for current run.*/
+    char seed[SERPATH_SEED_BUFSIZE]; /** Holds seed for current run.*/
     int64_t rng_advancements; /** Current advancements for rng.*/
 #ifdef __GNUC__
 } SerPath;

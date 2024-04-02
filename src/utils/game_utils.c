@@ -2792,12 +2792,12 @@ void emptyEquips(Fighter *player)
  * @see Path
  * @see MAXLENGTH
  * @see MAXLUCK
- * @param seed An integer seed.
+ * @param seed A string seed.
  * @param kls The Koliseo used for allocation.
  * @param path_to_savefile Path to savefile.
  * @return A Path pointer with stats.
  */
-Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
+Path *randomise_path(char* seed, Koliseo *kls, const char *path_to_savefile)
 {
     char msg[200];
     sprintf(msg, "Prepping Path");
@@ -2811,9 +2811,11 @@ Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
     Saveslot *save =
         (Saveslot *) KLS_PUSH_TYPED(kls, Saveslot, HR_Saveslot, "Saveslot",
                                     msg);
-    sprintf(msg, "Seed: %i", seed);
-    strcpy(save->name, msg);
-    p->seed = seed;
+    seed[PATH_SEED_BUFSIZE-1] = '\0';
+    strncpy(save->name, seed, PATH_SEED_BUFSIZE); //TODO: add size for save->name, unrelated to PATH_SEED_BUFSIZE
+    save->name[PATH_SEED_BUFSIZE-1] = '\0';
+    strncpy(p->seed, seed, PATH_SEED_BUFSIZE);
+    p->seed[PATH_SEED_BUFSIZE-1] = '\0';
     sprintf(msg, "%s", path_to_savefile);
     strcpy(save->save_path, msg);
     p->current_saveslot = save;
@@ -4097,12 +4099,13 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
 
 /**
  * Asks the user is they want to continue and returns the choice.
+ * @param seed The seed for the run that just ended.
  * @return int True for trying again, false otherwise.
  */
-int retry(int seed)
+int retry(char* seed)
 {
     lightGreen();
-    printf("\n\nYou died. Want to try again?\n\nSeed: [%i]\n\n\n\t\t[type no / yes]\n\n", seed);
+    printf("\n\nYou died. Want to try again?\n\nSeed: [%s]\n\n\n\t\t[type no / yes]\n\n", seed);
     white();
     char c[25] = { 0 };
     if (fgets(c, sizeof(c), stdin) != NULL) {
@@ -5263,4 +5266,38 @@ int hlpd_rand(void)
 {
     G_RNG_ADVANCEMENTS += 1;
     return rand();
+}
+
+/**
+ * djb2 by Dan Bernstein.
+ * See:
+ * http://www.cse.yorku.ca/~oz/hash.html
+ * https://stackoverflow.com/questions/7666509/hash-function-for-string
+ * @param str The string to hash.
+ * @return The resulting hash.
+ */
+unsigned long hlpd_hash(unsigned char *str)
+{
+    unsigned long hash = 5381;
+    int c;
+
+    do {
+        c = *str++;
+        if (c) hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    } while (c);
+
+    return hash;
+}
+
+void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
+{
+    int len = (rand() % (PATH_SEED_BUFSIZE-1)) +1;
+    for (size_t i=0; i < len; i++) {
+        int r_ch = -1;
+        do {
+            r_ch = (rand() % ('Z' - '0' +1)) + '0'; // We want a char from 0 to Z included.
+        } while (r_ch >= ':' && r_ch <= '@'); // We reject chars between the digits and upperscore letters
+        buffer[i] = r_ch;
+    }
+    buffer[PATH_SEED_BUFSIZE-1] = '\0';
 }

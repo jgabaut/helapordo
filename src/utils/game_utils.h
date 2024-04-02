@@ -219,7 +219,7 @@ int getConsumableQty(Fighter * f, int n);
 void emptyConsumables(Fighter * player);
 void emptyArtifacts(Fighter * player);
 void emptyEquips(Fighter * player);
-Path *randomise_path(int seed, Koliseo * kls, const char *path_to_savefile);
+Path *randomise_path(char* seed, Koliseo * kls, const char *path_to_savefile);
 void printStats(Fighter * f);
 void printEStats(Enemy * e);
 void printConsumablesStats(Consumable * c);
@@ -250,7 +250,7 @@ void applyStatus(WINDOW * notify_win, Fighter * f);
 void applyEStatus(WINDOW * notify_win, Enemy * e);
 void applyBStatus(WINDOW * notify_win, Boss * b);
 void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
-int retry(int seed);
+int retry(char* seed);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
 #else
@@ -296,4 +296,6 @@ void setCounter(Turncounter * c, int turns);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
 int hlpd_rand(void);
+unsigned long hlpd_hash(unsigned char *str);
+void gen_random_seed(char buffer[PATH_SEED_BUFSIZE]);
 #endif

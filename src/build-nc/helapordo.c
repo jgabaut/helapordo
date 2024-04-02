@@ -88,13 +88,14 @@ void gameloop(int argc, char **argv)
                                       NULL
                                   );
 
-    int seed = -1;
+    char seed[PATH_SEED_BUFSIZE] = {0};
 
     do {
         //Init default_kls
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
-        seed = rand();
+
+        gen_random_seed(seed);
 
 #ifndef _WIN32
         (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
@@ -1229,9 +1230,11 @@ void gameloop(int argc, char **argv)
 
                 load_info->enemy_index = gamestate->current_enemy_index;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
-                seed = gamestate->path->seed;
+                gamestate->path->seed[PATH_SEED_BUFSIZE-1] = '\0';
+                strncpy(seed, gamestate->path->seed, PATH_SEED_BUFSIZE);
+                seed[PATH_SEED_BUFSIZE-1] = '\0';
                 log_tag("debug_log.txt", "[DEBUG]",
-                        "Seed after loading: [%i]", seed);
+                        "Seed after loading: [%s]", seed);
                 //TODO: set the other load_info fields properly?
                 //
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking save type", __func__);
@@ -1382,10 +1385,10 @@ void gameloop(int argc, char **argv)
                         "Assigned load_info->save_type: [%s]",
                         stringFrom_saveType(load_info->save_type));
                 log_tag("debug_log.txt", "[TURNOP]",
-                        "Old seed: [%i]", seed);
-                seed = rand();
+                        "Old seed: [%s]", seed);
+                gen_random_seed(seed);
                 log_tag("debug_log.txt", "[TURNOP]",
-                        "New seed: [%i]", seed);
+                        "New seed: [%s]", seed);
                 path = randomise_path(seed, default_kls, current_save_path);
                 kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
                 player =
