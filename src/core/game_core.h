@@ -1198,7 +1198,7 @@ typedef struct Wincon {
  */
 extern char *winconstrings[WINCON_CLASS_MAX + 1];
 
-#define PATH_SEED_BUFSIZE 50
+#define PATH_SEED_BUFSIZE 20
 
 /**
  * Holds the state of game progression.
