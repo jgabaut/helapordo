@@ -514,8 +514,7 @@ void gameloop(int argc, char **argv)
         if (G_SEEDED_RUN_ON == 0) {
             gen_random_seed(seed);
         } else {
-            //TODO: evaluate user-provided seed and only use a random one when it's not valid.
-            printf("%s():    Seeded run. Checking seed: {%s}\n", __func__, G_SEEDED_RUN_ARG);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run. Checking seed: {%s}\n", __func__, G_SEEDED_RUN_ARG);
             bool seed_check_res = check_seed(G_SEEDED_RUN_ARG);
             if (seed_check_res) {
                 // Using a set seed. Uppercasing all letters
@@ -527,7 +526,9 @@ void gameloop(int argc, char **argv)
                 seed[PATH_SEED_BUFSIZE -1] = '\0';
                 is_seeded = true;
             } else { //Go back to using a random seed
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Can't do a seeded run. Failed checking seed: {%s}. Using gen_random_seed().\n", __func__, G_SEEDED_RUN_ARG);
                 gen_random_seed(seed);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Using seed: {%s}\n", __func__, seed);
             }
         }
 
@@ -1253,6 +1254,7 @@ void gameloop(int argc, char **argv)
                     exit(EXIT_FAILURE);
                 }
 
+
                 load_info->enemy_index = gamestate->current_enemy_index;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
                 gamestate->path->seed[PATH_SEED_BUFSIZE-1] = '\0';
@@ -1260,6 +1262,10 @@ void gameloop(int argc, char **argv)
                 seed[PATH_SEED_BUFSIZE-1] = '\0';
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Seed after loading: [%s]", seed);
+
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting is_seeded {%s} to gamestate->is_seeded {%s}", __func__, (is_seeded ? "true" : "false"), (gamestate->is_seeded ? "true" : "false"));
+                is_seeded = gamestate->is_seeded;
+
                 //TODO: set the other load_info fields properly?
                 //
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking save type", __func__);
@@ -1929,6 +1935,10 @@ void gameloop(int argc, char **argv)
                         "gameloop() 2 system(\"clear\") res was (%i)", clrres);
                 handleStats(player);
                 printf("\n\n\tYOU WON!\n\n");
+                if (gamestate->is_seeded) {
+                    printf("\n\n\tSeeded run\n\n");
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run win", __func__);
+                }
                 log_tag("debug_log.txt", "[DEBUG]", "Game won.");
                 //Free default kls
                 kls_log(default_kls, "DEBUG", "Freeing default KLS");
@@ -2457,6 +2467,10 @@ void gameloop(int argc, char **argv)
                             "gameloop() 3 system(\"clear\") res was (%i)",
                             clrres);
                     printf("\n\n\tYOU DIED.\n\n");
+                    if (is_seeded) {
+                        printf("\n\nSeeded run\n\n");
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run lost", __func__);
+                    }
                     log_tag("debug_log.txt", "[DEBUG]", "Game lost.");
                 }
 

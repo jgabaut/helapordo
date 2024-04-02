@@ -5275,6 +5275,7 @@ void useConsumable(Fighter *f, Enemy *e, Boss *b, char *string, int isBoss)
  */
 int hlpd_rand(void)
 {
+    //log_tag("debug_log.txt", "[RAND]", "%s():    Rolling. G_RNG_ADVANCEMENTS: {%i}", __func__, G_RNG_ADVANCEMENTS);
     G_RNG_ADVANCEMENTS += 1;
     return rand();
 }
@@ -5308,11 +5309,11 @@ unsigned long hlpd_hash(unsigned char *str)
 void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
 {
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Creating a random seed.", __func__);
-    int len = (rand() % (PATH_SEED_BUFSIZE-8)) +8; // Min len should be 8
+    int len = (hlpd_rand() % (PATH_SEED_BUFSIZE-8)) +8; // Min len should be 8
     for (size_t i=0; i < len; i++) {
         int r_ch = -1;
         do {
-            r_ch = (rand() % ('Z' - '0' +1)) + '0'; // We want a char from 0 to Z included.
+            r_ch = (hlpd_rand() % ('Z' - '0' +1)) + '0'; // We want a char from 0 to Z included.
         } while (r_ch >= ':' && r_ch <= '@'); // We reject chars between the digits and upperscore letters
         buffer[i] = r_ch;
     }

@@ -2814,6 +2814,7 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         }
 
         gmst->path->rng_advancements = &G_RNG_ADVANCEMENTS;
+
         //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
         return true;
     } else {
