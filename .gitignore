@@ -39,6 +39,7 @@ helapordo_debug
 
 # ignore save2l executable
 hlpd-save2l
+hlpd-save2l.exe
 
 # ignore debug log file
 debug_log.txt

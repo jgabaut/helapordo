@@ -515,9 +515,14 @@ void gameloop(int argc, char **argv)
         printf("\n\n\n\n\t\t\tPRESS ENTER TO START\n\n");
         white();
 
+        if (G_EXPERIMENTAL_ON) {
+            lightPurple();
+            printf("\t\t\t\t\t\t\tEXPERIMENTAL\n");
+            white();
+        }
         if (G_DEBUG_ON) {
             lightCyan();
-            printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
+            printf("\t\t\t\t\t\t\tDEBUG ON\n");
             white();
         }
         printf("\t\t\t\t\t\t\tncurses build\n");
