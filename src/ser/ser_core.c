@@ -399,7 +399,8 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
     }
 }
 
-bool appendSerTurncounter(const char* filename, SerTurncounter* data) {
+bool appendSerTurncounter(const char* filename, SerTurncounter* data)
+{
 
     FILE* file = fopen(filename, "ab");
 
@@ -421,7 +422,8 @@ bool appendSerTurncounter(const char* filename, SerTurncounter* data) {
     return true;
 }
 
-bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data) {
+bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data)
+{
     FILE* file = fopen(filename, "rb");
 
     if (file != NULL) {
@@ -496,7 +498,6 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         // Update len
         remaining_length -= sizeof(blob_size);
 
-
         if (remaining_length < blob_size) {
 
 #ifdef _WIN32
@@ -552,7 +553,8 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
     return true;
 }
 
-bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser) {
+bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTurncounter was NULL.", __func__);
         kls_free(default_kls);
@@ -572,7 +574,8 @@ bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser) {
     return true;
 }
 
-bool ser_Turncounter(Turncounter* deser, SerTurncounter* ser) {
+bool ser_Turncounter(Turncounter* deser, SerTurncounter* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTurncounter was NULL.", __func__);
         kls_free(default_kls);
@@ -592,7 +595,8 @@ bool ser_Turncounter(Turncounter* deser, SerTurncounter* ser) {
     return true;
 }
 
-bool deser_Perk(SerPerk* ser, Perk* deser) {
+bool deser_Perk(SerPerk* ser, Perk* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPerk was NULL.", __func__);
         kls_free(default_kls);
@@ -607,7 +611,8 @@ bool deser_Perk(SerPerk* ser, Perk* deser) {
     deser->innerValue = ser->innerValue;
     return true;
 }
-bool ser_Perk(Perk* deser, SerPerk* ser) {
+bool ser_Perk(Perk* deser, SerPerk* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPerk was NULL.", __func__);
         kls_free(default_kls);
@@ -623,7 +628,8 @@ bool ser_Perk(Perk* deser, SerPerk* ser) {
     return true;
 }
 
-bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser) {
+bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSkillslot was NULL.", __func__);
         kls_free(default_kls);
@@ -639,7 +645,8 @@ bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser) {
     return true;
 }
 
-bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser) {
+bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSkillslot was NULL.", __func__);
         kls_free(default_kls);
@@ -655,7 +662,8 @@ bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser) {
     return true;
 }
 
-bool deser_Equip(SerEquip* ser, Equip* deser) {
+bool deser_Equip(SerEquip* ser, Equip* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquip was NULL.", __func__);
         kls_free(default_kls);
@@ -690,7 +698,8 @@ bool deser_Equip(SerEquip* ser, Equip* deser) {
     return true;
 }
 
-bool ser_Equip(Equip* deser, SerEquip* ser) {
+bool ser_Equip(Equip* deser, SerEquip* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquip was NULL.", __func__);
         kls_free(default_kls);
@@ -718,13 +727,16 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
         perk_ser_res = ser_Perk(deser->perks[i], &ser->perks[i]);
         if (!perk_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Perk() for {%s}. Index: {%li}. Putting zeros.", __func__, stringFromEquips(deser->class), i);
-            ser->perks[i] = (SerPerk){0};
+            ser->perks[i] = (SerPerk) {
+                0
+            };
         }
     }
     return true;
 }
 
-bool deser_Equipslot(SerEquipslot* ser, Equipslot* deser) {
+bool deser_Equipslot(SerEquipslot* ser, Equipslot* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquipslot was NULL.", __func__);
         kls_free(default_kls);
@@ -742,7 +754,8 @@ bool deser_Equipslot(SerEquipslot* ser, Equipslot* deser) {
     return true;
 }
 
-bool ser_Equipslot(Equipslot* deser, SerEquipslot* ser) {
+bool ser_Equipslot(Equipslot* deser, SerEquipslot* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquipslot was NULL.", __func__);
         kls_free(default_kls);
@@ -760,7 +773,8 @@ bool ser_Equipslot(Equipslot* deser, SerEquipslot* ser) {
     return true;
 }
 
-bool deser_Specialslot(SerSpecialslot* ser, Specialslot* deser) {
+bool deser_Specialslot(SerSpecialslot* ser, Specialslot* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSpecialslot was NULL.", __func__);
         kls_free(default_kls);
@@ -779,7 +793,8 @@ bool deser_Specialslot(SerSpecialslot* ser, Specialslot* deser) {
     return true;
 }
 
-bool ser_Specialslot(Specialslot* deser, SerSpecialslot* ser) {
+bool ser_Specialslot(Specialslot* deser, SerSpecialslot* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSpecialslot was NULL.", __func__);
         kls_free(default_kls);
@@ -798,7 +813,8 @@ bool ser_Specialslot(Specialslot* deser, SerSpecialslot* ser) {
     return true;
 }
 
-bool deser_Consumable(SerConsumable* ser, Consumable* deser) {
+bool deser_Consumable(SerConsumable* ser, Consumable* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerConsumable was NULL.", __func__);
         kls_free(default_kls);
@@ -817,7 +833,8 @@ bool deser_Consumable(SerConsumable* ser, Consumable* deser) {
     return true;
 }
 
-bool ser_Consumable(Consumable* deser, SerConsumable* ser) {
+bool ser_Consumable(Consumable* deser, SerConsumable* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerConsumable was NULL.", __func__);
         kls_free(default_kls);
@@ -835,7 +852,8 @@ bool ser_Consumable(Consumable* deser, SerConsumable* ser) {
     return true;
 }
 
-bool deser_Artifact(SerArtifact* ser, Artifact* deser) {
+bool deser_Artifact(SerArtifact* ser, Artifact* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerArtifact was NULL.", __func__);
         kls_free(default_kls);
@@ -856,7 +874,8 @@ bool deser_Artifact(SerArtifact* ser, Artifact* deser) {
     return true;
 }
 
-bool ser_Artifact(Artifact* deser, SerArtifact* ser) {
+bool ser_Artifact(Artifact* deser, SerArtifact* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerArtifact was NULL.", __func__);
         kls_free(default_kls);
@@ -876,7 +895,8 @@ bool ser_Artifact(Artifact* deser, SerArtifact* ser) {
     return true;
 }
 
-bool deser_countStats(SerCountstats* ser, countStats* deser) {
+bool deser_countStats(SerCountstats* ser, countStats* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerCountstats was NULL.", __func__);
         kls_free(default_kls);
@@ -908,7 +928,8 @@ bool deser_countStats(SerCountstats* ser, countStats* deser) {
     return true;
 }
 
-bool ser_countStats(countStats* deser, SerCountstats* ser) {
+bool ser_countStats(countStats* deser, SerCountstats* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerCountstats was NULL.", __func__);
         kls_free(default_kls);
@@ -940,7 +961,8 @@ bool ser_countStats(countStats* deser, SerCountstats* ser) {
     return true;
 }
 
-bool deser_Enemy(SerEnemy* ser, Enemy* deser) {
+bool deser_Enemy(SerEnemy* ser, Enemy* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEnemy was NULL.", __func__);
         kls_free(default_kls);
@@ -993,7 +1015,8 @@ bool deser_Enemy(SerEnemy* ser, Enemy* deser) {
     return true;
 }
 
-bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
+bool ser_Enemy(Enemy* deser, SerEnemy* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEnemy was NULL.", __func__);
         kls_free(default_kls);
@@ -1025,7 +1048,9 @@ bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
         skillslot_ser_res = ser_Skillslot(deser->skills[i], &ser->skills[i]);
         if (!skillslot_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Skillslot(). Putting zeros. Index: {%li}", __func__, i);
-            ser->skills[i] = (SerSkillslot){0};
+            ser->skills[i] = (SerSkillslot) {
+                0
+            };
         }
     }
     bool turncounter_ser_res = false;
@@ -1046,7 +1071,8 @@ bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
     return true;
 }
 
-bool deser_Boss(SerBoss* ser, Boss* deser) {
+bool deser_Boss(SerBoss* ser, Boss* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerBoss was NULL.", __func__);
         kls_free(default_kls);
@@ -1100,7 +1126,8 @@ bool deser_Boss(SerBoss* ser, Boss* deser) {
     return true;
 }
 
-bool ser_Boss(Boss* deser, SerBoss* ser) {
+bool ser_Boss(Boss* deser, SerBoss* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerBoss was NULL.", __func__);
         kls_free(default_kls);
@@ -1154,7 +1181,8 @@ bool ser_Boss(Boss* deser, SerBoss* ser) {
     return true;
 }
 
-bool deser_Fighter(SerFighter* ser, Fighter* deser) {
+bool deser_Fighter(SerFighter* ser, Fighter* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFighter was NULL.", __func__);
         kls_free(default_kls);
@@ -1304,7 +1332,8 @@ bool deser_Fighter(SerFighter* ser, Fighter* deser) {
     return true;
 }
 
-bool ser_Fighter(Fighter* deser, SerFighter* ser) {
+bool ser_Fighter(Fighter* deser, SerFighter* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFighter was NULL.", __func__);
         kls_free(default_kls);
@@ -1400,7 +1429,9 @@ bool ser_Fighter(Fighter* deser, SerFighter* ser) {
         equips_ser_res = ser_Equip(deser->equipsBag[i], &ser->equipsBag[i]);
         if (!equips_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Equip(). Putting zeros. Index: {%li}", __func__, i);
-            ser->equipsBag[i] = (SerEquip){0};
+            ser->equipsBag[i] = (SerEquip) {
+                0
+            };
         }
     }
 
@@ -1454,7 +1485,8 @@ bool ser_Fighter(Fighter* deser, SerFighter* ser) {
     return true;
 }
 
-bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser) {
+bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFoeParty was NULL.", __func__);
         kls_free(default_kls);
@@ -1512,7 +1544,8 @@ bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser) {
     }
     return true;
 }
-bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
+bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFoeParty was NULL.", __func__);
         kls_free(default_kls);
@@ -1546,7 +1579,9 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
         enemies_ser_res = ser_Enemy(deser->enemy_foes[i], &ser->enemy_foes[i]);
         if (!enemies_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Putting zeros. Index: {%li}", __func__, i);
-            ser->enemy_foes[i] = (SerEnemy){0};
+            ser->enemy_foes[i] = (SerEnemy) {
+                0
+            };
         }
     }
 
@@ -1555,7 +1590,9 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
         bosses_ser_res = ser_Boss(deser->boss_foes[i], &ser->boss_foes[i]);
         if (!bosses_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss(). Putting zeros. Index: {%li}", __func__, i);
-            ser->boss_foes[i] = (SerBoss){0};
+            ser->boss_foes[i] = (SerBoss) {
+                0
+            };
         }
     }
 
@@ -1571,7 +1608,8 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
     return true;
 }
 
-bool deser_Chest(SerChest* ser, Chest* deser) {
+bool deser_Chest(SerChest* ser, Chest* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerChest was NULL.", __func__);
         kls_free(default_kls);
@@ -1613,7 +1651,8 @@ bool deser_Chest(SerChest* ser, Chest* deser) {
     return true;
 }
 
-bool ser_Chest(Chest* deser, SerChest* ser) {
+bool ser_Chest(Chest* deser, SerChest* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerChest was NULL.", __func__);
         kls_free(default_kls);
@@ -1655,7 +1694,8 @@ bool ser_Chest(Chest* deser, SerChest* ser) {
     return true;
 }
 
-bool deser_Treasure(SerTreasure* ser, Treasure* deser) {
+bool deser_Treasure(SerTreasure* ser, Treasure* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTreasure was NULL.", __func__);
         kls_free(default_kls);
@@ -1691,7 +1731,8 @@ bool deser_Treasure(SerTreasure* ser, Treasure* deser) {
     return true;
 }
 
-bool ser_Treasure(Treasure* deser, SerTreasure* ser) {
+bool ser_Treasure(Treasure* deser, SerTreasure* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTreasure was NULL.", __func__);
         kls_free(default_kls);
@@ -1727,7 +1768,8 @@ bool ser_Treasure(Treasure* deser, SerTreasure* ser) {
     return true;
 }
 
-bool deser_Shop(SerShop* ser, Shop* deser) {
+bool deser_Shop(SerShop* ser, Shop* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerShop was NULL.", __func__);
         kls_free(default_kls);
@@ -1776,7 +1818,8 @@ bool deser_Shop(SerShop* ser, Shop* deser) {
     }
     return true;
 }
-bool ser_Shop(Shop* deser, SerShop* ser) {
+bool ser_Shop(Shop* deser, SerShop* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerShop was NULL.", __func__);
         kls_free(default_kls);
@@ -1826,7 +1869,8 @@ bool ser_Shop(Shop* deser, SerShop* ser) {
     return true;
 }
 
-bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser) {
+bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoadfork was NULL.", __func__);
         kls_free(default_kls);
@@ -1844,7 +1888,8 @@ bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser) {
     return true;
 }
 
-bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser) {
+bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoadfork was NULL.", __func__);
         kls_free(default_kls);
@@ -1862,7 +1907,8 @@ bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser) {
     return true;
 }
 
-bool deser_Room(SerRoom* ser, Room* deser) {
+bool deser_Room(SerRoom* ser, Room* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoom was NULL.", __func__);
         kls_free(default_kls);
@@ -1918,7 +1964,8 @@ bool deser_Room(SerRoom* ser, Room* deser) {
     return true;
 }
 
-bool ser_Room(Room* deser, SerRoom* ser) {
+bool ser_Room(Room* deser, SerRoom* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoom was NULL.", __func__);
         kls_free(default_kls);
@@ -1935,24 +1982,32 @@ bool ser_Room(Room* deser, SerRoom* ser) {
     bool shop_ser_res = ser_Shop(deser->shop, &ser->shop);
     if (!shop_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Shop(). Putting zeros.", __func__);
-        ser->shop = (SerShop){0};
+        ser->shop = (SerShop) {
+            0
+        };
     }
 
     bool roadfork_ser_res = ser_Roadfork(deser->roadfork, &ser->roadfork);
     if (!roadfork_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Roadfork(). Putting zeros.", __func__);
-        ser->roadfork = (SerRoadfork){0};
+        ser->roadfork = (SerRoadfork) {
+            0
+        };
     }
 
     bool treasure_ser_res = ser_Treasure(deser->treasure, &ser->treasure);
     if (!treasure_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Treasure(). Putting zeros.", __func__);
-        ser->treasure = (SerTreasure){0};
+        ser->treasure = (SerTreasure) {
+            0
+        };
     }
     bool boss_ser_res = ser_Boss(deser->boss, &ser->boss);
     if (!boss_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss(). Putting zeros.", __func__);
-        ser->boss = (SerBoss){0};
+        ser->boss = (SerBoss) {
+            0
+        };
     }
 
     ser->enemyTotal = deser->enemyTotal;
@@ -1961,20 +2016,25 @@ bool ser_Room(Room* deser, SerRoom* ser) {
         enemies_ser_res = ser_Enemy(deser->enemies[i], &ser->enemies[i]);
         if (!enemies_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Putting zeros. Index: {%li}", __func__, i);
-            ser->enemies[i] = (SerEnemy){0};
+            ser->enemies[i] = (SerEnemy) {
+                0
+            };
         }
     }
 
     bool foeparty_ser_res = ser_FoeParty(deser->foes, &ser->foes);
     if (!foeparty_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_FoeParty(). Putting zeros.", __func__);
-        ser->foes = (SerFoeParty){0};
+        ser->foes = (SerFoeParty) {
+            0
+        };
     }
 
     return true;
 }
 
-bool deser_Floor(SerFloor* ser, Floor* deser) {
+bool deser_Floor(SerFloor* ser, Floor* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFloor was NULL.", __func__);
         kls_free(default_kls);
@@ -2026,7 +2086,8 @@ bool deser_Floor(SerFloor* ser, Floor* deser) {
 
     return true;
 }
-bool ser_Floor(Floor* deser, SerFloor* ser) {
+bool ser_Floor(Floor* deser, SerFloor* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFloor was NULL.", __func__);
         kls_free(default_kls);
@@ -2035,7 +2096,9 @@ bool ser_Floor(Floor* deser, SerFloor* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Floor was NULL. Putting zeros.", __func__);
-        *ser = (SerFloor){0};
+        *ser = (SerFloor) {
+            0
+        };
         return true;
     }
 
@@ -2080,7 +2143,8 @@ bool ser_Floor(Floor* deser, SerFloor* ser) {
     return true;
 }
 
-bool deser_Wincon(SerWincon* ser, Wincon* deser) {
+bool deser_Wincon(SerWincon* ser, Wincon* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerWincon was NULL.", __func__);
         kls_free(default_kls);
@@ -2100,7 +2164,8 @@ bool deser_Wincon(SerWincon* ser, Wincon* deser) {
     return true;
 }
 
-bool ser_Wincon(Wincon* deser, SerWincon* ser) {
+bool ser_Wincon(Wincon* deser, SerWincon* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerWincon was NULL.", __func__);
         kls_free(default_kls);
@@ -2120,7 +2185,8 @@ bool ser_Wincon(Wincon* deser, SerWincon* ser) {
     return true;
 }
 
-bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser) {
+bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveslot was NULL.", __func__);
         kls_free(default_kls);
@@ -2146,7 +2212,8 @@ bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser) {
     return true;
 }
 
-bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser) {
+bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveslot was NULL.", __func__);
         kls_free(default_kls);
@@ -2171,7 +2238,8 @@ bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser) {
     return true;
 }
 
-bool deser_Path(SerPath* ser, Path* deser) {
+bool deser_Path(SerPath* ser, Path* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPath was NULL.", __func__);
         kls_free(default_kls);
@@ -2219,7 +2287,8 @@ bool deser_Path(SerPath* ser, Path* deser) {
 
     return true;
 }
-bool ser_Path(Path* deser, SerPath* ser) {
+bool ser_Path(Path* deser, SerPath* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPath was NULL.", __func__);
         kls_free(default_kls);
@@ -2265,7 +2334,8 @@ bool ser_Path(Path* deser, SerPath* ser) {
     return true;
 }
 
-bool writeSerGamestate(const char* filename, SerGamestate* data) {
+bool writeSerGamestate(const char* filename, SerGamestate* data)
+{
     FILE* file = fopen(filename, "wb");
 
     if (file != NULL) {
@@ -2286,8 +2356,8 @@ bool writeSerGamestate(const char* filename, SerGamestate* data) {
     return true;
 }
 
-
-bool appendSerGamestate(const char* filename, SerGamestate* data) {
+bool appendSerGamestate(const char* filename, SerGamestate* data)
+{
     FILE* file = fopen(filename, "ab");
 
     if (file != NULL) {
@@ -2308,7 +2378,8 @@ bool appendSerGamestate(const char* filename, SerGamestate* data) {
     return true;
 }
 
-bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
+bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
+{
     FILE* file = fopen(filename, "rb");
 
     if (file != NULL) {
@@ -2390,7 +2461,6 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
         // Update len
         remaining_length -= sizeof(blob_size);
 
-
         if (remaining_length < blob_size) {
 
 #ifdef _WIN32
@@ -2450,7 +2520,8 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
     return true;
 }
 
-bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
+bool deser_Gamestate(SerGamestate* ser, Gamestate* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGamestate was NULL.", __func__);
         kls_free(default_kls);
@@ -2479,7 +2550,6 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
     deser->current_roomtype = deser->current_roomtype;
     deser->current_room_index = ser->current_room_index;
     deser->current_enemy_index = ser->current_enemy_index;
-
 
     bool wincon_deser_res = deser_Wincon(&ser->wincon, deser->wincon);
     if (!wincon_deser_res) {
@@ -2522,7 +2592,8 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
     return true;
 }
 
-bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
+bool ser_Gamestate(Gamestate* deser, SerGamestate* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGamestate was NULL.", __func__);
         kls_free(default_kls);
@@ -2551,7 +2622,6 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
     ser->current_roomtype = deser->current_roomtype;
     ser->current_room_index = deser->current_room_index;
     ser->current_enemy_index = deser->current_enemy_index;
-
 
     bool wincon_ser_res = ser_Wincon(deser->wincon, &ser->wincon);
     if (!wincon_ser_res) {
@@ -2589,7 +2659,9 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
     bool room_ser_res = ser_Room(deser->current_room, &ser->current_room);
     if (!room_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room() for current room. Putting zeros, class BASIC.", __func__);
-        ser->current_room = (SerRoom){0};
+        ser->current_room = (SerRoom) {
+            0
+        };
         ser->current_room.class = BASIC;
     }
 
@@ -2733,7 +2805,9 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
         return true;
     } else {
-        SerGamestate tmp = (SerGamestate) {0};
+        SerGamestate tmp = (SerGamestate) {
+            0
+        };
         tmp = *read_gmst;
         kls_temp_end(kls_t);
 

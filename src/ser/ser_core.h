@@ -816,7 +816,6 @@ typedef struct SerGamestate {
 #pragma pack(pop)
 #endif
 
-
 bool appendSerTurncounter(const char* filename, SerTurncounter* data);
 
 bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data);
