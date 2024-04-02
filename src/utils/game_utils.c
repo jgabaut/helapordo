@@ -502,6 +502,7 @@ void dbg_Gamestate(Gamestate *gmst)
         log_tag("debug_log.txt", "[GAMESTATE]", "  }");
     }
     log_tag("debug_log.txt", "[GAMESTATE]", "is_localexe == (%s)", (gmst->is_localexe ? "true" : "false"));
+    log_tag("debug_log.txt", "[GAMESTATE]", "is_seeded == (%s)", (gmst->is_seeded ? "true" : "false"));
     log_tag("debug_log.txt", "[GAMESTATE]", "}");
 }
 
@@ -1144,7 +1145,8 @@ void usage(char *progname)
     fprintf(stderr, "\nOptions:\n");
     fprintf(stderr, "\n    -R        Enable rogue mode\n");
     fprintf(stderr, "\n    -s        Enable story mode. Deprecated.\n");
-    fprintf(stderr, "    -l        Load a game.\n");
+    fprintf(stderr, "\n    -S        Pass a seed, instead of using a random one.\n");
+    fprintf(stderr, "    -l        Load a game. Deprecated.\n");
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
     fprintf(stderr, "\n    -d        Enable debug mode\n");
@@ -2989,9 +2991,10 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
  * @param gamemode Picked gamemode.
  * @param screen The main screen from initscr().
  * @param is_localexe Denotes if current game was started from a relative path.
+ * @param is_seeded Denotes if current game was started from a set seed.
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_localexe)
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_localexe, bool is_seeded)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
@@ -3039,6 +3042,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->gamemode = gamemode;
     gmst->screen = screen;
     gmst->is_localexe = is_localexe;
+    gmst->is_seeded = is_seeded;
 }
 
 /**
@@ -5262,6 +5266,13 @@ void useConsumable(Fighter *f, Enemy *e, Boss *b, char *string, int isBoss)
     c->qty--;
 }
 
+
+/**
+ * Wraps over rand() to update G_RNG_ADVANCEMENTS.
+ * @see G_RNG_ADVANCEMENTS
+ * @see rand()
+ * @return A random integer from rand().
+ */
 int hlpd_rand(void)
 {
     G_RNG_ADVANCEMENTS += 1;
@@ -5278,6 +5289,7 @@ int hlpd_rand(void)
  */
 unsigned long hlpd_hash(unsigned char *str)
 {
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Hashing {%s}.", __func__, str);
     unsigned long hash = 5381;
     int c;
 
@@ -5289,8 +5301,13 @@ unsigned long hlpd_hash(unsigned char *str)
     return hash;
 }
 
+/**
+ * Sets the passed buffer up to be a random seed. Only chars >= 0, <= Z; not including the symbols between digits and letters.
+ * @param buffer The buffer to set.
+ */
 void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
 {
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Creating a random seed.", __func__);
     int len = (rand() % (PATH_SEED_BUFSIZE-1)) +1;
     for (size_t i=0; i < len; i++) {
         int r_ch = -1;
@@ -5300,4 +5317,29 @@ void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
         buffer[i] = r_ch;
     }
     buffer[PATH_SEED_BUFSIZE-1] = '\0';
+}
+
+/**
+ * Checks the passed buffer as a seed. Only chars >= 0, <= Z; not including the symbols between digits and letters.
+ * Notably, the passed buffer is checked by applying toupper() to each char.
+ * @param buffer The buffer to check.
+ * @return True for a valid seed.
+ */
+bool check_seed(char buffer[PATH_SEED_BUFSIZE])
+{
+    if (buffer == NULL) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Passed buffer was NULL.\n");
+        return false;
+    }
+
+    int buf_len = strlen(buffer);
+    char ch = -1;
+    for (size_t i=0; i < buf_len; i++) {
+        ch = toupper(buffer[i]);
+        if (ch < '0' || ch > 'Z' || (ch >= ':' && ch <= '@')) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Found invalid char. {%c}", __func__, ch);
+            return false;
+        }
+    }
+    return true;
 }

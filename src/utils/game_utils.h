@@ -228,7 +228,7 @@ void printArtifactStats(Artifact * a);
 #ifdef HELAPORDO_CURSES_BUILD
 void test_game_color_pairs(WINDOW * win, int colors_per_row);
 void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
-                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen, bool is_localexe);
+                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen, bool is_localexe, bool is_seeded);
 turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
@@ -298,4 +298,5 @@ void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 int hlpd_rand(void);
 unsigned long hlpd_hash(unsigned char *str);
 void gen_random_seed(char buffer[PATH_SEED_BUFSIZE]);
+bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
 #endif

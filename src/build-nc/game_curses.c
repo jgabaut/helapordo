@@ -3989,7 +3989,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
 
         if (cursorCheck == ERR) {
             log_tag("debug_log.txt", "[ERROR]",
-                    "Failed curs_set(0) at handleRoom_Home()");
+                    "Failed curs_set(0) at handleRogueMenu()");
             return S4C_ERR_CURSOR;	//fprintf(stderr,"animate => Terminal does not support cursor visibility state.\n");
         }
 

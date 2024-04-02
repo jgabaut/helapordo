@@ -218,6 +218,10 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
         scrollok(home_win, TRUE);
         wprintw(home_win, "\n  This is your base.");
         wprintw(home_win, "\n  Take a nap before exploring.");
+
+        if (gamestate->is_seeded) {
+            wprintw(home_win, "\n\n  Your destiny seems chill.");
+        }
         wrefresh(home_win);
         refresh();
 

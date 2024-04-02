@@ -2585,6 +2585,7 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser)
     }
 
     deser->is_localexe = ser->is_localexe;
+    deser->is_seeded = ser->is_seeded;
     return true;
 }
 
@@ -2662,6 +2663,7 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser)
     }
 
     ser->is_localexe = deser->is_localexe;
+    ser->is_seeded = deser->is_seeded;
     return true;
 }
 

@@ -211,6 +211,15 @@ extern int G_USE_CURRENTDIR;
 extern int64_t G_RNG_ADVANCEMENTS;
 
 /**
+ * Global variable for seeded run flag.
+ */
+extern int G_SEEDED_RUN_ON;
+/**
+ * Global variable for seeded run flag, set to the passed string argument.
+ */
+extern char *G_SEEDED_RUN_ARG;
+
+/**
  * Current major release.
  */
 #define HELAPORDO_MAJOR_VERSION 1
@@ -1777,6 +1786,7 @@ typedef struct {
 #endif // HELAPORDO_CURSES_BUILD
 
     bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
+    bool is_seeded; /**< Denotes if the current game was started with a set seed.*/
 } Gamestate;
 
 /**

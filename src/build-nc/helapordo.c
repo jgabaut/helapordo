@@ -90,12 +90,12 @@ void gameloop(int argc, char **argv)
 
     char seed[PATH_SEED_BUFSIZE] = {0};
 
+    bool is_seeded = false;
+
     do {
         //Init default_kls
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
-
-        gen_random_seed(seed);
 
 #ifndef _WIN32
         (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
@@ -131,8 +131,13 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsaV")) != -1) {
+        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaV")) != -1) {
             switch (option) {
+            case 'S': {
+                G_SEEDED_RUN_ON = 1;
+                G_SEEDED_RUN_ARG = optarg;
+            }
+            break;
             case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
@@ -505,6 +510,26 @@ void gameloop(int argc, char **argv)
 
         }
         log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
+
+        if (G_SEEDED_RUN_ON == 0) {
+            gen_random_seed(seed);
+        } else {
+            //TODO: evaluate user-provided seed and only use a random one when it's not valid.
+            printf("%s():    Seeded run. Checking seed: {%s}\n", __func__, G_SEEDED_RUN_ARG);
+            bool seed_check_res = check_seed(G_SEEDED_RUN_ARG);
+            if (seed_check_res) {
+                // Using a set seed. Uppercasing all letters
+                for (size_t i=0; i < strlen(G_SEEDED_RUN_ARG); i++) {
+                    char upp = toupper(G_SEEDED_RUN_ARG[i]);
+                    G_SEEDED_RUN_ARG[i] = upp;
+                }
+                strncpy(seed, G_SEEDED_RUN_ARG, PATH_SEED_BUFSIZE);
+                seed[PATH_SEED_BUFSIZE -1] = '\0';
+                is_seeded = true;
+            } else { //Go back to using a random seed
+                gen_random_seed(seed);
+            }
+        }
 
         // Clear screen and print title, wait for user to press enter
         int clearres = system("clear");
@@ -1196,7 +1221,7 @@ void gameloop(int argc, char **argv)
                     KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                    "Gamestate");
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                               player, GAMEMODE, gamescreen, is_localexe);
+                               player, GAMEMODE, gamescreen, is_localexe, is_seeded);
 
                 current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
                                                "Loading floor");
@@ -1386,6 +1411,7 @@ void gameloop(int argc, char **argv)
                         stringFrom_saveType(load_info->save_type));
                 log_tag("debug_log.txt", "[TURNOP]",
                         "Old seed: [%s]", seed);
+                //TODO: maybe handle seeded runs here also.
                 gen_random_seed(seed);
                 log_tag("debug_log.txt", "[TURNOP]",
                         "New seed: [%s]", seed);
@@ -1601,7 +1627,7 @@ void gameloop(int argc, char **argv)
                 KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                "Gamestate");
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                           player, GAMEMODE, gamescreen, is_localexe);
+                           player, GAMEMODE, gamescreen, is_localexe, is_seeded);
         }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
