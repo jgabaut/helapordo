@@ -5308,7 +5308,7 @@ unsigned long hlpd_hash(unsigned char *str)
 void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
 {
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Creating a random seed.", __func__);
-    int len = (rand() % (PATH_SEED_BUFSIZE-1)) +1;
+    int len = (rand() % (PATH_SEED_BUFSIZE-8)) +8; // Min len should be 8
     for (size_t i=0; i < len; i++) {
         int r_ch = -1;
         do {
