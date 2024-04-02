@@ -1169,7 +1169,7 @@ void gameloop(int argc, char **argv)
             if (G_EXPERIMENTAL_ON == 1) { //Bin load
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    TODO bin load", __func__);
                 log_tag("debug_log.txt", "[TURNOP]",
-                        "Seed before loading, used to init path: [%i]", seed);
+                        "Seed before loading, used to init path: [%s]", seed);
                 path = randomise_path(seed, default_kls, current_save_path);
                 kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
                 player =
