@@ -3465,11 +3465,6 @@ void initRoom(Room *r, Fighter *f, int index, roomClass type, int enemyTotal,
               loadInfo *load_info, Koliseo_Temp *t_kls)
 {
     //Init room
-    if (load_info->is_new_game || load_info->done_loading) {
-        enemyTotal = (hlpd_rand() % (ROOM_ENEMIES_MAX)) + 1;
-    } else {			//We subtract how many enemies we have already done before loading
-        enemyTotal -= load_info->enemy_index;
-    }
 
     switch (type) {
     case BASIC: {
@@ -3494,6 +3489,13 @@ void initRoom(Room *r, Fighter *f, int index, roomClass type, int enemyTotal,
     break;
     case ENEMIES: {
         r->class = type;
+        if (load_info->is_new_game == 1 || load_info->done_loading == 1) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Rolling for enemyTotal.", __func__);
+            enemyTotal = (hlpd_rand() % (ROOM_ENEMIES_MAX)) + 1;
+        } else {			//We subtract how many enemies we have already done before loading
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Using loaded enemy index for enemyTotal.", __func__);
+            enemyTotal -= load_info->enemy_index;
+        }
         initRoom_Enemies(r, index, enemyTotal, load_info, t_kls);
     }
     break;
