@@ -316,38 +316,48 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     picked_explore = 1;
                 }
                 if (choice == SAVE) {
-                    char path_to_savefile[820];
-                    char static_path[500];
-                    char savefile_name[300];
-                    sprintf(savefile_name, "%s",
-                            p->current_saveslot->save_path);
-
-                    // Set static_path value to the correct static dir path
-                    resolve_staticPath(static_path);
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "handleRoom_Home:  savefile_name is [%s].",
-                            savefile_name);
-
-                    sprintf(path_to_savefile, "%s/%s/%s", static_path,
-                            savefile_name, "save.txt");
-
-                    save_file = fopen(path_to_savefile, "w");
-                    if (save_file == NULL) {
-                        fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                                path_to_savefile);
-                        exit(EXIT_FAILURE);
+                    if (G_EXPERIMENTAL_ON == 1) {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
                     } else {
-                        log_tag("debug_log.txt", "[TURNOP]",
-                                "Assigning save_file pointer to args->save_file. Path: [%s]",
-                                path_to_savefile);
-                        args->save_file = save_file;
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing save file path", __func__);
+                        char path_to_savefile[820];
+                        char static_path[500];
+                        char savefile_name[300];
+                        sprintf(savefile_name, "%s",
+                                p->current_saveslot->save_path);
+
+                        // Set static_path value to the correct static dir path
+                        resolve_staticPath(static_path);
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "handleRoom_Home:  savefile_name is [%s].",
+                                savefile_name);
+
+                        sprintf(path_to_savefile, "%s/%s/%s", static_path,
+                                savefile_name, "save.txt");
+
+                        save_file = fopen(path_to_savefile, "w");
+                        if (save_file == NULL) {
+                            endwin();
+                            fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
+                                    path_to_savefile);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        } else {
+                            log_tag("debug_log.txt", "[TURNOP]",
+                                    "Assigning save_file pointer to args->save_file. Path: [%s]",
+                                    path_to_savefile);
+                            args->save_file = save_file;
+                        }
                     }
                 }
                 turnOP(turnOP_from_turnOption(choice), args, kls, t_kls);
                 if (choice == SAVE) {
-                    fclose(save_file);
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "Closed save_file pointer.");
+                    if (G_EXPERIMENTAL_ON == 0) {
+                        fclose(save_file);
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "Closed save_file pointer.");
+                    }
                 }
             }			//End if Player char was enter
         }
@@ -1263,33 +1273,40 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 endwin();
                 turnOP(OP_STATS, args, kls, t_kls);
             } else if (choice == SAVE) {
-                FILE *save_file;
-                char path_to_savefile[820];
-                char static_path[500];
-                char savefile_name[300];
-                sprintf(savefile_name, "%s", p->current_saveslot->save_path);
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "handleRoom_Enemies:  savefile_name is [%s].",
-                        savefile_name);
-
-                // Set static_path value to the correct static dir path
-                resolve_staticPath(static_path);
-
-                sprintf(path_to_savefile, "%s/%s/%s", static_path, savefile_name, "save.txt");
-
-                save_file = fopen(path_to_savefile, "w");
-                if (save_file == NULL) {
-                    fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                            path_to_savefile);
-                    exit(EXIT_FAILURE);
+                FILE *save_file = NULL;
+                if (G_EXPERIMENTAL_ON == 1) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing save file path", __func__);
                 } else {
-                    log_tag("debug_log.txt", "[TURNOP]",
-                            "Assigning save_file pointer to args->save_file. Path: [%s]",
-                            path_to_savefile);
-                    args->save_file = save_file;
+                    char path_to_savefile[820];
+                    char static_path[500];
+                    char savefile_name[300];
+                    sprintf(savefile_name, "%s", p->current_saveslot->save_path);
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "handleRoom_Enemies:  savefile_name is [%s].",
+                            savefile_name);
+
+                    // Set static_path value to the correct static dir path
+                    resolve_staticPath(static_path);
+
+                    sprintf(path_to_savefile, "%s/%s/%s", static_path, savefile_name, "save.txt");
+
+                    save_file = fopen(path_to_savefile, "w");
+                    if (save_file == NULL) {
+                        fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
+                                path_to_savefile);
+                        exit(EXIT_FAILURE);
+                    } else {
+                        log_tag("debug_log.txt", "[TURNOP]",
+                                "Assigning save_file pointer to args->save_file. Path: [%s]",
+                                path_to_savefile);
+                        args->save_file = save_file;
+                    }
                 }
                 turnOP(OP_SAVE, args, kls, t_kls);
-                fclose(save_file);
+                if (G_EXPERIMENTAL_ON == 0) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Closed save file pointer.", __func__);
+                    fclose(save_file);
+                }
             } else if (choice == DEBUG) {
                 // Unpost menu and free all the memory taken up
                 unpost_menu(my_menu);
