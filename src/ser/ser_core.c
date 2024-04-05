@@ -284,11 +284,17 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
             // Current saveslot dir exists
         } else {
             // Current saveslot dir doesn't exist, try creating it
+#ifndef _WIN32
             int mkdir_saveslot_res = mkdir(path_to_bin_savefile_dir, 0777);
+#else
+            int mkdir_saveslot_res = mkdir(path_to_bin_savefile_dir);
+#endif
             if (mkdir_saveslot_res != 0) {
                 //sprintf(msg,"[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in \"%s/helapordo-local/static/\". Quitting.\n", homedir_path);
                 log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed creating saveslot dir {%s}", __func__, path_to_bin_savefile_dir);
+#ifndef HELAPORDO_RAYLIB_BUILD
                 endwin();
+#endif
                 fprintf(stderr, "\n[ERROR]    Failed creating saveslot directory at {%s}\n", path_to_bin_savefile_dir);
                 kls_free(default_kls);
                 kls_free(temporary_kls);
@@ -2611,7 +2617,6 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser)
         deser->current_room = NULL;
     }
 
-    deser->is_localexe = ser->is_localexe;
     deser->is_seeded = ser->is_seeded;
     return true;
 }
@@ -2689,7 +2694,6 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser)
         ser->current_room.class = BASIC;
     }
 
-    ser->is_localexe = deser->is_localexe;
     ser->is_seeded = deser->is_seeded;
     return true;
 }

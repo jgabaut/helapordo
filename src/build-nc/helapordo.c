@@ -102,9 +102,6 @@ void gameloop(int argc, char **argv)
 #else
         (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
-        bool is_localexe = ( argv[0][0] == '.');
-
-        G_USE_CURRENTDIR = (is_localexe ? 1 : G_USE_CURRENTDIR);
 
         char *kls_progname =
             (char *)KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami),
@@ -131,8 +128,12 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaV")) != -1) {
+        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVD")) != -1) {
             switch (option) {
+            case 'D': {
+                G_USE_CURRENTDIR = 1;
+            }
+            break;
             case 'S': {
                 G_SEEDED_RUN_ON = 1;
                 G_SEEDED_RUN_ARG = optarg;
@@ -406,7 +407,6 @@ void gameloop(int argc, char **argv)
                     G_DEBUG_ON);
             log_tag("debug_log.txt", "[DEBUG]", "kls_progname == (%s)",
                     kls_progname);
-            log_tag("debug_log.txt", "[DEBUG]", "is_localexe == (%s)", (is_localexe ? "true" : "false"));
             log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
             log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
             log_tag("debug_log.txt", "[DEBUG]",
@@ -1222,7 +1222,7 @@ void gameloop(int argc, char **argv)
                     KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                    "Gamestate");
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                               player, GAMEMODE, gamescreen, is_localexe, is_seeded);
+                               player, GAMEMODE, gamescreen, is_seeded);
 
                 current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
                                                "Loading floor");
@@ -1633,7 +1633,7 @@ void gameloop(int argc, char **argv)
                 KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                "Gamestate");
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                           player, GAMEMODE, gamescreen, is_localexe, is_seeded);
+                           player, GAMEMODE, gamescreen, is_seeded);
         }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate

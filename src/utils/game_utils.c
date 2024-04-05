@@ -501,7 +501,6 @@ void dbg_Gamestate(Gamestate *gmst)
         dbg_print_roomclass_layout(gmst->current_floor);
         log_tag("debug_log.txt", "[GAMESTATE]", "  }");
     }
-    log_tag("debug_log.txt", "[GAMESTATE]", "is_localexe == (%s)", (gmst->is_localexe ? "true" : "false"));
     log_tag("debug_log.txt", "[GAMESTATE]", "is_seeded == (%s)", (gmst->is_seeded ? "true" : "false"));
     log_tag("debug_log.txt", "[GAMESTATE]", "}");
 }
@@ -821,7 +820,11 @@ void resolve_staticPath(char static_path[500])
             //sprintf(msg, "[DEBUG]    resolve_staticPath(): Found \"/static/\" dir in global directory: \"%s/helapordo-local/static/\".\n", homedir_path);
             strcpy(static_path, static_folder_path_global);
         } else {
+#ifndef _WIN32
             int mkdir_global_res = mkdir(static_folder_path_global, 0777);
+#else
+            int mkdir_global_res = mkdir(static_folder_path_global);
+#endif
             if (mkdir_global_res != 0) {
                 //sprintf(msg,"[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in \"%s/helapordo-local/static/\". Quitting.\n", homedir_path);
                 fprintf(stderr, "\n[ERROR]    Can't find static dir. Quitting.\n");
@@ -1157,6 +1160,7 @@ void usage(char *progname)
     fprintf(stderr, "\n    [class]\n\n        [Knight|Archer|Mage|Assassin]\n");
     fprintf(stderr, "\nOptions:\n");
     fprintf(stderr, "\n    -R        Enable rogue mode\n");
+    fprintf(stderr, "\n    -D        Use current working directory (rather than default global dir) for saves and files.\n");
     fprintf(stderr, "\n    -s        Enable story mode. Deprecated.\n");
     fprintf(stderr, "\n    -S        Pass a seed, instead of using a random one.\n");
     fprintf(stderr, "    -l        Load a game. Deprecated.\n");
@@ -3003,11 +3007,10 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
  * @param player Game main player.
  * @param gamemode Picked gamemode.
  * @param screen The main screen from initscr().
- * @param is_localexe Denotes if current game was started from a relative path.
  * @param is_seeded Denotes if current game was started from a set seed.
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_localexe, bool is_seeded)
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_seeded)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
@@ -3054,7 +3057,6 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->player = player;
     gmst->gamemode = gamemode;
     gmst->screen = screen;
-    gmst->is_localexe = is_localexe;
     gmst->is_seeded = is_seeded;
 }
 

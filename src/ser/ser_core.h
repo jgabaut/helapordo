@@ -810,7 +810,6 @@ typedef struct SerGamestate {
     SerFloor current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
 
     SerRoom current_room; /**< Pointer to current room.*/
-    bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
     bool is_seeded; /**< Denotes if the current game was started with a set seed.*/
 #ifdef __GNUC__
 } SerGamestate;

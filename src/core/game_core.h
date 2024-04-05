@@ -1785,7 +1785,6 @@ typedef struct {
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
-    bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
     bool is_seeded; /**< Denotes if the current game was started with a set seed.*/
 } Gamestate;
 
