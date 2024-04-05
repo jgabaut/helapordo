@@ -49,8 +49,8 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     Enemy *dummy_enemy = NULL;
     Boss *dummy_boss = NULL;
     FILE *dummy_savefile = NULL;
-    FILE *save_file;
-    FILE *autosave_file;
+    FILE *save_file = NULL;
+    FILE *autosave_file = NULL;
     WINDOW *dummy_notify_win = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
     skillType dummy_skill_pick = -1;
@@ -94,31 +94,40 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
         log_tag("debug_log.txt", "[DEBUG]", "Doing autosave.");
 
         if (do_autosave) {
-            char path_to_autosave_file[820];
-            char autosave_static_path[500];
-            char autosave_file_name[300];
-            strcpy(autosave_file_name, p->current_saveslot->save_path);
-
-            // Set static_path value to the correct static dir path
-            resolve_staticPath(autosave_static_path);
-
-            sprintf(path_to_autosave_file, "%s/%s/%s", autosave_static_path,
-                    autosave_file_name, "save.txt");
-
-            autosave_file = fopen(path_to_autosave_file, "w");
-            if (autosave_file == NULL) {
-                fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                        path_to_autosave_file);
-                exit(EXIT_FAILURE);
+            if (G_EXPERIMENTAL_ON == 1) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
             } else {
-                log_tag("debug_log.txt", "[TURNOP]",
-                        "Assigning autosave_file pointer to args->save_file. Path: [%s]",
-                        path_to_autosave_file);
-                args->save_file = autosave_file;
+                // NOT experimental: txtfile
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing autosave file path", __func__);
+
+                char path_to_autosave_file[820];
+                char autosave_static_path[500];
+                char autosave_file_name[300];
+                strcpy(autosave_file_name, p->current_saveslot->save_path);
+
+                // Set static_path value to the correct static dir path
+                resolve_staticPath(autosave_static_path);
+
+                sprintf(path_to_autosave_file, "%s/%s/%s", autosave_static_path,
+                        autosave_file_name, "save.txt");
+
+                autosave_file = fopen(path_to_autosave_file, "w");
+                if (autosave_file == NULL) {
+                    fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
+                            path_to_autosave_file);
+                    exit(EXIT_FAILURE);
+                } else {
+                    log_tag("debug_log.txt", "[TURNOP]",
+                            "Assigning autosave_file pointer to args->save_file. Path: [%s]",
+                            path_to_autosave_file);
+                    args->save_file = autosave_file;
+                }
             }
             turnOP(turnOP_from_turnOption(SAVE), args, kls, t_kls);
-            fclose(autosave_file);
-            log_tag("debug_log.txt", "[DEBUG]", "Closed autosave_file pointer.");
+            if (G_EXPERIMENTAL_ON == 0) {
+                fclose(autosave_file);
+                log_tag("debug_log.txt", "[DEBUG]", "Closed autosave_file pointer.");
+            }
             log_tag("debug_log.txt", "[DEBUG]", "Done autosave.");
         }
     }

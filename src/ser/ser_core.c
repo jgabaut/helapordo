@@ -241,6 +241,7 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
         exit(EXIT_FAILURE);
     }
     char path_to_bin_savefile[1000];
+    char path_to_bin_savefile_dir[600];
     char bin_savefile_name[300];
 
     //Copy current_save_path
@@ -255,10 +256,17 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
 #endif // HELAPORDO_CURSES_BUILD
 
 #ifndef _WIN32
-    sprintf(path_to_bin_savefile, "%s/%s/%s", static_path, default_saveslots[saveslot_index].save_path, bin_savefile_name);
+    sprintf(path_to_bin_savefile_dir, "%s/%s", static_path, default_saveslots[saveslot_index].save_path);
 #else
-    sprintf(path_to_bin_savefile, "%s\\%s\\%s", static_path, default_saveslots[saveslot_index].save_path, bin_savefile_name);
+    sprintf(path_to_bin_savefile_dir, "%s\\%s", static_path, default_saveslots[saveslot_index].save_path);
 #endif
+
+#ifndef _WIN32
+    sprintf(path_to_bin_savefile, "%s/%s", path_to_bin_savefile_dir, bin_savefile_name);
+#else
+    sprintf(path_to_bin_savefile, "%s\\%s", path_to_bin_savefile_dir, bin_savefile_name);
+#endif
+
     if (force_init) {
         log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forcing init of binsave at {%s}.", __func__, path_to_bin_savefile);
         *did_init = true;
@@ -270,6 +278,25 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
             .os = HELAPORDO_OS,
             .machine = HELAPORDO_MACHINE,
         };
+        struct stat sb;
+
+        if (stat(path_to_bin_savefile_dir, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+            // Current saveslot dir exists
+        } else {
+            // Current saveslot dir doesn't exist, try creating it
+            int mkdir_saveslot_res = mkdir(path_to_bin_savefile_dir, 0777);
+            if (mkdir_saveslot_res != 0) {
+                //sprintf(msg,"[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in \"%s/helapordo-local/static/\". Quitting.\n", homedir_path);
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed creating saveslot dir {%s}", __func__, path_to_bin_savefile_dir);
+                endwin();
+                fprintf(stderr, "\n[ERROR]    Failed creating saveslot directory at {%s}\n", path_to_bin_savefile_dir);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            } else {
+                log_tag("debug_log.txt", "%s():    Could not find {%s} at first, so it was created.\n", __func__, path_to_bin_savefile_dir);
+            }
+        }
 
         // Write packed structure to a binary file
         bool write_res = writeSerSaveHeader(path_to_bin_savefile, &ser_saveheader);

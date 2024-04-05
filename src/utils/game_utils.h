@@ -40,6 +40,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+
+#ifdef _WIN32 // From https://stackoverflow.com/a/230068
+#include <io.h>
+#define F_OK 0
+#define access _access
+#endif
+
 #include <string.h>
 #include <sys/stat.h>
 #include <time.h>
