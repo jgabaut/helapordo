@@ -2107,7 +2107,7 @@ void updateSelectedSpecialW(WINDOW *w, MENU *my_menu, Fighter *f)
     int c;
     for (int j = 0; j < SPECIALSMAX + 1; j++) {
         if ((c =
-                 strcmp(nameStringFromSpecial(f->class, i), item_name(cur))) == 0) {
+                 strcmp(nameStringFromSpecial(f->class, j), item_name(cur))) == 0) {
             i = j;
         }
     };
