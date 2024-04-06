@@ -2927,6 +2927,10 @@ bool read_savedir(const char* dirpath)
         printf("Current room index: {%i}\n", s_gmst.current_room_index);
         printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
         printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
+
+	for (size_t i = 0; i < PERKSMAX; i++) {
+	    printf(SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
+	}
     }
     return true;
 }

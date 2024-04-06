@@ -129,6 +129,10 @@ typedef struct SerPerk {
 #pragma pack(pop)
 #endif
 
+#define SerPerk_Fmt "SerPerk { Class: %s , InnerValue: %" PRId32 " }"
+
+#define SerPerk_Arg(sp) (nameStringFromPerk(sp.class)), (sp.innerValue)
+
 /**
  * Serialized Skillslot. Packed struct.
  * Can be turned into a Skillslot with deser_Skillslot().
