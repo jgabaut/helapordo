@@ -128,7 +128,9 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                 fclose(autosave_file);
                 log_tag("debug_log.txt", "[DEBUG]", "Closed autosave_file pointer.");
             }
-            log_tag("debug_log.txt", "[DEBUG]", "Done autosave.");
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Done autosave.", __func__);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, p->seed);
         }
     }
 

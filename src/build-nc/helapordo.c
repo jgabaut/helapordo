@@ -512,9 +512,10 @@ void gameloop(int argc, char **argv)
         log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
 
         if (G_SEEDED_RUN_ON == 0) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    G_SEEDED_RUN_ON == 0 after getopt. Rolling random seed", __func__);
             gen_random_seed(seed);
         } else {
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run. Checking seed: {%s}\n", __func__, G_SEEDED_RUN_ARG);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run. Checking seed: {%s}", __func__, G_SEEDED_RUN_ARG);
             bool seed_check_res = check_seed(G_SEEDED_RUN_ARG);
             if (seed_check_res) {
                 // Using a set seed. Uppercasing all letters
@@ -526,9 +527,9 @@ void gameloop(int argc, char **argv)
                 seed[PATH_SEED_BUFSIZE -1] = '\0';
                 is_seeded = true;
             } else { //Go back to using a random seed
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Can't do a seeded run. Failed checking seed: {%s}. Using gen_random_seed().\n", __func__, G_SEEDED_RUN_ARG);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Can't do a seeded run. Failed checking seed: {%s}. Using gen_random_seed().", __func__, G_SEEDED_RUN_ARG);
                 gen_random_seed(seed);
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Using seed: {%s}\n", __func__, seed);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Using seed: {%s}", __func__, seed);
             }
         }
 
