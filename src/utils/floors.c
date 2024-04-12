@@ -633,6 +633,8 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
     }
     clear();
     refresh();
+
+    /*
     start_color();
     cbreak();
     noecho();
@@ -645,6 +647,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
     // Print a border around the window
     box(win, 0, 0);
     wrefresh(win);
+    */
 
     /*
        int xShift = 3;
