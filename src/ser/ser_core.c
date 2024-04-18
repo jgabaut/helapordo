@@ -2904,8 +2904,25 @@ bool read_savedir(const char* dirpath)
     char meta_filepath[800];
     char run_filepath[800];
 
-    snprintf(meta_filepath, 799, "%s/save-nc.bin", dirpath);
-    snprintf(run_filepath, 799, "%s/run-nc.bin", dirpath);
+    char* meta_file_name = NULL;
+    char* run_file_name = NULL;
+
+#ifdef HELAPORDO_CURSES_BUILD
+    meta_file_name = CURSES_BINSAVE_NAME;
+    run_file_name = CURSES_GMSTSAVE_NAME;
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+    meta_file_name = RL_BINSAVE_NAME;
+    run_file_name = RL_GMSTSAVE_NAME;
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+
+    snprintf(meta_filepath, 799, "%s/%s", dirpath, meta_file_name);
+
+
+    snprintf(run_filepath, 799, "%s/%s", dirpath, run_file_name);
 
     meta_filepath[799] = '\0';
     run_filepath[799] = '\0';
@@ -2932,9 +2949,9 @@ bool read_savedir(const char* dirpath)
         printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
         printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
 
-	for (size_t i = 0; i < PERKSMAX; i++) {
-	    printf(SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
-	}
+        for (size_t i = 0; i < PERKSMAX; i++) {
+            printf(SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
+        }
     }
     return true;
 }
