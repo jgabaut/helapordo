@@ -303,6 +303,7 @@ void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 void setCounter(Turncounter * c, int turns);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
+int hlpd_rand_docount(bool count);
 int hlpd_rand(void);
 unsigned long hlpd_hash(unsigned char *str);
 void gen_random_seed(char buffer[PATH_SEED_BUFSIZE]);

@@ -533,6 +533,11 @@ void gameloop(int argc, char **argv)
             }
         }
 
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
+
+        int hashed_seed = hlpd_hash((unsigned char*)seed);
+        srand(hashed_seed);
+
         // Clear screen and print title, wait for user to press enter
         int clearres = system("clear");
         log_tag("debug_log.txt", "[DEBUG]",
