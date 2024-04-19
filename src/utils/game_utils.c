@@ -264,6 +264,7 @@ void dbg_Path(Path *path)
             path->loreCounter);
     dbg_Wincon(path->win_condition);
     dbg_Saveslot(path->current_saveslot);
+    log_tag("debug_log.txt", "[PATH]", "Rng advancements: { %" PRId64 "}", *(path->rng_advancements));
 }
 
 /**
@@ -500,7 +501,7 @@ void dbg_Gamestate(Gamestate *gmst)
         dbg_print_roomclass_layout(gmst->current_floor);
         log_tag("debug_log.txt", "[GAMESTATE]", "  }");
     }
-    log_tag("debug_log.txt", "[GAMESTATE]", "is_localexe == (%s)", (gmst->is_localexe ? "true" : "false"));
+    log_tag("debug_log.txt", "[GAMESTATE]", "is_seeded == (%s)", (gmst->is_seeded ? "true" : "false"));
     log_tag("debug_log.txt", "[GAMESTATE]", "}");
 }
 
@@ -803,23 +804,40 @@ void resolve_staticPath(char static_path[500])
     strncat(static_folder_path_global, local_install_static_folder_path, 50);
     struct stat sb;
 
-    if (G_USE_CURRENTDIR == 1 && stat(static_folder_path_wd, &sb) == 0 && S_ISDIR(sb.st_mode)) {
-        //sprintf(msg, "[DEBUG]    resolve_staticPath(): Found \"/static/\" dir in working directory (%s).\n",static_folder_path_wd);
-        strcpy(static_path, static_folder_path_wd);
+    if (G_USE_CURRENTDIR == 1 ) {
+        if (stat(static_folder_path_wd, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+            //sprintf(msg, "[DEBUG]    resolve_staticPath(): Found \"/static/\" dir in working directory (%s).\n",static_folder_path_wd);
+            strcpy(static_path, static_folder_path_wd);
+        } else {
+            fprintf(stderr, "\n[ERROR]    Can't find static dir. Quitting.\n");
+            fprintf(stderr, "\nWorking static dir at: (%s).\n",
+                    static_folder_path_wd);
+            exit(EXIT_FAILURE);
+        }
     } else {
         //sprintf(msg, "[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in working directory (%s). Will try \"%s/helapordo-local/static/\".\n", static_folder_path_wd, homedir_path);
         if (stat(static_folder_path_global, &sb) == 0 && S_ISDIR(sb.st_mode)) {
             //sprintf(msg, "[DEBUG]    resolve_staticPath(): Found \"/static/\" dir in global directory: \"%s/helapordo-local/static/\".\n", homedir_path);
             strcpy(static_path, static_folder_path_global);
         } else {
-            //sprintf(msg,"[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in \"%s/helapordo-local/static/\". Quitting.\n", homedir_path);
-            fprintf(stderr, "\n[ERROR]    Can't find static dir. Quitting.\n");
-            fprintf(stderr, "\nHome dir at: (%s).\n", homedir_path);
-            fprintf(stderr, "\nGlobal static dir at: (%s).\n",
-                    static_folder_path_global);
-            fprintf(stderr, "\nWorking static dir at: (%s).\n",
-                    static_folder_path_wd);
-            exit(EXIT_FAILURE);
+#ifndef _WIN32
+            int mkdir_global_res = mkdir(static_folder_path_global, 0777);
+#else
+            int mkdir_global_res = mkdir(static_folder_path_global);
+#endif
+            if (mkdir_global_res != 0) {
+                //sprintf(msg,"[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in \"%s/helapordo-local/static/\". Quitting.\n", homedir_path);
+                fprintf(stderr, "\n[ERROR]    Can't find static dir. Quitting.\n");
+                fprintf(stderr, "\nHome dir at: (%s).\n", homedir_path);
+                fprintf(stderr, "\nGlobal static dir at: (%s).\n",
+                        static_folder_path_global);
+                fprintf(stderr, "\nWorking static dir at: (%s).\n",
+                        static_folder_path_wd);
+                exit(EXIT_FAILURE);
+            } else {
+                fprintf(stderr, "%s():    Could not find {%s} at first, so it was created.\n", __func__, static_folder_path_global);
+                strcpy(static_path, static_folder_path_global);
+            }
         }
     }
 }
@@ -897,9 +915,9 @@ void setRoomType(Path *path, int *roadFork_value, roomClass *room_type,
             *room_type = BOSS;
         } else if (roomsDone % SHOPROOM == 0) {
             *room_type = SHOP;
-        } else if (rand() % 5 == 0) {
+        } else if (hlpd_rand() % 5 == 0) {
             *room_type = TREASURE;
-        } else if (rand() % 4 == 0 && (roomsDone + 2 < path->length)) {
+        } else if (hlpd_rand() % 4 == 0 && (roomsDone + 2 < path->length)) {
             *room_type = ROADFORK;
         } else if (*room_type == -1) {
             *room_type = ENEMIES;
@@ -925,7 +943,7 @@ void setRoomType(Path *path, int *roadFork_value, roomClass *room_type,
             *room_type = BOSS;
         } else if (roomsDone % 4 == 0) {
             *room_type = SHOP;
-        } else if (rand() % 20 == 0) {
+        } else if (hlpd_rand() % 20 == 0) {
             *room_type = TREASURE;
         } else if (*room_type == -1) {
             *room_type = ENEMIES;
@@ -1142,8 +1160,10 @@ void usage(char *progname)
     fprintf(stderr, "\n    [class]\n\n        [Knight|Archer|Mage|Assassin]\n");
     fprintf(stderr, "\nOptions:\n");
     fprintf(stderr, "\n    -R        Enable rogue mode\n");
+    fprintf(stderr, "\n    -D        Use current working directory (rather than default global dir) for saves and files.\n");
     fprintf(stderr, "\n    -s        Enable story mode. Deprecated.\n");
-    fprintf(stderr, "    -l        Load a game.\n");
+    fprintf(stderr, "\n    -S        Pass a seed, instead of using a random one.\n");
+    fprintf(stderr, "    -l        Load a game. Deprecated.\n");
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
     fprintf(stderr, "\n    -d        Enable debug mode\n");
@@ -2325,7 +2345,7 @@ void setConsumablePrices(int size, int *consumablePrices,
 
         //Price evaluation
         int baseprice = 4;
-        int price = baseprice + (rand() % 5) - 1;
+        int price = baseprice + (hlpd_rand() % 5) - 1;
 
         *cur_price = price;
     }
@@ -2666,12 +2686,12 @@ void printSpawnMessage(Enemy *e, int roomIndex, int enemyIndex)
  */
 int dropConsumable(Fighter *player)
 {
-    int drop = rand() % (CONSUMABLESMAX + 1);
+    int drop = hlpd_rand() % (CONSUMABLESMAX + 1);
 
     //Special drop chances. Maybe a function for this?
     if (drop == Powergem) {
-        if (rand() % 3 == 0) {
-            drop = rand() % (CONSUMABLESMAX + 1);
+        if (hlpd_rand() % 3 == 0) {
+            drop = hlpd_rand() % (CONSUMABLESMAX + 1);
         }
     }
     // Powergem has 33% chance to be rerolled
@@ -2700,7 +2720,7 @@ int dropArtifact(Fighter *player)
 {
     int drop = 0;
     do {
-        drop = rand() % (ARTIFACTSMAX + 1);
+        drop = hlpd_rand() % (ARTIFACTSMAX + 1);
     } while (player->artifactsBag[drop]->qty != 0);	//We reroll to get one we don't have
 
     player->artifactsBag[drop]->qty++;
@@ -2791,27 +2811,30 @@ void emptyEquips(Fighter *player)
  * @see Path
  * @see MAXLENGTH
  * @see MAXLUCK
- * @param seed An integer seed.
+ * @param seed A string seed.
  * @param kls The Koliseo used for allocation.
  * @param path_to_savefile Path to savefile.
  * @return A Path pointer with stats.
  */
-Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
+Path *randomise_path(char* seed, Koliseo *kls, const char *path_to_savefile)
 {
     char msg[200];
     sprintf(msg, "Prepping Path");
     kls_log(kls, "DEBUG", msg);
     Path *p = (Path *) KLS_PUSH_TYPED(kls, Path, HR_Path, "Path", msg);
-    srand(seed);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting path->rng_advancements to point to G_RNG_ADVANCEMENTS. Value: {%i}", __func__, G_RNG_ADVANCEMENTS);
+    p->rng_advancements = &G_RNG_ADVANCEMENTS;
     sprintf(msg, "Prepping Saveslot");
     kls_log(kls, "DEBUG", msg);
     sprintf(msg, "save_path: [%s]", path_to_savefile);
     Saveslot *save =
         (Saveslot *) KLS_PUSH_TYPED(kls, Saveslot, HR_Saveslot, "Saveslot",
                                     msg);
-    sprintf(msg, "Seed: %i", seed);
-    strcpy(save->name, msg);
-    p->seed = seed;
+    seed[PATH_SEED_BUFSIZE-1] = '\0';
+    strncpy(save->name, seed, PATH_SEED_BUFSIZE); //TODO: add size for save->name, unrelated to PATH_SEED_BUFSIZE
+    save->name[PATH_SEED_BUFSIZE-1] = '\0';
+    strncpy(p->seed, seed, PATH_SEED_BUFSIZE);
+    p->seed[PATH_SEED_BUFSIZE-1] = '\0';
     sprintf(msg, "%s", path_to_savefile);
     strcpy(save->save_path, msg);
     p->current_saveslot = save;
@@ -2824,21 +2847,21 @@ Path *randomise_path(int seed, Koliseo *kls, const char *path_to_savefile)
 
     switch (GAMEMODE) {
     case Standard: {
-        p->length = (rand() % MAXLENGTH) + 1;
-        p->luck = (rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (rand() % 150) + 500;
+        p->length = (hlpd_rand() % MAXLENGTH) + 1;
+        p->luck = (hlpd_rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
     }
     break;
     case Story: {
         p->length = 41;
-        p->luck = (rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (rand() % 150) + 500;
+        p->luck = (hlpd_rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
     }
     break;
     case Rogue: {
         p->length = 1;
-        p->luck = (rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (rand() % 150) + 500;
+        p->luck = (hlpd_rand() % MAXLUCK) + 1;
+        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
     }
     break;
     default: {
@@ -2984,10 +3007,10 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
  * @param player Game main player.
  * @param gamemode Picked gamemode.
  * @param screen The main screen from initscr().
- * @param is_localexe Denotes if current game was started from a relative path.
+ * @param is_seeded Denotes if current game was started from a set seed.
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_localexe)
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_seeded)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
@@ -3034,7 +3057,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->player = player;
     gmst->gamemode = gamemode;
     gmst->screen = screen;
-    gmst->is_localexe = is_localexe;
+    gmst->is_seeded = is_seeded;
 }
 
 /**
@@ -3304,9 +3327,9 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     }
 
     //Select a basic item from the list
-    int drop = rand() % (EQUIPSMAX + 1);
+    int drop = hlpd_rand() % (EQUIPSMAX + 1);
     //Randomise quality
-    quality q = rand() % (QUALITIESMAX + 1);
+    quality q = hlpd_rand() % (QUALITIESMAX + 1);
 
     //Prepare the item
     kls_log(kls, "DEBUG", "Prepping dropped Equip");
@@ -3335,9 +3358,9 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     e->level = base->level + round(player->level / EQUIPLVLBOOSTRATIO);
 
     //Chance for better leveled item
-    if ((rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
+    if ((hlpd_rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
         e->level += 1;		//At least a simple +1
-        if ((rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
+        if ((hlpd_rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
             e->level += 1;	//A bonus roll for another +1
 
         }
@@ -3355,15 +3378,15 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     //Bonus stats on better quality items? Simple for now
     //
     if (q == Good) {
-        e->atk += (rand() % 3);	//Should use a defined constant
-        e->def += (rand() % 3);	//Should use a defined constant
-        e->vel += (rand() % 3);	//Should use a defined constant
-        e->enr += (rand() % 2);	//Should use a defined constant
+        e->atk += (hlpd_rand() % 3);	//Should use a defined constant
+        e->def += (hlpd_rand() % 3);	//Should use a defined constant
+        e->vel += (hlpd_rand() % 3);	//Should use a defined constant
+        e->enr += (hlpd_rand() % 2);	//Should use a defined constant
     } else if (q == Bad) {
-        e->atk -= (rand() % 3);	//Should use a defined constant
-        e->def -= (rand() % 3);	//Should use a defined constant
-        e->vel -= (rand() % 3);	//Should use a defined constant
-        e->enr -= (rand() % 2);	//Should use a defined constant
+        e->atk -= (hlpd_rand() % 3);	//Should use a defined constant
+        e->def -= (hlpd_rand() % 3);	//Should use a defined constant
+        e->vel -= (hlpd_rand() % 3);	//Should use a defined constant
+        e->enr -= (hlpd_rand() % 2);	//Should use a defined constant
         if (e->atk < 0) {
             e->atk = 0;
         };
@@ -3386,7 +3409,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
             chance *= 1.5;
         }
 
-        if ((rand() % 100) < chance || (beast && e->perksCount == 0)) {
+        if ((hlpd_rand() % 100) < chance || (beast && e->perksCount == 0)) {
 
             e->perksCount += 1;
 
@@ -3396,7 +3419,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
                     e->perksCount);
             Perk *p = e->perks[e->perksCount-1];
             //(Perk *) KLS_PUSH_TYPED(kls, Perk, HR_Perk, "Perk", "Perk");
-            p->class = rand() % (PERKSMAX + 1);
+            p->class = hlpd_rand() % (PERKSMAX + 1);
             //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
             strcpy(p->name, nameStringFromPerk(p->class));
             //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
@@ -4095,12 +4118,13 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
 
 /**
  * Asks the user is they want to continue and returns the choice.
+ * @param seed The seed for the run that just ended.
  * @return int True for trying again, false otherwise.
  */
-int retry(int seed)
+int retry(char* seed)
 {
     lightGreen();
-    printf("\n\nYou died. Want to try again?\n\nSeed: [%i]\n\n\n\t\t[type no / yes]\n\n", seed);
+    printf("\n\nYou died. Want to try again?\n\nSeed: [%s]\n\n\n\t\t[type no / yes]\n\n", seed);
     white();
     char c[25] = { 0 };
     if (fgets(c, sizeof(c), stdin) != NULL) {
@@ -5031,7 +5055,7 @@ foeTurnOption enemyTurnPick(Enemy *e, Fighter *f)
     foeTurnOption pick = FOE_INVALID;
 
     while (pick == FOE_INVALID) {
-        int rn = rand() % 101;
+        int rn = hlpd_rand() % 101;
         /*
            if (rn > 80) {
            //TODO
@@ -5079,7 +5103,7 @@ foeTurnOption bossTurnPick(Boss *b, Fighter *f)
     foeTurnOption pick = FOE_INVALID;
 
     while (pick == FOE_INVALID) {
-        int rn = rand() % 101;
+        int rn = hlpd_rand() % 101;
         /*
            if (rn > 80) {
            //TODO
@@ -5255,4 +5279,95 @@ void useConsumable(Fighter *f, Enemy *e, Boss *b, char *string, int isBoss)
     }
 
     c->qty--;
+}
+
+
+/**
+ * Wraps over rand() to update G_RNG_ADVANCEMENTS if passed flag is true.
+ * @see G_RNG_ADVANCEMENTS
+ * @see rand()
+ * @param count When true, advance G_RNG_ADVANCEMENTS.
+ * @return A random integer from rand().
+ */
+int hlpd_rand_docount(bool count)
+{
+    //log_tag("debug_log.txt", "[RAND]", "%s():    Rolling. G_RNG_ADVANCEMENTS: {%i}", __func__, G_RNG_ADVANCEMENTS);
+    if (count) G_RNG_ADVANCEMENTS += 1;
+    return rand();
+}
+
+/**
+ * Wraps over hlpd_rand_docount() to update G_RNG_ADVANCEMENTS.
+ * @see G_RNG_ADVANCEMENTS
+ * @see hlpd_rand_docount()
+ * @return A random integer from hlpd_rand_docount().
+ */
+int hlpd_rand(void)
+{
+    return hlpd_rand_docount(true);
+}
+
+/**
+ * djb2 by Dan Bernstein.
+ * See:
+ * http://www.cse.yorku.ca/~oz/hash.html
+ * https://stackoverflow.com/questions/7666509/hash-function-for-string
+ * @param str The string to hash.
+ * @return The resulting hash.
+ */
+unsigned long hlpd_hash(unsigned char *str)
+{
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Hashing {%s}.", __func__, str);
+    unsigned long hash = 5381;
+    int c;
+
+    do {
+        c = *str++;
+        if (c) hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    } while (c);
+
+    return hash;
+}
+
+/**
+ * Sets the passed buffer up to be a random seed. Only chars >= 0, <= Z; not including the symbols between digits and letters.
+ * @param buffer The buffer to set.
+ */
+void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
+{
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Creating a random seed.", __func__);
+    int len = (hlpd_rand_docount(false) % (PATH_SEED_BUFSIZE-8)) +8; // Min len should be 8
+    for (size_t i=0; i < len; i++) {
+        int r_ch = -1;
+        do {
+            r_ch = (hlpd_rand_docount(false) % ('Z' - '0' +1)) + '0'; // We want a char from 0 to Z included.
+        } while (r_ch >= ':' && r_ch <= '@'); // We reject chars between the digits and upperscore letters
+        buffer[i] = r_ch;
+    }
+    buffer[PATH_SEED_BUFSIZE-1] = '\0';
+}
+
+/**
+ * Checks the passed buffer as a seed. Only chars >= 0, <= Z; not including the symbols between digits and letters.
+ * Notably, the passed buffer is checked by applying toupper() to each char.
+ * @param buffer The buffer to check.
+ * @return True for a valid seed.
+ */
+bool check_seed(char buffer[PATH_SEED_BUFSIZE])
+{
+    if (buffer == NULL) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Passed buffer was NULL.\n");
+        return false;
+    }
+
+    int buf_len = strlen(buffer);
+    char ch = -1;
+    for (size_t i=0; i < buf_len; i++) {
+        ch = toupper(buffer[i]);
+        if (ch < '0' || ch > 'Z' || (ch >= ':' && ch <= '@')) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Found invalid char. {%c}", __func__, ch);
+            return false;
+        }
+    }
+    return true;
 }

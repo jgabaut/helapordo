@@ -1124,13 +1124,13 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
 
     switch (c->class) {
     case CHEST_BASE: {
-        cons_cnt = rand() % (CHEST_CONSUMABLES_MAX - 1);
-        equip_cnt = rand() % (CHEST_EQUIPS_MAX - 1);
+        cons_cnt = hlpd_rand() % (CHEST_CONSUMABLES_MAX - 1);
+        equip_cnt = hlpd_rand() % (CHEST_EQUIPS_MAX - 1);
     }
     break;
     case CHEST_BEAST: {
-        cons_cnt = (rand() % (CHEST_CONSUMABLES_MAX)) + 1;
-        equip_cnt = (rand() % (CHEST_EQUIPS_MAX)) + 1;
+        cons_cnt = (hlpd_rand() % (CHEST_CONSUMABLES_MAX)) + 1;
+        equip_cnt = (hlpd_rand() % (CHEST_EQUIPS_MAX)) + 1;
 
     }
     break;
@@ -1157,7 +1157,7 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
                 (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable,
                                                 HR_Consumable, "Consumable",
                                                 "Consumable");
-            int drop = rand() % (CONSUMABLESMAX + 1);
+            int drop = hlpd_rand() % (CONSUMABLESMAX + 1);
 
             cns->class = drop;
 
@@ -1178,9 +1178,9 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
         for (int i = 0; i < c->equipsCount; i++) {
 
             //Select a basic item from the list
-            int drop = rand() % (EQUIPSMAX + 1);
+            int drop = hlpd_rand() % (EQUIPSMAX + 1);
             //Randomise quality
-            quality q = rand() % (QUALITIESMAX + 1);
+            quality q = hlpd_rand() % (QUALITIESMAX + 1);
 
             //Prepare the item
             log_tag("debug_log.txt", "[DEBUG]",
@@ -1211,9 +1211,9 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
             e->level = base->level + round(f->level / EQUIPLVLBOOSTRATIO);
 
             //Chance for better leveled item
-            if ((rand() % 8) - (f->luck / 10) <= 0) {	//Should use a defined constant
+            if ((hlpd_rand() % 8) - (f->luck / 10) <= 0) {	//Should use a defined constant
                 e->level += 1;	//At least a simple +1
-                if ((rand() % 25) - (f->luck / 10) <= 0) {	//Should use a defined constant
+                if ((hlpd_rand() % 25) - (f->luck / 10) <= 0) {	//Should use a defined constant
                     e->level += 1;	//A bonus roll for another +1
 
                 }
@@ -1231,15 +1231,15 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
             //Bonus stats on better quality items? Simple for now
 
             if (q == Good) {
-                e->atk += (rand() % 3);	//Should use a defined constant
-                e->def += (rand() % 3);	//Should use a defined constant
-                e->vel += (rand() % 3);	//Should use a defined constant
-                e->enr += (rand() % 2);	//Should use a defined constant
+                e->atk += (hlpd_rand() % 3);	//Should use a defined constant
+                e->def += (hlpd_rand() % 3);	//Should use a defined constant
+                e->vel += (hlpd_rand() % 3);	//Should use a defined constant
+                e->enr += (hlpd_rand() % 2);	//Should use a defined constant
             } else if (q == Bad) {
-                e->atk -= (rand() % 3);	//Should use a defined constant
-                e->def -= (rand() % 3);	//Should use a defined constant
-                e->vel -= (rand() % 3);	//Should use a defined constant
-                e->enr -= (rand() % 2);	//Should use a defined constant
+                e->atk -= (hlpd_rand() % 3);	//Should use a defined constant
+                e->def -= (hlpd_rand() % 3);	//Should use a defined constant
+                e->vel -= (hlpd_rand() % 3);	//Should use a defined constant
+                e->enr -= (hlpd_rand() % 2);	//Should use a defined constant
                 if (e->atk < 0) {
                     e->atk = 0;
                 };
@@ -1262,7 +1262,7 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
                     chance *= 1.5;
                 }
 
-                if ((rand() % 100) < chance
+                if ((hlpd_rand() % 100) < chance
                     || (c->class == CHEST_BEAST && e->perksCount == 0)) {
 
                     e->perksCount += 1;
@@ -1276,7 +1276,7 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
                     Perk *p =
                         (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, HR_Perk,
                                                   "Perk", "Perk");
-                    p->class = rand() % (PERKSMAX + 1);
+                    p->class = hlpd_rand() % (PERKSMAX + 1);
                     //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
                     strcpy(p->name, nameStringFromPerk(p->class));
                     //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
@@ -1321,13 +1321,13 @@ void initChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
 void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
 {
 
-    int equipsCount = (rand() % EQUIP_SHOP_MAX) + 1;
+    int equipsCount = (hlpd_rand() % EQUIP_SHOP_MAX) + 1;
     Koliseo *kls = t_kls->kls;
 
     if (equipsCount != 0) {
 
         for (int equip_index = 0; equip_index < equipsCount; equip_index++) {
-            int curr = (rand() % (EQUIPSMAX + 1));
+            int curr = (hlpd_rand() % (EQUIPSMAX + 1));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Prepping Equip (%i/%i) for Shop", equip_index,
                     equipsCount);
@@ -1338,7 +1338,7 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
                                            "Equip");
 
             //Randomise quality
-            quality q = rand() % (QUALITIESMAX + 1);
+            quality q = hlpd_rand() % (QUALITIESMAX + 1);
 
             //Get the base item and copy the stats to the current equip
             Equip *base = &equips[curr];
@@ -1359,9 +1359,9 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
             e->level = base->level + round(player->level / EQUIPLVLBOOSTRATIO);
 
             //Chance for better leveled item
-            if ((rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
+            if ((hlpd_rand() % 8) - (player->luck / 10) <= 0) {	//Should use a defined constant
                 e->level += 1;	//At least a simple +1
-                if ((rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
+                if ((hlpd_rand() % 25) - (player->luck / 10) <= 0) {	//Should use a defined constant
                     e->level += 1;	//A bonus roll for another +1
 
                 }
@@ -1379,15 +1379,15 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
             //Bonus stats on better quality items? Simple for now
             //
             if (q == Good) {
-                e->atk += (rand() % 3);	//Should use a defined constant
-                e->def += (rand() % 3);	//Should use a defined constant
-                e->vel += (rand() % 3);	//Should use a defined constant
-                e->enr += (rand() % 2);	//Should use a defined constant
+                e->atk += (hlpd_rand() % 3);	//Should use a defined constant
+                e->def += (hlpd_rand() % 3);	//Should use a defined constant
+                e->vel += (hlpd_rand() % 3);	//Should use a defined constant
+                e->enr += (hlpd_rand() % 2);	//Should use a defined constant
             } else if (q == Bad) {
-                e->atk -= (rand() % 3);	//Should use a defined constant
-                e->def -= (rand() % 3);	//Should use a defined constant
-                e->vel -= (rand() % 3);	//Should use a defined constant
-                e->enr -= (rand() % 2);	//Should use a defined constant
+                e->atk -= (hlpd_rand() % 3);	//Should use a defined constant
+                e->def -= (hlpd_rand() % 3);	//Should use a defined constant
+                e->vel -= (hlpd_rand() % 3);	//Should use a defined constant
+                e->enr -= (hlpd_rand() % 2);	//Should use a defined constant
                 if (e->atk < 0) {
                     e->atk = 0;
                 };
@@ -1410,7 +1410,7 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
                     chance *= 1.5;
                 }
 
-                if ((rand() % 100) < chance) {
+                if ((hlpd_rand() % 100) < chance) {
 
                     e->perksCount += 1;
                     log_tag("debug_log.txt", "[DEBUG]",
@@ -1422,7 +1422,7 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
                     Perk *p =
                         (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, HR_Perk,
                                                   "Perk", "Perk");
-                    p->class = rand() % (PERKSMAX + 1);
+                    p->class = hlpd_rand() % (PERKSMAX + 1);
                     //p->name = (char*)malloc(sizeof(nameStringFromPerk(p->class)));
                     strcpy(p->name, nameStringFromPerk(p->class));
                     //p->desc = (char*)malloc(sizeof(descStringFromPerk(p->class)));
@@ -1459,7 +1459,7 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
     s->equipsCount = equipsCount;
     setEquipPrices(s->equipsCount, s->equipPrices, s->equips);
 
-    int uniqueConsumablesCount = (rand() % SINGLE_CONSUMABLE_SHOP_MAX) + 1;
+    int uniqueConsumablesCount = (hlpd_rand() % SINGLE_CONSUMABLE_SHOP_MAX) + 1;
     int uniques = 0;
     //int not_uniques = 0;
     if (uniqueConsumablesCount != 0) {
@@ -1472,7 +1472,7 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
 
             for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
                 if (cons_prepared < uniqueConsumablesCount) {
-                    int curr = rand() % (CONSUMABLESMAX + 1);
+                    int curr = hlpd_rand() % (CONSUMABLESMAX + 1);
                     if (!(already_rolled[curr])) {
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "Prepping Consumable (%i/%i) for Shop",
@@ -1488,10 +1488,10 @@ void initShop(Shop *s, int indexWeight, Fighter *player, Koliseo_Temp *t_kls)
                         cur->class = curr;
                         already_rolled[curr] = 1;
                         if (uniqueConsumablesCount - cons_prepared > 0) {
-                            cur->qty = (rand() % 4) + 1;
+                            cur->qty = (hlpd_rand() % 4) + 1;
                         } else {
                             cur->qty = 1;
-                            //cur->qty = (rand() % (consumablesCount - cons_index)) +1;
+                            //cur->qty = (hlpd_rand() % (consumablesCount - cons_index)) +1;
                         }
                         setConsumableSprite(cur);
                         //not_uniques += cur->qty;
@@ -1548,7 +1548,7 @@ void initTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
             (Consumable *) KLS_PUSH_T_TYPED(t_kls, Consumable,
                                             HR_Consumable, "Consumable",
                                             "Consumable");
-        int drop = rand() % (CONSUMABLESMAX + 1);
+        int drop = hlpd_rand() % (CONSUMABLESMAX + 1);
 
         cns->class = drop;
 
@@ -1574,7 +1574,7 @@ void initTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
                                           "Artifact", "Artifact");
         int drop = -1;
         do {
-            drop = rand() % (ARTIFACTSMAX + 1);
+            drop = hlpd_rand() % (ARTIFACTSMAX + 1);
         } while (f->artifactsBag[drop]->qty > 0);
 
         a->class = drop;
@@ -1608,7 +1608,7 @@ void prepareChest(Chest *c, Fighter *f, Koliseo_Temp *t_kls)
 {
 
     //Init chest class
-    int drop = (rand() % 100) + 1;
+    int drop = (hlpd_rand() % 100) + 1;
 
     if (drop > 70) {
         c->class = CHEST_BASE;
@@ -1634,7 +1634,7 @@ void prepareBoss(Boss *b, Koliseo_Temp *t_kls)
 {
 
     //Randomise boss class
-    b->class = rand() % (BOSSCLASSESMAX + 1);
+    b->class = hlpd_rand() % (BOSSCLASSESMAX + 1);
 
     b->beast = 0;
     BossBaseStats *base = &basebossstats[b->class];
@@ -1687,7 +1687,7 @@ void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
         exit(EXIT_FAILURE);
     }
     //Randomise enemy class
-    e->class = rand() % (ENEMYCLASSESMAX + 1);
+    e->class = hlpd_rand() % (ENEMYCLASSESMAX + 1);
 
     if (G_DEBUG_ON && G_DEBUG_ENEMYTYPE_ON && (GAMEMODE != Rogue)) {	//Debug flag has a fixed enemy class when used outside of Rogue gamemode
         log_tag("debug_log.txt", "[DEBUG]",
@@ -1699,7 +1699,7 @@ void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
     //Check for spawning beast enemies
     if ((roomindex % BEASTROOM == 0) && (enemyindex == (enemiesInRoom - 1))) {
         //TODO: better mechanic for spawning beast enemies
-        if (((rand() % 5) == 0)) {
+        if (((hlpd_rand() % 5) == 0)) {
             log_tag("debug_log.txt", "[DEBUG]", "Setting e->beast to 1.");
             e->beast = 1;
         }
@@ -1742,7 +1742,7 @@ void prepareTreasure(Treasure *t, Fighter *f, Koliseo_Temp *t_kls)
 
     //Init treasure class
 
-    int roll = (rand() % 100) + 1;
+    int roll = (hlpd_rand() % 100) + 1;
 
     if (roll > 70) {
         t->class = TREASURE_CHEST;
@@ -1768,12 +1768,12 @@ void prepareRoadfork(Roadfork *r)
 {
 
     //Randomise options
-    r->options[0] = rand() % (ROADFORK_OPTIONS_MAX + 1);
+    r->options[0] = hlpd_rand() % (ROADFORK_OPTIONS_MAX + 1);
     int previous = r->options[0];
     int new = -1;
 
     do {
-        new = rand() % (ROADFORK_OPTIONS_MAX + 1);
+        new = hlpd_rand() % (ROADFORK_OPTIONS_MAX + 1);
 
     } while (new == previous);
 

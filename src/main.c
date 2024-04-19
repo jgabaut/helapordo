@@ -47,6 +47,11 @@ int G_DOTUTORIAL_ON = 0;
 int GS_AUTOSAVE_ON = 1;
 
 int G_USE_CURRENTDIR = 0;
+int64_t G_RNG_ADVANCEMENTS = 0;
+
+int G_SEEDED_RUN_ON = 0;
+char *G_SEEDED_RUN_ARG = NULL;
+
 Gamemode GAMEMODE = Rogue;
 Koliseo *default_kls = NULL;
 Koliseo *temporary_kls = NULL;

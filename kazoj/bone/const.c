@@ -3,7 +3,6 @@
 #define HELAPORDO_CURSES_BUILD
 #include "../../src/core/game_core.h"
 #include "../../src/ser/ser_core.h"
-#include "../../src/utils/bin_saves.h"
 
 void fail(char* msg, int ex, int val) {
   printf("[Fail]    %s, expected (%i), was %i\n",msg,ex,val);
@@ -11,7 +10,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.4.4-dev") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.4.5") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (HLP_MAX_INDEX == 31) ) {

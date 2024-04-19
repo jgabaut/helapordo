@@ -36,7 +36,6 @@
 #endif // _WIN32
 
 #include "../utils/rooms.h"
-#include "../utils/bin_saves.h"
 #ifdef ANVIL_BUILD
 #include "../anvil__helapordo.h"
 #endif

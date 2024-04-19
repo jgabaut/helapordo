@@ -22,7 +22,6 @@
 #include "game_debug.h"
 #include "game_fight.h"
 #include "saves.h"
-#include "bin_saves.h"
 #include "../ser/ser_core.h"
 
 OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,

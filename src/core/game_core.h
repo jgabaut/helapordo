@@ -206,6 +206,20 @@ extern int G_DOTUTORIAL_ON;
 extern int G_USE_CURRENTDIR;
 
 /**
+ * Global variable used to count advancements of the rng.
+ */
+extern int64_t G_RNG_ADVANCEMENTS;
+
+/**
+ * Global variable for seeded run flag.
+ */
+extern int G_SEEDED_RUN_ON;
+/**
+ * Global variable for seeded run flag, set to the passed string argument.
+ */
+extern char *G_SEEDED_RUN_ARG;
+
+/**
  * Current major release.
  */
 #define HELAPORDO_MAJOR_VERSION 1
@@ -218,16 +232,16 @@ extern int G_USE_CURRENTDIR;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 4
+#define HELAPORDO_PATCH_VERSION 5
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.4"
+#define VERSION "1.4.5"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.1"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.2"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -1193,6 +1207,8 @@ typedef struct Wincon {
  */
 extern char *winconstrings[WINCON_CLASS_MAX + 1];
 
+#define PATH_SEED_BUFSIZE 20
+
 /**
  * Holds the state of game progression.
  * @see Wincon
@@ -1205,7 +1221,8 @@ typedef struct Path {
     int loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     Wincon *win_condition;     /**> Defines the win condition for the current game.*/
     Saveslot *current_saveslot;	    /** Defines current Saveslot for the game.*/
-    int seed; /** Contains seed for current run.*/
+    char seed[PATH_SEED_BUFSIZE]; /** Contains seed for current run.*/
+    int64_t* rng_advancements; /** Pointer to current advancements for rng.*/
 } Path;
 
 /**
@@ -1768,7 +1785,7 @@ typedef struct {
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
-    bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
+    bool is_seeded; /**< Denotes if the current game was started with a set seed.*/
 } Gamestate;
 
 /**

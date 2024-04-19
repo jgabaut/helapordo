@@ -97,17 +97,17 @@ void floor_random_walk(Floor *floor, int x, int y, int steps,
         int did_bonk = -1;
         int walked_steps = 0;
         for (int i = 0; i < steps; i++) {
-            int dir = rand() % 4;
-            if (rand() % 20 == 0) {	//5% chance to retry same direction
+            int dir = hlpd_rand() % 4;
+            if (hlpd_rand() % 20 == 0) {	//5% chance to retry same direction
                 log_tag("debug_log.txt", "[FLOOR]", "Retrying same direction!");
-                dir = lastdir > 0 ? lastdir : (rand() % 4);
+                dir = lastdir > 0 ? lastdir : (hlpd_rand() % 4);
             }
             log_tag("debug_log.txt", "[FLOOR]", "dir is [%i]", dir);
             while (dir == lastdir && did_bonk) {
                 log_tag("debug_log.txt", "[FLOOR]",
                         "dir [%i] == [%i] lastdir!! Won't bonk again.", dir,
                         lastdir);
-                dir = rand() % 4;
+                dir = hlpd_rand() % 4;
                 log_tag("debug_log.txt", "[FLOOR]", "newdir is [%i]", dir);
             }
             int new_x = -1;
@@ -237,14 +237,14 @@ void floor_set_room_types(Floor *floor)
             //fprintf(logfile,"Area is [ %i ]", floor->area);
             do {
                 // Select a valid random room as the SHOP
-                shop_x = rand() % max_x + 1;
-                shop_y = rand() % max_y + 1;
+                shop_x = hlpd_rand() % max_x + 1;
+                shop_y = hlpd_rand() % max_y + 1;
             } while (floor->floor_layout[shop_x][shop_y] != 1
                      && (shop_x != center_x || shop_y != center_y));
         } else {
             // Select a valid random room as the SHOP
-            shop_x = rand() % max_x + 1;
-            shop_y = rand() % max_y + 1;
+            shop_x = hlpd_rand() % max_x + 1;
+            shop_y = hlpd_rand() % max_y + 1;
             shop_attemps--;
         }
     } while (floor->floor_layout[shop_x][shop_y] != 1
@@ -265,15 +265,15 @@ void floor_set_room_types(Floor *floor)
             //fprintf(logfile,"Area is [ %i ]", floor->area);
             do {
                 // Select a valid random room as the BOSS
-                boss_x = rand() % max_x + 1;
-                boss_y = rand() % max_y + 1;
+                boss_x = hlpd_rand() % max_x + 1;
+                boss_y = hlpd_rand() % max_y + 1;
             } while (floor->floor_layout[boss_x][boss_y] != 1
                      && (boss_x != center_x || boss_y != center_y)
                      && (boss_x != shop_x || boss_y != shop_y));
         } else {
             // Select a valid random room as the SHOP
-            boss_x = rand() % max_x + 1;
-            boss_y = rand() % max_y + 1;
+            boss_x = hlpd_rand() % max_x + 1;
+            boss_y = hlpd_rand() % max_y + 1;
             boss_attemps--;
         }
     } while (floor->floor_layout[boss_x][boss_y] != 1
@@ -289,7 +289,7 @@ void floor_set_room_types(Floor *floor)
     int tried_treasure = -1;
     int done_treasure = -1;
 
-    int treasure_roll = rand() % 100;	//75% to have a treasure room
+    int treasure_roll = hlpd_rand() % 100;	//75% to have a treasure room
     if (treasure_roll >= 25) {
         tried_treasure = 1;
         do {
@@ -301,8 +301,8 @@ void floor_set_room_types(Floor *floor)
                 //fprintf(logfile,"Area is [ %i ]", floor->area);
                 do {
                     // Select a valid random room as the TREASURE
-                    treasure_x = rand() % max_x + 1;
-                    treasure_y = rand() % max_y + 1;
+                    treasure_x = hlpd_rand() % max_x + 1;
+                    treasure_y = hlpd_rand() % max_y + 1;
                 } while (floor->floor_layout[treasure_x][treasure_y] != 1
                          && (treasure_x != center_x || treasure_y != center_y)
                          && (treasure_x != shop_x || treasure_y != shop_y)
@@ -310,8 +310,8 @@ void floor_set_room_types(Floor *floor)
                 break;
             } else {
                 // Select a valid random room as the TREASURE
-                treasure_x = rand() % max_x + 1;
-                treasure_y = rand() % max_y + 1;
+                treasure_x = hlpd_rand() % max_x + 1;
+                treasure_y = hlpd_rand() % max_y + 1;
                 treasure_attemps--;
             }
         } while (floor->floor_layout[treasure_x][treasure_y] != 1
@@ -350,8 +350,8 @@ void floor_set_room_types(Floor *floor)
         int enemy_x = -1;
         int enemy_y = -1;
         do {
-            enemy_x = rand() % max_x;
-            enemy_y = rand() % max_y;
+            enemy_x = hlpd_rand() % max_x;
+            enemy_y = hlpd_rand() % max_y;
         } while (floor->floor_layout[enemy_x][enemy_y] != 1
                  && floor->roomclass_layout[enemy_x][enemy_y] != BASIC);
         floor->roomclass_layout[enemy_x][enemy_y] = ENEMIES;
@@ -633,6 +633,8 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
     }
     clear();
     refresh();
+
+    /*
     start_color();
     cbreak();
     noecho();
@@ -645,6 +647,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
     // Print a border around the window
     box(win, 0, 0);
     wrefresh(win);
+    */
 
     /*
        int xShift = 3;

@@ -428,6 +428,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             log_tag("debug_log.txt", "[WARN]",
                     "GAMEMODE was [Rogue] in turnOP(OP_SAVE)");
             if (G_EXPERIMENTAL_ON == 1) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
                 bool did_saveheader_init = false;
                 char static_path[500];
                 // Set static_path value to the correct static dir path

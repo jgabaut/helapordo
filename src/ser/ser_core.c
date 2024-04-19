@@ -1,6 +1,439 @@
+// jgabaut @ github.com/jgabaut
+// SPDX-License-Identifier: GPL-3.0-only
+/*
+    Copyright (C) 2022-2024 jgabaut
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 3 of the License.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 #include "ser_core.h"
 
-bool appendSerTurncounter(const char* filename, SerTurncounter* data) {
+/**
+ * Writes passed SerSaveHeader to passed file path.
+ * @param filename The path to write to.
+ * @param data The structure to write.
+ * @see SerSaveHeader
+ * @return True on success
+ */
+bool writeSerSaveHeader(const char* filename, SerSaveHeader* data)
+{
+    FILE* file = fopen(filename, "wb");
+
+    if (file != NULL) {
+        // Write the structure to the file
+        //
+        int64_t header_size = sizeof(SerSaveHeader);
+
+        fwrite(&header_size, sizeof(header_size), 1, file);
+        fwrite(data, sizeof(SerSaveHeader), 1, file);
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for writing\n", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for writing", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Reads SerSaveHeader from passed file path into passed structure.
+ * @param filename The path to read from.
+ * @param data The structure to read into.
+ * @see SerSaveHeader
+ * @return True on success
+ */
+bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
+{
+    FILE* file = fopen(filename, "rb");
+
+    if (file != NULL) {
+        size_t length = -1;
+        fseek(file, 0, SEEK_END);
+        length = ftell(file);
+        fseek(file, 0, SEEK_SET);
+
+        int64_t header_size = -1;
+        size_t read_blobs = fread(&header_size, sizeof(header_size), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        size_t sersh_size = sizeof(SerSaveHeader);
+
+#ifdef WIN_32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read header size: {%lli}", __func__, header_size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%lli}", __func__, sersh_size);
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read header size: {%li}", __func__, header_size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%li}", __func__, sersh_size);
+#endif
+
+        if (header_size != sersh_size) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Header size from {%s} doesn't match SemSaveHeader size.", __func__, filename);
+            if (header_size < sersh_size) {
+
+#ifdef WIN_32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, header_size, sersh_size);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, header_size, sersh_size);
+#endif
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            } else {
+
+#ifdef WIN_32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, header_size, sersh_size);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, header_size, sersh_size);
+#endif
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        // Update len
+        length -= sizeof(header_size);
+
+        if (length < header_size) {
+#ifdef WIN_32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%lli} is less than stored header size {%lli}.", __func__, length, header_size);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, length, header_size);
+#endif
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+#ifdef WIN_32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read file size: {%lli}", __func__, length);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%lli}", __func__, sersh_size);
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read file size: {%li}", __func__, length);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerSaveHeader size: {%li}", __func__, sersh_size);
+#endif
+
+        size_t expected_len = sizeof(SerSaveHeader);
+        if (length != expected_len) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    File {%s} size doesn't match expected size.", __func__, filename);
+            if (length < expected_len) {
+
+#ifdef WIN_32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, length, expected_len);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, length, expected_len);
+#endif
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            } else {
+
+#ifdef WIN_32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, length, expected_len);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, length, expected_len);
+#endif
+            }
+        }
+
+        // Read the structure from the file
+        read_blobs = fread(data, sizeof(SerSaveHeader), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for reading\n", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Converts passed SerSaveHeader into a SaveHeader.
+ * @param ser The SerSaveHeader to convert.
+ * @param deser The SaveHeader destination.
+ * @see SerSaveHeader
+ * @see SaveHeader
+ * @return True on success
+ */
+bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser)
+{
+    // ALL strings in the SerSaveHeader should be NULL-terminated
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveHeader was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    deser->api_level = ser->api_level;
+    ser->save_version[SERSAVEHEADER_BUFSIZE] = '\0';
+    memcpy(deser->save_version, ser->save_version, SAVEHEADER_BUFSIZE);
+    deser->save_version[SAVEHEADER_BUFSIZE] = '\0';
+    ser->game_version[SERSAVEHEADER_BUFSIZE] = '\0';
+    memcpy(deser->game_version, ser->game_version, SAVEHEADER_BUFSIZE);
+    deser->game_version[SAVEHEADER_BUFSIZE] = '\0';
+    ser->os[SERSAVEHEADER_BUFSIZE] = '\0';
+    memcpy(deser->os, ser->os, SAVEHEADER_BUFSIZE);
+    deser->os[SAVEHEADER_BUFSIZE] = '\0';
+    ser->machine[SERSAVEHEADER_BUFSIZE] = '\0';
+    memcpy(deser->machine, ser->machine, SAVEHEADER_BUFSIZE);
+    deser->machine[SAVEHEADER_BUFSIZE] = '\0';
+
+    return true;
+}
+
+/**
+ * Tries reading binary save from passed path.
+ * @param static_path The path to which we append to find our file.
+ * @param kls Koliseo used for allocation.
+ * @param force_init When true, forces the write of a new SerSaveHeader.
+ * @param did_init Set to true when a new saveHeader is written.
+ * @param saveslot_index Used to pass current saveslot index.
+ * @see SerSaveHeader
+ * @see SaveHeader
+ * @return The newly allocated SaveHeader.
+ * TODO Contract should meaningfully capture case of read failure + init.
+ */
+SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_init, bool* did_init, int saveslot_index)
+{
+    if (kls == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    char path_to_bin_savefile[1000];
+    char path_to_bin_savefile_dir[600];
+    char bin_savefile_name[300];
+
+    //Copy current_save_path
+#ifdef HELAPORDO_CURSES_BUILD
+    sprintf(bin_savefile_name, "%s", CURSES_BINSAVE_NAME);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    sprintf(bin_savefile_name, "%s", RL_BINSAVE_NAME);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+
+#ifndef _WIN32
+    sprintf(path_to_bin_savefile_dir, "%s/%s", static_path, default_saveslots[saveslot_index].save_path);
+#else
+    sprintf(path_to_bin_savefile_dir, "%s\\%s", static_path, default_saveslots[saveslot_index].save_path);
+#endif
+
+#ifndef _WIN32
+    sprintf(path_to_bin_savefile, "%s/%s", path_to_bin_savefile_dir, bin_savefile_name);
+#else
+    sprintf(path_to_bin_savefile, "%s\\%s", path_to_bin_savefile_dir, bin_savefile_name);
+#endif
+
+    if (force_init) {
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forcing init of binsave at {%s}.", __func__, path_to_bin_savefile);
+        *did_init = true;
+        // Failed reading existing binsave, create a new one
+        SerSaveHeader ser_saveheader = {
+            .api_level = HELAPORDO_API_VERSION_INT,
+            .game_version = VERSION,
+            .save_version = HELAPORDO_BINSAVEFILE_VERSION,
+            .os = HELAPORDO_OS,
+            .machine = HELAPORDO_MACHINE,
+        };
+        struct stat sb;
+
+        if (stat(path_to_bin_savefile_dir, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+            // Current saveslot dir exists
+        } else {
+            // Current saveslot dir doesn't exist, try creating it
+#ifndef _WIN32
+            int mkdir_saveslot_res = mkdir(path_to_bin_savefile_dir, 0777);
+#else
+            int mkdir_saveslot_res = mkdir(path_to_bin_savefile_dir);
+#endif
+            if (mkdir_saveslot_res != 0) {
+                //sprintf(msg,"[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in \"%s/helapordo-local/static/\". Quitting.\n", homedir_path);
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed creating saveslot dir {%s}", __func__, path_to_bin_savefile_dir);
+#ifndef HELAPORDO_RAYLIB_BUILD
+                endwin();
+#endif
+                fprintf(stderr, "\n[ERROR]    Failed creating saveslot directory at {%s}\n", path_to_bin_savefile_dir);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            } else {
+                log_tag("debug_log.txt", "%s():    Could not find {%s} at first, so it was created.\n", __func__, path_to_bin_savefile_dir);
+            }
+        }
+
+        // Write packed structure to a binary file
+        bool write_res = writeSerSaveHeader(path_to_bin_savefile, &ser_saveheader);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for forced writeSerSaveHeader()", __func__);
+        }
+
+        SaveHeader* save_head = KLS_PUSH(kls, SaveHeader);
+        bool deser_result = deser_SaveHeader(&ser_saveheader, save_head);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_SaveHeader().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_SaveHeader()", __func__);
+        }
+        //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
+        return save_head;
+    }
+
+    Koliseo_Temp* kls_t = kls_temp_start(kls);
+    // Try reading an existing binsave
+    SerSaveHeader* read_SSH = KLS_PUSH_T(kls_t, SerSaveHeader);
+    bool read_res = readSerSaveHeader(path_to_bin_savefile, read_SSH);
+
+    if (!read_res) {
+        kls_temp_end(kls_t);
+        log_tag("debug_log.txt", "[BINSAVE]", "Failed reading binsave at {%s}, creating a new one.", path_to_bin_savefile);
+        *did_init = true;
+        // Failed reading existing binsave, create a new one
+        SerSaveHeader ser_saveheader = {
+            .api_level = HELAPORDO_API_VERSION_INT,
+            .game_version = VERSION,
+            .save_version = HELAPORDO_BINSAVEFILE_VERSION,
+            .os = HELAPORDO_OS,
+            .machine = HELAPORDO_MACHINE,
+        };
+
+        // Write packed structure to a binary file
+        bool write_res = writeSerSaveHeader(path_to_bin_savefile, &ser_saveheader);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for writeSerSaveHeader()", __func__);
+        }
+
+        SaveHeader* save_head = KLS_PUSH(kls, SaveHeader);
+        bool deser_result = deser_SaveHeader(&ser_saveheader, save_head);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_SaveHeader().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_SaveHeader()", __func__);
+        }
+        //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
+        return save_head;
+    } else {
+        SerSaveHeader tmp = (SerSaveHeader) {
+            .api_level = read_SSH->api_level,
+        };
+        read_SSH->save_version[SERSAVEHEADER_BUFSIZE] = '\0';
+        memcpy(tmp.save_version, read_SSH->save_version, SERSAVEHEADER_BUFSIZE);
+        read_SSH->game_version[SERSAVEHEADER_BUFSIZE] = '\0';
+        memcpy(tmp.game_version, read_SSH->game_version, SERSAVEHEADER_BUFSIZE);
+        tmp.game_version[SERSAVEHEADER_BUFSIZE] = '\0';
+        read_SSH->os[SERSAVEHEADER_BUFSIZE] = '\0';
+        memcpy(tmp.os, read_SSH->os, SERSAVEHEADER_BUFSIZE);
+        read_SSH->machine[SERSAVEHEADER_BUFSIZE] = '\0';
+        memcpy(tmp.machine, read_SSH->machine, SERSAVEHEADER_BUFSIZE);
+        kls_temp_end(kls_t);
+
+        if ((strcmp(tmp.save_version, HELAPORDO_BINSAVEFILE_VERSION) != 0)) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): mismatch on read_SSH->save_version.", __func__);
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): Expected {%s}, found {%s}", __func__, HELAPORDO_BINSAVEFILE_VERSION, tmp.save_version);
+        }
+
+        if ((strcmp(tmp.game_version, VERSION) != 0)) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): mismatch on read_SSH->game_version.", __func__);
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): Expected {%s}, found {%s}", __func__, VERSION, tmp.game_version);
+        }
+
+        if ((strcmp(tmp.os, HELAPORDO_OS) != 0)) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): mismatch on read_SSH->os.", __func__);
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): Expected {%s}, found {%s}", __func__, HELAPORDO_OS, tmp.os);
+        }
+        if ((strcmp(tmp.machine, HELAPORDO_MACHINE) != 0)) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): mismatch on read_SSH->machine.", __func__);
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): Expected {%s}, found {%s}", __func__, HELAPORDO_MACHINE, tmp.machine);
+        }
+
+        SaveHeader* save_head = KLS_PUSH(kls, SaveHeader);
+
+        bool deser_result = deser_SaveHeader(&tmp, save_head);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_SaveHeader().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_SaveHeader()", __func__);
+        }
+
+        if (save_head == NULL) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): save_head was NULL after deser_SaveHeader().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        //log_tag("debug_log.txt", "[BINSAVE]", "Read Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
+        return save_head;
+    }
+}
+
+bool appendSerTurncounter(const char* filename, SerTurncounter* data)
+{
 
     FILE* file = fopen(filename, "ab");
 
@@ -22,7 +455,8 @@ bool appendSerTurncounter(const char* filename, SerTurncounter* data) {
     return true;
 }
 
-bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data) {
+bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* data)
+{
     FILE* file = fopen(filename, "rb");
 
     if (file != NULL) {
@@ -97,7 +531,6 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         // Update len
         remaining_length -= sizeof(blob_size);
 
-
         if (remaining_length < blob_size) {
 
 #ifdef _WIN32
@@ -153,7 +586,8 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
     return true;
 }
 
-bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser) {
+bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTurncounter was NULL.", __func__);
         kls_free(default_kls);
@@ -173,7 +607,8 @@ bool deser_Turncounter(SerTurncounter* ser, Turncounter* deser) {
     return true;
 }
 
-bool ser_Turncounter(Turncounter* deser, SerTurncounter* ser) {
+bool ser_Turncounter(Turncounter* deser, SerTurncounter* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTurncounter was NULL.", __func__);
         kls_free(default_kls);
@@ -193,7 +628,8 @@ bool ser_Turncounter(Turncounter* deser, SerTurncounter* ser) {
     return true;
 }
 
-bool deser_Perk(SerPerk* ser, Perk* deser) {
+bool deser_Perk(SerPerk* ser, Perk* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPerk was NULL.", __func__);
         kls_free(default_kls);
@@ -208,7 +644,8 @@ bool deser_Perk(SerPerk* ser, Perk* deser) {
     deser->innerValue = ser->innerValue;
     return true;
 }
-bool ser_Perk(Perk* deser, SerPerk* ser) {
+bool ser_Perk(Perk* deser, SerPerk* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPerk was NULL.", __func__);
         kls_free(default_kls);
@@ -224,7 +661,8 @@ bool ser_Perk(Perk* deser, SerPerk* ser) {
     return true;
 }
 
-bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser) {
+bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSkillslot was NULL.", __func__);
         kls_free(default_kls);
@@ -240,7 +678,8 @@ bool deser_Skillslot(SerSkillslot* ser, Skillslot* deser) {
     return true;
 }
 
-bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser) {
+bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSkillslot was NULL.", __func__);
         kls_free(default_kls);
@@ -256,7 +695,8 @@ bool ser_Skillslot(Skillslot* deser, SerSkillslot* ser) {
     return true;
 }
 
-bool deser_Equip(SerEquip* ser, Equip* deser) {
+bool deser_Equip(SerEquip* ser, Equip* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquip was NULL.", __func__);
         kls_free(default_kls);
@@ -276,7 +716,7 @@ bool deser_Equip(SerEquip* ser, Equip* deser) {
     deser->vel = ser->vel;
     deser->enr = ser->enr;
     deser->perksCount = ser->perksCount;
-    assert(deser->perksCount < EQUIPPERKSMAX);
+    assert(deser->perksCount <= EQUIPPERKSMAX);
     deser->cost = ser->cost;
     deser->qual = ser->qual;
     bool perk_deser_res = false;
@@ -291,7 +731,8 @@ bool deser_Equip(SerEquip* ser, Equip* deser) {
     return true;
 }
 
-bool ser_Equip(Equip* deser, SerEquip* ser) {
+bool ser_Equip(Equip* deser, SerEquip* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquip was NULL.", __func__);
         kls_free(default_kls);
@@ -311,7 +752,7 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
     ser->vel = deser->vel;
     ser->enr = deser->enr;
     ser->perksCount = deser->perksCount;
-    assert(ser->perksCount < EQUIPPERKSMAX);
+    assert(ser->perksCount <= EQUIPPERKSMAX);
     ser->cost = deser->cost;
     ser->qual = deser->qual;
     bool perk_ser_res = false;
@@ -319,13 +760,16 @@ bool ser_Equip(Equip* deser, SerEquip* ser) {
         perk_ser_res = ser_Perk(deser->perks[i], &ser->perks[i]);
         if (!perk_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Perk() for {%s}. Index: {%li}. Putting zeros.", __func__, stringFromEquips(deser->class), i);
-            ser->perks[i] = (SerPerk){0};
+            ser->perks[i] = (SerPerk) {
+                0
+            };
         }
     }
     return true;
 }
 
-bool deser_Equipslot(SerEquipslot* ser, Equipslot* deser) {
+bool deser_Equipslot(SerEquipslot* ser, Equipslot* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquipslot was NULL.", __func__);
         kls_free(default_kls);
@@ -343,7 +787,8 @@ bool deser_Equipslot(SerEquipslot* ser, Equipslot* deser) {
     return true;
 }
 
-bool ser_Equipslot(Equipslot* deser, SerEquipslot* ser) {
+bool ser_Equipslot(Equipslot* deser, SerEquipslot* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEquipslot was NULL.", __func__);
         kls_free(default_kls);
@@ -361,7 +806,8 @@ bool ser_Equipslot(Equipslot* deser, SerEquipslot* ser) {
     return true;
 }
 
-bool deser_Specialslot(SerSpecialslot* ser, Specialslot* deser) {
+bool deser_Specialslot(SerSpecialslot* ser, Specialslot* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSpecialslot was NULL.", __func__);
         kls_free(default_kls);
@@ -380,7 +826,8 @@ bool deser_Specialslot(SerSpecialslot* ser, Specialslot* deser) {
     return true;
 }
 
-bool ser_Specialslot(Specialslot* deser, SerSpecialslot* ser) {
+bool ser_Specialslot(Specialslot* deser, SerSpecialslot* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSpecialslot was NULL.", __func__);
         kls_free(default_kls);
@@ -399,7 +846,8 @@ bool ser_Specialslot(Specialslot* deser, SerSpecialslot* ser) {
     return true;
 }
 
-bool deser_Consumable(SerConsumable* ser, Consumable* deser) {
+bool deser_Consumable(SerConsumable* ser, Consumable* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerConsumable was NULL.", __func__);
         kls_free(default_kls);
@@ -418,7 +866,8 @@ bool deser_Consumable(SerConsumable* ser, Consumable* deser) {
     return true;
 }
 
-bool ser_Consumable(Consumable* deser, SerConsumable* ser) {
+bool ser_Consumable(Consumable* deser, SerConsumable* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerConsumable was NULL.", __func__);
         kls_free(default_kls);
@@ -436,7 +885,8 @@ bool ser_Consumable(Consumable* deser, SerConsumable* ser) {
     return true;
 }
 
-bool deser_Artifact(SerArtifact* ser, Artifact* deser) {
+bool deser_Artifact(SerArtifact* ser, Artifact* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerArtifact was NULL.", __func__);
         kls_free(default_kls);
@@ -457,7 +907,8 @@ bool deser_Artifact(SerArtifact* ser, Artifact* deser) {
     return true;
 }
 
-bool ser_Artifact(Artifact* deser, SerArtifact* ser) {
+bool ser_Artifact(Artifact* deser, SerArtifact* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerArtifact was NULL.", __func__);
         kls_free(default_kls);
@@ -477,7 +928,8 @@ bool ser_Artifact(Artifact* deser, SerArtifact* ser) {
     return true;
 }
 
-bool deser_countStats(SerCountstats* ser, countStats* deser) {
+bool deser_countStats(SerCountstats* ser, countStats* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerCountstats was NULL.", __func__);
         kls_free(default_kls);
@@ -509,7 +961,8 @@ bool deser_countStats(SerCountstats* ser, countStats* deser) {
     return true;
 }
 
-bool ser_countStats(countStats* deser, SerCountstats* ser) {
+bool ser_countStats(countStats* deser, SerCountstats* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerCountstats was NULL.", __func__);
         kls_free(default_kls);
@@ -541,7 +994,8 @@ bool ser_countStats(countStats* deser, SerCountstats* ser) {
     return true;
 }
 
-bool deser_Enemy(SerEnemy* ser, Enemy* deser) {
+bool deser_Enemy(SerEnemy* ser, Enemy* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEnemy was NULL.", __func__);
         kls_free(default_kls);
@@ -594,7 +1048,8 @@ bool deser_Enemy(SerEnemy* ser, Enemy* deser) {
     return true;
 }
 
-bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
+bool ser_Enemy(Enemy* deser, SerEnemy* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerEnemy was NULL.", __func__);
         kls_free(default_kls);
@@ -626,7 +1081,9 @@ bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
         skillslot_ser_res = ser_Skillslot(deser->skills[i], &ser->skills[i]);
         if (!skillslot_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Skillslot(). Putting zeros. Index: {%li}", __func__, i);
-            ser->skills[i] = (SerSkillslot){0};
+            ser->skills[i] = (SerSkillslot) {
+                0
+            };
         }
     }
     bool turncounter_ser_res = false;
@@ -647,7 +1104,8 @@ bool ser_Enemy(Enemy* deser, SerEnemy* ser) {
     return true;
 }
 
-bool deser_Boss(SerBoss* ser, Boss* deser) {
+bool deser_Boss(SerBoss* ser, Boss* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerBoss was NULL.", __func__);
         kls_free(default_kls);
@@ -701,7 +1159,8 @@ bool deser_Boss(SerBoss* ser, Boss* deser) {
     return true;
 }
 
-bool ser_Boss(Boss* deser, SerBoss* ser) {
+bool ser_Boss(Boss* deser, SerBoss* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerBoss was NULL.", __func__);
         kls_free(default_kls);
@@ -755,7 +1214,8 @@ bool ser_Boss(Boss* deser, SerBoss* ser) {
     return true;
 }
 
-bool deser_Fighter(SerFighter* ser, Fighter* deser) {
+bool deser_Fighter(SerFighter* ser, Fighter* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFighter was NULL.", __func__);
         kls_free(default_kls);
@@ -905,7 +1365,8 @@ bool deser_Fighter(SerFighter* ser, Fighter* deser) {
     return true;
 }
 
-bool ser_Fighter(Fighter* deser, SerFighter* ser) {
+bool ser_Fighter(Fighter* deser, SerFighter* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFighter was NULL.", __func__);
         kls_free(default_kls);
@@ -1001,7 +1462,9 @@ bool ser_Fighter(Fighter* deser, SerFighter* ser) {
         equips_ser_res = ser_Equip(deser->equipsBag[i], &ser->equipsBag[i]);
         if (!equips_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Equip(). Putting zeros. Index: {%li}", __func__, i);
-            ser->equipsBag[i] = (SerEquip){0};
+            ser->equipsBag[i] = (SerEquip) {
+                0
+            };
         }
     }
 
@@ -1055,7 +1518,8 @@ bool ser_Fighter(Fighter* deser, SerFighter* ser) {
     return true;
 }
 
-bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser) {
+bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFoeParty was NULL.", __func__);
         kls_free(default_kls);
@@ -1113,7 +1577,8 @@ bool deser_FoeParty(SerFoeParty* ser, FoeParty* deser) {
     }
     return true;
 }
-bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
+bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFoeParty was NULL.", __func__);
         kls_free(default_kls);
@@ -1147,7 +1612,9 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
         enemies_ser_res = ser_Enemy(deser->enemy_foes[i], &ser->enemy_foes[i]);
         if (!enemies_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Putting zeros. Index: {%li}", __func__, i);
-            ser->enemy_foes[i] = (SerEnemy){0};
+            ser->enemy_foes[i] = (SerEnemy) {
+                0
+            };
         }
     }
 
@@ -1156,7 +1623,9 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
         bosses_ser_res = ser_Boss(deser->boss_foes[i], &ser->boss_foes[i]);
         if (!bosses_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss(). Putting zeros. Index: {%li}", __func__, i);
-            ser->boss_foes[i] = (SerBoss){0};
+            ser->boss_foes[i] = (SerBoss) {
+                0
+            };
         }
     }
 
@@ -1172,7 +1641,8 @@ bool ser_FoeParty(FoeParty* deser, SerFoeParty* ser) {
     return true;
 }
 
-bool deser_Chest(SerChest* ser, Chest* deser) {
+bool deser_Chest(SerChest* ser, Chest* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerChest was NULL.", __func__);
         kls_free(default_kls);
@@ -1214,7 +1684,8 @@ bool deser_Chest(SerChest* ser, Chest* deser) {
     return true;
 }
 
-bool ser_Chest(Chest* deser, SerChest* ser) {
+bool ser_Chest(Chest* deser, SerChest* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerChest was NULL.", __func__);
         kls_free(default_kls);
@@ -1256,7 +1727,8 @@ bool ser_Chest(Chest* deser, SerChest* ser) {
     return true;
 }
 
-bool deser_Treasure(SerTreasure* ser, Treasure* deser) {
+bool deser_Treasure(SerTreasure* ser, Treasure* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTreasure was NULL.", __func__);
         kls_free(default_kls);
@@ -1292,7 +1764,8 @@ bool deser_Treasure(SerTreasure* ser, Treasure* deser) {
     return true;
 }
 
-bool ser_Treasure(Treasure* deser, SerTreasure* ser) {
+bool ser_Treasure(Treasure* deser, SerTreasure* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerTreasure was NULL.", __func__);
         kls_free(default_kls);
@@ -1328,7 +1801,8 @@ bool ser_Treasure(Treasure* deser, SerTreasure* ser) {
     return true;
 }
 
-bool deser_Shop(SerShop* ser, Shop* deser) {
+bool deser_Shop(SerShop* ser, Shop* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerShop was NULL.", __func__);
         kls_free(default_kls);
@@ -1377,7 +1851,8 @@ bool deser_Shop(SerShop* ser, Shop* deser) {
     }
     return true;
 }
-bool ser_Shop(Shop* deser, SerShop* ser) {
+bool ser_Shop(Shop* deser, SerShop* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerShop was NULL.", __func__);
         kls_free(default_kls);
@@ -1427,7 +1902,8 @@ bool ser_Shop(Shop* deser, SerShop* ser) {
     return true;
 }
 
-bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser) {
+bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoadfork was NULL.", __func__);
         kls_free(default_kls);
@@ -1445,7 +1921,8 @@ bool deser_Roadfork(SerRoadfork* ser, Roadfork* deser) {
     return true;
 }
 
-bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser) {
+bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoadfork was NULL.", __func__);
         kls_free(default_kls);
@@ -1463,7 +1940,8 @@ bool ser_Roadfork(Roadfork* deser, SerRoadfork* ser) {
     return true;
 }
 
-bool deser_Room(SerRoom* ser, Room* deser) {
+bool deser_Room(SerRoom* ser, Room* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoom was NULL.", __func__);
         kls_free(default_kls);
@@ -1472,7 +1950,7 @@ bool deser_Room(SerRoom* ser, Room* deser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Room was NULL.", __func__);
-        return NULL;
+        return false;
     }
 
     deser->index = ser->index;
@@ -1519,7 +1997,8 @@ bool deser_Room(SerRoom* ser, Room* deser) {
     return true;
 }
 
-bool ser_Room(Room* deser, SerRoom* ser) {
+bool ser_Room(Room* deser, SerRoom* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerRoom was NULL.", __func__);
         kls_free(default_kls);
@@ -1536,24 +2015,32 @@ bool ser_Room(Room* deser, SerRoom* ser) {
     bool shop_ser_res = ser_Shop(deser->shop, &ser->shop);
     if (!shop_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Shop(). Putting zeros.", __func__);
-        ser->shop = (SerShop){0};
+        ser->shop = (SerShop) {
+            0
+        };
     }
 
     bool roadfork_ser_res = ser_Roadfork(deser->roadfork, &ser->roadfork);
     if (!roadfork_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Roadfork(). Putting zeros.", __func__);
-        ser->roadfork = (SerRoadfork){0};
+        ser->roadfork = (SerRoadfork) {
+            0
+        };
     }
 
     bool treasure_ser_res = ser_Treasure(deser->treasure, &ser->treasure);
     if (!treasure_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Treasure(). Putting zeros.", __func__);
-        ser->treasure = (SerTreasure){0};
+        ser->treasure = (SerTreasure) {
+            0
+        };
     }
     bool boss_ser_res = ser_Boss(deser->boss, &ser->boss);
     if (!boss_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Boss(). Putting zeros.", __func__);
-        ser->boss = (SerBoss){0};
+        ser->boss = (SerBoss) {
+            0
+        };
     }
 
     ser->enemyTotal = deser->enemyTotal;
@@ -1562,20 +2049,25 @@ bool ser_Room(Room* deser, SerRoom* ser) {
         enemies_ser_res = ser_Enemy(deser->enemies[i], &ser->enemies[i]);
         if (!enemies_ser_res) {
             log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Enemy(). Putting zeros. Index: {%li}", __func__, i);
-            ser->enemies[i] = (SerEnemy){0};
+            ser->enemies[i] = (SerEnemy) {
+                0
+            };
         }
     }
 
     bool foeparty_ser_res = ser_FoeParty(deser->foes, &ser->foes);
     if (!foeparty_ser_res) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_FoeParty(). Putting zeros.", __func__);
-        ser->foes = (SerFoeParty){0};
+        ser->foes = (SerFoeParty) {
+            0
+        };
     }
 
     return true;
 }
 
-bool deser_Floor(SerFloor* ser, Floor* deser) {
+bool deser_Floor(SerFloor* ser, Floor* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFloor was NULL.", __func__);
         kls_free(default_kls);
@@ -1627,7 +2119,8 @@ bool deser_Floor(SerFloor* ser, Floor* deser) {
 
     return true;
 }
-bool ser_Floor(Floor* deser, SerFloor* ser) {
+bool ser_Floor(Floor* deser, SerFloor* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerFloor was NULL.", __func__);
         kls_free(default_kls);
@@ -1636,7 +2129,9 @@ bool ser_Floor(Floor* deser, SerFloor* ser) {
     }
     if (deser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed Floor was NULL. Putting zeros.", __func__);
-        *ser = (SerFloor){0};
+        *ser = (SerFloor) {
+            0
+        };
         return true;
     }
 
@@ -1681,7 +2176,8 @@ bool ser_Floor(Floor* deser, SerFloor* ser) {
     return true;
 }
 
-bool deser_Wincon(SerWincon* ser, Wincon* deser) {
+bool deser_Wincon(SerWincon* ser, Wincon* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerWincon was NULL.", __func__);
         kls_free(default_kls);
@@ -1701,7 +2197,8 @@ bool deser_Wincon(SerWincon* ser, Wincon* deser) {
     return true;
 }
 
-bool ser_Wincon(Wincon* deser, SerWincon* ser) {
+bool ser_Wincon(Wincon* deser, SerWincon* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerWincon was NULL.", __func__);
         kls_free(default_kls);
@@ -1721,7 +2218,8 @@ bool ser_Wincon(Wincon* deser, SerWincon* ser) {
     return true;
 }
 
-bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser) {
+bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveslot was NULL.", __func__);
         kls_free(default_kls);
@@ -1747,7 +2245,8 @@ bool deser_Saveslot(SerSaveslot* ser, Saveslot* deser) {
     return true;
 }
 
-bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser) {
+bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerSaveslot was NULL.", __func__);
         kls_free(default_kls);
@@ -1772,7 +2271,8 @@ bool ser_Saveslot(Saveslot* deser, SerSaveslot* ser) {
     return true;
 }
 
-bool deser_Path(SerPath* ser, Path* deser) {
+bool deser_Path(SerPath* ser, Path* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPath was NULL.", __func__);
         kls_free(default_kls);
@@ -1789,7 +2289,12 @@ bool deser_Path(SerPath* ser, Path* deser) {
     deser->luck = ser->luck;
     deser->prize = ser->prize;
     deser->loreCounter = ser->loreCounter;
-    deser->seed = ser->seed;
+
+    ser->seed[SERPATH_SEED_BUFSIZE-1] = '\0';
+    memcpy(deser->seed, ser->seed, PATH_SEED_BUFSIZE-1);
+    deser->seed[PATH_SEED_BUFSIZE-1] = '\0';
+
+    //Setting deser->rng_advancements is done by prep_Gamestate() later.
 
     bool wincon_deser_res = deser_Wincon(&ser->win_condition, deser->win_condition);
     if (!wincon_deser_res) {
@@ -1809,7 +2314,8 @@ bool deser_Path(SerPath* ser, Path* deser) {
 
     return true;
 }
-bool ser_Path(Path* deser, SerPath* ser) {
+bool ser_Path(Path* deser, SerPath* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerPath was NULL.", __func__);
         kls_free(default_kls);
@@ -1826,7 +2332,17 @@ bool ser_Path(Path* deser, SerPath* ser) {
     ser->luck = deser->luck;
     ser->prize = deser->prize;
     ser->loreCounter = deser->loreCounter;
-    ser->seed = deser->seed;
+    deser->seed[PATH_SEED_BUFSIZE-1] = '\0';
+    memcpy(ser->seed, deser->seed, SERPATH_SEED_BUFSIZE-1);
+    ser->seed[SERPATH_SEED_BUFSIZE-1] = '\0';
+
+    if (deser->rng_advancements == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): rng_advancements was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    ser->rng_advancements = *(deser->rng_advancements);
 
     bool wincon_ser_res = ser_Wincon(deser->win_condition, &ser->win_condition);
     if (!wincon_ser_res) {
@@ -1847,7 +2363,8 @@ bool ser_Path(Path* deser, SerPath* ser) {
     return true;
 }
 
-bool writeSerGamestate(const char* filename, SerGamestate* data) {
+bool writeSerGamestate(const char* filename, SerGamestate* data)
+{
     FILE* file = fopen(filename, "wb");
 
     if (file != NULL) {
@@ -1868,8 +2385,8 @@ bool writeSerGamestate(const char* filename, SerGamestate* data) {
     return true;
 }
 
-
-bool appendSerGamestate(const char* filename, SerGamestate* data) {
+bool appendSerGamestate(const char* filename, SerGamestate* data)
+{
     FILE* file = fopen(filename, "ab");
 
     if (file != NULL) {
@@ -1890,7 +2407,8 @@ bool appendSerGamestate(const char* filename, SerGamestate* data) {
     return true;
 }
 
-bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
+bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
+{
     FILE* file = fopen(filename, "rb");
 
     if (file != NULL) {
@@ -1972,7 +2490,6 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
         // Update len
         remaining_length -= sizeof(blob_size);
 
-
         if (remaining_length < blob_size) {
 
 #ifdef _WIN32
@@ -2032,7 +2549,8 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data) {
     return true;
 }
 
-bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
+bool deser_Gamestate(SerGamestate* ser, Gamestate* deser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGamestate was NULL.", __func__);
         kls_free(default_kls);
@@ -2061,7 +2579,6 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
     deser->current_roomtype = deser->current_roomtype;
     deser->current_room_index = ser->current_room_index;
     deser->current_enemy_index = ser->current_enemy_index;
-
 
     bool wincon_deser_res = deser_Wincon(&ser->wincon, deser->wincon);
     if (!wincon_deser_res) {
@@ -2100,11 +2617,12 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser) {
         deser->current_room = NULL;
     }
 
-    deser->is_localexe = ser->is_localexe;
+    deser->is_seeded = ser->is_seeded;
     return true;
 }
 
-bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
+bool ser_Gamestate(Gamestate* deser, SerGamestate* ser)
+{
     if (ser == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGamestate was NULL.", __func__);
         kls_free(default_kls);
@@ -2133,7 +2651,6 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
     ser->current_roomtype = deser->current_roomtype;
     ser->current_room_index = deser->current_room_index;
     ser->current_enemy_index = deser->current_enemy_index;
-
 
     bool wincon_ser_res = ser_Wincon(deser->wincon, &ser->wincon);
     if (!wincon_ser_res) {
@@ -2170,11 +2687,14 @@ bool ser_Gamestate(Gamestate* deser, SerGamestate* ser) {
 
     bool room_ser_res = ser_Room(deser->current_room, &ser->current_room);
     if (!room_ser_res) {
-        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room() for current room. Putting zeros.", __func__);
-        ser->current_room = (SerRoom){0};
+        log_tag("debug_log.txt", "[ERROR]", "%s(): Failed ser_Room() for current room. Putting zeros, class BASIC.", __func__);
+        ser->current_room = (SerRoom) {
+            0
+        };
+        ser->current_room.class = BASIC;
     }
 
-    ser->is_localexe = deser->is_localexe;
+    ser->is_seeded = deser->is_seeded;
     return true;
 }
 
@@ -2311,10 +2831,29 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
         } else {
             log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_Gamestate()", __func__);
         }
+
+        //TODO: pass buffer to load rng advancements into?
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(hashed_seed)", __func__);
+        int hashed_seed = hlpd_hash((unsigned char*) ser_gmst.path.seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Hashed seed: {%i}", __func__, hashed_seed);
+        srand(hashed_seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting G_RNG_ADVANCEMENTS to 0 and advancing to {%" PRId64 "}", __func__, ser_gmst.path.rng_advancements);
+
+        G_RNG_ADVANCEMENTS = 0;
+        for (int i=0; i < ser_gmst.path.rng_advancements; i++) {
+            hlpd_rand();
+        }
+
+        gmst->path->rng_advancements = &G_RNG_ADVANCEMENTS;
+
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+
         //log_tag("debug_log.txt", "[BINSAVE]", "Initialised Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
         return true;
     } else {
-        SerGamestate tmp = (SerGamestate) {0};
+        SerGamestate tmp = (SerGamestate) {
+            0
+        };
         tmp = *read_gmst;
         kls_temp_end(kls_t);
 
@@ -2339,7 +2878,80 @@ bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Kol
             exit(EXIT_FAILURE);
         }
 
+        //TODO: pass buffer to load rng advancements into?
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(hashed_seed)", __func__);
+        int hashed_seed = hlpd_hash((unsigned char*) tmp.path.seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Hashed seed: {%i}", __func__, hashed_seed);
+        srand(hashed_seed);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting G_RNG_ADVANCEMENTS to 0 and advancing to {%" PRId64 "}", __func__, tmp.path.rng_advancements);
+
+        G_RNG_ADVANCEMENTS = 0;
+        for (int i=0; i < tmp.path.rng_advancements; i++) {
+            hlpd_rand();
+        }
+
+        gmst->path->rng_advancements = &G_RNG_ADVANCEMENTS;
+
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+
         //log_tag("debug_log.txt", "[BINSAVE]", "Read Data: api_level=%" PRId32 ", save_version=%s, game_version=%s, os=%s, machine=%s", save_head->api_level, save_head->save_version, save_head->game_version, save_head->os, save_head->machine);
         return true;
     }
+}
+
+bool read_savedir(const char* dirpath)
+{
+    char meta_filepath[800];
+    char run_filepath[800];
+
+    char* meta_file_name = NULL;
+    char* run_file_name = NULL;
+
+#ifdef HELAPORDO_CURSES_BUILD
+    meta_file_name = CURSES_BINSAVE_NAME;
+    run_file_name = CURSES_GMSTSAVE_NAME;
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+    meta_file_name = RL_BINSAVE_NAME;
+    run_file_name = RL_GMSTSAVE_NAME;
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+
+    snprintf(meta_filepath, 799, "%s/%s", dirpath, meta_file_name);
+
+
+    snprintf(run_filepath, 799, "%s/%s", dirpath, run_file_name);
+
+    meta_filepath[799] = '\0';
+    run_filepath[799] = '\0';
+
+    SerSaveHeader s_hdr = {0};
+
+    bool read_res = readSerSaveHeader(meta_filepath, &s_hdr);
+    if (!read_res) {
+        fprintf(stderr, "Error while reading from {%s}.\n", meta_filepath);
+        return false;
+    } else {
+        printf("Save info: {\n    Api level: {%" PRId32 "}\n    Game version: {%s}\n    Save version: {%s}\n    Os: {%s}\n    Machine: {%s}\n}\n", s_hdr.api_level, s_hdr.game_version, s_hdr.save_version, s_hdr.os, s_hdr.machine);
+    }
+    SerGamestate s_gmst = {0};
+
+    bool run_read_res = readSerGamestate(run_filepath, 0, &s_gmst);
+    if (!run_read_res) {
+        fprintf(stderr, "Error while reading from {%s}.\n", run_filepath);
+        return false;
+    } else {
+
+        printf("Gamemode: {%s}\n", stringFromGamemode(s_gmst.gamemode));
+        printf("Current room index: {%i}\n", s_gmst.current_room_index);
+        printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
+        printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
+
+        for (size_t i = 0; i < PERKSMAX; i++) {
+            printf(SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
+        }
+    }
+    return true;
 }

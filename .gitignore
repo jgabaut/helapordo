@@ -7,6 +7,11 @@ helapordo-save-3.txt
 save-nc.bin
 save-rl.bin
 
+# ignore run bin
+
+run-nc.bin
+run-rl.bin
+
 # ignore hlpd-1 dir
 hlpd-1
 # ignore hlpd-2 dir
@@ -31,6 +36,11 @@ helapordo
 helapordo.exe
 # ignore debug executable
 helapordo_debug
+
+# ignore save2l executable
+hlpd-save2l
+hlpd-save2l.exe
+
 # ignore debug log file
 debug_log.txt
 # ignore ops log file

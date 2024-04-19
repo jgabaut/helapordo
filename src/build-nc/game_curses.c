@@ -217,9 +217,15 @@ int get_saveslot_index(void)
             }
         }
         if (!set_Saveslot_name(svfile, &default_saveslots[i])) {
-            log_tag("debug_log.txt", "[WARN]",
-                    "%s(): Failed reading savefile {%i} at \"%s\".", __func__,
-                    i, path_to_sv_file);
+            if (G_EXPERIMENTAL_ON == 0) {
+                log_tag("debug_log.txt", "[WARN]",
+                        "%s(): Failed reading savefile {%i} at \"%s\".", __func__,
+                        i, path_to_sv_file);
+            } else {
+                log_tag("debug_log.txt", "[WARN]",
+                        "%s(): Failed reading binary savefile {%i} at \"%s\".", __func__,
+                        i, default_saveslots[i].save_path);
+            }
         };
         if (svfile) fclose(svfile);
     }
@@ -2101,7 +2107,7 @@ void updateSelectedSpecialW(WINDOW *w, MENU *my_menu, Fighter *f)
     int c;
     for (int j = 0; j < SPECIALSMAX + 1; j++) {
         if ((c =
-                 strcmp(nameStringFromSpecial(f->class, i), item_name(cur))) == 0) {
+                 strcmp(nameStringFromSpecial(f->class, j), item_name(cur))) == 0) {
             i = j;
         }
     };
@@ -3983,7 +3989,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
 
         if (cursorCheck == ERR) {
             log_tag("debug_log.txt", "[ERROR]",
-                    "Failed curs_set(0) at handleRoom_Home()");
+                    "Failed curs_set(0) at handleRogueMenu()");
             return S4C_ERR_CURSOR;	//fprintf(stderr,"animate => Terminal does not support cursor visibility state.\n");
         }
 

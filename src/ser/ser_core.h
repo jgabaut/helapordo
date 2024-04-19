@@ -26,6 +26,63 @@
 #endif
 
 /**
+ * Defines size for all SerSaveHeader char buffers.
+ * @see SerSaveHeader
+ */
+#define SERSAVEHEADER_BUFSIZE 15
+
+/**
+ * Serialized save header. Packed struct.
+ * Can be turned into a SaveHeader with deser_SaveHeader().
+ * @see deser_SaveHeader()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerSaveHeader {
+#else
+#pragma pack(push, 1)
+typedef struct SerSaveHeader {
+#endif
+    int32_t api_level;
+    char game_version[SERSAVEHEADER_BUFSIZE+1];
+    char save_version[SERSAVEHEADER_BUFSIZE+1];
+    char os[SERSAVEHEADER_BUFSIZE+1];
+    char machine[SERSAVEHEADER_BUFSIZE+1];
+#ifdef __GNUC__
+} SerSaveHeader;
+#else
+} SerSaveHeader;
+#pragma pack(pop)
+#endif
+
+/**
+ * Defines size for all SaveHeader char buffers.
+ * @see SaveHeader
+ */
+#define SAVEHEADER_BUFSIZE SERSAVEHEADER_BUFSIZE
+
+/**
+ * Save header. Normal struct.
+ * Can be obtained from a SerSaveHeader with deser_SaveHeader().
+ * @see deser_SaveHeader()
+ * @see SerSaveHeader
+ */
+typedef struct SaveHeader {
+    int32_t api_level;
+    char game_version[SAVEHEADER_BUFSIZE+1];
+    char save_version[SAVEHEADER_BUFSIZE+1];
+    char os[SAVEHEADER_BUFSIZE+1];
+    char machine[SAVEHEADER_BUFSIZE+1];
+} SaveHeader;
+
+bool writeSerSaveHeader(const char* filename, SerSaveHeader* data);
+
+bool readSerSaveHeader(const char* filename, SerSaveHeader* data);
+
+bool deser_SaveHeader(SerSaveHeader* ser, SaveHeader* deser);
+
+SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_init, bool* did_init, int saveslot_index);
+
+/**
  * Serialized Turncounter. Packed struct.
  * Can be turned into a Turncounter with deser_turnCounter().
  * Can be obtained from a Turncounter with ser_turnCounter().
@@ -71,6 +128,10 @@ typedef struct SerPerk {
 } SerPerk;
 #pragma pack(pop)
 #endif
+
+#define SerPerk_Fmt "SerPerk { Class: %s , InnerValue: %" PRId32 " }"
+
+#define SerPerk_Arg(sp) (nameStringFromPerk(sp.class)), (sp.innerValue)
 
 /**
  * Serialized Skillslot. Packed struct.
@@ -688,6 +749,8 @@ typedef struct SerSaveslot {
 #pragma pack(pop)
 #endif
 
+#define SERPATH_SEED_BUFSIZE PATH_SEED_BUFSIZE
+
 /**
  * Serialized SerPath. Packed struct.
  * Can be turned into a Path with deser_Path().
@@ -708,7 +771,8 @@ typedef struct SerPath {
     int8_t loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     SerWincon win_condition;     /**> Defines the win condition for the current game.*/
     SerSaveslot current_saveslot;	    /** Defines current SerSaveslot for the game.*/
-    int32_t seed; /** Holds seed for current run.*/
+    char seed[SERPATH_SEED_BUFSIZE]; /** Holds seed for current run.*/
+    int64_t rng_advancements; /** Current advancements for rng.*/
 #ifdef __GNUC__
 } SerPath;
 #else
@@ -750,14 +814,13 @@ typedef struct SerGamestate {
     SerFloor current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
 
     SerRoom current_room; /**< Pointer to current room.*/
-    bool is_localexe; /**< Denotes if the current game was started from a relative path.*/
+    bool is_seeded; /**< Denotes if the current game was started with a set seed.*/
 #ifdef __GNUC__
 } SerGamestate;
 #else
 } SerGamestate;
 #pragma pack(pop)
 #endif
-
 
 bool appendSerTurncounter(const char* filename, SerTurncounter* data);
 
@@ -836,4 +899,5 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data);
 bool deser_Gamestate(SerGamestate* ser, Gamestate* deser);
 bool ser_Gamestate(Gamestate* deser, SerGamestate* ser);
 bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Koliseo* kls, bool force_init);
+bool read_savedir(const char* dirpath);
 #endif // SER_CORE_H

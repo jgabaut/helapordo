@@ -88,22 +88,20 @@ void gameloop(int argc, char **argv)
                                       NULL
                                   );
 
-    int seed = -1;
+    char seed[PATH_SEED_BUFSIZE] = {0};
+
+    bool is_seeded = false;
 
     do {
         //Init default_kls
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 16, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
-        seed = rand();
 
 #ifndef _WIN32
         (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 #else
         (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
-        bool is_localexe = ( argv[0][0] == '.');
-
-        G_USE_CURRENTDIR = (is_localexe ? 1 : G_USE_CURRENTDIR);
 
         char *kls_progname =
             (char *)KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami),
@@ -130,8 +128,17 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsaV")) != -1) {
+        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVD")) != -1) {
             switch (option) {
+            case 'D': {
+                G_USE_CURRENTDIR = 1;
+            }
+            break;
+            case 'S': {
+                G_SEEDED_RUN_ON = 1;
+                G_SEEDED_RUN_ARG = optarg;
+            }
+            break;
             case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
@@ -400,7 +407,6 @@ void gameloop(int argc, char **argv)
                     G_DEBUG_ON);
             log_tag("debug_log.txt", "[DEBUG]", "kls_progname == (%s)",
                     kls_progname);
-            log_tag("debug_log.txt", "[DEBUG]", "is_localexe == (%s)", (is_localexe ? "true" : "false"));
             log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
             log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
             log_tag("debug_log.txt", "[DEBUG]",
@@ -505,6 +511,33 @@ void gameloop(int argc, char **argv)
         }
         log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
 
+        if (G_SEEDED_RUN_ON == 0) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    G_SEEDED_RUN_ON == 0 after getopt. Rolling random seed", __func__);
+            gen_random_seed(seed);
+        } else {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run. Checking seed: {%s}", __func__, G_SEEDED_RUN_ARG);
+            bool seed_check_res = check_seed(G_SEEDED_RUN_ARG);
+            if (seed_check_res) {
+                // Using a set seed. Uppercasing all letters
+                for (size_t i=0; i < strlen(G_SEEDED_RUN_ARG); i++) {
+                    char upp = toupper(G_SEEDED_RUN_ARG[i]);
+                    G_SEEDED_RUN_ARG[i] = upp;
+                }
+                strncpy(seed, G_SEEDED_RUN_ARG, PATH_SEED_BUFSIZE);
+                seed[PATH_SEED_BUFSIZE -1] = '\0';
+                is_seeded = true;
+            } else { //Go back to using a random seed
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Can't do a seeded run. Failed checking seed: {%s}. Using gen_random_seed().", __func__, G_SEEDED_RUN_ARG);
+                gen_random_seed(seed);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Using seed: {%s}", __func__, seed);
+            }
+        }
+
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
+
+        int hashed_seed = hlpd_hash((unsigned char*)seed);
+        srand(hashed_seed);
+
         // Clear screen and print title, wait for user to press enter
         int clearres = system("clear");
         log_tag("debug_log.txt", "[DEBUG]",
@@ -515,9 +548,14 @@ void gameloop(int argc, char **argv)
         printf("\n\n\n\n\t\t\tPRESS ENTER TO START\n\n");
         white();
 
+        if (G_EXPERIMENTAL_ON) {
+            lightPurple();
+            printf("\t\t\t\t\t\t\tEXPERIMENTAL\n");
+            white();
+        }
         if (G_DEBUG_ON) {
             lightCyan();
-            printf("\t\t\t\t\t\t\t\tDEBUG ON\n");
+            printf("\t\t\t\t\t\t\tDEBUG ON\n");
             white();
         }
         printf("\t\t\t\t\t\t\tncurses build\n");
@@ -1163,7 +1201,7 @@ void gameloop(int argc, char **argv)
             if (G_EXPERIMENTAL_ON == 1) { //Bin load
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    TODO bin load", __func__);
                 log_tag("debug_log.txt", "[TURNOP]",
-                        "Seed before loading, used to init path: [%i]", seed);
+                        "Seed before loading, used to init path: [%s]", seed);
                 path = randomise_path(seed, default_kls, current_save_path);
                 kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
                 player =
@@ -1190,7 +1228,7 @@ void gameloop(int argc, char **argv)
                     KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                    "Gamestate");
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                               player, GAMEMODE, gamescreen, is_localexe);
+                               player, GAMEMODE, gamescreen, is_seeded);
 
                 current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
                                                "Loading floor");
@@ -1222,17 +1260,33 @@ void gameloop(int argc, char **argv)
                     exit(EXIT_FAILURE);
                 }
 
+
                 load_info->enemy_index = gamestate->current_enemy_index;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
-                seed = gamestate->path->seed;
-                log_tag("debug_log.txt", "[TURNOP]",
-                        "Seed after loading: [%i]", seed);
+                gamestate->path->seed[PATH_SEED_BUFSIZE-1] = '\0';
+                strncpy(seed, gamestate->path->seed, PATH_SEED_BUFSIZE);
+                seed[PATH_SEED_BUFSIZE-1] = '\0';
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Seed after loading: [%s]", seed);
+
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting is_seeded {%s} to gamestate->is_seeded {%s}", __func__, (is_seeded ? "true" : "false"), (gamestate->is_seeded ? "true" : "false"));
+                is_seeded = gamestate->is_seeded;
+
                 //TODO: set the other load_info fields properly?
+                //
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking save type", __func__);
                 if (gamestate->current_room != NULL) {
                     current_room = gamestate->current_room;
                     switch (current_room->class) {
                     case ENEMIES: {
-                        assert(load_info->enemy_index >= 0);
+                        if (load_info->enemy_index < 0) {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    load_info->enemy_index was <0: {%i}", __func__, load_info->enemy_index);
+                            endwin();
+                            fprintf(stderr, "%s():    Failed preparing gamestate. Invalid enemy index.\n", __func__);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
                         load_info->save_type = ENEMIES_SAVE;
                     }
                     break;
@@ -1242,8 +1296,6 @@ void gameloop(int argc, char **argv)
                     break;
                     case BASIC: {
                         load_info->save_type = FLOORMENU_SAVE;
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting load_info->done_loading to 1", __func__);
-                        load_info->done_loading = 1;
                     }
                     break;
                     default: {
@@ -1370,10 +1422,11 @@ void gameloop(int argc, char **argv)
                         "Assigned load_info->save_type: [%s]",
                         stringFrom_saveType(load_info->save_type));
                 log_tag("debug_log.txt", "[TURNOP]",
-                        "Old seed: [%i]", seed);
-                seed = rand();
+                        "Old seed: [%s]", seed);
+                //TODO: maybe handle seeded runs here also.
+                gen_random_seed(seed);
                 log_tag("debug_log.txt", "[TURNOP]",
-                        "New seed: [%i]", seed);
+                        "New seed: [%s]", seed);
                 path = randomise_path(seed, default_kls, current_save_path);
                 kls_log(default_kls, "DEBUG", "Prepping Loady Fighter");
                 player =
@@ -1586,7 +1639,7 @@ void gameloop(int argc, char **argv)
                 KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                "Gamestate");
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                           player, GAMEMODE, gamescreen, is_localexe);
+                           player, GAMEMODE, gamescreen, is_seeded);
         }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
@@ -1888,6 +1941,10 @@ void gameloop(int argc, char **argv)
                         "gameloop() 2 system(\"clear\") res was (%i)", clrres);
                 handleStats(player);
                 printf("\n\n\tYOU WON!\n\n");
+                if (gamestate->is_seeded) {
+                    printf("\n\n\tSeeded run\n\n");
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run win", __func__);
+                }
                 log_tag("debug_log.txt", "[DEBUG]", "Game won.");
                 //Free default kls
                 kls_log(default_kls, "DEBUG", "Freeing default KLS");
@@ -2416,6 +2473,10 @@ void gameloop(int argc, char **argv)
                             "gameloop() 3 system(\"clear\") res was (%i)",
                             clrres);
                     printf("\n\n\tYOU DIED.\n\n");
+                    if (is_seeded) {
+                        printf("\n\nSeeded run\n\n");
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run lost", __func__);
+                    }
                     log_tag("debug_log.txt", "[DEBUG]", "Game lost.");
                 }
 
