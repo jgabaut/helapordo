@@ -13,6 +13,7 @@
 
 ## Table of Contents <a name = "index"></a>
 
++ [Latest Release](#latest_release)
 + [Building](#building)
   + [Dependencies](#dependencies)
   + [Initialitising Submodules](#init_submodules)
@@ -23,12 +24,24 @@
   + [Compiling](#compiling)
 + [Installation](#installation)
 + [Documentation](#doc)
-+ [Latest Release](#latest_release)
 
+## Latest Release <a name = "latest_release"></a>
+
+  I try to upload precompiled binaries for the ncurses build:
+
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.5/helapordo-nc-1.4.5-Linux-x86_64.zip)
+  - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
+  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.5/helapordo.exe-nc-1.4.5-w64-mingw32-x86_64.zip)
+
+  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.3/helapordo-nc-1.4.3-darwin-arm64.zip) (Available = `1.4.3`. Latest = `1.4.5`)
+    - You should always check if the releases page has a newer build for you than the one linked here.
+
+  📦 v1.4.5 19/04/2024
+  https://github.com/jgabaut/helapordo/releases
 
 ## Building <a name = "building"></a>
 
-  The code should build for:
+  The source code should build for:
 
   - `x86_64-Linux`
   - `aarch64-Linux`(see [this section](#latest_release))
@@ -151,17 +164,3 @@
   If you have `doxygen` installed you can generate the HTML yourself, or even the pdf if you have `doxygen-latex` or equivalents.
 
   You if you have those packages, running `make doc` should give you `./docs/docs.pdf`, just the pdf output from latex, and delete the doxygen folder by itself.
-
-## Latest Release <a name = "latest_release"></a>
-
-  I try to upload precompiled binaries for the ncurses build:
-
-  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.4/helapordo-nc-1.4.4-Linux-x86_64.zip)
-  - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
-  - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.4/helapordo.exe-nc-1.4.4-w64-mingw32-x86_64.zip)
-
-  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.3/helapordo-nc-1.4.3-darwin-arm64.zip) (Available = `1.4.3`. Latest = `1.4.4`)
-    - You should always check if the releases page has a newer build for you than the one linked here.
-
-  📦 v1.4.4 25/03/2024
-  https://github.com/jgabaut/helapordo/releases

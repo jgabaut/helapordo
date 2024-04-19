@@ -830,9 +830,9 @@ void resolve_staticPath(char static_path[500])
                 fprintf(stderr, "\n[ERROR]    Can't find static dir. Quitting.\n");
                 fprintf(stderr, "\nHome dir at: (%s).\n", homedir_path);
                 fprintf(stderr, "\nGlobal static dir at: (%s).\n",
-                    static_folder_path_global);
+                        static_folder_path_global);
                 fprintf(stderr, "\nWorking static dir at: (%s).\n",
-                    static_folder_path_wd);
+                        static_folder_path_wd);
                 exit(EXIT_FAILURE);
             } else {
                 fprintf(stderr, "%s():    Could not find {%s} at first, so it was created.\n", __func__, static_folder_path_global);
