@@ -20,6 +20,28 @@
 //
 
 /**
+ * Function to handle Ctrl+C signal
+ */
+void ctrl_c_handler(int signum) {
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Ctrl+C received. Cleaning up memory...", __func__);
+#ifdef HELAPORDO_CURSES_BUILD
+    if (stdscr != NULL) {
+        endwin();
+        log_tag("debug_log.txt", "[CLEANUP]", "%s():    Ended window mode", __func__);
+    }
+#endif // HELAPORDO_CURSES_BUILD
+    if (default_kls != NULL) {
+        kls_free(default_kls);
+        log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned default_kls", __func__);
+    }
+    if (temporary_kls != NULL) {
+        kls_free(temporary_kls);
+        log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned temporary_kls", __func__);
+    }
+    exit(0);
+}
+
+/**
  * Takes a Wincon and a Path pointers and a winconClass and initialises the passed Wincon.
  * @see Wincon
  * @see Path

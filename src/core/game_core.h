@@ -232,12 +232,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 5
+#define HELAPORDO_PATCH_VERSION 6
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.5"
+#define VERSION "1.4.6-dev"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 

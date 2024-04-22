@@ -58,6 +58,8 @@ Koliseo *temporary_kls = NULL;
 
 int main(int argc, char **argv)
 {
+    // Registering the signal handler for SIGINT (Ctrl+C)
+    signal(SIGINT, ctrl_c_handler);
     //Randomise seed
     srand(time(NULL));
 

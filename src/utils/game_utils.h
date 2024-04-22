@@ -52,8 +52,10 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <inttypes.h>
+#include <signal.h>
 #include "../core/game_core.h"
 
+void ctrl_c_handler(int signum);
 void initWincon(Wincon * w, Path * p, winconClass class);
 void printGlobVars(void);
 
