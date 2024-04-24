@@ -2075,10 +2075,16 @@ void gameloop(int argc, char **argv)
                     //Init floor rooms
                     init_floor_rooms(current_floor);
 
-                    //Random walk #1
-                    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                    //Random walk #2
-                    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                    if (G_EXPERIMENTAL_ON != 1) {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                        //Random walk #1
+                        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                        //Random walk #2
+                        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                    } else {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                        floor_bsp_gen(current_floor, center_x, center_y);
+                    }
 
                     //Set floor explored matrix
                     load_floor_explored(current_floor);
@@ -2116,9 +2122,11 @@ void gameloop(int argc, char **argv)
                         && (load_info->save_type == ENEMIES_SAVE)) {
                         enemyTotal = loaded_roomtotalenemies;
                     } else {
+                        if (!load_info->done_loading) {
+                            log_tag("debug_log.txt", "[DEBUG-PREP]",
+                                    "Setting load_info->done_loading to 1.");
+                        }
                         load_info->done_loading = 1;
-                        log_tag("debug_log.txt", "[DEBUG-PREP]",
-                                "Set load_info->done_loading to 1.");
                     }
 
                     Room *current_room = NULL;

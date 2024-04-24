@@ -22,7 +22,8 @@
 /**
  * Function to handle Ctrl+C signal
  */
-void ctrl_c_handler(int signum) {
+void ctrl_c_handler(int signum)
+{
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Ctrl+C received. Cleaning up memory...", __func__);
 #ifdef HELAPORDO_CURSES_BUILD
     if (stdscr != NULL) {

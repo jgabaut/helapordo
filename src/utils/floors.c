@@ -345,6 +345,18 @@ void floor_set_room_types(Floor *floor)
         }
     }
 
+    if (G_EXPERIMENTAL_ON == 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting floor->area", __func__);
+        floor->area = 0;
+        for (size_t i = 0; i < FLOOR_MAX_ROWS; i++) {
+            for (size_t j = 0; j < FLOOR_MAX_COLS; j++) {
+                if (floor->roomclass_layout[j][i] != WALL) {
+                    floor->area += 1;
+                }
+            }
+        }
+    }
+
     while (floor->area > (placed_rooms * 6)) {
         //Spice it up with enemy rooms
         int enemy_x = -1;
@@ -356,6 +368,7 @@ void floor_set_room_types(Floor *floor)
                  && floor->roomclass_layout[enemy_x][enemy_y] != BASIC);
         floor->roomclass_layout[enemy_x][enemy_y] = ENEMIES;
         placed_rooms++;
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Placed enemy room at {%i,%i}", __func__, enemy_x, enemy_y);
     }
     /*
        fclose(logfile);
