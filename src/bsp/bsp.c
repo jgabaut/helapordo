@@ -109,6 +109,7 @@ static BSP_Room prep_bsp_baseroom(Floor *floor)
     set_horizontal_wall(&new_room.walls[WALL_BOTTOM], floor);
     set_vertical_wall(&new_room.walls[WALL_LEFT], floor);
     set_vertical_wall(&new_room.walls[WALL_RIGHT], floor);
+    set_room_center(&new_room);
     return new_room;
 }
 
@@ -125,8 +126,10 @@ static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor)
     if (room == NULL)
         return;
 
-    if (room->walls[WALL_LEFT].start_y + (BSP_ROOM_SIZE / 2) >= room->walls[WALL_LEFT].end_y - (BSP_ROOM_SIZE / 2))
+    if (room->walls[WALL_LEFT].start_y + (BSP_ROOM_SIZE / 2) >= room->walls[WALL_LEFT].end_y - (BSP_ROOM_SIZE / 2)) {
+	log_tag("debug_log.txt", "[DEBUG]", "%s():    passed BSP_Room can't be split further", __func__);
         return;
+    }
 
     int rand_y =
         random_in_range(room->walls[WALL_LEFT].start_y + (BSP_ROOM_SIZE / 2), room->walls[WALL_LEFT].end_y - (BSP_ROOM_SIZE / 2));
