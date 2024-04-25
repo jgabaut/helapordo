@@ -2076,16 +2076,25 @@ void gameloop(int argc, char **argv)
                     init_floor_rooms(current_floor);
 
                     if (G_EXPERIMENTAL_ON != 1) {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
                         //Random walk #1
                         floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
                         //Random walk #2
                         floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
                         current_floor->from_bsp = false;
                     } else {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                        floor_bsp_gen(current_floor, center_x, center_y);
-                        current_floor->from_bsp = true;
+                        if ((hlpd_rand() % 101) > 20) {
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                            floor_bsp_gen(current_floor, center_x, center_y);
+                            current_floor->from_bsp = true;
+                        } else {
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                            //Random walk #1
+                            floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                            //Random walk #2
+                            floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                            current_floor->from_bsp = false;
+                        }
                     }
 
                     //Set floor explored matrix
@@ -2378,16 +2387,25 @@ void gameloop(int argc, char **argv)
                                 //Init floor rooms
                                 init_floor_rooms(current_floor);
                                 if (G_EXPERIMENTAL_ON != 1) {
-                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
                                     //Random walk #1
                                     floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
                                     //Random walk #2
                                     floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
                                     current_floor->from_bsp = false;
                                 } else {
-                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                                    floor_bsp_gen(current_floor, center_x, center_y);
-                                    current_floor->from_bsp = true;
+                                    if ((hlpd_rand() % 101) > 20) {
+                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                                        floor_bsp_gen(current_floor, center_x, center_y);
+                                        current_floor->from_bsp = true;
+                                    } else {
+                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                                        //Random walk #1
+                                        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                                        //Random walk #2
+                                        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                                        current_floor->from_bsp = false;
+                                    }
                                 }
                                 //Set floor explored matrix
                                 load_floor_explored(current_floor);

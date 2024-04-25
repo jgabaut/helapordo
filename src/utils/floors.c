@@ -719,7 +719,11 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
                 if (isWall > 0) {
                     ch = '#';
 #ifndef _WIN32
-                    isColored = S4C_PURPLE;
+                    if (floor->from_bsp) {
+                        isColored = S4C_DARK_PURPLE;
+                    } else {
+                        isColored = S4C_PURPLE;
+                    }
 #else
                     isColored = S4C_WIN_PURPLE;
 #endif
@@ -750,7 +754,11 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
                 case WALL: {
                     ch = '#';
 #ifndef _WIN32
-                    isColored = S4C_BLUE;
+                    if (floor->from_bsp) {
+                        isColored = S4C_DARK_BLUE;
+                    } else {
+                        isColored = S4C_BLUE;
+                    }
 #else
                     isColored = S4C_WIN_BLUE;
 #endif
@@ -759,7 +767,11 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
                 case BASIC: {
                     ch = '.';
 #ifndef _WIN32
-                    isColored = S4C_LIGHT_BROWN;
+                    if (floor->from_bsp) {
+                        isColored = S4C_DARK_OLIVE;
+                    } else {
+                        isColored = S4C_LIGHT_BROWN;
+                    }
 #else
                     isColored = S4C_WIN_WHITE;
 #endif
@@ -768,7 +780,11 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
                 case HOME: {
                     ch = 'H';
 #ifndef _WIN32
-                    isColored = S4C_WHITE;
+                    if (floor->from_bsp) {
+                        isColored = S4C_LIGHT_OLIVE;
+                    } else {
+                        isColored = S4C_WHITE;
+                    }
 #else
                     isColored = S4C_WIN_WHITE;
 #endif
@@ -777,7 +793,11 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
                 case BOSS: {
                     ch = 'B';
 #ifndef _WIN32
-                    isColored = S4C_RED;
+                    if (floor->from_bsp) {
+                        isColored = S4C_CHERRY;
+                    } else {
+                        isColored = S4C_RED;
+                    }
 #else
                     isColored = S4C_WIN_RED;
 #endif
@@ -786,7 +806,11 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
                 case TREASURE: {
                     ch = '*';
 #ifndef _WIN32
-                    isColored = S4C_ORANGE;
+                    if (floor->from_bsp) {
+                        isColored = S4C_LIGHT_ORANGE;
+                    } else {
+                        isColored = S4C_ORANGE;
+                    }
 #else
                     isColored = S4C_WIN_WHITE_ON_RED;
 #endif
@@ -795,7 +819,11 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
                 case SHOP: {
                     ch = '$';
 #ifndef _WIN32
-                    isColored = S4C_MAGENTA;
+                    if (floor->from_bsp) {
+                        isColored = S4C_TEAL;
+                    } else {
+                        isColored = S4C_MAGENTA;
+                    }
 #else
                     isColored = S4C_WIN_WHITE_ON_PURPLE;
 #endif
@@ -804,7 +832,11 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
                 case ENEMIES: {
                     ch = '^';
 #ifndef _WIN32
-                    isColored = S4C_CYAN;
+                    if (floor->from_bsp) {
+                        isColored = S4C_DARK_CYAN;
+                    } else {
+                        isColored = S4C_CYAN;
+                    }
 #else
                     isColored = S4C_WIN_CYAN;
 #endif
