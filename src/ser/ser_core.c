@@ -2116,6 +2116,7 @@ bool deser_Floor(SerFloor* ser, Floor* deser)
     }
 
     deser->explored_area = ser->explored_area;
+    deser->from_bsp = ser->from_bsp;
 
     return true;
 }
@@ -2172,6 +2173,7 @@ bool ser_Floor(Floor* deser, SerFloor* ser)
     }
 
     ser->explored_area = deser->explored_area;
+    ser->from_bsp = deser->from_bsp;
 
     return true;
 }

@@ -241,7 +241,7 @@ extern char *G_SEEDED_RUN_ARG;
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.2"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.3"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -1695,6 +1695,7 @@ typedef struct Floor {
     roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
     int explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
     int explored_area;	   /**< Holds how many cells we explored.*/
+    bool from_bsp; /**< Flag for floors generated using bsp.*/
 
     //TODO: add some pointer to a loot instance, initialised for floors having some flag active.*/
 } Floor;

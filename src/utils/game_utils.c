@@ -508,6 +508,8 @@ void dbg_Gamestate(Gamestate *gmst)
         log_tag("debug_log.txt", "[GAMESTATE]", "Current floor: {");
         log_tag("debug_log.txt", "[Floor]", "index: {%i}",
                 gmst->current_floor->index);
+        log_tag("debug_log.txt", "[Floor]", "from_bsp: {%s}",
+                (gmst->current_floor->from_bsp ? "true" : "false"));
         if (gmst->current_floor->desc != NULL) {
             log_tag("debug_log.txt", "[Floor]", "desc: {%s}",
                     gmst->current_floor->desc);

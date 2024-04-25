@@ -694,6 +694,7 @@ typedef struct SerFloor {
     roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
     int8_t explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
     int8_t explored_area;	   /**< Holds how many cells we explored.*/
+    bool from_bsp; /**< Flag for floors generated using bsp.*/
 #ifdef __GNUC__
 } SerFloor;
 #else
