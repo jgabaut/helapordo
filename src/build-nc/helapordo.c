@@ -88,7 +88,7 @@ void gameloop(int argc, char **argv)
                                       NULL
                                   );
 
-    char seed[PATH_SEED_BUFSIZE] = {0};
+    char seed[PATH_SEED_BUFSIZE+1] = {0};
 
     bool is_seeded = false;
 
@@ -1263,9 +1263,9 @@ void gameloop(int argc, char **argv)
 
                 load_info->enemy_index = gamestate->current_enemy_index;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
-                gamestate->path->seed[PATH_SEED_BUFSIZE-1] = '\0';
-                strncpy(seed, gamestate->path->seed, PATH_SEED_BUFSIZE);
-                seed[PATH_SEED_BUFSIZE-1] = '\0';
+                gamestate->path->seed[PATH_SEED_BUFSIZE] = '\0';
+                memcpy(seed, gamestate->path->seed, PATH_SEED_BUFSIZE);
+                seed[PATH_SEED_BUFSIZE] = '\0';
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Seed after loading: [%s]", seed);
 

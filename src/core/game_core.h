@@ -1221,7 +1221,7 @@ typedef struct Path {
     int loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     Wincon *win_condition;     /**> Defines the win condition for the current game.*/
     Saveslot *current_saveslot;	    /** Defines current Saveslot for the game.*/
-    char seed[PATH_SEED_BUFSIZE]; /** Contains seed for current run.*/
+    char seed[PATH_SEED_BUFSIZE+1]; /** Contains seed for current run.*/
     int64_t* rng_advancements; /** Pointer to current advancements for rng.*/
 } Path;
 

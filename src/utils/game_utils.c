@@ -5358,7 +5358,7 @@ unsigned long hlpd_hash(unsigned char *str)
  * Sets the passed buffer up to be a random seed. Only chars >= 0, <= Z; not including the symbols between digits and letters.
  * @param buffer The buffer to set.
  */
-void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
+void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1])
 {
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Creating a random seed.", __func__);
     int len = (hlpd_rand_docount(false) % (PATH_SEED_BUFSIZE-8)) +8; // Min len should be 8
@@ -5369,7 +5369,7 @@ void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
         } while (r_ch >= ':' && r_ch <= '@'); // We reject chars between the digits and upperscore letters
         buffer[i] = r_ch;
     }
-    buffer[PATH_SEED_BUFSIZE-1] = '\0';
+    buffer[PATH_SEED_BUFSIZE] = '\0';
 }
 
 /**
