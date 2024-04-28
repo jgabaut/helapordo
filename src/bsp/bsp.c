@@ -281,10 +281,10 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor)
 /**
  * Prepares the floor layout with BSP.
  * @param floor the Floor whose layout is to be prepared
- * @param x Base x coordinate
- * @param y Base y coordinate
+ * @param base_x Base x coordinate
+ * @param base_y Base y coordinate
  */
-void floor_bsp_gen(Floor* floor, int x, int y)
+void floor_bsp_gen(Floor* floor, int base_x, int base_y)
 {
     for (size_t i = 0; i < FLOOR_MAX_ROWS; i++) {
         for (size_t j = 0; j < FLOOR_MAX_COLS; j++) {
@@ -292,11 +292,23 @@ void floor_bsp_gen(Floor* floor, int x, int y)
         }
     }
 
-    BSP_Room base_room = prep_bsp_baseroom(floor);
+    bool done = false;
 
-    if (hlpd_rand() % 2) {
-        bsp_gen_vert_split(&base_room, floor);
-    } else {
-        bsp_gen_horiz_split(&base_room, floor);
+    while (!done) {
+        BSP_Room base_room = prep_bsp_baseroom(floor);
+
+        if (hlpd_rand() % 2) {
+            bsp_gen_vert_split(&base_room, floor);
+        } else {
+            bsp_gen_horiz_split(&base_room, floor);
+        }
+
+        int walkable_center = floor->floor_layout[base_y][base_x];
+
+        if (walkable_center != 1) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    center was not walkable. Regenning.", __func__);
+        } else {
+            done = true;
+        }
     }
 }

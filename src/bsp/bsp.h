@@ -56,6 +56,6 @@ typedef struct BSP_Room {
 
 #define BSP_ROOM_SIZE 4
 
-void floor_bsp_gen(Floor* floor, int x, int y);
+void floor_bsp_gen(Floor* floor, int base_x, int base_y);
 
 #endif
