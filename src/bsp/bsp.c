@@ -292,23 +292,11 @@ void floor_bsp_gen(Floor* floor, int base_x, int base_y)
         }
     }
 
-    bool done = false;
+    BSP_Room base_room = prep_bsp_baseroom(floor);
 
-    while (!done) {
-        BSP_Room base_room = prep_bsp_baseroom(floor);
-
-        if (hlpd_rand() % 2) {
-            bsp_gen_vert_split(&base_room, floor);
-        } else {
-            bsp_gen_horiz_split(&base_room, floor);
-        }
-
-        int walkable_center = floor->floor_layout[base_y][base_x];
-
-        if (walkable_center != 1) {
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    center was not walkable. Regenning.", __func__);
-        } else {
-            done = true;
-        }
+    if (hlpd_rand() % 2) {
+        bsp_gen_vert_split(&base_room, floor);
+    } else {
+        bsp_gen_horiz_split(&base_room, floor);
     }
 }

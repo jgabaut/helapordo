@@ -175,10 +175,25 @@ void floor_set_room_types(Floor *floor)
 {
 
     int placed_rooms = 0;
-    // Assume the center room is the HOME room
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
-    floor->roomclass_layout[center_x][center_y] = HOME;
+
+    int home_x;
+    int home_y;
+
+    if (G_EXPERIMENTAL_ON != 1) {
+        // Assume the center room is the HOME room
+        home_x = center_x;
+        home_y = center_y;
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Centered HOME is at {x:%i, y:%i}", __func__, home_x, home_y);
+    } else {
+        do {
+            home_x = hlpd_rand() % FLOOR_MAX_COLS;
+            home_y = hlpd_rand() % FLOOR_MAX_ROWS;
+        } while (floor->floor_layout[home_x][home_y] != 1);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Random HOME is at {x:%i, y:%i}", __func__, home_x, home_y);
+    }
+    floor->roomclass_layout[home_x][home_y] = HOME;
 
     placed_rooms++;
     /*
@@ -240,7 +255,7 @@ void floor_set_room_types(Floor *floor)
                 shop_x = hlpd_rand() % max_x + 1;
                 shop_y = hlpd_rand() % max_y + 1;
             } while (floor->floor_layout[shop_x][shop_y] != 1
-                     && (shop_x != center_x || shop_y != center_y));
+                     && (shop_x != home_x || shop_y != home_y));
         } else {
             // Select a valid random room as the SHOP
             shop_x = hlpd_rand() % max_x + 1;
@@ -248,7 +263,7 @@ void floor_set_room_types(Floor *floor)
             shop_attemps--;
         }
     } while (floor->floor_layout[shop_x][shop_y] != 1
-             || calc_distance(shop_x, shop_y, center_x, center_y) < 2);
+             || calc_distance(shop_x, shop_y, home_x, home_y) < 2);
 
     floor->roomclass_layout[shop_x][shop_y] = SHOP;
     placed_rooms++;
@@ -268,7 +283,7 @@ void floor_set_room_types(Floor *floor)
                 boss_x = hlpd_rand() % max_x + 1;
                 boss_y = hlpd_rand() % max_y + 1;
             } while (floor->floor_layout[boss_x][boss_y] != 1
-                     && (boss_x != center_x || boss_y != center_y)
+                     && (boss_x != home_x || boss_y != home_y)
                      && (boss_x != shop_x || boss_y != shop_y));
         } else {
             // Select a valid random room as the SHOP
@@ -277,7 +292,7 @@ void floor_set_room_types(Floor *floor)
             boss_attemps--;
         }
     } while (floor->floor_layout[boss_x][boss_y] != 1
-             || (calc_distance(boss_x, boss_y, center_x, center_y) < 4)
+             || (calc_distance(boss_x, boss_y, home_x, home_y) < 4)
              || (calc_distance(boss_x, boss_y, shop_x, shop_y) < 4));
 
     floor->roomclass_layout[boss_x][boss_y] = BOSS;
@@ -304,7 +319,7 @@ void floor_set_room_types(Floor *floor)
                     treasure_x = hlpd_rand() % max_x + 1;
                     treasure_y = hlpd_rand() % max_y + 1;
                 } while (floor->floor_layout[treasure_x][treasure_y] != 1
-                         && (treasure_x != center_x || treasure_y != center_y)
+                         && (treasure_x != home_x || treasure_y != home_y)
                          && (treasure_x != shop_x || treasure_y != shop_y)
                          && (treasure_x != boss_x || treasure_y != boss_y));
                 break;
@@ -315,7 +330,7 @@ void floor_set_room_types(Floor *floor)
                 treasure_attemps--;
             }
         } while (floor->floor_layout[treasure_x][treasure_y] != 1
-                 || (calc_distance(treasure_x, treasure_y, center_x, center_y) <
+                 || (calc_distance(treasure_x, treasure_y, home_x, home_y) <
                      4)
                  || (calc_distance(treasure_x, treasure_y, shop_x, shop_y) < 4)
                  || (calc_distance(treasure_x, treasure_y, boss_x, boss_y) <
@@ -345,8 +360,8 @@ void floor_set_room_types(Floor *floor)
         }
     }
 
-    if (G_EXPERIMENTAL_ON == 1) {
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting floor->area", __func__);
+    if (G_EXPERIMENTAL_ON == 1 && floor->from_bsp) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Floor is from_bsp. Setting floor->area", __func__);
         floor->area = 0;
         for (size_t i = 0; i < FLOOR_MAX_ROWS; i++) {
             for (size_t j = 0; j < FLOOR_MAX_COLS; j++) {
@@ -365,7 +380,7 @@ void floor_set_room_types(Floor *floor)
             enemy_x = hlpd_rand() % max_x;
             enemy_y = hlpd_rand() % max_y;
         } while (floor->floor_layout[enemy_x][enemy_y] != 1
-                 && floor->roomclass_layout[enemy_x][enemy_y] != BASIC);
+                 || floor->roomclass_layout[enemy_x][enemy_y] != BASIC);
         floor->roomclass_layout[enemy_x][enemy_y] = ENEMIES;
         placed_rooms++;
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Placed enemy room at {%i,%i}", __func__, enemy_x, enemy_y);
@@ -373,6 +388,8 @@ void floor_set_room_types(Floor *floor)
     /*
        fclose(logfile);
      */
+
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Center room class at {%i,%i} is {%s}", __func__, center_x, center_y, stringFromRoom(floor->roomclass_layout[center_x][center_y]));
 }
 
 /**
