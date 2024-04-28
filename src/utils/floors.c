@@ -181,7 +181,7 @@ void floor_set_room_types(Floor *floor)
     int home_x;
     int home_y;
 
-    if (G_EXPERIMENTAL_ON != 1) {
+    if (!(floor->from_bsp)) {
         // Assume the center room is the HOME room
         home_x = center_x;
         home_y = center_y;
