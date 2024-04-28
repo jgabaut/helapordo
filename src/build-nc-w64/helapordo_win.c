@@ -62,7 +62,7 @@ void gameloop_Win(int argc, char **argv)
 
     bool is_localexe = ( argv[0][0] == '.');
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
-    char seed[PATH_SEED_BUFSIZE] = {0};
+    char seed[PATH_SEED_BUFSIZE+1] = {0};
     do {
         default_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, default_kls_conf);
         temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 8, temporary_kls_conf);
