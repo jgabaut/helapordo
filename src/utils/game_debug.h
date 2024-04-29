@@ -2,6 +2,8 @@
 #define GAME_DEBUG_H
 
 #include "floors.h"
+//TODO This inclusion could be in a better place
+#include "../bsp/bsp.h"
 
 #ifdef _WIN32
 #else

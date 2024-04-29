@@ -588,16 +588,63 @@ void gameloop_rl(int argc, char** argv)
     //Init floor rooms
     init_floor_rooms(current_floor);
 
-    //Random walk #1
-    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-    //Random walk #2
-    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+    if (G_EXPERIMENTAL_ON != 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
+        //Random walk #1
+        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+        //Random walk #2
+        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+        current_floor->from_bsp = false;
+    } else {
+        if ((hlpd_rand() % 101) > 20) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+            floor_bsp_gen(current_floor, center_x, center_y);
+            current_floor->from_bsp = true;
+        } else {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+            //Random walk #1
+            floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+            //Random walk #2
+            floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+            current_floor->from_bsp = false;
+        }
+    }
 
     //Set floor explored matrix
     load_floor_explored(current_floor);
 
     //Set room types
     floor_set_room_types(current_floor);
+
+    if (G_EXPERIMENTAL_ON != 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+        current_x = center_x;
+        current_y = center_y;
+    } else {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+        int home_room_x = -1;
+        int home_room_y = -1;
+        bool done_looking = false;
+        for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+            for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                if (current_floor->roomclass_layout[i][j] == HOME) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                    home_room_x = i;
+                    home_room_y = j;
+                    done_looking = true;
+                }
+            }
+        }
+        if (!done_looking) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+        current_x = home_room_x;
+        current_y = home_room_y;
+    }
 
     int screenWidth = 800;
     int screenHeight = 450;
@@ -688,16 +735,64 @@ void gameloop_rl(int argc, char** argv)
                 //Init floor rooms
                 init_floor_rooms(current_floor);
 
-                //Random walk #1
-                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                //Random walk #2
-                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                if (G_EXPERIMENTAL_ON != 1) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
+                    //Random walk #1
+                    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                    //Random walk #2
+                    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                    current_floor->from_bsp = false;
+                } else {
+                    if ((hlpd_rand() % 101) > 20) {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                        floor_bsp_gen(current_floor, center_x, center_y);
+                        current_floor->from_bsp = true;
+                    } else {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                        //Random walk #1
+                        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                        //Random walk #2
+                        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                        current_floor->from_bsp = false;
+                    }
+                }
 
                 //Set floor explored matrix
                 load_floor_explored(current_floor);
 
                 //Set room types
                 floor_set_room_types(current_floor);
+
+                if (G_EXPERIMENTAL_ON != 1) {
+                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                    current_x = center_x;
+                    current_y = center_y;
+                } else {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+                    int home_room_x = -1;
+                    int home_room_y = -1;
+                    bool done_looking = false;
+                    for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+                        for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                            if (current_floor->roomclass_layout[i][j] == HOME) {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                                home_room_x = i;
+                                home_room_y = j;
+                                done_looking = true;
+                            }
+                        }
+                    }
+                    if (!done_looking) {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+                        kls_free(default_kls);
+                        kls_free(temporary_kls);
+                        exit(EXIT_FAILURE);
+                    }
+                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+                    current_x = home_room_x;
+                    current_y = home_room_y;
+                }
+
             }
             if (IsKeyPressed(KEY_UP)) {
                 step_floor(current_floor, &current_x,
@@ -861,14 +956,17 @@ void gameloop_rl(int argc, char** argv)
                             FLOOR_MAX_ROWS * sprite_w_factor,
             };
 
-            draw_floor_view(current_floor, current_x, current_y, sprite_w_factor, &floor_r);
+            if (G_EXPERIMENTAL_ON != 1) {
+                draw_floor_view(current_floor, current_x, current_y, sprite_w_factor, &floor_r);
+            } else {
+                display_roomclass_layout(current_floor, &floor_r, sprite_w_factor);
+            }
 
             /*
             int center_x = FLOOR_MAX_COLS / 2;
             int center_y = FLOOR_MAX_ROWS / 2;
             draw_floor_view(current_floor, center_x, center_y, sprite_w_factor, &floor_r);
             */
-            //display_roomclass_layout(current_floor, &floor_r, sprite_w_factor);
             //display_floor_layout(current_floor, &floor_r, sprite_w_factor);
             //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
             /*

@@ -3499,6 +3499,8 @@ void initRoom(Room *r, Fighter *f, int index, roomClass type, int enemyTotal,
         log_tag("debug_log.txt", "[DEBUG]", "initRoom() for BASIC");
         r->class = type;
         log_tag("debug_log.txt", "[TODO]", "initRoom() for BASIC");
+        kls_free(default_kls);
+        kls_free(temporary_kls);
         exit(EXIT_FAILURE);
     }
     break;
@@ -3506,6 +3508,8 @@ void initRoom(Room *r, Fighter *f, int index, roomClass type, int enemyTotal,
         log_tag("debug_log.txt", "[DEBUG]", "initRoom() for WALL");
         r->class = type;
         log_tag("debug_log.txt", "[TODO]", "initRoom() for WALL");
+        kls_free(default_kls);
+        kls_free(temporary_kls);
         exit(EXIT_FAILURE);
     }
     break;

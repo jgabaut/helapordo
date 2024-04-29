@@ -67,6 +67,9 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         size_t read_blobs = fread(&header_size, sizeof(header_size), 1, file);
         if (read_blobs != 1) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
             fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
@@ -91,6 +94,11 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
 #else
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, header_size, sersh_size);
 #endif
+
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
+
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
                 fclose(file);
                 kls_free(default_kls);
@@ -103,6 +111,11 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
 #else
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, header_size, sersh_size);
 #endif
+
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
+
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
                 fclose(file);
                 kls_free(default_kls);
@@ -120,6 +133,11 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
 #else
             log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, length, header_size);
 #endif
+
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
+
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
             fclose(file);
             kls_free(default_kls);
@@ -145,6 +163,11 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
 #else
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, length, expected_len);
 #endif
+
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
+
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
                 fclose(file);
                 kls_free(default_kls);
@@ -164,6 +187,9 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         read_blobs = fread(data, sizeof(SerSaveHeader), 1, file);
         if (read_blobs != 1) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
             fclose(file);
             kls_free(default_kls);
             kls_free(temporary_kls);
@@ -173,6 +199,9 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         // Close the file
         fclose(file);
     } else {
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
         fprintf(stderr, "%s(): Error opening file {%s} for reading\n", __func__, filename);
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
@@ -2116,6 +2145,7 @@ bool deser_Floor(SerFloor* ser, Floor* deser)
     }
 
     deser->explored_area = ser->explored_area;
+    deser->from_bsp = ser->from_bsp;
 
     return true;
 }
@@ -2172,6 +2202,7 @@ bool ser_Floor(Floor* deser, SerFloor* ser)
     }
 
     ser->explored_area = deser->explored_area;
+    ser->from_bsp = deser->from_bsp;
 
     return true;
 }
@@ -2424,6 +2455,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
 #else
             log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%li} is less than passed offset {%li}", __func__, tot_length, offset);
 #endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
             fclose(file);
             kls_free(default_kls);
@@ -2445,6 +2479,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
         if (read_blobs != 1) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
             fclose(file);
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);
@@ -2468,6 +2505,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
 #else
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, blob_size, sergmst_size);
 #endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
                 fclose(file);
                 kls_free(default_kls);
@@ -2480,6 +2520,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
 #else
                 log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, blob_size, sergmst_size);
 #endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
                 fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
                 fclose(file);
                 kls_free(default_kls);
@@ -2497,6 +2540,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
 #else
             log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, remaining_length, blob_size);
 #endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
             fclose(file);
             kls_free(default_kls);
@@ -2512,6 +2558,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
 #else
             log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, remaining_length, expected_len);
 #endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
             fclose(file);
             kls_free(default_kls);
@@ -2531,6 +2580,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
         if (read_blobs != 1) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
             fclose(file);
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
             kls_free(default_kls);
             kls_free(temporary_kls);
             exit(EXIT_FAILURE);

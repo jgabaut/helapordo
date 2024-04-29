@@ -20,6 +20,29 @@
 //
 
 /**
+ * Function to handle Ctrl+C signal
+ */
+void ctrl_c_handler(int signum)
+{
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Ctrl+C received. Cleaning up memory...", __func__);
+#ifdef HELAPORDO_CURSES_BUILD
+    if (stdscr != NULL) {
+        endwin();
+        log_tag("debug_log.txt", "[CLEANUP]", "%s():    Ended window mode", __func__);
+    }
+#endif // HELAPORDO_CURSES_BUILD
+    if (default_kls != NULL) {
+        kls_free(default_kls);
+        log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned default_kls", __func__);
+    }
+    if (temporary_kls != NULL) {
+        kls_free(temporary_kls);
+        log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned temporary_kls", __func__);
+    }
+    exit(0);
+}
+
+/**
  * Takes a Wincon and a Path pointers and a winconClass and initialises the passed Wincon.
  * @see Wincon
  * @see Path
@@ -485,6 +508,8 @@ void dbg_Gamestate(Gamestate *gmst)
         log_tag("debug_log.txt", "[GAMESTATE]", "Current floor: {");
         log_tag("debug_log.txt", "[Floor]", "index: {%i}",
                 gmst->current_floor->index);
+        log_tag("debug_log.txt", "[Floor]", "from_bsp: {%s}",
+                (gmst->current_floor->from_bsp ? "true" : "false"));
         if (gmst->current_floor->desc != NULL) {
             log_tag("debug_log.txt", "[Floor]", "desc: {%s}",
                     gmst->current_floor->desc);
@@ -5333,7 +5358,7 @@ unsigned long hlpd_hash(unsigned char *str)
  * Sets the passed buffer up to be a random seed. Only chars >= 0, <= Z; not including the symbols between digits and letters.
  * @param buffer The buffer to set.
  */
-void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
+void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1])
 {
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Creating a random seed.", __func__);
     int len = (hlpd_rand_docount(false) % (PATH_SEED_BUFSIZE-8)) +8; // Min len should be 8
@@ -5344,7 +5369,7 @@ void gen_random_seed(char buffer[PATH_SEED_BUFSIZE])
         } while (r_ch >= ':' && r_ch <= '@'); // We reject chars between the digits and upperscore letters
         buffer[i] = r_ch;
     }
-    buffer[PATH_SEED_BUFSIZE-1] = '\0';
+    buffer[PATH_SEED_BUFSIZE] = '\0';
 }
 
 /**

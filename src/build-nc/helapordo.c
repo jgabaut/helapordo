@@ -88,7 +88,7 @@ void gameloop(int argc, char **argv)
                                       NULL
                                   );
 
-    char seed[PATH_SEED_BUFSIZE] = {0};
+    char seed[PATH_SEED_BUFSIZE+1] = {0};
 
     bool is_seeded = false;
 
@@ -1263,9 +1263,9 @@ void gameloop(int argc, char **argv)
 
                 load_info->enemy_index = gamestate->current_enemy_index;
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
-                gamestate->path->seed[PATH_SEED_BUFSIZE-1] = '\0';
-                strncpy(seed, gamestate->path->seed, PATH_SEED_BUFSIZE);
-                seed[PATH_SEED_BUFSIZE-1] = '\0';
+                gamestate->path->seed[PATH_SEED_BUFSIZE] = '\0';
+                memcpy(seed, gamestate->path->seed, PATH_SEED_BUFSIZE);
+                seed[PATH_SEED_BUFSIZE] = '\0';
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Seed after loading: [%s]", seed);
 
@@ -2075,10 +2075,27 @@ void gameloop(int argc, char **argv)
                     //Init floor rooms
                     init_floor_rooms(current_floor);
 
-                    //Random walk #1
-                    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                    //Random walk #2
-                    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                    if (G_EXPERIMENTAL_ON != 1) {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
+                        //Random walk #1
+                        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                        //Random walk #2
+                        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                        current_floor->from_bsp = false;
+                    } else {
+                        if ((hlpd_rand() % 101) > 20) {
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                            floor_bsp_gen(current_floor, center_x, center_y);
+                            current_floor->from_bsp = true;
+                        } else {
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                            //Random walk #1
+                            floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                            //Random walk #2
+                            floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                            current_floor->from_bsp = false;
+                        }
+                    }
 
                     //Set floor explored matrix
                     load_floor_explored(current_floor);
@@ -2086,9 +2103,35 @@ void gameloop(int argc, char **argv)
                     //Set room types
                     floor_set_room_types(current_floor);
 
-                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
-                    player->floor_x = center_x;
-                    player->floor_y = center_y;
+                    if (G_EXPERIMENTAL_ON != 1) {
+                        log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                        player->floor_x = center_x;
+                        player->floor_y = center_y;
+                    } else {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+                        int home_room_x = -1;
+                        int home_room_y = -1;
+                        bool done_looking = false;
+                        for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+                            for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                                if (current_floor->roomclass_layout[i][j] == HOME) {
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                                    home_room_x = i;
+                                    home_room_y = j;
+                                    done_looking = true;
+                                }
+                            }
+                        }
+                        if (!done_looking) {
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                        log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+                        player->floor_x = home_room_x;
+                        player->floor_y = home_room_y;
+                    }
                 }
 
                 //TODO: handle finishing all floors
@@ -2116,9 +2159,11 @@ void gameloop(int argc, char **argv)
                         && (load_info->save_type == ENEMIES_SAVE)) {
                         enemyTotal = loaded_roomtotalenemies;
                     } else {
+                        if (!load_info->done_loading) {
+                            log_tag("debug_log.txt", "[DEBUG-PREP]",
+                                    "Setting load_info->done_loading to 1.");
+                        }
                         load_info->done_loading = 1;
-                        log_tag("debug_log.txt", "[DEBUG-PREP]",
-                                "Set load_info->done_loading to 1.");
                     }
 
                     Room *current_room = NULL;
@@ -2367,10 +2412,27 @@ void gameloop(int argc, char **argv)
                                 floor_layout[center_x][center_y] = 1;
                                 //Init floor rooms
                                 init_floor_rooms(current_floor);
-                                //Random walk #1
-                                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                                //Random walk #2
-                                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                                if (G_EXPERIMENTAL_ON != 1) {
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
+                                    //Random walk #1
+                                    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                                    //Random walk #2
+                                    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                                    current_floor->from_bsp = false;
+                                } else {
+                                    if ((hlpd_rand() % 101) > 20) {
+                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                                        floor_bsp_gen(current_floor, center_x, center_y);
+                                        current_floor->from_bsp = true;
+                                    } else {
+                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                                        //Random walk #1
+                                        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                                        //Random walk #2
+                                        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                                        current_floor->from_bsp = false;
+                                    }
+                                }
                                 //Set floor explored matrix
                                 load_floor_explored(current_floor);
                                 //Set room types

@@ -694,6 +694,7 @@ typedef struct SerFloor {
     roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
     int8_t explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
     int8_t explored_area;	   /**< Holds how many cells we explored.*/
+    bool from_bsp; /**< Flag for floors generated using bsp.*/
 #ifdef __GNUC__
 } SerFloor;
 #else
@@ -769,10 +770,10 @@ typedef struct SerPath {
     int8_t luck;	  /**< Defines global luck value.*/
     int8_t prize;	   /**< Defines the reward for getting to length*/
     int8_t loreCounter;	 /**< Counts how many lore prompts have been displayed*/
-    SerWincon win_condition;     /**> Defines the win condition for the current game.*/
-    SerSaveslot current_saveslot;	    /** Defines current SerSaveslot for the game.*/
-    char seed[SERPATH_SEED_BUFSIZE]; /** Holds seed for current run.*/
-    int64_t rng_advancements; /** Current advancements for rng.*/
+    SerWincon win_condition;     /**< Defines the win condition for the current game.*/
+    SerSaveslot current_saveslot;	    /**< Defines current SerSaveslot for the game.*/
+    char seed[SERPATH_SEED_BUFSIZE+1]; /**< Holds seed for current run.*/
+    int64_t rng_advancements; /**< Current advancements for rng.*/
 #ifdef __GNUC__
 } SerPath;
 #else

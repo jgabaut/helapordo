@@ -139,10 +139,12 @@ bool set_Saveslot_name(FILE *file, Saveslot *sv)
             log_tag("debug_log.txt", "[WARN]", "%s():    Failed readSerGamestate() for {%s}.", __func__, path_to_sv_file);
             return false;
         } else {
-            strncpy(buf, ser_gmst.player.name, 50);
+            ser_gmst.player.name[49] = '\0';
+            memcpy(buf, ser_gmst.player.name, 50);
         }
     }
-    strncpy(sv->name, buf, 50);
+    buf[49] = '\0';
+    memcpy(sv->name, buf, 50);
     sv->name[49] = '\0';
     return true;
 }

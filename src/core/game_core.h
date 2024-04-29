@@ -232,16 +232,16 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 5
+#define HELAPORDO_PATCH_VERSION 6
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.5"
+#define VERSION "1.4.6"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.2"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.3"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -1219,10 +1219,10 @@ typedef struct Path {
     int luck;	  /**< Defines global luck value.*/
     int prize;	   /**< Defines the reward for getting to length*/
     int loreCounter;	 /**< Counts how many lore prompts have been displayed*/
-    Wincon *win_condition;     /**> Defines the win condition for the current game.*/
-    Saveslot *current_saveslot;	    /** Defines current Saveslot for the game.*/
-    char seed[PATH_SEED_BUFSIZE]; /** Contains seed for current run.*/
-    int64_t* rng_advancements; /** Pointer to current advancements for rng.*/
+    Wincon *win_condition;     /**< Defines the win condition for the current game.*/
+    Saveslot *current_saveslot;	    /**< Defines current Saveslot for the game.*/
+    char seed[PATH_SEED_BUFSIZE+1]; /**< Contains seed for current run.*/
+    int64_t* rng_advancements; /**< Pointer to current advancements for rng.*/
 } Path;
 
 /**
@@ -1695,6 +1695,7 @@ typedef struct Floor {
     roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
     int explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
     int explored_area;	   /**< Holds how many cells we explored.*/
+    bool from_bsp; /**< Flag for floors generated using bsp.*/
 
     //TODO: add some pointer to a loot instance, initialised for floors having some flag active.*/
 } Floor;
