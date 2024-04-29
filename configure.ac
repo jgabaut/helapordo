@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.4.6], [jgabaut@github.com])
+AC_INIT([helapordo], [1.4.7], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -187,7 +187,7 @@ AM_CONDITIONAL([USE_EMOJI_BUILD], [test "$enable_emoji" = "yes"])
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.4.6"
+  VERSION="1.4.7"
 fi
 
 # Output variables to the config.h header
