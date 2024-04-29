@@ -372,7 +372,13 @@ void floor_set_room_types(Floor *floor)
         }
     }
 
-    while (floor->area > (placed_rooms * 6)) {
+    int enemy_area_ratio;
+    if (floor->from_bsp) {
+        enemy_area_ratio = 10;
+    } else {
+        enemy_area_ratio = 6;
+    }
+    while (floor->area > (placed_rooms * enemy_area_ratio)) {
         //Spice it up with enemy rooms
         int enemy_x = -1;
         int enemy_y = -1;
