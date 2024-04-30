@@ -2367,6 +2367,13 @@ void gameloop(int argc, char **argv)
                             //Free room memory
                             //freeRoom(current_room);
 
+                            if (current_room->class != HOME) {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    updating Gamestate to clear current_room reference", __func__);
+                                update_Gamestate(gamestate, 1, BASIC,
+                                         roomsDone, -1,
+                                         current_floor, NULL);  // Pass NULL for current room to gamestate
+                            }
+
                             //Update floor's roomclass layout for finished rooms which should not be replayed
                             switch (current_floor->
                                     roomclass_layout[player->floor_x][player->floor_y]) {
