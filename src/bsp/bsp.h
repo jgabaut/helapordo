@@ -3,7 +3,7 @@
 //
 // Reference repo: https://github.com/mtsdurica/bsp-dungeon-generator
 // Original license: MIT.
-// The author of the original code gave permission to re-license it to shit helapordo with just one license.
+// The author of the original code gave permission to re-license it to ship helapordo with just one license.
 //
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
