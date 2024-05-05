@@ -1011,7 +1011,7 @@ void gameloop(int argc, char **argv)
          */
 
         for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-            init_s4c_color_pair(&palette[i], 9 + i);
+            init_s4c_color_pair_ex(&palette[i], 9 + i, (G_EXPERIMENTAL_ON == 1 ? -1 : 0));
         }
         log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
         gamescreen->colors = COLORS;
@@ -1746,7 +1746,7 @@ void gameloop(int argc, char **argv)
                     exit(S4C_ERR_TERMCHANGECOLOR);
                 }
                 for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-                    init_s4c_color_pair(&palette[i], 9 + i);
+                    init_s4c_color_pair_ex(&palette[i], 9 + i, (G_EXPERIMENTAL_ON == 1 ? -1 : 0));
                 }
                 cbreak();
                 noecho();
@@ -2029,7 +2029,7 @@ void gameloop(int argc, char **argv)
                     exit(S4C_ERR_TERMCHANGECOLOR);
                 }
                 for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-                    init_s4c_color_pair(&palette[i], 9 + i);
+                    init_s4c_color_pair_ex(&palette[i], 9 + i, (G_EXPERIMENTAL_ON == 1 ? -1 : 0));
                 }
                 cbreak();
                 noecho();
