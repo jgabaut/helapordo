@@ -129,7 +129,6 @@ int get_saveslot_index(void)
     log_tag("debug_log.txt", "[DEBUG]", "Initialising curses for %s()",
             __func__);
     /* Initialize curses */
-    start_color();
     clear();
     refresh();
     cbreak();
