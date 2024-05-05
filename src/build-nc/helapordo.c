@@ -837,6 +837,13 @@ void gameloop(int argc, char **argv)
                 time_spent_loading_animations);
 
         WINDOW* screen = initscr();
+
+        if (G_EXPERIMENTAL_ON == 1) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "%s():    Calling use_default_colors()", __func__);
+            use_default_colors();
+        }
+
         bool screen_is_big_enough = false;
         int screen_rows = 0;
         int screen_cols = 0;
