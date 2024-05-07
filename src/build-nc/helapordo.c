@@ -252,6 +252,7 @@ void gameloop(int argc, char **argv)
                 s4c_dbg_features();
                 printf("  using: koliseo v%s\n", string_koliseo_version());
                 kls_dbg_features();
+                printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
                 printf("  using: ncurses v%s\n", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
@@ -950,6 +951,10 @@ void gameloop(int argc, char **argv)
                 S4C_ANIMATE_VERSION);
         wprintw(savepick_side_win, "  \n  using: koliseo v%s",
                 KOLISEO_API_VERSION_STRING);
+        if (G_EXPERIMENTAL_ON == 1) {
+            wprintw(savepick_side_win, "  \n  using: s4c-gui v%s",
+                    S4C_GUI_API_VERSION_STRING);
+        }
         wprintw(savepick_side_win, "  \n  using: ncurses v%s", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__

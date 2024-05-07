@@ -54,6 +54,7 @@
 #include <inttypes.h>
 #include <signal.h>
 #include "../core/game_core.h"
+#include "../../s4c-gui/src/s4c_gui.h"
 
 void ctrl_c_handler(int signum);
 void initWincon(Wincon * w, Path * p, winconClass class);

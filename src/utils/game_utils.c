@@ -1723,18 +1723,78 @@ void pickClass(Fighter *player)
 {
     int pick = -1;
     do {
-        int res = system("clear");
-        log_tag("debug_log.txt", "[DEBUG]",
-                "pickClass() system(\"clear\") res was (%i)", res);
-        printf("\nPick a class.\n");
-        printClasses();
-        pick = scanClass();
+        if (G_EXPERIMENTAL_ON != 1) {
+            int res = system("clear");
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "pickClass() system(\"clear\") res was (%i)", res);
+            printf("\nPick a class.\n");
+            printClasses();
+            pick = scanClass();
+        } else {
+            // Initialize ncurses
+            initscr();
+            cbreak();
+            noecho();
+            keypad(stdscr, TRUE);
+
+            clear();
+            refresh();
+
+            mvprintw(7, 0, "Press Enter to pick a class");
+            mvprintw(8, 0, "Knight | Archer | Mage | Assassin");
+            mvprintw(9, 0, "Press 'q' when you're done.");
+            refresh();
+
+            const char* class_toggle_label = "Class ->";
+            // Define the dimensions and position of the textfield window
+            int height = 5;
+            int width = 20;
+            int start_y = 2;
+            int start_x = strlen(class_toggle_label) + 10;
+
+            // Define menu options and their toggle states
+            Toggle toggles[] = {
+            {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(height, width, start_x, start_y)}, (char*)class_toggle_label, false},
+            {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(height, width, start_x, start_y)}, "Pick class ^", true},
+            };
+            int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
+
+            const char* statewin_label = "Current selection:";
+            ToggleMenu_Conf menu_conf = (ToggleMenu_Conf) {
+                .start_x = 0,
+                .start_y = 0,
+                .boxed = true,
+                .quit_key = 'q',
+                .statewin_height = 15,
+                .statewin_width = 30,
+                .statewin_start_x = 40,
+                .statewin_start_y = 0,
+                .statewin_boxed = true,
+                .statewin_label = statewin_label,
+            };
+
+            ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
+            handle_ToggleMenu(toggle_menu);
+            endwin(); // End ncurses
+            free_ToggleMenu(toggle_menu);
+
+            const char* submitted = get_TextField_value(toggles[0].state.txt_state);
+            if (strcmp(submitted, "Knight") == 0) {
+                pick = Knight;
+            } else if (strcmp(submitted, "Archer") == 0) {
+                pick = Archer;
+            } else if (strcmp(submitted, "Mage") == 0) {
+                pick = Mage;
+            } else if (strcmp(submitted, "Assassin") == 0) {
+                pick = Assassin;
+            } else {
+                pick = -1;
+            }
+        }
     } while (pick < 0);
 
     player->class = pick;
-    green();
-    printf("\n\n\tClass: %s\n\n", stringFromClass(player->class));
-    white();
+    log_tag("debug_log.txt", "[DEBUG]", "%s(): player picked class {%s}", __func__, stringFromClass(player->class));
 }
 
 /**
