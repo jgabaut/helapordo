@@ -4201,18 +4201,14 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     return 0;
 }
 
-int handleGameOptions(Gamestate * gmst)
+int handleGameOptions(GameOptions * game_options)
 {
     if (G_EXPERIMENTAL_ON != 1) {
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Experimental was not 1: {%i}", __func__, G_EXPERIMENTAL_ON);
         return 1;
     }
-    if (gmst == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "%s():    Gamestate was NULL.", __func__);
-        return 1;
-    }
-    if (gmst->options == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "%s():    gmst->GameOptions was NULL.", __func__);
+    if (game_options == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    GameOptions was NULL.", __func__);
         return 2;
     }
     // Initialize ncurses
@@ -4232,8 +4228,8 @@ int handleGameOptions(Gamestate * gmst)
 
     // Define menu options and their toggle states
     Toggle toggles[] = {
-        {BOOL_TOGGLE, (ToggleState){.bool_state = gmst->options->use_default_background}, (char*) default_background_toggle_label, false},
-        {BOOL_TOGGLE, (ToggleState){.bool_state = gmst->options->do_autosave}, (char*) do_autosave_toggle_label, false},
+        {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->use_default_background}, (char*) default_background_toggle_label, false},
+        {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->do_autosave}, (char*) do_autosave_toggle_label, false},
         {BOOL_TOGGLE, (ToggleState){.bool_state = true}, "Change options ^^", true},
     };
     int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
@@ -4256,8 +4252,8 @@ int handleGameOptions(Gamestate * gmst)
     handle_ToggleMenu(toggle_menu);
     endwin(); // End ncurses
 
-    gmst->options->use_default_background = toggle_menu.toggles[1].state.bool_state;
-    gmst->options->do_autosave = toggle_menu.toggles[2].state.bool_state;
+    game_options->use_default_background = toggle_menu.toggles[1].state.bool_state;
+    game_options->do_autosave = toggle_menu.toggles[2].state.bool_state;
     free_ToggleMenu(toggle_menu);
 
     return 0;
