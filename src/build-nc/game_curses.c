@@ -240,12 +240,20 @@ int get_saveslot_index(void)
 
     while (!picked && (c = wgetch(menu_win)) != KEY_F(1)) {
         switch (c) {
-        case KEY_DOWN:
-            menu_driver(saveslots_menu, REQ_DOWN_ITEM);
-            break;
-        case KEY_UP:
-            menu_driver(saveslots_menu, REQ_UP_ITEM);
-            break;
+        case KEY_DOWN: {
+            int menudriver_res = menu_driver(saveslots_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(saveslots_menu, REQ_FIRST_ITEM);
+            }
+        }
+        break;
+        case KEY_UP: {
+            int menudriver_res = menu_driver(saveslots_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(saveslots_menu, REQ_LAST_ITEM);
+            }
+        }
+        break;
         case KEY_LEFT: {	/*Left option pick */
             ITEM *cur;
             cur = current_item(saveslots_menu);
@@ -2629,12 +2637,18 @@ void displayEquipbagMenu(Fighter *f)
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
         switch (c) {
         case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
         }
         break;
         case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
         }
         break;
@@ -2841,7 +2855,10 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
         switch (c) {
         case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
@@ -2850,7 +2867,10 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
         }
         break;
         case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
@@ -3027,7 +3047,10 @@ void handleArtifacts(Fighter *f)
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
         switch (c) {
         case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
@@ -3036,7 +3059,10 @@ void handleArtifacts(Fighter *f)
         }
         break;
         case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
@@ -3203,12 +3229,18 @@ void handleEquips(Fighter *f, Path *p)
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
         switch (c) {
         case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
         }
         break;
         case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
         }
         break;
@@ -3500,7 +3532,10 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
         switch (c) {
         case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
@@ -3509,7 +3544,10 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
         }
         break;
         case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
@@ -4067,12 +4105,20 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
 
         while (!picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_close) {
             switch (c) {
-            case KEY_DOWN:
-                menu_driver(rogue_menu, REQ_DOWN_ITEM);
-                break;
-            case KEY_UP:
-                menu_driver(rogue_menu, REQ_UP_ITEM);
-                break;
+            case KEY_DOWN: {
+                int menudriver_res = menu_driver(rogue_menu, REQ_DOWN_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(rogue_menu, REQ_FIRST_ITEM);
+                }
+            }
+            break;
+            case KEY_UP: {
+                int menudriver_res = menu_driver(rogue_menu, REQ_UP_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(rogue_menu, REQ_LAST_ITEM);
+                }
+            }
+            break;
             case KEY_LEFT: {	/*Left option pick */
                 ITEM *cur;
                 cur = current_item(rogue_menu);

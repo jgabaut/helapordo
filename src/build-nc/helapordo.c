@@ -988,11 +988,17 @@ void gameloop(int argc, char **argv)
                && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
             switch (pickchar) {
             case KEY_DOWN: {
-                menu_driver(savepick_menu, REQ_DOWN_ITEM);
+                int menudriver_res = menu_driver(savepick_menu, REQ_DOWN_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(savepick_menu, REQ_FIRST_ITEM);
+                }
             }
             break;
             case KEY_UP: {
-                menu_driver(savepick_menu, REQ_UP_ITEM);
+                int menudriver_res = menu_driver(savepick_menu, REQ_UP_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(savepick_menu, REQ_LAST_ITEM);
+                }
             }
             break;
             case KEY_LEFT: {	/*Left option pick */

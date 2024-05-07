@@ -241,12 +241,20 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
 
         while (!picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_explore) {
             switch (c) {
-            case KEY_DOWN:
-                menu_driver(home_menu, REQ_DOWN_ITEM);
-                break;
-            case KEY_UP:
-                menu_driver(home_menu, REQ_UP_ITEM);
-                break;
+            case KEY_DOWN: {
+                int menudriver_res = menu_driver(home_menu, REQ_DOWN_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(home_menu, REQ_FIRST_ITEM);
+                }
+            }
+            break;
+            case KEY_UP: {
+                int menudriver_res = menu_driver(home_menu, REQ_UP_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(home_menu, REQ_LAST_ITEM);
+                }
+            }
+            break;
             case KEY_LEFT: {	/*Left option pick */
                 ITEM *cur;
                 cur = current_item(home_menu);
@@ -887,12 +895,20 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 //clock_t menu_loop_time = clock();
 
                 switch (c) {
-                case KEY_DOWN:
-                    menu_driver(my_menu, REQ_DOWN_ITEM);
-                    break;
-                case KEY_UP:
-                    menu_driver(my_menu, REQ_UP_ITEM);
-                    break;
+                case KEY_DOWN: {
+                    int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+                    if (menudriver_res == E_REQUEST_DENIED) {
+                        menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+                    }
+                }
+                break;
+                case KEY_UP: {
+                    int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+                    if (menudriver_res == E_REQUEST_DENIED) {
+                        menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+                    }
+                }
+                break;
                 case KEY_LEFT: { /*Left option pick */
                     ITEM *cur;
                     cur = current_item(my_menu);
@@ -1799,12 +1815,20 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
         while (!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
             //clock_t menu_loop_time = clock();
             switch (c) {
-            case KEY_DOWN:
-                menu_driver(my_menu, REQ_DOWN_ITEM);
-                break;
-            case KEY_UP:
-                menu_driver(my_menu, REQ_UP_ITEM);
-                break;
+            case KEY_DOWN: {
+                int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+                }
+            }
+            break;
+            case KEY_UP: {
+                int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+                }
+            }
+            break;
             case KEY_NPAGE:
                 menu_driver(my_menu, REQ_SCR_DPAGE);
                 break;
@@ -2290,12 +2314,20 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
 
     while (!end_shop && (c = wgetch(my_menu_win)) != KEY_F(1)) {
         switch (c) {
-        case KEY_DOWN:
-            menu_driver(my_menu, REQ_DOWN_ITEM);
-            break;
-        case KEY_UP:
-            menu_driver(my_menu, REQ_UP_ITEM);
-            break;
+        case KEY_DOWN: {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
+        }
+        break;
+        case KEY_UP: {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
+        }
+        break;
         case KEY_NPAGE:
             menu_driver(my_menu, REQ_SCR_DPAGE);
             break;
@@ -2668,12 +2700,20 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
 
     while (!end_room && (c = wgetch(my_menu_win)) != KEY_F(1)) {
         switch (c) {
-        case KEY_DOWN:
-            menu_driver(my_menu, REQ_DOWN_ITEM);
-            break;
-        case KEY_UP:
-            menu_driver(my_menu, REQ_UP_ITEM);
-            break;
+        case KEY_DOWN: {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
+        }
+        break;
+        case KEY_UP: {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
+        }
+        break;
         case KEY_NPAGE:
             menu_driver(my_menu, REQ_SCR_DPAGE);
             break;
@@ -3139,12 +3179,20 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
 
     while (!end_room && (c = wgetch(my_menu_win)) != KEY_F(1)) {
         switch (c) {
-        case KEY_DOWN:
-            menu_driver(my_menu, REQ_DOWN_ITEM);
-            break;
-        case KEY_UP:
-            menu_driver(my_menu, REQ_UP_ITEM);
-            break;
+        case KEY_DOWN: {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
+        }
+        break;
+        case KEY_UP: {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
+        }
+        break;
         case KEY_NPAGE:
             menu_driver(my_menu, REQ_SCR_DPAGE);
             break;
