@@ -4216,12 +4216,6 @@ int handleGameOptions(GameOptions * game_options)
         log_tag("debug_log.txt", "[ERROR]", "%s():    GameOptions was NULL.", __func__);
         return 2;
     }
-    // Initialize ncurses
-    initscr();
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-
     clear();
     refresh();
 
@@ -4235,7 +4229,6 @@ int handleGameOptions(GameOptions * game_options)
     Toggle toggles[] = {
         {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->use_default_background}, (char*) default_background_toggle_label, false},
         {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->do_autosave}, (char*) do_autosave_toggle_label, false},
-        {BOOL_TOGGLE, (ToggleState){.bool_state = true}, "Change options ^^", true},
     };
     int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
 
