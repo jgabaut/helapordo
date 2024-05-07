@@ -823,6 +823,17 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
         }
     }
     break;
+    case OP_CHANGE_OPTIONS: {
+        if (gmst == NULL) {
+            log_tag("debug_log.txt", "[WARN]",
+                    "Gamestate pointer was null in turnOP(OP_CHANGE_OPTIONS)");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[DEBUG]", "OP_CHANGE_OPTIONS");
+        handleGameOptions(gmst);
+        res = OP_OK;
+    }
+    break;
     default: {
         log_tag(OPS_LOGFILE, "[ERROR]", "Invalid OP in turnOP()");
         log_tag("debug_log.txt", "[ERROR]", "Invalid OP in turnOP()");

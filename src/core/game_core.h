@@ -1828,6 +1828,7 @@ typedef enum turnOption {
     TUTORIAL = 777,
     CLOSE_MENU = 110,
     SKILL = 111,
+    GAME_OPTIONS = 112,
 } turnOption;
 
 /**
@@ -1852,6 +1853,7 @@ typedef enum turnOption_OP {
     OP_LOAD_ENEMYROOM = 14,
     OP_LOAD_HOMEROOM = 15,
     OP_SKILL = 16,
+    OP_CHANGE_OPTIONS = 17,
 } turnOption_OP;
 
 /**
@@ -1867,7 +1869,7 @@ turnOption_OP turnOP_from_turnOption(turnOption t);
  * @see turnOption_OP
  * @see stringFromTurnOP()
  */
-#define TURNOP_MAX 16
+#define TURNOP_MAX 17
 /**
  * Array with the name strings for turnOption.
  * @see turnOption

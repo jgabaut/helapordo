@@ -142,11 +142,16 @@ turnOption_OP turnOP_from_turnOption(turnOption t)
         res = OP_SKILL;
     }
     break;
+    case GAME_OPTIONS: {
+        res = OP_CHANGE_OPTIONS;
+    }
+    break;
     default: {
         //FIXME:
         //Signal error right here?
         return OP_INVALID;
     }
+    break;
     }
     return res;
 }
@@ -261,6 +266,7 @@ char *turnopstrings[TURNOP_MAX + 1] = {
     "Load Enemy Room",
     "Load Home Room",
     "Skill",
+    "Options",
 };
 
 char *foeturnopstrings[FOETURNOP_MAX + 1] = {

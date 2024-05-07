@@ -5180,6 +5180,8 @@ turnOption getTurnChoice(char *ch)
             pick = EXPLORE;
         } else if ((comp = strcmp(ch, "Tutorial")) == 0) {
             pick = TUTORIAL;
+        } else if ((comp = strcmp(ch, "Options")) == 0) {
+            pick = GAME_OPTIONS;
         } else if ((comp = strcmp(ch, "Close")) == 0) {
             pick = CLOSE_MENU;
         } else {

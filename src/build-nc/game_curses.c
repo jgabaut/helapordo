@@ -3953,6 +3953,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
         "Perks",
         "Save",
         "Stats",
+        "Options",
         "Quit",
         "Close",
         (char *)NULL,
@@ -4197,5 +4198,67 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     //free(args);
     log_tag("debug_log.txt", "[FREE]", "handleRogueMenu():  Freed turnOP_args");
     log_tag("debug_log.txt", "[DEBUG]", "Ended handleRogueMenu()");
+    return 0;
+}
+
+int handleGameOptions(Gamestate * gmst)
+{
+    if (G_EXPERIMENTAL_ON != 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Experimental was not 1: {%i}", __func__, G_EXPERIMENTAL_ON);
+        return 1;
+    }
+    if (gmst == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Gamestate was NULL.", __func__);
+        return 1;
+    }
+    if (gmst->options == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    gmst->GameOptions was NULL.", __func__);
+        return 2;
+    }
+    // Initialize ncurses
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
+    clear();
+    refresh();
+
+    mvprintw(9, 0, "Press 'q' when you're done.");
+    refresh();
+
+    const char* default_background_toggle_label = "Default background";
+    const char* do_autosave_toggle_label = "Do autosave";
+
+    // Define menu options and their toggle states
+    Toggle toggles[] = {
+        {BOOL_TOGGLE, (ToggleState){.bool_state = gmst->options->use_default_background}, (char*) default_background_toggle_label, false},
+        {BOOL_TOGGLE, (ToggleState){.bool_state = gmst->options->do_autosave}, (char*) do_autosave_toggle_label, false},
+        {BOOL_TOGGLE, (ToggleState){.bool_state = true}, "Change options ^^", true},
+    };
+    int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
+
+    const char* statewin_label = "Current options:";
+    ToggleMenu_Conf menu_conf = (ToggleMenu_Conf) {
+        .start_x = 0,
+        .start_y = 0,
+        .boxed = true,
+        .quit_key = 'q',
+        .statewin_height = 15,
+        .statewin_width = 30,
+        .statewin_start_x = 40,
+        .statewin_start_y = 0,
+        .statewin_boxed = true,
+        .statewin_label = statewin_label,
+    };
+
+    ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
+    handle_ToggleMenu(toggle_menu);
+    endwin(); // End ncurses
+
+    gmst->options->use_default_background = toggle_menu.toggles[1].state.bool_state;
+    gmst->options->do_autosave = toggle_menu.toggles[2].state.bool_state;
+    free_ToggleMenu(toggle_menu);
+
     return 0;
 }

@@ -22,8 +22,8 @@ int main(void) {
  if ( ! (FOETURNOP_MAX == 3) ) {
    fail("FOETURNOP_MAX",3,FOETURNOP_MAX);
  };
- if ( ! (TURNOP_MAX == 16) ) {
-   fail("TURNOP_MAX",16,TURNOP_MAX);
+ if ( ! (TURNOP_MAX == 17) ) {
+   fail("TURNOP_MAX",17,TURNOP_MAX);
  };
  if ( ! (OP_RES_MAX == 10) ) {
    fail("OP_RES_MAX",10,OP_RES_MAX);
