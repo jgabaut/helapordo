@@ -1193,6 +1193,7 @@ void gameloop(int argc, char **argv)
         Gamestate* gamestate = NULL;
         Room* current_room = NULL;
         Floor* current_floor = NULL;
+        GameOptions* game_options = NULL;
 
         if (load_info->is_new_game) {	// We prepare path and fighter
             path = randomise_path(seed, default_kls, current_save_path);
@@ -1208,6 +1209,9 @@ void gameloop(int argc, char **argv)
 
             getParams(argc, argv, player, path, optTot, default_kls);
             initPlayerStats(player, path, default_kls);
+            game_options = KLS_PUSH_TYPED(default_kls, GameOptions, HR_GameOptions, "GameOptions",
+                                    "Gameoptions");
+            *game_options = default_GameOptions;
         } else {		//Handle loading of gamestate
 
             if (G_EXPERIMENTAL_ON == 1) { //Bin load
@@ -1239,8 +1243,11 @@ void gameloop(int argc, char **argv)
                 gamestate =
                     KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                    "Gamestate");
+                game_options = KLS_PUSH_TYPED(default_kls, GameOptions, HR_GameOptions, "GameOptions",
+                                    "Gameoptions");
+                *game_options = default_GameOptions;
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                               player, GAMEMODE, gamescreen, is_seeded);
+                               player, GAMEMODE, gamescreen, game_options, is_seeded);
 
                 current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
                                                "Loading floor");
@@ -1534,6 +1541,9 @@ void gameloop(int argc, char **argv)
                 //e_death(loaded_enemy);
                 //death(player);
                 //exit(0)
+                game_options = KLS_PUSH_TYPED(default_kls, GameOptions, HR_GameOptions, "GameOptions",
+                                    "Gameoptions");
+                *game_options = default_GameOptions;
             } // End text load else
         }
 
@@ -1651,7 +1661,7 @@ void gameloop(int argc, char **argv)
                 KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                "Gamestate");
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                           player, GAMEMODE, gamescreen, is_seeded);
+                           player, GAMEMODE, gamescreen, game_options, is_seeded);
         }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
@@ -1660,9 +1670,9 @@ void gameloop(int argc, char **argv)
             //NO. We pass NULL now.
             //
             //We also pass NULL for current room.
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor, NULL);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor, NULL, game_options);
         } else {
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL, game_options);
         }
         log_tag("debug_log.txt", "[DEBUG]", "Initialised Gamestate.");
         dbg_Gamestate(gamestate);
@@ -1856,7 +1866,7 @@ void gameloop(int argc, char **argv)
                 endwin();
 
                 update_Gamestate(gamestate, 1, current_room->class, roomsDone,
-                                 -1, NULL, current_room);
+                                 -1, NULL, current_room, game_options);
 
                 if (current_room->class == HOME) {
                     res =
@@ -2070,7 +2080,7 @@ void gameloop(int argc, char **argv)
                                                    HR_Floor, "Floor", "Floor");
                 }
                 update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
-                                 current_floor, NULL); // NULL for current_room
+                                 current_floor, NULL, game_options); // NULL for current_room
                 // Start the random walk from the center of the dungeon
                 int center_x = FLOOR_MAX_COLS / 2;
                 int center_y = FLOOR_MAX_ROWS / 2;
@@ -2296,7 +2306,7 @@ void gameloop(int argc, char **argv)
 
                         update_Gamestate(gamestate, 1, current_room->class,
                                          current_room->index, -1,
-                                         current_floor, current_room);
+                                         current_floor, current_room, game_options);
 
                         if (current_room->class == HOME) {
                             res =
@@ -2383,7 +2393,7 @@ void gameloop(int argc, char **argv)
                                 log_tag("debug_log.txt", "[DEBUG]", "%s():    updating Gamestate to clear current_room reference", __func__);
                                 update_Gamestate(gamestate, 1, BASIC,
                                          roomsDone, -1,
-                                         current_floor, NULL);  // Pass NULL for current room to gamestate
+                                         current_floor, NULL, game_options);  // Pass NULL for current room to gamestate
                             }
 
                             //Update floor's roomclass layout for finished rooms which should not be replayed
@@ -2419,7 +2429,7 @@ void gameloop(int argc, char **argv)
                                                      "Floor");
                                 update_Gamestate(gamestate, 1, HOME,
                                                  roomsDone, -1,
-                                                 current_floor, NULL); // Passing NULL for current_room
+                                                 current_floor, NULL, game_options); // Passing NULL for current_room
 
                                 //Regenerate floor
                                 log_tag("debug_log.txt", "[DEBUG]",

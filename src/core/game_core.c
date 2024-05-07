@@ -67,6 +67,7 @@ char *hlp_regiontype_strings[HLP_MAX_INDEX + 1] = {
     "HLP_Saveslot",
     "HLP_Gamestate",
     "HLP_Gamescreen",
+    "HLP_GameOptions",
     "HLP_loadInfo",
 };
 
@@ -549,3 +550,8 @@ const wchar_t HEAD_CHAR_ICON = 'H';
 const wchar_t TORSO_CHAR_ICON = 'T';
 const wchar_t LEGS_CHAR_ICON = 'L';
 #endif // _WIN32
+
+const GameOptions default_GameOptions = {
+    .use_default_background = false,
+    .do_autosave = true,
+};

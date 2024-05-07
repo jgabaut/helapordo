@@ -90,6 +90,16 @@ extern const char* helapordo_title_string; /**< Defines a formatted string for t
 extern const char* helapordo_build_string;
 
 /**
+ * Holds options useful for user runtime preferences.
+ */
+typedef struct GameOptions {
+    bool use_default_background;
+    bool do_autosave;
+} GameOptions;
+
+extern const GameOptions default_GameOptions;
+
+/**
  * Defines indexes for all types that are allocated with Koliseo.
  */
 typedef enum HLP_Region_Type {
@@ -120,6 +130,7 @@ typedef enum HLP_Region_Type {
     HR_Saveslot,
     HR_Gamestate,
     HR_Gamescreen,
+    HR_GameOptions,
     HR_loadInfo,
 } HLP_Region_Type;
 
@@ -1755,6 +1766,7 @@ typedef struct loadInfo {
  * @see roomClass
  * @see Wincon
  * @see Path
+ * @see GameOptions
  */
 typedef struct {
 
@@ -1785,6 +1797,8 @@ typedef struct {
 #else
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
+
+    GameOptions *options; /**< Keeps track of current options.*/
 
     bool is_seeded; /**< Denotes if the current game was started with a set seed.*/
 } Gamestate;

@@ -149,6 +149,17 @@ void log_Win_EnvVars(void)
 }
 #endif
 
+void dbg_GameOptions(GameOptions * options)
+{
+    if (options == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "GameOptions was NULL in dbg_GameOptions()");
+        exit(EXIT_FAILURE);
+    }
+    log_tag("debug_log.txt", "[OPTIONS]", "Use default terminal background: { %s }", options->use_default_background ? "on" : "off");
+    log_tag("debug_log.txt", "[OPTIONS]", "Autosave: { %s }", options->do_autosave ? "on" : "off");
+}
+
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
  * @param fighter The allocated Fighter to debug.
@@ -484,6 +495,14 @@ void dbg_Gamestate(Gamestate *gmst)
     log_tag("debug_log.txt", "[DEBUG]", "Gamestate:{");
     log_tag("debug_log.txt", "[GAMESTATE]", "Current Gamemode: { %s } [ %i ]",
             stringFromGamemode(gmst->gamemode), gmst->gamemode);
+    if (gmst->options == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "GameOptions was NULL in dbg_Gamestate()");
+    } else {
+        log_tag("debug_log.txt", "[GAMESTATE]", "%s", "Current options: {");
+        dbg_GameOptions(gmst->options);
+        log_tag("debug_log.txt", "[GAMESTATE]", "%s", "}");
+    }
+
     log_tag("debug_log.txt", "[GAMESTATE]", "Start time: {%llu}",
             (unsigned long long) gmst->start_time);
     clock_t run_time = clock() - gmst->start_time;
@@ -578,10 +597,11 @@ void dbg_GameScreen(GameScreen * scr)
  * @param current_enemy_index Index for current Enemy.
  * @param current_floor Pointer to current Floor, initialised if gmst->gamemode == Rogue.
  * @param current_room Pointer to current Room.
+ * @param game_options Pointer to current game options.
  */
 void update_Gamestate(Gamestate *gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
-                      int current_enemy_index, Floor *current_floor, Room* current_room)
+                      int current_enemy_index, Floor *current_floor, Room* current_room, GameOptions* game_options)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s().",
@@ -601,6 +621,7 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
         }
     }
     gmst->current_room = current_room;
+    gmst->options = game_options;
 }
 
 /**
@@ -3149,10 +3170,11 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
  * @param player Game main player.
  * @param gamemode Picked gamemode.
  * @param screen The main screen from initscr().
+ * @param options The GameOptions for current run.
  * @param is_seeded Denotes if current game was started from a set seed.
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_seeded)
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
