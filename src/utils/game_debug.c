@@ -259,8 +259,9 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
         break;
         case 'A': {
             GS_AUTOSAVE_ON = (GS_AUTOSAVE_ON == 1 ? 0 : 1);
-            sprintf(msg, "Toggled G_AUTOSAVE_ON, new value: (%i)",
+            sprintf(msg, "Toggled GS_AUTOSAVE_ON, new value: (%i)",
                     GS_AUTOSAVE_ON);
+            gmst->options->do_autosave = !gmst->options->do_autosave;
             log_tag("debug_log.txt", "[DEBUG]", msg);
         }
         break;
@@ -1117,9 +1118,10 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
 #endif // KOLISEO_HAS_REGION
         case 'A': {
             GS_AUTOSAVE_ON = (GS_AUTOSAVE_ON == 1 ? 0 : 1);
-            sprintf(msg, "Toggled G_AUTOSAVE_ON, new value: (%i)",
+            sprintf(msg, "Toggled GS_AUTOSAVE_ON, new value: (%i)",
                     GS_AUTOSAVE_ON);
             log_tag("debug_log.txt", "[DEBUG]", msg);
+            gmst->options->do_autosave = !gmst->options->do_autosave;
         }
         break;
         case 'Q': {

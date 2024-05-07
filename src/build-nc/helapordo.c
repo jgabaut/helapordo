@@ -876,6 +876,9 @@ void gameloop(int argc, char **argv)
 
         GameOptions game_options = default_GameOptions;
 
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    setting game_options.do_autosave to (GS_AUTOSAVE_ON == 1): {%s}", __func__, (GS_AUTOSAVE_ON == 1 ? "true" : "false"));
+        game_options.do_autosave = (GS_AUTOSAVE_ON == 1);
+
         ITEM **savepick_items;
         MENU *savepick_menu;
         WINDOW *savepick_menu_win;
