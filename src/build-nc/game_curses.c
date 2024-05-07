@@ -4201,6 +4201,11 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     return 0;
 }
 
+/**
+ * Takes a GameOptions pointer and prompts the user with a form to change options.
+ * @param game_options Pointer to GameOptions.
+ * return 0 on success, non-zero on errors.
+ */
 int handleGameOptions(GameOptions * game_options)
 {
     if (G_EXPERIMENTAL_ON != 1) {
@@ -4252,9 +4257,64 @@ int handleGameOptions(GameOptions * game_options)
     handle_ToggleMenu(toggle_menu);
     endwin(); // End ncurses
 
-    game_options->use_default_background = toggle_menu.toggles[1].state.bool_state;
-    game_options->do_autosave = toggle_menu.toggles[2].state.bool_state;
+    game_options->use_default_background = toggle_menu.toggles[0].state.bool_state;
+    game_options->do_autosave = toggle_menu.toggles[1].state.bool_state;
     free_ToggleMenu(toggle_menu);
 
     return 0;
+}
+
+void draw_buildinfo(WINDOW* win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Passed WINDOW was NULL.", __func__);
+        return;
+    }
+    wprintw(win, "  \nhelapordo");
+    wprintw(win, "  \n  build: %s", helapordo_build_string);
+    wprintw(win, "  \n  using: s4c-animate v%s",
+            S4C_ANIMATE_VERSION);
+    wprintw(win, "  \n  using: koliseo v%s",
+            KOLISEO_API_VERSION_STRING);
+    if (G_EXPERIMENTAL_ON == 1) {
+        wprintw(win, "  \n  using: s4c-gui v%s",
+                S4C_GUI_API_VERSION_STRING);
+    }
+    wprintw(win, "  \n  using: ncurses v%s", NCURSES_VERSION);
+#ifdef ANVIL__helapordo__
+#ifndef INVIL__helapordo__HEADER__
+    wprintw(win, "  \nBuilt with: amboso v%s",
+            ANVIL__API_LEVEL__STRING);
+#else
+    wprintw(win, "  \nBuilt with: invil v%s",
+            INVIL__VERSION__STRING);
+    wprintw(win, "  \nVersion Info: %.8s",
+            get_ANVIL__VERSION__DESC__());
+    const char* anvil_date = get_ANVIL__VERSION__DATE__();
+    char* anvil_date_end;
+#ifndef _WIN32
+    time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
+#else
+    time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
+#endif //_WIN32
+
+    if (anvil_date_end == anvil_date) {
+        log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
+    } else {
+        char build_time_buff[20] = {0};
+        struct tm* build_time_tm = localtime(&anvil_build_time);
+
+        if (build_time_tm == NULL) {
+            log_tag("debug_log.txt", "ERROR", "localtime() failed");
+        } else {
+            strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
+            wprintw(win, "  \nDate: %s", build_time_buff);
+        }
+    }
+#endif // INVIL__helapordo__HEADER__
+#else
+    wprintw(win, "  \nBuilt without anvil");
+#endif // ANVIL__helapordo__
+    //wprintw(win,"  \n  %s",get_ANVIL__VERSION__DESC__());
+    wrefresh(win);
 }

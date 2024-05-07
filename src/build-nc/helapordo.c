@@ -873,6 +873,9 @@ void gameloop(int argc, char **argv)
         gamescreen->tabsize = TABSIZE;
 
         gamescreen->win = screen;
+
+        GameOptions game_options = default_GameOptions;
+
         ITEM **savepick_items;
         MENU *savepick_menu;
         WINDOW *savepick_menu_win;
@@ -898,6 +901,7 @@ void gameloop(int argc, char **argv)
             "New game",
             "Load save",
             "Tutorial",
+            "Options",
             "Quit",
             (char *)NULL,
         };
@@ -945,53 +949,7 @@ void gameloop(int argc, char **argv)
         //Handle side window for welcome info
         savepick_side_win = newwin(12, 32, 2, 2);
         scrollok(savepick_side_win, TRUE);
-        wprintw(savepick_side_win, "  \nhelapordo");
-        wprintw(savepick_side_win, "  \n  build: %s", helapordo_build_string);
-        wprintw(savepick_side_win, "  \n  using: s4c-animate v%s",
-                S4C_ANIMATE_VERSION);
-        wprintw(savepick_side_win, "  \n  using: koliseo v%s",
-                KOLISEO_API_VERSION_STRING);
-        if (G_EXPERIMENTAL_ON == 1) {
-            wprintw(savepick_side_win, "  \n  using: s4c-gui v%s",
-                    S4C_GUI_API_VERSION_STRING);
-        }
-        wprintw(savepick_side_win, "  \n  using: ncurses v%s", NCURSES_VERSION);
-#ifdef ANVIL__helapordo__
-#ifndef INVIL__helapordo__HEADER__
-        wprintw(savepick_side_win, "  \nBuilt with: amboso v%s",
-                ANVIL__API_LEVEL__STRING);
-#else
-        wprintw(savepick_side_win, "  \nBuilt with: invil v%s",
-                INVIL__VERSION__STRING);
-        wprintw(savepick_side_win, "  \nVersion Info: %.8s",
-                get_ANVIL__VERSION__DESC__());
-        const char* anvil_date = get_ANVIL__VERSION__DATE__();
-        char* anvil_date_end;
-#ifndef _WIN32
-        time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
-#else
-        time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
-#endif //_WIN32
-
-        if (anvil_date_end == anvil_date) {
-            log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
-        } else {
-            char build_time_buff[20] = {0};
-            struct tm* build_time_tm = localtime(&anvil_build_time);
-
-            if (build_time_tm == NULL) {
-                log_tag("debug_log.txt", "ERROR", "localtime() failed");
-            } else {
-                strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
-                wprintw(savepick_side_win, "  \nDate: %s", build_time_buff);
-            }
-        }
-#endif // INVIL__helapordo__HEADER__
-#else
-        wprintw(savepick_side_win, "  \nBuilt without anvil");
-#endif // ANVIL__helapordo__
-        //wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
-        wrefresh(savepick_side_win);
+        draw_buildinfo(savepick_side_win);
         refresh();
 
         int savepick_picked = 0;
@@ -1069,7 +1027,6 @@ void gameloop(int argc, char **argv)
             }
             break;
             case 10: {	/* Enter */
-                savepick_picked = 1;
                 ITEM *cur;
 
                 //move(18,47);
@@ -1077,6 +1034,9 @@ void gameloop(int argc, char **argv)
                 cur = current_item(savepick_menu);
                 //mvprintw(18, 47, "Item selected is : %s", item_name(cur));
                 savepick_choice = getTurnChoice((char *)item_name(cur));
+                if (savepick_choice != GAME_OPTIONS) {
+                    savepick_picked = 1;
+                }
                 pos_menu_cursor(savepick_menu);
                 refresh();
             }
@@ -1154,6 +1114,18 @@ void gameloop(int argc, char **argv)
                 log_tag("debug_log.txt", "[DEBUG]", "Doing tutorial.");
                 handleTutorial();
                 exit(EXIT_SUCCESS);
+            } else if (savepick_choice == GAME_OPTIONS) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Changing options from savepick menu", __func__);
+                handleGameOptions(&game_options);
+                clear();
+                refresh();
+                box(savepick_menu_win,0,0);
+                //TODO: is it possible to avoid redrawing this?...
+                wclear(savepick_side_win);
+                draw_buildinfo(savepick_side_win);
+                wrefresh(savepick_menu_win);
+                wrefresh(savepick_side_win);
+                savepick_choice = 999;
             }
         }			//End while !savepick_picked
 
@@ -1193,7 +1165,6 @@ void gameloop(int argc, char **argv)
         Gamestate* gamestate = NULL;
         Room* current_room = NULL;
         Floor* current_floor = NULL;
-        GameOptions* game_options = NULL;
 
         if (load_info->is_new_game) {	// We prepare path and fighter
             path = randomise_path(seed, default_kls, current_save_path);
@@ -1209,9 +1180,6 @@ void gameloop(int argc, char **argv)
 
             getParams(argc, argv, player, path, optTot, default_kls);
             initPlayerStats(player, path, default_kls);
-            game_options = KLS_PUSH_TYPED(default_kls, GameOptions, HR_GameOptions, "GameOptions",
-                                    "Gameoptions");
-            *game_options = default_GameOptions;
         } else {		//Handle loading of gamestate
 
             if (G_EXPERIMENTAL_ON == 1) { //Bin load
@@ -1243,11 +1211,8 @@ void gameloop(int argc, char **argv)
                 gamestate =
                     KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                    "Gamestate");
-                game_options = KLS_PUSH_TYPED(default_kls, GameOptions, HR_GameOptions, "GameOptions",
-                                    "Gameoptions");
-                *game_options = default_GameOptions;
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                               player, GAMEMODE, gamescreen, game_options, is_seeded);
+                               player, GAMEMODE, gamescreen, &game_options, is_seeded);
 
                 current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
                                                "Loading floor");
@@ -1541,9 +1506,6 @@ void gameloop(int argc, char **argv)
                 //e_death(loaded_enemy);
                 //death(player);
                 //exit(0)
-                game_options = KLS_PUSH_TYPED(default_kls, GameOptions, HR_GameOptions, "GameOptions",
-                                    "Gameoptions");
-                *game_options = default_GameOptions;
             } // End text load else
         }
 
@@ -1661,7 +1623,7 @@ void gameloop(int argc, char **argv)
                 KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                "Gamestate");
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                           player, GAMEMODE, gamescreen, game_options, is_seeded);
+                           player, GAMEMODE, gamescreen, &game_options, is_seeded);
         }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
@@ -1670,9 +1632,9 @@ void gameloop(int argc, char **argv)
             //NO. We pass NULL now.
             //
             //We also pass NULL for current room.
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor, NULL, game_options);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor, NULL, &game_options);
         } else {
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL, game_options);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL, &game_options);
         }
         log_tag("debug_log.txt", "[DEBUG]", "Initialised Gamestate.");
         dbg_Gamestate(gamestate);
@@ -1866,7 +1828,7 @@ void gameloop(int argc, char **argv)
                 endwin();
 
                 update_Gamestate(gamestate, 1, current_room->class, roomsDone,
-                                 -1, NULL, current_room, game_options);
+                                 -1, NULL, current_room, &game_options);
 
                 if (current_room->class == HOME) {
                     res =
@@ -2080,7 +2042,7 @@ void gameloop(int argc, char **argv)
                                                    HR_Floor, "Floor", "Floor");
                 }
                 update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
-                                 current_floor, NULL, game_options); // NULL for current_room
+                                 current_floor, NULL, &game_options); // NULL for current_room
                 // Start the random walk from the center of the dungeon
                 int center_x = FLOOR_MAX_COLS / 2;
                 int center_y = FLOOR_MAX_ROWS / 2;
@@ -2306,7 +2268,7 @@ void gameloop(int argc, char **argv)
 
                         update_Gamestate(gamestate, 1, current_room->class,
                                          current_room->index, -1,
-                                         current_floor, current_room, game_options);
+                                         current_floor, current_room, &game_options);
 
                         if (current_room->class == HOME) {
                             res =
@@ -2393,7 +2355,7 @@ void gameloop(int argc, char **argv)
                                 log_tag("debug_log.txt", "[DEBUG]", "%s():    updating Gamestate to clear current_room reference", __func__);
                                 update_Gamestate(gamestate, 1, BASIC,
                                          roomsDone, -1,
-                                         current_floor, NULL, game_options);  // Pass NULL for current room to gamestate
+                                         current_floor, NULL, &game_options);  // Pass NULL for current room to gamestate
                             }
 
                             //Update floor's roomclass layout for finished rooms which should not be replayed
@@ -2429,7 +2391,7 @@ void gameloop(int argc, char **argv)
                                                      "Floor");
                                 update_Gamestate(gamestate, 1, HOME,
                                                  roomsDone, -1,
-                                                 current_floor, NULL, game_options); // Passing NULL for current_room
+                                                 current_floor, NULL, &game_options); // Passing NULL for current_room
 
                                 //Regenerate floor
                                 log_tag("debug_log.txt", "[DEBUG]",

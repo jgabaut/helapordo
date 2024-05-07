@@ -99,4 +99,5 @@ void handleTutorial(void);
 int handleRogueMenu(Gamestate * gmst, Path * p, Fighter * player, Room * room,
                     loadInfo * load_info, Koliseo * kls, Koliseo_Temp * t_kls);
 int handleGameOptions(GameOptions * game_options);
+void draw_buildinfo(WINDOW* win);
 #endif
