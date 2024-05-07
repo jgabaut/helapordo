@@ -2438,11 +2438,36 @@ void gameloop(int argc, char **argv)
                                 //Set room types
                                 floor_set_room_types(current_floor);
 
-                                //Center current coords
-                                player->floor_x = center_x;
-                                player->floor_y = center_y;
+                                if (G_EXPERIMENTAL_ON != 1) {
+                                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                                    player->floor_x = center_x;
+                                    player->floor_y = center_y;
+                                } else {
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+                                    int home_room_x = -1;
+                                    int home_room_y = -1;
+                                    bool done_looking = false;
+                                    for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+                                        for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                                            if (current_floor->roomclass_layout[i][j] == HOME) {
+                                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                                                home_room_x = i;
+                                                home_room_y = j;
+                                                done_looking = true;
+                                            }
+                                        }
+                                    }
+                                    if (!done_looking) {
+                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+                                        kls_free(default_kls);
+                                        kls_free(temporary_kls);
+                                        exit(EXIT_FAILURE);
+                                    }
+                                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+                                    player->floor_x = home_room_x;
+                                    player->floor_y = home_room_y;
+                                }
                                 continue;	//Check win condition for loop
-
                             }
                             break;
                             case SHOP: {
