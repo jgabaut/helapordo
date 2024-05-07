@@ -1776,7 +1776,6 @@ void pickClass(Fighter *player)
             ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
             handle_ToggleMenu(toggle_menu);
             endwin(); // End ncurses
-            free_ToggleMenu(toggle_menu);
 
             const char* submitted = get_TextField_value(toggles[0].state.txt_state);
             if (strcmp(submitted, "Knight") == 0) {
@@ -1790,6 +1789,7 @@ void pickClass(Fighter *player)
             } else {
                 pick = -1;
             }
+            free_ToggleMenu(toggle_menu);
         }
     } while (pick < 0);
 
@@ -1843,10 +1843,61 @@ int scanWincon(void)
  */
 void pickName(Fighter *player)
 {
-    scanName(player);
-    red();
-    printf("\n\n\tName: %s\n\n", player->name);
-    white();
+    if (G_EXPERIMENTAL_ON != 1) {
+        scanName(player);
+    } else {
+        // Initialize ncurses
+        initscr();
+        cbreak();
+        noecho();
+        keypad(stdscr, TRUE);
+
+        clear();
+        refresh();
+
+        mvprintw(7, 0, "Press Enter to pick a name");
+        mvprintw(9, 0, "Press 'q' when you're done.");
+        refresh();
+
+        const char* name_toggle_label = "Name ->";
+        // Define the dimensions and position of the textfield window
+        int height = 5;
+        int width = 20;
+        int start_y = 2;
+        int start_x = strlen(name_toggle_label) + 10;
+
+        // Define menu options and their toggle states
+        Toggle toggles[] = {
+        {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(height, width, start_x, start_y)}, (char*)name_toggle_label, false},
+        {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(height, width, start_x, start_y)}, "Pick a name ^", true},
+        };
+        int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
+
+        const char* statewin_label = "Current input:";
+        ToggleMenu_Conf menu_conf = (ToggleMenu_Conf) {
+            .start_x = 0,
+            .start_y = 0,
+            .boxed = true,
+            .quit_key = 'q',
+            .statewin_height = 15,
+            .statewin_width = 30,
+            .statewin_start_x = 40,
+            .statewin_start_y = 0,
+            .statewin_boxed = true,
+            .statewin_label = statewin_label,
+        };
+
+        ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
+        handle_ToggleMenu(toggle_menu);
+        endwin(); // End ncurses
+
+        if (lint_TextField(toggles[0].state.txt_state)) {
+            const char* submitted = get_TextField_value(toggles[0].state.txt_state);
+            memcpy(player->name, submitted, FIGHTER_NAME_BUFSIZE);
+        }
+        free_ToggleMenu(toggle_menu);
+    }
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    player chose name {%s}", __func__, player->name);
 }
 
 /**
