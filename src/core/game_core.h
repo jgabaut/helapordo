@@ -217,6 +217,7 @@ extern int G_DOTUTORIAL_ON;
  */
 extern int G_USE_CURRENTDIR;
 
+
 /**
  * Global variable used to count advancements of the rng.
  */
@@ -230,6 +231,16 @@ extern int G_SEEDED_RUN_ON;
  * Global variable for seeded run flag, set to the passed string argument.
  */
 extern char *G_SEEDED_RUN_ARG;
+
+/**
+ * Global variable for pair0 initial fg index, used to toggle default colors.
+ */
+extern short int G_PAIR0_FG;
+
+/**
+ * Global variable for pair0 initial bg index, used to toggle default colors.
+ */
+extern short int G_PAIR0_BG;
 
 /**
  * Current major release.

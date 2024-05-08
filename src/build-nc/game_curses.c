@@ -4256,7 +4256,6 @@ int handleGameOptions(GameOptions * game_options)
 {
     if (G_EXPERIMENTAL_ON != 1) {
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Experimental was not 1: {%i}", __func__, G_EXPERIMENTAL_ON);
-        return 1;
     }
     if (game_options == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s():    GameOptions was NULL.", __func__);
@@ -4294,10 +4293,32 @@ int handleGameOptions(GameOptions * game_options)
 
     ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
     handle_ToggleMenu(toggle_menu);
-    endwin(); // End ncurses
 
-    game_options->use_default_background = toggle_menu.toggles[0].state.bool_state;
+    bool selected_use_default_background = toggle_menu.toggles[0].state.bool_state;
+    if ( game_options->use_default_background != selected_use_default_background) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    User switched default background options, reloading colors", __func__);
+        if (selected_use_default_background) {
+            // Coming from opaque mode
+            // TODO: store color pair 0?
+            short int pair0_fg = -2;
+            short int pair0_bg = -2;
+            pair_content(0, &pair0_fg, &pair0_bg);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 is now: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Global Pair 0 info is: {fg: %i, bg: %i}", __func__, G_PAIR0_FG, G_PAIR0_BG);
+        }
+        if (selected_use_default_background) {
+            use_default_colors();
+        } else {
+            reset_color_pairs();
+        }
+        for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+            init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
+        }
+        //wbkgd(stdscr, COLOR_PAIR(selected_use_default_background ? -1 : 0));
+        game_options->use_default_background = selected_use_default_background;
+    }
     game_options->do_autosave = toggle_menu.toggles[1].state.bool_state;
+    endwin(); // End ncurses after resetting color pairs ?
     free_ToggleMenu(toggle_menu);
 
     return 0;

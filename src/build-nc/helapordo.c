@@ -839,9 +839,11 @@ void gameloop(int argc, char **argv)
 
         WINDOW* screen = initscr();
 
-        if (G_EXPERIMENTAL_ON == 1) {
+        if (G_EXPERIMENTAL_ON == 1 || default_GameOptions.use_default_background) {
             log_tag("debug_log.txt", "[DEBUG]",
                     "%s():    Calling use_default_colors()", __func__);
+            pair_content(0, &G_PAIR0_FG, &G_PAIR0_BG);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 is {fg: %i, bg: %i}", __func__, G_PAIR0_FG, G_PAIR0_BG);
             use_default_colors();
         }
 
@@ -2084,7 +2086,7 @@ void gameloop(int argc, char **argv)
                             clear();
                             refresh();
                             box(test_win, 0, 0);
-                            draw_BSP_Room(test_win, bsp_tree, 1, 1, 9);
+                            draw_BSP_Room(test_win, bsp_tree, 1, 1, 8);
                             refresh();
                             wgetch(test_win);
                             */

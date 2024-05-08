@@ -413,7 +413,7 @@ static void draw_horizontal_wall(WINDOW* win, BSP_Wall* w, int start_y, int star
             wattroff(win, COLOR_PAIR(color_index));
         } else {
             wattron(win, COLOR_PAIR(color_index));
-            mvwprintw(win, start_y + w->start_y, start_y + x, "%s", "@");
+            mvwprintw(win, start_y + w->start_y, start_x + x, "%s", "@");
             wattroff(win, COLOR_PAIR(color_index));
         }
     }
@@ -429,7 +429,7 @@ void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, in
         // No left child
         if (bsp_room->child_right != NULL) {
             // Depth first
-            draw_BSP_Room(win, bsp_room->child_right, start_y, start_x, (color_index == PALETTE_S4C_H_TOTCOLORS  ? 9 : color_index+1));
+            draw_BSP_Room(win, bsp_room->child_right, start_y, start_x, (color_index == PALETTE_S4C_H_TOTCOLORS-1  ? 9 : color_index+2));
         } else {
             // No right child, leaf room
             for (int i=0; i<4; i++) {
@@ -439,17 +439,20 @@ void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, in
                     draw_vertical_wall(win, &(bsp_room->walls[i]), start_y, start_x, color_index);
                 }
             }
+            wattron(win, COLOR_PAIR(color_index));
+            mvwprintw(win, start_y + bsp_room->center_y, start_x + bsp_room->center_x, "%s", "c");
+            wattroff(win, COLOR_PAIR(color_index));
             return;
         }
     }
 
     if (bsp_room->child_right != NULL) {
-        draw_BSP_Room(win, bsp_room->child_right, start_y, start_x, (color_index == PALETTE_S4C_H_TOTCOLORS ? 9 : color_index+1));
+        draw_BSP_Room(win, bsp_room->child_right, start_y, start_x, (color_index == PALETTE_S4C_H_TOTCOLORS-2 ? 9 : color_index+3));
     } else {
         // No right child
         if (bsp_room->child_left != NULL) {
             // Depth first
-            draw_BSP_Room(win, bsp_room->child_left, start_y, start_x, (color_index == PALETTE_S4C_H_TOTCOLORS ? 9 : color_index+1));
+            draw_BSP_Room(win, bsp_room->child_left, start_y, start_x, (color_index == PALETTE_S4C_H_TOTCOLORS-3 ? 9 : color_index+4));
         } else {
             // No left child, leaf room
             for (int i=0; i<4; i++) {
@@ -459,6 +462,9 @@ void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, in
                     draw_vertical_wall(win, &(bsp_room->walls[i]), start_y, start_x, color_index);
                 }
             }
+            wattron(win, COLOR_PAIR(color_index));
+            mvwprintw(win, start_y + bsp_room->center_y, start_x + bsp_room->center_x, "%s", "c");
+            wattroff(win, COLOR_PAIR(color_index));
             return;
         }
     }
