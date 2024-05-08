@@ -2079,6 +2079,15 @@ void gameloop(int argc, char **argv)
                         if ((hlpd_rand() % 101) > 20) {
                             log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
                             BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
+                            /*
+                            WINDOW* test_win = newwin(FLOOR_MAX_COLS +2, FLOOR_MAX_ROWS+2, 0,0);
+                            clear();
+                            refresh();
+                            box(test_win, 0, 0);
+                            draw_BSP_Room(test_win, bsp_tree, 1, 1, 9);
+                            refresh();
+                            wgetch(test_win);
+                            */
                             dbg_BSP_Room(bsp_tree);
                             current_floor->from_bsp = true;
                         } else {
