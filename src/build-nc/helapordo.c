@@ -2078,7 +2078,8 @@ void gameloop(int argc, char **argv)
                     } else {
                         if ((hlpd_rand() % 101) > 20) {
                             log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                            floor_bsp_gen(current_floor, center_x, center_y);
+                            BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
+                            dbg_BSP_Room(bsp_tree);
                             current_floor->from_bsp = true;
                         } else {
                             log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
@@ -2422,7 +2423,8 @@ void gameloop(int argc, char **argv)
                                 } else {
                                     if ((hlpd_rand() % 101) > 20) {
                                         log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                                        floor_bsp_gen(current_floor, center_x, center_y);
+                                        BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
+                                        dbg_BSP_Room(bsp_tree);
                                         current_floor->from_bsp = true;
                                     } else {
                                         log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);

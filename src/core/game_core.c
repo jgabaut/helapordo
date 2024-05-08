@@ -68,6 +68,7 @@ char *hlp_regiontype_strings[HLP_MAX_INDEX + 1] = {
     "HLP_Gamestate",
     "HLP_Gamescreen",
     "HLP_GameOptions",
+    "HLP_BSP_Room",
     "HLP_loadInfo",
 };
 

@@ -131,6 +131,7 @@ typedef enum HLP_Region_Type {
     HR_Gamestate,
     HR_Gamescreen,
     HR_GameOptions,
+    HR_BSP_Room,
     HR_loadInfo,
 } HLP_Region_Type;
 
