@@ -201,8 +201,8 @@ static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kl
             .end_x = new_split.end_x,
             .end_y = new_split.end_y
         },
-        .child_left = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Horiz split c1 BSP_Room->left"),
-        .child_right = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Horiz split c1 BSP_Room->right"),
+        .child_left = NULL,
+        .child_right = NULL,
         .center_x = 0,
         .center_y = 0,
     };
@@ -224,8 +224,8 @@ static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kl
             .end_x = room->walls[WALL_BOTTOM].end_x,
             .end_y = room->walls[WALL_BOTTOM].end_y
         },
-        .child_left = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Horiz split c2 BSP_Room->left"),
-        .child_right = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Horiz split c2 BSP_Room->right"),
+        .child_left = NULL,
+        .child_right = NULL,
         .center_x = 0,
         .center_y = 0,
     };
@@ -289,8 +289,8 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kls
         },
         .walls[WALL_LEFT] = room->walls[WALL_LEFT],
                             .walls[WALL_RIGHT] = new_split,
-                                .child_left = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Vert split c1 BSP_Room->left"),
-                                .child_right = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Vert split c1 BSP_Room->right"),
+                                .child_left = NULL,
+                                .child_right = NULL,
                                 .center_x = 0,
                                 .center_y = 0,
     };
@@ -313,8 +313,8 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kls
         },
         .walls[WALL_LEFT] = new_split,
                             .walls[WALL_RIGHT] = room->walls[WALL_RIGHT],
-                                .child_left = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Vert split c2 BSP_Room->left"),
-                                .child_right = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Vert split c2 BSP_Room->right"),
+                                .child_left = NULL,
+                                .child_right = NULL,
                                 .center_x = 0,
                                 .center_y = 0,
     };
@@ -369,8 +369,16 @@ void dbg_BSP_Room(BSP_Room* bsp_room)
     log_tag("debug_log.txt", "[DEBUG-BSP]", "%s():    {c_x: %i, c_y: %i}", __func__, bsp_room->center_x, bsp_room->center_y);
     if (bsp_room->child_left != NULL) {
         dbg_BSP_Room(bsp_room->child_left);
+    } else {
+        for (int i=0; i<4; i++) {
+            log_tag("debug_log.txt", "[DEBUG-BSP]", "%s():    Room with no left child. {" BSP_Wall_Fmt "}", __func__, BSP_Wall_Arg(bsp_room->walls[i]));
+        }
     }
     if (bsp_room->child_right != NULL) {
         dbg_BSP_Room(bsp_room->child_right);
+    } else {
+        for (int i=0; i<4; i++) {
+            log_tag("debug_log.txt", "[DEBUG-BSP]", "%s():    Room with no right child. {" BSP_Wall_Fmt "}", __func__, BSP_Wall_Arg(bsp_room->walls[i]));
+        }
     }
 }
