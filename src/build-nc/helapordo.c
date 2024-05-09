@@ -2104,7 +2104,7 @@ void gameloop(int argc, char **argv)
                             clear();
                             refresh();
                             box(test_win, 0, 0);
-                            draw_BSP_Room(test_win, bsp_tree, 1, 1, 8);
+                            draw_BSP_Room(test_win, bsp_tree, 1, 1, 0);
                             refresh();
                             wgetch(test_win);
                             */

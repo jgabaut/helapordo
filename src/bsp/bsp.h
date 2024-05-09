@@ -67,6 +67,6 @@ typedef struct BSP_Room {
 BSP_Room* floor_bsp_gen(Floor* floor, Koliseo_Temp* t_kls, int base_x, int base_y);
 
 void dbg_BSP_Room(BSP_Room* bsp_room);
-void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, int color_index);
+void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, int depth);
 
 #endif
