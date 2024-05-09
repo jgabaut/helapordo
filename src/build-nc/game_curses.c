@@ -4304,7 +4304,6 @@ int handleGameOptions(GameOptions * game_options)
             short int pair0_bg = -2;
             pair_content(0, &pair0_fg, &pair0_bg);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 is now: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Global Pair 0 info is: {fg: %i, bg: %i}", __func__, G_PAIR0_FG, G_PAIR0_BG);
         }
         if (selected_use_default_background) {
             use_default_colors();

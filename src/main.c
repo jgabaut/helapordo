@@ -56,9 +56,6 @@ Gamemode GAMEMODE = Rogue;
 Koliseo *default_kls = NULL;
 Koliseo *temporary_kls = NULL;
 
-short int G_PAIR0_FG;
-short int G_PAIR0_BG;
-
 int main(int argc, char **argv)
 {
     // Registering the signal handler for SIGINT (Ctrl+C)

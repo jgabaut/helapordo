@@ -842,8 +842,10 @@ void gameloop(int argc, char **argv)
         if (G_EXPERIMENTAL_ON == 1 || default_GameOptions.use_default_background) {
             log_tag("debug_log.txt", "[DEBUG]",
                     "%s():    Calling use_default_colors()", __func__);
-            pair_content(0, &G_PAIR0_FG, &G_PAIR0_BG);
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 is {fg: %i, bg: %i}", __func__, G_PAIR0_FG, G_PAIR0_BG);
+            short int pair0_fg;
+            short int pair0_bg;
+            pair_content(0, &pair0_fg, &pair0_bg);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 is {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
             use_default_colors();
         }
 
