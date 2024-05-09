@@ -4264,7 +4264,10 @@ static void toggle_default_back(bool selected_use_default_background)
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 was: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
     }
     if (selected_use_default_background) {
-        use_default_colors();
+        int default_colors_res = use_default_colors();
+        if (default_colors_res != OK) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed use_default_colors(). Res: {%i}", __func__, default_colors_res);
+        }
         reset_color_pairs();
     } else {
         assume_default_colors(7,0);

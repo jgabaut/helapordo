@@ -514,6 +514,7 @@ void gameloop(int argc, char **argv)
             }
 
         }
+
         log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
 
         if (G_SEEDED_RUN_ON == 0) {
@@ -843,15 +844,18 @@ void gameloop(int argc, char **argv)
 
         WINDOW* screen = initscr();
 
-        if (default_GameOptions.use_default_background) {
-            // We don't use the global var here to allow the flag to override the static default before this.
+        if (default_GameOptions.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) {
+            // game_options is initialised later ATM. But the default is overridden by G_USE_DEFAULT_BACKGROUND atm, so all good
             log_tag("debug_log.txt", "[DEBUG]",
                     "%s():    Calling use_default_colors()", __func__);
             short int pair0_fg;
             short int pair0_bg;
             pair_content(0, &pair0_fg, &pair0_bg);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 is {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
-            use_default_colors();
+            int default_colors_res = use_default_colors();
+            if (default_colors_res != OK) {
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Failed use_default_colors(). Res: {%i}", __func__, default_colors_res);
+            }
         }
 
         bool screen_is_big_enough = false;
@@ -987,7 +991,7 @@ void gameloop(int argc, char **argv)
          */
 
         for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-            init_s4c_color_pair_ex(&palette[i], 9 + i, (G_EXPERIMENTAL_ON == 1 ? -1 : 0));
+            init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1 ) ? -1 : 0));
         }
         log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
         gamescreen->colors = COLORS;
@@ -1731,18 +1735,24 @@ void gameloop(int argc, char **argv)
                 int colorCheck = has_colors();
 
                 if (colorCheck == FALSE) {
+                    endwin();
                     fprintf(stderr, "Terminal can't use colors, abort.\n");
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
                     exit(S4C_ERR_TERMCOLOR);
                 }
 
                 colorCheck = can_change_color();
 
                 if (colorCheck == FALSE) {
+                    endwin();
                     fprintf(stderr, "Terminal can't change colors, abort.\n");
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
                     exit(S4C_ERR_TERMCHANGECOLOR);
                 }
                 for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-                    init_s4c_color_pair_ex(&palette[i], 9 + i, (G_EXPERIMENTAL_ON == 1 ? -1 : 0));
+                    init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) ? -1 : 0));
                 }
                 cbreak();
                 noecho();
@@ -2025,7 +2035,7 @@ void gameloop(int argc, char **argv)
                     exit(S4C_ERR_TERMCHANGECOLOR);
                 }
                 for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-                    init_s4c_color_pair_ex(&palette[i], 9 + i, (G_EXPERIMENTAL_ON == 1 ? -1 : 0));
+                    init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) ? -1 : 0));
                 }
                 cbreak();
                 noecho();
