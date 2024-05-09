@@ -383,38 +383,30 @@ void dbg_BSP_Room(BSP_Room* bsp_room)
     }
 }
 
-static void draw_vertical_wall(WINDOW* win, BSP_Wall* w, int start_y, int start_x, int color_index)
+static void draw_vertical_wall(WINDOW* win, BSP_Wall* w, int start_y, int start_x)
 {
     for (int y = w->start_y; y <= w->end_y; y++) {
         int tmp_x = w->start_x;
         int tmp_y = y;
         if ((tmp_x == w->start_x && tmp_y == w->start_y)
             || (tmp_x == w->end_x && tmp_y == w->end_y)) {
-            wattron(win, COLOR_PAIR(color_index));
             mvwprintw(win, start_y + y, start_x + w->start_x, "%s", "#");
-            wattroff(win, COLOR_PAIR(color_index));
         } else {
-            wattron(win, COLOR_PAIR(color_index));
             mvwprintw(win, start_y + y, start_x + w->start_x, "%s", "@");
-            wattroff(win, COLOR_PAIR(color_index));
         }
     }
 }
 
-static void draw_horizontal_wall(WINDOW* win, BSP_Wall* w, int start_y, int start_x, int color_index)
+static void draw_horizontal_wall(WINDOW* win, BSP_Wall* w, int start_y, int start_x)
 {
     for (int x = w->start_x; x <= w->end_x; x++) {
         int tmp_x = x;
         int tmp_y = w->start_y;
         if ((tmp_x == w->start_x && tmp_y == w->start_y)
             || (tmp_x == w->end_x && tmp_y == w->end_y)) {
-            wattron(win, COLOR_PAIR(color_index));
             mvwprintw(win, start_y + w->start_y, start_x + x, "%s", "#");
-            wattroff(win, COLOR_PAIR(color_index));
         } else {
-            wattron(win, COLOR_PAIR(color_index));
             mvwprintw(win, start_y + w->start_y, start_x + x, "%s", "@");
-            wattroff(win, COLOR_PAIR(color_index));
         }
     }
 }
@@ -422,22 +414,65 @@ static void draw_horizontal_wall(WINDOW* win, BSP_Wall* w, int start_y, int star
 void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, int depth)
 {
     if (bsp_room == NULL) return;
+    wattron(win, COLOR_PAIR(depth+9));
     for (int i=0; i<4; i++) {
         if (i == WALL_TOP || i == WALL_BOTTOM) {
-            draw_horizontal_wall(win, &(bsp_room->walls[i]), start_y, start_x, depth +9);
+            draw_horizontal_wall(win, &(bsp_room->walls[i]), start_y, start_x);
         } else {
-            draw_vertical_wall(win, &(bsp_room->walls[i]), start_y, start_x, depth+9);
+            draw_vertical_wall(win, &(bsp_room->walls[i]), start_y, start_x);
         }
     }
-    wattron(win, COLOR_PAIR(depth+9));
     mvwprintw(win, start_y + bsp_room->center_y, start_x + bsp_room->center_x, "%s", "c");
     wattroff(win, COLOR_PAIR(depth+9));
+
+    wrefresh(win);
+    napms(250);
 
     if (bsp_room->child_left != NULL) {
         draw_BSP_Room(win, bsp_room->child_left, start_y, start_x, (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
     }
 
     if (bsp_room->child_right != NULL) {
-        draw_BSP_Room(win, bsp_room->child_right, start_y, start_x,  (depth + 1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
+        draw_BSP_Room(win, bsp_room->child_right, start_y, start_x,  (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
     }
+
+}
+
+void draw_BSP_Tree(WINDOW* win, BSP_Room* node, int depth, int x, int y, int hz_spacing, int vrt_spacing)
+{
+    if (node == NULL) {
+        return;
+    }
+
+    // Move cursor to position in the window
+    wmove(win, y, x);
+
+    // Print the current node
+    wprintw(win, "%s", "(NODE)");
+
+    // Calculate positions for children
+    int left_x = x - hz_spacing;
+    int right_x = x + hz_spacing;
+    int child_y = y + vrt_spacing;
+
+    // Draw connectors if children exist
+    if (node->child_left != NULL) {
+        // Draw left connector
+        for (int i = x + 1; i < left_x; i++) {
+            mvwaddch(win, y + 1, i, '_');
+        }
+        // Recursively print the left subtree
+        draw_BSP_Tree(win, node->child_left, depth + 1, left_x, child_y, hz_spacing, vrt_spacing);
+    }
+
+    if (node->child_right != NULL) {
+        // Draw right connector
+        for (int i = x + 1; i < right_x; i++) {
+            mvwaddch(win, y + 1, i, '_');
+        }
+        // Recursively print the right subtree
+        draw_BSP_Tree(win, node->child_right, depth + 1, right_x, child_y, hz_spacing, vrt_spacing);
+    }
+
+    wrefresh(win);
 }

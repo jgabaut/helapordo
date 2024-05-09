@@ -2108,6 +2108,14 @@ void gameloop(int argc, char **argv)
                             refresh();
                             wgetch(test_win);
                             */
+                            /*
+                            WINDOW* win = newwin(LINES, COLS, 0, 0);
+                            clear();
+                            refresh();
+                            draw_BSP_Tree(win, bsp_tree, 0, COLS/2, 1, 6, 2);
+                            refresh();
+                            getch();
+                            */
                             dbg_BSP_Room(bsp_tree);
                             current_floor->from_bsp = true;
                         } else {
