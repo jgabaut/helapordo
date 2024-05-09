@@ -30,6 +30,18 @@ const char* helapordo_build_string = HELAPORDO_BUILD_STR "-" VERSION;
 const char* helapordo_build_string = "unknown-" VERSION;
 #endif
 
+char *hlpd_keyclass_strings[HLPD_KEYCLASS_MAX + 1] = {
+    [HLPD_UP_KEY] = "UP",
+    [HLPD_RIGHT_KEY] = "RIGHT",
+    [HLPD_DOWN_KEY] = "DOWN",
+    [HLPD_LEFT_KEY] = "LEFT",
+    [HLPD_DWNPAGE_KEY] = "DOWN_PAGE",
+    [HLPD_UPPAGE_KEY] = "UP_PAGE",
+    [HLPD_CONFIRM_KEY] = "CONFIRM",
+    [HLPD_QUIT_KEY] = "QUIT",
+    [HLPD_MENU_KEY] = "MENU",
+};
+
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
     "Standard",
     "Story",

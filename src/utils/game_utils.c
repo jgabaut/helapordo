@@ -1683,6 +1683,18 @@ char *stringFromFloorclass(floorClass fc)
 }
 
 /**
+ * Takes a integer and returns the corresponding HLPD_KeyClass string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see HLPD_KeyClass
+ * @param k The integer/HLPD_KeyClass.
+ * @return String corresponding to the HLPD_KeyClass.
+ */
+char *stringFrom_HLPD_KeyClass(HLPD_KeyClass k)
+{
+    return hlpd_keyclass_strings[k];
+}
+
+/**
  * Takes a Fighter pointer and sets its name value to the string provided on stdin.
  * @param player The pointer whose name value will be set.
  */

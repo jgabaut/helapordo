@@ -118,6 +118,7 @@ void log_tag(char *filename, char *header, const char *format, ...);
 void log_OP(turnOption_OP op);
 
 saveType saveTypeFrom_string(char *s);
+char *stringFrom_HLPD_KeyClass(HLPD_KeyClass k);
 char *stringFrom_HLP_Region_Type(HLP_Region_Type t);
 char *stringFrom_OP_res(OP_res r);
 char *stringFrom_saveType(saveType s);

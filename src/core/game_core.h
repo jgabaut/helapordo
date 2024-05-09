@@ -90,6 +90,43 @@ extern const char* helapordo_title_string; /**< Defines a formatted string for t
 extern const char* helapordo_build_string;
 
 /**
+ * The different kinds of HLDP_Key.
+ * Ordering is directly related to hlpd_keyclass_strings.
+ * @see hlpd_keyclass_strings
+ */
+typedef enum HLPD_KeyClass {
+    HLPD_UP_KEY = 0,
+    HLPD_RIGHT_KEY,
+    HLPD_DOWN_KEY,
+    HLPD_LEFT_KEY,
+    HLPD_DWNPAGE_KEY,
+    HLPD_UPPAGE_KEY,
+    HLPD_CONFIRM_KEY,
+    HLPD_QUIT_KEY,
+    HLPD_MENU_KEY,
+} HLPD_KeyClass;
+
+/** Maximum index of HLPD_KeyClass, so that the size has to add 1 for the 0th index
+ * @see HLPD_KeyClass
+ */
+#define HLPD_KEYCLASS_MAX 8
+
+/**
+ * Array with the name strings for Gamemode.
+ * @see Gamemode
+ */
+extern char *hlpd_keyclass_strings[HLPD_KEYCLASS_MAX + 1];
+
+/**
+ * Holds info about a keybind for the game.
+ * @see HLDP_KeyClass
+ */
+typedef struct HLPD_Key {
+    int val;
+    HLPD_KeyClass class;
+} HLPD_Key;
+
+/**
  * Holds options useful for user runtime preferences.
  */
 typedef struct GameOptions {
