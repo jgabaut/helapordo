@@ -3905,7 +3905,7 @@ void unlockSpecial(Fighter *f)
                 }
             }
         } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-        	/*Enter */
+            /*Enter */
             picked = 1;
             cur = current_item(my_menu);
             for (int i = 0; i < SPECIALSMAX + 1; i++) {

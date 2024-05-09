@@ -1011,7 +1011,7 @@ void gameloop(int argc, char **argv)
                     menudriver_res = menu_driver(savepick_menu, REQ_LAST_ITEM);
                 }
             } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_LEFT)) {
-            	/*Left option pick */
+                /*Left option pick */
                 ITEM *cur;
                 cur = current_item(savepick_menu);
                 savepick_choice = getTurnChoice((char *)item_name(cur));
@@ -1023,7 +1023,7 @@ void gameloop(int argc, char **argv)
                             "Should do something");
                 }
             } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
-            	/*Right option pick */
+                /*Right option pick */
                 ITEM *cur;
                 cur = current_item(savepick_menu);
                 savepick_choice = getTurnChoice((char *)item_name(cur));
@@ -1039,7 +1039,7 @@ void gameloop(int argc, char **argv)
             } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(savepick_menu, REQ_SCR_UPAGE);
             } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-            	/* Enter */
+                /* Enter */
                 ITEM *cur;
 
                 //move(18,47);

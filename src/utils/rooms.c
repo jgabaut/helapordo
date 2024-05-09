@@ -251,7 +251,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     menudriver_res = menu_driver(home_menu, REQ_LAST_ITEM);
                 }
             } else if ( c == hlpd_d_keyval(HLPD_KEY_LEFT)) {
-            	/*Left option pick */
+                /*Left option pick */
                 ITEM *cur;
                 cur = current_item(home_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -263,7 +263,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                             "Should do something");
                 }
             } else if ( c == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
-            	/*Right option pick */
+                /*Right option pick */
                 ITEM *cur;
                 cur = current_item(home_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -279,7 +279,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
             } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(home_menu, REQ_SCR_UPAGE);
             } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-            	/* Enter */
+                /* Enter */
                 picked = 1;
                 ITEM *cur;
 
@@ -919,7 +919,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                     menu_driver(my_menu, REQ_SCR_UPAGE);
                 } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-                	/* Enter */
+                    /* Enter */
                     picked = 1;
                     ITEM *cur;
 
@@ -1799,7 +1799,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(my_menu, REQ_SCR_UPAGE);
             } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-            	/* Enter */
+                /* Enter */
                 picked = 1;
                 ITEM *cur;
 
@@ -2331,7 +2331,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                         wrefresh(wins[0]);
                         refresh();
                     } else if ( ec == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-                    	/* Enter */
+                        /* Enter */
                         equipToBuy = room->shop->equips[equips_index];
                         buyEquip = 1;
                         buyConsumable = 0;
@@ -2379,7 +2379,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                         wrefresh(wins[0]);
                         refresh();
                     } else if ( cc == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-                    	/* Enter */
+                        /* Enter */
                         consumableToBuy =
                             room->shop->consumables[consumables_index];
                         buyEquip = 0;
@@ -2651,7 +2651,7 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
         } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
         } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-        	// Enter
+            // Enter
             ITEM *cur;
 
             cur = current_item(my_menu);
@@ -3122,7 +3122,7 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
         } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
         } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-        	// Enter
+            // Enter
             ITEM *cur;
 
             cur = current_item(my_menu);

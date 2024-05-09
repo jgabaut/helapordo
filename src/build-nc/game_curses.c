@@ -3200,7 +3200,7 @@ void handleEquips(Fighter *f, Path *p)
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
         } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-        	/*Enter */
+            /*Enter */
             picked = 1;
             int check = -1;
 
@@ -3509,7 +3509,7 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
         } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-        	/*Enter */
+            /*Enter */
             picked = 1;
 
             cur = current_item(my_menu);
@@ -4049,7 +4049,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     menudriver_res = menu_driver(rogue_menu, REQ_LAST_ITEM);
                 }
             } else if ( c == hlpd_d_keyval(HLPD_KEY_LEFT)) {
-            	/*Left option pick */
+                /*Left option pick */
                 ITEM *cur;
                 cur = current_item(rogue_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -4061,7 +4061,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                             "Should do something");
                 }
             } else if ( c == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
-            	/*Right option pick */
+                /*Right option pick */
                 ITEM *cur;
                 cur = current_item(rogue_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -4077,7 +4077,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
             } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(rogue_menu, REQ_SCR_UPAGE);
             } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-            	/* Enter */
+                /* Enter */
                 picked = 1;
                 ITEM *cur;
 
