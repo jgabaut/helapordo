@@ -166,7 +166,7 @@ static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kl
         return;
 
     if (room->walls[WALL_LEFT].start_y + (BSP_ROOM_SIZE / 2) >= room->walls[WALL_LEFT].end_y - (BSP_ROOM_SIZE / 2)) {
-	    log_tag("debug_log.txt", "[DEBUG]", "%s():    passed BSP_Room can't be split further", __func__);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    passed BSP_Room can't be split further", __func__);
         /*
         for (int i=0; i < 4; i++) {
             log_tag("debug_log.txt", "[BSP_ROOM]", "Wall [%s]: {" BSP_Wall_Fmt "}", stringFromBSP_Wall_Index(i), BSP_Wall_Arg(room->walls[i]));
@@ -255,7 +255,7 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kls
         return;
 
     if (room->walls[WALL_TOP].start_x + BSP_ROOM_SIZE >= room->walls[WALL_TOP].end_x - BSP_ROOM_SIZE) {
-	    log_tag("debug_log.txt", "[DEBUG]", "%s():    passed BSP_Room can't be split further", __func__);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    passed BSP_Room can't be split further", __func__);
         /*
         for (int i=0; i < 4; i++) {
             log_tag("debug_log.txt", "[BSP_ROOM]", "Wall [%s]: {" BSP_Wall_Fmt "}", stringFromBSP_Wall_Index(i), BSP_Wall_Arg(room->walls[i]));

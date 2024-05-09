@@ -1789,7 +1789,7 @@ void pickClass(Fighter *player)
 
             // Define menu options and their toggle states
             Toggle toggles[] = {
-            {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(class_inputbuf_max_size, height, width, start_x, start_y)}, (char*)class_toggle_label, false},
+                {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(class_inputbuf_max_size, height, width, start_x, start_y)}, (char*)class_toggle_label, false},
             };
             int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
 
@@ -1905,7 +1905,7 @@ void pickName(Fighter *player)
 
             // Define menu options and their toggle states
             Toggle toggles[] = {
-            {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(name_inputbuf_max_size, height, width, start_x, start_y)}, (char*)name_toggle_label, false},
+                {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(name_inputbuf_max_size, height, width, start_x, start_y)}, (char*)name_toggle_label, false},
             };
             int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
 

@@ -274,7 +274,7 @@ int get_saveslot_index(void)
         } else if (c == hlpd_default_keybinds[HLPD_KEY_UPPAGE].val) {
             menu_driver(saveslots_menu, REQ_SCR_UPAGE);
         } else if (c == hlpd_default_keybinds[HLPD_KEY_CONFIRM].val) {
-	        /* Enter */
+            /* Enter */
             picked = 1;
             ITEM *cur;
             //move(18,47);
