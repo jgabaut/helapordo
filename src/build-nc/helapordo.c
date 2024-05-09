@@ -128,8 +128,12 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVD")) != -1) {
+        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVDb")) != -1) {
             switch (option) {
+            case 'b': {
+                G_USE_DEFAULT_BACKGROUND = 1;
+            }
+            break;
             case 'D': {
                 G_USE_CURRENTDIR = 1;
             }
@@ -142,18 +146,18 @@ void gameloop(int argc, char **argv)
             case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
-                G_DEBUG_ON += 1;
+                G_DEBUG_ON = 1;
                 G_LOG_ON = 1;
 #endif
             }
             break;
             case 'r': {
-                G_DEBUG_ROOMTYPE_ON += 1;
+                G_DEBUG_ROOMTYPE_ON = 1;
                 G_DEBUG_ROOMTYPE_ARG = optarg;
             }
             break;
             case 'E': {
-                G_DEBUG_ENEMYTYPE_ON += 1;
+                G_DEBUG_ENEMYTYPE_ON = 1;
                 G_DEBUG_ENEMYTYPE_ARG = optarg;
             }
             break;
@@ -881,7 +885,8 @@ void gameloop(int argc, char **argv)
         GameOptions game_options = default_GameOptions;
 
         log_tag("debug_log.txt", "[DEBUG]", "%s():    setting game_options.do_autosave to (GS_AUTOSAVE_ON == 1): {%s}", __func__, (GS_AUTOSAVE_ON == 1 ? "true" : "false"));
-        game_options.do_autosave = (GS_AUTOSAVE_ON == 1);
+        game_options.do_autosave = (GS_AUTOSAVE_ON == 1); // Global var overtakes
+        game_options.use_default_background = (G_USE_DEFAULT_BACKGROUND == 1); // Global var overtakes
 
         ITEM **savepick_items;
         MENU *savepick_menu;

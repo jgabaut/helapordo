@@ -4248,6 +4248,34 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
 }
 
 /**
+ * Utility to switch the current background mode and use the default terminal one.
+ * Inverts current state.
+ * @param selected_use_default_background Indicates if the caller wants to toggle to on or to off.
+ */
+static void toggle_default_back(bool selected_use_default_background)
+{
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    User switched default background options, reloading colors", __func__);
+    if (selected_use_default_background) {
+        // Coming from opaque mode
+        // TODO: store color pair 0?
+        short int pair0_fg = -2;
+        short int pair0_bg = -2;
+        pair_content(0, &pair0_fg, &pair0_bg);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 was: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
+    }
+    if (selected_use_default_background) {
+        use_default_colors();
+        reset_color_pairs();
+    } else {
+        assume_default_colors(7,0);
+        reset_color_pairs();
+    }
+    for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+        init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
+    }
+}
+
+/**
  * Takes a GameOptions pointer and prompts the user with a form to change options.
  * @param game_options Pointer to GameOptions.
  * return 0 on success, non-zero on errors.
@@ -4296,26 +4324,12 @@ int handleGameOptions(GameOptions * game_options)
 
     bool selected_use_default_background = toggle_menu.toggles[0].state.bool_state;
     if ( game_options->use_default_background != selected_use_default_background) {
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    User switched default background options, reloading colors", __func__);
-        if (selected_use_default_background) {
-            // Coming from opaque mode
-            // TODO: store color pair 0?
-            short int pair0_fg = -2;
-            short int pair0_bg = -2;
-            pair_content(0, &pair0_fg, &pair0_bg);
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 is now: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
-        }
-        if (selected_use_default_background) {
-            use_default_colors();
-            reset_color_pairs();
-        } else {
-            assume_default_colors(7,0);
-            reset_color_pairs();
-        }
-        for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-            init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
-        }
+        toggle_default_back(selected_use_default_background);
         game_options->use_default_background = selected_use_default_background;
+        short int pair0_fg = -2;
+        short int pair0_bg = -2;
+        pair_content(0, &pair0_fg, &pair0_bg);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 now is: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
     }
     game_options->do_autosave = toggle_menu.toggles[1].state.bool_state;
     endwin(); // End ncurses after resetting color pairs ?

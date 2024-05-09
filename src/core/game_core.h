@@ -217,6 +217,11 @@ extern int G_DOTUTORIAL_ON;
  */
 extern int G_USE_CURRENTDIR;
 
+/**
+ * Global variable for using terminal default color.
+ */
+extern int G_USE_DEFAULT_BACKGROUND;
+
 
 /**
  * Global variable used to count advancements of the rng.
