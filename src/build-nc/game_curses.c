@@ -4308,13 +4308,14 @@ int handleGameOptions(GameOptions * game_options)
         }
         if (selected_use_default_background) {
             use_default_colors();
+            reset_color_pairs();
         } else {
+            assume_default_colors(7,0);
             reset_color_pairs();
         }
         for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
             init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
         }
-        //wbkgd(stdscr, COLOR_PAIR(selected_use_default_background ? -1 : 0));
         game_options->use_default_background = selected_use_default_background;
     }
     game_options->do_autosave = toggle_menu.toggles[1].state.bool_state;

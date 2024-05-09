@@ -559,6 +559,6 @@ const wchar_t LEGS_CHAR_ICON = 'L';
 #endif // _WIN32
 
 const GameOptions default_GameOptions = {
-    .use_default_background = true,
+    .use_default_background = false,
     .do_autosave = true,
 };
