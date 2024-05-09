@@ -4273,6 +4273,7 @@ static void toggle_default_back(bool selected_use_default_background)
     for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
         init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
     }
+    G_USE_DEFAULT_BACKGROUND = (G_USE_DEFAULT_BACKGROUND == 1 ? 0 : 1);
 }
 
 /**

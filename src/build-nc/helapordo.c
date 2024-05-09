@@ -843,7 +843,8 @@ void gameloop(int argc, char **argv)
 
         WINDOW* screen = initscr();
 
-        if (G_EXPERIMENTAL_ON == 1 || default_GameOptions.use_default_background) {
+        if (default_GameOptions.use_default_background) {
+            // We don't use the global var here to allow the flag to override the static default before this.
             log_tag("debug_log.txt", "[DEBUG]",
                     "%s():    Calling use_default_colors()", __func__);
             short int pair0_fg;
