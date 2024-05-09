@@ -414,28 +414,25 @@ static void draw_horizontal_wall(WINDOW* win, BSP_Wall* w, int start_y, int star
 void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, int depth)
 {
     if (bsp_room == NULL) return;
-    wattron(win, COLOR_PAIR(depth+9));
-    for (int i=0; i<4; i++) {
-        if (i == WALL_TOP || i == WALL_BOTTOM) {
-            draw_horizontal_wall(win, &(bsp_room->walls[i]), start_y, start_x);
-        } else {
-            draw_vertical_wall(win, &(bsp_room->walls[i]), start_y, start_x);
-        }
-    }
-    mvwprintw(win, start_y + bsp_room->center_y, start_x + bsp_room->center_x, "%s", "c");
-    wattroff(win, COLOR_PAIR(depth+9));
 
-    wrefresh(win);
-    napms(250);
-
-    if (bsp_room->child_left != NULL) {
+    if (bsp_room->child_left != NULL && bsp_room->child_right != NULL) {
         draw_BSP_Room(win, bsp_room->child_left, start_y, start_x, (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
-    }
-
-    if (bsp_room->child_right != NULL) {
         draw_BSP_Room(win, bsp_room->child_right, start_y, start_x,  (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
-    }
+    } else {
+        wattron(win, COLOR_PAIR(depth+9));
+        for (int i=0; i<4; i++) {
+            if (i == WALL_TOP || i == WALL_BOTTOM) {
+                draw_horizontal_wall(win, &(bsp_room->walls[i]), start_y, start_x);
+            } else {
+                draw_vertical_wall(win, &(bsp_room->walls[i]), start_y, start_x);
+            }
+        }
+        mvwprintw(win, start_y + bsp_room->center_y, start_x + bsp_room->center_x, "%s", "c");
+        wattroff(win, COLOR_PAIR(depth+9));
 
+        wrefresh(win);
+        napms(250);
+    }
 }
 
 void draw_BSP_Tree(WINDOW* win, BSP_Room* node, int depth, int x, int y, int hz_spacing, int vrt_spacing)
