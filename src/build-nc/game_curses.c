@@ -238,23 +238,18 @@ int get_saveslot_index(void)
     wrefresh(saveslots_win);
     refresh();
 
-    while (!picked && (c = wgetch(menu_win)) != KEY_F(1)) {
-        switch (c) {
-        case KEY_DOWN: {
+    while (!picked && (c = wgetch(menu_win)) != KEY_F(1)) { // This key is not mapped into the keybinds yet.
+        if (c == hlpd_default_keybinds[HLPD_KEY_DOWN].val) {
             int menudriver_res = menu_driver(saveslots_menu, REQ_DOWN_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(saveslots_menu, REQ_FIRST_ITEM);
             }
-        }
-        break;
-        case KEY_UP: {
+        } else if (c == hlpd_default_keybinds[HLPD_KEY_UP].val) {
             int menudriver_res = menu_driver(saveslots_menu, REQ_UP_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(saveslots_menu, REQ_LAST_ITEM);
             }
-        }
-        break;
-        case KEY_LEFT: {	/*Left option pick */
+        } else if (c == hlpd_default_keybinds[HLPD_KEY_LEFT].val) {
             ITEM *cur;
             cur = current_item(saveslots_menu);
             choice = getTurnChoice((char *)item_name(cur));
@@ -264,9 +259,7 @@ int get_saveslot_index(void)
             if (choice == EQUIPS) {
                 log_tag("debug_log.txt", "[DEBUG]", "Should do something");
             }
-        }
-        break;
-        case KEY_RIGHT: {	/*Right option pick */
+        } else if (c == hlpd_default_keybinds[HLPD_KEY_RIGHT].val) {
             ITEM *cur;
             cur = current_item(saveslots_menu);
             choice = getTurnChoice((char *)item_name(cur));
@@ -276,15 +269,12 @@ int get_saveslot_index(void)
             if (choice == EQUIPS) {
                 log_tag("debug_log.txt", "[DEBUG]", "Should do something");
             }
-        }
-        break;
-        case KEY_NPAGE:
+        } else if (c == hlpd_default_keybinds[HLPD_KEY_DWNPAGE].val) {
             menu_driver(saveslots_menu, REQ_SCR_DPAGE);
-            break;
-        case KEY_PPAGE:
+        } else if (c == hlpd_default_keybinds[HLPD_KEY_UPPAGE].val) {
             menu_driver(saveslots_menu, REQ_SCR_UPAGE);
-            break;
-        case 10: {	/* Enter */
+        } else if (c == hlpd_default_keybinds[HLPD_KEY_CONFIRM].val) {
+	        /* Enter */
             picked = 1;
             ITEM *cur;
             //move(18,47);
@@ -294,9 +284,7 @@ int get_saveslot_index(void)
             choice = atoi(item_name(cur));
             pos_menu_cursor(saveslots_menu);
             refresh();
-        };
-        break;
-        case 'q': {
+        } else if (c == hlpd_default_keybinds[HLPD_KEY_QUIT].val) {
             if (G_FASTQUIT_ON == 1) {
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Player used q to quit from [%s].", __func__);
@@ -309,13 +297,9 @@ int get_saveslot_index(void)
                         "Player used q in [%s], but G_FASTQUIT_ON was not 1.",
                         __func__);
             }
-        }
-        break;
-        default: {
+        } else {
             log_tag("debug_log.txt", "[DEBUG]", "Invalid keystroke in [%s]",
                     __func__);
-        }
-        break;
         }
         wrefresh(menu_win);
         refresh();
@@ -2635,34 +2619,26 @@ void displayEquipbagMenu(Fighter *f)
     ITEM *cur = NULL;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
+        if ( c == hlpd_default_keybinds[HLPD_KEY_DOWN].val) {
             int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
             }
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_UP: {
+        } else if ( c == hlpd_default_keybinds[HLPD_KEY_UP].val) {
             int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
             }
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_default_keybinds[HLPD_KEY_DWNPAGE].val) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_default_keybinds[HLPD_KEY_UPPAGE].val) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
-        }
-        break;
-        case 10: {		/*Enter, set equip */
+        } else if ( c == hlpd_default_keybinds[HLPD_KEY_CONFIRM].val) {
+            /*Enter, set equip */
             picked = 1;
 
             cur = current_item(my_menu);
@@ -2700,8 +2676,6 @@ void displayEquipbagMenu(Fighter *f)
             pos_menu_cursor(my_menu);
             refresh();
         };
-        break;
-        }
 
         int num = item_index(cur);
         num = (num >= 0 && num <= n_choices ? num : 0);

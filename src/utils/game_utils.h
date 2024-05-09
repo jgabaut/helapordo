@@ -313,4 +313,5 @@ int hlpd_rand(void);
 unsigned long hlpd_hash(unsigned char *str);
 void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1]);
 bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
+
 #endif

@@ -31,27 +31,27 @@ const char* helapordo_build_string = "unknown-" VERSION;
 #endif
 
 char *hlpd_keyclass_strings[HLPD_KEYCLASS_MAX + 1] = {
-    [HLPD_UP_KEY] = "UP",
-    [HLPD_RIGHT_KEY] = "RIGHT",
-    [HLPD_DOWN_KEY] = "DOWN",
-    [HLPD_LEFT_KEY] = "LEFT",
-    [HLPD_DWNPAGE_KEY] = "DOWN_PAGE",
-    [HLPD_UPPAGE_KEY] = "UP_PAGE",
-    [HLPD_CONFIRM_KEY] = "CONFIRM",
-    [HLPD_QUIT_KEY] = "QUIT",
-    [HLPD_MENU_KEY] = "MENU",
+    [HLPD_KEY_UP] = "UP",
+    [HLPD_KEY_RIGHT] = "RIGHT",
+    [HLPD_KEY_DOWN] = "DOWN",
+    [HLPD_KEY_LEFT] = "LEFT",
+    [HLPD_KEY_DWNPAGE] = "DOWN_PAGE",
+    [HLPD_KEY_UPPAGE] = "UP_PAGE",
+    [HLPD_KEY_CONFIRM] = "CONFIRM",
+    [HLPD_KEY_QUIT] = "QUIT",
+    [HLPD_KEY_MENU] = "MENU",
 };
 
 HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1] = {
-    [HLPD_UP_KEY] = {.class = HLPD_UP_KEY, .val = KEY_UP},
-    [HLPD_RIGHT_KEY] = {.class = HLPD_RIGHT_KEY, .val = KEY_RIGHT},
-    [HLPD_DOWN_KEY] = {.class = HLPD_DOWN_KEY, .val = KEY_DOWN},
-    [HLPD_LEFT_KEY] = {.class = HLPD_LEFT_KEY, .val = KEY_LEFT},
-    [HLPD_DWNPAGE_KEY] = {.class = HLPD_DWNPAGE_KEY, .val = KEY_NPAGE},
-    [HLPD_UPPAGE_KEY] = {.class = HLPD_UPPAGE_KEY, .val = KEY_PPAGE},
-    [HLPD_CONFIRM_KEY] = {.class = HLPD_CONFIRM_KEY, .val = 10},
-    [HLPD_QUIT_KEY] = {.class = HLPD_QUIT_KEY, .val = 'q'},
-    [HLPD_MENU_KEY] = {.class = HLPD_MENU_KEY, .val = 'm'},
+    [HLPD_KEY_UP] = {.class = HLPD_KEY_UP, .val = KEY_UP},
+    [HLPD_KEY_RIGHT] = {.class = HLPD_KEY_RIGHT, .val = KEY_RIGHT},
+    [HLPD_KEY_DOWN] = {.class = HLPD_KEY_DOWN, .val = KEY_DOWN},
+    [HLPD_KEY_LEFT] = {.class = HLPD_KEY_LEFT, .val = KEY_LEFT},
+    [HLPD_KEY_DWNPAGE] = {.class = HLPD_KEY_DWNPAGE, .val = KEY_NPAGE},
+    [HLPD_KEY_UPPAGE] = {.class = HLPD_KEY_UPPAGE, .val = KEY_PPAGE},
+    [HLPD_KEY_CONFIRM] = {.class = HLPD_KEY_CONFIRM, .val = 10},
+    [HLPD_KEY_QUIT] = {.class = HLPD_KEY_QUIT, .val = 'q'},
+    [HLPD_KEY_MENU] = {.class = HLPD_KEY_MENU, .val = 'm'},
 };
 
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {

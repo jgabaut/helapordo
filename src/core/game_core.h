@@ -95,15 +95,15 @@ extern const char* helapordo_build_string;
  * @see hlpd_keyclass_strings
  */
 typedef enum HLPD_KeyClass {
-    HLPD_UP_KEY = 0,
-    HLPD_RIGHT_KEY,
-    HLPD_DOWN_KEY,
-    HLPD_LEFT_KEY,
-    HLPD_DWNPAGE_KEY,
-    HLPD_UPPAGE_KEY,
-    HLPD_CONFIRM_KEY,
-    HLPD_QUIT_KEY,
-    HLPD_MENU_KEY,
+    HLPD_KEY_UP = 0,
+    HLPD_KEY_RIGHT,
+    HLPD_KEY_DOWN,
+    HLPD_KEY_LEFT,
+    HLPD_KEY_DWNPAGE,
+    HLPD_KEY_UPPAGE,
+    HLPD_KEY_CONFIRM,
+    HLPD_KEY_QUIT,
+    HLPD_KEY_MENU,
 } HLPD_KeyClass;
 
 /** Maximum index of HLPD_KeyClass, so that the size has to add 1 for the 0th index
