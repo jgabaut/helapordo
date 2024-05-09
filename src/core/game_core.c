@@ -54,6 +54,11 @@ HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1] = {
     [HLPD_KEY_MENU] = {.class = HLPD_KEY_MENU, .val = 'm'},
 };
 
+char *hlpd_directionalkeyschemas_strings[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX + 1] = {
+    "Arrow keys",
+    "Vim keys",
+};
+
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
     "Standard",
     "Story",
@@ -585,4 +590,5 @@ const wchar_t LEGS_CHAR_ICON = 'L';
 const GameOptions default_GameOptions = {
     .use_default_background = false,
     .do_autosave = true,
+    .directional_keys_schema = HLPD_ARROW_KEYS,
 };

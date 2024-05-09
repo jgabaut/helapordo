@@ -129,11 +129,33 @@ typedef struct HLPD_Key {
 extern HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1];
 
 /**
+ * The different kinds of schemas available for directional keys.
+ * Ordering is directly related to hlpd_directionalkeyschema_strings.
+ * @see hlpd_directionalkeyschema_strings
+ */
+typedef enum HLPD_DirectionalKeys_Schema {
+    HLPD_ARROW_KEYS=0,
+    HLDP_VIM_KEYS,
+} HLPD_DirectionalKeys_Schema;
+
+/** Maximum index of HLPD_DirectionalKeys_Schema, so that the size has to add 1 for the 0th index
+ * @see HLPD_DirectionalKeys_Schema
+ */
+#define HLPD_DIRECTIONALKEYS_SCHEMAS_MAX 1
+
+/**
+ * Array with the name strings for HLPD_DirectionalKeys_Schema.
+ * @see HLPD_DirectionalKeys_Schema
+ */
+extern char *hlpd_directionalkeyschemas_strings[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX + 1];
+
+/**
  * Holds options useful for user runtime preferences.
  */
 typedef struct GameOptions {
     bool use_default_background;
     bool do_autosave;
+    HLPD_DirectionalKeys_Schema directional_keys_schema;
 } GameOptions;
 
 extern const GameOptions default_GameOptions;

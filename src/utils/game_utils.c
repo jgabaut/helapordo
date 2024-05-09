@@ -1695,6 +1695,18 @@ char *stringFrom_HLPD_KeyClass(HLPD_KeyClass k)
 }
 
 /**
+ * Takes a integer and returns the corresponding HLPD_DirectionalKeys_Schema string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see HLPD_DirectionalKeys_Schema
+ * @param dks The integer/HLPD_DirectionalKeys_Schema.
+ * @return String corresponding to the HLPD_DirectionalKeys_Schema.
+ */
+char *stringFrom_HLPD_DirectionalKeys_Schema(HLPD_DirectionalKeys_Schema dks)
+{
+    return hlpd_directionalkeyschemas_strings[dks];
+}
+
+/**
  * Takes a Fighter pointer and sets its name value to the string provided on stdin.
  * @param player The pointer whose name value will be set.
  */
