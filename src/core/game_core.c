@@ -42,6 +42,18 @@ char *hlpd_keyclass_strings[HLPD_KEYCLASS_MAX + 1] = {
     [HLPD_MENU_KEY] = "MENU",
 };
 
+HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1] = {
+    [HLPD_UP_KEY] = {.class = HLPD_UP_KEY, .val = KEY_UP},
+    [HLPD_RIGHT_KEY] = {.class = HLPD_RIGHT_KEY, .val = KEY_RIGHT},
+    [HLPD_DOWN_KEY] = {.class = HLPD_DOWN_KEY, .val = KEY_DOWN},
+    [HLPD_LEFT_KEY] = {.class = HLPD_LEFT_KEY, .val = KEY_LEFT},
+    [HLPD_DWNPAGE_KEY] = {.class = HLPD_DWNPAGE_KEY, .val = KEY_NPAGE},
+    [HLPD_UPPAGE_KEY] = {.class = HLPD_UPPAGE_KEY, .val = KEY_PPAGE},
+    [HLPD_CONFIRM_KEY] = {.class = HLPD_CONFIRM_KEY, .val = 10},
+    [HLPD_QUIT_KEY] = {.class = HLPD_QUIT_KEY, .val = 'q'},
+    [HLPD_MENU_KEY] = {.class = HLPD_MENU_KEY, .val = 'm'},
+};
+
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
     "Standard",
     "Story",

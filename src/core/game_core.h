@@ -126,6 +126,8 @@ typedef struct HLPD_Key {
     HLPD_KeyClass class;
 } HLPD_Key;
 
+extern HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1];
+
 /**
  * Holds options useful for user runtime preferences.
  */
