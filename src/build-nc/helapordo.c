@@ -1000,22 +1000,18 @@ void gameloop(int argc, char **argv)
 
         while (!savepick_picked
                && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
-            switch (pickchar) {
-            case KEY_DOWN: {
+            if ( pickchar == hlpd_d_keyval(HLPD_KEY_DOWN)) {
                 int menudriver_res = menu_driver(savepick_menu, REQ_DOWN_ITEM);
                 if (menudriver_res == E_REQUEST_DENIED) {
                     menudriver_res = menu_driver(savepick_menu, REQ_FIRST_ITEM);
                 }
-            }
-            break;
-            case KEY_UP: {
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UP)) {
                 int menudriver_res = menu_driver(savepick_menu, REQ_UP_ITEM);
                 if (menudriver_res == E_REQUEST_DENIED) {
                     menudriver_res = menu_driver(savepick_menu, REQ_LAST_ITEM);
                 }
-            }
-            break;
-            case KEY_LEFT: {	/*Left option pick */
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_LEFT)) {
+            	/*Left option pick */
                 ITEM *cur;
                 cur = current_item(savepick_menu);
                 savepick_choice = getTurnChoice((char *)item_name(cur));
@@ -1026,9 +1022,8 @@ void gameloop(int argc, char **argv)
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_RIGHT: {	/*Right option pick */
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
+            	/*Right option pick */
                 ITEM *cur;
                 cur = current_item(savepick_menu);
                 savepick_choice = getTurnChoice((char *)item_name(cur));
@@ -1039,17 +1034,12 @@ void gameloop(int argc, char **argv)
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_NPAGE: {
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
                 menu_driver(savepick_menu, REQ_SCR_DPAGE);
-            }
-            break;
-            case KEY_PPAGE: {
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(savepick_menu, REQ_SCR_UPAGE);
-            }
-            break;
-            case 10: {	/* Enter */
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            	/* Enter */
                 ITEM *cur;
 
                 //move(18,47);
@@ -1062,9 +1052,7 @@ void gameloop(int argc, char **argv)
                 }
                 pos_menu_cursor(savepick_menu);
                 refresh();
-            }
-            break;
-            case 'q': {
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_QUIT)) {
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Player used q to quit from savepick menu.");
                 //TODO: take some variable to disable quick quitting with q
@@ -1072,11 +1060,6 @@ void gameloop(int argc, char **argv)
                 savepick_choice = getTurnChoice("Quit");
                 pos_menu_cursor(savepick_menu);
                 refresh();
-            }
-            break;
-            default: {
-                break;
-            }
             }
             wrefresh(savepick_menu_win);
             if (savepick_choice == NEW_GAME) {

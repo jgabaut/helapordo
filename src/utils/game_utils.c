@@ -3842,8 +3842,7 @@ void unlockSpecial(Fighter *f)
     int c;
 
     while (!picked && (c = wgetch(my_menu_win))) {
-        switch (c) {
-        case KEY_DOWN: {
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             menu_driver(my_menu, REQ_DOWN_ITEM);
             cur = current_item(my_menu);
             //Update selected window
@@ -3856,9 +3855,7 @@ void unlockSpecial(Fighter *f)
                     break;
                 }
             }
-        }
-        break;
-        case KEY_UP: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
             menu_driver(my_menu, REQ_UP_ITEM);
             cur = current_item(my_menu);
             for (int i = 0; i < SPECIALSMAX + 1; i++) {
@@ -3870,9 +3867,7 @@ void unlockSpecial(Fighter *f)
                     break;
                 }
             }
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
             //Update selected window
@@ -3885,9 +3880,7 @@ void unlockSpecial(Fighter *f)
                     break;
                 }
             }
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
             for (int i = 0; i < SPECIALSMAX + 1; i++) {
@@ -3899,9 +3892,8 @@ void unlockSpecial(Fighter *f)
                     break;
                 }
             }
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+        	/*Enter */
             picked = 1;
             cur = current_item(my_menu);
             for (int i = 0; i < SPECIALSMAX + 1; i++) {
@@ -3916,8 +3908,6 @@ void unlockSpecial(Fighter *f)
                 pos_menu_cursor(my_menu);
                 refresh();
             };
-            break;
-        }
         }
         wclear(display_win);
         wrefresh(display_win);

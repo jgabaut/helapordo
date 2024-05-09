@@ -239,17 +239,17 @@ int get_saveslot_index(void)
     refresh();
 
     while (!picked && (c = wgetch(menu_win)) != KEY_F(1)) { // This key is not mapped into the keybinds yet.
-        if (c == hlpd_default_keybinds[HLPD_KEY_DOWN].val) {
+        if (c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             int menudriver_res = menu_driver(saveslots_menu, REQ_DOWN_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(saveslots_menu, REQ_FIRST_ITEM);
             }
-        } else if (c == hlpd_default_keybinds[HLPD_KEY_UP].val) {
+        } else if (c == hlpd_d_keyval(HLPD_KEY_UP)) {
             int menudriver_res = menu_driver(saveslots_menu, REQ_UP_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(saveslots_menu, REQ_LAST_ITEM);
             }
-        } else if (c == hlpd_default_keybinds[HLPD_KEY_LEFT].val) {
+        } else if (c == hlpd_d_keyval(HLPD_KEY_LEFT)) {
             ITEM *cur;
             cur = current_item(saveslots_menu);
             choice = getTurnChoice((char *)item_name(cur));
@@ -259,7 +259,7 @@ int get_saveslot_index(void)
             if (choice == EQUIPS) {
                 log_tag("debug_log.txt", "[DEBUG]", "Should do something");
             }
-        } else if (c == hlpd_default_keybinds[HLPD_KEY_RIGHT].val) {
+        } else if (c == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
             ITEM *cur;
             cur = current_item(saveslots_menu);
             choice = getTurnChoice((char *)item_name(cur));
@@ -269,11 +269,11 @@ int get_saveslot_index(void)
             if (choice == EQUIPS) {
                 log_tag("debug_log.txt", "[DEBUG]", "Should do something");
             }
-        } else if (c == hlpd_default_keybinds[HLPD_KEY_DWNPAGE].val) {
+        } else if (c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(saveslots_menu, REQ_SCR_DPAGE);
-        } else if (c == hlpd_default_keybinds[HLPD_KEY_UPPAGE].val) {
+        } else if (c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(saveslots_menu, REQ_SCR_UPAGE);
-        } else if (c == hlpd_default_keybinds[HLPD_KEY_CONFIRM].val) {
+        } else if (c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
             /* Enter */
             picked = 1;
             ITEM *cur;
@@ -284,7 +284,7 @@ int get_saveslot_index(void)
             choice = atoi(item_name(cur));
             pos_menu_cursor(saveslots_menu);
             refresh();
-        } else if (c == hlpd_default_keybinds[HLPD_KEY_QUIT].val) {
+        } else if (c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
             if (G_FASTQUIT_ON == 1) {
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Player used q to quit from [%s].", __func__);
@@ -2619,25 +2619,25 @@ void displayEquipbagMenu(Fighter *f)
     ITEM *cur = NULL;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        if ( c == hlpd_default_keybinds[HLPD_KEY_DOWN].val) {
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
             }
             cur = current_item(my_menu);
-        } else if ( c == hlpd_default_keybinds[HLPD_KEY_UP].val) {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
             int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
             }
             cur = current_item(my_menu);
-        } else if ( c == hlpd_default_keybinds[HLPD_KEY_DWNPAGE].val) {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
-        } else if ( c == hlpd_default_keybinds[HLPD_KEY_UPPAGE].val) {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
-        } else if ( c == hlpd_default_keybinds[HLPD_KEY_CONFIRM].val) {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
             /*Enter, set equip */
             picked = 1;
 
@@ -2827,8 +2827,7 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
     ITEM *cur;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
@@ -2838,9 +2837,7 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedConsumableW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_UP: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
             int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
@@ -2850,27 +2847,22 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedConsumableW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedConsumableW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedConsumableW(my_wins[0], my_menu, f);
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /*Enter */
             picked = 1;
 
             cur = current_item(my_menu);
@@ -2879,8 +2871,6 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
             pos_menu_cursor(my_menu);
             refresh();
         };
-        break;
-        }
         wrefresh(my_menu_win);
     }
     /* Unpost and free all the memory taken up */
@@ -3019,8 +3009,7 @@ void handleArtifacts(Fighter *f)
     ITEM *cur;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
@@ -3030,9 +3019,7 @@ void handleArtifacts(Fighter *f)
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedArtifactW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_UP: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
             int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
@@ -3042,27 +3029,22 @@ void handleArtifacts(Fighter *f)
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedArtifactW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedArtifactW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedArtifactW(my_wins[0], my_menu, f);
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /*Enter */
             picked = 1;
 
             move(18, 47);
@@ -3073,8 +3055,6 @@ void handleArtifacts(Fighter *f)
             pos_menu_cursor(my_menu);
             refresh();
         };
-        break;
-        }
         wrefresh(my_menu_win);
     }
     /* Unpost and free all the memory taken up */
@@ -3201,34 +3181,26 @@ void handleEquips(Fighter *f, Path *p)
     ITEM *cur;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
             }
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_UP: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
             int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
             }
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+        	/*Enter */
             picked = 1;
             int check = -1;
 
@@ -3245,8 +3217,6 @@ void handleEquips(Fighter *f, Path *p)
             pos_menu_cursor(my_menu);
             refresh();
         };
-        break;
-        }
         wrefresh(my_menu_win);
     }
     /* Unpost and free all the memory taken up */
@@ -3504,8 +3474,7 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
     ITEM *cur;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
@@ -3515,9 +3484,7 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_UP: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
             int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
@@ -3527,27 +3494,22 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+        	/*Enter */
             picked = 1;
 
             cur = current_item(my_menu);
@@ -3586,9 +3548,7 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
                 refresh();
                 napms(1000);
             };
-            break;
-        }			//End case 10 (Enter)
-        }			//End switch
+        }
         wrefresh(my_menu_win);
     }				//End while
     /* Unpost and free all the memory taken up */
@@ -4077,23 +4037,19 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
         int picked = 0;
         int picked_close = 0;
 
-        while (!picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_close) {
-            switch (c) {
-            case KEY_DOWN: {
+        while (!picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_close) { // This key is not mapped into the keybinds yet.
+            if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
                 int menudriver_res = menu_driver(rogue_menu, REQ_DOWN_ITEM);
                 if (menudriver_res == E_REQUEST_DENIED) {
                     menudriver_res = menu_driver(rogue_menu, REQ_FIRST_ITEM);
                 }
-            }
-            break;
-            case KEY_UP: {
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
                 int menudriver_res = menu_driver(rogue_menu, REQ_UP_ITEM);
                 if (menudriver_res == E_REQUEST_DENIED) {
                     menudriver_res = menu_driver(rogue_menu, REQ_LAST_ITEM);
                 }
-            }
-            break;
-            case KEY_LEFT: {	/*Left option pick */
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_LEFT)) {
+            	/*Left option pick */
                 ITEM *cur;
                 cur = current_item(rogue_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -4104,9 +4060,8 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_RIGHT: {	/*Right option pick */
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
+            	/*Right option pick */
                 ITEM *cur;
                 cur = current_item(rogue_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -4117,15 +4072,12 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_NPAGE:
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
                 menu_driver(rogue_menu, REQ_SCR_DPAGE);
-                break;
-            case KEY_PPAGE:
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(rogue_menu, REQ_SCR_UPAGE);
-                break;
-            case 10: {	/* Enter */
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            	/* Enter */
                 picked = 1;
                 ITEM *cur;
 
@@ -4136,9 +4088,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                 choice = getTurnChoice((char *)item_name(cur));
                 pos_menu_cursor(rogue_menu);
                 refresh();
-            };
-            break;
-            case 'q': {
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
                 if (G_FASTQUIT_ON == 1) {
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Player used q to quit from Rogue menu.");
@@ -4150,13 +4100,9 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Player used q in Rogue menu, but G_FASTQUIT_ON was not 1.");
                 }
-            }
-            break;
-            default: {
+            } else {
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Invalid keystroke in Rogue menu");
-            }
-            break;
             }
             wrefresh(menu_win);
             if (c == 10) {	// Player char was enter
