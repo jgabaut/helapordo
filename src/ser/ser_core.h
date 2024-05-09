@@ -171,7 +171,7 @@ typedef struct __attribute__((packed)) SerEquip {
 typedef struct SerEquip {
 #endif
     int32_t class;	  /**< Defines which kind of Equip the instance relates to*/
-    Equipzone type;	/**< Defines which kind of Equipzone the instance relates to*/
+    int32_t type;	/**< Defines which kind of Equipzone the instance relates to*/
     int8_t equipped; /**< Flag indicating the instance as currently in use if set.*/
     int8_t level;
     int8_t atk;
@@ -204,7 +204,7 @@ typedef struct __attribute__((packed)) SerEquipslot {
 #pragma pack(push, 1)
 typedef struct SerEquipslot {
 #endif
-    Equipzone type;	/**< Defines which kind of Equipzone the instance relates to*/
+    int32_t type;	/**< Defines which kind of Equipzone the instance relates to*/
     int8_t active; /**< Flag indicating the instance as currently in use if set.*/
 #ifdef __GNUC__
 } SerEquipslot;
@@ -632,7 +632,7 @@ typedef struct __attribute__((packed)) SerRoadfork {
 #pragma pack(push, 1)
 typedef struct SerRoadfork {
 #endif
-    roadforkOption options[2];	   /**< Defines which choices the fork has.*/
+    int32_t options[2];	   /**< Defines which choices the fork has.*/
 #ifdef __GNUC__
 } SerRoadfork;
 #else
@@ -691,7 +691,7 @@ typedef struct SerFloor {
     int8_t floor_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	  /**< Defines the layout for the Floor (which cells are actually filled).*/
     int8_t area;	  /**< Holds how many cells we succesfully random walked.*/
     //SerRoom rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< SerRoom matrix for rooms of this floor.*/
-    roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
+    int32_t roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
     int8_t explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
     int8_t explored_area;	   /**< Holds how many cells we explored.*/
     bool from_bsp; /**< Flag for floors generated using bsp.*/
@@ -800,7 +800,7 @@ typedef struct SerGamestate {
     SerCountstats stats;	   /**< Keeps track of stats for the game.*/
 
     int8_t current_fighters;     /**< Keeps track of Fighter number for the game.*/
-    roomClass current_roomtype;	    /**< Keeps track of current room type.*/
+    int32_t current_roomtype;	    /**< Keeps track of current room type.*/
     int8_t current_room_index;	/**< Keeps track of current room index.*/
 
     int8_t current_enemy_index;	 /**< Keeps track of current enemy index.*/
