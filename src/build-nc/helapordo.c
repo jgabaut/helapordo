@@ -128,8 +128,16 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVDb")) != -1) {
+        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVDbjw")) != -1) {
             switch (option) {
+            case 'j': {
+                G_USE_VIM_DIRECTIONAL_KEYS = 1;
+            }
+            break;
+            case 'w': {
+                G_USE_WASD_DIRECTIONAL_KEYS = 1;
+            }
+            break;
             case 'b': {
                 G_USE_DEFAULT_BACKGROUND = 1;
             }
@@ -892,6 +900,21 @@ void gameloop(int argc, char **argv)
         log_tag("debug_log.txt", "[DEBUG]", "%s():    setting game_options.do_autosave to (GS_AUTOSAVE_ON == 1): {%s}", __func__, (GS_AUTOSAVE_ON == 1 ? "true" : "false"));
         game_options.do_autosave = (GS_AUTOSAVE_ON == 1); // Global var overtakes
         game_options.use_default_background = (G_USE_DEFAULT_BACKGROUND == 1); // Global var overtakes
+
+        if (G_USE_VIM_DIRECTIONAL_KEYS == 1) { // Takes precedence over WASD option by being evaluated first
+            game_options.directional_keys_schema = HLPD_VIM_KEYS;
+        } else if (G_USE_WASD_DIRECTIONAL_KEYS == 1) {
+            game_options.directional_keys_schema = HLPD_WASD_KEYS;
+        }
+
+        if (game_options.directional_keys_schema != default_GameOptions.directional_keys_schema) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    setting game_options.directional_keys_schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(game_options.directional_keys_schema));
+            HLPD_DirectionalKeys directional_keys = hlpd_default_directional_keys[game_options.directional_keys_schema];
+            hlpd_default_keybinds[HLPD_KEY_UP] = directional_keys.up;
+            hlpd_default_keybinds[HLPD_KEY_RIGHT] = directional_keys.right;
+            hlpd_default_keybinds[HLPD_KEY_DOWN] = directional_keys.down;
+            hlpd_default_keybinds[HLPD_KEY_LEFT] = directional_keys.left;
+        }
 
         ITEM **savepick_items;
         MENU *savepick_menu;

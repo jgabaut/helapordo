@@ -294,6 +294,16 @@ extern int G_USE_CURRENTDIR;
  */
 extern int G_USE_DEFAULT_BACKGROUND;
 
+/**
+ * Global variable for using vim-like directional keys.
+ */
+extern int G_USE_VIM_DIRECTIONAL_KEYS;
+
+/**
+ * Global variable for using WASD directional keys.
+ */
+extern int G_USE_WASD_DIRECTIONAL_KEYS;
+
 
 /**
  * Global variable used to count advancements of the rng.
