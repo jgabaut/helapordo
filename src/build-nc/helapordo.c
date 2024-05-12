@@ -1217,6 +1217,10 @@ void gameloop(int argc, char **argv)
                 gamestate =
                     KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                    "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+                G_GAMESTATE = gamestate;
+#endif
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
                                player, GAMEMODE, gamescreen, &game_options, is_seeded);
 
@@ -1628,6 +1632,10 @@ void gameloop(int argc, char **argv)
             gamestate =
                 KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+                G_GAMESTATE = gamestate;
+#endif
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
                            player, GAMEMODE, gamescreen, &game_options, is_seeded);
         }

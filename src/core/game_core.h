@@ -215,6 +215,7 @@ extern Koliseo *default_kls;
  * Global variable for temporary Koliseo.
  */
 extern Koliseo *temporary_kls;
+
 /**
  * TODO Remove mentions of this.
  * Global variable for load animations flag. Legacy.
@@ -1870,6 +1871,14 @@ typedef struct {
 
     bool is_seeded; /**< Denotes if the current game was started with a set seed.*/
 } Gamestate;
+
+#ifndef KOLISEO_HAS_REGION
+/**
+ * Global variable used to store Gamestate address when KLS_Region is not available. Could be used even with it.
+ * Useful to save the game in a pinch, like when receiving SIGINT.
+ */
+extern Gamestate* G_GAMESTATE;
+#endif
 
 /**
  * The different kinds of turnOption.

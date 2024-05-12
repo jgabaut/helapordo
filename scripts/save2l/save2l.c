@@ -1,5 +1,8 @@
 #include "save2l.h"
 
+#ifndef KOLISEO_HAS_REGION
+Gamestate* G_GAMESTATE = NULL;
+#endif
 int G_PRELOAD_ANIMATIONS_ON = 0;
 int G_DEBUG_ON = 0;
 int G_LOG_ON = 0;

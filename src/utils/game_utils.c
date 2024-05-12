@@ -31,6 +31,35 @@ void ctrl_c_handler(int signum)
         log_tag("debug_log.txt", "[CLEANUP]", "%s():    Ended window mode", __func__);
     }
 #endif // HELAPORDO_CURSES_BUILD
+
+    // Retrieve gamestate pointer
+    Gamestate* gmst = NULL;
+    char* gmst_p = NULL;
+    bool found = false;
+#ifndef KOLISEO_HAS_REGION
+    gmst_p = (char*) G_GAMESTATE;
+    if (gmst_p != NULL) found = true;
+#else
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Leveraging Koliseo region list to get Gamestate back", __func__);
+    KLS_Region_List reg_list = default_kls->regs;
+    KLS_Region* head = NULL;
+    while (!found && ! kls_rl_empty(reg_list)) {
+        head = kls_rl_head(reg_list);
+        if (head != NULL && head->type == HR_Gamestate) {
+            gmst_p = default_kls->data + head->begin_offset + head->padding; // Calc pointer using region info
+            found = true;
+        }
+        reg_list = kls_rl_tail(reg_list);
+    }
+#endif  //KOLISEO_HAS_REGION
+    if (!found) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Could not find Gamestate region in default_kls.", __func__);
+    } else {
+        gmst = (Gamestate*) gmst_p;
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Gamestate at {%p}\n", gmst_p);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Player quit: {%s}\n", gmst->player->name);
+        //TODO try to save the gamestate before freeing the arenas and exiting
+    }
     if (default_kls != NULL) {
         kls_free(default_kls);
         log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned default_kls", __func__);
