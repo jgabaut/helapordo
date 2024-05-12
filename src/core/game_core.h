@@ -90,7 +90,7 @@ extern const char* helapordo_title_string; /**< Defines a formatted string for t
 extern const char* helapordo_build_string;
 
 /**
- * The different kinds of HLDP_Key.
+ * The different kinds of HLPD_Key.
  * Ordering is directly related to hlpd_keyclass_strings.
  * @see hlpd_keyclass_strings
  */
@@ -119,7 +119,7 @@ extern char *hlpd_keyclass_strings[HLPD_KEYCLASS_MAX + 1];
 
 /**
  * Holds info about a keybind for the game.
- * @see HLDP_KeyClass
+ * @see HLPD_KeyClass
  */
 typedef struct HLPD_Key {
     int val;
@@ -135,19 +135,29 @@ extern HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1];
  */
 typedef enum HLPD_DirectionalKeys_Schema {
     HLPD_ARROW_KEYS=0,
-    HLDP_VIM_KEYS,
+    HLPD_VIM_KEYS,
+    HLPD_WASD_KEYS,
 } HLPD_DirectionalKeys_Schema;
 
 /** Maximum index of HLPD_DirectionalKeys_Schema, so that the size has to add 1 for the 0th index
  * @see HLPD_DirectionalKeys_Schema
  */
-#define HLPD_DIRECTIONALKEYS_SCHEMAS_MAX 1
+#define HLPD_DIRECTIONALKEYS_SCHEMAS_MAX 2
 
 /**
  * Array with the name strings for HLPD_DirectionalKeys_Schema.
  * @see HLPD_DirectionalKeys_Schema
  */
 extern char *hlpd_directionalkeyschemas_strings[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX + 1];
+
+typedef struct HLPD_DirectionalKeys {
+    HLPD_Key up;
+    HLPD_Key right;
+    HLPD_Key down;
+    HLPD_Key left;
+} HLPD_DirectionalKeys;
+
+extern HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1];
 
 /**
  * Holds options useful for user runtime preferences.

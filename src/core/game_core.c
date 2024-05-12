@@ -55,8 +55,30 @@ HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1] = {
 };
 
 char *hlpd_directionalkeyschemas_strings[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX + 1] = {
-    "Arrow keys",
-    "Vim keys",
+    [HLPD_ARROW_KEYS] = "Arrow keys",
+    [HLPD_VIM_KEYS] = "Vim keys",
+    [HLPD_WASD_KEYS] = "WASD keys",
+};
+
+HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1] = {
+    [HLPD_ARROW_KEYS] = {
+        .up = {.class = HLPD_KEY_UP, .val = KEY_UP},
+        .right = {.class = HLPD_KEY_RIGHT, .val = KEY_RIGHT},
+        .down = {.class = HLPD_KEY_DOWN, .val = KEY_DOWN},
+        .left = {.class = HLPD_KEY_LEFT, .val = KEY_LEFT},
+    },
+    [HLPD_VIM_KEYS] = {
+        .up = {.class = HLPD_KEY_UP, .val = 'k'},
+        .right = {.class = HLPD_KEY_RIGHT, .val = 'l'},
+        .down = {.class = HLPD_KEY_DOWN, .val = 'j'},
+        .left = {.class = HLPD_KEY_LEFT, .val = 'h'},
+    },
+    [HLPD_WASD_KEYS] = {
+        .up = {.class = HLPD_KEY_UP, .val = 'w'},
+        .right = {.class = HLPD_KEY_RIGHT, .val = 'd'},
+        .down = {.class = HLPD_KEY_DOWN, .val = 's'},
+        .left = {.class = HLPD_KEY_LEFT, .val = 'a'},
+    },
 };
 
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {

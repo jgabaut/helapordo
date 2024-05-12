@@ -4221,11 +4221,14 @@ int handleGameOptions(GameOptions * game_options)
 
     const char* default_background_toggle_label = "Default background";
     const char* do_autosave_toggle_label = "Do autosave";
+    const char* directional_keys_schema_label = "<- Directional keys set ->";
 
     // Define menu options and their toggle states
     Toggle toggles[] = {
         {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->use_default_background}, (char*) default_background_toggle_label, false},
         {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->do_autosave}, (char*) do_autosave_toggle_label, false},
+        //{MULTI_STATE_TOGGLE, (ToggleState){.ts_state.current_state = game_options->directional_keys_schema, .ts_state.num_states = HLPD_DIRECTIONALKEYS_SCHEMAS_MAX}, (char*)directional_keys_schema_label, false,stringFrom_HLPD_DirectionalKeys_Schema},
+        {MULTI_STATE_TOGGLE, (ToggleState){.ts_state.current_state = game_options->directional_keys_schema, .ts_state.num_states = HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1}, (char*)directional_keys_schema_label, false,stringFrom_HLPD_DirectionalKeys_Schema},
     };
     int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
 
@@ -4236,11 +4239,15 @@ int handleGameOptions(GameOptions * game_options)
         .boxed = true,
         .quit_key = 'q',
         .statewin_height = 15,
-        .statewin_width = 30,
-        .statewin_start_x = 40,
+        .statewin_width = 45,
+        .statewin_start_x = 35,
         .statewin_start_y = 0,
         .statewin_boxed = true,
         .statewin_label = statewin_label,
+        .key_up = hlpd_d_keyval(HLPD_KEY_UP),
+        .key_right = hlpd_d_keyval(HLPD_KEY_RIGHT),
+        .key_down = hlpd_d_keyval(HLPD_KEY_DOWN),
+        .key_left = hlpd_d_keyval(HLPD_KEY_LEFT),
     };
 
     ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
@@ -4255,6 +4262,20 @@ int handleGameOptions(GameOptions * game_options)
         pair_content(0, &pair0_fg, &pair0_bg);
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 now is: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
     }
+
+    HLPD_DirectionalKeys_Schema selected_directional_keys_schema = toggle_menu.toggles[2].state.ts_state.current_state;
+    if ( game_options->directional_keys_schema != selected_directional_keys_schema) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Current directional keys schema : {%i} [%s]", __func__, game_options->directional_keys_schema, stringFrom_HLPD_DirectionalKeys_Schema(game_options->directional_keys_schema));
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    User selected directional key schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(selected_directional_keys_schema));
+        HLPD_DirectionalKeys selected_directional_keys = hlpd_default_directional_keys[selected_directional_keys_schema];
+        hlpd_default_keybinds[HLPD_KEY_UP] = selected_directional_keys.up;
+        hlpd_default_keybinds[HLPD_KEY_RIGHT] = selected_directional_keys.right;
+        hlpd_default_keybinds[HLPD_KEY_DOWN] = selected_directional_keys.down;
+        hlpd_default_keybinds[HLPD_KEY_LEFT] = selected_directional_keys.left;
+        game_options->directional_keys_schema = selected_directional_keys_schema;
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Updated directional keys schema to.", __func__);
+    }
+
     game_options->do_autosave = toggle_menu.toggles[1].state.bool_state;
     endwin(); // End ncurses after resetting color pairs ?
     free_ToggleMenu(toggle_menu);

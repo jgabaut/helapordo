@@ -1730,7 +1730,7 @@ char *stringFrom_HLPD_KeyClass(HLPD_KeyClass k)
  * @param dks The integer/HLPD_DirectionalKeys_Schema.
  * @return String corresponding to the HLPD_DirectionalKeys_Schema.
  */
-char *stringFrom_HLPD_DirectionalKeys_Schema(HLPD_DirectionalKeys_Schema dks)
+const char *stringFrom_HLPD_DirectionalKeys_Schema(int dks)
 {
     return hlpd_directionalkeyschemas_strings[dks];
 }
