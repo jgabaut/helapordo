@@ -32,6 +32,7 @@ void ctrl_c_handler(int signum)
     }
 #endif // HELAPORDO_CURSES_BUILD
 
+    /*
     // Retrieve gamestate pointer
     Gamestate* gmst = NULL;
     char* gmst_p = NULL;
@@ -60,6 +61,7 @@ void ctrl_c_handler(int signum)
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Player quit: {%s}\n", gmst->player->name);
         //TODO try to save the gamestate before freeing the arenas and exiting
     }
+    */
     if (default_kls != NULL) {
         kls_free(default_kls);
         log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned default_kls", __func__);
