@@ -852,7 +852,7 @@ void gameloop(int argc, char **argv)
 
         WINDOW* screen = initscr();
         noecho();
-	    int cursorCheck = curs_set(0); // We try making the cursor invisible
+        int cursorCheck = curs_set(0); // We try making the cursor invisible
         if (cursorCheck == ERR) {
             log_tag("debug_log.txt", "[ERROR]","%s():    Failed making the cursor invisible");
         }

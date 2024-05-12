@@ -37,10 +37,10 @@ void ctrl_c_handler(int signum)
     Gamestate* gmst = NULL;
     char* gmst_p = NULL;
     bool found = false;
-#ifndef KOLISEO_HAS_REGION
+    #ifndef KOLISEO_HAS_REGION
     gmst_p = (char*) G_GAMESTATE;
     if (gmst_p != NULL) found = true;
-#else
+    #else
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Leveraging Koliseo region list to get Gamestate back", __func__);
     KLS_Region_List reg_list = default_kls->regs;
     KLS_Region* head = NULL;
@@ -52,7 +52,7 @@ void ctrl_c_handler(int signum)
         }
         reg_list = kls_rl_tail(reg_list);
     }
-#endif  //KOLISEO_HAS_REGION
+    #endif  //KOLISEO_HAS_REGION
     if (!found) {
         log_tag("debug_log.txt", "[ERROR]", "%s():    Could not find Gamestate region in default_kls.", __func__);
     } else {
