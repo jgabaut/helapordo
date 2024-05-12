@@ -851,6 +851,11 @@ void gameloop(int argc, char **argv)
                 time_spent_loading_animations);
 
         WINDOW* screen = initscr();
+        noecho();
+	    int cursorCheck = curs_set(0); // We try making the cursor invisible
+        if (cursorCheck == ERR) {
+            log_tag("debug_log.txt", "[ERROR]","%s():    Failed making the cursor invisible");
+        }
 
         if (default_GameOptions.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) {
             // game_options is initialised later ATM. But the default is overridden by G_USE_DEFAULT_BACKGROUND atm, so all good
@@ -2051,10 +2056,6 @@ void gameloop(int argc, char **argv)
                 for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
                     init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) ? -1 : 0));
                 }
-                cbreak();
-                noecho();
-                keypad(stdscr, TRUE);
-
                 cbreak();
                 noecho();
                 keypad(stdscr, TRUE);
