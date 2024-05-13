@@ -928,6 +928,8 @@ bool read_savedir(const char* dirpath);
 
 bool deser_GameOptions(SerGameOptions* ser, GameOptions* deser);
 bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser);
+bool writeSerGameOptions(const char* filename, SerGameOptions* data);
 bool appendSerGameOptions(const char* filename, SerGameOptions* data);
 bool readSerGameOptions(const char* filename, size_t offset, SerGameOptions* data);
+bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t offset, Koliseo* kls, bool force_init);
 #endif // SER_CORE_H

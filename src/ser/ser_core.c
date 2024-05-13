@@ -3052,6 +3052,28 @@ bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser)
     return true;
 }
 
+bool writeSerGameOptions(const char* filename, SerGameOptions* data)
+{
+    FILE* file = fopen(filename, "wb");
+
+    if (file != NULL) {
+        // Write the structure to the file
+        //
+        int64_t ser_gameopt_size = sizeof(SerGameOptions);
+
+        fwrite(&ser_gameopt_size, sizeof(ser_gameopt_size), 1, file);
+        fwrite(data, sizeof(SerGameOptions), 1, file);
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for writing", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for writing", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
 bool appendSerGameOptions(const char* filename, SerGameOptions* data)
 {
     FILE* file = fopen(filename, "ab");
@@ -3233,6 +3255,180 @@ bool readSerGameOptions(const char* filename, size_t offset, SerGameOptions* dat
         }
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
+    }
+    return true;
+}
+
+bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t offset, Koliseo* kls, bool force_init)
+{
+    if (kls == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    bool gameopts_null = false;
+    if (game_options != NULL) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s(): passed GameOptions is not NULL.", __func__);
+    } else {
+        gameopts_null = true;
+        log_tag("debug_log.txt", "[DEBUG]", "%s(): passed GameOptions is NULL, will be allocated.", __func__);
+    }
+
+    char path_to_bin_savefile[1000];
+    char bin_gameoptions_file_name[300];
+
+    //Copy current_save_path
+#ifdef HELAPORDO_CURSES_BUILD
+    sprintf(bin_gameoptions_file_name, "%s", CURSES_SETTINGS_SAVE_NAME);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    sprintf(bin_gameoptions_file_name, "%s", RL_SETTINGS_SAVE_NAME);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+
+#ifndef _WIN32
+    sprintf(path_to_bin_savefile, "%s/%s", static_path, bin_gameoptions_file_name);
+#else
+    sprintf(path_to_bin_savefile, "%s\\%s", static_path, bin_gameoptions_file_name);
+#endif
+
+    if (force_init) {
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forced init of SerGameOptions.", __func__);
+        SerGameOptions ser_gameopts = {0};
+        if (!gameopts_null) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s():    using passed GameOptions.", __func__);
+            bool ser_res = ser_GameOptions(game_options, &ser_gameopts);
+            if (!ser_res) {
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed serializing passed GameOptions.", __func__);
+                return false;
+            }
+        }
+
+        // Write packed structure to a binary file
+        bool write_res = writeSerGameOptions(path_to_bin_savefile, &ser_gameopts);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a settings binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for writeSerGameOptions()", __func__);
+        }
+
+        if (gameopts_null) {
+            game_options = KLS_PUSH(kls, GameOptions);
+        }
+        bool deser_result = deser_GameOptions(&ser_gameopts, game_options);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_GameOptions().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_GameOptions()", __func__);
+        }
+        return true;
+    }
+
+    Koliseo_Temp* kls_t = kls_temp_start(kls);
+    // Try reading an existing binsave
+    SerGameOptions* read_gameopts = KLS_PUSH_T(kls_t, SerGameOptions);
+    bool read_res = readSerGameOptions(path_to_bin_savefile, offset, read_gameopts);
+
+    if (!read_res) {
+        kls_temp_end(kls_t);
+        log_tag("debug_log.txt", "[BINSAVE]", "Failed reading binsave at {%s}, creating a new one.", path_to_bin_savefile);
+        // Failed reading existing binsave, create a new one
+        SerGameOptions ser_gameopts = {0};
+        if (!gameopts_null) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s():    using passed GameOptions.", __func__);
+            bool ser_res = ser_GameOptions(game_options, &ser_gameopts);
+            if (!ser_res) {
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed serializing passed GameOptions.", __func__);
+                return false;
+            }
+        }
+
+        // Write packed structure to a binary file
+        bool write_res = appendSerGameOptions(path_to_bin_savefile, &ser_gameopts);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a settings binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for appendSerGameOptions()", __func__);
+        }
+
+        if (gameopts_null) {
+            game_options = KLS_PUSH(kls, GameOptions);
+        }
+        bool deser_result = deser_GameOptions(&ser_gameopts, game_options);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_GameOptions().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_GameOptions()", __func__);
+        }
+
+        // Apply read settings
+
+        HLPD_DirectionalKeys_Schema saved_directional_keys_schema = game_options->directional_keys_schema;
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Applying directional keys schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(saved_directional_keys_schema));
+        HLPD_DirectionalKeys directional_keys = hlpd_default_directional_keys[saved_directional_keys_schema];
+        hlpd_default_keybinds[HLPD_KEY_UP] = directional_keys.up;
+        hlpd_default_keybinds[HLPD_KEY_RIGHT] = directional_keys.right;
+        hlpd_default_keybinds[HLPD_KEY_DOWN] = directional_keys.down;
+        hlpd_default_keybinds[HLPD_KEY_LEFT] = directional_keys.left;
+
+        return true;
+    } else {
+        SerGameOptions tmp = (SerGameOptions) {
+            0
+        };
+        tmp = *read_gameopts;
+        kls_temp_end(kls_t);
+
+        if (gameopts_null) {
+            game_options = KLS_PUSH(kls, GameOptions);
+        }
+
+        bool deser_result = deser_GameOptions(&tmp, game_options);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_GameOptions().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_GameOptions()", __func__);
+        }
+
+        if (game_options == NULL) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): game_options was NULL after deser_GameOptions().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        HLPD_DirectionalKeys_Schema saved_directional_keys_schema = game_options->directional_keys_schema;
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Applying directional keys schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(saved_directional_keys_schema));
+        HLPD_DirectionalKeys directional_keys = hlpd_default_directional_keys[saved_directional_keys_schema];
+        hlpd_default_keybinds[HLPD_KEY_UP] = directional_keys.up;
+        hlpd_default_keybinds[HLPD_KEY_RIGHT] = directional_keys.right;
+        hlpd_default_keybinds[HLPD_KEY_DOWN] = directional_keys.down;
+        hlpd_default_keybinds[HLPD_KEY_LEFT] = directional_keys.left;
+
+
+        return true;
     }
     return true;
 }
