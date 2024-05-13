@@ -3051,3 +3051,188 @@ bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser)
 
     return true;
 }
+
+bool appendSerGameOptions(const char* filename, SerGameOptions* data)
+{
+    FILE* file = fopen(filename, "ab");
+
+    if (file != NULL) {
+        // Write the structure to the file
+        //
+        int64_t ser_gameopt_size = sizeof(SerGameOptions);
+
+        fwrite(&ser_gameopt_size, sizeof(ser_gameopt_size), 1, file);
+        fwrite(data, sizeof(SerGameOptions), 1, file);
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for writing", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for writing", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
+bool readSerGameOptions(const char* filename, size_t offset, SerGameOptions* data)
+{
+    FILE* file = fopen(filename, "rb");
+
+    if (file != NULL) {
+        size_t tot_length = -1;
+        fseek(file, 0, SEEK_END);
+        tot_length = ftell(file);
+
+        int64_t blob_size = -1;
+
+        if (tot_length < offset ) {
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%lli} is less than passed offset {%lli}", __func__, tot_length, offset);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%li} is less than passed offset {%li}", __func__, tot_length, offset);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        size_t remaining_length = -1;
+        fseek(file, offset, SEEK_SET);
+        remaining_length = tot_length - offset;
+
+#ifdef _WIN32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Total file size: {%lli}, Offset: {%lli}, Remaining: {%lli}", __func__, tot_length, offset, remaining_length);
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Total file size: {%li}, Offset: {%lli}, Remaining: {%li}", __func__, tot_length, offset, remaining_length);
+#endif
+
+        size_t read_blobs = fread(&blob_size, sizeof(blob_size), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        size_t sergameopt_size = sizeof(SerGameOptions);
+
+#ifdef _WIN32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read blob size: {%lli}", __func__, blob_size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerGameOptions size: {%lli}", __func__, sizeof(SerGameOptions));
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read blob size: {%li}", __func__, blob_size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerGameOptions size: {%li}", __func__, sizeof(SerGameOptions));
+#endif
+
+        if (blob_size != sergameopt_size) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Header size from {%s} doesn't match SerGameOptions size.", __func__, filename);
+            if (blob_size < sergameopt_size) {
+
+#ifdef _WIN32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, blob_size, sergameopt_size);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, blob_size, sergameopt_size);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            } else if (blob_size > sergameopt_size) {
+
+#ifdef _WIN32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, blob_size, sergameopt_size);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, blob_size, sergameopt_size);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+        }
+        // Update len
+        remaining_length -= sizeof(blob_size);
+
+        if (remaining_length < blob_size) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%lli} is less than stored header size {%lli}.", __func__, remaining_length, blob_size);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, remaining_length, blob_size);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        size_t expected_len = sizeof(SerGameOptions);
+        if (remaining_length < expected_len) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, remaining_length, expected_len);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, remaining_length, expected_len);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else if (remaining_length > expected_len) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, remaining_length, expected_len);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, remaining_length, expected_len);
+#endif
+        }
+
+        // Read the structure from the file
+        read_blobs = fread(data, sizeof(SerGameOptions), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        // Close the file
+        fclose(file);
+    } else {
+        //TODO: Print notice for error. It shouldn't disrupt the screen for saveslot name setting.
+        if (G_EXPERIMENTAL_ON == 0) {
+            fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        }
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
+        return false;
+    }
+    return true;
+}
