@@ -2184,8 +2184,8 @@ OP_res OP_res_from_fightResult(fightResult fr);
 #define CURSES_GMSTSAVE_NAME "run-nc.bin" /**< Defines file name used for gamestate binary save. */
 #define RL_GMSTSAVE_NAME "run-rl.bin" /**< Defines file name used for gamestate binary save. */
 
-#define CURSES_SETTINGS_SAVE_NAME "options-nc.bin" /**< Defines file name used for game options binary save. */
-#define RL_SETTINGS_SAVE_NAME "options-rl.bin" /**< Defines file name used for game options binary save. */
+#define CURSES_SETTINGS_SAVE_NAME "settings-nc.bin" /**< Defines file name used for game options binary save. */
+#define RL_SETTINGS_SAVE_NAME "settings-rl.bin" /**< Defines file name used for game options binary save. */
 
 extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;

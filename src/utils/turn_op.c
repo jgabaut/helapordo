@@ -439,7 +439,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                 if (prep_res) {
                     log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
                 } else {
-                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamesate().");
+                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
                     kls_free(default_kls);
                     kls_free(temporary_kls);
                     exit(EXIT_FAILURE);

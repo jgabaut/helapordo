@@ -902,13 +902,37 @@ void gameloop(int argc, char **argv)
 
         GameOptions game_options = default_GameOptions;
 
+        bool force_gameoptions_init = false;
+        // Set static_path value to the correct static dir path
+        resolve_staticPath(static_path);
+        bool gameopts_prep_res = prep_GameOptions(&game_options, static_path, 0, default_kls, force_gameoptions_init);
+
+        if (gameopts_prep_res) {
+            log_tag("debug_log.txt", "[DEBUG]", "Done prep_GameOptions().");
+        } else {
+            log_tag("debug_log.txt", "[ERROR]", "Failed prep_GameOptions().");
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
         log_tag("debug_log.txt", "[DEBUG]", "%s():    setting game_options.do_autosave to (GS_AUTOSAVE_ON == 1): {%s}", __func__, (GS_AUTOSAVE_ON == 1 ? "true" : "false"));
-        game_options.do_autosave = (GS_AUTOSAVE_ON == 1); // Global var overtakes
-        game_options.use_default_background = (G_USE_DEFAULT_BACKGROUND == 1); // Global var overtakes
+        if (GS_AUTOSAVE_ON == 1) {
+            // Global var overtakes
+            if (! game_options.do_autosave) log_tag("debug_log.txt", "[DEBUG]", "%s():    game_options autosave was false, but global var overtook", __func__);
+            game_options.do_autosave = true;
+        }
+        if (G_USE_DEFAULT_BACKGROUND == 1) {
+            // Global var overtakes
+            if (! game_options.use_default_background) log_tag("debug_log.txt", "[DEBUG]", "%s():    game_options use_default_background was false, but global var overtook", __func__);
+            game_options.use_default_background = true;
+        }
 
         if (G_USE_VIM_DIRECTIONAL_KEYS == 1) { // Takes precedence over WASD option by being evaluated first
+            if (game_options.directional_keys_schema != HLPD_VIM_KEYS) log_tag("debug_log.txt", "[DEBUG]", "%s():    game_options directional keys schema was not VIM_KEYS, but global var overtook", __func__);
             game_options.directional_keys_schema = HLPD_VIM_KEYS;
         } else if (G_USE_WASD_DIRECTIONAL_KEYS == 1) {
+            if (game_options.directional_keys_schema != HLPD_WASD_KEYS) log_tag("debug_log.txt", "[DEBUG]", "%s():    game_options directional keys schema was not WASD_KEYS, but global var overtook", __func__);
             game_options.directional_keys_schema = HLPD_WASD_KEYS;
         }
 

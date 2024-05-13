@@ -4253,8 +4253,11 @@ int handleGameOptions(GameOptions * game_options)
     ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
     handle_ToggleMenu(toggle_menu);
 
+    bool settings_changed = false;
+
     bool selected_use_default_background = toggle_menu.toggles[0].state.bool_state;
     if ( game_options->use_default_background != selected_use_default_background) {
+        settings_changed = true;
         toggle_default_back(selected_use_default_background);
         game_options->use_default_background = selected_use_default_background;
         short int pair0_fg = -2;
@@ -4265,6 +4268,7 @@ int handleGameOptions(GameOptions * game_options)
 
     HLPD_DirectionalKeys_Schema selected_directional_keys_schema = toggle_menu.toggles[2].state.ts_state.current_state;
     if ( game_options->directional_keys_schema != selected_directional_keys_schema) {
+        settings_changed = true;
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Current directional keys schema : {%i} [%s]", __func__, game_options->directional_keys_schema, stringFrom_HLPD_DirectionalKeys_Schema(game_options->directional_keys_schema));
         log_tag("debug_log.txt", "[DEBUG]", "%s():    User selected directional key schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(selected_directional_keys_schema));
         HLPD_DirectionalKeys selected_directional_keys = hlpd_default_directional_keys[selected_directional_keys_schema];
@@ -4276,10 +4280,28 @@ int handleGameOptions(GameOptions * game_options)
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Updated directional keys schema to.", __func__);
     }
 
-    game_options->do_autosave = toggle_menu.toggles[1].state.bool_state;
+    bool selected_do_autosave = toggle_menu.toggles[1].state.bool_state;
+    if ( game_options->do_autosave != selected_do_autosave) {
+        settings_changed = true;
+        game_options->do_autosave = selected_do_autosave;
+    }
     endwin(); // End ncurses after resetting color pairs ?
     free_ToggleMenu(toggle_menu);
 
+    if (settings_changed) {
+        char static_path[500] = {0};
+        resolve_staticPath(static_path);
+        bool gameopts_prep_res = prep_GameOptions(game_options, static_path, 0, default_kls, true);
+
+        if (gameopts_prep_res) {
+            log_tag("debug_log.txt", "[DEBUG]", "Done prep_GameOptions().");
+        } else {
+            log_tag("debug_log.txt", "[ERROR]", "Failed prep_GameOptions().");
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
     return 0;
 }
 

@@ -20,11 +20,13 @@
  *
  * \section intro_sec Intro
  *
- * Helapordo is roguelike terminal game, using ncurses.
+ * Helapordo is a roguelike terminal game, using ncurses.
  *
  * SPDX-License-Identifier: GPL-3.0-only
  *
  * Check it out on [github](https://github.com/jgabaut/helapordo).
+ *
+ * [Author](https://github.com/jgabaut) jgabaut
  */
 
 #ifndef HELAPORDO_H
