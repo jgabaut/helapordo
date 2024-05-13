@@ -3007,3 +3007,47 @@ bool read_savedir(const char* dirpath)
     }
     return true;
 }
+
+bool deser_GameOptions(SerGameOptions* ser, GameOptions* deser)
+{
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGameOptions was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed GameOptions was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->use_default_background = ser->use_default_background;
+    deser->do_autosave = ser->do_autosave;
+    deser->directional_keys_schema = ser->directional_keys_schema;
+
+    return true;
+}
+
+bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser)
+{
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGameOptions was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed GameOptions was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->use_default_background = deser->use_default_background;
+    ser->do_autosave = deser->do_autosave;
+    ser->directional_keys_schema = deser->directional_keys_schema;
+
+    return true;
+}

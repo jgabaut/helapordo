@@ -810,7 +810,7 @@ typedef struct SerGamestate {
 
     SerFighter player;	 /**< Keeps track of current Player.*/
 
-    Gamemode gamemode;	   /**< Keeps track of current Gamemode.*/
+    int32_t gamemode;	   /**< Keeps track of current Gamemode.*/
 
     SerFloor current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
 
@@ -820,6 +820,30 @@ typedef struct SerGamestate {
 } SerGamestate;
 #else
 } SerGamestate;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized GameOptions. Packed struct.
+ * Can be turned into a GameOptions with deser_GameOptions().
+ * Can be obtained from a GameOptions with ser_GameOptions().
+ * @see SerGameOptions
+ * @see deser_GameOptions()
+ * @see ser_GameOptions()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerGameOptions {
+#else
+#pragma pack(push, 1)
+typedef struct SerGameOptions {
+#endif
+    bool use_default_background; //<** Turn on usage of default terminal background */
+    bool do_autosave; //<* Turns on autosave */
+    int32_t directional_keys_schema; //* Defines the current schema for cardinal directions movement */
+#ifdef __GNUC__
+} SerGameOptions;
+#else
+} SerGameOptions;
 #pragma pack(pop)
 #endif
 
@@ -901,4 +925,7 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser);
 bool ser_Gamestate(Gamestate* deser, SerGamestate* ser);
 bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Koliseo* kls, bool force_init);
 bool read_savedir(const char* dirpath);
+
+bool deser_GameOptions(SerGameOptions* ser, GameOptions* deser);
+bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser);
 #endif // SER_CORE_H

@@ -126,6 +126,10 @@ typedef struct HLPD_Key {
     HLPD_KeyClass class;
 } HLPD_Key;
 
+/**
+ * Array with the keybinds for the game.
+ * @see HLPD_Key
+ */
 extern HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1];
 
 /**
@@ -150,6 +154,10 @@ typedef enum HLPD_DirectionalKeys_Schema {
  */
 extern char *hlpd_directionalkeyschemas_strings[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX + 1];
 
+/**
+ * Holds a set of HLPD_Key to use for cardinal direction movement.
+ * @see HLPD_Key
+ */
 typedef struct HLPD_DirectionalKeys {
     HLPD_Key up;
     HLPD_Key right;
@@ -157,15 +165,20 @@ typedef struct HLPD_DirectionalKeys {
     HLPD_Key left;
 } HLPD_DirectionalKeys;
 
+/**
+ * Array with the default directional keys for all schemas defined as HLPD_DirectionalKeys_Schema.
+ * @see HLPD_DirectionalKeys_Schema
+ * @see HLPD_DirectionalKeys
+ */
 extern HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1];
 
 /**
  * Holds options useful for user runtime preferences.
  */
 typedef struct GameOptions {
-    bool use_default_background;
-    bool do_autosave;
-    HLPD_DirectionalKeys_Schema directional_keys_schema;
+    bool use_default_background; //<** Turn on usage of default terminal background */
+    bool do_autosave; //<* Turns on autosave */
+    HLPD_DirectionalKeys_Schema directional_keys_schema; //* Defines the current schema for cardinal directions movement */
 } GameOptions;
 
 extern const GameOptions default_GameOptions;
@@ -2170,6 +2183,9 @@ OP_res OP_res_from_fightResult(fightResult fr);
 
 #define CURSES_GMSTSAVE_NAME "run-nc.bin" /**< Defines file name used for gamestate binary save. */
 #define RL_GMSTSAVE_NAME "run-rl.bin" /**< Defines file name used for gamestate binary save. */
+
+#define CURSES_SETTINGS_SAVE_NAME "options-nc.bin" /**< Defines file name used for game options binary save. */
+#define RL_SETTINGS_SAVE_NAME "options-rl.bin" /**< Defines file name used for game options binary save. */
 
 extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;
