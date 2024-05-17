@@ -18,11 +18,31 @@
 #include "game_utils.h"
 //Functions useful in many areas
 //
+void* s4c_gui_malloc(size_t size)
+{
+#ifndef _WIN32
+    log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating {%li} bytes.", __func__, size);
+#else
+    log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating {%lli} bytes.", __func__, size);
+#endif // _WIN32
+    return kls_push_zero_AR(support_kls, size, _Alignof(char), 1);
+}
+void* s4c_gui_calloc(size_t count, size_t size)
+{
+#ifndef _WIN32
+    log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating [%li]x{%li} bytes.", __func__, count, size);
+#else
+    log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating [%lli]x{%lli} bytes.", __func__, count, size);
+#endif // _WIN32
+    return kls_push_zero_AR(support_kls, size, _Alignof(char), count);
+}
 
 /**
  * Function to handle Ctrl+C signal
+ * @see SIGINT
+ * @param signum The signal number, expected to be SIGINT.
  */
-void ctrl_c_handler(int signum)
+void hlpd_sigint_handler(int signum)
 {
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Ctrl+C received. Cleaning up memory...", __func__);
 #ifdef HELAPORDO_CURSES_BUILD
@@ -31,6 +51,37 @@ void ctrl_c_handler(int signum)
         log_tag("debug_log.txt", "[CLEANUP]", "%s():    Ended window mode", __func__);
     }
 #endif // HELAPORDO_CURSES_BUILD
+
+    /*
+    // Retrieve gamestate pointer
+    Gamestate* gmst = NULL;
+    char* gmst_p = NULL;
+    bool found = false;
+    #ifndef KOLISEO_HAS_REGION
+    gmst_p = (char*) G_GAMESTATE;
+    if (gmst_p != NULL) found = true;
+    #else
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Leveraging Koliseo region list to get Gamestate back", __func__);
+    KLS_Region_List reg_list = default_kls->regs;
+    KLS_Region* head = NULL;
+    while (!found && ! kls_rl_empty(reg_list)) {
+        head = kls_rl_head(reg_list);
+        if (head != NULL && head->type == HR_Gamestate) {
+            gmst_p = default_kls->data + head->begin_offset + head->padding; // Calc pointer using region info
+            found = true;
+        }
+        reg_list = kls_rl_tail(reg_list);
+    }
+    #endif  //KOLISEO_HAS_REGION
+    if (!found) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Could not find Gamestate region in default_kls.", __func__);
+    } else {
+        gmst = (Gamestate*) gmst_p;
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Gamestate at {%p}\n", gmst_p);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Player quit: {%s}\n", gmst->player->name);
+        //TODO try to save the gamestate before freeing the arenas and exiting
+    }
+    */
     if (default_kls != NULL) {
         kls_free(default_kls);
         log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned default_kls", __func__);
@@ -38,6 +89,10 @@ void ctrl_c_handler(int signum)
     if (temporary_kls != NULL) {
         kls_free(temporary_kls);
         log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned temporary_kls", __func__);
+    }
+    if (support_kls != NULL) {
+        kls_free(support_kls);
+        log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned support_kls", __func__);
     }
     exit(0);
 }
@@ -148,6 +203,17 @@ void log_Win_EnvVars(void)
     log_tag("debug_log.txt", "[WIN32-DEBUG]", "OS: { %s }", getenv("OS"));
 }
 #endif
+
+void dbg_GameOptions(GameOptions * options)
+{
+    if (options == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "GameOptions was NULL in dbg_GameOptions()");
+        exit(EXIT_FAILURE);
+    }
+    log_tag("debug_log.txt", "[OPTIONS]", "Use default terminal background: { %s }", options->use_default_background ? "on" : "off");
+    log_tag("debug_log.txt", "[OPTIONS]", "Autosave: { %s }", options->do_autosave ? "on" : "off");
+}
 
 /**
  * Debugs the passed (preallocated) Fighter with log_tag().
@@ -484,6 +550,14 @@ void dbg_Gamestate(Gamestate *gmst)
     log_tag("debug_log.txt", "[DEBUG]", "Gamestate:{");
     log_tag("debug_log.txt", "[GAMESTATE]", "Current Gamemode: { %s } [ %i ]",
             stringFromGamemode(gmst->gamemode), gmst->gamemode);
+    if (gmst->options == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "GameOptions was NULL in dbg_Gamestate()");
+    } else {
+        log_tag("debug_log.txt", "[GAMESTATE]", "%s", "Current options: {");
+        dbg_GameOptions(gmst->options);
+        log_tag("debug_log.txt", "[GAMESTATE]", "%s", "}");
+    }
+
     log_tag("debug_log.txt", "[GAMESTATE]", "Start time: {%llu}",
             (unsigned long long) gmst->start_time);
     clock_t run_time = clock() - gmst->start_time;
@@ -578,10 +652,11 @@ void dbg_GameScreen(GameScreen * scr)
  * @param current_enemy_index Index for current Enemy.
  * @param current_floor Pointer to current Floor, initialised if gmst->gamemode == Rogue.
  * @param current_room Pointer to current Room.
+ * @param game_options Pointer to current game options.
  */
 void update_Gamestate(Gamestate *gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
-                      int current_enemy_index, Floor *current_floor, Room* current_room)
+                      int current_enemy_index, Floor *current_floor, Room* current_room, GameOptions* game_options)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s().",
@@ -601,6 +676,7 @@ void update_Gamestate(Gamestate *gmst, int current_fighters,
         }
     }
     gmst->current_room = current_room;
+    gmst->options = game_options;
 }
 
 /**
@@ -1201,6 +1277,9 @@ void usage(char *progname)
     fprintf(stderr, "    -X        Enable experimental features.\n");
     fprintf(stderr, "    -v        Prints %s version.\n", progname);
     fprintf(stderr, "    -V        Prints %s build info.\n", progname);
+    fprintf(stderr, "    -b        Start the game using terminal default background.\n");
+    fprintf(stderr, "    -j        Start the game with vim (HJKL) directional keys.\n");
+    fprintf(stderr, "    -w        Start the game with WASD directional keys.\n");
     fprintf(stderr, "    -a        Disable autosave.\n");
     fprintf(stderr, "    -L        Enable logging.\n");
     fprintf(stderr, "    -Q        Enable fast quit.\n");
@@ -1661,6 +1740,30 @@ char *stringFromFloorclass(floorClass fc)
 }
 
 /**
+ * Takes a integer and returns the corresponding HLPD_KeyClass string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see HLPD_KeyClass
+ * @param k The integer/HLPD_KeyClass.
+ * @return String corresponding to the HLPD_KeyClass.
+ */
+char *stringFrom_HLPD_KeyClass(HLPD_KeyClass k)
+{
+    return hlpd_keyclass_strings[k];
+}
+
+/**
+ * Takes a integer and returns the corresponding HLPD_DirectionalKeys_Schema string by the inner array position.
+ * Correct result is only possible by having the enum values in a consistent order with the string array.
+ * @see HLPD_DirectionalKeys_Schema
+ * @param dks The integer/HLPD_DirectionalKeys_Schema.
+ * @return String corresponding to the HLPD_DirectionalKeys_Schema.
+ */
+const char *stringFrom_HLPD_DirectionalKeys_Schema(int dks)
+{
+    return hlpd_directionalkeyschemas_strings[dks];
+}
+
+/**
  * Takes a Fighter pointer and sets its name value to the string provided on stdin.
  * @param player The pointer whose name value will be set.
  */
@@ -1723,18 +1826,61 @@ void pickClass(Fighter *player)
 {
     int pick = -1;
     do {
-        int res = system("clear");
-        log_tag("debug_log.txt", "[DEBUG]",
-                "pickClass() system(\"clear\") res was (%i)", res);
-        printf("\nPick a class.\n");
-        printClasses();
-        pick = scanClass();
+        if (G_EXPERIMENTAL_ON != 1) {
+            int res = system("clear");
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "pickClass() system(\"clear\") res was (%i)", res);
+            printf("\nPick a class.\n");
+            printClasses();
+            pick = scanClass();
+        } else {
+            // Initialize ncurses
+            if (support_kls == NULL) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing support koliseo", __func__);
+                support_kls = kls_new(500);
+            }
+
+            clear();
+            refresh();
+
+            mvprintw(7, 0, "Press Enter to pick a class");
+            mvprintw(8, 0, "Knight | Archer | Mage | Assassin");
+            mvprintw(9, 0, "Press 'q' when you're done.");
+            refresh();
+
+            const char* class_toggle_label = "Class ->";
+            // Define the dimensions and position of the textfield window
+            int height = 5;
+            int width = 20;
+            int start_y = 2;
+            int start_x = strlen(class_toggle_label) + 10;
+            size_t class_inputbuf_max_size = strlen("Assassin");
+
+            // Define menu options and their toggle states
+            TextField txt_field = new_TextField_alloc(class_inputbuf_max_size, height, width, start_x, start_y, s4c_gui_malloc, s4c_gui_calloc, NULL);
+            use_clean_TextField(txt_field);
+            endwin(); // End ncurses
+
+            const char* submitted = get_TextField_value(txt_field);
+            if (strcmp(submitted, "Knight") == 0) {
+                pick = Knight;
+            } else if (strcmp(submitted, "Archer") == 0) {
+                pick = Archer;
+            } else if (strcmp(submitted, "Mage") == 0) {
+                pick = Mage;
+            } else if (strcmp(submitted, "Assassin") == 0) {
+                pick = Assassin;
+            } else {
+                pick = -1;
+            }
+            free_TextField(txt_field);
+            kls_free(support_kls);
+            support_kls = NULL;
+        }
     } while (pick < 0);
 
     player->class = pick;
-    green();
-    printf("\n\n\tClass: %s\n\n", stringFromClass(player->class));
-    white();
+    log_tag("debug_log.txt", "[DEBUG]", "%s(): player picked class {%s}", __func__, stringFromClass(player->class));
 }
 
 /**
@@ -1783,10 +1929,49 @@ int scanWincon(void)
  */
 void pickName(Fighter *player)
 {
-    scanName(player);
-    red();
-    printf("\n\n\tName: %s\n\n", player->name);
-    white();
+    if (G_EXPERIMENTAL_ON != 1) {
+        scanName(player);
+    } else {
+        bool picked = false;
+        do {
+            if (support_kls == NULL) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing support koliseo", __func__);
+                support_kls = kls_new(500);
+            }
+            // Initialize ncurses
+            clear();
+            refresh();
+
+            mvprintw(7, 0, "Press Enter to pick a name");
+            mvprintw(9, 0, "Press 'q' when you're done.");
+            refresh();
+
+            const char* name_toggle_label = "Name ->";
+            // Define the dimensions and position of the textfield window
+            int height = 5;
+            int width = 20;
+            int start_y = 2;
+            int start_x = strlen(name_toggle_label) + 10;
+            size_t name_inputbuf_max_size = FIGHTER_NAME_BUFSIZE;
+
+            // Define menu options and their toggle states
+            TextField txt_field = new_TextField_alloc(name_inputbuf_max_size, height, width, start_x, start_y, s4c_gui_malloc, s4c_gui_calloc, NULL);
+
+            use_clean_TextField(txt_field);
+
+            endwin(); // End ncurses
+
+            if (lint_TextField(txt_field)) {
+                const char* submitted = get_TextField_value(txt_field);
+                memcpy(player->name, submitted, FIGHTER_NAME_BUFSIZE);
+                picked = true;
+            }
+            free_TextField(txt_field);
+            kls_free(support_kls);
+            support_kls = NULL;
+        } while (!picked);
+    }
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    player chose name {%s}", __func__, player->name);
 }
 
 /**
@@ -3032,10 +3217,11 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
  * @param player Game main player.
  * @param gamemode Picked gamemode.
  * @param screen The main screen from initscr().
+ * @param options The GameOptions for current run.
  * @param is_seeded Denotes if current game was started from a set seed.
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, bool is_seeded)
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
@@ -3692,8 +3878,7 @@ void unlockSpecial(Fighter *f)
     int c;
 
     while (!picked && (c = wgetch(my_menu_win))) {
-        switch (c) {
-        case KEY_DOWN: {
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             menu_driver(my_menu, REQ_DOWN_ITEM);
             cur = current_item(my_menu);
             //Update selected window
@@ -3706,9 +3891,7 @@ void unlockSpecial(Fighter *f)
                     break;
                 }
             }
-        }
-        break;
-        case KEY_UP: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
             menu_driver(my_menu, REQ_UP_ITEM);
             cur = current_item(my_menu);
             for (int i = 0; i < SPECIALSMAX + 1; i++) {
@@ -3720,9 +3903,7 @@ void unlockSpecial(Fighter *f)
                     break;
                 }
             }
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
             //Update selected window
@@ -3735,9 +3916,7 @@ void unlockSpecial(Fighter *f)
                     break;
                 }
             }
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
             for (int i = 0; i < SPECIALSMAX + 1; i++) {
@@ -3749,9 +3928,8 @@ void unlockSpecial(Fighter *f)
                     break;
                 }
             }
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /*Enter */
             picked = 1;
             cur = current_item(my_menu);
             for (int i = 0; i < SPECIALSMAX + 1; i++) {
@@ -3766,8 +3944,6 @@ void unlockSpecial(Fighter *f)
                 pos_menu_cursor(my_menu);
                 refresh();
             };
-            break;
-        }
         }
         wclear(display_win);
         wrefresh(display_win);
@@ -5041,6 +5217,8 @@ turnOption getTurnChoice(char *ch)
             pick = EXPLORE;
         } else if ((comp = strcmp(ch, "Tutorial")) == 0) {
             pick = TUTORIAL;
+        } else if ((comp = strcmp(ch, "Options")) == 0) {
+            pick = GAME_OPTIONS;
         } else if ((comp = strcmp(ch, "Close")) == 0) {
             pick = CLOSE_MENU;
         } else {

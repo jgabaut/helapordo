@@ -90,6 +90,100 @@ extern const char* helapordo_title_string; /**< Defines a formatted string for t
 extern const char* helapordo_build_string;
 
 /**
+ * The different kinds of HLPD_Key.
+ * Ordering is directly related to hlpd_keyclass_strings.
+ * @see hlpd_keyclass_strings
+ */
+typedef enum HLPD_KeyClass {
+    HLPD_KEY_UP = 0,
+    HLPD_KEY_RIGHT,
+    HLPD_KEY_DOWN,
+    HLPD_KEY_LEFT,
+    HLPD_KEY_DWNPAGE,
+    HLPD_KEY_UPPAGE,
+    HLPD_KEY_CONFIRM,
+    HLPD_KEY_QUIT,
+    HLPD_KEY_MENU,
+} HLPD_KeyClass;
+
+/** Maximum index of HLPD_KeyClass, so that the size has to add 1 for the 0th index
+ * @see HLPD_KeyClass
+ */
+#define HLPD_KEYCLASS_MAX 8
+
+/**
+ * Array with the name strings for Gamemode.
+ * @see Gamemode
+ */
+extern char *hlpd_keyclass_strings[HLPD_KEYCLASS_MAX + 1];
+
+/**
+ * Holds info about a keybind for the game.
+ * @see HLPD_KeyClass
+ */
+typedef struct HLPD_Key {
+    int val;
+    HLPD_KeyClass class;
+} HLPD_Key;
+
+/**
+ * Array with the keybinds for the game.
+ * @see HLPD_Key
+ */
+extern HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1];
+
+/**
+ * The different kinds of schemas available for directional keys.
+ * Ordering is directly related to hlpd_directionalkeyschema_strings.
+ * @see hlpd_directionalkeyschema_strings
+ */
+typedef enum HLPD_DirectionalKeys_Schema {
+    HLPD_ARROW_KEYS=0,
+    HLPD_VIM_KEYS,
+    HLPD_WASD_KEYS,
+} HLPD_DirectionalKeys_Schema;
+
+/** Maximum index of HLPD_DirectionalKeys_Schema, so that the size has to add 1 for the 0th index
+ * @see HLPD_DirectionalKeys_Schema
+ */
+#define HLPD_DIRECTIONALKEYS_SCHEMAS_MAX 2
+
+/**
+ * Array with the name strings for HLPD_DirectionalKeys_Schema.
+ * @see HLPD_DirectionalKeys_Schema
+ */
+extern char *hlpd_directionalkeyschemas_strings[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX + 1];
+
+/**
+ * Holds a set of HLPD_Key to use for cardinal direction movement.
+ * @see HLPD_Key
+ */
+typedef struct HLPD_DirectionalKeys {
+    HLPD_Key up;
+    HLPD_Key right;
+    HLPD_Key down;
+    HLPD_Key left;
+} HLPD_DirectionalKeys;
+
+/**
+ * Array with the default directional keys for all schemas defined as HLPD_DirectionalKeys_Schema.
+ * @see HLPD_DirectionalKeys_Schema
+ * @see HLPD_DirectionalKeys
+ */
+extern HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1];
+
+/**
+ * Holds options useful for user runtime preferences.
+ */
+typedef struct GameOptions {
+    bool use_default_background; //<** Turn on usage of default terminal background */
+    bool do_autosave; //<* Turns on autosave */
+    HLPD_DirectionalKeys_Schema directional_keys_schema; //* Defines the current schema for cardinal directions movement */
+} GameOptions;
+
+extern const GameOptions default_GameOptions;
+
+/**
  * Defines indexes for all types that are allocated with Koliseo.
  */
 typedef enum HLP_Region_Type {
@@ -120,6 +214,8 @@ typedef enum HLP_Region_Type {
     HR_Saveslot,
     HR_Gamestate,
     HR_Gamescreen,
+    HR_GameOptions,
+    HR_BSP_Room,
     HR_loadInfo,
 } HLP_Region_Type;
 
@@ -142,6 +238,11 @@ extern Koliseo *default_kls;
  * Global variable for temporary Koliseo.
  */
 extern Koliseo *temporary_kls;
+/**
+ * Global variable for support Koliseo.
+ */
+extern Koliseo *support_kls;
+
 /**
  * TODO Remove mentions of this.
  * Global variable for load animations flag. Legacy.
@@ -206,6 +307,22 @@ extern int G_DOTUTORIAL_ON;
 extern int G_USE_CURRENTDIR;
 
 /**
+ * Global variable for using terminal default color.
+ */
+extern int G_USE_DEFAULT_BACKGROUND;
+
+/**
+ * Global variable for using vim-like directional keys.
+ */
+extern int G_USE_VIM_DIRECTIONAL_KEYS;
+
+/**
+ * Global variable for using WASD directional keys.
+ */
+extern int G_USE_WASD_DIRECTIONAL_KEYS;
+
+
+/**
  * Global variable used to count advancements of the rng.
  */
 extern int64_t G_RNG_ADVANCEMENTS;
@@ -232,12 +349,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 7
+#define HELAPORDO_PATCH_VERSION 8
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.7"
+#define VERSION "1.4.8"
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
@@ -1755,6 +1872,7 @@ typedef struct loadInfo {
  * @see roomClass
  * @see Wincon
  * @see Path
+ * @see GameOptions
  */
 typedef struct {
 
@@ -1786,8 +1904,18 @@ typedef struct {
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
+    GameOptions *options; /**< Keeps track of current options.*/
+
     bool is_seeded; /**< Denotes if the current game was started with a set seed.*/
 } Gamestate;
+
+#ifndef KOLISEO_HAS_REGION
+/**
+ * Global variable used to store Gamestate address when KLS_Region is not available. Could be used even with it.
+ * Useful to save the game in a pinch, like when receiving SIGINT.
+ */
+extern Gamestate* G_GAMESTATE;
+#endif
 
 /**
  * The different kinds of turnOption.
@@ -1814,6 +1942,7 @@ typedef enum turnOption {
     TUTORIAL = 777,
     CLOSE_MENU = 110,
     SKILL = 111,
+    GAME_OPTIONS = 112,
 } turnOption;
 
 /**
@@ -1838,6 +1967,7 @@ typedef enum turnOption_OP {
     OP_LOAD_ENEMYROOM = 14,
     OP_LOAD_HOMEROOM = 15,
     OP_SKILL = 16,
+    OP_CHANGE_OPTIONS = 17,
 } turnOption_OP;
 
 /**
@@ -1853,7 +1983,7 @@ turnOption_OP turnOP_from_turnOption(turnOption t);
  * @see turnOption_OP
  * @see stringFromTurnOP()
  */
-#define TURNOP_MAX 16
+#define TURNOP_MAX 17
 /**
  * Array with the name strings for turnOption.
  * @see turnOption
@@ -2057,6 +2187,9 @@ OP_res OP_res_from_fightResult(fightResult fr);
 
 #define CURSES_GMSTSAVE_NAME "run-nc.bin" /**< Defines file name used for gamestate binary save. */
 #define RL_GMSTSAVE_NAME "run-rl.bin" /**< Defines file name used for gamestate binary save. */
+
+#define CURSES_SETTINGS_SAVE_NAME "settings-nc.bin" /**< Defines file name used for game options binary save. */
+#define RL_SETTINGS_SAVE_NAME "settings-rl.bin" /**< Defines file name used for game options binary save. */
 
 extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;

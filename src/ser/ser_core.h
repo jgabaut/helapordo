@@ -120,7 +120,7 @@ typedef struct __attribute__((packed)) SerPerk {
 #pragma pack(push, 1)
 typedef struct SerPerk {
 #endif
-    perkClass class;	  /**< Defines which kind of Perk the instance relates to*/
+    int32_t class;	  /**< Defines which kind of Perk the instance relates to*/
     int32_t innerValue;	/**< Contains an integer for perks that need a state*/
 #ifdef __GNUC__
 } SerPerk;
@@ -147,7 +147,7 @@ typedef struct __attribute__((packed)) SerSkillslot {
 #pragma pack(push, 1)
 typedef struct SerSkillslot {
 #endif
-    skillType class;	  /**< Defines which kind of Skillslot the instance relates to*/
+    int32_t class;	  /**< Defines which kind of Skillslot the instance relates to*/
     int8_t enabled;	/**< Flag defining if the slot is initialised.*/
 #ifdef __GNUC__
 } SerSkillslot;
@@ -170,8 +170,8 @@ typedef struct __attribute__((packed)) SerEquip {
 #pragma pack(push, 1)
 typedef struct SerEquip {
 #endif
-    equipClass class;	  /**< Defines which kind of Equip the instance relates to*/
-    Equipzone type;	/**< Defines which kind of Equipzone the instance relates to*/
+    int32_t class;	  /**< Defines which kind of Equip the instance relates to*/
+    int32_t type;	/**< Defines which kind of Equipzone the instance relates to*/
     int8_t equipped; /**< Flag indicating the instance as currently in use if set.*/
     int8_t level;
     int8_t atk;
@@ -204,7 +204,7 @@ typedef struct __attribute__((packed)) SerEquipslot {
 #pragma pack(push, 1)
 typedef struct SerEquipslot {
 #endif
-    Equipzone type;	/**< Defines which kind of Equipzone the instance relates to*/
+    int32_t type;	/**< Defines which kind of Equipzone the instance relates to*/
     int8_t active; /**< Flag indicating the instance as currently in use if set.*/
 #ifdef __GNUC__
 } SerEquipslot;
@@ -251,7 +251,7 @@ typedef struct __attribute__((packed)) SerConsumable {
 #pragma pack(push, 1)
 typedef struct SerConsumable {
 #endif
-    consumableClass class;     /**< Defines which kind of Consumable this is*/
+    int32_t class;     /**< Defines which kind of Consumable this is*/
     int qty;	 /**< Indicates how many copies of the consumable the instance of this class holds*/
 #ifdef __GNUC__
 } SerConsumable;
@@ -274,7 +274,7 @@ typedef struct __attribute__((packed)) SerArtifact {
 #pragma pack(push, 1)
 typedef struct SerArtifact {
 #endif
-    artifactClass class;     /**< Defines which kind of artifactClass the instance relates to*/
+    int32_t class;     /**< Defines which kind of artifactClass the instance relates to*/
     int qty;	 /**< Indicates how many copies of the artifact the instance of this class holds*/
     int active;	    /**< Flag used to mark instance whose function pointer has been called already*/
     int innerValue;	/**< Indicates interal state of the item when needed*/
@@ -334,7 +334,7 @@ typedef struct __attribute__((packed)) SerEnemy {
 typedef struct SerEnemy {
 #endif
     int8_t index;	   /**< Defines position inside containing foeParty.*/
-    enemyClass class;	  /**< Defines which kind of enemyClass the instance relates to*/
+    int32_t class;	  /**< Defines which kind of enemyClass the instance relates to*/
     int8_t hp;	/**< Current hp value*/
     int8_t atk;	 /**< Current atk value*/
     int8_t def;	 /**< Current def value*/
@@ -383,7 +383,7 @@ typedef struct __attribute__((packed)) SerBoss {
 #pragma pack(push, 1)
 typedef struct SerBoss {
 #endif
-    bossClass class;	 /**< Defines which kind of enemyClass the instance relates to*/
+    int32_t class;	 /**< Defines which kind of enemyClass the instance relates to*/
     int8_t hp;	/**< Current hp value*/
     int8_t atk;	 /**< Current atk value*/
     int8_t def;	 /**< Current def value*/
@@ -438,7 +438,7 @@ typedef struct __attribute__((packed)) SerFighter {
 typedef struct SerFighter {
 #endif
     char name[SERFIGHTER_NAME_BUFSIZE];     /**< Name string*/
-    fighterClass class;	    /**< Defines which kind of fighterClass the instance relates to*/
+    int32_t class;	    /**< Defines which kind of fighterClass the instance relates to*/
     int8_t hp;	/**< Current hp value*/
     int8_t atk;	 /**< Current atk value*/
     int8_t def;	 /**< Current def value*/
@@ -513,7 +513,7 @@ typedef struct __attribute__((packed)) SerFoeParty {
 #pragma pack(push, 1)
 typedef struct SerFoeParty {
 #endif
-    foePartyClass class;     /**< Defines which kind of foePartyClass the instance relates to*/
+    int32_t class;     /**< Defines which kind of foePartyClass the instance relates to*/
     int8_t level;	   /**< Level for the whole FoeParty*/
     SerTurncounter counters[COUNTERSMAX + 1];   /**< Array with all the SerTurncounter*/
     int8_t turnboost_atk;	   /**< Current temp boost value for atk*/
@@ -549,7 +549,7 @@ typedef struct __attribute__((packed)) SerChest {
 #pragma pack(push, 1)
 typedef struct SerChest {
 #endif
-    chestClass class;	  /**< Defines which kind of chesteClass the instance relates to*/
+    int32_t class;	  /**< Defines which kind of chesteClass the instance relates to*/
     int consumablesCount;     /**< Defines how many consumables the chest contains.*/
 
     SerConsumable consumables[CHEST_CONSUMABLES_MAX];	/**< The contained consumables.*/
@@ -577,7 +577,7 @@ typedef struct __attribute__((packed)) SerTreasure {
 #pragma pack(push, 1)
 typedef struct SerTreasure {
 #endif
-    treasureClass class;     /**< Defines which kind of treasureClass the instance relates to*/
+    int32_t class;     /**< Defines which kind of treasureClass the instance relates to*/
     SerChest chest;     /**< The treasure SerChest, initialised if class == TREASURE_CHEST*/
     SerConsumable consumable;	/**< The treasure SerConsumable, initialised if class == TREASURE_CONSUMABLE*/
     SerArtifact artifact;	    /**< The treasure SerArtifact, initialised if class == TREASURE_ARTIFACT*/
@@ -632,7 +632,7 @@ typedef struct __attribute__((packed)) SerRoadfork {
 #pragma pack(push, 1)
 typedef struct SerRoadfork {
 #endif
-    roadforkOption options[2];	   /**< Defines which choices the fork has.*/
+    int32_t options[2];	   /**< Defines which choices the fork has.*/
 #ifdef __GNUC__
 } SerRoadfork;
 #else
@@ -655,7 +655,7 @@ typedef struct __attribute__((packed)) SerRoom {
 typedef struct SerRoom {
 #endif
     int8_t index;	   /**< The room's own number.*/
-    roomClass class;	 /**< Defines which kind of roomClass the instance relates to*/
+    int32_t class;	 /**< Defines which kind of roomClass the instance relates to*/
     SerShop shop;	    /**< The SerShop, initialised for rooms of class SHOP.*/
     SerRoadfork roadfork;	    /**< The SerRoadfork, initialised for rooms of class ROADFORK.*/
     SerTreasure treasure;	    /**< The SerTreasure, initialised for rooms of class TREASURE.*/
@@ -687,11 +687,11 @@ typedef struct SerFloor {
 #endif
     int8_t index;	   /**< The floor's own number.*/
 
-    floorClass class;	  /**< Defines which kind of floorClass the instance relates to*/
+    int32_t class;	  /**< Defines which kind of floorClass the instance relates to*/
     int8_t floor_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	  /**< Defines the layout for the Floor (which cells are actually filled).*/
     int8_t area;	  /**< Holds how many cells we succesfully random walked.*/
     //SerRoom rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< SerRoom matrix for rooms of this floor.*/
-    roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
+    int32_t roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
     int8_t explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
     int8_t explored_area;	   /**< Holds how many cells we explored.*/
     bool from_bsp; /**< Flag for floors generated using bsp.*/
@@ -716,7 +716,7 @@ typedef struct __attribute__((packed)) SerWincon {
 #pragma pack(push, 1)
 typedef struct SerWincon {
 #endif
-    winconClass class;	   /**< Defines which kind of winconClass the instance relates to.*/
+    int32_t class;	   /**< Defines which kind of winconClass the instance relates to.*/
     int8_t current_val;	 /**< Defines the current progress.*/
     int8_t target_val;	/**< Defines the total progress.*/
 #ifdef __GNUC__
@@ -800,7 +800,7 @@ typedef struct SerGamestate {
     SerCountstats stats;	   /**< Keeps track of stats for the game.*/
 
     int8_t current_fighters;     /**< Keeps track of Fighter number for the game.*/
-    roomClass current_roomtype;	    /**< Keeps track of current room type.*/
+    int32_t current_roomtype;	    /**< Keeps track of current room type.*/
     int8_t current_room_index;	/**< Keeps track of current room index.*/
 
     int8_t current_enemy_index;	 /**< Keeps track of current enemy index.*/
@@ -810,7 +810,7 @@ typedef struct SerGamestate {
 
     SerFighter player;	 /**< Keeps track of current Player.*/
 
-    Gamemode gamemode;	   /**< Keeps track of current Gamemode.*/
+    int32_t gamemode;	   /**< Keeps track of current Gamemode.*/
 
     SerFloor current_floor; /**< Pointer to current floor, initialised when gamemode==Rogue.*/
 
@@ -820,6 +820,30 @@ typedef struct SerGamestate {
 } SerGamestate;
 #else
 } SerGamestate;
+#pragma pack(pop)
+#endif
+
+/**
+ * Serialized GameOptions. Packed struct.
+ * Can be turned into a GameOptions with deser_GameOptions().
+ * Can be obtained from a GameOptions with ser_GameOptions().
+ * @see SerGameOptions
+ * @see deser_GameOptions()
+ * @see ser_GameOptions()
+ */
+#ifdef __GNUC__
+typedef struct __attribute__((packed)) SerGameOptions {
+#else
+#pragma pack(push, 1)
+typedef struct SerGameOptions {
+#endif
+    bool use_default_background; //<** Turn on usage of default terminal background */
+    bool do_autosave; //<* Turns on autosave */
+    int32_t directional_keys_schema; //* Defines the current schema for cardinal directions movement */
+#ifdef __GNUC__
+} SerGameOptions;
+#else
+} SerGameOptions;
 #pragma pack(pop)
 #endif
 
@@ -901,4 +925,11 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser);
 bool ser_Gamestate(Gamestate* deser, SerGamestate* ser);
 bool prep_Gamestate(Gamestate* gmst, const char* static_path, size_t offset, Koliseo* kls, bool force_init);
 bool read_savedir(const char* dirpath);
+
+bool deser_GameOptions(SerGameOptions* ser, GameOptions* deser);
+bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser);
+bool writeSerGameOptions(const char* filename, SerGameOptions* data);
+bool appendSerGameOptions(const char* filename, SerGameOptions* data);
+bool readSerGameOptions(const char* filename, size_t offset, SerGameOptions* data);
+bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t offset, Koliseo* kls, bool force_init);
 #endif // SER_CORE_H

@@ -29,6 +29,10 @@
 #endif //HELAPORDO_RAYLIB_BUILD
 #endif //HELAPORDO_CURSES_BUILD
 
+#ifndef KOLISEO_HAS_REGION
+Gamestate* G_GAMESTATE = NULL;
+#endif
+
 int G_PRELOAD_ANIMATIONS_ON = 0;
 int G_DEBUG_ON = 0;
 int G_LOG_ON = 0;
@@ -47,6 +51,10 @@ int G_DOTUTORIAL_ON = 0;
 int GS_AUTOSAVE_ON = 1;
 
 int G_USE_CURRENTDIR = 0;
+int G_USE_DEFAULT_BACKGROUND = 0;
+int G_USE_VIM_DIRECTIONAL_KEYS = 0;
+int G_USE_WASD_DIRECTIONAL_KEYS = 0;
+
 int64_t G_RNG_ADVANCEMENTS = 0;
 
 int G_SEEDED_RUN_ON = 0;
@@ -55,11 +63,12 @@ char *G_SEEDED_RUN_ARG = NULL;
 Gamemode GAMEMODE = Rogue;
 Koliseo *default_kls = NULL;
 Koliseo *temporary_kls = NULL;
+Koliseo *support_kls = NULL;
 
 int main(int argc, char **argv)
 {
     // Registering the signal handler for SIGINT (Ctrl+C)
-    signal(SIGINT, ctrl_c_handler);
+    signal(SIGINT, hlpd_sigint_handler);
     //Randomise seed
     srand(time(NULL));
 

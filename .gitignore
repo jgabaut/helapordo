@@ -8,9 +8,12 @@ save-nc.bin
 save-rl.bin
 
 # ignore run bin
-
 run-nc.bin
 run-rl.bin
+
+# ignore settings bin
+settings-nc.bin
+settings-rl.bin
 
 # ignore hlpd-1 dir
 hlpd-1

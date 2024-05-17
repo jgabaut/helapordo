@@ -3,7 +3,7 @@
 //
 // Reference repo: https://github.com/mtsdurica/bsp-dungeon-generator
 // Original license: MIT.
-// The author of the original code gave permission to re-license it to shit helapordo with just one license.
+// The author of the original code gave permission to re-license it to ship helapordo with just one license.
 //
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
@@ -24,6 +24,19 @@
 */
 
 #include "bsp.h"
+
+const char* BSP_Wall_Index_strings[BSP_WALL_INDEX_MAX+1] = {
+    [WALL_TOP] = "TOP",
+    [WALL_BOTTOM] = "BOTTOM",
+    [WALL_RIGHT] = "RIGHT",
+    [WALL_LEFT] = "LEFT",
+};
+
+const char* stringFromBSP_Wall_Index(int i)
+{
+    if (i < 0 || i > BSP_WALL_INDEX_MAX) return "";
+    return BSP_Wall_Index_strings[i];
+}
 
 /**
  * Set horizontal wall in Floor layout.
@@ -98,9 +111,10 @@ static void set_room_center(BSP_Room *room)
  * @param floor Floor to set the base room to.
  * @return BSP_Room Base BSP room
  */
-static BSP_Room prep_bsp_baseroom(Floor *floor)
+static BSP_Room* prep_bsp_baseroom(Floor *floor, Koliseo_Temp* t_kls)
 {
-    BSP_Room new_room = (BSP_Room) {
+    BSP_Room* new_room = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Base BSP_Room");
+    *new_room = (BSP_Room) {
         .walls[WALL_TOP] = (BSP_Wall) {
             .start_x = 0,
             .start_y = 0,
@@ -125,20 +139,20 @@ static BSP_Room prep_bsp_baseroom(Floor *floor)
             .end_x = FLOOR_MAX_COLS - 1,
             .end_y = FLOOR_MAX_ROWS - 1
         },
-        .child_left = NULL,
-        .child_right = NULL,
+        .child_left = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Base BSP_Room->left"),
+        .child_right = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Base BSP_Room->right"),
         .center_x = 0,
         .center_y = 0,
     };
-    set_horizontal_wall(&new_room.walls[WALL_TOP], floor);
-    set_horizontal_wall(&new_room.walls[WALL_BOTTOM], floor);
-    set_vertical_wall(&new_room.walls[WALL_LEFT], floor);
-    set_vertical_wall(&new_room.walls[WALL_RIGHT], floor);
-    set_room_center(&new_room);
+    set_horizontal_wall(&(new_room->walls[WALL_TOP]), floor);
+    set_horizontal_wall(&(new_room->walls[WALL_BOTTOM]), floor);
+    set_vertical_wall(&(new_room->walls[WALL_LEFT]), floor);
+    set_vertical_wall(&(new_room->walls[WALL_RIGHT]), floor);
+    set_room_center(new_room);
     return new_room;
 }
 
-static void bsp_gen_vert_split(BSP_Room *room, Floor *floor);
+static void bsp_gen_vert_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kls);
 
 /**
  * Generate horizontal split
@@ -146,13 +160,18 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor);
  * @param room The parent room to split
  * @param floor The Floor holding the floor_layout
  */
-static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor)
+static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kls)
 {
     if (room == NULL)
         return;
 
     if (room->walls[WALL_LEFT].start_y + (BSP_ROOM_SIZE / 2) >= room->walls[WALL_LEFT].end_y - (BSP_ROOM_SIZE / 2)) {
-	log_tag("debug_log.txt", "[DEBUG]", "%s():    passed BSP_Room can't be split further", __func__);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    passed BSP_Room can't be split further", __func__);
+        /*
+        for (int i=0; i < 4; i++) {
+            log_tag("debug_log.txt", "[BSP_ROOM]", "Wall [%s]: {" BSP_Wall_Fmt "}", stringFromBSP_Wall_Index(i), BSP_Wall_Arg(room->walls[i]));
+        }
+        */
         return;
     }
 
@@ -166,7 +185,8 @@ static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor)
         .end_y = rand_y,
     };
 
-    BSP_Room child1 = (BSP_Room) {
+    BSP_Room* child1 = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Horiz split c1");
+    *child1 = (BSP_Room) {
         .walls[WALL_TOP] = room->walls[WALL_TOP],
                            .walls[WALL_BOTTOM] = new_split,
         .walls[WALL_LEFT] = (BSP_Wall) {
@@ -186,9 +206,10 @@ static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor)
         .center_x = 0,
         .center_y = 0,
     };
-    room->child_left = &child1;
+    room->child_left = child1;
 
-    BSP_Room child2 = (BSP_Room) {
+    BSP_Room* child2 = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Horiz split c2");
+    *child2 = (BSP_Room) {
         .walls[WALL_TOP] = new_split,
                            .walls[WALL_BOTTOM] = room->walls[WALL_BOTTOM],
         .walls[WALL_LEFT] = (BSP_Wall) {
@@ -208,18 +229,18 @@ static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor)
         .center_x = 0,
         .center_y = 0,
     };
-    room->child_right = &child2;
+    room->child_right = child2;
 
     set_horizontal_wall(&new_split, floor);
 
-    bsp_gen_vert_split(&child1, floor);
-    set_room_center(&child1);
+    bsp_gen_vert_split(child1, floor, t_kls);
+    set_room_center(child1);
 
-    bsp_gen_vert_split(&child2, floor);
-    set_room_center(&child2);
+    bsp_gen_vert_split(child2, floor, t_kls);
+    set_room_center(child2);
     // Carve corridor between coupled rooms
-    for (int i = child2.center_y; i > child1.center_y; i--)
-        floor->floor_layout[child2.center_x][i] = 1;
+    for (int i = child2->center_y; i > child1->center_y; i--)
+        floor->floor_layout[child2->center_x][i] = 1;
 }
 
 /**
@@ -228,13 +249,20 @@ static void bsp_gen_horiz_split(BSP_Room *room, Floor *floor)
  * @param room The parent room to split
  * @param floor The Floor holding the floor_layout
  */
-static void bsp_gen_vert_split(BSP_Room *room, Floor *floor)
+static void bsp_gen_vert_split(BSP_Room *room, Floor *floor, Koliseo_Temp* t_kls)
 {
     if (room == NULL)
         return;
 
-    if (room->walls[WALL_TOP].start_x + BSP_ROOM_SIZE >= room->walls[WALL_TOP].end_x - BSP_ROOM_SIZE)
+    if (room->walls[WALL_TOP].start_x + BSP_ROOM_SIZE >= room->walls[WALL_TOP].end_x - BSP_ROOM_SIZE) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    passed BSP_Room can't be split further", __func__);
+        /*
+        for (int i=0; i < 4; i++) {
+            log_tag("debug_log.txt", "[BSP_ROOM]", "Wall [%s]: {" BSP_Wall_Fmt "}", stringFromBSP_Wall_Index(i), BSP_Wall_Arg(room->walls[i]));
+        }
+        */
         return;
+    }
 
     int rand_x = random_in_range(room->walls[WALL_TOP].start_x + BSP_ROOM_SIZE, room->walls[WALL_TOP].end_x - BSP_ROOM_SIZE);
 
@@ -245,7 +273,8 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor)
         .end_y = room->walls[WALL_BOTTOM].start_y,
     };
 
-    BSP_Room child1 = (BSP_Room) {
+    BSP_Room* child1 = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Vert split c1");
+    *child1 = (BSP_Room) {
         .walls[WALL_TOP] = (BSP_Wall) {
             .start_x = room->walls[WALL_TOP].start_x,
             .start_y = room->walls[WALL_TOP].start_y,
@@ -266,9 +295,10 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor)
                                 .center_y = 0,
     };
 
-    room->child_left = &child1;
+    room->child_left = child1;
 
-    BSP_Room child2 = (BSP_Room) {
+    BSP_Room* child2 = KLS_PUSH_T_TYPED(t_kls, BSP_Room, HR_BSP_Room, "BSP_Room", "Vert split c2");
+    *child2 = (BSP_Room) {
         .walls[WALL_TOP] = (BSP_Wall) {
             .start_x = new_split.start_x,
             .start_y = new_split.start_y,
@@ -289,18 +319,18 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor)
                                 .center_y = 0,
     };
 
-    room->child_right = &child2;
+    room->child_right = child2;
 
     set_vertical_wall(&new_split, floor);
 
-    bsp_gen_horiz_split(&child1, floor);
-    set_room_center(&child1);
+    bsp_gen_horiz_split(child1, floor, t_kls);
+    set_room_center(child1);
 
-    bsp_gen_horiz_split(&child2, floor);
-    set_room_center(&child2);
+    bsp_gen_horiz_split(child2, floor, t_kls);
+    set_room_center(child2);
     // Carve corridor between coupled rooms
-    for (int i = child2.center_x; i > child1.center_x; i--)
-        floor->floor_layout[i][child2.center_y] = 1;
+    for (int i = child2->center_x; i > child1->center_x; i--)
+        floor->floor_layout[i][child2->center_y] = 1;
 }
 
 /**
@@ -308,8 +338,9 @@ static void bsp_gen_vert_split(BSP_Room *room, Floor *floor)
  * @param floor the Floor whose layout is to be prepared
  * @param base_x Base x coordinate
  * @param base_y Base y coordinate
+ * @return The BSP_Room tree for the generated floor.
  */
-void floor_bsp_gen(Floor* floor, int base_x, int base_y)
+BSP_Room* floor_bsp_gen(Floor* floor, Koliseo_Temp* t_kls, int base_x, int base_y)
 {
     for (size_t i = 0; i < FLOOR_MAX_ROWS; i++) {
         for (size_t j = 0; j < FLOOR_MAX_COLS; j++) {
@@ -317,11 +348,128 @@ void floor_bsp_gen(Floor* floor, int base_x, int base_y)
         }
     }
 
-    BSP_Room base_room = prep_bsp_baseroom(floor);
+    BSP_Room* base_room = prep_bsp_baseroom(floor, t_kls);
 
     if (hlpd_rand() % 2) {
-        bsp_gen_vert_split(&base_room, floor);
+        bsp_gen_vert_split(base_room, floor, t_kls);
     } else {
-        bsp_gen_horiz_split(&base_room, floor);
+        bsp_gen_horiz_split(base_room, floor, t_kls);
     }
+    return base_room;
+}
+
+void dbg_BSP_Room(BSP_Room* bsp_room)
+{
+    if (bsp_room == NULL) {
+        return;
+    }
+    for (int i=0; i<4; i++) {
+        log_tag("debug_log.txt", "[DEBUG-BSP]", "%s():    {" BSP_Wall_Fmt "}", __func__, BSP_Wall_Arg(bsp_room->walls[i]));
+    }
+    log_tag("debug_log.txt", "[DEBUG-BSP]", "%s():    {c_x: %i, c_y: %i}", __func__, bsp_room->center_x, bsp_room->center_y);
+    if (bsp_room->child_left != NULL) {
+        dbg_BSP_Room(bsp_room->child_left);
+    } else {
+        for (int i=0; i<4; i++) {
+            log_tag("debug_log.txt", "[DEBUG-BSP]", "%s():    Room with no left child. {" BSP_Wall_Fmt "}", __func__, BSP_Wall_Arg(bsp_room->walls[i]));
+        }
+    }
+    if (bsp_room->child_right != NULL) {
+        dbg_BSP_Room(bsp_room->child_right);
+    } else {
+        for (int i=0; i<4; i++) {
+            log_tag("debug_log.txt", "[DEBUG-BSP]", "%s():    Room with no right child. {" BSP_Wall_Fmt "}", __func__, BSP_Wall_Arg(bsp_room->walls[i]));
+        }
+    }
+}
+
+static void draw_vertical_wall(WINDOW* win, BSP_Wall* w, int start_y, int start_x)
+{
+    for (int y = w->start_y; y <= w->end_y; y++) {
+        int tmp_x = w->start_x;
+        int tmp_y = y;
+        if ((tmp_x == w->start_x && tmp_y == w->start_y)
+            || (tmp_x == w->end_x && tmp_y == w->end_y)) {
+            mvwprintw(win, start_y + y, start_x + w->start_x, "%s", "#");
+        } else {
+            mvwprintw(win, start_y + y, start_x + w->start_x, "%s", "@");
+        }
+    }
+}
+
+static void draw_horizontal_wall(WINDOW* win, BSP_Wall* w, int start_y, int start_x)
+{
+    for (int x = w->start_x; x <= w->end_x; x++) {
+        int tmp_x = x;
+        int tmp_y = w->start_y;
+        if ((tmp_x == w->start_x && tmp_y == w->start_y)
+            || (tmp_x == w->end_x && tmp_y == w->end_y)) {
+            mvwprintw(win, start_y + w->start_y, start_x + x, "%s", "#");
+        } else {
+            mvwprintw(win, start_y + w->start_y, start_x + x, "%s", "@");
+        }
+    }
+}
+
+void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, int depth)
+{
+    if (bsp_room == NULL) return;
+
+    if (bsp_room->child_left != NULL && bsp_room->child_right != NULL) {
+        draw_BSP_Room(win, bsp_room->child_left, start_y, start_x, (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
+        draw_BSP_Room(win, bsp_room->child_right, start_y, start_x,  (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
+    } else {
+        wattron(win, COLOR_PAIR(depth+9));
+        for (int i=0; i<4; i++) {
+            if (i == WALL_TOP || i == WALL_BOTTOM) {
+                draw_horizontal_wall(win, &(bsp_room->walls[i]), start_y, start_x);
+            } else {
+                draw_vertical_wall(win, &(bsp_room->walls[i]), start_y, start_x);
+            }
+        }
+        mvwprintw(win, start_y + bsp_room->center_y, start_x + bsp_room->center_x, "%s", "c");
+        wattroff(win, COLOR_PAIR(depth+9));
+
+        wrefresh(win);
+        napms(250);
+    }
+}
+
+void draw_BSP_Tree(WINDOW* win, BSP_Room* node, int depth, int x, int y, int hz_spacing, int vrt_spacing)
+{
+    if (node == NULL) {
+        return;
+    }
+
+    // Move cursor to position in the window
+    wmove(win, y, x);
+
+    // Print the current node
+    wprintw(win, "%s", "(NODE)");
+
+    // Calculate positions for children
+    int left_x = x - hz_spacing;
+    int right_x = x + hz_spacing;
+    int child_y = y + vrt_spacing;
+
+    // Draw connectors if children exist
+    if (node->child_left != NULL) {
+        // Draw left connector
+        for (int i = x + 1; i < left_x; i++) {
+            mvwaddch(win, y + 1, i, '_');
+        }
+        // Recursively print the left subtree
+        draw_BSP_Tree(win, node->child_left, depth + 1, left_x, child_y, hz_spacing, vrt_spacing);
+    }
+
+    if (node->child_right != NULL) {
+        // Draw right connector
+        for (int i = x + 1; i < right_x; i++) {
+            mvwaddch(win, y + 1, i, '_');
+        }
+        // Recursively print the right subtree
+        draw_BSP_Tree(win, node->child_right, depth + 1, right_x, child_y, hz_spacing, vrt_spacing);
+    }
+
+    wrefresh(win);
 }

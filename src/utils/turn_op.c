@@ -439,7 +439,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                 if (prep_res) {
                     log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
                 } else {
-                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamesate().");
+                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
                     kls_free(default_kls);
                     kls_free(temporary_kls);
                     exit(EXIT_FAILURE);
@@ -821,6 +821,22 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
         }
         break;
         }
+    }
+    break;
+    case OP_CHANGE_OPTIONS: {
+        if (gmst == NULL) {
+            log_tag("debug_log.txt", "[WARN]",
+                    "Gamestate pointer was null in turnOP(OP_CHANGE_OPTIONS)");
+            exit(EXIT_FAILURE);
+        }
+        if (gmst->options == NULL) {
+            log_tag("debug_log.txt", "[WARN]",
+                    "GameOptions pointer was null in turnOP(OP_CHANGE_OPTIONS)");
+            exit(EXIT_FAILURE);
+        }
+        log_tag("debug_log.txt", "[DEBUG]", "OP_CHANGE_OPTIONS");
+        handleGameOptions(gmst->options);
+        res = OP_OK;
     }
     break;
     default: {

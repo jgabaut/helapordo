@@ -128,8 +128,20 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVD")) != -1) {
+        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVDbjw")) != -1) {
             switch (option) {
+            case 'j': {
+                G_USE_VIM_DIRECTIONAL_KEYS = 1;
+            }
+            break;
+            case 'w': {
+                G_USE_WASD_DIRECTIONAL_KEYS = 1;
+            }
+            break;
+            case 'b': {
+                G_USE_DEFAULT_BACKGROUND = 1;
+            }
+            break;
             case 'D': {
                 G_USE_CURRENTDIR = 1;
             }
@@ -142,18 +154,18 @@ void gameloop(int argc, char **argv)
             case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
-                G_DEBUG_ON += 1;
+                G_DEBUG_ON = 1;
                 G_LOG_ON = 1;
 #endif
             }
             break;
             case 'r': {
-                G_DEBUG_ROOMTYPE_ON += 1;
+                G_DEBUG_ROOMTYPE_ON = 1;
                 G_DEBUG_ROOMTYPE_ARG = optarg;
             }
             break;
             case 'E': {
-                G_DEBUG_ENEMYTYPE_ON += 1;
+                G_DEBUG_ENEMYTYPE_ON = 1;
                 G_DEBUG_ENEMYTYPE_ARG = optarg;
             }
             break;
@@ -252,6 +264,7 @@ void gameloop(int argc, char **argv)
                 s4c_dbg_features();
                 printf("  using: koliseo v%s\n", string_koliseo_version());
                 kls_dbg_features();
+                printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
                 printf("  using: ncurses v%s\n", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
@@ -384,8 +397,8 @@ void gameloop(int argc, char **argv)
             }
             fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
             if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
-                && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR
-                && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH) {
+                || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR)
+                || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR == EXPECTED_NCURSES_VERSION_MINOR && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH)) {
                 fprintf(debug_file,
                         "[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
                         NCURSES_VERSION, NCURSES_VERSION_MAJOR,
@@ -508,6 +521,14 @@ void gameloop(int argc, char **argv)
                 };
             }
 
+        }
+
+        if (G_USE_DEFAULT_BACKGROUND == 1) {
+#ifndef reset_color_pairs
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Overriding flag G_USE_DEFAULT_BACKGROUND to 0, since reset_color_pairs() support is missing from this ncurses build.");
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
+            G_USE_DEFAULT_BACKGROUND = 0;
+#endif // reset_color_pairs
         }
         log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
 
@@ -837,6 +858,26 @@ void gameloop(int argc, char **argv)
                 time_spent_loading_animations);
 
         WINDOW* screen = initscr();
+        noecho();
+        int cursorCheck = curs_set(0); // We try making the cursor invisible
+        if (cursorCheck == ERR) {
+            log_tag("debug_log.txt", "[ERROR]","%s():    Failed making the cursor invisible");
+        }
+
+        if (default_GameOptions.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) {
+            // game_options is initialised later ATM. But the default is overridden by G_USE_DEFAULT_BACKGROUND atm, so all good
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "%s():    Calling use_default_colors()", __func__);
+            short int pair0_fg;
+            short int pair0_bg;
+            pair_content(0, &pair0_fg, &pair0_bg);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 is {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
+            int default_colors_res = use_default_colors();
+            if (default_colors_res != OK) {
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Failed use_default_colors(). Res: {%i}", __func__, default_colors_res);
+            }
+        }
+
         bool screen_is_big_enough = false;
         int screen_rows = 0;
         int screen_cols = 0;
@@ -865,6 +906,52 @@ void gameloop(int argc, char **argv)
         gamescreen->tabsize = TABSIZE;
 
         gamescreen->win = screen;
+
+        GameOptions game_options = default_GameOptions;
+
+        bool force_gameoptions_init = false;
+        // Set static_path value to the correct static dir path
+        resolve_staticPath(static_path);
+        bool gameopts_prep_res = prep_GameOptions(&game_options, static_path, 0, default_kls, force_gameoptions_init);
+
+        if (gameopts_prep_res) {
+            log_tag("debug_log.txt", "[DEBUG]", "Done prep_GameOptions().");
+        } else {
+            log_tag("debug_log.txt", "[ERROR]", "Failed prep_GameOptions().");
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    setting game_options.do_autosave to (GS_AUTOSAVE_ON == 1): {%s}", __func__, (GS_AUTOSAVE_ON == 1 ? "true" : "false"));
+        if (GS_AUTOSAVE_ON == 1) {
+            // Global var overtakes
+            if (! game_options.do_autosave) log_tag("debug_log.txt", "[DEBUG]", "%s():    game_options autosave was false, but global var overtook", __func__);
+            game_options.do_autosave = true;
+        }
+        if (G_USE_DEFAULT_BACKGROUND == 1) {
+            // Global var overtakes
+            if (! game_options.use_default_background) log_tag("debug_log.txt", "[DEBUG]", "%s():    game_options use_default_background was false, but global var overtook", __func__);
+            game_options.use_default_background = true;
+        }
+
+        if (G_USE_VIM_DIRECTIONAL_KEYS == 1) { // Takes precedence over WASD option by being evaluated first
+            if (game_options.directional_keys_schema != HLPD_VIM_KEYS) log_tag("debug_log.txt", "[DEBUG]", "%s():    game_options directional keys schema was not VIM_KEYS, but global var overtook", __func__);
+            game_options.directional_keys_schema = HLPD_VIM_KEYS;
+        } else if (G_USE_WASD_DIRECTIONAL_KEYS == 1) {
+            if (game_options.directional_keys_schema != HLPD_WASD_KEYS) log_tag("debug_log.txt", "[DEBUG]", "%s():    game_options directional keys schema was not WASD_KEYS, but global var overtook", __func__);
+            game_options.directional_keys_schema = HLPD_WASD_KEYS;
+        }
+
+        if (game_options.directional_keys_schema != default_GameOptions.directional_keys_schema) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    setting game_options.directional_keys_schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(game_options.directional_keys_schema));
+            HLPD_DirectionalKeys directional_keys = hlpd_default_directional_keys[game_options.directional_keys_schema];
+            hlpd_default_keybinds[HLPD_KEY_UP] = directional_keys.up;
+            hlpd_default_keybinds[HLPD_KEY_RIGHT] = directional_keys.right;
+            hlpd_default_keybinds[HLPD_KEY_DOWN] = directional_keys.down;
+            hlpd_default_keybinds[HLPD_KEY_LEFT] = directional_keys.left;
+        }
+
         ITEM **savepick_items;
         MENU *savepick_menu;
         WINDOW *savepick_menu_win;
@@ -890,6 +977,7 @@ void gameloop(int argc, char **argv)
             "New game",
             "Load save",
             "Tutorial",
+            "Options",
             "Quit",
             (char *)NULL,
         };
@@ -937,49 +1025,7 @@ void gameloop(int argc, char **argv)
         //Handle side window for welcome info
         savepick_side_win = newwin(12, 32, 2, 2);
         scrollok(savepick_side_win, TRUE);
-        wprintw(savepick_side_win, "  \nhelapordo");
-        wprintw(savepick_side_win, "  \n  build: %s", helapordo_build_string);
-        wprintw(savepick_side_win, "  \n  using: s4c-animate v%s",
-                S4C_ANIMATE_VERSION);
-        wprintw(savepick_side_win, "  \n  using: koliseo v%s",
-                KOLISEO_API_VERSION_STRING);
-        wprintw(savepick_side_win, "  \n  using: ncurses v%s", NCURSES_VERSION);
-#ifdef ANVIL__helapordo__
-#ifndef INVIL__helapordo__HEADER__
-        wprintw(savepick_side_win, "  \nBuilt with: amboso v%s",
-                ANVIL__API_LEVEL__STRING);
-#else
-        wprintw(savepick_side_win, "  \nBuilt with: invil v%s",
-                INVIL__VERSION__STRING);
-        wprintw(savepick_side_win, "  \nVersion Info: %.8s",
-                get_ANVIL__VERSION__DESC__());
-        const char* anvil_date = get_ANVIL__VERSION__DATE__();
-        char* anvil_date_end;
-#ifndef _WIN32
-        time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
-#else
-        time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
-#endif //_WIN32
-
-        if (anvil_date_end == anvil_date) {
-            log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
-        } else {
-            char build_time_buff[20] = {0};
-            struct tm* build_time_tm = localtime(&anvil_build_time);
-
-            if (build_time_tm == NULL) {
-                log_tag("debug_log.txt", "ERROR", "localtime() failed");
-            } else {
-                strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
-                wprintw(savepick_side_win, "  \nDate: %s", build_time_buff);
-            }
-        }
-#endif // INVIL__helapordo__HEADER__
-#else
-        wprintw(savepick_side_win, "  \nBuilt without anvil");
-#endif // ANVIL__helapordo__
-        //wprintw(savepick_side_win,"  \n  %s",get_ANVIL__VERSION__DESC__());
-        wrefresh(savepick_side_win);
+        draw_buildinfo(savepick_side_win);
         refresh();
 
         int savepick_picked = 0;
@@ -1004,7 +1050,7 @@ void gameloop(int argc, char **argv)
          */
 
         for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-            init_s4c_color_pair(&palette[i], 9 + i);
+            init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1 ) ? -1 : 0));
         }
         log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
         gamescreen->colors = COLORS;
@@ -1013,16 +1059,18 @@ void gameloop(int argc, char **argv)
 
         while (!savepick_picked
                && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
-            switch (pickchar) {
-            case KEY_DOWN: {
-                menu_driver(savepick_menu, REQ_DOWN_ITEM);
-            }
-            break;
-            case KEY_UP: {
-                menu_driver(savepick_menu, REQ_UP_ITEM);
-            }
-            break;
-            case KEY_LEFT: {	/*Left option pick */
+            if ( pickchar == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+                int menudriver_res = menu_driver(savepick_menu, REQ_DOWN_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(savepick_menu, REQ_FIRST_ITEM);
+                }
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UP)) {
+                int menudriver_res = menu_driver(savepick_menu, REQ_UP_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(savepick_menu, REQ_LAST_ITEM);
+                }
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_LEFT)) {
+                /*Left option pick */
                 ITEM *cur;
                 cur = current_item(savepick_menu);
                 savepick_choice = getTurnChoice((char *)item_name(cur));
@@ -1033,9 +1081,8 @@ void gameloop(int argc, char **argv)
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_RIGHT: {	/*Right option pick */
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
+                /*Right option pick */
                 ITEM *cur;
                 cur = current_item(savepick_menu);
                 savepick_choice = getTurnChoice((char *)item_name(cur));
@@ -1046,18 +1093,12 @@ void gameloop(int argc, char **argv)
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_NPAGE: {
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
                 menu_driver(savepick_menu, REQ_SCR_DPAGE);
-            }
-            break;
-            case KEY_PPAGE: {
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(savepick_menu, REQ_SCR_UPAGE);
-            }
-            break;
-            case 10: {	/* Enter */
-                savepick_picked = 1;
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+                /* Enter */
                 ITEM *cur;
 
                 //move(18,47);
@@ -1065,11 +1106,12 @@ void gameloop(int argc, char **argv)
                 cur = current_item(savepick_menu);
                 //mvprintw(18, 47, "Item selected is : %s", item_name(cur));
                 savepick_choice = getTurnChoice((char *)item_name(cur));
+                if (savepick_choice != GAME_OPTIONS) {
+                    savepick_picked = 1;
+                }
                 pos_menu_cursor(savepick_menu);
                 refresh();
-            }
-            break;
-            case 'q': {
+            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_QUIT)) {
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Player used q to quit from savepick menu.");
                 //TODO: take some variable to disable quick quitting with q
@@ -1077,11 +1119,6 @@ void gameloop(int argc, char **argv)
                 savepick_choice = getTurnChoice("Quit");
                 pos_menu_cursor(savepick_menu);
                 refresh();
-            }
-            break;
-            default: {
-                break;
-            }
             }
             wrefresh(savepick_menu_win);
             if (savepick_choice == NEW_GAME) {
@@ -1142,6 +1179,18 @@ void gameloop(int argc, char **argv)
                 log_tag("debug_log.txt", "[DEBUG]", "Doing tutorial.");
                 handleTutorial();
                 exit(EXIT_SUCCESS);
+            } else if (savepick_choice == GAME_OPTIONS) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Changing options from savepick menu", __func__);
+                handleGameOptions(&game_options);
+                clear();
+                refresh();
+                box(savepick_menu_win,0,0);
+                //TODO: is it possible to avoid redrawing this?...
+                wclear(savepick_side_win);
+                draw_buildinfo(savepick_side_win);
+                wrefresh(savepick_menu_win);
+                wrefresh(savepick_side_win);
+                savepick_choice = 999;
             }
         }			//End while !savepick_picked
 
@@ -1227,8 +1276,12 @@ void gameloop(int argc, char **argv)
                 gamestate =
                     KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                    "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+                G_GAMESTATE = gamestate;
+#endif
                 init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                               player, GAMEMODE, gamescreen, is_seeded);
+                               player, GAMEMODE, gamescreen, &game_options, is_seeded);
 
                 current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
                                                "Loading floor");
@@ -1638,8 +1691,12 @@ void gameloop(int argc, char **argv)
             gamestate =
                 KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
                                "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+            G_GAMESTATE = gamestate;
+#endif
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                           player, GAMEMODE, gamescreen, is_seeded);
+                           player, GAMEMODE, gamescreen, &game_options, is_seeded);
         }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
@@ -1648,9 +1705,9 @@ void gameloop(int argc, char **argv)
             //NO. We pass NULL now.
             //
             //We also pass NULL for current room.
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor, NULL);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, current_floor, NULL, &game_options);
         } else {
-            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL);
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1, NULL, NULL, &game_options);
         }
         log_tag("debug_log.txt", "[DEBUG]", "Initialised Gamestate.");
         dbg_Gamestate(gamestate);
@@ -1728,18 +1785,24 @@ void gameloop(int argc, char **argv)
                 int colorCheck = has_colors();
 
                 if (colorCheck == FALSE) {
+                    endwin();
                     fprintf(stderr, "Terminal can't use colors, abort.\n");
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
                     exit(S4C_ERR_TERMCOLOR);
                 }
 
                 colorCheck = can_change_color();
 
                 if (colorCheck == FALSE) {
+                    endwin();
                     fprintf(stderr, "Terminal can't change colors, abort.\n");
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
                     exit(S4C_ERR_TERMCHANGECOLOR);
                 }
                 for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-                    init_s4c_color_pair(&palette[i], 9 + i);
+                    init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) ? -1 : 0));
                 }
                 cbreak();
                 noecho();
@@ -1844,7 +1907,7 @@ void gameloop(int argc, char **argv)
                 endwin();
 
                 update_Gamestate(gamestate, 1, current_room->class, roomsDone,
-                                 -1, NULL, current_room);
+                                 -1, NULL, current_room, &game_options);
 
                 if (current_room->class == HOME) {
                     res =
@@ -2022,12 +2085,8 @@ void gameloop(int argc, char **argv)
                     exit(S4C_ERR_TERMCHANGECOLOR);
                 }
                 for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-                    init_s4c_color_pair(&palette[i], 9 + i);
+                    init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) ? -1 : 0));
                 }
-                cbreak();
-                noecho();
-                keypad(stdscr, TRUE);
-
                 cbreak();
                 noecho();
                 keypad(stdscr, TRUE);
@@ -2058,7 +2117,7 @@ void gameloop(int argc, char **argv)
                                                    HR_Floor, "Floor", "Floor");
                 }
                 update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
-                                 current_floor, NULL); // NULL for current_room
+                                 current_floor, NULL, &game_options); // NULL for current_room
                 // Start the random walk from the center of the dungeon
                 int center_x = FLOOR_MAX_COLS / 2;
                 int center_y = FLOOR_MAX_ROWS / 2;
@@ -2085,7 +2144,25 @@ void gameloop(int argc, char **argv)
                     } else {
                         if ((hlpd_rand() % 101) > 20) {
                             log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                            floor_bsp_gen(current_floor, center_x, center_y);
+                            BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
+                            /*
+                            WINDOW* test_win = newwin(FLOOR_MAX_COLS +2, FLOOR_MAX_ROWS+2, 0,0);
+                            clear();
+                            refresh();
+                            box(test_win, 0, 0);
+                            draw_BSP_Room(test_win, bsp_tree, 1, 1, 0);
+                            refresh();
+                            wgetch(test_win);
+                            */
+                            /*
+                            WINDOW* win = newwin(LINES, COLS, 0, 0);
+                            clear();
+                            refresh();
+                            draw_BSP_Tree(win, bsp_tree, 0, COLS/2, 1, 6, 2);
+                            refresh();
+                            getch();
+                            */
+                            dbg_BSP_Room(bsp_tree);
                             current_floor->from_bsp = true;
                         } else {
                             log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
@@ -2284,7 +2361,7 @@ void gameloop(int argc, char **argv)
 
                         update_Gamestate(gamestate, 1, current_room->class,
                                          current_room->index, -1,
-                                         current_floor, current_room);
+                                         current_floor, current_room, &game_options);
 
                         if (current_room->class == HOME) {
                             res =
@@ -2367,6 +2444,13 @@ void gameloop(int argc, char **argv)
                             //Free room memory
                             //freeRoom(current_room);
 
+                            if (current_room->class != HOME) {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    updating Gamestate to clear current_room reference", __func__);
+                                update_Gamestate(gamestate, 1, BASIC,
+                                                 roomsDone, -1,
+                                                 current_floor, NULL, &game_options);  // Pass NULL for current room to gamestate
+                            }
+
                             //Update floor's roomclass layout for finished rooms which should not be replayed
                             switch (current_floor->
                                     roomclass_layout[player->floor_x][player->floor_y]) {
@@ -2400,7 +2484,7 @@ void gameloop(int argc, char **argv)
                                                      "Floor");
                                 update_Gamestate(gamestate, 1, HOME,
                                                  roomsDone, -1,
-                                                 current_floor, NULL); // Passing NULL for current_room
+                                                 current_floor, NULL, &game_options); // Passing NULL for current_room
 
                                 //Regenerate floor
                                 log_tag("debug_log.txt", "[DEBUG]",
@@ -2422,7 +2506,8 @@ void gameloop(int argc, char **argv)
                                 } else {
                                     if ((hlpd_rand() % 101) > 20) {
                                         log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                                        floor_bsp_gen(current_floor, center_x, center_y);
+                                        BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
+                                        dbg_BSP_Room(bsp_tree);
                                         current_floor->from_bsp = true;
                                     } else {
                                         log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
@@ -2438,11 +2523,36 @@ void gameloop(int argc, char **argv)
                                 //Set room types
                                 floor_set_room_types(current_floor);
 
-                                //Center current coords
-                                player->floor_x = center_x;
-                                player->floor_y = center_y;
+                                if (G_EXPERIMENTAL_ON != 1) {
+                                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                                    player->floor_x = center_x;
+                                    player->floor_y = center_y;
+                                } else {
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+                                    int home_room_x = -1;
+                                    int home_room_y = -1;
+                                    bool done_looking = false;
+                                    for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+                                        for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                                            if (current_floor->roomclass_layout[i][j] == HOME) {
+                                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                                                home_room_x = i;
+                                                home_room_y = j;
+                                                done_looking = true;
+                                            }
+                                        }
+                                    }
+                                    if (!done_looking) {
+                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+                                        kls_free(default_kls);
+                                        kls_free(temporary_kls);
+                                        exit(EXIT_FAILURE);
+                                    }
+                                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+                                    player->floor_x = home_room_x;
+                                    player->floor_y = home_room_y;
+                                }
                                 continue;	//Check win condition for loop
-
                             }
                             break;
                             case SHOP: {

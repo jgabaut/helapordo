@@ -30,6 +30,57 @@ const char* helapordo_build_string = HELAPORDO_BUILD_STR "-" VERSION;
 const char* helapordo_build_string = "unknown-" VERSION;
 #endif
 
+char *hlpd_keyclass_strings[HLPD_KEYCLASS_MAX + 1] = {
+    [HLPD_KEY_UP] = "UP",
+    [HLPD_KEY_RIGHT] = "RIGHT",
+    [HLPD_KEY_DOWN] = "DOWN",
+    [HLPD_KEY_LEFT] = "LEFT",
+    [HLPD_KEY_DWNPAGE] = "DOWN_PAGE",
+    [HLPD_KEY_UPPAGE] = "UP_PAGE",
+    [HLPD_KEY_CONFIRM] = "CONFIRM",
+    [HLPD_KEY_QUIT] = "QUIT",
+    [HLPD_KEY_MENU] = "MENU",
+};
+
+HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1] = {
+    [HLPD_KEY_UP] = {.class = HLPD_KEY_UP, .val = KEY_UP},
+    [HLPD_KEY_RIGHT] = {.class = HLPD_KEY_RIGHT, .val = KEY_RIGHT},
+    [HLPD_KEY_DOWN] = {.class = HLPD_KEY_DOWN, .val = KEY_DOWN},
+    [HLPD_KEY_LEFT] = {.class = HLPD_KEY_LEFT, .val = KEY_LEFT},
+    [HLPD_KEY_DWNPAGE] = {.class = HLPD_KEY_DWNPAGE, .val = KEY_NPAGE},
+    [HLPD_KEY_UPPAGE] = {.class = HLPD_KEY_UPPAGE, .val = KEY_PPAGE},
+    [HLPD_KEY_CONFIRM] = {.class = HLPD_KEY_CONFIRM, .val = 10},
+    [HLPD_KEY_QUIT] = {.class = HLPD_KEY_QUIT, .val = 'q'},
+    [HLPD_KEY_MENU] = {.class = HLPD_KEY_MENU, .val = 'm'},
+};
+
+char *hlpd_directionalkeyschemas_strings[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX + 1] = {
+    [HLPD_ARROW_KEYS] = "Arrow keys",
+    [HLPD_VIM_KEYS] = "Vim keys",
+    [HLPD_WASD_KEYS] = "WASD keys",
+};
+
+HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1] = {
+    [HLPD_ARROW_KEYS] = {
+        .up = {.class = HLPD_KEY_UP, .val = KEY_UP},
+        .right = {.class = HLPD_KEY_RIGHT, .val = KEY_RIGHT},
+        .down = {.class = HLPD_KEY_DOWN, .val = KEY_DOWN},
+        .left = {.class = HLPD_KEY_LEFT, .val = KEY_LEFT},
+    },
+    [HLPD_VIM_KEYS] = {
+        .up = {.class = HLPD_KEY_UP, .val = 'k'},
+        .right = {.class = HLPD_KEY_RIGHT, .val = 'l'},
+        .down = {.class = HLPD_KEY_DOWN, .val = 'j'},
+        .left = {.class = HLPD_KEY_LEFT, .val = 'h'},
+    },
+    [HLPD_WASD_KEYS] = {
+        .up = {.class = HLPD_KEY_UP, .val = 'w'},
+        .right = {.class = HLPD_KEY_RIGHT, .val = 'd'},
+        .down = {.class = HLPD_KEY_DOWN, .val = 's'},
+        .left = {.class = HLPD_KEY_LEFT, .val = 'a'},
+    },
+};
+
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
     "Standard",
     "Story",
@@ -67,6 +118,8 @@ char *hlp_regiontype_strings[HLP_MAX_INDEX + 1] = {
     "HLP_Saveslot",
     "HLP_Gamestate",
     "HLP_Gamescreen",
+    "HLP_GameOptions",
+    "HLP_BSP_Room",
     "HLP_loadInfo",
 };
 
@@ -141,11 +194,16 @@ turnOption_OP turnOP_from_turnOption(turnOption t)
         res = OP_SKILL;
     }
     break;
+    case GAME_OPTIONS: {
+        res = OP_CHANGE_OPTIONS;
+    }
+    break;
     default: {
         //FIXME:
         //Signal error right here?
         return OP_INVALID;
     }
+    break;
     }
     return res;
 }
@@ -260,6 +318,7 @@ char *turnopstrings[TURNOP_MAX + 1] = {
     "Load Enemy Room",
     "Load Home Room",
     "Skill",
+    "Options",
 };
 
 char *foeturnopstrings[FOETURNOP_MAX + 1] = {
@@ -549,3 +608,9 @@ const wchar_t HEAD_CHAR_ICON = 'H';
 const wchar_t TORSO_CHAR_ICON = 'T';
 const wchar_t LEGS_CHAR_ICON = 'L';
 #endif // _WIN32
+
+const GameOptions default_GameOptions = {
+    .use_default_background = false,
+    .do_autosave = true,
+    .directional_keys_schema = HLPD_ARROW_KEYS,
+};

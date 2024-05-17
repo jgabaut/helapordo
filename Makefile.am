@@ -56,10 +56,10 @@ else
 helapordo_SOURCES =
 endif
 
-helapordo_SOURCES += src/core/game_core.c src/utils/game_utils.c src/utils/game_init.c src/utils/game_fight.c src/utils/game_debug.c src/core/equips.c src/ser/ser_core.c src/utils/saves.c src/utils/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/utils/specials.c src/main.c src/core/sprites.c src/utils/floors.c koliseo/src/koliseo.c sprites4curses/s4c-animate/animate.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/core/game_lore.c src/core/game_lore_alt.c src/palette.c src/bsp/bsp.c
+helapordo_SOURCES += src/core/game_core.c src/utils/game_utils.c src/utils/game_init.c src/utils/game_fight.c src/utils/game_debug.c src/core/equips.c src/ser/ser_core.c src/utils/saves.c src/utils/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/utils/specials.c src/main.c src/core/sprites.c src/utils/floors.c koliseo/src/koliseo.c sprites4curses/s4c-animate/animate.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/core/game_lore.c src/core/game_lore_alt.c src/palette.c src/bsp/bsp.c s4c-gui/src/s4c_gui.c
 if HL_RAYLIB_BUILD
 AM_CFLAGS += -DHELAPORDO_RAYLIB_BUILD
-helapordo_SOURCES += src/build-rl/helapordo_raylib.c src/build-rl/game_rl.c
+helapordo_SOURCES += src/build-rl/helapordo_raylib.c src/build-rl/game_rl.c s4c-gui/src/s4c_gui.c
 else
 AM_CFLAGS += -DHELAPORDO_CURSES_BUILD
 helapordo_SOURCES += src/build-nc/game_curses.c
@@ -75,7 +75,7 @@ helapordo_SOURCES += src/build-nc/helapordo.c
 endif
 endif
 
-hlpd_save2l_SOURCES = src/core/game_core.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c koliseo/src/koliseo.c
+hlpd_save2l_SOURCES = src/core/game_core.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c koliseo/src/koliseo.c s4c-gui/src/s4c_gui.c
 
 if HL_RAYLIB_BUILD
 hlpd_save2l_SOURCES += sprites4curses/s4c-animate/animate.c src/build-rl/game_rl.c
@@ -95,6 +95,12 @@ endif
 	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./sprites4curses/s4c-animate/animate.o\e[0m]:  "
 	$(CCOMP) -c ./sprites4curses/s4c-animate/animate.c $(AM_CFLAGS) -o ./sprites4curses/s4c-animate/animate.o
+	@echo -e "\033[1;33mDone.\e[0m"
+
+./s4c-gui/src/s4c_gui.o:
+	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
+	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./s4c-gui/src/s4c_gui.o\e[0m]:  "
+	$(CCOMP) -c ./s4c-gui/src/s4c_gui.c $(AM_CFLAGS) -o ./s4c-gui/src/s4c_gui.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./koliseo/src/koliseo.o:
@@ -225,6 +231,7 @@ clean:
 	@echo -en "Cleaning build artifacts:  "
 	-rm $(TARGET)
 	-rm sprites4curses/s4c-animate/*.o
+	-rm s4c-gui/src/*.o
 	-rm src/*.o
 	-rm src/build-*/*.o
 	-rm src/core/*.o
@@ -244,6 +251,7 @@ clean:
 cleanob:
 	@echo -en "Cleaning object build artifacts:  "
 	-rm sprites4curses/s4c-animate/*.o
+	-rm s4c-gui/src/*.o
 	-rm koliseo/src/*.o
 	-rm src/*.o
 	-rm src/build-*/*.o
@@ -255,7 +263,7 @@ cleanob:
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)
-all: ./src/palette.c ./koliseo/src/koliseo.o ./sprites4curses/s4c-animate/animate.o $(TARGET) ./hlpd-save2l
+all: ./src/palette.c ./koliseo/src/koliseo.o ./sprites4curses/s4c-animate/animate.o ./s4c-gui/src/s4c_gui.o $(TARGET) ./hlpd-save2l
 
 # Target to clean and rebuild
 rebuild: clean all

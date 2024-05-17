@@ -80,7 +80,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     fightResult fightStatus = FIGHTRES_NO_DMG;
     log_tag("debug_log.txt", "[ROOM]", "New HOME room, index %i", room->index);
 
-    if (GS_AUTOSAVE_ON == 1) {
+    if (gamestate->options->do_autosave) {
         bool do_autosave = false;
         if (GAMEMODE == Rogue) {
             if (G_EXPERIMENTAL_ON == 1) {
@@ -239,15 +239,19 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
         int picked = 0;
         int picked_explore = 0;
 
-        while (!picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_explore) {
-            switch (c) {
-            case KEY_DOWN:
-                menu_driver(home_menu, REQ_DOWN_ITEM);
-                break;
-            case KEY_UP:
-                menu_driver(home_menu, REQ_UP_ITEM);
-                break;
-            case KEY_LEFT: {	/*Left option pick */
+        while (!picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_explore) { // This key is not mapped into the keybinds yet.
+            if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+                int menudriver_res = menu_driver(home_menu, REQ_DOWN_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(home_menu, REQ_FIRST_ITEM);
+                }
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+                int menudriver_res = menu_driver(home_menu, REQ_UP_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(home_menu, REQ_LAST_ITEM);
+                }
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_LEFT)) {
+                /*Left option pick */
                 ITEM *cur;
                 cur = current_item(home_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -258,9 +262,8 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_RIGHT: {	/*Right option pick */
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
+                /*Right option pick */
                 ITEM *cur;
                 cur = current_item(home_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -271,15 +274,12 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_NPAGE:
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
                 menu_driver(home_menu, REQ_SCR_DPAGE);
-                break;
-            case KEY_PPAGE:
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(home_menu, REQ_SCR_UPAGE);
-                break;
-            case 10: {	/* Enter */
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+                /* Enter */
                 picked = 1;
                 ITEM *cur;
 
@@ -290,9 +290,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                 choice = getTurnChoice((char *)item_name(cur));
                 pos_menu_cursor(home_menu);
                 refresh();
-            };
-            break;
-            case 'q': {
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
                 if (G_FASTQUIT_ON == 1) {
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Player used q to quit from home room menu.");
@@ -304,13 +302,9 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Player used q in home room menu, but G_FASTQUIT_ON was not 1.");
                 }
-            }
-            break;
-            default: {
+            } else {
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Invalid keystroke in home room menu");
-            }
-            break;
             }
             wrefresh(menu_win);
             if (c == 10) {	// Player char was enter
@@ -506,7 +500,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
     for (int i = 0; i < enemies;) {
 
         update_Gamestate(gamestate, 1, room->class, room->index, i,
-                         gamestate->current_floor, room);
+                         gamestate->current_floor, room, gamestate->options);
 
         fightStatus = OP_RES_NO_DMG;
         Enemy *e = room->enemies[i];
@@ -883,17 +877,21 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
             clock_t menu_start_time = clock(), menu_diff_time;	//, menu_loop_diff_time;
             int frame_tot = 60;
 
-            while (!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
+            while (!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) { // This key is not mapped into the keybinds yet.
                 //clock_t menu_loop_time = clock();
 
-                switch (c) {
-                case KEY_DOWN:
-                    menu_driver(my_menu, REQ_DOWN_ITEM);
-                    break;
-                case KEY_UP:
-                    menu_driver(my_menu, REQ_UP_ITEM);
-                    break;
-                case KEY_LEFT: { /*Left option pick */
+                if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+                    int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+                    if (menudriver_res == E_REQUEST_DENIED) {
+                        menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+                    }
+                } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+                    int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+                    if (menudriver_res == E_REQUEST_DENIED) {
+                        menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+                    }
+                } else if ( c == hlpd_d_keyval(HLPD_KEY_LEFT)) {
+                    /*Left option pick */
                     ITEM *cur;
                     cur = current_item(my_menu);
                     choice = getTurnChoice((char *)item_name(cur));
@@ -904,9 +902,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "Should do something");
                     }
-                }
-                break;
-                case KEY_RIGHT: {
+                } else if ( c == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
                     /*Right option pick */
                     ITEM *cur;
                     cur = current_item(my_menu);
@@ -918,15 +914,12 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "Should do something");
                     }
-                }
-                break;
-                case KEY_NPAGE:
+                } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
                     menu_driver(my_menu, REQ_SCR_DPAGE);
-                    break;
-                case KEY_PPAGE:
+                } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                     menu_driver(my_menu, REQ_SCR_UPAGE);
-                    break;
-                case 10: {	/* Enter */
+                } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+                    /* Enter */
                     picked = 1;
                     ITEM *cur;
 
@@ -937,9 +930,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     choice = getTurnChoice((char *)item_name(cur));
                     pos_menu_cursor(my_menu);
                     //refresh();
-                };
-                break;
-                case 'q': {
+                } else if ( c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
                     if (G_FASTQUIT_ON == 1) {
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "Player used q to quit from enemy room menu.");
@@ -951,11 +942,6 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "Player used q in enemy room menu, but G_FASTQUIT_ON was not 1.");
                     }
-                }
-                break;
-                default: {
-                    break;
-                }
                 }
                 wrefresh(my_menu_win);
                 menu_diff_time = clock() - menu_start_time;
@@ -1390,7 +1376,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
         }			//End while current enemy
     }				//End for all enemies
     update_Gamestate(gamestate, 1, -1, room->index, -1,
-                     gamestate->current_floor, NULL); //Set current_room to NULL
+                     gamestate->current_floor, NULL, gamestate->options); //Set current_room to NULL
     log_tag("debug_log.txt", "[ROOM]", "End of room %i", room->index);
     //free(args);
     //log_tag("debug_log.txt","[FREE]","Freed turnOP_args");
@@ -1526,7 +1512,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     int debug_n_choices = 0;
 
     update_Gamestate(gamestate, 1, room->class, room->index - 1, 1,
-                     gamestate->current_floor, room);
+                     gamestate->current_floor, room, gamestate->options);
 
     int frame_counter = 0;
     int animation_loops_done = 0;
@@ -1796,22 +1782,24 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
         clock_t menu_start_time = clock(), menu_diff_time;	//, menu_loop_diff_time;
         int frame_tot = 60;
 
-        while (!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) {
+        while (!picked && (c = wgetch(my_menu_win)) != KEY_F(1)) { // This key is not mapped into the keybinds yet.
             //clock_t menu_loop_time = clock();
-            switch (c) {
-            case KEY_DOWN:
-                menu_driver(my_menu, REQ_DOWN_ITEM);
-                break;
-            case KEY_UP:
-                menu_driver(my_menu, REQ_UP_ITEM);
-                break;
-            case KEY_NPAGE:
+            if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+                int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+                }
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+                int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+                }
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
                 menu_driver(my_menu, REQ_SCR_DPAGE);
-                break;
-            case KEY_PPAGE:
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(my_menu, REQ_SCR_UPAGE);
-                break;
-            case 10: {		/* Enter */
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+                /* Enter */
                 picked = 1;
                 ITEM *cur;
 
@@ -1819,9 +1807,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 choice = getTurnChoice((char *)item_name(cur));
                 pos_menu_cursor(my_menu);
                 //refresh();
-            };
-            break;
-            case 'q': {
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
                 if (G_FASTQUIT_ON == 1) {
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Player used q to quit from boss room menu.");
@@ -1833,11 +1819,6 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Player used q in boss room menu, but G_FASTQUIT_ON was not 1.");
                 }
-            }
-            break;
-            default: {
-                break;
-            }
             }
             wrefresh(my_menu_win);
             menu_diff_time = clock() - menu_start_time;
@@ -2116,7 +2097,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
 
     update_Gamestate(gamestate, 1, -1, room->index, -1,
-                     gamestate->current_floor, NULL); // Setting current room to NULL
+                     gamestate->current_floor, NULL, gamestate->options); // Setting current room to NULL
     return fightStatus;
 }
 
@@ -2288,21 +2269,23 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
     int consumables_index = 0;
     int equips_index = 0;
 
-    while (!end_shop && (c = wgetch(my_menu_win)) != KEY_F(1)) {
-        switch (c) {
-        case KEY_DOWN:
-            menu_driver(my_menu, REQ_DOWN_ITEM);
-            break;
-        case KEY_UP:
-            menu_driver(my_menu, REQ_UP_ITEM);
-            break;
-        case KEY_NPAGE:
+    while (!end_shop && (c = wgetch(my_menu_win)) != KEY_F(1)) { // This key is not mapped into the keybinds yet.
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
-            break;
-        case KEY_PPAGE:
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
-            break;
-        case 10: {	/* Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /* Enter */
             int ec, cc;
             ITEM *cur;
             end_scrolling = 0;
@@ -2317,8 +2300,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
             } else if ((check = strcmp("View Equips", item_name(cur))) == 0) {
                 equips_index = 0;
                 while (!end_scrolling && (ec = wgetch(wins[1])) != 'q') {
-                    switch (ec) {
-                    case KEY_LEFT: {
+                    if ( ec == hlpd_d_keyval(HLPD_KEY_LEFT)) {
                         if (equips_index > 0) {
                             equips_index--;
                         }
@@ -2333,9 +2315,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                                   "X");
                         wrefresh(wins[0]);
                         refresh();
-                    }
-                    break;
-                    case KEY_RIGHT: {
+                    } else if ( ec == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
                         if (equips_index < room->shop->equipsCount - 1) {
                             equips_index++;
                         }
@@ -2350,15 +2330,12 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                                   "X");
                         wrefresh(wins[0]);
                         refresh();
-                    }
-                    break;
-                    case 10: {	/* Enter */
+                    } else if ( ec == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+                        /* Enter */
                         equipToBuy = room->shop->equips[equips_index];
                         buyEquip = 1;
                         buyConsumable = 0;
                         end_scrolling = 1;
-                    }
-                    break;
                     }
                 }
             } else if ((check = strcmp("View Consum.", item_name(cur))) ==
@@ -2366,8 +2343,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                 consumables_index = 0;
 
                 while (!end_scrolling && (cc = wgetch(wins[1])) != 'q') {
-                    switch (cc) {
-                    case KEY_LEFT: {
+                    if ( cc == hlpd_d_keyval(HLPD_KEY_LEFT)) {
                         if (consumables_index > 0) {
                             consumables_index--;
                         }
@@ -2384,9 +2360,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                                   6 + (14 * consumables_index), "X");
                         wrefresh(wins[0]);
                         refresh();
-                    }
-                    break;
-                    case KEY_RIGHT: {
+                    } else if ( cc == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
                         if (consumables_index <
                             room->shop->consumablesCount - 1) {
                             consumables_index++;
@@ -2404,16 +2378,13 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                                   6 + (14 * consumables_index), "X");
                         wrefresh(wins[0]);
                         refresh();
-                    }
-                    break;
-                    case 10: {	/* Enter */
+                    } else if ( cc == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+                        /* Enter */
                         consumableToBuy =
                             room->shop->consumables[consumables_index];
                         buyEquip = 0;
                         buyConsumable = 1;
                         end_scrolling = 1;
-                    }
-                    break;
                     }
                 }
 
@@ -2518,8 +2489,6 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
             }
             pos_menu_cursor(my_menu);
             refresh();
-        };
-        break;
         }
         wrefresh(my_menu_win);
     }
@@ -2667,20 +2636,22 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
     int check = -1;
 
     while (!end_room && (c = wgetch(my_menu_win)) != KEY_F(1)) {
-        switch (c) {
-        case KEY_DOWN:
-            menu_driver(my_menu, REQ_DOWN_ITEM);
-            break;
-        case KEY_UP:
-            menu_driver(my_menu, REQ_UP_ITEM);
-            break;
-        case KEY_NPAGE:
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
-            break;
-        case KEY_PPAGE:
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
-            break;
-        case 10: {	// Enter
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            // Enter
             ITEM *cur;
 
             cur = current_item(my_menu);
@@ -2705,8 +2676,6 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
             }
             pos_menu_cursor(my_menu);
             refresh();
-        };
-        break;
         }
         wrefresh(my_menu_win);
     }
@@ -3138,20 +3107,22 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
     int check = -1;
 
     while (!end_room && (c = wgetch(my_menu_win)) != KEY_F(1)) {
-        switch (c) {
-        case KEY_DOWN:
-            menu_driver(my_menu, REQ_DOWN_ITEM);
-            break;
-        case KEY_UP:
-            menu_driver(my_menu, REQ_UP_ITEM);
-            break;
-        case KEY_NPAGE:
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
-            break;
-        case KEY_PPAGE:
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
-            break;
-        case 10: {	// Enter
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            // Enter
             ITEM *cur;
 
             cur = current_item(my_menu);
@@ -3197,8 +3168,6 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
             }
             pos_menu_cursor(my_menu);
             refresh();
-        };
-        break;
         }
         wrefresh(my_menu_win);
     }

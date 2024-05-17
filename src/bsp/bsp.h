@@ -3,7 +3,7 @@
 //
 // Reference repo: https://github.com/mtsdurica/bsp-dungeon-generator
 // Original license: MIT.
-// The author of the original code gave permission to re-license it to shit helapordo with just one license.
+// The author of the original code gave permission to re-license it to ship helapordo with just one license.
 //
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
@@ -35,6 +35,10 @@ typedef struct BSP_Wall {
     int end_y;
 } BSP_Wall;
 
+#define BSP_Wall_Fmt "st_x: %i, st_y: %i, e_x: %i, e_y: %i"
+
+#define BSP_Wall_Arg(wall) (wall).start_x, (wall).start_y, (wall).end_x, (wall).end_y
+
 enum BSP_Wall_Index {
     WALL_TOP,
     WALL_RIGHT,
@@ -43,6 +47,10 @@ enum BSP_Wall_Index {
 };
 
 #define BSP_WALL_INDEX_MAX WALL_LEFT
+
+extern const char* BSP_Wall_Index_strings[BSP_WALL_INDEX_MAX+1];
+
+const char* stringFromBSP_Wall_Index(int i);
 
 struct BSP_Room;
 
@@ -56,6 +64,10 @@ typedef struct BSP_Room {
 
 #define BSP_ROOM_SIZE 4
 
-void floor_bsp_gen(Floor* floor, int base_x, int base_y);
+BSP_Room* floor_bsp_gen(Floor* floor, Koliseo_Temp* t_kls, int base_x, int base_y);
+
+void dbg_BSP_Room(BSP_Room* bsp_room);
+void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, int depth);
+void draw_BSP_Tree(WINDOW* win, BSP_Room* node, int depth, int x, int y, int hz_spacing, int vrt_spacing);
 
 #endif

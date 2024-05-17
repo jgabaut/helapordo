@@ -1,5 +1,8 @@
 #include "save2l.h"
 
+#ifndef KOLISEO_HAS_REGION
+Gamestate* G_GAMESTATE = NULL;
+#endif
 int G_PRELOAD_ANIMATIONS_ON = 0;
 int G_DEBUG_ON = 0;
 int G_LOG_ON = 0;
@@ -22,6 +25,7 @@ int64_t G_RNG_ADVANCEMENTS = 0;
 Gamemode GAMEMODE = Rogue;
 Koliseo* default_kls = NULL;
 Koliseo* temporary_kls = NULL;
+Koliseo* support_kls = NULL;
 
 void saverdr_usage(const char* progname)
 {

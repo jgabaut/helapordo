@@ -54,8 +54,14 @@
 #include <inttypes.h>
 #include <signal.h>
 #include "../core/game_core.h"
+#include "../../s4c-gui/src/s4c_gui.h"
+#ifdef ANVIL_BUILD
+#include "../anvil__helapordo.h"
+#endif
 
-void ctrl_c_handler(int signum);
+void* s4c_gui_malloc(size_t size);
+void* s4c_gui_calloc(size_t count, size_t size);
+void hlpd_sigint_handler(int signum);
 void initWincon(Wincon * w, Path * p, winconClass class);
 void printGlobVars(void);
 
@@ -87,6 +93,7 @@ void dbg_print_explored_layout(Floor * floor);
 void dbg_print_roomclass_layout(Floor * floor);
 void dbg_Gamestate(Gamestate * gmst);
 void dbg_GameScreen(GameScreen * scr);
+void dbg_GameOptions(GameOptions * options);
 void dbg_Fighter(Fighter * fighter);
 void dbg_countStats(countStats * stats);
 void dbg_Wincon(Wincon * wc);
@@ -95,7 +102,7 @@ void dbg_Saveslot(Saveslot * saveslot);
 
 void update_Gamestate(Gamestate * gmst, int current_fighters,
                       roomClass current_roomtype, int current_room_index,
-                      int current_enemy_index, Floor * current_floor, Room* current_room);
+                      int current_enemy_index, Floor * current_floor, Room* current_room, GameOptions* game_options);
 
 void update_Equipslots(Fighter* f);
 
@@ -116,6 +123,8 @@ void log_tag(char *filename, char *header, const char *format, ...);
 void log_OP(turnOption_OP op);
 
 saveType saveTypeFrom_string(char *s);
+const char *stringFrom_HLPD_DirectionalKeys_Schema(int dks);
+char *stringFrom_HLPD_KeyClass(HLPD_KeyClass k);
 char *stringFrom_HLP_Region_Type(HLP_Region_Type t);
 char *stringFrom_OP_res(OP_res r);
 char *stringFrom_saveType(saveType s);
@@ -238,7 +247,7 @@ void printArtifactStats(Artifact * a);
 #ifdef HELAPORDO_CURSES_BUILD
 void test_game_color_pairs(WINDOW * win, int colors_per_row);
 void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
-                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen, bool is_seeded);
+                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded);
 turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
@@ -310,4 +319,6 @@ int hlpd_rand(void);
 unsigned long hlpd_hash(unsigned char *str);
 void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1]);
 bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
+
+#define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )
 #endif

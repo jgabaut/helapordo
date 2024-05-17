@@ -68,7 +68,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         if (read_blobs != 1) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
             fclose(file);
             kls_free(default_kls);
@@ -135,7 +135,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
 #endif
 
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
 
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
@@ -188,7 +188,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         if (read_blobs != 1) {
             log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
             fclose(file);
             kls_free(default_kls);
@@ -200,7 +200,7 @@ bool readSerSaveHeader(const char* filename, SerSaveHeader* data)
         fclose(file);
     } else {
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+        endwin();
 #endif // HELAPORDO_CURSES_BUILD
         fprintf(stderr, "%s(): Error opening file {%s} for reading\n", __func__, filename);
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
@@ -2456,7 +2456,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
             log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%li} is less than passed offset {%li}", __func__, tot_length, offset);
 #endif
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
             fclose(file);
@@ -2480,7 +2480,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
             log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
             fclose(file);
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
             kls_free(default_kls);
             kls_free(temporary_kls);
@@ -2541,7 +2541,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
             log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, remaining_length, blob_size);
 #endif
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
             fclose(file);
@@ -2559,7 +2559,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
             log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, remaining_length, expected_len);
 #endif
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
             fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
             fclose(file);
@@ -2581,7 +2581,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
             log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
             fclose(file);
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
             kls_free(default_kls);
             kls_free(temporary_kls);
@@ -3004,6 +3004,455 @@ bool read_savedir(const char* dirpath)
         for (size_t i = 0; i < PERKSMAX; i++) {
             printf(SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
         }
+    }
+    return true;
+}
+
+bool deser_GameOptions(SerGameOptions* ser, GameOptions* deser)
+{
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGameOptions was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed GameOptions was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    deser->use_default_background = ser->use_default_background;
+    deser->do_autosave = ser->do_autosave;
+    deser->directional_keys_schema = ser->directional_keys_schema;
+
+    return true;
+}
+
+bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser)
+{
+    if (ser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed SerGameOptions was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    if (deser == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): passed GameOptions was NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+
+    ser->use_default_background = deser->use_default_background;
+    ser->do_autosave = deser->do_autosave;
+    ser->directional_keys_schema = deser->directional_keys_schema;
+
+    return true;
+}
+
+bool writeSerGameOptions(const char* filename, SerGameOptions* data)
+{
+    FILE* file = fopen(filename, "wb");
+
+    if (file != NULL) {
+        // Write the structure to the file
+        //
+        int64_t ser_gameopt_size = sizeof(SerGameOptions);
+
+        fwrite(&ser_gameopt_size, sizeof(ser_gameopt_size), 1, file);
+        fwrite(data, sizeof(SerGameOptions), 1, file);
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for writing", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for writing", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
+bool appendSerGameOptions(const char* filename, SerGameOptions* data)
+{
+    FILE* file = fopen(filename, "ab");
+
+    if (file != NULL) {
+        // Write the structure to the file
+        //
+        int64_t ser_gameopt_size = sizeof(SerGameOptions);
+
+        fwrite(&ser_gameopt_size, sizeof(ser_gameopt_size), 1, file);
+        fwrite(data, sizeof(SerGameOptions), 1, file);
+
+        // Close the file
+        fclose(file);
+    } else {
+        fprintf(stderr, "%s(): Error opening file {%s} for writing", __func__, filename);
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for writing", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
+bool readSerGameOptions(const char* filename, size_t offset, SerGameOptions* data)
+{
+    FILE* file = fopen(filename, "rb");
+
+    if (file != NULL) {
+        size_t tot_length = -1;
+        fseek(file, 0, SEEK_END);
+        tot_length = ftell(file);
+
+        int64_t blob_size = -1;
+
+        if (tot_length < offset ) {
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%lli} is less than passed offset {%lli}", __func__, tot_length, offset);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Total file size {%li} is less than passed offset {%li}", __func__, tot_length, offset);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        size_t remaining_length = -1;
+        fseek(file, offset, SEEK_SET);
+        remaining_length = tot_length - offset;
+
+#ifdef _WIN32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Total file size: {%lli}, Offset: {%lli}, Remaining: {%lli}", __func__, tot_length, offset, remaining_length);
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Total file size: {%li}, Offset: {%lli}, Remaining: {%li}", __func__, tot_length, offset, remaining_length);
+#endif
+
+        size_t read_blobs = fread(&blob_size, sizeof(blob_size), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        size_t sergameopt_size = sizeof(SerGameOptions);
+
+#ifdef _WIN32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read blob size: {%lli}", __func__, blob_size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerGameOptions size: {%lli}", __func__, sizeof(SerGameOptions));
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Read blob size: {%li}", __func__, blob_size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    SerGameOptions size: {%li}", __func__, sizeof(SerGameOptions));
+#endif
+
+        if (blob_size != sergameopt_size) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Header size from {%s} doesn't match SerGameOptions size.", __func__, filename);
+            if (blob_size < sergameopt_size) {
+
+#ifdef _WIN32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, blob_size, sergameopt_size);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, blob_size, sergameopt_size);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            } else if (blob_size > sergameopt_size) {
+
+#ifdef _WIN32
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, blob_size, sergameopt_size);
+#else
+                log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, blob_size, sergameopt_size);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+                endwin();
+#endif // HELAPORDO_CURSES_BUILD
+                fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+                fclose(file);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+        }
+        // Update len
+        remaining_length -= sizeof(blob_size);
+
+        if (remaining_length < blob_size) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%lli} is less than stored header size {%lli}.", __func__, remaining_length, blob_size);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Remaining file length {%li} is less than stored header size {%li}.", __func__, remaining_length, blob_size);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        size_t expected_len = sizeof(SerGameOptions);
+        if (remaining_length < expected_len) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is less than expected {%lli}.", __func__, remaining_length, expected_len);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is less than expected {%li}.", __func__, remaining_length, expected_len);
+#endif
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            fprintf(stderr, "%s():    Failed reading {%s}.\n", __func__, filename);
+            fclose(file);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else if (remaining_length > expected_len) {
+
+#ifdef _WIN32
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%lli} is greater than expected {%lli}.", __func__, remaining_length, expected_len);
+#else
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Size {%li} is greater than expected {%li}.", __func__, remaining_length, expected_len);
+#endif
+        }
+
+        // Read the structure from the file
+        read_blobs = fread(data, sizeof(SerGameOptions), 1, file);
+        if (read_blobs != 1) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed reading blob.", __func__);
+            fclose(file);
+#ifdef HELAPORDO_CURSES_BUILD
+            endwin();
+#endif // HELAPORDO_CURSES_BUILD
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        // Close the file
+        fclose(file);
+    } else {
+        //TODO: Print notice for error. It shouldn't disrupt the screen for saveslot name setting.
+        if (G_EXPERIMENTAL_ON == 0) {
+            fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        }
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
+        return false;
+    }
+    return true;
+}
+
+bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t offset, Koliseo* kls, bool force_init)
+{
+    if (kls == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s(): koliseo as NULL.", __func__);
+        kls_free(default_kls);
+        kls_free(temporary_kls);
+        exit(EXIT_FAILURE);
+    }
+    bool gameopts_null = false;
+    if (game_options != NULL) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s(): passed GameOptions is not NULL.", __func__);
+    } else {
+        gameopts_null = true;
+        log_tag("debug_log.txt", "[DEBUG]", "%s(): passed GameOptions is NULL, will be allocated.", __func__);
+    }
+
+    char path_to_bin_savefile[1000];
+    char bin_gameoptions_file_name[300];
+
+    //Copy current_save_path
+#ifdef HELAPORDO_CURSES_BUILD
+    sprintf(bin_gameoptions_file_name, "%s", CURSES_SETTINGS_SAVE_NAME);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+    sprintf(bin_gameoptions_file_name, "%s", RL_SETTINGS_SAVE_NAME);
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+
+#ifndef _WIN32
+    sprintf(path_to_bin_savefile, "%s/%s", static_path, bin_gameoptions_file_name);
+#else
+    sprintf(path_to_bin_savefile, "%s\\%s", static_path, bin_gameoptions_file_name);
+#endif
+
+    if (force_init) {
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Forced init of SerGameOptions.", __func__);
+        SerGameOptions ser_gameopts = {0};
+        if (!gameopts_null) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s():    using passed GameOptions.", __func__);
+            bool ser_res = ser_GameOptions(game_options, &ser_gameopts);
+            if (!ser_res) {
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed serializing passed GameOptions.", __func__);
+                return false;
+            }
+        }
+
+        // Write packed structure to a binary file
+        bool write_res = writeSerGameOptions(path_to_bin_savefile, &ser_gameopts);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a settings binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for writeSerGameOptions()", __func__);
+        }
+
+        if (gameopts_null) {
+            game_options = KLS_PUSH(kls, GameOptions);
+        }
+        bool deser_result = deser_GameOptions(&ser_gameopts, game_options);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_GameOptions().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_GameOptions()", __func__);
+        }
+        if (game_options->use_default_background) {
+#ifndef reset_color_pairs
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
+            game_options->use_default_background = false;
+#endif // reset_color_pairs
+        }
+
+        return true;
+    }
+
+    Koliseo_Temp* kls_t = kls_temp_start(kls);
+    // Try reading an existing binsave
+    SerGameOptions* read_gameopts = KLS_PUSH_T(kls_t, SerGameOptions);
+    bool read_res = readSerGameOptions(path_to_bin_savefile, offset, read_gameopts);
+
+    if (!read_res) {
+        kls_temp_end(kls_t);
+        log_tag("debug_log.txt", "[BINSAVE]", "Failed reading binsave at {%s}, creating a new one.", path_to_bin_savefile);
+        // Failed reading existing binsave, create a new one
+        SerGameOptions ser_gameopts = {0};
+        if (!gameopts_null) {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s():    using passed GameOptions.", __func__);
+            bool ser_res = ser_GameOptions(game_options, &ser_gameopts);
+            if (!ser_res) {
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed serializing passed GameOptions.", __func__);
+                return false;
+            }
+        }
+
+        // Write packed structure to a binary file
+        bool write_res = appendSerGameOptions(path_to_bin_savefile, &ser_gameopts);
+
+        if (!write_res) {
+            // Failed writing new binsave
+            fprintf(stderr, "%s():    Failed to create a settings binsave.\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for appendSerGameOptions()", __func__);
+        }
+
+        if (gameopts_null) {
+            game_options = KLS_PUSH(kls, GameOptions);
+        }
+        bool deser_result = deser_GameOptions(&ser_gameopts, game_options);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_GameOptions().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_GameOptions()", __func__);
+        }
+
+        if (game_options->use_default_background) {
+#ifndef reset_color_pairs
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
+            game_options->use_default_background = false;
+#endif // reset_color_pairs
+        }
+
+        // Apply read settings
+
+        HLPD_DirectionalKeys_Schema saved_directional_keys_schema = game_options->directional_keys_schema;
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Applying directional keys schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(saved_directional_keys_schema));
+        HLPD_DirectionalKeys directional_keys = hlpd_default_directional_keys[saved_directional_keys_schema];
+        hlpd_default_keybinds[HLPD_KEY_UP] = directional_keys.up;
+        hlpd_default_keybinds[HLPD_KEY_RIGHT] = directional_keys.right;
+        hlpd_default_keybinds[HLPD_KEY_DOWN] = directional_keys.down;
+        hlpd_default_keybinds[HLPD_KEY_LEFT] = directional_keys.left;
+
+        return true;
+    } else {
+        SerGameOptions tmp = (SerGameOptions) {
+            0
+        };
+        tmp = *read_gameopts;
+        kls_temp_end(kls_t);
+
+        if (gameopts_null) {
+            game_options = KLS_PUSH(kls, GameOptions);
+        }
+
+        bool deser_result = deser_GameOptions(&tmp, game_options);
+        if (!deser_result) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): failed deser_GameOptions().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        } else {
+            log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_GameOptions()", __func__);
+        }
+
+        if (game_options == NULL) {
+            log_tag("debug_log.txt", "[ERROR]", "%s(): game_options was NULL after deser_GameOptions().", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+
+        if (game_options->use_default_background) {
+#ifndef reset_color_pairs
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
+            game_options->use_default_background = false;
+#endif // reset_color_pairs
+        }
+
+        HLPD_DirectionalKeys_Schema saved_directional_keys_schema = game_options->directional_keys_schema;
+        log_tag("debug_log.txt", "[BINSAVE]", "%s():    Applying directional keys schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(saved_directional_keys_schema));
+        HLPD_DirectionalKeys directional_keys = hlpd_default_directional_keys[saved_directional_keys_schema];
+        hlpd_default_keybinds[HLPD_KEY_UP] = directional_keys.up;
+        hlpd_default_keybinds[HLPD_KEY_RIGHT] = directional_keys.right;
+        hlpd_default_keybinds[HLPD_KEY_DOWN] = directional_keys.down;
+        hlpd_default_keybinds[HLPD_KEY_LEFT] = directional_keys.left;
+
+
+        return true;
     }
     return true;
 }

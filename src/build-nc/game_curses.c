@@ -129,7 +129,6 @@ int get_saveslot_index(void)
     log_tag("debug_log.txt", "[DEBUG]", "Initialising curses for %s()",
             __func__);
     /* Initialize curses */
-    start_color();
     clear();
     refresh();
     cbreak();
@@ -239,45 +238,23 @@ int get_saveslot_index(void)
     wrefresh(saveslots_win);
     refresh();
 
-    while (!picked && (c = wgetch(menu_win)) != KEY_F(1)) {
-        switch (c) {
-        case KEY_DOWN:
-            menu_driver(saveslots_menu, REQ_DOWN_ITEM);
-            break;
-        case KEY_UP:
-            menu_driver(saveslots_menu, REQ_UP_ITEM);
-            break;
-        case KEY_LEFT: {	/*Left option pick */
-            ITEM *cur;
-            cur = current_item(saveslots_menu);
-            choice = getTurnChoice((char *)item_name(cur));
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "Left on choice: [ %s ] value (%i)", item_name(cur),
-                    choice);
-            if (choice == EQUIPS) {
-                log_tag("debug_log.txt", "[DEBUG]", "Should do something");
+    while (!picked && (c = wgetch(menu_win)) != KEY_F(1)) { // This key is not mapped into the keybinds yet.
+        if (c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(saveslots_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(saveslots_menu, REQ_FIRST_ITEM);
             }
-        }
-        break;
-        case KEY_RIGHT: {	/*Right option pick */
-            ITEM *cur;
-            cur = current_item(saveslots_menu);
-            choice = getTurnChoice((char *)item_name(cur));
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "Right on choice: [ %s ] value (%i)", item_name(cur),
-                    choice);
-            if (choice == EQUIPS) {
-                log_tag("debug_log.txt", "[DEBUG]", "Should do something");
+        } else if (c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(saveslots_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(saveslots_menu, REQ_LAST_ITEM);
             }
-        }
-        break;
-        case KEY_NPAGE:
+        } else if (c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(saveslots_menu, REQ_SCR_DPAGE);
-            break;
-        case KEY_PPAGE:
+        } else if (c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(saveslots_menu, REQ_SCR_UPAGE);
-            break;
-        case 10: {	/* Enter */
+        } else if (c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /* Enter */
             picked = 1;
             ITEM *cur;
             //move(18,47);
@@ -287,9 +264,7 @@ int get_saveslot_index(void)
             choice = atoi(item_name(cur));
             pos_menu_cursor(saveslots_menu);
             refresh();
-        };
-        break;
-        case 'q': {
+        } else if (c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
             if (G_FASTQUIT_ON == 1) {
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Player used q to quit from [%s].", __func__);
@@ -302,13 +277,9 @@ int get_saveslot_index(void)
                         "Player used q in [%s], but G_FASTQUIT_ON was not 1.",
                         __func__);
             }
-        }
-        break;
-        default: {
+        } else {
             log_tag("debug_log.txt", "[DEBUG]", "Invalid keystroke in [%s]",
                     __func__);
-        }
-        break;
         }
         wrefresh(menu_win);
         refresh();
@@ -2628,28 +2599,26 @@ void displayEquipbagMenu(Fighter *f)
     ITEM *cur = NULL;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
-        }
-        break;
-        case 10: {		/*Enter, set equip */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /*Enter, set equip */
             picked = 1;
 
             cur = current_item(my_menu);
@@ -2687,8 +2656,6 @@ void displayEquipbagMenu(Fighter *f)
             pos_menu_cursor(my_menu);
             refresh();
         };
-        break;
-        }
 
         int num = item_index(cur);
         num = (num >= 0 && num <= n_choices ? num : 0);
@@ -2840,44 +2807,42 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
     ITEM *cur;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedConsumableW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedConsumableW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedConsumableW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedConsumableW(my_wins[0], my_menu, f);
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /*Enter */
             picked = 1;
 
             cur = current_item(my_menu);
@@ -2886,8 +2851,6 @@ void handleConsumables(Fighter *f, Enemy *e, Boss *b, int isBoss)
             pos_menu_cursor(my_menu);
             refresh();
         };
-        break;
-        }
         wrefresh(my_menu_win);
     }
     /* Unpost and free all the memory taken up */
@@ -3026,44 +2989,42 @@ void handleArtifacts(Fighter *f)
     ITEM *cur;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedArtifactW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedArtifactW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedArtifactW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedArtifactW(my_wins[0], my_menu, f);
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /*Enter */
             picked = 1;
 
             move(18, 47);
@@ -3074,8 +3035,6 @@ void handleArtifacts(Fighter *f)
             pos_menu_cursor(my_menu);
             refresh();
         };
-        break;
-        }
         wrefresh(my_menu_win);
     }
     /* Unpost and free all the memory taken up */
@@ -3202,28 +3161,26 @@ void handleEquips(Fighter *f, Path *p)
     ITEM *cur;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /*Enter */
             picked = 1;
             int check = -1;
 
@@ -3240,8 +3197,6 @@ void handleEquips(Fighter *f, Path *p)
             pos_menu_cursor(my_menu);
             refresh();
         };
-        break;
-        }
         wrefresh(my_menu_win);
     }
     /* Unpost and free all the memory taken up */
@@ -3499,44 +3454,42 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
     ITEM *cur;
 
     while (!picked && (c = wgetch(my_menu_win)) != 'q') {
-        switch (c) {
-        case KEY_DOWN: {
-            menu_driver(my_menu, REQ_DOWN_ITEM);
+        if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(my_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_FIRST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_UP: {
-            menu_driver(my_menu, REQ_UP_ITEM);
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(my_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(my_menu, REQ_LAST_ITEM);
+            }
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_NPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(my_menu, REQ_SCR_DPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
-        }
-        break;
-        case KEY_PPAGE: {
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
             menu_driver(my_menu, REQ_SCR_UPAGE);
             cur = current_item(my_menu);
             //Update selected window
             wclear(my_wins[0]);
             wrefresh(my_wins[0]);
             updateSelectedSpecialW(my_wins[0], my_menu, f);
-        }
-        break;
-        case 10: {		/*Enter */
+        } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /*Enter */
             picked = 1;
 
             cur = current_item(my_menu);
@@ -3575,9 +3528,7 @@ void handleSpecials(Fighter *f, Enemy *e, Boss *b, Path *p, int roomIndex,
                 refresh();
                 napms(1000);
             };
-            break;
-        }			//End case 10 (Enter)
-        }			//End switch
+        }
         wrefresh(my_menu_win);
     }				//End while
     /* Unpost and free all the memory taken up */
@@ -3954,6 +3905,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
         "Perks",
         "Save",
         "Stats",
+        "Options",
         "Quit",
         "Close",
         (char *)NULL,
@@ -4065,15 +4017,19 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
         int picked = 0;
         int picked_close = 0;
 
-        while (!picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_close) {
-            switch (c) {
-            case KEY_DOWN:
-                menu_driver(rogue_menu, REQ_DOWN_ITEM);
-                break;
-            case KEY_UP:
-                menu_driver(rogue_menu, REQ_UP_ITEM);
-                break;
-            case KEY_LEFT: {	/*Left option pick */
+        while (!picked && (c = wgetch(menu_win)) != KEY_F(1) && !picked_close) { // This key is not mapped into the keybinds yet.
+            if ( c == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+                int menudriver_res = menu_driver(rogue_menu, REQ_DOWN_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(rogue_menu, REQ_FIRST_ITEM);
+                }
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_UP)) {
+                int menudriver_res = menu_driver(rogue_menu, REQ_UP_ITEM);
+                if (menudriver_res == E_REQUEST_DENIED) {
+                    menudriver_res = menu_driver(rogue_menu, REQ_LAST_ITEM);
+                }
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_LEFT)) {
+                /*Left option pick */
                 ITEM *cur;
                 cur = current_item(rogue_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -4084,9 +4040,8 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_RIGHT: {	/*Right option pick */
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
+                /*Right option pick */
                 ITEM *cur;
                 cur = current_item(rogue_menu);
                 choice = getTurnChoice((char *)item_name(cur));
@@ -4097,15 +4052,12 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Should do something");
                 }
-            }
-            break;
-            case KEY_NPAGE:
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
                 menu_driver(rogue_menu, REQ_SCR_DPAGE);
-                break;
-            case KEY_PPAGE:
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
                 menu_driver(rogue_menu, REQ_SCR_UPAGE);
-                break;
-            case 10: {	/* Enter */
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+                /* Enter */
                 picked = 1;
                 ITEM *cur;
 
@@ -4116,9 +4068,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                 choice = getTurnChoice((char *)item_name(cur));
                 pos_menu_cursor(rogue_menu);
                 refresh();
-            };
-            break;
-            case 'q': {
+            } else if ( c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
                 if (G_FASTQUIT_ON == 1) {
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Player used q to quit from Rogue menu.");
@@ -4130,13 +4080,9 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     log_tag("debug_log.txt", "[DEBUG]",
                             "Player used q in Rogue menu, but G_FASTQUIT_ON was not 1.");
                 }
-            }
-            break;
-            default: {
+            } else {
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Invalid keystroke in Rogue menu");
-            }
-            break;
             }
             wrefresh(menu_win);
             if (c == 10) {	// Player char was enter
@@ -4199,4 +4145,215 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     log_tag("debug_log.txt", "[FREE]", "handleRogueMenu():  Freed turnOP_args");
     log_tag("debug_log.txt", "[DEBUG]", "Ended handleRogueMenu()");
     return 0;
+}
+
+/**
+ * Utility to switch the current background mode and use the default terminal one.
+ * Inverts current state.
+ * @param selected_use_default_background Indicates if the caller wants to toggle to on or to off.
+ */
+static void toggle_default_back(bool selected_use_default_background)
+{
+#ifndef reset_color_pairs
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    User tried switched default background options, but this build of ncurses lacks support for reset_color_pairs().", __func__);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
+#else
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    User switched default background options, reloading colors", __func__);
+    if (selected_use_default_background) {
+        // Coming from opaque mode
+        // TODO: store color pair 0?
+        short int pair0_fg = -2;
+        short int pair0_bg = -2;
+        pair_content(0, &pair0_fg, &pair0_bg);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 was: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
+    }
+    if (selected_use_default_background) {
+        int default_colors_res = use_default_colors();
+        if (default_colors_res != OK) {
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Failed use_default_colors(). Res: {%i}", __func__, default_colors_res);
+        }
+        reset_color_pairs();
+    } else {
+        assume_default_colors(7,0);
+        reset_color_pairs();
+    }
+    for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+        init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
+    }
+    G_USE_DEFAULT_BACKGROUND = (G_USE_DEFAULT_BACKGROUND == 1 ? 0 : 1);
+#endif // reset_color_pairs
+}
+
+/**
+ * Takes a GameOptions pointer and prompts the user with a form to change options.
+ * @param game_options Pointer to GameOptions.
+ * return 0 on success, non-zero on errors.
+ */
+int handleGameOptions(GameOptions * game_options)
+{
+    if (G_EXPERIMENTAL_ON != 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Experimental was not 1: {%i}", __func__, G_EXPERIMENTAL_ON);
+    }
+    if (game_options == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    GameOptions was NULL.", __func__);
+        return 2;
+    }
+    if (support_kls == NULL) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing support koliseo", __func__);
+        support_kls = kls_new(500);
+    }
+    clear();
+    refresh();
+
+    mvprintw(9, 0, "Press 'q' when you're done.");
+    refresh();
+
+    const char* default_background_toggle_label = "Default background";
+    const char* do_autosave_toggle_label = "Do autosave";
+    const char* directional_keys_schema_label = "<- Directional keys set ->";
+
+    bool use_default_bg_is_locked = false;
+#ifndef reset_color_pairs
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Locking use_default_background since this build of ncurses lacks support for reset_color_pairs().", __func__);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
+    use_default_bg_is_locked = true;
+#endif // reset_color_pairs
+
+    // Define menu options and their toggle states
+    Toggle toggles[] = {
+        {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->use_default_background}, (char*) default_background_toggle_label, use_default_bg_is_locked},
+        {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->do_autosave}, (char*) do_autosave_toggle_label, false},
+        //{MULTI_STATE_TOGGLE, (ToggleState){.ts_state.current_state = game_options->directional_keys_schema, .ts_state.num_states = HLPD_DIRECTIONALKEYS_SCHEMAS_MAX}, (char*)directional_keys_schema_label, false,stringFrom_HLPD_DirectionalKeys_Schema},
+        {MULTI_STATE_TOGGLE, (ToggleState){.ts_state.current_state = game_options->directional_keys_schema, .ts_state.num_states = HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1}, (char*)directional_keys_schema_label, false,stringFrom_HLPD_DirectionalKeys_Schema},
+    };
+    int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
+
+    const char* statewin_label = "Current options:";
+    ToggleMenu_Conf menu_conf = (ToggleMenu_Conf) {
+        .start_x = 0,
+        .start_y = 0,
+        .boxed = true,
+        .quit_key = 'q',
+        .statewin_height = 15,
+        .statewin_width = 45,
+        .statewin_start_x = 35,
+        .statewin_start_y = 0,
+        .statewin_boxed = true,
+        .statewin_label = statewin_label,
+        .key_up = hlpd_d_keyval(HLPD_KEY_UP),
+        .key_right = hlpd_d_keyval(HLPD_KEY_RIGHT),
+        .key_down = hlpd_d_keyval(HLPD_KEY_DOWN),
+        .key_left = hlpd_d_keyval(HLPD_KEY_LEFT),
+    };
+
+    ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
+    handle_ToggleMenu(toggle_menu);
+
+    bool settings_changed = false;
+
+    bool selected_use_default_background = toggle_menu.toggles[0].state.bool_state;
+    if ( game_options->use_default_background != selected_use_default_background) {
+        settings_changed = true;
+        toggle_default_back(selected_use_default_background);
+        game_options->use_default_background = selected_use_default_background;
+        short int pair0_fg = -2;
+        short int pair0_bg = -2;
+        pair_content(0, &pair0_fg, &pair0_bg);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 now is: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
+    }
+
+    HLPD_DirectionalKeys_Schema selected_directional_keys_schema = toggle_menu.toggles[2].state.ts_state.current_state;
+    if ( game_options->directional_keys_schema != selected_directional_keys_schema) {
+        settings_changed = true;
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Current directional keys schema : {%i} [%s]", __func__, game_options->directional_keys_schema, stringFrom_HLPD_DirectionalKeys_Schema(game_options->directional_keys_schema));
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    User selected directional key schema: {%s}", __func__, stringFrom_HLPD_DirectionalKeys_Schema(selected_directional_keys_schema));
+        HLPD_DirectionalKeys selected_directional_keys = hlpd_default_directional_keys[selected_directional_keys_schema];
+        hlpd_default_keybinds[HLPD_KEY_UP] = selected_directional_keys.up;
+        hlpd_default_keybinds[HLPD_KEY_RIGHT] = selected_directional_keys.right;
+        hlpd_default_keybinds[HLPD_KEY_DOWN] = selected_directional_keys.down;
+        hlpd_default_keybinds[HLPD_KEY_LEFT] = selected_directional_keys.left;
+        game_options->directional_keys_schema = selected_directional_keys_schema;
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Updated directional keys schema to.", __func__);
+    }
+
+    bool selected_do_autosave = toggle_menu.toggles[1].state.bool_state;
+    if ( game_options->do_autosave != selected_do_autosave) {
+        settings_changed = true;
+        game_options->do_autosave = selected_do_autosave;
+    }
+    endwin(); // End ncurses after resetting color pairs ?
+    free_ToggleMenu(toggle_menu);
+    kls_free(support_kls);
+    support_kls = NULL;
+
+    if (settings_changed) {
+        char static_path[500] = {0};
+        resolve_staticPath(static_path);
+        bool gameopts_prep_res = prep_GameOptions(game_options, static_path, 0, default_kls, true);
+
+        if (gameopts_prep_res) {
+            log_tag("debug_log.txt", "[DEBUG]", "Done prep_GameOptions().");
+        } else {
+            log_tag("debug_log.txt", "[ERROR]", "Failed prep_GameOptions().");
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+    }
+    return 0;
+}
+
+void draw_buildinfo(WINDOW* win)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "%s():    Passed WINDOW was NULL.", __func__);
+        return;
+    }
+    wprintw(win, "  \nhelapordo");
+    wprintw(win, "  \n  build: %s", helapordo_build_string);
+    wprintw(win, "  \n  using: s4c-animate v%s",
+            S4C_ANIMATE_VERSION);
+    wprintw(win, "  \n  using: koliseo v%s",
+            KOLISEO_API_VERSION_STRING);
+    if (G_EXPERIMENTAL_ON == 1) {
+        wprintw(win, "  \n  using: s4c-gui v%s",
+                S4C_GUI_API_VERSION_STRING);
+    }
+    wprintw(win, "  \n  using: ncurses v%s", NCURSES_VERSION);
+#ifdef ANVIL__helapordo__
+#ifndef INVIL__helapordo__HEADER__
+    wprintw(win, "  \nBuilt with: amboso v%s",
+            ANVIL__API_LEVEL__STRING);
+#else
+    wprintw(win, "  \nBuilt with: invil v%s",
+            INVIL__VERSION__STRING);
+    wprintw(win, "  \nVersion Info: %.8s",
+            get_ANVIL__VERSION__DESC__());
+    const char* anvil_date = get_ANVIL__VERSION__DATE__();
+    char* anvil_date_end;
+#ifndef _WIN32
+    time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
+#else
+    time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
+#endif //_WIN32
+
+    if (anvil_date_end == anvil_date) {
+        log_tag("debug_log.txt", "ERROR", "anvil date was invalid");
+    } else {
+        char build_time_buff[20] = {0};
+        struct tm* build_time_tm = localtime(&anvil_build_time);
+
+        if (build_time_tm == NULL) {
+            log_tag("debug_log.txt", "ERROR", "localtime() failed");
+        } else {
+            strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
+            wprintw(win, "  \nDate: %s", build_time_buff);
+        }
+    }
+#endif // INVIL__helapordo__HEADER__
+#else
+    wprintw(win, "  \nBuilt without anvil");
+#endif // ANVIL__helapordo__
+    //wprintw(win,"  \n  %s",get_ANVIL__VERSION__DESC__());
+    wrefresh(win);
 }
