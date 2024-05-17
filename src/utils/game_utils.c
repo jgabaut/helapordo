@@ -1855,30 +1855,11 @@ void pickClass(Fighter *player)
             size_t class_inputbuf_max_size = strlen("Assassin");
 
             // Define menu options and their toggle states
-            Toggle toggles[] = {
-                {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField_alloc(class_inputbuf_max_size, height, width, start_x, start_y, s4c_gui_malloc, s4c_gui_calloc, NULL)}, (char*)class_toggle_label, false},
-            };
-            int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
-
-            const char* statewin_label = "Current selection:";
-            ToggleMenu_Conf menu_conf = (ToggleMenu_Conf) {
-                .start_x = 0,
-                .start_y = 0,
-                .boxed = true,
-                .quit_key = 'q',
-                .statewin_height = 15,
-                .statewin_width = 30,
-                .statewin_start_x = 40,
-                .statewin_start_y = 0,
-                .statewin_boxed = true,
-                .statewin_label = statewin_label,
-            };
-
-            ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
-            handle_ToggleMenu(toggle_menu);
+            TextField txt_field = new_TextField_alloc(class_inputbuf_max_size, height, width, start_x, start_y, s4c_gui_malloc, s4c_gui_calloc, NULL);
+            use_clean_TextField(txt_field);
             endwin(); // End ncurses
 
-            const char* submitted = get_TextField_value(toggles[0].state.txt_state);
+            const char* submitted = get_TextField_value(txt_field);
             if (strcmp(submitted, "Knight") == 0) {
                 pick = Knight;
             } else if (strcmp(submitted, "Archer") == 0) {
@@ -1890,7 +1871,7 @@ void pickClass(Fighter *player)
             } else {
                 pick = -1;
             }
-            free_ToggleMenu(toggle_menu);
+            free_TextField(txt_field);
             kls_free(support_kls);
             support_kls = NULL;
         }
@@ -1972,35 +1953,18 @@ void pickName(Fighter *player)
             size_t name_inputbuf_max_size = FIGHTER_NAME_BUFSIZE;
 
             // Define menu options and their toggle states
-            Toggle toggles[] = {
-                {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField_alloc(name_inputbuf_max_size, height, width, start_x, start_y, s4c_gui_malloc, s4c_gui_calloc, NULL)}, (char*)name_toggle_label, false},
-            };
-            int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
+            TextField txt_field = new_TextField_alloc(name_inputbuf_max_size, height, width, start_x, start_y, s4c_gui_malloc, s4c_gui_calloc, NULL);
 
-            const char* statewin_label = "Current input:";
-            ToggleMenu_Conf menu_conf = (ToggleMenu_Conf) {
-                .start_x = 0,
-                .start_y = 0,
-                .boxed = true,
-                .quit_key = 'q',
-                .statewin_height = 15,
-                .statewin_width = 30,
-                .statewin_start_x = 40,
-                .statewin_start_y = 0,
-                .statewin_boxed = true,
-                .statewin_label = statewin_label,
-            };
+            use_clean_TextField(txt_field);
 
-            ToggleMenu toggle_menu = new_ToggleMenu_(toggles, num_toggles, menu_conf);
-            handle_ToggleMenu(toggle_menu);
             endwin(); // End ncurses
 
-            if (lint_TextField(toggles[0].state.txt_state)) {
-                const char* submitted = get_TextField_value(toggles[0].state.txt_state);
+            if (lint_TextField(txt_field)) {
+                const char* submitted = get_TextField_value(txt_field);
                 memcpy(player->name, submitted, FIGHTER_NAME_BUFSIZE);
                 picked = true;
             }
-            free_ToggleMenu(toggle_menu);
+            free_TextField(txt_field);
             kls_free(support_kls);
             support_kls = NULL;
         } while (!picked);
