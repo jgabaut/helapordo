@@ -63,6 +63,7 @@ char *G_SEEDED_RUN_ARG = NULL;
 Gamemode GAMEMODE = Rogue;
 Koliseo *default_kls = NULL;
 Koliseo *temporary_kls = NULL;
+Koliseo *support_kls = NULL;
 
 int main(int argc, char **argv)
 {

@@ -25,6 +25,7 @@ int64_t G_RNG_ADVANCEMENTS = 0;
 Gamemode GAMEMODE = Rogue;
 Koliseo* default_kls = NULL;
 Koliseo* temporary_kls = NULL;
+Koliseo* support_kls = NULL;
 
 void saverdr_usage(const char* progname)
 {

@@ -18,6 +18,24 @@
 #include "game_utils.h"
 //Functions useful in many areas
 //
+void* s4c_gui_malloc(size_t size)
+{
+#ifndef _WIN32
+    log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating {%li} bytes.", __func__, size);
+#else
+    log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating {%lli} bytes.", __func__, size);
+#endif // _WIN32
+    return kls_push_zero_AR(support_kls, size, _Alignof(char), 1);
+}
+void* s4c_gui_calloc(size_t count, size_t size)
+{
+#ifndef _WIN32
+    log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating [%li]x{%li} bytes.", __func__, count, size);
+#else
+    log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating [%lli]x{%lli} bytes.", __func__, count, size);
+#endif // _WIN32
+    return kls_push_zero_AR(support_kls, size, _Alignof(char), count);
+}
 
 /**
  * Function to handle Ctrl+C signal
@@ -1811,10 +1829,10 @@ void pickClass(Fighter *player)
             pick = scanClass();
         } else {
             // Initialize ncurses
-            initscr();
-            cbreak();
-            noecho();
-            keypad(stdscr, TRUE);
+            if (support_kls == NULL) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing support koliseo", __func__);
+                support_kls = kls_new(500);
+            }
 
             clear();
             refresh();
@@ -1834,7 +1852,7 @@ void pickClass(Fighter *player)
 
             // Define menu options and their toggle states
             Toggle toggles[] = {
-                {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(class_inputbuf_max_size, height, width, start_x, start_y)}, (char*)class_toggle_label, false},
+                {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField_alloc(class_inputbuf_max_size, height, width, start_x, start_y, s4c_gui_malloc, s4c_gui_calloc, NULL)}, (char*)class_toggle_label, false},
             };
             int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
 
@@ -1869,6 +1887,8 @@ void pickClass(Fighter *player)
                 pick = -1;
             }
             free_ToggleMenu(toggle_menu);
+            kls_free(support_kls);
+            support_kls = NULL;
         }
     } while (pick < 0);
 
@@ -1927,12 +1947,11 @@ void pickName(Fighter *player)
     } else {
         bool picked = false;
         do {
+            if (support_kls == NULL) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing support koliseo", __func__);
+                support_kls = kls_new(500);
+            }
             // Initialize ncurses
-            initscr();
-            cbreak();
-            noecho();
-            keypad(stdscr, TRUE);
-
             clear();
             refresh();
 
@@ -1950,7 +1969,7 @@ void pickName(Fighter *player)
 
             // Define menu options and their toggle states
             Toggle toggles[] = {
-                {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField(name_inputbuf_max_size, height, width, start_x, start_y)}, (char*)name_toggle_label, false},
+                {TEXTFIELD_TOGGLE, (ToggleState){.txt_state = new_TextField_alloc(name_inputbuf_max_size, height, width, start_x, start_y, s4c_gui_malloc, s4c_gui_calloc, NULL)}, (char*)name_toggle_label, false},
             };
             int num_toggles = sizeof(toggles) / sizeof(toggles[0]);
 
@@ -1978,6 +1997,8 @@ void pickName(Fighter *player)
                 picked = true;
             }
             free_ToggleMenu(toggle_menu);
+            kls_free(support_kls);
+            support_kls = NULL;
         } while (!picked);
     }
     log_tag("debug_log.txt", "[DEBUG]", "%s():    player chose name {%s}", __func__, player->name);

@@ -4213,6 +4213,10 @@ int handleGameOptions(GameOptions * game_options)
         log_tag("debug_log.txt", "[ERROR]", "%s():    GameOptions was NULL.", __func__);
         return 2;
     }
+    if (support_kls == NULL) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing support koliseo", __func__);
+        support_kls = kls_new(500);
+    }
     clear();
     refresh();
 
@@ -4287,6 +4291,8 @@ int handleGameOptions(GameOptions * game_options)
     }
     endwin(); // End ncurses after resetting color pairs ?
     free_ToggleMenu(toggle_menu);
+    kls_free(support_kls);
+    support_kls = NULL;
 
     if (settings_changed) {
         char static_path[500] = {0};
