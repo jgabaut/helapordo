@@ -61,7 +61,7 @@
 
 void* s4c_gui_malloc(size_t size);
 void* s4c_gui_calloc(size_t count, size_t size);
-void ctrl_c_handler(int signum);
+void hlpd_sigint_handler(int signum);
 void initWincon(Wincon * w, Path * p, winconClass class);
 void printGlobVars(void);
 

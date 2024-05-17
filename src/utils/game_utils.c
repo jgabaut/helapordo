@@ -39,8 +39,10 @@ void* s4c_gui_calloc(size_t count, size_t size)
 
 /**
  * Function to handle Ctrl+C signal
+ * @see SIGINT
+ * @param signum The signal number, expected to be SIGINT.
  */
-void ctrl_c_handler(int signum)
+void hlpd_sigint_handler(int signum)
 {
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Ctrl+C received. Cleaning up memory...", __func__);
 #ifdef HELAPORDO_CURSES_BUILD
