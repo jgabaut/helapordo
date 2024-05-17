@@ -38,9 +38,6 @@
 #endif // _WIN32
 
 #include "../utils/rooms.h"
-#ifdef ANVIL_BUILD
-#include "../anvil__helapordo.h"
-#endif
 #include "../core/game_lore.h"
 #include "../ser/ser_core.h"
 

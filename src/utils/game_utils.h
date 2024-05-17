@@ -55,6 +55,9 @@
 #include <signal.h>
 #include "../core/game_core.h"
 #include "../../s4c-gui/src/s4c_gui.h"
+#ifdef ANVIL_BUILD
+#include "../anvil__helapordo.h"
+#endif
 
 void* s4c_gui_malloc(size_t size);
 void* s4c_gui_calloc(size_t count, size_t size);
