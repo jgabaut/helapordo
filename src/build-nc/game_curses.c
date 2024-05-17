@@ -249,26 +249,6 @@ int get_saveslot_index(void)
             if (menudriver_res == E_REQUEST_DENIED) {
                 menudriver_res = menu_driver(saveslots_menu, REQ_LAST_ITEM);
             }
-        } else if (c == hlpd_d_keyval(HLPD_KEY_LEFT)) {
-            ITEM *cur;
-            cur = current_item(saveslots_menu);
-            choice = getTurnChoice((char *)item_name(cur));
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "Left on choice: [ %s ] value (%i)", item_name(cur),
-                    choice);
-            if (choice == EQUIPS) {
-                log_tag("debug_log.txt", "[DEBUG]", "Should do something");
-            }
-        } else if (c == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
-            ITEM *cur;
-            cur = current_item(saveslots_menu);
-            choice = getTurnChoice((char *)item_name(cur));
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "Right on choice: [ %s ] value (%i)", item_name(cur),
-                    choice);
-            if (choice == EQUIPS) {
-                log_tag("debug_log.txt", "[DEBUG]", "Should do something");
-            }
         } else if (c == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
             menu_driver(saveslots_menu, REQ_SCR_DPAGE);
         } else if (c == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
