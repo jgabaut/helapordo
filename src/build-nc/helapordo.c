@@ -523,6 +523,13 @@ void gameloop(int argc, char **argv)
 
         }
 
+        if (G_USE_DEFAULT_BACKGROUND == 1) {
+#ifndef reset_color_pairs
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Overriding flag G_USE_DEFAULT_BACKGROUND to 0, since reset_color_pairs() support is missing from this ncurses build.");
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
+            G_USE_DEFAULT_BACKGROUND = 0;
+#endif // reset_color_pairs
+        }
         log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
 
         if (G_SEEDED_RUN_ON == 0) {
