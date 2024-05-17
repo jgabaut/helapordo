@@ -4154,6 +4154,9 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
  */
 static void toggle_default_back(bool selected_use_default_background)
 {
+#if NCURSES_VERSION_MAJOR < 6
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    User tried switched default background options, but this build is using ncurses v%i, which lacks support for this functionality.", __func__, NCURSES_VERSION_MAJOR);
+#else
     log_tag("debug_log.txt", "[DEBUG]", "%s():    User switched default background options, reloading colors", __func__);
     if (selected_use_default_background) {
         // Coming from opaque mode
@@ -4177,6 +4180,7 @@ static void toggle_default_back(bool selected_use_default_background)
         init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
     }
     G_USE_DEFAULT_BACKGROUND = (G_USE_DEFAULT_BACKGROUND == 1 ? 0 : 1);
+#endif // NCURSES_VERSION_MAJOR < 6
 }
 
 /**
