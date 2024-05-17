@@ -88,6 +88,10 @@ void ctrl_c_handler(int signum)
         kls_free(temporary_kls);
         log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned temporary_kls", __func__);
     }
+    if (support_kls != NULL) {
+        kls_free(support_kls);
+        log_tag("debug_log.txt", "[CLEANUP]", "%s():    Cleaned support_kls", __func__);
+    }
     exit(0);
 }
 
