@@ -4155,7 +4155,8 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
 static void toggle_default_back(bool selected_use_default_background)
 {
 #ifndef reset_color_pairs
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    User tried switched default background options, but this build is using ncurses v%i, which lacks support for this functionality.", __func__, NCURSES_VERSION_MAJOR);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    User tried switched default background options, but this build of ncurses lacks support for reset_color_pairs().", __func__);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
 #else
     log_tag("debug_log.txt", "[DEBUG]", "%s():    User switched default background options, reloading colors", __func__);
     if (selected_use_default_background) {
@@ -4211,9 +4212,16 @@ int handleGameOptions(GameOptions * game_options)
     const char* do_autosave_toggle_label = "Do autosave";
     const char* directional_keys_schema_label = "<- Directional keys set ->";
 
+    bool use_default_bg_is_locked = false;
+#ifndef reset_color_pairs
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Locking use_default_background since this build of ncurses lacks support for reset_color_pairs().", __func__);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
+    use_default_bg_is_locked = true;
+#endif // reset_color_pairs
+
     // Define menu options and their toggle states
     Toggle toggles[] = {
-        {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->use_default_background}, (char*) default_background_toggle_label, false},
+        {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->use_default_background}, (char*) default_background_toggle_label, use_default_bg_is_locked},
         {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->do_autosave}, (char*) do_autosave_toggle_label, false},
         //{MULTI_STATE_TOGGLE, (ToggleState){.ts_state.current_state = game_options->directional_keys_schema, .ts_state.num_states = HLPD_DIRECTIONALKEYS_SCHEMAS_MAX}, (char*)directional_keys_schema_label, false,stringFrom_HLPD_DirectionalKeys_Schema},
         {MULTI_STATE_TOGGLE, (ToggleState){.ts_state.current_state = game_options->directional_keys_schema, .ts_state.num_states = HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1}, (char*)directional_keys_schema_label, false,stringFrom_HLPD_DirectionalKeys_Schema},
