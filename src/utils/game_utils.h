@@ -59,6 +59,8 @@
 #include "../anvil__helapordo.h"
 #endif
 
+#include "../release_data/release_data.h"
+
 void* s4c_gui_malloc(size_t size);
 void* s4c_gui_calloc(size_t count, size_t size);
 void hlpd_sigint_handler(int signum);
