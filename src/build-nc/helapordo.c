@@ -397,8 +397,8 @@ void gameloop(int argc, char **argv)
             }
             fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
             if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
-                && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR
-                && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH) {
+                || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR)
+                || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR == EXPECTED_NCURSES_VERSION_MINOR && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH)) {
                 fprintf(debug_file,
                         "[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
                         NCURSES_VERSION, NCURSES_VERSION_MAJOR,
