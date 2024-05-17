@@ -57,11 +57,15 @@ typedef enum HLPD_Release_Idx {
 /**
  * Total number of releases info.
  */
-#define HLPD_TOTAL_RELEASE_DATA HLPD_LATEST_TAG
+#define HLPD_RELEASE_DATA_TOTAL HLPD_LATEST_TAG
 
 /**
  * Array with all releases info.
  */
-extern HLPD_Release_Data release_data[HLPD_TOTAL_RELEASE_DATA+1];
+extern HLPD_Release_Data release_data[HLPD_RELEASE_DATA_TOTAL+1];
+
+#define HLPD_Release_Data_Fmt "Release_Data {\n    date : \"%s\",\n    int_date : %" PRId64 ",\n    version : \"%s\",\n    phase : %s,\n    age_years : %" PRId64 ",\n    age_months : %" PRId64 ",\n    age_days : %" PRId64 ",\n    days_since_last : %" PRId64 ",\n    bin_size_KB : %" PRId64 ",\n    total_slocs : %" PRId64 ",\n    logic_slocs : %" PRId64 ",\n    animation_slocs : %" PRId64 ",\n    logic_slocs_relative_delta : %" PRId64 ",\n    invil_version : \"%s\",\n    amboso_version : \"%s\",\n    s4c_slocs : %" PRId64 ",\n    s4c_tag : \"%s\",\n    kls_slocs : %" PRId64 ",\n    kls_tag : \"%s\",\n    s4c_gui_slocs : %" PRId64 ",\n    s4c_gui_tag : \"%s\",\n    lib_slocs : %" PRId64 ",\n    lib_slocs_relative_delta : %" PRId64 ",\n    ratio_of_lib_slocs_to_logic_slocs : %f,\n    time : \"%s\",\n}"
+
+#define HLPD_Release_Data_Arg(rls) (rls)->date, (rls)->int_date, (rls)->version, (rls)->phase, (rls)->age_years, (rls)->age_months, (rls)->age_days, (rls)->days_since_last, (rls)->bin_size_KB, (rls)->total_slocs, (rls)->logic_slocs, (rls)->animation_slocs, (rls)->logic_slocs_relative_delta, (rls)->invil_version, (rls)->amboso_version, (rls)->s4c_slocs, (rls)->s4c_tag, (rls)->kls_slocs, (rls)->kls_tag, (rls)->s4c_gui_slocs, (rls)->s4c_gui_tag, (rls)->lib_slocs, (rls)->lib_slocs_relative_delta, (rls)->ratio_of_lib_slocs_to_logic_slocs, (rls)->time
 
 #endif // HLPD_RELEASE_DATA_H_

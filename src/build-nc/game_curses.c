@@ -21,6 +21,34 @@ callback_void_t callback_func_ptrs[SPECIALSMAX];
 callback_void_t callback_artifact_ptrs[ARTIFACTSMAX];
 callback_void_t callback_counter_ptrs[COUNTERSMAX];
 
+void plot_line_in_ncurses(int x1, int y1, int x2, int y2)
+{
+    // Calculate dx and dy
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    // Determine the direction of movement for x and y
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    // Initial error
+    int err = dx - dy;
+    // Draw line
+    while (x1 != x2 || y1 != y2) {
+        mvaddch(y1, x1, '*');
+        refresh();
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
+        }
+    }
+    // Wait for user input
+    //getch();
+}
+
 /**
  * Runs some shell commands to see all color pairs, then returns exitcode
  * Prints the encoded value of the passed char to the window at the coordinates.

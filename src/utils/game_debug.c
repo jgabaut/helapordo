@@ -210,6 +210,10 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
             if (G_DEBUG_ENEMYTYPE_ON == 1) {
                 printf("\nG_DEBUG_ENEMYTYPE:    %i\n", G_DEBUG_ENEMYTYPE);
             }
+
+            for (int i=0; i < HLPD_RELEASE_DATA_TOTAL+1; i++) {
+                printf("\nRELEASE_DATA_%i: {" HLPD_Release_Data_Fmt "},\n", i, HLPD_Release_Data_Arg(&(release_data[i])));
+            }
             printf("\nPress Enter to resume game.\n");
             int res = scanf("%*c");
             sprintf(msg, "debug_generic() 7 scanf() res was (%i)", res);

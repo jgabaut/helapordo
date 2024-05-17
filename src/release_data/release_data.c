@@ -1,6 +1,6 @@
 #include "release_data.h"
 
-HLPD_Release_Data release_data[HLPD_TOTAL_RELEASE_DATA+1] = {
+HLPD_Release_Data release_data[HLPD_RELEASE_DATA_TOTAL+1] = {
     [HLPD_01_TAG] = {
         .date = "2022-11-22",
         .int_date = 1669071600,

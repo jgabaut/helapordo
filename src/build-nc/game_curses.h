@@ -41,6 +41,7 @@
 #include "../utils/turn_op.h"
 #include "../core/game_animations.h"
 
+void plot_line_in_ncurses(int x1, int y1, int x2, int y2);
 int display_colorpairs(void);
 void print_encoded_char(WINDOW * w, int y, int x, char c);
 int get_saveslot_index(void);
