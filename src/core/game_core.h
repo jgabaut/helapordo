@@ -425,14 +425,13 @@ extern Saveslot default_saveslots[MAX_SAVESLOTS + 1];
  * @see gamemodeStrings
  */
 typedef enum {
-    Standard = 0,
-    Rogue = 1,
+    Rogue = 0,
 } Gamemode;
 
 /** Maximum index of Gamemode, so that the size has to add 1 for the 0th index
  * @see roomClass
  */
-#define GAMEMODE_MAX 1
+#define GAMEMODE_MAX 0
 
 /**
  * Array with the name strings for Gamemode.

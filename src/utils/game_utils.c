@@ -1002,35 +1002,6 @@ void setRoomType(Path *path, int *roadFork_value, roomClass *room_type,
             "setRoomType():  room type (%i) rooms done (%i)", (int)*room_type,
             roomsDone);
     switch (GAMEMODE) {
-    case Standard: {
-        if ((*roadFork_value >= 0)) {
-            *room_type = *roadFork_value;
-            *roadFork_value = -1;
-            log_tag("debug_log.txt", "[TEST]",
-                    "setRoomType() for ROADFORK");
-        } else if ((roomsDone == 1) || (roomsDone % HOMEROOM == 0)) {	//Only the first and every nth room will be a HOME room.
-            //FIXME: why the hell does roomsDone need to start from 1?
-            *room_type = HOME;
-            log_tag("debug_log.txt", "[TEST]", "setRoomType() for HOME");
-        } else if (roomsDone % BOSSROOM == 0) {
-            *room_type = BOSS;
-        } else if (roomsDone % SHOPROOM == 0) {
-            *room_type = SHOP;
-        } else if (hlpd_rand() % 5 == 0) {
-            *room_type = TREASURE;
-        } else if (hlpd_rand() % 4 == 0 && (roomsDone + 2 < path->length)) {
-            *room_type = ROADFORK;
-        } else if (*room_type == -1) {
-            *room_type = ENEMIES;
-        }
-        if (G_DEBUG_ON && G_DEBUG_ROOMTYPE_ON > 0) {
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "setRoomType(): Room debug flag asserted in standard gamemode, room type will always be equal to G_DEBUG_ROOMTYPE (%s).",
-                    stringFromRoom(G_DEBUG_ROOMTYPE));
-            *room_type = G_DEBUG_ROOMTYPE;
-        }
-    }
-    break;
     default: {
         fprintf(stderr, "Unexpected GAMEMODE value: %i\n", GAMEMODE);
         exit(EXIT_FAILURE);
@@ -3035,12 +3006,6 @@ Path *randomise_path(char* seed, Koliseo *kls, const char *path_to_savefile)
             p->current_saveslot->save_path);
 
     switch (GAMEMODE) {
-    case Standard: {
-        p->length = (hlpd_rand() % MAXLENGTH) + 1;
-        p->luck = (hlpd_rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
-    }
-    break;
     case Rogue: {
         p->length = 1;
         p->luck = (hlpd_rand() % MAXLUCK) + 1;
