@@ -128,7 +128,7 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhsaVDbjw")) != -1) {
+        while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLlvdhaVDbjw")) != -1) {
             switch (option) {
             case 'j': {
                 G_USE_VIM_DIRECTIONAL_KEYS = 1;
@@ -191,10 +191,6 @@ void gameloop(int argc, char **argv)
             break;
             case 'a': {
                 GS_AUTOSAVE_ON = 0;
-            }
-            break;
-            case 's': {
-                GAMEMODE = Story;
             }
             break;
             case 'R': {
@@ -1593,35 +1589,6 @@ void gameloop(int argc, char **argv)
         log_tag("debug_log.txt", "[DEBUG]", "loreCounter == (%i)",
                 *loreCounter);
 
-        if (GAMEMODE == Story) {
-
-            /*
-             * TODO
-             * Remove me
-             * Legacy code to load lores from a text file.
-             int loreKind = 0; //rand() % LORES_MAX;
-             */
-
-            if (load_info->is_new_game) {
-                log_tag("debug_log.txt", "[FIXME]",
-                        "loreCounter was (%i), setting it to 0.", *loreCounter);
-                *loreCounter = 0;	//We must set the counter before going forward
-                //FIXME:
-                //loreCounter should not start from 0 again.
-            }
-
-            /*
-             * TODO
-             *Remove me
-             *Legacy code for loading lores from a text file.
-             loadLore(lore_strings,loreKind);
-             */
-
-        } else {
-            log_tag("debug_log.txt", "[WARN]",
-                    "GAMEMODE is not Story. Value was: (%i)", GAMEMODE);
-        }
-
         //Set consumables sprites
         for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
             setConsumableSprite((Consumable *) player->consumablesBag[i]);
@@ -1731,7 +1698,7 @@ void gameloop(int argc, char **argv)
             }
         }
 
-        if (GAMEMODE == Story || GAMEMODE == Standard) {
+        if (GAMEMODE == Standard) {
 
             //Loop till wincon reached
 
@@ -1808,11 +1775,6 @@ void gameloop(int argc, char **argv)
                 noecho();
                 keypad(stdscr, TRUE);
 
-                //Check if we need to display a story prompt
-                if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
-                    displayLore(lore_strings, *loreCounter);
-                    (*loreCounter)++;
-                }
                 //Play room animation
 
                 /*

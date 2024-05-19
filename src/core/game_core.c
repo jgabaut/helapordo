@@ -83,7 +83,6 @@ HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_SCHEMAS_
 
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
     "Standard",
-    "Story",
     "Rogue"
 };
 

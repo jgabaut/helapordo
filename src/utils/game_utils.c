@@ -1031,32 +1031,6 @@ void setRoomType(Path *path, int *roadFork_value, roomClass *room_type,
         }
     }
     break;
-    case Story: {
-        if (*roadFork_value >= 0) {	//Is this branch needed here?
-            *room_type = *roadFork_value;
-            *roadFork_value = -1;
-        } else if ((roomsDone == 1) || (roomsDone % HOMEROOM == 0)) {	//Only the first and every nth room will be a HOME room.
-            //FIXME: why the hell does roomsDone need to start from 1?
-            *room_type = HOME;
-            log_tag("debug_log.txt", "[TEST]",
-                    "story mode, setRoomType() for HOME");
-        } else if (roomsDone % BOSSROOM == 0) {
-            *room_type = BOSS;
-        } else if (roomsDone % 4 == 0) {
-            *room_type = SHOP;
-        } else if (hlpd_rand() % 20 == 0) {
-            *room_type = TREASURE;
-        } else if (*room_type == -1) {
-            *room_type = ENEMIES;
-        }
-        if (G_DEBUG_ON && G_DEBUG_ROOMTYPE_ON > 0) {
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "setRoomType(): Room debug flag asserted in standard gamemode, room type will always be equal to G_DEBUG_ROOMTYPE (%s).",
-                    stringFromRoom(G_DEBUG_ROOMTYPE));
-            *room_type = G_DEBUG_ROOMTYPE;
-        }
-    }
-    break;
     default: {
         fprintf(stderr, "Unexpected GAMEMODE value: %i\n", GAMEMODE);
         exit(EXIT_FAILURE);
@@ -1268,7 +1242,6 @@ void usage(char *progname)
     fprintf(stderr, "\nOptions:\n");
     fprintf(stderr, "\n    -R        Enable rogue mode\n");
     fprintf(stderr, "\n    -D        Use current working directory (rather than default global dir) for saves and files.\n");
-    fprintf(stderr, "\n    -s        Enable story mode. Deprecated.\n");
     fprintf(stderr, "\n    -S        Pass a seed, instead of using a random one.\n");
     fprintf(stderr, "    -l        Load a game. Deprecated.\n");
 #ifndef HELAPORDO_DEBUG_ACCESS
@@ -3068,12 +3041,6 @@ Path *randomise_path(char* seed, Koliseo *kls, const char *path_to_savefile)
         p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
     }
     break;
-    case Story: {
-        p->length = 41;
-        p->luck = (hlpd_rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
-    }
-    break;
     case Rogue: {
         p->length = 1;
         p->luck = (hlpd_rand() % MAXLUCK) + 1;
@@ -3253,7 +3220,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
                 __func__);
         exit(EXIT_FAILURE);
     }
-    if (gamemode != Story && gamemode != Rogue) {
+    if (gamemode != Rogue) {
         log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
                 gamemode);
         exit(EXIT_FAILURE);
@@ -4392,10 +4359,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         Wincon *w =
             (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
-        if (GAMEMODE == Story) {
-            //Path length must be already initialised before getting here.
-            initWincon(w, path, FULL_PATH);
-        } else if (GAMEMODE == Rogue) {
+        if (GAMEMODE == Rogue) {
             //Path length must be already initialised before getting here.
             initWincon(w, path, ALL_ARTIFACTS);
         } else {
@@ -4426,10 +4390,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         Wincon *w =
             (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
-        if (GAMEMODE == Story) {
-            //Path length must be already initialised before getting here.
-            initWincon(w, path, FULL_PATH);
-        } else if (GAMEMODE == Rogue) {
+        if (GAMEMODE == Rogue) {
             //Path length must be already initialised before getting here.
             initWincon(w, path, ALL_ARTIFACTS);
         } else {
@@ -4456,10 +4417,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         Wincon *w =
             (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
-        if (GAMEMODE == Story) {
-            //Path length must be already initialised before getting here.
-            initWincon(w, path, FULL_PATH);
-        } else if (GAMEMODE == Rogue) {
+        if (GAMEMODE == Rogue) {
             //TODO: what do we set as path length? Number of floors?
             //Path length must be already initialised before getting here.
             initWincon(w, path, ALL_ARTIFACTS);
@@ -4520,7 +4478,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
                 __func__);
         exit(EXIT_FAILURE);
     }
-    if (gamemode != Story && gamemode != Rogue) {
+    if (gamemode != Rogue) {
         log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
                 gamemode);
         exit(EXIT_FAILURE);
