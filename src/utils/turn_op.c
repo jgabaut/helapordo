@@ -122,122 +122,6 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
         res = OP_OK;
     }
     break;
-    case OP_LOAD_ENEMYROOM: {
-        if (load_info == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "turnOP_args->(load_info) was NULL");
-            //free(args);
-            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-            return res;
-        }
-        load_info = args->load_info;
-        if (load_info == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_ENEMYROOM");
-            return res;
-        }
-        save_file = args->save_file;
-
-        if (save_file == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "turnOP_args->(save_file) was NULL");
-            //free(args);
-            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-            return res;
-        }
-        int *ptr_to_loaded_enemy_index = &(load_info->enemy_index);
-        log_tag("debug_log.txt", "[TURNOP]",
-                "*(ptr_to_loaded_enemy_index) == [%i]",
-                *ptr_to_loaded_enemy_index);
-        int *ptr_to_loaded_roomtotalenemies =
-            (load_info->ptr_to_roomtotalenemies);
-        log_tag("debug_log.txt", "[TURNOP]",
-                "*(ptr_to_loaded_roomtotalenemies) == [%i]",
-                *ptr_to_loaded_roomtotalenemies);
-        int *ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
-        log_tag("debug_log.txt", "[TURNOP]",
-                "*(ptr_to_loaded_roomindex) == [%i]",
-                *ptr_to_loaded_roomindex);
-        int *tot_foes = &(load_info->total_foes);
-        log_tag("debug_log.txt", "[TURNOP]", "*(tot_foes) == [%i]",
-                *tot_foes);
-        int *ptr_to_done_loading = &(load_info->done_loading);
-        log_tag("debug_log.txt", "[TURNOP]", "*(done_loading) == [%i]",
-                *ptr_to_done_loading);
-        res =
-            handleLoadgame_Enemies(save_file, actor, path,
-                                   load_info->loaded_enemy,
-                                   ptr_to_loaded_enemy_index,
-                                   ptr_to_loaded_roomtotalenemies,
-                                   ptr_to_loaded_roomindex, tot_foes,
-                                   ptr_to_done_loading, kls);
-        //Log end of operation
-        log_tag("debug_log.txt", "[TURNOP]",
-                "Done operation: [%s] res: [%s (%i)]", stringFromTurnOP(op),
-                stringFrom_OP_res(res), res);
-
-        log_tag(OPS_LOGFILE, "[RES]", "res: [%s (%i)]",
-                stringFrom_OP_res(res), res);
-
-        return res;
-    }
-    break;
-    case OP_LOAD_HOMEROOM: {
-        if (load_info == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "turnOP_args->(load_info) was NULL");
-            //free(args);
-            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-            return res;
-        }
-        load_info = args->load_info;
-        if (load_info == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "load_info was NULL after load_info = args->load_info:  in turnOP(OP_LOAD_HOMEROOM");
-            return res;
-        }
-        save_file = args->save_file;
-
-        if (save_file == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "turnOP_args->(save_file) was NULL");
-            //free(args);
-            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-            return res;
-        }
-        if (load_info->ptr_to_roomindex == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "load_info->ptr_to_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
-            return res;
-        }
-        int *ptr_to_loaded_roomindex = (load_info->ptr_to_roomindex);
-        if (ptr_to_loaded_roomindex == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "ptr_to_loaded_roomindex was NULL in turnOP(OP_LOAD_HOMEROOM");
-            return res;
-        }
-        log_tag("debug_log.txt", "[TURNOP]",
-                "*(ptr_to_loaded_roomindex) == [%i]",
-                *ptr_to_loaded_roomindex);
-
-        int *ptr_to_done_loading = &(load_info->done_loading);
-        log_tag("debug_log.txt", "[TURNOP]", "*(done_loading) == [%i]",
-                *ptr_to_done_loading);
-        res =
-            handleLoadgame_Home(save_file, actor, path,
-                                ptr_to_loaded_roomindex,
-                                ptr_to_done_loading, kls);
-        //Log end of operation
-        log_tag("debug_log.txt", "[TURNOP]",
-                "Done operation: [%s] res: [%s (%i)]", stringFromTurnOP(op),
-                stringFrom_OP_res(res), res);
-
-        log_tag(OPS_LOGFILE, "[RES]", "res: [%s (%i)]",
-                stringFrom_OP_res(res), res);
-
-        return res;
-    }
-    break;
     case OP_FIGHT: {
         if (notify_win == NULL) {
             log_tag("debug_log.txt", "[CRITICAL]",
@@ -424,135 +308,28 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
     }
     break;
     case OP_SAVE: {
-        if (GAMEMODE == Rogue) {
-            log_tag("debug_log.txt", "[WARN]",
-                    "GAMEMODE was [Rogue] in turnOP(OP_SAVE)");
-            if (G_EXPERIMENTAL_ON == 1) {
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
-                bool did_saveheader_init = false;
-                char static_path[500];
-                // Set static_path value to the correct static dir path
-                resolve_staticPath(static_path);
-                SaveHeader* current_saveHeader = prep_saveHeader(static_path, kls, true, &did_saveheader_init, path->current_saveslot->index);
-                log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
-                bool prep_res = prep_Gamestate(gmst, static_path, 0, default_kls, true); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
-                if (prep_res) {
-                    log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
-                } else {
-                    log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
-                    kls_free(default_kls);
-                    kls_free(temporary_kls);
-                    exit(EXIT_FAILURE);
-                }
+        if (G_EXPERIMENTAL_ON == 1) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+            bool did_saveheader_init = false;
+            char static_path[500];
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
+            SaveHeader* current_saveHeader = prep_saveHeader(static_path, kls, true, &did_saveheader_init, path->current_saveslot->index);
+            log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+            bool prep_res = prep_Gamestate(gmst, static_path, 0, default_kls, true); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+            if (prep_res) {
+                log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+            } else {
+                log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
             }
-            res = NO_OP;
-            break;
+        } else {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Can't save without experimental flag.", __func__);
         }
-        if (save_file == NULL) {
-            log_tag("debug_log.txt", "[CRITICAL]",
-                    "save_file pointer was null in turnOP(OP_SAVE)");
-            exit(EXIT_FAILURE);
-        }
-        if (load_info == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "turnOP_args->(load_info) was NULL");
-            //free(args);
-            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
-            return res;
-        }
-        if (room == NULL) {
-            log_tag("debug_log.txt", "[CRITICAL]",
-                    "Room pointer was null in turnOP(OP_SAVE)");
-            exit(EXIT_FAILURE);
-        }
-        room_index = room->index;
-        if (room->class == ENEMIES && enemy == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "Enemy pointer was null in turnOP(OP_SAVE) for ENEMIES room.");
-            exit(EXIT_FAILURE);
-        } else if (room->class == BOSS && boss == NULL) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "Boss pointer was null in turnOP(OP_SAVE) for BOSS room.");
-            exit(EXIT_FAILURE);
-        }
-
-        if ((room->class != ENEMIES) && (room->class != HOME)) {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "Invalid room class in turnOP(OP_SAVE): (%s [%i])",
-                    stringFromRoom(room->class), room->class);
-            exit(EXIT_FAILURE);
-        }
-
-        switch (room->class) {
-        case ENEMIES: {
-            enemy_index = enemy->index;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Setting enemy_index to (%i) (OP_SAVE), isBoss == 0",
-                    enemy->index);
-            isBoss = 0;
-            load_info->save_type = ENEMIES_SAVE;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Setting save_type to ENEMIES_SAVE. [%s]",
-                    stringFrom_saveType(load_info->save_type));
-        }
+        res = NO_OP; //TODO Collect save result for caller?
         break;
-        case BOSS: {
-            enemy_index = 0;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Setting enemy_index to (0) (OP_SAVE), isBoss == 1");
-            isBoss = 1;
-        }
-        break;
-        case HOME: {
-            enemy_index = -1;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Setting enemy_index to (-1) (OP_SAVE), isBoss == -1");
-            isBoss = -1;
-            load_info->save_type = HOME_SAVE;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Setting save_type to HOME_SAVE. [%s]",
-                    stringFrom_saveType(load_info->save_type));
-        }
-        break;
-        case BASIC: {
-            enemy_index = -1;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Setting enemy_index to (-1) (OP_SAVE), isBoss == -1");
-            isBoss = -1;
-            load_info->save_type = FLOORMENU_SAVE;
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Setting save_type to FLOORMENU_SAVE. [%s]",
-                    stringFrom_saveType(load_info->save_type));
-        }
-        break;
-        default: {
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Invalid room value in turnOP(OP_SAVE): [%s (%i)]",
-                    stringFromRoom(room->class), room->class);
-            exit(EXIT_FAILURE);
-
-        }
-        }
-        switch (load_info->save_type) {
-        case ENEMIES_SAVE: {
-            res =
-                handleSave_Enemies(save_file, actor, path, enemy,
-                                   enemy_index, room->enemyTotal,
-                                   room_index);
-        }
-        break;
-        case HOME_SAVE: {
-            res = handleSave_Home(save_file, actor, path, room_index);
-        }
-        break;
-        default: {
-            log_tag("debug_log.txt", "[TURNOP]",
-                    "Invalid save_type value in turnOP(OP_SAVE): (%i)",
-                    (int)load_info->save_type);
-            exit(EXIT_FAILURE);
-        }
-        break;
-        }
     }
     break;
     case OP_DEBUG: {

@@ -32,14 +32,4 @@
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 bool set_Saveslot_name(FILE * file, Saveslot * sv);
-
-OP_res handleLoadgame_Home(FILE * file, Fighter * f, Path * p, int *roomIndex,
-                           int *done_loading, Koliseo * kls);
-OP_res handleLoadgame_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
-                              int *enemyIndex, int *roomTotalEnemies,
-                              int *roomIndex, int *total_foes,
-                              int *done_loading, Koliseo * kls);
-OP_res handleSave_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
-                          int enemyIndex, int roomTotalEnemies, int roomIndex);
-OP_res handleSave_Home(FILE * file, Fighter * f, Path * p, int roomIndex);
 #endif // SAVES_H_
