@@ -1697,645 +1697,645 @@ void gameloop(int argc, char **argv)
             }
         }
 
-            log_tag("debug_log.txt", "[DEBUG]", "Gamemode was [%i]", GAMEMODE);
+        log_tag("debug_log.txt", "[DEBUG]", "Gamemode was [%i]", GAMEMODE);
 
-            if (GAMEMODE == Rogue) {
-                log_tag("debug_log.txt", "[DEBUG]", "Doing a Rogue run.");
-                char static_path[500];
+        if (GAMEMODE == Rogue) {
+            log_tag("debug_log.txt", "[DEBUG]", "Doing a Rogue run.");
+            char static_path[500];
 
-                // Set static_path value to the correct static dir path
-                resolve_staticPath(static_path);
+            // Set static_path value to the correct static dir path
+            resolve_staticPath(static_path);
 
-                /**
-                 * Legacy code for reading palette.gpl. Was it ever needed at runtime?
-                 * TODO check which tags may use the palette.gpl at runtime (other than trying to read it pointlessly).
-                 *
-                char path_to_palette[600];
-                FILE* palette_file = NULL;
-                char palette_name[50] = "palette.gpl";
-                sprintf(path_to_palette, "%s/%s", static_path, palette_name);
-                palette_file = fopen(path_to_palette, "r");
-                if (palette_file == NULL) {
-                    fprintf(stderr,
-                            "Error: could not open palette file (%s/%s).\n",
-                            static_path, palette_name);
-                    exit(EXIT_FAILURE);
-                }
-                */
+            /**
+             * Legacy code for reading palette.gpl. Was it ever needed at runtime?
+             * TODO check which tags may use the palette.gpl at runtime (other than trying to read it pointlessly).
+             *
+            char path_to_palette[600];
+            FILE* palette_file = NULL;
+            char palette_name[50] = "palette.gpl";
+            sprintf(path_to_palette, "%s/%s", static_path, palette_name);
+            palette_file = fopen(path_to_palette, "r");
+            if (palette_file == NULL) {
+                fprintf(stderr,
+                        "Error: could not open palette file (%s/%s).\n",
+                        static_path, palette_name);
+                exit(EXIT_FAILURE);
+            }
+            */
 
-                WINDOW *floor_win;
-                //TODO: store if we have done initsrc() or endwin(). Am sure we can get this from ncurses with some MACRO
-                //initscr();
-                clear();
-                refresh();
-                start_color();
+            WINDOW *floor_win;
+            //TODO: store if we have done initsrc() or endwin(). Am sure we can get this from ncurses with some MACRO
+            //initscr();
+            clear();
+            refresh();
+            start_color();
 
-                int colorCheck = has_colors();
+            int colorCheck = has_colors();
 
-                if (colorCheck == FALSE) {
-                    fprintf(stderr, "Terminal can't use colors, abort.\n");
-                    exit(S4C_ERR_TERMCOLOR);
-                }
+            if (colorCheck == FALSE) {
+                fprintf(stderr, "Terminal can't use colors, abort.\n");
+                exit(S4C_ERR_TERMCOLOR);
+            }
 
-                colorCheck = can_change_color();
+            colorCheck = can_change_color();
 
-                if (colorCheck == FALSE) {
-                    fprintf(stderr, "Terminal can't change colors, abort.\n");
-                    exit(S4C_ERR_TERMCHANGECOLOR);
-                }
-                for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-                    init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) ? -1 : 0));
-                }
-                cbreak();
-                noecho();
-                keypad(stdscr, TRUE);
+            if (colorCheck == FALSE) {
+                fprintf(stderr, "Terminal can't change colors, abort.\n");
+                exit(S4C_ERR_TERMCHANGECOLOR);
+            }
+            for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+                init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) ? -1 : 0));
+            }
+            cbreak();
+            noecho();
+            keypad(stdscr, TRUE);
 
-                // Create the window
-                floor_win = newwin(23, 24, 1, 2);
-                wclear(floor_win);
-                wrefresh(floor_win);
-                keypad(floor_win, TRUE);
+            // Create the window
+            floor_win = newwin(23, 24, 1, 2);
+            wclear(floor_win);
+            wrefresh(floor_win);
+            keypad(floor_win, TRUE);
 
-                /* Print a border around the windows and print a title */
-                box(floor_win, 0, 0);
-                wrefresh(floor_win);
-                refresh();
-                int res = -1;
-                char msg[500];
+            /* Print a border around the windows and print a title */
+            box(floor_win, 0, 0);
+            wrefresh(floor_win);
+            refresh();
+            int res = -1;
+            char msg[500];
 
-                bool is_bin_load_floor = (G_EXPERIMENTAL_ON == 1 && load_info->is_new_game == 0 && load_info->done_loading == 0);
+            bool is_bin_load_floor = (G_EXPERIMENTAL_ON == 1 && load_info->is_new_game == 0 && load_info->done_loading == 0);
 
-                if (is_bin_load_floor) {
-                    update_Equipslots(player);
-                    log_tag("debug_log.txt", "[DEBUG]", "Using current_floor from loaded gamestate.");
+            if (is_bin_load_floor) {
+                update_Equipslots(player);
+                log_tag("debug_log.txt", "[DEBUG]", "Using current_floor from loaded gamestate.");
+            } else {
+                log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
+                kls_log(default_kls, "DEBUG", "Prepping current_floor.");
+                current_floor =
+                    (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor,
+                                               HR_Floor, "Floor", "Floor");
+            }
+            update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
+                             current_floor, NULL, &game_options); // NULL for current_room
+            // Start the random walk from the center of the dungeon
+            int center_x = FLOOR_MAX_COLS / 2;
+            int center_y = FLOOR_MAX_ROWS / 2;
+
+            if (is_bin_load_floor) {
+                log_tag("debug_log.txt", "[DEBUG]", "Skipping current_floor init.");
+            } else {
+                // Init dbg_floor
+                init_floor_layout(current_floor);
+
+                //Set center as filled
+                current_floor->floor_layout[center_x][center_y] = 1;
+
+                //Init floor rooms
+                init_floor_rooms(current_floor);
+
+                if (G_EXPERIMENTAL_ON != 1) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
+                    //Random walk #1
+                    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                    //Random walk #2
+                    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                    current_floor->from_bsp = false;
                 } else {
-                    log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
-                    kls_log(default_kls, "DEBUG", "Prepping current_floor.");
-                    current_floor =
-                        (Floor *) KLS_PUSH_T_TYPED(gamestate_kls, Floor,
-                                                   HR_Floor, "Floor", "Floor");
-                }
-                update_Gamestate(gamestate, 1, HOME, roomsDone, -1,
-                                 current_floor, NULL, &game_options); // NULL for current_room
-                // Start the random walk from the center of the dungeon
-                int center_x = FLOOR_MAX_COLS / 2;
-                int center_y = FLOOR_MAX_ROWS / 2;
-
-                if (is_bin_load_floor) {
-                    log_tag("debug_log.txt", "[DEBUG]", "Skipping current_floor init.");
-                } else {
-                    // Init dbg_floor
-                    init_floor_layout(current_floor);
-
-                    //Set center as filled
-                    current_floor->floor_layout[center_x][center_y] = 1;
-
-                    //Init floor rooms
-                    init_floor_rooms(current_floor);
-
-                    if (G_EXPERIMENTAL_ON != 1) {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
+                    if ((hlpd_rand() % 101) > 20) {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                        BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
+                        /*
+                        WINDOW* test_win = newwin(FLOOR_MAX_COLS +2, FLOOR_MAX_ROWS+2, 0,0);
+                        clear();
+                        refresh();
+                        box(test_win, 0, 0);
+                        draw_BSP_Room(test_win, bsp_tree, 1, 1, 0);
+                        refresh();
+                        wgetch(test_win);
+                        */
+                        /*
+                        WINDOW* win = newwin(LINES, COLS, 0, 0);
+                        clear();
+                        refresh();
+                        draw_BSP_Tree(win, bsp_tree, 0, COLS/2, 1, 6, 2);
+                        refresh();
+                        getch();
+                        */
+                        dbg_BSP_Room(bsp_tree);
+                        current_floor->from_bsp = true;
+                    } else {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
                         //Random walk #1
                         floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
                         //Random walk #2
                         floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
                         current_floor->from_bsp = false;
-                    } else {
-                        if ((hlpd_rand() % 101) > 20) {
-                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                            BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
-                            /*
-                            WINDOW* test_win = newwin(FLOOR_MAX_COLS +2, FLOOR_MAX_ROWS+2, 0,0);
-                            clear();
-                            refresh();
-                            box(test_win, 0, 0);
-                            draw_BSP_Room(test_win, bsp_tree, 1, 1, 0);
-                            refresh();
-                            wgetch(test_win);
-                            */
-                            /*
-                            WINDOW* win = newwin(LINES, COLS, 0, 0);
-                            clear();
-                            refresh();
-                            draw_BSP_Tree(win, bsp_tree, 0, COLS/2, 1, 6, 2);
-                            refresh();
-                            getch();
-                            */
-                            dbg_BSP_Room(bsp_tree);
-                            current_floor->from_bsp = true;
-                        } else {
-                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
-                            //Random walk #1
-                            floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                            //Random walk #2
-                            floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-                            current_floor->from_bsp = false;
-                        }
-                    }
-
-                    //Set floor explored matrix
-                    load_floor_explored(current_floor);
-
-                    //Set room types
-                    floor_set_room_types(current_floor);
-
-                    if (G_EXPERIMENTAL_ON != 1) {
-                        log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
-                        player->floor_x = center_x;
-                        player->floor_y = center_y;
-                    } else {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
-                        int home_room_x = -1;
-                        int home_room_y = -1;
-                        bool done_looking = false;
-                        for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
-                            for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
-                                if (current_floor->roomclass_layout[i][j] == HOME) {
-                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
-                                    home_room_x = i;
-                                    home_room_y = j;
-                                    done_looking = true;
-                                }
-                            }
-                        }
-                        if (!done_looking) {
-                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
-                            kls_free(default_kls);
-                            kls_free(temporary_kls);
-                            exit(EXIT_FAILURE);
-                        }
-                        log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
-                        player->floor_x = home_room_x;
-                        player->floor_y = home_room_y;
                     }
                 }
 
-                //TODO: handle finishing all floors
-                path->length = MAX_ROGUE_FLOORS;
+                //Set floor explored matrix
+                load_floor_explored(current_floor);
 
-                //TODO: restore floors_done from loaded gamestate
-                int floors_done = 0;
+                //Set room types
+                floor_set_room_types(current_floor);
 
-                //Loop till wincon reached
-
-                //while (dbg_floor->explored_area*1.0 < (dbg_floor->area*0.8)) {
-                while (win_con->current_val < win_con->target_val) {
-
-                    //Check if we have to update the wincon value
-                    if (path->win_condition->class == ALL_ARTIFACTS) {
-                        path->win_condition->current_val =
-                            player->stats->artifactsfound;
-                        //Are we forced to do one more room?
+                if (G_EXPERIMENTAL_ON != 1) {
+                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                    player->floor_x = center_x;
+                    player->floor_y = center_y;
+                } else {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+                    int home_room_x = -1;
+                    int home_room_y = -1;
+                    bool done_looking = false;
+                    for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+                        for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                            if (current_floor->roomclass_layout[i][j] == HOME) {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                                home_room_x = i;
+                                home_room_y = j;
+                                done_looking = true;
+                            }
+                        }
                     }
+                    if (!done_looking) {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+                        kls_free(default_kls);
+                        kls_free(temporary_kls);
+                        exit(EXIT_FAILURE);
+                    }
+                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+                    player->floor_x = home_room_x;
+                    player->floor_y = home_room_y;
+                }
+            }
 
-                    int enemyTotal = -1;
-                    roomClass room_type = -1;
+            //TODO: handle finishing all floors
+            path->length = MAX_ROGUE_FLOORS;
 
-                    if (!(load_info->is_new_game) && !(load_info->done_loading)
-                        && (load_info->save_type == ENEMIES_SAVE)) {
-                        enemyTotal = loaded_roomtotalenemies;
+            //TODO: restore floors_done from loaded gamestate
+            int floors_done = 0;
+
+            //Loop till wincon reached
+
+            //while (dbg_floor->explored_area*1.0 < (dbg_floor->area*0.8)) {
+            while (win_con->current_val < win_con->target_val) {
+
+                //Check if we have to update the wincon value
+                if (path->win_condition->class == ALL_ARTIFACTS) {
+                    path->win_condition->current_val =
+                        player->stats->artifactsfound;
+                    //Are we forced to do one more room?
+                }
+
+                int enemyTotal = -1;
+                roomClass room_type = -1;
+
+                if (!(load_info->is_new_game) && !(load_info->done_loading)
+                    && (load_info->save_type == ENEMIES_SAVE)) {
+                    enemyTotal = loaded_roomtotalenemies;
+                } else {
+                    if (!load_info->done_loading) {
+                        log_tag("debug_log.txt", "[DEBUG-PREP]",
+                                "Setting load_info->done_loading to 1.");
+                    }
+                    load_info->done_loading = 1;
+                }
+
+                Room *current_room = NULL;
+
+                //Check if current room needs to be played
+                if (current_floor->roomclass_layout[player->floor_x][player->floor_y] !=
+                    BASIC) {
+                    kls_log(temporary_kls, "DEBUG",
+                            "Prepping Room for Rogue Gamemode. roomsDone=(%i)",
+                            roomsDone);
+                    current_room =
+                        (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room,
+                                                  HR_Room, "Room", msg);
+
+                    current_room->index = roomsDone;
+                    //setRoomType(path, &roadFork_value, &room_type, roomsDone);
+
+                    room_type =
+                        current_floor->
+                        roomclass_layout[player->floor_x][player->floor_y];
+                    log_tag("debug_log.txt", "[ROOM]",
+                            "Set Room #%i type:    (%s)\n", roomsDone,
+                            stringFromRoom(room_type));
+
+                    initRoom(current_room, player, roomsDone, room_type,
+                             enemyTotal, load_info, gamestate_kls);
+                    log_tag("debug_log.txt", "[ROOM]",
+                            "Init Room #%i:    (%s)\n", roomsDone,
+                            stringFromRoom(room_type));
+
+                    /*
+                       //Check if we need to display a story prompt
+                       if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
+                       displayLore(lore_strings,*loreCounter);
+                       (*loreCounter)++;
+                       }
+                     */
+
+                    //Play room animation
+
+                    WINDOW *door_win;
+                    //initscr();
+                    clear();
+                    refresh();
+                    start_color();
+
+                    int reps = 1;
+                    int frametime = 27;
+                    int num_frames = 60;
+                    int frame_height = 22;
+                    int frame_width = 22;
+                    door_win =
+                        newwin(frame_height + 1, frame_width + 1, 0, 25);
+
+                    char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
+
+                    s4c_copy_animation(enter_door, door_sprites, num_frames,
+                                       frame_height, frame_width);
+
+                    log_tag("debug_log.txt", "[PREP]",
+                            "Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",
+                            num_frames, frame_height, frame_width);
+
+                    /*
+                     * TODO
+                     * Remove me
+                     * Legacy code for loading animation from an s4c-file.
+                     *
+                     // Set static_path value to the correct static dir path
+
+                     // Set static_path value to the correct static dir path
+                     resolve_staticPath(static_path);
+
+                     char door_file_path[600];
+
+                     sprintf(door_file_path,"%s/animations/enter_door.txt",static_path);
+
+                     FILE* door_file = fopen(door_file_path,"r");
+                     if (!door_file) {
+                     fprintf(stderr,"[ERROR]    Can't open enter_door file.\n");
+                     exit(EXIT_FAILURE);
+                     }
+                     int loadCheck = load_sprites(door_sprites, door_file, frame_height-1, frame_width-1);
+
+                     // Check for possible loadCheck() errors and in this case we return early if we couldn't load
+                     if (loadCheck < 0) {
+                     endwin();
+                     switch (loadCheck) {
+                     case S4C_ERR_FILEVERSION: {
+                     fprintf(stderr,"S4C_ERR_FILEVERSION : Failed file version check.\n");
+                     }
+                     break;
+                     case S4C_ERR_LOADSPRITES: {
+                     fprintf(stderr,"S4C_ERR_LOADSPRITES : Failed loading the sprites.\n");
+                     }
+                     break;
+                     }
+                     exit(loadCheck);
+                     }
+                     */
+
+                    // We make sure we have the background correcly set up and expect animate_sprites to refresh it
+                    wclear(door_win);
+                    wrefresh(door_win);
+
+                    int result =
+                        s4c_animate_sprites_at_coords(door_sprites,
+                                                      door_win, reps,
+                                                      frametime, num_frames,
+                                                      frame_height,
+                                                      frame_width, 0, 0);
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "animate() result was (%i)", result);
+                    wclear(door_win);
+                    wrefresh(door_win);
+                    delwin(door_win);
+                    endwin();
+
+                    update_Gamestate(gamestate, 1, current_room->class,
+                                     current_room->index, -1,
+                                     current_floor, current_room, &game_options);
+
+                    if (current_room->class == HOME) {
+                        res =
+                            handleRoom_Home(gamestate, current_room,
+                                            roomsDone, path, player,
+                                            load_info, fighter_sprites,
+                                            default_kls, gamestate_kls);
+                    } else if (current_room->class == ENEMIES) {
+                        res =
+                            handleRoom_Enemies(gamestate, current_room,
+                                               roomsDone, path, player,
+                                               load_info, enemy_sprites,
+                                               fighter_sprites, default_kls,
+                                               gamestate_kls);
+                    } else if (current_room->class == SHOP) {
+                        res =
+                            handleRoom_Shop(current_room, roomsDone, path,
+                                            player, default_kls,
+                                            gamestate_kls);
+                    } else if (current_room->class == BOSS) {
+                        res =
+                            handleRoom_Boss(gamestate, current_room,
+                                            roomsDone, path, player,
+                                            load_info, boss_sprites,
+                                            fighter_sprites, default_kls,
+                                            gamestate_kls);
+                    } else if (current_room->class == TREASURE) {
+                        res =
+                            handleRoom_Treasure(current_room, roomsDone,
+                                                path, player, default_kls,
+                                                gamestate_kls);
+                    } else if (current_room->class == ROADFORK) {
+                        res =
+                            handleRoom_Roadfork(current_room,
+                                                &roadFork_value, roomsDone,
+                                                path, player);
                     } else {
-                        if (!load_info->done_loading) {
-                            log_tag("debug_log.txt", "[DEBUG-PREP]",
-                                    "Setting load_info->done_loading to 1.");
-                        }
-                        load_info->done_loading = 1;
+                        sprintf(msg,
+                                "Unexpected current_room->class value: [%i] [%s]",
+                                current_room->class,
+                                stringFromRoom(current_room->class));
+                        log_tag("debug_log.txt", "[ERROR]", msg);
+                        //freeRoom(current_room);
+                        log_tag("debug_log.txt", "[ERROR]",
+                                "Freed current room, quitting program.");
+                        exit(EXIT_FAILURE);
                     }
 
-                    Room *current_room = NULL;
-
-                    //Check if current room needs to be played
-                    if (current_floor->roomclass_layout[player->floor_x][player->floor_y] !=
-                        BASIC) {
-                        kls_log(temporary_kls, "DEBUG",
-                                "Prepping Room for Rogue Gamemode. roomsDone=(%i)",
-                                roomsDone);
-                        current_room =
-                            (Room *) KLS_PUSH_T_TYPED(gamestate_kls, Room,
-                                                      HR_Room, "Room", msg);
-
-                        current_room->index = roomsDone;
-                        //setRoomType(path, &roadFork_value, &room_type, roomsDone);
-
-                        room_type =
-                            current_floor->
-                            roomclass_layout[player->floor_x][player->floor_y];
-                        log_tag("debug_log.txt", "[ROOM]",
-                                "Set Room #%i type:    (%s)\n", roomsDone,
-                                stringFromRoom(room_type));
-
-                        initRoom(current_room, player, roomsDone, room_type,
-                                 enemyTotal, load_info, gamestate_kls);
-                        log_tag("debug_log.txt", "[ROOM]",
-                                "Init Room #%i:    (%s)\n", roomsDone,
-                                stringFromRoom(room_type));
-
-                        /*
-                           //Check if we need to display a story prompt
-                           if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
-                           displayLore(lore_strings,*loreCounter);
-                           (*loreCounter)++;
-                           }
-                         */
-
-                        //Play room animation
-
-                        WINDOW *door_win;
-                        //initscr();
-                        clear();
-                        refresh();
-                        start_color();
-
-                        int reps = 1;
-                        int frametime = 27;
-                        int num_frames = 60;
-                        int frame_height = 22;
-                        int frame_width = 22;
-                        door_win =
-                            newwin(frame_height + 1, frame_width + 1, 0, 25);
-
-                        char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
-
-                        s4c_copy_animation(enter_door, door_sprites, num_frames,
-                                           frame_height, frame_width);
-
-                        log_tag("debug_log.txt", "[PREP]",
-                                "Copied animation from matrix vector for enter_door with dimensions: [%i][%i][%i].",
-                                num_frames, frame_height, frame_width);
-
-                        /*
-                         * TODO
-                         * Remove me
-                         * Legacy code for loading animation from an s4c-file.
-                         *
-                         // Set static_path value to the correct static dir path
-
-                         // Set static_path value to the correct static dir path
-                         resolve_staticPath(static_path);
-
-                         char door_file_path[600];
-
-                         sprintf(door_file_path,"%s/animations/enter_door.txt",static_path);
-
-                         FILE* door_file = fopen(door_file_path,"r");
-                         if (!door_file) {
-                         fprintf(stderr,"[ERROR]    Can't open enter_door file.\n");
-                         exit(EXIT_FAILURE);
-                         }
-                         int loadCheck = load_sprites(door_sprites, door_file, frame_height-1, frame_width-1);
-
-                         // Check for possible loadCheck() errors and in this case we return early if we couldn't load
-                         if (loadCheck < 0) {
-                         endwin();
-                         switch (loadCheck) {
-                         case S4C_ERR_FILEVERSION: {
-                         fprintf(stderr,"S4C_ERR_FILEVERSION : Failed file version check.\n");
-                         }
-                         break;
-                         case S4C_ERR_LOADSPRITES: {
-                         fprintf(stderr,"S4C_ERR_LOADSPRITES : Failed loading the sprites.\n");
-                         }
-                         break;
-                         }
-                         exit(loadCheck);
-                         }
-                         */
-
-                        // We make sure we have the background correcly set up and expect animate_sprites to refresh it
-                        wclear(door_win);
-                        wrefresh(door_win);
-
-                        int result =
-                            s4c_animate_sprites_at_coords(door_sprites,
-                                                          door_win, reps,
-                                                          frametime, num_frames,
-                                                          frame_height,
-                                                          frame_width, 0, 0);
+                    if (res == OP_RES_DEATH) {
                         log_tag("debug_log.txt", "[DEBUG]",
-                                "animate() result was (%i)", result);
-                        wclear(door_win);
-                        wrefresh(door_win);
-                        delwin(door_win);
-                        endwin();
+                                "Room resulted in DEATH.");
+                        if (G_EXPERIMENTAL_ON == 1) {
+                            //TODO: delete savefile?
+                        }
+                        //Free room memory
+                        //freeRoom(current_room);
+                        break;
+                    } else {
+                        //Flush the terminal
+                        int clrres = system("clear");
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "gameloop() system(\"clear\") res was (%i)",
+                                clrres);
 
-                        update_Gamestate(gamestate, 1, current_room->class,
-                                         current_room->index, -1,
-                                         current_floor, current_room, &game_options);
+                        if (roadFork_value > 0) {
+                            //lightYellow();
+                            //TODO
+                            //What is this?
+                            printStats(player);
+                            //lightGreen();
+                            log_tag("debug_logx.txt", "[ROADFORK?]",
+                                    "You completed room %i.", roomsDone);
+                            //white();
+                        }
+                        roomsDone++;
 
-                        if (current_room->class == HOME) {
-                            res =
-                                handleRoom_Home(gamestate, current_room,
-                                                roomsDone, path, player,
-                                                load_info, fighter_sprites,
-                                                default_kls, gamestate_kls);
-                        } else if (current_room->class == ENEMIES) {
-                            res =
-                                handleRoom_Enemies(gamestate, current_room,
-                                                   roomsDone, path, player,
-                                                   load_info, enemy_sprites,
-                                                   fighter_sprites, default_kls,
-                                                   gamestate_kls);
-                        } else if (current_room->class == SHOP) {
-                            res =
-                                handleRoom_Shop(current_room, roomsDone, path,
-                                                player, default_kls,
-                                                gamestate_kls);
-                        } else if (current_room->class == BOSS) {
-                            res =
-                                handleRoom_Boss(gamestate, current_room,
-                                                roomsDone, path, player,
-                                                load_info, boss_sprites,
-                                                fighter_sprites, default_kls,
-                                                gamestate_kls);
-                        } else if (current_room->class == TREASURE) {
-                            res =
-                                handleRoom_Treasure(current_room, roomsDone,
-                                                    path, player, default_kls,
-                                                    gamestate_kls);
-                        } else if (current_room->class == ROADFORK) {
-                            res =
-                                handleRoom_Roadfork(current_room,
-                                                    &roadFork_value, roomsDone,
-                                                    path, player);
-                        } else {
-                            sprintf(msg,
-                                    "Unexpected current_room->class value: [%i] [%s]",
-                                    current_room->class,
-                                    stringFromRoom(current_room->class));
-                            log_tag("debug_log.txt", "[ERROR]", msg);
-                            //freeRoom(current_room);
-                            log_tag("debug_log.txt", "[ERROR]",
-                                    "Freed current room, quitting program.");
-                            exit(EXIT_FAILURE);
+                        //Update stats
+                        player->stats->roomscompleted++;
+
+                        //Free room memory
+                        //freeRoom(current_room);
+
+                        if (current_room->class != HOME) {
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    updating Gamestate to clear current_room reference", __func__);
+                            update_Gamestate(gamestate, 1, BASIC,
+                                             roomsDone, -1,
+                                             current_floor, NULL, &game_options);  // Pass NULL for current room to gamestate
                         }
 
-                        if (res == OP_RES_DEATH) {
+                        //Update floor's roomclass layout for finished rooms which should not be replayed
+                        switch (current_floor->
+                                roomclass_layout[player->floor_x][player->floor_y]) {
+                        case ENEMIES: {
+                            current_floor->
+                            roomclass_layout[player->floor_x][player->floor_y] =
+                                BASIC;
+                        }
+                        break;
+                        case BOSS: {
+                            current_floor->
+                            roomclass_layout[player->floor_x][player->floor_y] =
+                                BASIC;
+                            floors_done++;
+                            player->stats->floorscompleted++;
                             log_tag("debug_log.txt", "[DEBUG]",
-                                    "Room resulted in DEATH.");
-                            if (G_EXPERIMENTAL_ON == 1) {
-                                //TODO: delete savefile?
+                                    "Floors done: [%i]", floors_done);
+                            //Check if we need to update the win condition
+                            if (win_con->class == FULL_PATH) {
+                                win_con->current_val++;
                             }
-                            //Free room memory
-                            //freeRoom(current_room);
-                            break;
-                        } else {
-                            //Flush the terminal
-                            int clrres = system("clear");
+                            // Reset gamestate_kls
+                            kls_temp_end(gamestate_kls);
+                            gamestate_kls =
+                                kls_temp_start(temporary_kls);
+
+                            current_floor =
+                                (Floor *)
+                                KLS_PUSH_T_TYPED(gamestate_kls, Floor,
+                                                 HR_Floor, "Floor",
+                                                 "Floor");
+                            update_Gamestate(gamestate, 1, HOME,
+                                             roomsDone, -1,
+                                             current_floor, NULL, &game_options); // Passing NULL for current_room
+
+                            //Regenerate floor
                             log_tag("debug_log.txt", "[DEBUG]",
-                                    "gameloop() system(\"clear\") res was (%i)",
-                                    clrres);
-
-                            if (roadFork_value > 0) {
-                                //lightYellow();
-                                //TODO
-                                //What is this?
-                                printStats(player);
-                                //lightGreen();
-                                log_tag("debug_logx.txt", "[ROADFORK?]",
-                                        "You completed room %i.", roomsDone);
-                                //white();
-                            }
-                            roomsDone++;
-
-                            //Update stats
-                            player->stats->roomscompleted++;
-
-                            //Free room memory
-                            //freeRoom(current_room);
-
-                            if (current_room->class != HOME) {
-                                log_tag("debug_log.txt", "[DEBUG]", "%s():    updating Gamestate to clear current_room reference", __func__);
-                                update_Gamestate(gamestate, 1, BASIC,
-                                                 roomsDone, -1,
-                                                 current_floor, NULL, &game_options);  // Pass NULL for current room to gamestate
-                            }
-
-                            //Update floor's roomclass layout for finished rooms which should not be replayed
-                            switch (current_floor->
-                                    roomclass_layout[player->floor_x][player->floor_y]) {
-                            case ENEMIES: {
-                                current_floor->
-                                roomclass_layout[player->floor_x][player->floor_y] =
-                                    BASIC;
-                            }
-                            break;
-                            case BOSS: {
-                                current_floor->
-                                roomclass_layout[player->floor_x][player->floor_y] =
-                                    BASIC;
-                                floors_done++;
-                                player->stats->floorscompleted++;
-                                log_tag("debug_log.txt", "[DEBUG]",
-                                        "Floors done: [%i]", floors_done);
-                                //Check if we need to update the win condition
-                                if (win_con->class == FULL_PATH) {
-                                    win_con->current_val++;
-                                }
-                                // Reset gamestate_kls
-                                kls_temp_end(gamestate_kls);
-                                gamestate_kls =
-                                    kls_temp_start(temporary_kls);
-
-                                current_floor =
-                                    (Floor *)
-                                    KLS_PUSH_T_TYPED(gamestate_kls, Floor,
-                                                     HR_Floor, "Floor",
-                                                     "Floor");
-                                update_Gamestate(gamestate, 1, HOME,
-                                                 roomsDone, -1,
-                                                 current_floor, NULL, &game_options); // Passing NULL for current_room
-
-                                //Regenerate floor
-                                log_tag("debug_log.txt", "[DEBUG]",
-                                        "Beaten a boss, regenerating current floor.");
-                                // Init
-                                init_floor_layout(current_floor);
-                                //Set center as filled
-                                current_floor->
-                                floor_layout[center_x][center_y] = 1;
-                                //Init floor rooms
-                                init_floor_rooms(current_floor);
-                                if (G_EXPERIMENTAL_ON != 1) {
-                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
+                                    "Beaten a boss, regenerating current floor.");
+                            // Init
+                            init_floor_layout(current_floor);
+                            //Set center as filled
+                            current_floor->
+                            floor_layout[center_x][center_y] = 1;
+                            //Init floor rooms
+                            init_floor_rooms(current_floor);
+                            if (G_EXPERIMENTAL_ON != 1) {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
+                                //Random walk #1
+                                floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                                //Random walk #2
+                                floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                                current_floor->from_bsp = false;
+                            } else {
+                                if ((hlpd_rand() % 101) > 20) {
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                                    BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
+                                    dbg_BSP_Room(bsp_tree);
+                                    current_floor->from_bsp = true;
+                                } else {
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
                                     //Random walk #1
                                     floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
                                     //Random walk #2
                                     floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
                                     current_floor->from_bsp = false;
-                                } else {
-                                    if ((hlpd_rand() % 101) > 20) {
-                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                                        BSP_Room* bsp_tree = floor_bsp_gen(current_floor, gamestate_kls, center_x, center_y);
-                                        dbg_BSP_Room(bsp_tree);
-                                        current_floor->from_bsp = true;
-                                    } else {
-                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
-                                        //Random walk #1
-                                        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                                        //Random walk #2
-                                        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-                                        current_floor->from_bsp = false;
-                                    }
                                 }
-                                //Set floor explored matrix
-                                load_floor_explored(current_floor);
-                                //Set room types
-                                floor_set_room_types(current_floor);
+                            }
+                            //Set floor explored matrix
+                            load_floor_explored(current_floor);
+                            //Set room types
+                            floor_set_room_types(current_floor);
 
-                                if (G_EXPERIMENTAL_ON != 1) {
-                                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
-                                    player->floor_x = center_x;
-                                    player->floor_y = center_y;
-                                } else {
-                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
-                                    int home_room_x = -1;
-                                    int home_room_y = -1;
-                                    bool done_looking = false;
-                                    for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
-                                        for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
-                                            if (current_floor->roomclass_layout[i][j] == HOME) {
-                                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
-                                                home_room_x = i;
-                                                home_room_y = j;
-                                                done_looking = true;
-                                            }
+                            if (G_EXPERIMENTAL_ON != 1) {
+                                log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                                player->floor_x = center_x;
+                                player->floor_y = center_y;
+                            } else {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+                                int home_room_x = -1;
+                                int home_room_y = -1;
+                                bool done_looking = false;
+                                for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+                                    for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                                        if (current_floor->roomclass_layout[i][j] == HOME) {
+                                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                                            home_room_x = i;
+                                            home_room_y = j;
+                                            done_looking = true;
                                         }
                                     }
-                                    if (!done_looking) {
-                                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
-                                        kls_free(default_kls);
-                                        kls_free(temporary_kls);
-                                        exit(EXIT_FAILURE);
-                                    }
-                                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
-                                    player->floor_x = home_room_x;
-                                    player->floor_y = home_room_y;
                                 }
-                                continue;	//Check win condition for loop
+                                if (!done_looking) {
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+                                    kls_free(default_kls);
+                                    kls_free(temporary_kls);
+                                    exit(EXIT_FAILURE);
+                                }
+                                log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+                                player->floor_x = home_room_x;
+                                player->floor_y = home_room_y;
                             }
-                            break;
-                            case SHOP: {
-                                current_floor->
-                                roomclass_layout[player->floor_x][player->floor_y] =
-                                    BASIC;
-                            }
-                            break;
-                            case TREASURE: {
-                                current_floor->
-                                roomclass_layout[player->floor_x][player->floor_y] =
-                                    BASIC;
-                            }
-                            break;
-                            case HOME: {
-                                //We leave it available
-                                log_tag("debug_log.txt", "[DEBUG]",
-                                        "Skipping reset of roomclass for HOME room");
-                            }
-                            break;
-                            default: {
-                                log_tag("debug_log.txt", "[ERROR]",
-                                        "Unexpected roomclass value in Rogue loop: [%i] [%s]",
-                                        current_floor->
-                                        roomclass_layout[player->floor_x]
-                                        [player->floor_x],
-                                        stringFromRoom(current_floor->
-                                                       roomclass_layout
-                                                       [player->floor_x]
-                                                       [player->floor_y]));
-                                kls_free(default_kls);
-                                kls_free(temporary_kls);
-                                exit(EXIT_FAILURE);
-                            }
-                            break;
-                            }
+                            continue;	//Check win condition for loop
                         }
-                    } else {
-                        log_tag("debug_log.txt", "[DEBUG]",
-                                "Current room class was [%s] (val: %i), not playable.",
-                                stringFromRoom(current_floor->
-                                               roomclass_layout[player->floor_x]
-                                               [player->floor_y]),
-                                current_floor->
-                                roomclass_layout[player->floor_x][player->floor_y]);
+                        break;
+                        case SHOP: {
+                            current_floor->
+                            roomclass_layout[player->floor_x][player->floor_y] =
+                                BASIC;
+                        }
+                        break;
+                        case TREASURE: {
+                            current_floor->
+                            roomclass_layout[player->floor_x][player->floor_y] =
+                                BASIC;
+                        }
+                        break;
+                        case HOME: {
+                            //We leave it available
+                            log_tag("debug_log.txt", "[DEBUG]",
+                                    "Skipping reset of roomclass for HOME room");
+                        }
+                        break;
+                        default: {
+                            log_tag("debug_log.txt", "[ERROR]",
+                                    "Unexpected roomclass value in Rogue loop: [%i] [%s]",
+                                    current_floor->
+                                    roomclass_layout[player->floor_x]
+                                    [player->floor_x],
+                                    stringFromRoom(current_floor->
+                                                   roomclass_layout
+                                                   [player->floor_x]
+                                                   [player->floor_y]));
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                        break;
+                        }
                     }
-
-                    //Draw current FOV
-                    draw_floor_view(current_floor, player->floor_x, player->floor_y,
-                                    floor_win);
-                    //Take a step and update screen
-                    move_update(gamestate, current_floor, &(player->floor_x),
-                                &(player->floor_y), floor_win, path, player,
-                                current_room, load_info, default_kls,
-                                gamestate_kls);
-                }		// Win condition loop
-
-                //FIXME: do we need this?
-                //kls_temp_end(gamestate_kls);
-                // Clear default_kls
-                //kls_clear(default_kls);
-
-                //Got out of the loop with res not being DEATH; so i won
-                if (res != OP_RES_DEATH) {	//I guess player and enemy were freed already?
-                    int clrres = system("clear");
-                    //TODO
-                    //What is this?
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "gameloop() 2 system(\"clear\") res was (%i)",
-                            clrres);
-                    handleStats(player);
-                    printf("\n\n\tYOU WON!\n\n");
-                    log_tag("debug_log.txt", "[DEBUG]", "Game won.");
-                    //Free default kls
-                    kls_log(default_kls, "DEBUG", "Freeing default KLS");
-                    kls_free(default_kls);
-                    log_tag("debug_log.txt", "[DEBUG-KLS]",
-                            "Freed default KLS");
-
-                    //Free temporary kls
-                    kls_log(temporary_kls, "DEBUG", "Freeing temporary KLS");
-                    kls_free(temporary_kls);
-                    log_tag("debug_log.txt", "[DEBUG-KLS]",
-                            "Freed temporary KLS");
                 } else {
-                    //TODO
-                    //What is this?
-                    int clrres = system("clear");
                     log_tag("debug_log.txt", "[DEBUG]",
-                            "gameloop() 3 system(\"clear\") res was (%i)",
-                            clrres);
-                    printf("\n\n\tYOU DIED.\n\n");
-                    if (is_seeded) {
-                        printf("\n\nSeeded run\n\n");
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run lost", __func__);
-                    }
-                    log_tag("debug_log.txt", "[DEBUG]", "Game lost.");
+                            "Current room class was [%s] (val: %i), not playable.",
+                            stringFromRoom(current_floor->
+                                           roomclass_layout[player->floor_x]
+                                           [player->floor_y]),
+                            current_floor->
+                            roomclass_layout[player->floor_x][player->floor_y]);
                 }
 
-                /*
-                   //Free lore strings if they were loaded
-                   if (GAMEMODE == Story) {
-                   for (int i=0; i<5; i++) {
-                   char msg[1000];
-                   sprintf(msg,"Freed lore string %i",i);
-                   log_tag("debug_log.txt","[FREE]",msg);
-                   sprintf(msg,"%s",lore_strings[i]);
-                   log_tag("debug_log.txt","[FREE]",msg);
-                   //free(lore_strings[i]);
-                   }
-                   }
-                 */
+                //Draw current FOV
+                draw_floor_view(current_floor, player->floor_x, player->floor_y,
+                                floor_win);
+                //Take a step and update screen
+                move_update(gamestate, current_floor, &(player->floor_x),
+                            &(player->floor_y), floor_win, path, player,
+                            current_room, load_info, default_kls,
+                            gamestate_kls);
+            }		// Win condition loop
 
-                //free(path->win_condition);
-                //free(path);
-                log_tag("debug_log.txt", "[DEBUG]", "End of wincon loop.");
+            //FIXME: do we need this?
+            //kls_temp_end(gamestate_kls);
+            // Clear default_kls
+            //kls_clear(default_kls);
 
-                //free(current_floor);
+            //Got out of the loop with res not being DEATH; so i won
+            if (res != OP_RES_DEATH) {	//I guess player and enemy were freed already?
+                int clrres = system("clear");
+                //TODO
+                //What is this?
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "gameloop() 2 system(\"clear\") res was (%i)",
+                        clrres);
+                handleStats(player);
+                printf("\n\n\tYOU WON!\n\n");
+                log_tag("debug_log.txt", "[DEBUG]", "Game won.");
+                //Free default kls
+                kls_log(default_kls, "DEBUG", "Freeing default KLS");
+                kls_free(default_kls);
+                log_tag("debug_log.txt", "[DEBUG-KLS]",
+                        "Freed default KLS");
 
-                endwin();
+                //Free temporary kls
+                kls_log(temporary_kls, "DEBUG", "Freeing temporary KLS");
+                kls_free(temporary_kls);
+                log_tag("debug_log.txt", "[DEBUG-KLS]",
+                        "Freed temporary KLS");
             } else {
-                log_tag("debug_log.txt", "[ERROR]", "Error in gameloop().");
-                exit(EXIT_FAILURE);
+                //TODO
+                //What is this?
+                int clrres = system("clear");
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "gameloop() 3 system(\"clear\") res was (%i)",
+                        clrres);
+                printf("\n\n\tYOU DIED.\n\n");
+                if (is_seeded) {
+                    printf("\n\nSeeded run\n\n");
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run lost", __func__);
+                }
+                log_tag("debug_log.txt", "[DEBUG]", "Game lost.");
             }
+
+            /*
+               //Free lore strings if they were loaded
+               if (GAMEMODE == Story) {
+               for (int i=0; i<5; i++) {
+               char msg[1000];
+               sprintf(msg,"Freed lore string %i",i);
+               log_tag("debug_log.txt","[FREE]",msg);
+               sprintf(msg,"%s",lore_strings[i]);
+               log_tag("debug_log.txt","[FREE]",msg);
+               //free(lore_strings[i]);
+               }
+               }
+             */
+
+            //free(path->win_condition);
+            //free(path);
+            log_tag("debug_log.txt", "[DEBUG]", "End of wincon loop.");
+
+            //free(current_floor);
+
+            endwin();
+        } else {
+            log_tag("debug_log.txt", "[ERROR]", "Error in gameloop().");
+            exit(EXIT_FAILURE);
+        }
         //kls_temp_end(gamestate_kls);
     } while (retry(seed));
 
