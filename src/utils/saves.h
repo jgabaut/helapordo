@@ -42,5 +42,4 @@ OP_res handleLoadgame_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
 OP_res handleSave_Enemies(FILE * file, Fighter * f, Path * p, Enemy * e,
                           int enemyIndex, int roomTotalEnemies, int roomIndex);
 OP_res handleSave_Home(FILE * file, Fighter * f, Path * p, int roomIndex);
-saveType read_saveType(FILE * file);
 #endif // SAVES_H_
