@@ -44,6 +44,11 @@ AC_ARG_ENABLE([emoji],
   [enable_emoji=$enableval],
   [enable_emoji=yes])
 
+AC_ARG_ENABLE([default_background],
+  [AS_HELP_STRING([--enable-default-background], [Enable usage of terminal default background])],
+  [enable_default_background=$enableval],
+  [enable_default_background=no])
+
 if test "$enable_anvil" = "yes"; then
     echo "CONF    Building using anvil."
 else
@@ -183,6 +188,7 @@ AM_CONDITIONAL([WINDOWS_BUILD], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([DARWIN_BUILD], [test "$build_mac" = "yes"])
 AM_CONDITIONAL([LINUX_BUILD], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([USE_EMOJI_BUILD], [test "$enable_emoji" = "yes"])
+AM_CONDITIONAL([USE_DEFAULT_BACKGROUND], [test "$enable_default_background" = "yes"])
 
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])

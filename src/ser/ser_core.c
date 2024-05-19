@@ -3333,11 +3333,11 @@ bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t
             log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_GameOptions()", __func__);
         }
         if (game_options->use_default_background) {
-#ifndef reset_color_pairs
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build does not support reset_color_pairs().", __func__);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
             game_options->use_default_background = false;
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
         }
 
         return true;
@@ -3389,11 +3389,11 @@ bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t
         }
 
         if (game_options->use_default_background) {
-#ifndef reset_color_pairs
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build does not support reset_color_pairs().", __func__);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
             game_options->use_default_background = false;
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
         }
 
         // Apply read settings
@@ -3436,11 +3436,11 @@ bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t
         }
 
         if (game_options->use_default_background) {
-#ifndef reset_color_pairs
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build does not support reset_color_pairs().", __func__);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
             game_options->use_default_background = false;
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
         }
 
         HLPD_DirectionalKeys_Schema saved_directional_keys_schema = game_options->directional_keys_schema;

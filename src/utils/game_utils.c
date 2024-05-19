@@ -1230,6 +1230,12 @@ void hlpd_dbg_features(void)
     fprintf(stderr,"[HLP]    Emoji icons are not enabled\n");
 #endif
 
+#ifdef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+    fprintf(stderr,"[HLP]    Default background support is enabled\n");
+#else
+    fprintf(stderr,"[HLP]    Default background support is not enabled\n");
+#endif
+
 #ifdef ANVIL__helapordo__
 #ifdef INVIL__helapordo__HEADER__
     fprintf(stderr,"[HLP]    Built with invil\n");

@@ -4182,8 +4182,8 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
  */
 static void toggle_default_back(bool selected_use_default_background)
 {
-#ifndef reset_color_pairs
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    User tried switched default background options, but this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    User tried switched default background options, but this build does not support reset_color_pairs().", __func__);
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
 #else
     log_tag("debug_log.txt", "[DEBUG]", "%s():    User switched default background options, reloading colors", __func__);
@@ -4209,7 +4209,7 @@ static void toggle_default_back(bool selected_use_default_background)
         init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
     }
     G_USE_DEFAULT_BACKGROUND = (G_USE_DEFAULT_BACKGROUND == 1 ? 0 : 1);
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
 }
 
 /**
@@ -4241,11 +4241,11 @@ int handleGameOptions(GameOptions * game_options)
     const char* directional_keys_schema_label = "<- Directional keys set ->";
 
     bool use_default_bg_is_locked = false;
-#ifndef reset_color_pairs
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    Locking use_default_background since this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Locking use_default_background since this build does not support reset_color_pairs().", __func__);
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
     use_default_bg_is_locked = true;
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
 
     // Define menu options and their toggle states
     Toggle toggles[] = {
