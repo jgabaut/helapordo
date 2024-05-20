@@ -358,7 +358,7 @@ extern char *G_SEEDED_RUN_ARG;
 
 #define HELAPORDO_SAVEFILE_VERSION "0.1.7"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.3"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.4-dev"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -1333,7 +1333,6 @@ typedef struct Path {
     int length;	    /**< Defines how many rooms there are in total.*/
     int luck;	  /**< Defines global luck value.*/
     int prize;	   /**< Defines the reward for getting to length*/
-    int loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     Wincon *win_condition;     /**< Defines the win condition for the current game.*/
     Saveslot *current_saveslot;	    /**< Defines current Saveslot for the game.*/
     char seed[PATH_SEED_BUFSIZE+1]; /**< Contains seed for current run.*/

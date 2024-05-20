@@ -2319,7 +2319,6 @@ bool deser_Path(SerPath* ser, Path* deser)
     deser->length = ser->length;
     deser->luck = ser->luck;
     deser->prize = ser->prize;
-    deser->loreCounter = ser->loreCounter;
 
     ser->seed[SERPATH_SEED_BUFSIZE-1] = '\0';
     memcpy(deser->seed, ser->seed, PATH_SEED_BUFSIZE-1);
@@ -2362,7 +2361,6 @@ bool ser_Path(Path* deser, SerPath* ser)
     ser->length = deser->length;
     ser->luck = deser->luck;
     ser->prize = deser->prize;
-    ser->loreCounter = deser->loreCounter;
     deser->seed[PATH_SEED_BUFSIZE-1] = '\0';
     memcpy(ser->seed, deser->seed, SERPATH_SEED_BUFSIZE-1);
     ser->seed[SERPATH_SEED_BUFSIZE-1] = '\0';

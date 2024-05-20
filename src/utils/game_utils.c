@@ -347,10 +347,6 @@ void dbg_Path(Path *path)
     log_tag("debug_log.txt", "[PATH]", "Path length: { %i }", path->length);
     log_tag("debug_log.txt", "[PATH]", "Path luck: { %i }", path->luck);
     log_tag("debug_log.txt", "[PATH]", "Path prize: { %i }", path->prize);
-    log_tag("debug_log.txt", "[PATH]", "Path loreCounter: { %i }",
-            path->loreCounter);
-    log_tag("debug_log.txt", "[PATH]", "Path loreCounter: { %i }",
-            path->loreCounter);
     dbg_Wincon(path->win_condition);
     dbg_Saveslot(path->current_saveslot);
     log_tag("debug_log.txt", "[PATH]", "Rng advancements: { %" PRId64 "}", *(path->rng_advancements));

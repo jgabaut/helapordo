@@ -1229,7 +1229,6 @@ void gameloop(int argc, char **argv)
 
         if (load_info->is_new_game) {	// We prepare path and fighter
             path = randomise_path(seed, default_kls, current_save_path);
-            path->loreCounter = -1;
             path->current_saveslot->index = picked_saveslot_index;
 
             kls_log(default_kls, "DEBUG", "Prepping Fighter");
@@ -1422,10 +1421,6 @@ void gameloop(int argc, char **argv)
          lore_strings[i] = (char*) KLS_PUSH_NAMED(default_kls, char, 300, "Lore", msg);
          }
          */
-
-        int *loreCounter = &(path->loreCounter);
-        log_tag("debug_log.txt", "[DEBUG]", "loreCounter == (%i)",
-                *loreCounter);
 
         //Set consumables sprites
         for (int i = 0; i < CONSUMABLESMAX + 1; i++) {
@@ -1767,14 +1762,6 @@ void gameloop(int argc, char **argv)
                     log_tag("debug_log.txt", "[ROOM]",
                             "Init Room #%i:    (%s)\n", roomsDone,
                             stringFromRoom(room_type));
-
-                    /*
-                       //Check if we need to display a story prompt
-                       if (GAMEMODE == Story && (roomsDone == 1 || room_type == BOSS)) {
-                       displayLore(lore_strings,*loreCounter);
-                       (*loreCounter)++;
-                       }
-                     */
 
                     //Play room animation
 
