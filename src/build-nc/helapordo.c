@@ -1708,7 +1708,6 @@ void gameloop(int argc, char **argv)
             //TODO: handle finishing all floors
             path->length = MAX_ROGUE_FLOORS;
 
-            //TODO: restore floors_done from loaded gamestate
             int floors_done = (load_info->is_new_game == 1 ? 0 : gamestate->player->stats->floorscompleted);
 
             log_tag("debug_log.txt", "[DEBUG]", "%s():    floors_done: {%i}", __func__, floors_done);
