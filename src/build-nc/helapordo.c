@@ -1356,8 +1356,8 @@ void gameloop(int argc, char **argv)
                     }
 
                     log_tag("debug_log.txt", "[DEBUG]", "%s():    save_type: [%s]", __func__, stringFrom_saveType(load_info->save_type));
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, current_room->index);
-                    *(load_info->ptr_to_roomindex) = current_room->index;
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, gamestate->player->stats->roomscompleted);
+                    *(load_info->ptr_to_roomindex) = gamestate->player->stats->roomscompleted;
                     log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomtotalenemies) to {%i}.", __func__, current_room->enemyTotal);
                     *(load_info->ptr_to_roomtotalenemies) = current_room->enemyTotal;
 
@@ -1462,6 +1462,8 @@ void gameloop(int argc, char **argv)
         //white();
 
         int roomsDone = (load_info->is_new_game == 1 ? 1 : loaded_roomindex);
+
+        log_tag("debug_log.txt", "[DEBUG]", "roomsDone:    %i", roomsDone);
         int roadFork_value = -1;	//0 may be used as a value, so
 
         Wincon *win_con = path->win_condition;
