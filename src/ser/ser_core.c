@@ -3000,18 +3000,30 @@ bool read_savedir(const char* dirpath)
         printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
 
         printf("Player perks: {\n");
-        for (size_t i = 0; i < PERKSMAX; i++) {
-            printf("    " SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
+        for (int i = 0; i < PERKSMAX+1; i++) {
+            printf("    [#%i] " SerPerk_Fmt "\n", i, SerPerk_Arg(s_gmst.player.perks[i]));
         }
         printf("}\n");
 
         printf("Player equipsBag: {\n");
-        for (size_t i =0; i < EQUIPSBAGSIZE; i++) {
+        for (int i =0; i < EQUIPSBAGSIZE; i++) {
             SerEquip se = s_gmst.player.equipsBag[i];
-            printf("    " SerEquip_Fmt "\n", SerEquip_Arg(se));
-            for (size_t j = 0; i < se.perksCount; j++) {
-                printf("        " SerPerk_Fmt "\n", SerPerk_Arg(se.perks[j]));
+            printf("    [#%i] " SerEquip_Fmt "\n", i, SerEquip_Arg(se));
+            for (int j = 0; j < se.perksCount; j++) {
+                printf("        [#%i] " SerPerk_Fmt "\n", j, SerPerk_Arg(se.perks[j]));
             }
+        }
+        printf("}\n");
+        printf("Player consumablesBag: {\n");
+        for (int i =0; i < CONSUMABLESMAX+1; i++) {
+            SerConsumable sc = s_gmst.player.consumablesBag[i];
+            printf("    [#%i] " SerConsumable_Fmt "\n", i, SerConsumable_Arg(sc));
+        }
+        printf("}\n");
+        printf("Player artifactsBag: {\n");
+        for (int i =0; i < ARTIFACTSMAX+1; i++) {
+            SerArtifact sa = s_gmst.player.artifactsBag[i];
+            printf("    [#%i] " SerArtifact_Fmt "\n", i, SerArtifact_Arg(sa));
         }
         printf("}\n");
     }

@@ -256,13 +256,17 @@ typedef struct __attribute__((packed)) SerConsumable {
 typedef struct SerConsumable {
 #endif
     int32_t class;     /**< Defines which kind of Consumable this is*/
-    int qty;	 /**< Indicates how many copies of the consumable the instance of this class holds*/
+    int32_t qty;	 /**< Indicates how many copies of the consumable the instance of this class holds*/
 #ifdef __GNUC__
 } SerConsumable;
 #else
 } SerConsumable;
 #pragma pack(pop)
 #endif
+
+#define SerConsumable_Fmt "SerConsumable { Class: %s , Quantity: %" PRId32 " }"
+
+#define SerConsumable_Arg(sc) (stringFromConsumables(sc.class)), (sc.qty)
 
 /**
  * Serialized Artifact. Packed struct.
@@ -279,15 +283,19 @@ typedef struct __attribute__((packed)) SerArtifact {
 typedef struct SerArtifact {
 #endif
     int32_t class;     /**< Defines which kind of artifactClass the instance relates to*/
-    int qty;	 /**< Indicates how many copies of the artifact the instance of this class holds*/
-    int active;	    /**< Flag used to mark instance whose function pointer has been called already*/
-    int innerValue;	/**< Indicates interal state of the item when needed*/
+    int32_t qty;	 /**< Indicates how many copies of the artifact the instance of this class holds*/
+    int32_t active;	    /**< Flag used to mark instance whose function pointer has been called already*/
+    int32_t innerValue;	/**< Indicates interal state of the item when needed*/
 #ifdef __GNUC__
 } SerArtifact;
 #else
 } SerArtifact;
 #pragma pack(pop)
 #endif
+
+#define SerArtifact_Fmt "SerArtifact { Class: %s , Quantity: %" PRId32 ", Active: %" PRId32 ", InnerValue: %" PRId32 " }"
+
+#define SerArtifact_Arg(sa) (stringFromArtifacts(sa.class)), (sa.qty), (sa.active), (sa.innerValue)
 
 /**
  * Serialized countStats. Packed struct.
