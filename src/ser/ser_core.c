@@ -3026,6 +3026,12 @@ bool read_savedir(const char* dirpath)
             printf("    [#%i] " SerArtifact_Fmt "\n", i, SerArtifact_Arg(sa));
         }
         printf("}\n");
+        printf("Player Turncounters: {\n");
+        for (int i =0; i < COUNTERSMAX+1; i++) {
+            SerTurncounter st = s_gmst.player.counters[i];
+            printf("    [#%i] " SerTurncounter_Fmt "\n", i, SerTurncounter_Arg(st));
+        }
+        printf("}\n");
     }
     return true;
 }

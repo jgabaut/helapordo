@@ -98,13 +98,17 @@ typedef struct SerTurncounter {
 #endif
     int32_t count;	   /**< Defines the current count.*/
     int32_t innerValue;	/**< Contains an integer for counters that need a state*/
-    Countertype type;	  /**< Defines which kind of Countertype the instance relates to*/
+    int32_t type;	  /**< Defines which kind of Countertype the instance relates to*/
 #ifdef __GNUC__
 } SerTurncounter;
 #else
 } SerTurncounter;
 #pragma pack(pop)
 #endif
+
+#define SerTurncounter_Fmt "SerTurncounter { Type: %" PRId32 ", Count: %" PRId32 ", InnerValue: %" PRId32 " }"
+
+#define SerTurncounter_Arg(st) (st.type), (st.count), (st.innerValue)
 
 /**
  * Serialized Perk. Packed struct.
