@@ -3007,7 +3007,11 @@ bool read_savedir(const char* dirpath)
 
         printf("Player equipsBag: {\n");
         for (size_t i =0; i < EQUIPSBAGSIZE; i++) {
-            printf("    " SerEquip_Fmt "\n", SerEquip_Arg(s_gmst.player.equipsBag[i]));
+            SerEquip se = s_gmst.player.equipsBag[i];
+            printf("    " SerEquip_Fmt "\n", SerEquip_Arg(se));
+            for (size_t j = 0; i < se.perksCount; j++) {
+                printf("        " SerPerk_Fmt "\n", SerPerk_Arg(se.perks[j]));
+            }
         }
         printf("}\n");
     }
