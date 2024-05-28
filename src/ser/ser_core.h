@@ -335,6 +335,10 @@ typedef struct SerCountstats {
 #pragma pack(pop)
 #endif
 
+#define SerCountstats_Fmt "SerCountstats {\n    Enemies killed: %" PRId8 ",\n    Consumables Found: %" PRId8 ",\n    Equips Found: %" PRId8 ",\n    Artifacts found: %" PRId8 ",\n    Critical Hits dealt: %" PRId8",\n    Rooms completed: %" PRId8 ",\n    Floors completed: %" PRId8 ",\n    Specials Unlocked: %" PRId8 ",\n    Coins found: %" PRId8 ",\n    Bosses killed: %" PRId8 ",\n    Unique Bosses Killed: %" PRId8 ",\n    Killed Bosses: [\n        %s: %s,\n        %s: %s,\n        %s: %s,\n        %s: %s,\n        %s: %s\n    ],\n    Keys Found: %" PRId8 "\n  }"
+
+#define SerCountstats_Arg(sc) (sc.enemieskilled), (sc.consumablesfound), (sc.equipsfound), (sc.artifactsfound), (sc.criticalhits), (sc.roomscompleted), (sc.floorscompleted), (sc.specialsunlocked), (sc.coinsfound), (sc.bosseskilled), (sc.unique_bosseskilled), (stringFromBossClass(0)), (sc.killed_bosses[0] >= 1 ? "True" : "False"), (stringFromBossClass(1)), (sc.killed_bosses[1] >= 1 ? "True" : "False"), (stringFromBossClass(2)), (sc.killed_bosses[2] >= 1 ? "True" : "False"), (stringFromBossClass(3)), (sc.killed_bosses[3] >= 1 ? "True" : "False"), (stringFromBossClass(4)), (sc.killed_bosses[4] >= 1 ? "True" : "False"), (sc.keysfound)
+
 /**
  * Serialized Enemy. Packed struct.
  * Can be turned into an Enemy with deser_Enemy().
