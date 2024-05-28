@@ -190,6 +190,10 @@ typedef struct SerEquip {
 #pragma pack(pop)
 #endif
 
+#define SerEquip_Fmt "SerEquip { Class: %s , Type: %s, Equipped: %" PRId8 ", Level: %" PRId8 ", Atk: %" PRId8 ", Def: %" PRId8 ", Vel: %" PRId8 ", Enr: %" PRId8 ", Bonus: %" PRId8 ", PerksCount: %" PRId8 ", Cost: %" PRId8 ", Quality: %s }"
+
+#define SerEquip_Arg(se) (stringFromEquips(se.class)), (stringFromEquipzones(se.type)), (se.equipped), (se.level), (se.atk), (se.def), (se.vel), (se.enr), (se.bonus), (se.perksCount), (se.cost), (stringFromQuality(se.qual))
+
 /**
  * Serialized Equipslot. Packed struct.
  * Can be turned into an Equipslot with deser_Equipslot().

@@ -2999,9 +2999,17 @@ bool read_savedir(const char* dirpath)
         printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
         printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
 
+        printf("Player perks: {\n");
         for (size_t i = 0; i < PERKSMAX; i++) {
-            printf(SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
+            printf("    " SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
         }
+        printf("}\n");
+
+        printf("Player equipsBag: {\n");
+        for (size_t i =0; i < EQUIPSBAGSIZE; i++) {
+            printf("    " SerEquip_Fmt "\n", SerEquip_Arg(s_gmst.player.equipsBag[i]));
+        }
+        printf("}\n");
     }
     return true;
 }
