@@ -2997,7 +2997,9 @@ bool read_savedir(const char* dirpath)
         printf("Gamemode: {%s}\n", stringFromGamemode(s_gmst.gamemode));
         printf("Current room index: {%i}\n", s_gmst.current_room_index);
         printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
-        printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
+        printf("Player info: {\n");
+        printf("  " SerFighter_Fmt "\n", SerFighter_Arg(s_gmst.player));
+        printf("}\n");
 
         printf("Player stats: {\n");
         printf("  " SerCountstats_Fmt "\n", SerCountstats_Arg(s_gmst.player.stats));

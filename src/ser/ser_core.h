@@ -523,6 +523,10 @@ typedef struct SerFighter {
 #pragma pack(pop)
 #endif
 
+#define SerFighter_Fmt "SerFighter {\n    Name: %s,\n    Class: %s,\n    Hp: %" PRId8 ",\n    Atk: %" PRId8 ",\n    Def: %" PRId8 ",\n    Vel: %" PRId8 ",\n    Level: %" PRId8 ",\n    Luck: %" PRId8 ",\n    Total xp: %" PRId8 ",\n    Current lvl xp: %" PRId8 ",\n    Total lvl xp: %" PRId8 ",\n    Total hp: %" PRId8 ",\n    Status: %s,\n    Energy: %" PRId8 ",\n    Total energy: %" PRId8 ",\n    Stamina: %" PRId8 ",\n    Total Stamina: %" PRId8 ",\n    Turnboost_Atk: %" PRId8 ",\n    Turnboost_Def: %" PRId8 ",\n    Turnboost_Vel: %" PRId8 ",\n    Turnboost_Enr: %" PRId8 ",\n    PerksCount: %" PRId8 ",\n    EquipsBagOccupiedSlots: %" PRId8 ",\n    EarliestBagSlot: %" PRId8 ",\n    Permboost_Atk: %" PRId8 ",\n    Permboost_Def: %" PRId8 ",\n    Permboost_Vel: %" PRId8 ",\n    Permboost_Enr: %" PRId8 ",\n    Equipboost_Atk: %" PRId8 ",\n    Equipboost_Def: %" PRId8 ",\n    Equipboost_Vel: %" PRId8 ",\n    Equipboost_Enr: %" PRId8 ",\n    Balance: %" PRId8 ",\n    Keys Balance: %" PRId8 ",\n    Floor_x: %" PRId8 ",\n    Floor_y: %" PRId8 "\n  }"
+
+#define SerFighter_Arg(sf) (sf.name), (stringFromClass(sf.class)), (sf.hp), (sf.atk), (sf.def), (sf.vel), (sf.level), (sf.luck), (sf.totalxp), (sf.currentlevelxp), (sf.totallevelxp), (sf.totalhp), (stringFromStatus(sf.status)), (sf.energy), (sf.totalenergy), (sf.stamina), (sf.totalstamina), (sf.turnboost_atk), (sf.turnboost_def), (sf.turnboost_vel), (sf.turnboost_enr), (sf.perksCount), (sf.equipsBagOccupiedSlots), (sf.earliestBagSlot), (sf.permboost_atk), (sf.permboost_def), (sf.permboost_vel), (sf.permboost_enr), (sf.equipboost_atk), (sf.equipboost_def), (sf.equipboost_vel), (sf.equipboost_enr), (sf.balance), (sf.keys_balance), (sf.floor_x), (sf.floor_y)
+
 /**
  * Serialized FoeParty. Packed struct.
  * Can be turned into an FoeParty with deser_FoeParty().
