@@ -236,7 +236,7 @@ typedef struct __attribute__((packed)) SerSpecialslot {
 typedef struct SerSpecialslot {
 #endif
     int8_t enabled;     /**< Flag defining if the current slot is initialised*/
-    specialMove move;	  /**< Defines which kind of specialMove the slot is holding*/
+    int8_t move;	  /**< Defines which kind of specialMove the slot is holding*/
     int8_t cost;	  /**< Cost of use*/
 #ifdef __GNUC__
 } SerSpecialslot;
@@ -244,6 +244,10 @@ typedef struct SerSpecialslot {
 } SerSpecialslot;
 #pragma pack(pop)
 #endif
+
+#define SerSpecialslot_Fmt "SerSpecialslot { Move: %" PRId8 ", Enabled: %s, Cost: %" PRId8 " }"
+
+#define SerSpecialslot_Arg(sp) (sp.move), (sp.enabled >= 1 ? "True" : "False"), (sp.cost)
 
 /**
  * Serialized Consumable. Packed struct.

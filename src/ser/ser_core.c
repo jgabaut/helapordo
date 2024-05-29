@@ -3030,6 +3030,14 @@ bool read_savedir(const char* dirpath)
             printf("    [#%i] " SerArtifact_Fmt "\n", i, SerArtifact_Arg(sa));
         }
         printf("}\n");
+
+        printf("Player Speciaslots: {\n");
+        for (int i =0; i < SPECIALSMAX+1; i++) {
+            SerSpecialslot sp = s_gmst.player.specials[i];
+            printf("    [#%i] " SerSpecialslot_Fmt "\n", i, SerSpecialslot_Arg(sp));
+        }
+        printf("}\n");
+
         printf("Player Turncounters: {\n");
         for (int i =0; i < COUNTERSMAX+1; i++) {
             SerTurncounter st = s_gmst.player.counters[i];
