@@ -2180,4 +2180,4 @@ OP_res OP_res_from_fightResult(fightResult fr);
 extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;
 extern const wchar_t LEGS_CHAR_ICON;
-#endif
+#endif // GAME_CORE_H

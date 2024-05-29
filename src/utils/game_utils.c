@@ -1142,9 +1142,9 @@ void printVersion(void)
  * Prints formatted version string.
  * @param progName The program name string.
  */
-void printFormattedVersion(char *progName)
+void printFormattedVersion(const char *progname)
 {
-    printf("%s v. %s\n", progName, VERSION);
+    printf("%s v. %s\n", progname, VERSION);
 }
 
 /**
@@ -1201,7 +1201,7 @@ void hlpd_dbg_features(void)
 /**
  * Prints correct argument syntax for command line invocation.
  */
-void usage(char *progname)
+void usage(const char *progname)
 {
     fprintf(stderr, "\nUsage:        %s [...options] [name] [class]\n",
             progname);
@@ -1210,7 +1210,6 @@ void usage(char *progname)
     fprintf(stderr, "\n    -R        Enable rogue mode\n");
     fprintf(stderr, "\n    -D        Use current working directory (rather than default global dir) for saves and files.\n");
     fprintf(stderr, "\n    -S        Pass a seed, instead of using a random one.\n");
-    fprintf(stderr, "    -l        Load a game. Deprecated.\n");
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
     fprintf(stderr, "\n    -d        Enable debug mode\n");

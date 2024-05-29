@@ -117,10 +117,10 @@ void freeRoom(Room * room);
 void printTitle(void);
 
 void printVersion(void);
-void printFormattedVersion(char *progName);
+void printFormattedVersion(const char *progname);
 void hlpd_dbg_features(void);
 
-void usage(char *progname);
+void usage(const char *progname);
 void log_tag(char *filename, char *header, const char *format, ...);
 void log_OP(turnOption_OP op);
 
