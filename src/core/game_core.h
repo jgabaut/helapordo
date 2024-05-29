@@ -356,8 +356,6 @@ extern char *G_SEEDED_RUN_ARG;
  */
 #define VERSION "1.4.9-dev"
 
-#define HELAPORDO_SAVEFILE_VERSION "0.1.7"
-
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.4-dev"
 
 /**
