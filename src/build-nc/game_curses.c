@@ -216,45 +216,16 @@ int get_saveslot_index(void)
 
     //Try updating default save names by reading fighter name from each file
     for (int i = 0; i < 3; i++) {
-        char path_to_sv_file[600];
         char static_path[500];
         // Set static_path value to the correct static dir path
         resolve_staticPath(static_path);
 
         FILE* svfile = NULL;
-        if (G_EXPERIMENTAL_ON == 0) {
-#ifndef _WIN32
-            sprintf(path_to_sv_file, "%s/%s/%s", static_path,
-                    default_saveslots[i].save_path, "save.txt");
-#else
-            sprintf(path_to_sv_file, "%s\\%s\\%s", static_path,
-                    default_saveslots[i].save_path, "save.txt");
-#endif
-            svfile = fopen(path_to_sv_file, "r");
-        }
-        if (!svfile) {
-            if (G_EXPERIMENTAL_ON == 0) {
-                log_tag("debug_log.txt", "[WARN]",
-                        "%s(): Failed opening savefile {%i} at \"%s\".", __func__,
-                        i, path_to_sv_file);
-                continue;
-            } else {
-                log_tag("debug_log.txt", "[LOAD]",
-                        "%s():    Deferring file opening to ser_Saveslot_name().", __func__);
-            }
-        }
+        log_tag("debug_log.txt", "[LOAD]", "%s():    Deferring file opening to ser_Saveslot_name().", __func__);
+
         if (!set_Saveslot_name(svfile, &default_saveslots[i])) {
-            if (G_EXPERIMENTAL_ON == 0) {
-                log_tag("debug_log.txt", "[WARN]",
-                        "%s(): Failed reading savefile {%i} at \"%s\".", __func__,
-                        i, path_to_sv_file);
-            } else {
-                log_tag("debug_log.txt", "[WARN]",
-                        "%s(): Failed reading binary savefile {%i} at \"%s\".", __func__,
-                        i, default_saveslots[i].save_path);
-            }
+            log_tag("debug_log.txt", "[WARN]", "%s(): Failed reading binary savefile {%i} at \"%s\".", __func__, i, default_saveslots[i].save_path);
         };
-        if (svfile) fclose(svfile);
     }
 
     saveslots_win = newwin(12, 24, 2, 5);
@@ -3916,7 +3887,6 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     Enemy *dummy_enemy = NULL;
     Boss *dummy_boss = NULL;
     FILE *dummy_savefile = NULL;
-    FILE *save_file;
     WINDOW *dummy_notify_win = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
     skillType dummy_skill_pick = -1;
@@ -4118,33 +4088,16 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     picked_close = 1;
                 }
                 if (choice == SAVE) {
-                    char path_to_savefile[600];
-                    char static_path[500];
-                    char savefile_name[50] = HELAPORDO_SAVEPATH_1;
-
-                    // Set static_path value to the correct static dir path
-                    resolve_staticPath(static_path);
-
-                    sprintf(path_to_savefile, "%s/%s", static_path,
-                            savefile_name);
-                    save_file = fopen(path_to_savefile, "w");
-                    if (save_file == NULL) {
-                        fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                                path_to_savefile);
-                        exit(EXIT_FAILURE);
+                    /*
                     } else {
                         log_tag("debug_log.txt", "[TURNOP]",
                                 "Assigning save_file pointer to args->save_file. Path: [%s]",
                                 path_to_savefile);
                         args->save_file = save_file;
                     }
+                    */
                 }
                 turnOP(turnOP_from_turnOption(choice), args, kls, t_kls);
-                if (choice == SAVE) {
-                    fclose(save_file);
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "Closed save_file pointer.");
-                }
             }			//End if Player char was enter
         }
 

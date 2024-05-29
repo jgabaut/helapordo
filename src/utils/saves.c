@@ -24,7 +24,6 @@ bool set_Saveslot_name(FILE *file, Saveslot *sv)
     //printf("\nLoading game...\n");
     log_tag("debug_log.txt", "[LOAD]", "%s():    Starting loading from savefile.", __func__);
 
-//      FILE* file = fopen("save.txt", "r");
     if (G_EXPERIMENTAL_ON != 1 && file == NULL) {
         endwin();
         printf("Error with file while trying to load!\n");

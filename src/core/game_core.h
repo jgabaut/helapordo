@@ -368,15 +368,6 @@ static const int HELAPORDO_API_VERSION_INT =
 /**< Represents current version with numeric format.*/
 
 /**
- * Default savepath.
- * @see handleRoom_Home()
- * @see handleRoom_Enemies()
- * @see handleRogue_Menu()
- * @see handleSave()
- */
-#define HELAPORDO_SAVEPATH_1 "helapordo-save.txt"
-
-/**
  * Holds arguments for a saveslot.
  * @see handleSave()
  * @see Path
