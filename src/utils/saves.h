@@ -31,5 +31,5 @@
 #include "../build-rl/game_rl.h"
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
-bool set_Saveslot_name(FILE * file, Saveslot * sv);
+bool set_Saveslot_name(Saveslot * sv);
 #endif // SAVES_H_

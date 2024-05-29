@@ -608,7 +608,10 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         // Close the file
         fclose(file);
     } else {
-        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+#ifdef HELAPORDO_CURSES_BUILD
+        endwin();
+#endif // HELAPORDO_CURSES_BUILD
+        fprintf(stderr, "%s(): Error opening file {%s} for reading\n", __func__, filename);
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
     }
@@ -2590,9 +2593,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
         fclose(file);
     } else {
         //TODO: Print notice for error. It shouldn't disrupt the screen for saveslot name setting.
-        if (G_EXPERIMENTAL_ON == 0) {
-            fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
-        }
+        /*
+        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        */
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
     }
@@ -3292,9 +3295,9 @@ bool readSerGameOptions(const char* filename, size_t offset, SerGameOptions* dat
         fclose(file);
     } else {
         //TODO: Print notice for error. It shouldn't disrupt the screen for saveslot name setting.
-        if (G_EXPERIMENTAL_ON == 0) {
-            fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
-        }
+        /*
+        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        */
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
     }

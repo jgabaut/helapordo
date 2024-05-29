@@ -220,10 +220,9 @@ int get_saveslot_index(void)
         // Set static_path value to the correct static dir path
         resolve_staticPath(static_path);
 
-        FILE* svfile = NULL;
-        log_tag("debug_log.txt", "[LOAD]", "%s():    Deferring file opening to ser_Saveslot_name().", __func__);
+        log_tag("debug_log.txt", "[LOAD]", "%s():    Trying to load file for saveslot [%i]", __func__, i);
 
-        if (!set_Saveslot_name(svfile, &default_saveslots[i])) {
+        if (!set_Saveslot_name(&default_saveslots[i])) {
             log_tag("debug_log.txt", "[WARN]", "%s(): Failed reading binary savefile {%i} at \"%s\".", __func__, i, default_saveslots[i].save_path);
         };
     }
@@ -4296,10 +4295,8 @@ void draw_buildinfo(WINDOW* win)
             S4C_ANIMATE_VERSION);
     wprintw(win, "  \n  using: koliseo v%s",
             KOLISEO_API_VERSION_STRING);
-    if (G_EXPERIMENTAL_ON == 1) {
-        wprintw(win, "  \n  using: s4c-gui v%s",
-                S4C_GUI_API_VERSION_STRING);
-    }
+    wprintw(win, "  \n  using: s4c-gui v%s",
+            S4C_GUI_API_VERSION_STRING);
     wprintw(win, "  \n  using: ncurses v%s", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__

@@ -79,29 +79,15 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     log_tag("debug_log.txt", "[ROOM]", "New HOME room, index %i", room->index);
 
     if (gamestate->options->do_autosave) {
-        bool do_autosave = false;
-        if (GAMEMODE == Rogue) {
-            if (G_EXPERIMENTAL_ON == 1) {
-                do_autosave = true;
-            } else {
-                do_autosave = false;
-            }
-        } else {
-            do_autosave = true;
-        }
+        bool do_autosave = true;
         log_tag("debug_log.txt", "[DEBUG]", "Doing autosave.");
 
         if (do_autosave) {
-            if (G_EXPERIMENTAL_ON != 1) {
-                // NOT experimental: no op
-                log_tag("debug_log.txt", "[WARN]", "%s():    Can't do autosave without experimental flag.", __func__);
-            } else {
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
-                turnOP(turnOP_from_turnOption(SAVE), args, kls, t_kls);
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Done autosave.", __func__);
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, p->seed);
-            }
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
+            turnOP(turnOP_from_turnOption(SAVE), args, kls, t_kls);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Done autosave.", __func__);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, p->seed);
         }
     }
 
@@ -283,12 +269,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     picked_explore = 1;
                 }
                 if (choice == SAVE) {
-                    if (G_EXPERIMENTAL_ON != 1) {
-                        // NOT experimental: no op
-                        log_tag("debug_log.txt", "[WARN]", "%s():    Can't save without experimental flag.", __func__);
-                    } else {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Saving", __func__);
-                    }
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Saving", __func__);
                 }
                 turnOP(turnOP_from_turnOption(choice), args, kls, t_kls);
             }			//End if Player char was enter
@@ -1197,13 +1178,8 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 endwin();
                 turnOP(OP_STATS, args, kls, t_kls);
             } else if (choice == SAVE) {
-                if (G_EXPERIMENTAL_ON != 1) {
-                    // NOT experimental: no op
-                    log_tag("debug_log.txt", "[WARN]", "%s():    Can't save without experimental flag.", __func__);
-                } else {
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Saving", __func__);
-                    turnOP(OP_SAVE, args, kls, t_kls);
-                }
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Saving", __func__);
+                turnOP(OP_SAVE, args, kls, t_kls);
             } else if (choice == DEBUG) {
                 // Unpost menu and free all the memory taken up
                 unpost_menu(my_menu);
