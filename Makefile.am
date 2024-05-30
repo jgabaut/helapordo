@@ -192,6 +192,15 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/ ]] || mkdir ~/helapordo-local
 	[[ -d ~/helapordo-local/share ]] || mkdir ~/helapordo-local/share
 	[[ -d ~/helapordo-local/share/$(PACK_NAME) ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/release_data ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/release_data
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/build-nc ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/build-nc
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/build-rl ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/build-rl
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/core ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/core
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/utils ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/utils
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/animations ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/animations
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/ser ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/ser
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/bsp ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/bsp
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static
 
 	@echo -e "\033[1;32m[TREE] Removing '~/helapordo-local/share/$(PACK_NAME).zip':\e[0m"
@@ -200,6 +209,19 @@ pack: versioncheck
 	@echo -e "\033[1;32m[TREE] Done.\e[0m"
 	@echo -e "\033[1;35m[PACK] Installing:\e[0m"
 	install $(TARGET) ~/helapordo-local/share/$(PACK_NAME)
+	install ./LICENSE ~/helapordo-local/share/$(PACK_NAME)
+	install ./README.md ~/helapordo-local/share/$(PACK_NAME)
+	install ./Makefile.am ~/helapordo-local/share/$(PACK_NAME)
+	install ./configure.ac ~/helapordo-local/share/$(PACK_NAME)
+	install ./src/release_data/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/release_data/
+	install ./src/build-nc/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-nc/
+	install ./src/build-rl/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-rl/
+	install ./src/core/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/core/
+	install ./src/utils/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/utils/
+	install ./src/animations/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/animations/
+	install ./src/ser/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/ser/
+	install ./src/bsp/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/bsp/
+	install ./src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/
 
 	@echo -e "\033[1;35m[PACK] Done.\e[0m"
 	@echo -e "\033[1;32m[ZIP] Compressing $(PACK_NAME):\e[0m"
