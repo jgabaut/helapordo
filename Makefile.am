@@ -202,6 +202,15 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/ser ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/ser
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/bsp ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/bsp
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/scripts ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/scripts
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/scripts/save2l ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/scripts/save2l
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/sprites4curses ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/sprites4curses
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/s4c-animate ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/s4c-animate
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/amboso ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/amboso
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo/src
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/s4c-gui ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/s4c-gui
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/src
 
 	@echo -e "\033[1;32m[TREE] Removing '~/helapordo-local/share/$(PACK_NAME).zip':\e[0m"
 	touch ~/helapordo-local/share/$(PACK_NAME).zip
@@ -213,6 +222,21 @@ pack: versioncheck
 	install ./README.md ~/helapordo-local/share/$(PACK_NAME)
 	install ./Makefile.am ~/helapordo-local/share/$(PACK_NAME)
 	install ./configure.ac ~/helapordo-local/share/$(PACK_NAME)
+	install ./static/palette.gpl ~/helapordo-local/share/$(PACK_NAME)/static/
+	install ./scripts/save2l/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/scripts/save2l/
+	install ./sprites4curses/s4c-animate/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/s4c-animate/
+	install ./sprites4curses/LICENSE ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/
+	install ./sprites4curses/README.md ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/
+	install ./amboso/amboso ~/helapordo-local/share/$(PACK_NAME)/amboso/
+	install ./amboso/amboso_fn.sh ~/helapordo-local/share/$(PACK_NAME)/amboso/
+	install ./amboso/LICENSE ~/helapordo-local/share/$(PACK_NAME)/amboso/
+	install ./amboso/README.md ~/helapordo-local/share/$(PACK_NAME)/amboso/
+	install ./koliseo/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/koliseo/src/
+	install ./koliseo/LICENSE ~/helapordo-local/share/$(PACK_NAME)/koliseo/
+	install ./koliseo/README.md ~/helapordo-local/share/$(PACK_NAME)/koliseo/
+	install ./s4c-gui/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/src/
+	install ./s4c-gui/LICENSE ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/
+	install ./s4c-gui/README.md ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/
 	install ./src/release_data/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/release_data/
 	install ./src/build-nc/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-nc/
 	install ./src/build-rl/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-rl/
