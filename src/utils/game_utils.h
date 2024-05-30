@@ -324,4 +324,5 @@ bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
 
 #define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )
 void hlpd_reset_logfile(void);
+void hlpd_post_getopts(const char* whoami);
 #endif

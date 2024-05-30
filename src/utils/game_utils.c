@@ -5567,3 +5567,89 @@ void hlpd_reset_logfile(void)
     }
 #endif
 }
+
+void hlpd_post_getopts(const char* whoami)
+{
+    if (G_DEBUG_ENEMYTYPE_ON == 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ENEMYTYPE_ON == (%i)",
+                G_DEBUG_ENEMYTYPE_ON);
+        log_tag("debug_log.txt", "[DEBUG]", "ENEMY DEBUG FLAG ASSERTED");
+        if ((G_DEBUG_ON > 0)) {
+            G_DEBUG_ON += 1;
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                    G_DEBUG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "Forcing enemy type: (%s)",
+                    G_DEBUG_ENEMYTYPE_ARG);
+            int setenemy_debug = 0;
+            for (int ec = 0; ec < ENEMYCLASSESMAX && (setenemy_debug == 0);
+                 ec++) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Checking optarg for -E: (%s)",
+                        stringFromEClass(ec));
+                if ((strcmp(G_DEBUG_ENEMYTYPE_ARG, stringFromEClass(ec)) ==
+                     0)) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",
+                            stringFromEClass(ec), ec);
+                    G_DEBUG_ENEMYTYPE = ec;
+                    setenemy_debug = 1;
+                }
+            }
+            if (setenemy_debug == 0) {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Invalid optarg for -E flag: {%s}.\n",
+                        G_DEBUG_ENEMYTYPE_ARG);
+                fprintf(stderr,
+                        "[ERROR]    Incorrect -E \"enemyType\" arg: {%s}.\n",
+                        G_DEBUG_ENEMYTYPE_ARG);
+                fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
+                        whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            };
+        }
+    }
+    if (G_DEBUG_ROOMTYPE_ON == 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ROOMTYPE_ON == (%i)",
+                G_DEBUG_ROOMTYPE_ON);
+        log_tag("debug_log.txt", "[DEBUG]", "ROOM DEBUG FLAG ASSERTED");
+        if ((G_DEBUG_ON > 0)) {
+            G_DEBUG_ON += 1;
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                    G_DEBUG_ON);
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Forcing room type: optarg was (%s)",
+                    G_DEBUG_ROOMTYPE_ARG);
+            int setroom_debug = 0;
+            for (int rc = 0;
+                 (rc < ROOM_CLASS_MAX + 1) && (setroom_debug == 0); rc++) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Checking optarg (%s) for -R: (%s)", G_DEBUG_ROOMTYPE_ARG,
+                        stringFromRoom(rc));
+                if ((strcmp(G_DEBUG_ROOMTYPE_ARG, stringFromRoom(rc)) == 0)) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",
+                            stringFromRoom(rc), rc);
+                    G_DEBUG_ROOMTYPE = rc;
+                    setroom_debug = 1;
+                }
+            }
+            if (setroom_debug == 0) {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Invalid optarg for -R flag: {%s}.",
+                        G_DEBUG_ROOMTYPE_ARG);
+                fprintf(stderr,
+                        "[ERROR]    Incorrect -R \"roomType\" arg: {%s}.\n",
+                        G_DEBUG_ROOMTYPE_ARG);
+                fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
+                        whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            };
+        }
+
+    }
+
+}
