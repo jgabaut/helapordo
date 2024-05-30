@@ -323,4 +323,5 @@ void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1]);
 bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
 
 #define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )
+void hlpd_reset_logfile(void);
 #endif

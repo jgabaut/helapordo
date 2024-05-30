@@ -5498,3 +5498,72 @@ bool check_seed(char buffer[PATH_SEED_BUFSIZE])
     }
     return true;
 }
+
+void hlpd_reset_logfile(void)
+{
+#ifndef HELAPORDO_DEBUG_LOG
+#else
+    FILE *debug_file = NULL;
+    FILE *OPS_debug_file = NULL;
+    // Open log file if log flag is set and reset it
+    if (G_LOG_ON == 1) {
+        char path_to_debug_file[600];
+        char path_to_OPS_debug_file[600];
+        char static_path[500];
+        // Set static_path value to the correct static dir path
+        resolve_staticPath(static_path);
+
+        //Truncate "debug_log.txt"
+        sprintf(path_to_debug_file, "%s/%s", static_path, "debug_log.txt");
+        debug_file = fopen(path_to_debug_file, "w");
+        if (!debug_file) {
+            endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+            fprintf(stderr,
+                    "[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n",
+                    static_path);
+            exit(EXIT_FAILURE);
+        }
+        fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
+        if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
+            || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR)
+            || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR == EXPECTED_NCURSES_VERSION_MINOR && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH)) {
+            fprintf(debug_file,
+                    "[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                    NCURSES_VERSION, NCURSES_VERSION_MAJOR,
+                    NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH,
+                    EXPECTED_NCURSES_VERSION_MAJOR,
+                    EXPECTED_NCURSES_VERSION_MINOR,
+                    EXPECTED_NCURSES_VERSION_PATCH);
+        }
+        fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
+        print_kls_2file(debug_file, default_kls);
+        fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
+        print_kls_2file(debug_file, temporary_kls);
+        fprintf(debug_file,
+                "[DEBUG]    --Closing header for new game.--  \n");
+        fclose(debug_file);
+
+        //Lay debug info
+        log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                G_DEBUG_ON);
+        log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
+        log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[Current position in default_kls] [pos: %li]\n",
+                kls_get_pos(default_kls));
+
+        //Truncate OPS_LOGFILE
+        sprintf(path_to_OPS_debug_file, "%s/%s", static_path, OPS_LOGFILE);
+        OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
+        if (!OPS_debug_file) {
+            endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+            fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s/%s).\n",
+                    static_path, OPS_LOGFILE);
+            exit(EXIT_FAILURE);
+        }
+        fprintf(OPS_debug_file, "[OPLOG]    --New game--  \n");
+        fclose(OPS_debug_file);
+        log_tag("debug_log.txt", "[DEBUG]", "Truncated [%s]", OPS_LOGFILE);
+    }
+#endif
+}

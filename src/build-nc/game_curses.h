@@ -27,10 +27,6 @@
 #include <menu.h>
 #endif
 
-#define EXPECTED_NCURSES_VERSION_MAJOR 6 /**< Defines min expected major ncurses version.*/
-#define EXPECTED_NCURSES_VERSION_MINOR 4 /**< Defines min expected minor ncurses version.*/
-#define EXPECTED_NCURSES_VERSION_PATCH 20230520	/**< Defines min expected patch ncurses version.*/
-
 #define HLPD_DEFAULT_SCREEN_ROWS 24
 #define HLPD_DEFAULT_SCREEN_COLS 80
 #define HLPD_MIN_SCREEN_ROWS (HLPD_DEFAULT_SCREEN_ROWS+4) /**< Defines minimum y size for game screen.*/

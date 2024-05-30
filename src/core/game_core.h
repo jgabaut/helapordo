@@ -365,6 +365,10 @@ static const int HELAPORDO_API_VERSION_INT =
     (HELAPORDO_MAJOR_VERSION * 1000000 + HELAPORDO_MINOR_VERSION * 10000 + HELAPORDO_PATCH_VERSION * 100);
 /**< Represents current version with numeric format.*/
 
+#define EXPECTED_NCURSES_VERSION_MAJOR 6 /**< Defines min expected major ncurses version.*/
+#define EXPECTED_NCURSES_VERSION_MINOR 4 /**< Defines min expected minor ncurses version.*/
+#define EXPECTED_NCURSES_VERSION_PATCH 20230520	/**< Defines min expected patch ncurses version.*/
+
 /**
  * Holds arguments for a saveslot.
  * @see handleSave()
