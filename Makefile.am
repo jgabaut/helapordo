@@ -217,6 +217,8 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo/src
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/s4c-gui ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/s4c-gui
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/src
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/ringabuf ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/ringabuf
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/ringabuf/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/ringabuf/src
 
 	@echo -e "\033[1;32m[TREE] Removing '~/helapordo-local/share/$(PACK_NAME).zip':\e[0m"
 	touch ~/helapordo-local/share/$(PACK_NAME).zip
@@ -243,6 +245,9 @@ pack: versioncheck
 	install ./s4c-gui/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/src/
 	install ./s4c-gui/LICENSE ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/
 	install ./s4c-gui/README.md ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/
+	install ./ringabuf/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/ringabuf/src/
+	install ./ringabuf/LICENSE ~/helapordo-local/share/$(PACK_NAME)/ringabuf/
+	install ./ringabuf/README.md ~/helapordo-local/share/$(PACK_NAME)/ringabuf/
 	install ./src/release_data/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/release_data/
 	install ./src/build-nc/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-nc/
 	install ./src/build-rl/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-rl/
