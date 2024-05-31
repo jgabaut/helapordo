@@ -3261,13 +3261,15 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
  * @param w The WINDOW pointer to print to.
  * @param text The contents of the notification.
  * @param time The display time in milliseconds
+ * @param color The index of color to use for the notification drawing.
  * @param rb_notifications The Ringabuf to push the notification to.
  */
-void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifications)
+void display_notification(WINDOW *w, char *text, int time, int color, RingaBuf* rb_notifications)
 {
     Notification notif = {0};
 
     sprintf(notif.buf, "%s", text);
+    notif.color = color;
 
 #ifndef _WIN32
     log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%li} bytes to ringbuf", __func__, sizeof(notif));
@@ -3283,7 +3285,7 @@ void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifica
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Logging up from 0 to head: { %" PRIu32 " }", __func__, rb_notifications->head);
         for (int i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
             Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification: [%s]", __func__, read_notif->buf);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification: [%s] Color: [%" PRId8 "]", __func__, read_notif->buf, read_notif->color);
         }
         oldest_notif = (Notification*) &(rb_notifications->data[0]);
         newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head - (sizeof(Notification))]);
@@ -3291,11 +3293,11 @@ void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifica
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Logging up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (rb_notifications->head / sizeof(Notification)) +1, rb_notifications->capacity / sizeof(Notification));
         for (size_t i = (rb_notifications->head / sizeof(Notification)) +1; i < (rb_notifications->capacity / sizeof(Notification)); i++) {
             Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    [%li] H+1->sz Notification: [%s]", __func__, i, read_notif->buf);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    [%li] H+1->sz Notification: [%s] Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
         }
         for (size_t i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
             Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    [%li] 0->H Notification: [%s]", __func__, i, read_notif->buf);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    [%li] 0->H Notification: [%s] Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
         }
 
         size_t newest_offset = (rb_notifications->head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (rb_notifications->head - sizeof(Notification)));
@@ -3304,8 +3306,8 @@ void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifica
 
     }
 
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    Newest Notification: [%s]", __func__, newest_notif->buf);
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    Oldest Notification: [%s]", __func__, oldest_notif->buf);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Newest Notification: [%s] Color: [%" PRId8 "]", __func__, newest_notif->buf, newest_notif->color);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Oldest Notification: [%s] Color: [%" PRId8 "]", __func__, oldest_notif->buf, oldest_notif->color);
 
 #ifndef _WIN32
     if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Capacity: {%li}", __func__, rb_notifications->head, rb_notifications->tail, rb_notifications->capacity);
@@ -3649,7 +3651,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls, Rin
     wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     sprintf(msg, "You found %s %s!", stringFromQuality(q),
             stringFromEquips(drop));
-    display_notification(notify_win, msg, 800, rb_notifications);
+    display_notification(notify_win, msg, 800, S4C_BRIGHT_YELLOW, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     log_tag("debug_log.txt", "[DEBUG-DROPS]", "Found Equip:    %s.",
             stringFromEquips(drop));
@@ -4286,19 +4288,19 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject, Ri
     case Burned: {
         sprintf(msg, "%s is hurt by its %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, -1, rb_notifications);
     }
     break;
     case Weak:
     case Strong: {
         sprintf(msg, "%s is feeling %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, -1, rb_notifications);
     }
     break;
     case Frozen: {
         sprintf(msg, "%s is frozen cold.", subject);
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, -1, rb_notifications);
     }
     break;
     }

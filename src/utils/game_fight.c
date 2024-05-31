@@ -202,7 +202,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls, RingaBuf*
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
             damageDealt > 0 ? damageDealt : 1);
     wattron(notify_win, COLOR_PAIR(color));
-    display_notification(notify_win, msg, 500, rb_notifications);
+    display_notification(notify_win, msg, 500, color, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(color));
 
     //Rolls
@@ -230,7 +230,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls, RingaBuf*
         sprintf(msg, "A critical hit!    (%i DMG)",
                 damageDealt > 0 ? damageDealt : 1);
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_MAGENTA, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         //Update stats
         player->stats->criticalhits++;
@@ -257,7 +257,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls, RingaBuf*
         }
         wattron(notify_win, COLOR_PAIR(color));
         sprintf(msg, "%s fainted.", stringFromEClass(e->class));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, color, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(color));
 
         log_tag("debug_log.txt", "[FIGHT]", "Killed  %s.",
@@ -289,7 +289,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls, RingaBuf*
         int drop = dropConsumable(player);
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_CYAN, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
         log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
                 stringFromConsumables(drop));
@@ -304,7 +304,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls, RingaBuf*
         int artifact_drop = dropArtifact(player);
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_MAGENTA, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
                 stringFromArtifacts(artifact_drop));
@@ -526,7 +526,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls, Ri
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
             damageDealt > 0 ? damageDealt : 1);
     wattron(notify_win, COLOR_PAIR(color));
-    display_notification(notify_win, msg, 500, rb_notifications);
+    display_notification(notify_win, msg, 500, color, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(color));
 
     //Rolls
@@ -554,7 +554,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls, Ri
         sprintf(msg, "A critical hit!    (%i DMG)",
                 damageDealt > 0 ? damageDealt : 1);
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_MAGENTA, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         //Update stats
         target->stats->criticalhits++;
@@ -581,7 +581,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls, Ri
         }
         wattron(notify_win, COLOR_PAIR(color));
         sprintf(msg, "%s fainted.", stringFromEClass(e->class));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, color, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(color));
 
         log_tag("debug_log.txt", "[FIGHT]", "Killed  %s.",
@@ -615,7 +615,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls, Ri
         int drop = dropConsumable(target);
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_CYAN, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
         log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
                 stringFromConsumables(drop));
@@ -630,7 +630,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls, Ri
         int artifact_drop = dropArtifact(target);
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_MAGENTA, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
                 stringFromArtifacts(artifact_drop));
@@ -701,7 +701,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is loafing around.",
                         stringFromEClass(e->class));
-                display_notification(notify_win, msg, 500, rb_notifications);
+                display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             }
             break;
@@ -711,7 +711,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
                         stringFromEClass(e->class));
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is angry!", stringFromEClass(e->class));
-                display_notification(notify_win, msg, 500, rb_notifications);
+                display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
 
                 res = enemy_attack(e, player, notify_win, kls, rb_notifications);
@@ -777,7 +777,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is loafing around.",
                     stringFromEClass(e->class));
-            display_notification(notify_win, msg, 500, rb_notifications);
+            display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
         }
         break;
@@ -897,7 +897,7 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is loafing around.",
                         stringFromEClass(e->class));
-                display_notification(notify_win, msg, 500, rb_notifications);
+                display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             }
             break;
@@ -907,7 +907,7 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
                         stringFromEClass(e->class));
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is angry!", stringFromEClass(e->class));
-                display_notification(notify_win, msg, 500, rb_notifications);
+                display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
 
                 res = enemy_attack(e, player, notify_win, kls, rb_notifications);
@@ -973,7 +973,7 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is loafing around.",
                     stringFromEClass(e->class));
-            display_notification(notify_win, msg, 500, rb_notifications);
+            display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
         }
         break;
@@ -1227,7 +1227,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
     wattron(notify_win, COLOR_PAIR(color));
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
             damageDealt > 0 ? damageDealt : 1);
-    display_notification(notify_win, msg, 500, rb_notifications);
+    display_notification(notify_win, msg, 500, color, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(color));
 
     //Rolls
@@ -1250,7 +1250,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "A critical hit!    (%i DMG)",
                 damageDealt > 0 ? damageDealt : 1);
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_MAGENTA, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "Critical hit for %i dmg, proc on 1/%i chance.\n",
                 damageDealt, critMax);
@@ -1281,7 +1281,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         }
         wattron(notify_win, COLOR_PAIR(color));
         sprintf(msg, "%s fainted.", stringFromBossClass(b->class));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, color, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(color));
         sprintf(msg, "Killed  %s.", stringFromBossClass(b->class));
         log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
@@ -1326,7 +1326,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         int drop = dropConsumable(player);
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_CYAN, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
         sprintf(msg, "Found Consumable:    %s.", stringFromConsumables(drop));
         log_tag("debug_log.txt", "[DROPS]", msg);
@@ -1338,7 +1338,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         int artifact_drop = dropArtifact(player);
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_MAGENTA, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "Found Artifact:    %s.",
                 stringFromArtifacts(artifact_drop));
@@ -1530,7 +1530,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
     wattron(notify_win, COLOR_PAIR(color));
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
             damageDealt > 0 ? damageDealt : 1);
-    display_notification(notify_win, msg, 500, rb_notifications);
+    display_notification(notify_win, msg, 500, color, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(color));
 
     //Rolls
@@ -1553,7 +1553,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "A critical hit!    (%i DMG)",
                 damageDealt > 0 ? damageDealt : 1);
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_MAGENTA, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         log_tag("debug_log.txt", "[FIGHT-BOSS]",
                 "Critical hit for %i dmg, proc on 1/%i chance.", damageDealt,
@@ -1584,7 +1584,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         }
         wattron(notify_win, COLOR_PAIR(color));
         sprintf(msg, "%s fainted.", stringFromBossClass(b->class));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, color, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(color));
         log_tag("debug_log.txt", "[FIGHT-BOSS]", "Killed  %s.",
                 stringFromBossClass(b->class));
@@ -1627,7 +1627,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         int drop = dropConsumable(target);
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_CYAN, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
         log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
                 stringFromConsumables(drop));
@@ -1639,7 +1639,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         int artifact_drop = dropArtifact(target);
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-        display_notification(notify_win, msg, 500, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_MAGENTA, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
                 stringFromArtifacts(artifact_drop));
@@ -1701,7 +1701,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is loafing around.",
                         stringFromBossClass(b->class));
-                display_notification(notify_win, msg, 500, rb_notifications);
+                display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             }
             break;
@@ -1711,7 +1711,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                         stringFromBossClass(b->class));
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-                display_notification(notify_win, msg, 500, rb_notifications);
+                display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
                 res = boss_attack(b, player, p, notify_win, kls, rb_notifications);
             }
@@ -1767,7 +1767,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is loafing around.",
                     stringFromBossClass(b->class));
-            display_notification(notify_win, msg, 500, rb_notifications);
+            display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
         }
         break;
@@ -1777,7 +1777,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                     stringFromBossClass(b->class));
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-            display_notification(notify_win, msg, 500, rb_notifications);
+            display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             res = boss_attack(b, player, p, notify_win, kls, rb_notifications);
         }
@@ -1876,7 +1876,7 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is loafing around.",
                         stringFromBossClass(b->class));
-                display_notification(notify_win, msg, 500, rb_notifications);
+                display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             }
             break;
@@ -1886,7 +1886,7 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
                         stringFromBossClass(b->class));
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-                display_notification(notify_win, msg, 500, rb_notifications);
+                display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
                 res = boss_attack(b, player, p, notify_win, kls, rb_notifications);
             }
@@ -1942,7 +1942,7 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is loafing around.",
                     stringFromBossClass(b->class));
-            display_notification(notify_win, msg, 500, rb_notifications);
+            display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
         }
         break;
@@ -1952,7 +1952,7 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
                     stringFromBossClass(b->class));
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-            display_notification(notify_win, msg, 500, rb_notifications);
+            display_notification(notify_win, msg, 500, S4C_GREY, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             res = boss_attack(b, player, p, notify_win, kls, rb_notifications);
         }

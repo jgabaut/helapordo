@@ -259,7 +259,7 @@ turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Boss * boss, FILE * save_file,
                               WINDOW * notify_win, Koliseo_Temp * t_kls,
                               foeTurnOption_OP foe_op, skillType picked_skill, RingaBuf* rb_notifications);
-void display_notification(WINDOW * w, char *text, int time, RingaBuf* rb_notifications);
+void display_notification(WINDOW * w, char *text, int time, int color, RingaBuf* rb_notifications);
 void print_label(WINDOW * win, int starty, int startx, int width, char *string,
                  chtype color);
 void setEquipSprite(Equip * e);

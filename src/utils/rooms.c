@@ -1027,7 +1027,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     char msg[50];
                     sprintf(msg, "You found +%i coins.", e->prize);
                     wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-                    display_notification(notifications_win, msg, 500, rb_notifications);
+                    display_notification(notifications_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
                     wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
                     //Win, get xp and free memory from enemy
@@ -1850,7 +1850,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 char msg[50];
                 sprintf(msg, "You found +%i coins.", b->prize);
                 wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-                display_notification(notifications_win, msg, 500, rb_notifications);
+                display_notification(notifications_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
                 wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
                 //Give key
@@ -1859,7 +1859,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 wattron(notifications_win, COLOR_PAIR(S4C_MAGENTA));
                 display_notification(notifications_win,
-                                     "You found a key. May be useful.", 800, rb_notifications);
+                                     "You found a key. May be useful.", 800, S4C_MAGENTA, rb_notifications);
                 wattroff(notifications_win, COLOR_PAIR(S4C_MAGENTA));
 
                 //Win, get xp and free memory from boss

@@ -2196,6 +2196,7 @@ extern const wchar_t LEGS_CHAR_ICON;
  */
 typedef struct Notification {
     char buf[NOTIFICATION_BUFFER_SIZE+1];
+    int8_t color;
     bool displayed;
 } Notification;
 
