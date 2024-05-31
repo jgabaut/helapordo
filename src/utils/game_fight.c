@@ -34,9 +34,10 @@
  * @param e The Enemy pointer at hand.
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  * @see display_notification()
  */
-int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
+int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls, RingaBuf* rb_notifications)
 {
 
     fightResult res = FIGHTRES_NO_DMG;
@@ -201,7 +202,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
             damageDealt > 0 ? damageDealt : 1);
     wattron(notify_win, COLOR_PAIR(color));
-    display_notification(notify_win, msg, 500);
+    display_notification(notify_win, msg, 500, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(color));
 
     //Rolls
@@ -229,7 +230,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
         sprintf(msg, "A critical hit!    (%i DMG)",
                 damageDealt > 0 ? damageDealt : 1);
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         //Update stats
         player->stats->criticalhits++;
@@ -256,7 +257,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
         }
         wattron(notify_win, COLOR_PAIR(color));
         sprintf(msg, "%s fainted.", stringFromEClass(e->class));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(color));
 
         log_tag("debug_log.txt", "[FIGHT]", "Killed  %s.",
@@ -267,7 +268,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
     } else {
         //Apply status effects to enemy
         if (e->status != Normal) {
-            applyEStatus(notify_win, e);
+            applyEStatus(notify_win, e, rb_notifications);
             log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
                     stringFromStatus(e->status), stringFromEClass(e->class));
         }
@@ -278,7 +279,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
     } else {
         //Apply status effects to player
         if (player->status != Normal) {
-            applyStatus(notify_win, player);
+            applyStatus(notify_win, player, rb_notifications);
         }
     }
 
@@ -288,7 +289,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
         int drop = dropConsumable(player);
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
         log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
                 stringFromConsumables(drop));
@@ -303,7 +304,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
         int artifact_drop = dropArtifact(player);
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
                 stringFromArtifacts(artifact_drop));
@@ -315,7 +316,7 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
     //Equip drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
         && (e->beast || ((hlpd_rand() % 15) - (player->luck / 10) <= 0))) {
-        dropEquip(player, e->beast, notify_win, kls);
+        dropEquip(player, e->beast, notify_win, kls, rb_notifications);
     }
     return res;
 }
@@ -338,9 +339,10 @@ int fight(Fighter *player, Enemy *e, WINDOW *notify_win, Koliseo *kls)
  * @param e The Enemy pointer at hand.
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  * @see display_notification()
  */
-int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
+int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls, RingaBuf* rb_notifications)
 {
     //Implementation similar to fight(), as a base idea
     //Should return fightResult values, while keeping the perspective on the Fighter, as in:
@@ -524,7 +526,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
             damageDealt > 0 ? damageDealt : 1);
     wattron(notify_win, COLOR_PAIR(color));
-    display_notification(notify_win, msg, 500);
+    display_notification(notify_win, msg, 500, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(color));
 
     //Rolls
@@ -552,7 +554,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
         sprintf(msg, "A critical hit!    (%i DMG)",
                 damageDealt > 0 ? damageDealt : 1);
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         //Update stats
         target->stats->criticalhits++;
@@ -579,7 +581,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
         }
         wattron(notify_win, COLOR_PAIR(color));
         sprintf(msg, "%s fainted.", stringFromEClass(e->class));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(color));
 
         log_tag("debug_log.txt", "[FIGHT]", "Killed  %s.",
@@ -590,7 +592,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     } else {
         //Apply status effects to enemy
         if (e->status != Normal) {
-            applyEStatus(notify_win, e);
+            applyEStatus(notify_win, e, rb_notifications);
             log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
                     stringFromStatus(e->status), stringFromEClass(e->class));
         }
@@ -603,7 +605,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     } else {
         //Apply status effects to target
         if (target->status != Normal) {
-            applyStatus(notify_win, target);
+            applyStatus(notify_win, target, rb_notifications);
         }
     }
 
@@ -613,7 +615,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
         int drop = dropConsumable(target);
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
         log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
                 stringFromConsumables(drop));
@@ -628,7 +630,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
         int artifact_drop = dropArtifact(target);
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
                 stringFromArtifacts(artifact_drop));
@@ -640,7 +642,7 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
     //Equip drop, guaranteed on killing a beast
     if (res == FIGHTRES_KILL_DONE
         && (e->beast || ((hlpd_rand() % 15) - (target->luck / 10) <= 0))) {
-        dropEquip(target, e->beast, notify_win, kls);
+        dropEquip(target, e->beast, notify_win, kls, rb_notifications);
     }
     return res;
 }
@@ -655,9 +657,10 @@ int enemy_attack(Enemy *e, Fighter *target, WINDOW *notify_win, Koliseo *kls)
  * @param foe_op The foeTurnOption_OP for the foe.
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
 int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
-                      WINDOW *notify_win, Koliseo *kls)
+                      WINDOW *notify_win, Koliseo *kls, RingaBuf* rb_notifications)
 {
     char msg[200];
     //FIXME
@@ -672,7 +675,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
 
     if (player_goes_first) {
 
-        res = fight(player, e, notify_win, kls);
+        res = fight(player, e, notify_win, kls, rb_notifications);
 
         //Check res and apply second action if needed
         log_tag("debug_log.txt", "[DEBUG]",
@@ -698,7 +701,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is loafing around.",
                         stringFromEClass(e->class));
-                display_notification(notify_win, msg, 500);
+                display_notification(notify_win, msg, 500, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             }
             break;
@@ -708,10 +711,10 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
                         stringFromEClass(e->class));
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is angry!", stringFromEClass(e->class));
-                display_notification(notify_win, msg, 500);
+                display_notification(notify_win, msg, 500, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
 
-                res = enemy_attack(e, player, notify_win, kls);
+                res = enemy_attack(e, player, notify_win, kls, rb_notifications);
             }
             break;
             case FOE_OP_SPECIAL: {
@@ -774,7 +777,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is loafing around.",
                     stringFromEClass(e->class));
-            display_notification(notify_win, msg, 500);
+            display_notification(notify_win, msg, 500, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
         }
         break;
@@ -782,7 +785,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
             log_tag("debug_log.txt", "[DEFER]",
                     "[%s()]:  Foe { %s } wants to fight.", __func__,
                     stringFromEClass(e->class));
-            res = enemy_attack(e, player, notify_win, kls);
+            res = enemy_attack(e, player, notify_win, kls, rb_notifications);
         }
         break;
         case FOE_OP_SPECIAL: {
@@ -812,7 +815,7 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
         first_act_res = res;
 
         if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
-            res = fight(player, e, notify_win, kls);
+            res = fight(player, e, notify_win, kls, rb_notifications);
 
             log_tag("debug_log.txt", "[DEBUG]",
                     "[%s()]: Second act res was [%s]: [%i]", __func__,
@@ -850,9 +853,10 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
  * @param foe_op The foeTurnOption_OP for the foe.
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf use for notifications.
  */
 int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
-                      WINDOW *notify_win, Koliseo *kls)
+                      WINDOW *notify_win, Koliseo *kls, RingaBuf* rb_notifications)
 {
     char msg[200];
     //FIXME
@@ -893,7 +897,7 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is loafing around.",
                         stringFromEClass(e->class));
-                display_notification(notify_win, msg, 500);
+                display_notification(notify_win, msg, 500, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             }
             break;
@@ -903,10 +907,10 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
                         stringFromEClass(e->class));
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is angry!", stringFromEClass(e->class));
-                display_notification(notify_win, msg, 500);
+                display_notification(notify_win, msg, 500, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
 
-                res = enemy_attack(e, player, notify_win, kls);
+                res = enemy_attack(e, player, notify_win, kls, rb_notifications);
             }
             break;
             case FOE_OP_SPECIAL: {
@@ -969,7 +973,7 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is loafing around.",
                     stringFromEClass(e->class));
-            display_notification(notify_win, msg, 500);
+            display_notification(notify_win, msg, 500, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
         }
         break;
@@ -977,7 +981,7 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
             log_tag("debug_log.txt", "[DEFER]",
                     "[%s()]:  Foe { %s } wants to fight.", __func__,
                     stringFromEClass(e->class));
-            res = enemy_attack(e, player, notify_win, kls);
+            res = enemy_attack(e, player, notify_win, kls, rb_notifications);
         }
         break;
         case FOE_OP_SPECIAL: {
@@ -1051,10 +1055,11 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
  * @param p The Path pointer for the game.
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  * @see display_notification()
  */
 int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
-               Koliseo *kls)
+               Koliseo *kls, RingaBuf* rb_notifications)
 {
 
     fightResult res = FIGHTRES_NO_DMG;
@@ -1222,7 +1227,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
     wattron(notify_win, COLOR_PAIR(color));
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
             damageDealt > 0 ? damageDealt : 1);
-    display_notification(notify_win, msg, 500);
+    display_notification(notify_win, msg, 500, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(color));
 
     //Rolls
@@ -1245,7 +1250,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "A critical hit!    (%i DMG)",
                 damageDealt > 0 ? damageDealt : 1);
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "Critical hit for %i dmg, proc on 1/%i chance.\n",
                 damageDealt, critMax);
@@ -1276,7 +1281,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         }
         wattron(notify_win, COLOR_PAIR(color));
         sprintf(msg, "%s fainted.", stringFromBossClass(b->class));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(color));
         sprintf(msg, "Killed  %s.", stringFromBossClass(b->class));
         log_tag("debug_log.txt", "[FIGHT-BOSS]", msg);
@@ -1300,7 +1305,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
     } else {
         //Apply status effects to boss
         if (b->status != Normal) {
-            applyBStatus(notify_win, b);
+            applyBStatus(notify_win, b, rb_notifications);
             sprintf(msg, "Applied  %s to %s.", stringFromStatus(b->status),
                     stringFromBossClass(b->class));
             log_tag("debug_log.txt", "[STATUS]", msg);
@@ -1312,7 +1317,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
     } else {
         //Apply status effects to player
         if (player->status != Normal) {
-            applyStatus(notify_win, player);
+            applyStatus(notify_win, player, rb_notifications);
         }
     }
 
@@ -1321,7 +1326,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         int drop = dropConsumable(player);
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
         sprintf(msg, "Found Consumable:    %s.", stringFromConsumables(drop));
         log_tag("debug_log.txt", "[DROPS]", msg);
@@ -1333,7 +1338,7 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
         int artifact_drop = dropArtifact(player);
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "Found Artifact:    %s.",
                 stringFromArtifacts(artifact_drop));
@@ -1342,14 +1347,14 @@ int boss_fight(Fighter *player, Boss *b, Path *p, WINDOW *notify_win,
     //Equip drop
     if (res == FIGHTRES_KILL_DONE) {
         //We give 1 to obtain the better equip generation used for beasts
-        dropEquip(player, 1, notify_win, kls);
+        dropEquip(player, 1, notify_win, kls, rb_notifications);
     }
 
     return res;
 }
 
 int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
-                Koliseo *kls)
+                Koliseo *kls, RingaBuf* rb_notifications)
 {
 
     //TODO
@@ -1525,7 +1530,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
     wattron(notify_win, COLOR_PAIR(color));
     sprintf(msg, "%s was hit.    (%i DMG)", victim,
             damageDealt > 0 ? damageDealt : 1);
-    display_notification(notify_win, msg, 500);
+    display_notification(notify_win, msg, 500, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(color));
 
     //Rolls
@@ -1548,7 +1553,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "A critical hit!    (%i DMG)",
                 damageDealt > 0 ? damageDealt : 1);
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         log_tag("debug_log.txt", "[FIGHT-BOSS]",
                 "Critical hit for %i dmg, proc on 1/%i chance.", damageDealt,
@@ -1579,7 +1584,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         }
         wattron(notify_win, COLOR_PAIR(color));
         sprintf(msg, "%s fainted.", stringFromBossClass(b->class));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(color));
         log_tag("debug_log.txt", "[FIGHT-BOSS]", "Killed  %s.",
                 stringFromBossClass(b->class));
@@ -1602,7 +1607,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
     } else {
         //Apply status effects to boss
         if (b->status != Normal) {
-            applyBStatus(notify_win, b);
+            applyBStatus(notify_win, b, rb_notifications);
             log_tag("debug_log.txt", "[STATUS]", "Applied  %s to %s.",
                     stringFromStatus(b->status), stringFromBossClass(b->class));
         }
@@ -1613,7 +1618,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
     } else {
         //Apply status effects to target
         if (target->status != Normal) {
-            applyStatus(notify_win, target);
+            applyStatus(notify_win, target, rb_notifications);
         }
     }
 
@@ -1622,7 +1627,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         int drop = dropConsumable(target);
         wattron(notify_win, COLOR_PAIR(S4C_CYAN));
         sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_CYAN));
         log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
                 stringFromConsumables(drop));
@@ -1634,7 +1639,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
         int artifact_drop = dropArtifact(target);
         wattron(notify_win, COLOR_PAIR(S4C_MAGENTA));
         sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
         wattroff(notify_win, COLOR_PAIR(S4C_MAGENTA));
         log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
                 stringFromArtifacts(artifact_drop));
@@ -1642,7 +1647,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
     //Equip drop
     if (res == FIGHTRES_KILL_DONE) {
         //We give 1 to obtain the better equip generation used for beasts
-        dropEquip(target, 1, notify_win, kls);
+        dropEquip(target, 1, notify_win, kls, rb_notifications);
     }
 
     return res;
@@ -1658,9 +1663,10 @@ int boss_attack(Boss *b, Fighter *target, Path *p, WINDOW *notify_win,
  * @param foe_op The foeTurnOption_OP for the foe.
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
 int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
-                     WINDOW *notify_win, Koliseo *kls)
+                     WINDOW *notify_win, Koliseo *kls, RingaBuf* rb_notifications)
 {
     char msg[200];
     //FIXME
@@ -1672,7 +1678,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
     int player_goes_first = (player->vel >= b->vel ? 1 : 0);
 
     if (player_goes_first) {
-        res = boss_fight(player, b, p, notify_win, kls);
+        res = boss_fight(player, b, p, notify_win, kls, rb_notifications);
         //Check res and apply second action if needed
         log_tag("debug_log.txt", "[DEBUG]",
                 "[%s()]: First act res was [%s]: [%i]", __func__,
@@ -1695,7 +1701,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is loafing around.",
                         stringFromBossClass(b->class));
-                display_notification(notify_win, msg, 500);
+                display_notification(notify_win, msg, 500, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             }
             break;
@@ -1705,9 +1711,9 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                         stringFromBossClass(b->class));
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-                display_notification(notify_win, msg, 500);
+                display_notification(notify_win, msg, 500, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-                res = boss_attack(b, player, p, notify_win, kls);
+                res = boss_attack(b, player, p, notify_win, kls, rb_notifications);
             }
             break;
             case FOE_OP_SPECIAL: {
@@ -1761,7 +1767,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is loafing around.",
                     stringFromBossClass(b->class));
-            display_notification(notify_win, msg, 500);
+            display_notification(notify_win, msg, 500, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
         }
         break;
@@ -1771,9 +1777,9 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                     stringFromBossClass(b->class));
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-            display_notification(notify_win, msg, 500);
+            display_notification(notify_win, msg, 500, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-            res = boss_attack(b, player, p, notify_win, kls);
+            res = boss_attack(b, player, p, notify_win, kls, rb_notifications);
         }
         break;
         case FOE_OP_SPECIAL: {
@@ -1802,7 +1808,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                 stringFrom_fightResult(res), res);
 
         if (res != FIGHTRES_DEATH && res != FIGHTRES_KILL_DONE) {
-            res = boss_fight(player, b, p, notify_win, kls);
+            res = boss_fight(player, b, p, notify_win, kls, rb_notifications);
 
             log_tag("debug_log.txt", "[DEBUG]",
                     "[%s()]: Second act res was [%s]: [%i]", __func__,
@@ -1832,9 +1838,10 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
  * @param foe_op The foeTurnOption_OP for the foe.
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
 int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
-                     WINDOW *notify_win, Koliseo *kls)
+                     WINDOW *notify_win, Koliseo *kls, RingaBuf* rb_notifications)
 {
     char msg[200];
     //FIXME
@@ -1869,7 +1876,7 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is loafing around.",
                         stringFromBossClass(b->class));
-                display_notification(notify_win, msg, 500);
+                display_notification(notify_win, msg, 500, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
             }
             break;
@@ -1879,9 +1886,9 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
                         stringFromBossClass(b->class));
                 wattron(notify_win, COLOR_PAIR(S4C_GREY));
                 sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-                display_notification(notify_win, msg, 500);
+                display_notification(notify_win, msg, 500, rb_notifications);
                 wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-                res = boss_attack(b, player, p, notify_win, kls);
+                res = boss_attack(b, player, p, notify_win, kls, rb_notifications);
             }
             break;
             case FOE_OP_SPECIAL: {
@@ -1935,7 +1942,7 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is loafing around.",
                     stringFromBossClass(b->class));
-            display_notification(notify_win, msg, 500);
+            display_notification(notify_win, msg, 500, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
         }
         break;
@@ -1945,9 +1952,9 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
                     stringFromBossClass(b->class));
             wattron(notify_win, COLOR_PAIR(S4C_GREY));
             sprintf(msg, "%s is angry!", stringFromBossClass(b->class));
-            display_notification(notify_win, msg, 500);
+            display_notification(notify_win, msg, 500, rb_notifications);
             wattroff(notify_win, COLOR_PAIR(S4C_GREY));
-            res = boss_attack(b, player, p, notify_win, kls);
+            res = boss_attack(b, player, p, notify_win, kls, rb_notifications);
         }
         break;
         case FOE_OP_SPECIAL: {

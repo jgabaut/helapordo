@@ -567,9 +567,9 @@ void gameloop(int argc, char **argv)
                     "Set load_info->done_loading to 0.");
         }
 
-        char* notifications_buffer = (char*) KLS_PUSH_ARR_TYPED(default_kls, Notification, NOTIFICATIONS_BUFFER_SIZE+1, HR_Notification, "Notification buffer", "Notification");
+        char* notifications_buffer = (char*) KLS_PUSH_ARR_TYPED(default_kls, Notification, NOTIFICATIONS_RINGBUFFER_SIZE+1, HR_Notification, "Notification buffer", "Notification");
 
-        RingaBuf rb_notifications = rb_new_arr(notifications_buffer, Notification, NOTIFICATIONS_BUFFER_SIZE);
+        RingaBuf rb_notifications = rb_new_arr(notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
 
 #ifndef _WIN32
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Size: {%li}", __func__, rb_notifications.size);
@@ -954,7 +954,7 @@ void gameloop(int argc, char **argv)
                                                roomsDone, path, player,
                                                load_info, enemy_sprites,
                                                fighter_sprites, default_kls,
-                                               gamestate_kls);
+                                               gamestate_kls, &rb_notifications);
                     } else if (current_room->class == SHOP) {
                         res =
                             handleRoom_Shop(current_room, roomsDone, path,
@@ -966,7 +966,7 @@ void gameloop(int argc, char **argv)
                                             roomsDone, path, player,
                                             load_info, boss_sprites,
                                             fighter_sprites, default_kls,
-                                            gamestate_kls);
+                                            gamestate_kls, &rb_notifications);
                     } else if (current_room->class == TREASURE) {
                         res =
                             handleRoom_Treasure(current_room, roomsDone,

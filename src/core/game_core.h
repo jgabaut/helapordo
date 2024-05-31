@@ -45,6 +45,8 @@
 #include <panel.h>
 #endif // _WIN32
 
+#include "../../ringabuf/src/ringabuf.h"
+
 /**
  * Defines GameScreen type, wrapping curses WINDOW.
  */
@@ -2087,6 +2089,7 @@ typedef struct {
     Rectangle *notify_win; /**< Pointer to notification area for OP*/
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
+    RingaBuf* rb_notifications; /**< Pointer to RingaBuf for notifications for OP*/
     Koliseo_Temp *t_kls;     /**< Pointer to Koliseo_Temp for OP*/
     Gamestate *gmst;	 /**< Pointer to Gamestate for OP*/
     foeTurnOption_OP foe_op;	 /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
@@ -2186,14 +2189,16 @@ extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;
 extern const wchar_t LEGS_CHAR_ICON;
 
+#define NOTIFICATION_BUFFER_SIZE 200 /**< Defines message buffer size for Notification.*/
+
 /**
  * Holds text for a notification.
  */
 typedef struct Notification {
-    char buf[200];
+    char buf[NOTIFICATION_BUFFER_SIZE+1];
     bool displayed;
 } Notification;
 
-#define NOTIFICATIONS_BUFFER_SIZE 7 /**< Defines the size for notifications array buffer. */
+#define NOTIFICATIONS_RINGBUFFER_SIZE 7 /**< Defines the size for notifications ringbuffer. */
 
 #endif // GAME_CORE_H

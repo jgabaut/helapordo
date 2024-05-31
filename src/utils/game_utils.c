@@ -15,7 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#define RINGABUF_IMPLEMENTATION
 #include "game_utils.h"
 //Functions useful in many areas
 //
@@ -3222,12 +3221,13 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
  * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
  * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
  * @param picked_skill The skillType to assign to turnOP_args->picked_skill.
+ * @param rb_notifications The RingaBuf to assign to turnOP_args->rb_notifications.
  */
 turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
                               Room *room, loadInfo *load_info, Enemy *enemy,
                               Boss *boss, FILE *save_file, WINDOW *notify_win,
                               Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
-                              skillType picked_skill)
+                              skillType picked_skill, RingaBuf* rb_notifications)
 {
     log_tag("debug_log.txt", "[TURNOP]",
             "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
@@ -3249,6 +3249,7 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
     res->t_kls = t_kls;
     res->foe_op = foe_op;
     res->picked_skill = picked_skill;
+    res->rb_notifications = rb_notifications;
 
     return res;
 }
@@ -3260,9 +3261,21 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
  * @param w The WINDOW pointer to print to.
  * @param text The contents of the notification.
  * @param time The display time in milliseconds
+ * @param rb_notifications The Ringabuf to push the notification to.
  */
-void display_notification(WINDOW *w, char *text, int time)
+void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifications)
 {
+    char buf[NOTIFICATION_BUFFER_SIZE+1] = {0};
+
+    sprintf(buf, "%s", text);
+
+#ifndef _WIN32
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%li} bytes to ringbuf", __func__, sizeof(buf));
+#else
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%lli} bytes to ringbuf", __func__, sizeof(buf));
+#endif
+    rb_push_bytes(rb_notifications, buf, sizeof(buf));
+
     wprintw(w, "\n  %s", text);
     wrefresh(w);
     //refresh();
@@ -3459,8 +3472,9 @@ void printEquipStats(Equip *e)
  * @param beast The integer for drops coming from a beast kill if true.
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
-void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
+void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls, RingaBuf* rb_notifications)
 {
 
     assert(player->equipsBagOccupiedSlots >= 0);
@@ -3599,7 +3613,7 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
     wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     sprintf(msg, "You found %s %s!", stringFromQuality(q),
             stringFromEquips(drop));
-    display_notification(notify_win, msg, 800);
+    display_notification(notify_win, msg, 800, rb_notifications);
     wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     log_tag("debug_log.txt", "[DEBUG-DROPS]", "Found Equip:    %s.",
             stringFromEquips(drop));
@@ -4043,7 +4057,7 @@ void printActivePerks(Fighter *f)
  * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param f The Fighter pointer at hand.
  */
-void applyStatus(WINDOW *notify_win, Fighter *f)
+void applyStatus(WINDOW *notify_win, Fighter *f, RingaBuf* rb_notifications)
 {
 
     switch (f->status) {
@@ -4065,15 +4079,15 @@ void applyStatus(WINDOW *notify_win, Fighter *f)
         } else {
             f->hp = 1;	//Will this be a problem?
         }
-        printStatusText(notify_win, Poison, f->name);
+        printStatusText(notify_win, Poison, f->name, rb_notifications);
     }
     break;
     case Burned: {
-        printStatusText(notify_win, Burned, f->name);
+        printStatusText(notify_win, Burned, f->name, rb_notifications);
     }
     break;
     case Frozen: {
-        printStatusText(notify_win, Frozen, f->name);
+        printStatusText(notify_win, Frozen, f->name, rb_notifications);
     }
     break;
     case Weak:
@@ -4093,9 +4107,10 @@ void applyStatus(WINDOW *notify_win, Fighter *f)
  * @see stringFromEClass()
  * @param notify_win The window pointer to call display_notification() on.
  * @param e The Enemy pointer at hand.
+ * @param rb_notifications The RingaBuf used for notifications.
  * @see display_notification()
  */
-void applyEStatus(WINDOW *notify_win, Enemy *e)
+void applyEStatus(WINDOW *notify_win, Enemy *e, RingaBuf* rb_notifications)
 {
 
     wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
@@ -4111,7 +4126,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e)
         } else {
             e->hp = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Poison, stringFromEClass(e->class));
+        printStatusText(notify_win, Poison, stringFromEClass(e->class), rb_notifications);
     }
     break;
     case Burned: {
@@ -4126,7 +4141,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e)
         } else {
             e->atk = 1;
         }
-        printStatusText(notify_win, Burned, stringFromEClass(e->class));
+        printStatusText(notify_win, Burned, stringFromEClass(e->class), rb_notifications);
     }
     break;
     case Frozen: {
@@ -4135,7 +4150,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e)
         } else {
             e->vel = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Frozen, stringFromEClass(e->class));
+        printStatusText(notify_win, Frozen, stringFromEClass(e->class), rb_notifications);
     }
 
     break;
@@ -4158,8 +4173,9 @@ void applyEStatus(WINDOW *notify_win, Enemy *e)
  * @see stringFromBossClass()
  * @param notify_win The window pointer to call disaply_notification() on.
  * @param b The Boss pointer at hand.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
-void applyBStatus(WINDOW *notify_win, Boss *b)
+void applyBStatus(WINDOW *notify_win, Boss *b, RingaBuf* rb_notifications)
 {
 
     wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
@@ -4175,7 +4191,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
         } else {
             b->hp = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Poison, stringFromBossClass(b->class));
+        printStatusText(notify_win, Poison, stringFromBossClass(b->class), rb_notifications);
     }
     break;
     case Burned: {
@@ -4190,7 +4206,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
         } else {
             b->atk = 1;
         }
-        printStatusText(notify_win, Burned, stringFromBossClass(b->class));
+        printStatusText(notify_win, Burned, stringFromBossClass(b->class), rb_notifications);
     }
     break;
     case Frozen: {
@@ -4199,7 +4215,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
         } else {
             b->vel = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Frozen, stringFromBossClass(b->class));
+        printStatusText(notify_win, Frozen, stringFromBossClass(b->class), rb_notifications);
     }
 
     break;
@@ -4220,8 +4236,9 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
  * @param notify_win The pointer to the window to use display_notification() on.
  * @param status The fighterStatus at hand.
  * @param subject A string with name of entity owning the fighterStatus.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
-void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
+void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject, RingaBuf* rb_notifications)
 {
     char msg[500];
     switch (status) {
@@ -4233,19 +4250,19 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
     case Burned: {
         sprintf(msg, "%s is hurt by its %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
     }
     break;
     case Weak:
     case Strong: {
         sprintf(msg, "%s is feeling %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
     }
     break;
     case Frozen: {
         sprintf(msg, "%s is frozen cold.", subject);
-        display_notification(notify_win, msg, 500);
+        display_notification(notify_win, msg, 500, rb_notifications);
     }
     break;
     }

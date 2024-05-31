@@ -65,8 +65,6 @@
 
 #include "../release_data/release_data.h"
 
-#include "../../ringabuf/src/ringabuf.h"
-
 void* s4c_gui_malloc(size_t size);
 void* s4c_gui_calloc(size_t count, size_t size);
 void hlpd_sigint_handler(int signum);
@@ -260,8 +258,8 @@ turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
                               WINDOW * notify_win, Koliseo_Temp * t_kls,
-                              foeTurnOption_OP foe_op, skillType picked_skill);
-void display_notification(WINDOW * w, char *text, int time);
+                              foeTurnOption_OP foe_op, skillType picked_skill, RingaBuf* rb_notifications);
+void display_notification(WINDOW * w, char *text, int time, RingaBuf* rb_notifications);
 void print_label(WINDOW * win, int starty, int startx, int width, char *string,
                  chtype color);
 void setEquipSprite(Equip * e);
@@ -269,14 +267,14 @@ void setConsumableSprite(Consumable * c);
 void setArtifactSprite(Artifact * a);
 void printEquipStats(Equip * e);
 void printQualityColor(quality q);
-void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
+void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls, RingaBuf* rb_notifications);
 void unlockSpecial(Fighter * f);
 void printCounters(Turncounter * counters[]);
 void printActivePerks(Fighter * f);
-void applyStatus(WINDOW * notify_win, Fighter * f);
-void applyEStatus(WINDOW * notify_win, Enemy * e);
-void applyBStatus(WINDOW * notify_win, Boss * b);
-void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
+void applyStatus(WINDOW * notify_win, Fighter * f, RingaBuf* rb_notifications);
+void applyEStatus(WINDOW * notify_win, Enemy * e, RingaBuf* rb_notifications);
+void applyBStatus(WINDOW * notify_win, Boss * b, RingaBuf* rb_notifications);
+void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject, RingaBuf* rb_notifications);
 int retry(char* seed);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);

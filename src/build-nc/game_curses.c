@@ -3870,13 +3870,14 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     Boss *dummy_boss = NULL;
     FILE *dummy_savefile = NULL;
     WINDOW *dummy_notify_win = NULL;
+    RingaBuf *dummy_rb = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
     skillType dummy_skill_pick = -1;
     //Declare turnOP_args
     turnOP_args *args =
         init_turnOP_args(gmst, player, p, room, load_info, dummy_enemy,
                          dummy_boss, dummy_savefile, dummy_notify_win, t_kls,
-                         dummy_foe_op, dummy_skill_pick);
+                         dummy_foe_op, dummy_skill_pick, dummy_rb);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -4346,13 +4347,14 @@ int hlpd_prep_saveslot_path(char save_path[300], Fighter* player, Path* path, lo
     Boss *fakeboss = NULL;
     FILE *fakesavefile = NULL;
     WINDOW *fakenotifywin = NULL;
+    RingaBuf *fakerb = NULL;
     Gamestate *fakegmst = NULL;
     foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
     skillType fake_skill = -1;
     turnOP_args *savepick_turn_args =
         init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
                          fakeenemy, fakeboss, fakesavefile, fakenotifywin,
-                         savepick_kls, fake_foe_op, fake_skill);
+                         savepick_kls, fake_foe_op, fake_skill, fakerb);
     char *savepick_choices[] = {
         "New game",
         "Load save",

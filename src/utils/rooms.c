@@ -50,13 +50,14 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     Boss *dummy_boss = NULL;
     FILE *dummy_savefile = NULL;
     WINDOW *dummy_notify_win = NULL;
+    RingaBuf *dummy_rb = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
     skillType dummy_skill_pick = -1;
     //Declare turnOP_args
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy,
                          dummy_boss, dummy_savefile, dummy_notify_win, t_kls,
-                         dummy_foe_op, dummy_skill_pick);
+                         dummy_foe_op, dummy_skill_pick, dummy_rb);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -347,6 +348,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
  * @param fighter_sprites The sprites array for all fighter classes.
  * @param kls The Koliseo used for allocations.
  * @param t_kls The Koliseo_Temp used for temp allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  * @see gameloop()
  * @see turnOP()
  * @see enemyClass
@@ -358,7 +360,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                                1][MAXFRAMES][MAXROWS][MAXCOLS],
                        char fighter_sprites[CLASSESMAX +
                                1][MAXFRAMES][MAXROWS][MAXCOLS],
-                       Koliseo *kls, Koliseo_Temp *t_kls)
+                       Koliseo *kls, Koliseo_Temp *t_kls, RingaBuf* rb_notifications)
 {
 
     Boss *dummy_boss = NULL;
@@ -372,7 +374,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, args_enemy,
                          dummy_boss, args_save_file, args_notify_win, t_kls,
-                         dummy_foe_op, dummy_picked_skill);
+                         dummy_foe_op, dummy_picked_skill, rb_notifications);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -727,7 +729,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 }
                 //Equip drop, guaranteed on killing a beast
                 if (e->beast || ((hlpd_rand() % 15) - (player->luck / 10) <= 0)) {
-                    dropEquip(player, e->beast, notifications_win, kls);
+                    dropEquip(player, e->beast, notifications_win, kls, rb_notifications);
                 }
                 //Get xp and free memory from enemy
 
@@ -1025,7 +1027,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     char msg[50];
                     sprintf(msg, "You found +%i coins.", e->prize);
                     wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-                    display_notification(notifications_win, msg, 500);
+                    display_notification(notifications_win, msg, 500, rb_notifications);
                     wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
                     //Win, get xp and free memory from enemy
@@ -1307,6 +1309,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
  * @param player The Fighter pointer at hand.
  * @param kls The Koliseo used for allocations.
  * @param t_kls The Koliseo_Temp used for temp allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  * @see turnOP()
  * @return When room is cleared, should return KILL_DONE.
  */
@@ -1316,7 +1319,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                                       1][MAXFRAMES][MAXROWS][MAXCOLS],
                     char fighter_sprites[CLASSESMAX +
                             1][MAXFRAMES][MAXROWS][MAXCOLS],
-                    Koliseo *kls, Koliseo_Temp *t_kls)
+                    Koliseo *kls, Koliseo_Temp *t_kls, RingaBuf* rb_notifications)
 {
 
     Boss *args_boss = NULL;
@@ -1330,7 +1333,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy,
                          args_boss, args_save_file, args_notify_win, t_kls,
-                         dummy_foe_op, dummy_skill_pick);
+                         dummy_foe_op, dummy_skill_pick, rb_notifications);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -1615,7 +1618,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                         artifactDrop);
             }
             //Equip drop
-            dropEquip(player, b->beast, notifications_win, kls);
+            dropEquip(player, b->beast, notifications_win, kls, rb_notifications);
 
             //Account for harvester perk
             int harvester_perks = player->perks[HARVESTER]->innerValue;
@@ -1847,7 +1850,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 char msg[50];
                 sprintf(msg, "You found +%i coins.", b->prize);
                 wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-                display_notification(notifications_win, msg, 500);
+                display_notification(notifications_win, msg, 500, rb_notifications);
                 wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
                 //Give key
@@ -1856,7 +1859,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 wattron(notifications_win, COLOR_PAIR(S4C_MAGENTA));
                 display_notification(notifications_win,
-                                     "You found a key. May be useful.", 800);
+                                     "You found a key. May be useful.", 800, rb_notifications);
                 wattroff(notifications_win, COLOR_PAIR(S4C_MAGENTA));
 
                 //Win, get xp and free memory from boss

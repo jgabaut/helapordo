@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#define RINGABUF_IMPLEMENTATION
 #include "game_core.h"
 
 const char* helapordo_title_string = "     __  __  ____  __     ______  _____   ______  ____    _____    ______\n\
