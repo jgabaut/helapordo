@@ -54,9 +54,9 @@ void gameloop(int argc, char **argv)
 
     char *whoami;		// This will reference argv[0] at basename, it's the same string in memory, just starting later
 #ifndef _WIN32
-        (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
+    (whoami = strrchr(argv[0], '/')) ? ++whoami : (whoami = argv[0]);
 #else
-        (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
+    (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
     char path_to_kls_debug_file[600];
     char static_path[500];
@@ -97,7 +97,7 @@ void gameloop(int argc, char **argv)
 
     bool is_seeded = false;
 
-    hlpd_getopt(argc, argv, whoami);
+    int optTot = hlpd_getopt(argc, argv, whoami);
     if (G_DOTUTORIAL_ON == 1) {
         handleTutorial();
         usage(whoami);
@@ -130,7 +130,11 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
         hlpd_reset_logfile();
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Beginning log. Option total: {%i}", __func__, optTot);
+
         hlpd_use_forced_flags(whoami);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Done using forced room/enemy flags.", __func__);
+
         if (G_USE_DEFAULT_BACKGROUND == 1) {
 #ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Overriding flag G_USE_DEFAULT_BACKGROUND to 0, since reset_color_pairs() support is missing from this build.");
@@ -194,9 +198,6 @@ void gameloop(int argc, char **argv)
         log_tag("debug_log.txt", "[DEBUG]", "gameloop() scanf() res was (%i)",
                 scanfres);
 
-        // Parse positional arguments
-        //for (int i = optind; i < argc; i++) {
-        // Handle positional arguments
         Path *path = NULL;
         Fighter *player = NULL;
 
@@ -318,8 +319,10 @@ void gameloop(int argc, char **argv)
             hlpd_default_keybinds[HLPD_KEY_LEFT] = directional_keys.left;
         }
 
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Querying user for saveslot path", __func__);
         char current_save_path[300] = {0};
         int saveslot_index = hlpd_prep_saveslot_path(current_save_path, player, path, load_info, &game_options);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Picked path: {%s}", __func__, current_save_path);
 
         Koliseo_Temp *gamestate_kls = kls_temp_start(temporary_kls);
 
@@ -335,8 +338,6 @@ void gameloop(int argc, char **argv)
             player =
                 (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
                                            "Fighter", "Fighter");
-
-            int optTot = optind;
 
             getParams(argc, argv, player, path, optTot, default_kls);
             initPlayerStats(player, path, default_kls);

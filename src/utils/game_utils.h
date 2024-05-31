@@ -330,5 +330,5 @@ bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
 void hlpd_reset_logfile(void);
 void hlpd_use_forced_flags(const char* whoami);
 int display_colorpairs(void);
-void hlpd_getopt(size_t argc, char** argv, const char* whoami);
+int hlpd_getopt(size_t argc, char** argv, const char* whoami);
 #endif

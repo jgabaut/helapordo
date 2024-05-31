@@ -5671,7 +5671,14 @@ int display_colorpairs(void)
     return (exitcode);
 }
 
-void hlpd_getopt(size_t argc, char** argv, const char* whoami)
+/**
+ * Parse options from CLI arguments.
+ * @param argc argc from main
+ * @param argv argv from main
+ * @param whoami Name used by the program
+ * @return The value of "optind" at the end of the routine.
+ */
+int hlpd_getopt(size_t argc, char** argv, const char* whoami)
 {
     int option;
     while ((option = getopt(argc, argv, "r:E:S:tTGRXQLvdhaVDbjw")) != -1) {
@@ -5892,4 +5899,5 @@ void hlpd_getopt(size_t argc, char** argv, const char* whoami)
         break;
         }
     }
+    return optind; // Used to determin total number of options
 }
