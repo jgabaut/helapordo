@@ -3286,7 +3286,7 @@ void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifica
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification: [%s]", __func__, read_notif->buf);
         }
         oldest_notif = (Notification*) &(rb_notifications->data[0]);
-        newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head]);
+        newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head - (sizeof(Notification))]);
     } else {
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Logging up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (rb_notifications->head / sizeof(Notification)) +1, rb_notifications->capacity / sizeof(Notification));
         for (size_t i = (rb_notifications->head / sizeof(Notification)) +1; i < (rb_notifications->capacity / sizeof(Notification)); i++) {
@@ -3298,7 +3298,8 @@ void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifica
             log_tag("debug_log.txt", "[DEBUG]", "%s():    [%li] 0->H Notification: [%s]", __func__, i, read_notif->buf);
         }
 
-        newest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head) - (1 * sizeof(Notification))]);
+        size_t newest_offset = (rb_notifications->head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (rb_notifications->head - sizeof(Notification)));
+        newest_notif = (Notification*) &(rb_notifications->data[newest_offset]);
         oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
 
     }
