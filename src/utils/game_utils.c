@@ -3276,12 +3276,17 @@ void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifica
 #endif
     bool rb_res = rb_push(rb_notifications, notif);
 
+    Notification* newest_notif = NULL;
+    Notification* oldest_notif = NULL;
+
     if (!rb_notifications->is_full) {
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Logging up from 0 to head: { %" PRIu32 " }", __func__, rb_notifications->head);
         for (int i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
             Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification: [%s]", __func__, read_notif->buf);
         }
+        oldest_notif = (Notification*) &(rb_notifications->data[0]);
+        newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head]);
     } else {
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Logging up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (rb_notifications->head / sizeof(Notification)) +1, rb_notifications->capacity / sizeof(Notification));
         for (size_t i = (rb_notifications->head / sizeof(Notification)) +1; i < (rb_notifications->capacity / sizeof(Notification)); i++) {
@@ -3293,12 +3298,13 @@ void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifica
             log_tag("debug_log.txt", "[DEBUG]", "%s():    [%li] 0->H Notification: [%s]", __func__, i, read_notif->buf);
         }
 
-        Notification* newest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head) - (1 * sizeof(Notification))]);
-        Notification* oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
+        newest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head) - (1 * sizeof(Notification))]);
+        oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
 
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Newest Notification: [%li] [%s]", __func__, rb_notifications->head / sizeof(Notification), newest_notif->buf);
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Oldest Notification: [%li] [%s]", __func__, rb_notifications->head / sizeof(Notification), oldest_notif->buf);
     }
+
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Newest Notification: [%s]", __func__, newest_notif->buf);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Oldest Notification: [%s]", __func__, oldest_notif->buf);
 
 #ifndef _WIN32
     if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Capacity: {%li}", __func__, rb_notifications->head, rb_notifications->tail, rb_notifications->capacity);
