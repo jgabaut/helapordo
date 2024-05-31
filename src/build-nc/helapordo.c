@@ -572,9 +572,9 @@ void gameloop(int argc, char **argv)
         RingaBuf rb_notifications = rb_new_arr(notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
 
 #ifndef _WIN32
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Size: {%li}", __func__, rb_notifications.size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%li}", __func__, rb_notifications.capacity);
 #else
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Size: {%lli}", __func__, rb_notifications.size);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%lli}", __func__, rb_notifications.capacity);
 #endif
         log_tag("debug_log.txt", "[DEBUG-PREP]", "Prepping done.\n");
         log_tag("debug_log.txt", "[DEBUG]", "Starting wincon loop.\n");
