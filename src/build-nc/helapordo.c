@@ -566,6 +566,16 @@ void gameloop(int argc, char **argv)
             log_tag("debug_log.txt", "[DEBUG-PREP]",
                     "Set load_info->done_loading to 0.");
         }
+
+        char* notifications_buffer = (char*) KLS_PUSH_ARR_TYPED(default_kls, Notification, NOTIFICATIONS_BUFFER_SIZE+1, HR_Notification, "Notification buffer", "Notification");
+
+        RingaBuf rb_notifications = rb_new_arr(notifications_buffer, Notification, NOTIFICATIONS_BUFFER_SIZE);
+
+#ifndef _WIN32
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Size: {%li}", __func__, rb_notifications.size);
+#else
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Size: {%lli}", __func__, rb_notifications.size);
+#endif
         log_tag("debug_log.txt", "[DEBUG-PREP]", "Prepping done.\n");
         log_tag("debug_log.txt", "[DEBUG]", "Starting wincon loop.\n");
 

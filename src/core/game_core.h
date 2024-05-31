@@ -216,6 +216,7 @@ typedef enum HLP_Region_Type {
     HR_Gamescreen,
     HR_GameOptions,
     HR_BSP_Room,
+    HR_Notification,
     HR_loadInfo,
 } HLP_Region_Type;
 
@@ -2184,4 +2185,15 @@ OP_res OP_res_from_fightResult(fightResult fr);
 extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;
 extern const wchar_t LEGS_CHAR_ICON;
+
+/**
+ * Holds text for a notification.
+ */
+typedef struct Notification {
+    char buf[200];
+    bool displayed;
+} Notification;
+
+#define NOTIFICATIONS_BUFFER_SIZE 7 /**< Defines the size for notifications array buffer. */
+
 #endif // GAME_CORE_H
