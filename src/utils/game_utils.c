@@ -3265,16 +3265,16 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
  */
 void display_notification(WINDOW *w, char *text, int time, RingaBuf* rb_notifications)
 {
-    char buf[NOTIFICATION_BUFFER_SIZE+1] = {0};
+    Notification notif = {0};
 
-    sprintf(buf, "%s", text);
+    sprintf(notif.buf, "%s", text);
 
 #ifndef _WIN32
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%li} bytes to ringbuf", __func__, sizeof(buf));
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%li} bytes to ringbuf", __func__, sizeof(notif));
 #else
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%lli} bytes to ringbuf", __func__, sizeof(buf));
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%lli} bytes to ringbuf", __func__, sizeof(notif));
 #endif
-    rb_push_bytes(rb_notifications, buf, sizeof(buf));
+    rb_push(rb_notifications, notif);
 
     wprintw(w, "\n  %s", text);
     wrefresh(w);
