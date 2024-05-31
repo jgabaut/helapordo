@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#define RINGABUF_IMPLEMENTATION
 #include "game_utils.h"
 //Functions useful in many areas
 //
@@ -5798,6 +5799,7 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
             printf("  using: koliseo v%s\n", string_koliseo_version());
             kls_dbg_features();
             printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
+            printf("  using: ringabuf v%s\n", RINGABUF_API_VERSION_STRING);
             printf("  using: ncurses v%s\n", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__

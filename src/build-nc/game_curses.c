@@ -4280,6 +4280,8 @@ void draw_buildinfo(WINDOW* win)
             KOLISEO_API_VERSION_STRING);
     wprintw(win, "  \n  using: s4c-gui v%s",
             S4C_GUI_API_VERSION_STRING);
+    wprintw(win, "  \n  using: ringabuf v%s",
+            RINGABUF_API_VERSION_STRING);
     wprintw(win, "  \n  using: ncurses v%s", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
