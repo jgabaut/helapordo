@@ -318,278 +318,8 @@ void gameloop(int argc, char **argv)
             hlpd_default_keybinds[HLPD_KEY_LEFT] = directional_keys.left;
         }
 
-        ITEM **savepick_items;
-        MENU *savepick_menu;
-        WINDOW *savepick_menu_win;
-        WINDOW *savepick_side_win;
-        char current_save_path[300];	//Will hold picked path
-
-        Koliseo_Temp *savepick_kls = kls_temp_start(temporary_kls);
-
-        //Declare turnOP_args
-        Room *fakeroom = NULL;
-        Enemy *fakeenemy = NULL;
-        Boss *fakeboss = NULL;
-        FILE *fakesavefile = NULL;
-        WINDOW *fakenotifywin = NULL;
-        Gamestate *fakegmst = NULL;
-        foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
-        skillType fake_skill = -1;
-        turnOP_args *savepick_turn_args =
-            init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
-                             fakeenemy, fakeboss, fakesavefile, fakenotifywin,
-                             savepick_kls, fake_foe_op, fake_skill);
-        char *savepick_choices[] = {
-            "New game",
-            "Load save",
-            "Tutorial",
-            "Options",
-            "Quit",
-            (char *)NULL,
-        };
-        int savepick_n_choices = ARRAY_SIZE(savepick_choices);
-        //FIXME: remove magic numbers
-        turnOption savepick_choice = 999;
-
-        /* Create menu items */
-        savepick_items = (ITEM **) calloc(savepick_n_choices, sizeof(ITEM *));
-        for (int i = 0; i < savepick_n_choices; i++) {
-            savepick_items[i] =
-                new_item(savepick_choices[i], savepick_choices[i]);
-        }
-        savepick_items[savepick_n_choices - 1] = (ITEM *) NULL;
-
-        /* Create menu */
-        savepick_menu = new_menu((ITEM **) savepick_items);
-
-        /* Set description off */
-        menu_opts_off(savepick_menu, O_SHOWDESC);
-
-        /* Create the window to be associated with the menu */
-        savepick_menu_win = newwin(11, 16, 5, 35);
-        keypad(savepick_menu_win, TRUE);
-
-        /* Set main window and sub window */
-        set_menu_win(savepick_menu, savepick_menu_win);
-        set_menu_sub(savepick_menu, derwin(savepick_menu_win, 4, 14, 4, 1));
-        set_menu_format(savepick_menu, 4, 1);
-
-        /* Set menu mark to the string " >  " */
-        set_menu_mark(savepick_menu, " >  ");
-
-        /* Print a border around main menu window */
-        box(savepick_menu_win, 0, 0);
-        print_label(savepick_menu_win, 1, 0, 16, "Select save", COLOR_PAIR(6));
-        mvwaddch(savepick_menu_win, 2, 0, ACS_LTEE);
-        mvwhline(savepick_menu_win, 2, 1, ACS_HLINE, 16);
-        mvwaddch(savepick_menu_win, 2, 15, ACS_RTEE);
-
-        /* Post the menu */
-        post_menu(savepick_menu);
-        wrefresh(savepick_menu_win);
-
-        //Handle side window for welcome info
-        savepick_side_win = newwin(12, 32, 2, 2);
-        scrollok(savepick_side_win, TRUE);
-        draw_buildinfo(savepick_side_win);
-        refresh();
-
-        int savepick_picked = 0;
-
-        /*
-           //We set the colors to use s4c's palette file...
-           FILE* palette_file;
-           char path_to_palette[600];
-           char palette_name[50] = "palette.gpl";
-         */
-        int pickchar = -1;
-
-        /*
-           // Set static_path value to the correct static dir path
-           resolve_staticPath(static_path);
-
-           sprintf(path_to_palette,"%s/%s",static_path,palette_name);
-
-           palette_file = fopen(path_to_palette, "r");
-
-           init_s4c_color_pairs(palette_file);
-         */
-
-        for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-            init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1 ) ? -1 : 0));
-        }
-        log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
-        gamescreen->colors = COLORS;
-        gamescreen->color_pairs = COLOR_PAIRS;
-        int picked_saveslot_index = -1;
-
-        while (!savepick_picked
-               && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
-            if ( pickchar == hlpd_d_keyval(HLPD_KEY_DOWN)) {
-                int menudriver_res = menu_driver(savepick_menu, REQ_DOWN_ITEM);
-                if (menudriver_res == E_REQUEST_DENIED) {
-                    menudriver_res = menu_driver(savepick_menu, REQ_FIRST_ITEM);
-                }
-            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UP)) {
-                int menudriver_res = menu_driver(savepick_menu, REQ_UP_ITEM);
-                if (menudriver_res == E_REQUEST_DENIED) {
-                    menudriver_res = menu_driver(savepick_menu, REQ_LAST_ITEM);
-                }
-            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_LEFT)) {
-                /*Left option pick */
-                ITEM *cur;
-                cur = current_item(savepick_menu);
-                savepick_choice = getTurnChoice((char *)item_name(cur));
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "Left on choice: [ %s ] value (%i)", item_name(cur),
-                        savepick_choice);
-                if (savepick_choice == NEW_GAME) {
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "Should do something");
-                }
-            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
-                /*Right option pick */
-                ITEM *cur;
-                cur = current_item(savepick_menu);
-                savepick_choice = getTurnChoice((char *)item_name(cur));
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "Right on choice: [ %s ] value (%i)",
-                        item_name(cur), savepick_choice);
-                if (savepick_choice == NEW_GAME) {
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "Should do something");
-                }
-            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
-                menu_driver(savepick_menu, REQ_SCR_DPAGE);
-            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
-                menu_driver(savepick_menu, REQ_SCR_UPAGE);
-            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
-                /* Enter */
-                ITEM *cur;
-
-                //move(18,47);
-                //clrtoeol();
-                cur = current_item(savepick_menu);
-                //mvprintw(18, 47, "Item selected is : %s", item_name(cur));
-                savepick_choice = getTurnChoice((char *)item_name(cur));
-                if (savepick_choice != GAME_OPTIONS) {
-                    savepick_picked = 1;
-                }
-                pos_menu_cursor(savepick_menu);
-                refresh();
-            } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_QUIT)) {
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "Player used q to quit from savepick menu.");
-                //TODO: take some variable to disable quick quitting with q
-                savepick_picked = 1;
-                savepick_choice = getTurnChoice("Quit");
-                pos_menu_cursor(savepick_menu);
-                refresh();
-            }
-            wrefresh(savepick_menu_win);
-            if (savepick_choice == NEW_GAME) {
-                picked_saveslot_index = get_saveslot_index();
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "Saveslot index picked: [%i]", picked_saveslot_index);
-                sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
-                //TODO
-                //Get picked_slot with a curses menu.
-                //int picked_slot = handle_pickSave();
-                //sprintf(current_save_path,default_saveslots[picked_slot].save_path);
-                //TODO
-                //By default we expect the user to press new game, no action needed?
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "Running new game from savepick menu");
-                turnOP(OP_NEW_GAME, savepick_turn_args, default_kls,
-                       savepick_kls);
-            } else if (savepick_choice == LOAD_GAME) {
-                picked_saveslot_index = get_saveslot_index();
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "Saveslot index picked: [%i]", picked_saveslot_index);
-                sprintf(current_save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
-                //TODO
-                //Get picked_slot with a curses menu.
-                //int picked_slot = handle_pickSave();
-                //sprintf(current_save_path,default_saveslots[picked_slot].save_path);
-                //ATM we expect a single save.
-                //Setting this to 0 is the only thing we expect here, the actual load is done later.
-                load_info->is_new_game = 0;
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "Set load value: load_info->is_new_game == (%i)",
-                        load_info->is_new_game);
-                turnOP(OP_LOAD_GAME, savepick_turn_args, default_kls,
-                       savepick_kls);
-                //TODO
-                //Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
-            } else if (savepick_choice == QUIT) {
-                //TODO
-                //We can quit, I guess.
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "Savepick menu: doing exit(%i)", EXIT_SUCCESS);
-                // Unpost menu and free all the memory taken up
-                unpost_menu(savepick_menu);
-                free_menu(savepick_menu);
-                log_tag("debug_log.txt", "[FREE]", "Freed savepick menu");
-                for (int k = 0; k < savepick_n_choices; k++) {
-                    free_item(savepick_items[k]);
-                    log_tag("debug_log.txt", "[FREE]",
-                            "Freed %i savepick menu item", k);
-                }
-
-                delwin(savepick_menu_win);
-                endwin();
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_SUCCESS);
-            } else if (savepick_choice == TUTORIAL) {
-                log_tag("debug_log.txt", "[DEBUG]", "Doing tutorial.");
-                handleTutorial();
-                exit(EXIT_SUCCESS);
-            } else if (savepick_choice == GAME_OPTIONS) {
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Changing options from savepick menu", __func__);
-                handleGameOptions(&game_options);
-                clear();
-                refresh();
-                box(savepick_menu_win,0,0);
-                //TODO: is it possible to avoid redrawing this?...
-                wclear(savepick_side_win);
-                draw_buildinfo(savepick_side_win);
-                wrefresh(savepick_menu_win);
-                wrefresh(savepick_side_win);
-                savepick_choice = 999;
-            }
-        }			//End while !savepick_picked
-
-        //Free turnOP_args
-        //free(savepick_turn_args);
-
-        // Unpost menu and free all the memory taken up
-        unpost_menu(savepick_menu);
-        free_menu(savepick_menu);
-        log_tag("debug_log.txt", "[FREE]", "Freed savepick menu");
-        for (int k = 0; k < savepick_n_choices; k++) {
-            free_item(savepick_items[k]);
-            log_tag("debug_log.txt", "[FREE]", "Freed %i savepick menu item",
-                    k);
-        }
-
-        delwin(savepick_menu_win);
-        endwin();
-        log_tag("debug_log.txt", "[DEBUG]",
-                "Ended window mode for savepick menu");
-
-        kls_temp_end(savepick_kls);
-
-        //Flush the terminal
-        int clrres = system("clear");
-        log_tag("debug_log.txt", "[DEBUG]",
-                "gameloop() system(\"clear\") after savepick res was (%i)",
-                clrres);
-
-        //By now, we expect load_info->is_new_game to be set to 0 or 1.
-        log_tag("debug_log.txt", "[DEBUG]",
-                "  Checking is_new_game:  load_info->is_new_game == (%i)",
-                load_info->is_new_game);
+        char current_save_path[300] = {0};
+        int saveslot_index = hlpd_prep_saveslot_path(current_save_path, player, path, load_info, &game_options);
 
         Koliseo_Temp *gamestate_kls = kls_temp_start(temporary_kls);
 
@@ -599,7 +329,7 @@ void gameloop(int argc, char **argv)
 
         if (load_info->is_new_game) {	// We prepare path and fighter
             path = randomise_path(seed, default_kls, current_save_path);
-            path->current_saveslot->index = picked_saveslot_index;
+            path->current_saveslot->index = saveslot_index;
 
             kls_log(default_kls, "DEBUG", "Prepping Fighter");
             player =
@@ -631,7 +361,7 @@ void gameloop(int argc, char **argv)
             initWincon(w, path, w->class);
             initPlayerStats(player, path, default_kls);
             path->win_condition = w;
-            path->current_saveslot->index = picked_saveslot_index;
+            path->current_saveslot->index = saveslot_index;
             char static_path[500];
             // Set static_path value to the correct static dir path
             resolve_staticPath(static_path);
@@ -938,6 +668,9 @@ void gameloop(int argc, char **argv)
             for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
                 init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1) ? -1 : 0));
             }
+            log_tag("debug_log.txt","[DEBUG]","%s():    Updating gamescreen->colors and colorpairs after init_s4c_color_pair() loop.", __func__);
+            gamescreen->colors = COLORS;
+            gamescreen->color_pairs = COLOR_PAIRS;
             cbreak();
             noecho();
             keypad(stdscr, TRUE);

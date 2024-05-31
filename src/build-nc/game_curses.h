@@ -39,7 +39,7 @@
 
 void plot_line_in_ncurses(int x1, int y1, int x2, int y2);
 void print_encoded_char(WINDOW * w, int y, int x, char c);
-int get_saveslot_index(void);
+//int get_saveslot_index(void);
 void displayLore(char **lore_strings, int lore_counter);
 
 void printBattleStats(WINDOW * wins[3], Fighter * f, Enemy * e);
@@ -96,4 +96,5 @@ int handleRogueMenu(Gamestate * gmst, Path * p, Fighter * player, Room * room,
                     loadInfo * load_info, Koliseo * kls, Koliseo_Temp * t_kls);
 int handleGameOptions(GameOptions * game_options);
 void draw_buildinfo(WINDOW* win);
+int hlpd_prep_saveslot_path(char save_path[300], Fighter* player, Path* path, loadInfo* load_info, GameOptions* game_options);
 #endif
