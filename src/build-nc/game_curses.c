@@ -50,23 +50,6 @@ void plot_line_in_ncurses(int x1, int y1, int x2, int y2)
 }
 
 /**
- * Runs some shell commands to see all color pairs, then returns exitcode
- * Prints the encoded value of the passed char to the window at the coordinates.
- */
-int display_colorpairs(void)
-{
-    //Done checking versions, we check colors
-    int status =
-        system
-        (" clear; for C in {0..255}; do {     tput setab $C;     echo -n \"$C \"; } ; done ; tput sgr0 ; echo");
-    int exitcode = status / 256;
-    if (exitcode != 0) {
-        log_tag("debug_log.txt", "[DEBUG]", "\"Diplay colors\" failed.\n");
-    }
-    return (exitcode);
-}
-
-/**
  * Takes a WINDOW pointer, two integers for coordinates and a char.
  * Prints the encoded value of the passed char to the window at the coordinates.
  * @param w A pointer to the window to print to.

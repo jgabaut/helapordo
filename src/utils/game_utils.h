@@ -19,6 +19,10 @@
 #ifndef GAME_UTILS_H
 #define GAME_UTILS_H
 
+#ifndef _WIN32
+#define _POSIX_C_SOURCE 200809L // Needed for getopt
+#endif // _WIN32
+
 #ifdef HELAPORDO_CURSES_BUILD
 #include "../core/sprites.h"
 #ifdef _WIN32
@@ -324,5 +328,7 @@ bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
 
 #define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )
 void hlpd_reset_logfile(void);
-void hlpd_post_getopts(const char* whoami);
+void hlpd_use_forced_flags(const char* whoami);
+int display_colorpairs(void);
+void hlpd_getopt(size_t argc, char** argv, const char* whoami);
 #endif

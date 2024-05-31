@@ -79,10 +79,16 @@ helapordo_SOURCES += src/build-nc/helapordo.c
 endif
 endif
 
-hlpd_save2l_SOURCES = src/core/game_core.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c koliseo/src/koliseo.c s4c-gui/src/s4c_gui.c
+if USE_ANVIL_BUILD
+hlpd_save2l_SOURCES = src/anvil__helapordo.c
+else
+hlpd_save2l_SOURCES =
+endif
+
+hlpd_save2l_SOURCES += src/core/game_core.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c koliseo/src/koliseo.c s4c-gui/src/s4c_gui.c sprites4curses/s4c-animate/animate.c src/palette.c
 
 if HL_RAYLIB_BUILD
-hlpd_save2l_SOURCES += sprites4curses/s4c-animate/animate.c src/build-rl/game_rl.c
+hlpd_save2l_SOURCES += src/build-rl/game_rl.c
 endif
 
 ./anvil:

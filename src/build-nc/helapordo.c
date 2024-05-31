@@ -32,235 +32,6 @@ void register_counter_callback(int index, callback_void_t ptr, Fighter* f) {
 }
 */
 
-static void hlpd_getopt(size_t argc, char** argv, const char* whoami)
-{
-    int option;
-    while ((option = getopt(argc, argv, "f:r:E:S:tTGRXQLvdhaVDbjw")) != -1) {
-        switch (option) {
-        case 'j': {
-            G_USE_VIM_DIRECTIONAL_KEYS = 1;
-        }
-        break;
-        case 'w': {
-            G_USE_WASD_DIRECTIONAL_KEYS = 1;
-        }
-        break;
-        case 'b': {
-            G_USE_DEFAULT_BACKGROUND = 1;
-        }
-        break;
-        case 'D': {
-            G_USE_CURRENTDIR = 1;
-        }
-        break;
-        case 'S': {
-            G_SEEDED_RUN_ON = 1;
-            G_SEEDED_RUN_ARG = optarg;
-        }
-        break;
-        case 'd': {
-#ifndef HELAPORDO_DEBUG_ACCESS
-#else
-            G_DEBUG_ON = 1;
-            G_LOG_ON = 1;
-#endif
-        }
-        break;
-        case 'r': {
-            G_DEBUG_ROOMTYPE_ON = 1;
-            G_DEBUG_ROOMTYPE_ARG = optarg;
-        }
-        break;
-        case 'E': {
-            G_DEBUG_ENEMYTYPE_ON = 1;
-            G_DEBUG_ENEMYTYPE_ARG = optarg;
-        }
-        break;
-        case 'L': {
-            G_LOG_ON = 1;
-        }
-        break;
-        case 'G': {
-            G_GODMODE_ON = 1;
-        }
-        break;
-        case 'Q': {
-            G_FASTQUIT_ON = 1;
-        }
-        break;
-        case 'X': {
-            G_EXPERIMENTAL_ON = 1;
-        }
-        break;
-        case 'a': {
-            GS_AUTOSAVE_ON = 0;
-        }
-        break;
-        case 'R': {
-            GAMEMODE = Rogue;
-        }
-        break;
-        case 'f': {
-            //filename = optarg;
-        }
-        break;
-        case 'h': {
-            usage(whoami);
-            exit(EXIT_SUCCESS);
-        }
-        break;
-        case 'T': {
-            G_DOTUTORIAL_ON = 1;
-            handleTutorial();
-            usage(whoami);
-            exit(EXIT_SUCCESS);
-        }
-        break;
-        case 't': {
-            //Test all colors
-            printFormattedVersion(whoami);
-            printf("Using:\n");
-            printf("  \'animate\' :\n    s4c/animate.h    ");
-            S4C_ECHOVERSION();
-            printf("[DEBUG]    Testing terminal color capabilities.\n");
-            napms(200);
-            display_colorpairs();
-            napms(200);
-            WINDOW *test_win;
-            initscr();
-            start_color();
-            for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
-                init_s4c_color_pair(&palette[i], 9 + i);
-            }
-            clear();
-            refresh();
-            cbreak();
-            noecho();
-            test_win = newwin(9, 7, 1, 1);
-            keypad(test_win, TRUE);
-            box(test_win, 0, 0);
-
-            refresh();
-
-            test_game_color_pairs(test_win, 5);
-
-            napms(200);
-            delwin(test_win);
-            endwin();
-            exit(EXIT_SUCCESS);
-        }
-        break;
-        case 'V': {
-            printf("helapordo build: %s\n", helapordo_build_string);
-            hlpd_dbg_features();
-            printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
-            s4c_dbg_features();
-            printf("  using: koliseo v%s\n", string_koliseo_version());
-            kls_dbg_features();
-            printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
-            printf("  using: ncurses v%s\n", NCURSES_VERSION);
-#ifdef ANVIL__helapordo__
-#ifndef INVIL__helapordo__HEADER__
-            printf("  Built with: amboso v%s\n",
-                   ANVIL__API_LEVEL__STRING);
-#else
-            printf("  Built with: invil v%s\n",
-                   INVIL__VERSION__STRING);
-            printf("Last commit: %s", get_INVIL__COMMIT__DESC__());
-#endif // INVIL__helapordo__HEADER__
-            printf("Version Info: %.8s\n",
-                   get_ANVIL__VERSION__DESC__());
-            const char* anvil_date = get_ANVIL__VERSION__DATE__();
-            char* anvil_date_end;
-#ifndef _WIN32
-            time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
-#else
-            time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
-#endif //_WIN32
-
-            if (anvil_date_end == anvil_date) {
-                //TODO: error
-            } else {
-                char build_time_buff[20] = {0};
-                struct tm* build_time_tm = localtime(&anvil_build_time);
-
-                if (build_time_tm == NULL) {
-                    //TODO: error
-                } else {
-                    strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
-                    printf("\nDate: %s\n", build_time_buff);
-                }
-            }
-            const char* headergen_date = get_ANVIL__HEADER__GENTIME__();
-            char* headergen_date_end;
-#ifndef _WIN32
-            time_t headergen_time = strtol(headergen_date, &headergen_date_end, 10);
-#else
-            time_t headergen_time = strtoll(headergen_date, &headergen_date_end, 10);
-#endif //_WIN32
-
-            if (headergen_date_end == headergen_date) {
-                //TODO: error
-            } else {
-                char headergen_time_buff[20] = {0};
-                struct tm* headergen_time_tm = localtime(&headergen_time);
-
-                if (headergen_time_tm == NULL) {
-                    //TODO: error
-                } else {
-                    strftime(headergen_time_buff, 20, "%Y-%m-%d %H:%M:%S", headergen_time_tm);
-                    printf("Anvil Gen Date: %s\n", headergen_time_buff);
-                }
-            }
-#else
-            printf("  Built without anvil\n");
-#endif // ANVIL__helapordo__
-            exit(EXIT_SUCCESS);
-        }
-        break;
-        case 'v': {
-            printVersion();
-            /*
-               printf("Using:\n");
-               printf("  \'animate\' :\n    s4c/animate.h    ");
-               S4C_ECHOVERSION();
-               printf("\n  \'anvil\' :\n");
-               int status = system("echo \"    $( anvil -vv 2>/dev/null ) \"");
-               int exitcode = status / 256;
-               if (exitcode != 0) {
-               printf("\033[1;31m[DEBUG]\e[0m    \"anvil -vv\" failed.\n\n    Maybe amboso is not installed globally?\n");
-               exit(exitcode);
-               }
-               exit(exitcode);
-             */
-#if 0
-#ifdef HELAPORDO_DEBUG_ACCESS
-            printf("\nSeed: [%i]\n", seed);
-#endif
-#endif
-            exit(EXIT_SUCCESS);
-        }
-        break;
-        case '?': {
-            fprintf(stderr,
-                    "Invalid option: %c\n Check your arguments.\n",
-                    option);
-            usage(whoami);
-            // Handle invalid options
-            exit(EXIT_FAILURE);
-        }
-        break;
-        default: {
-            // Should never get here
-            fprintf(stderr, "Invalid option: %c\n, bad usage.\n",
-                    option);
-            exit(EXIT_FAILURE);
-        }
-        break;
-        }
-    }
-}
-
 /**
  * Takes a integer and a string array (possibly from main).
  * Initialises a Path pointer and a Fighter pointer, before looping for each oom in path length by calling the correct room function.
@@ -327,6 +98,11 @@ void gameloop(int argc, char **argv)
     bool is_seeded = false;
 
     hlpd_getopt(argc, argv, whoami);
+    if (G_DOTUTORIAL_ON == 1) {
+        handleTutorial();
+        usage(whoami);
+        exit(EXIT_SUCCESS);
+    }
 
     do {
         //Init default_kls
@@ -354,7 +130,7 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
         hlpd_reset_logfile();
-        hlpd_post_getopts(whoami);
+        hlpd_use_forced_flags(whoami);
         if (G_USE_DEFAULT_BACKGROUND == 1) {
 #ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Overriding flag G_USE_DEFAULT_BACKGROUND to 0, since reset_color_pairs() support is missing from this build.");
