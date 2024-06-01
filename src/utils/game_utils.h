@@ -274,7 +274,7 @@ void printActivePerks(Fighter * f);
 void applyStatus(WINDOW * notify_win, Fighter * f, RingaBuf* rb_notifications);
 void applyEStatus(WINDOW * notify_win, Enemy * e, RingaBuf* rb_notifications);
 void applyBStatus(WINDOW * notify_win, Boss * b, RingaBuf* rb_notifications);
-void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject, RingaBuf* rb_notifications);
+void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject, int color, RingaBuf* rb_notifications);
 int retry(char* seed);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);

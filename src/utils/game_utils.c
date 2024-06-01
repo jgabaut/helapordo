@@ -4123,15 +4123,15 @@ void applyStatus(WINDOW *notify_win, Fighter *f, RingaBuf* rb_notifications)
         } else {
             f->hp = 1;	//Will this be a problem?
         }
-        printStatusText(notify_win, Poison, f->name, rb_notifications);
+        printStatusText(notify_win, Poison, f->name, S4C_RED, rb_notifications);
     }
     break;
     case Burned: {
-        printStatusText(notify_win, Burned, f->name, rb_notifications);
+        printStatusText(notify_win, Burned, f->name, S4C_RED, rb_notifications);
     }
     break;
     case Frozen: {
-        printStatusText(notify_win, Frozen, f->name, rb_notifications);
+        printStatusText(notify_win, Frozen, f->name, S4C_RED, rb_notifications);
     }
     break;
     case Weak:
@@ -4156,9 +4156,6 @@ void applyStatus(WINDOW *notify_win, Fighter *f, RingaBuf* rb_notifications)
  */
 void applyEStatus(WINDOW *notify_win, Enemy *e, RingaBuf* rb_notifications)
 {
-
-    wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
-
     switch (e->status) {
     case Normal: {
         break;
@@ -4170,7 +4167,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e, RingaBuf* rb_notifications)
         } else {
             e->hp = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Poison, stringFromEClass(e->class), rb_notifications);
+        printStatusText(notify_win, Poison, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
     break;
     case Burned: {
@@ -4185,7 +4182,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e, RingaBuf* rb_notifications)
         } else {
             e->atk = 1;
         }
-        printStatusText(notify_win, Burned, stringFromEClass(e->class), rb_notifications);
+        printStatusText(notify_win, Burned, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
     break;
     case Frozen: {
@@ -4194,7 +4191,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e, RingaBuf* rb_notifications)
         } else {
             e->vel = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Frozen, stringFromEClass(e->class), rb_notifications);
+        printStatusText(notify_win, Frozen, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
 
     break;
@@ -4205,8 +4202,6 @@ void applyEStatus(WINDOW *notify_win, Enemy *e, RingaBuf* rb_notifications)
 
         break;
     }
-
-    wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
@@ -4221,9 +4216,6 @@ void applyEStatus(WINDOW *notify_win, Enemy *e, RingaBuf* rb_notifications)
  */
 void applyBStatus(WINDOW *notify_win, Boss *b, RingaBuf* rb_notifications)
 {
-
-    wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
-
     switch (b->status) {
     case Normal: {
         break;
@@ -4235,7 +4227,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b, RingaBuf* rb_notifications)
         } else {
             b->hp = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Poison, stringFromBossClass(b->class), rb_notifications);
+        printStatusText(notify_win, Poison, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
     break;
     case Burned: {
@@ -4250,7 +4242,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b, RingaBuf* rb_notifications)
         } else {
             b->atk = 1;
         }
-        printStatusText(notify_win, Burned, stringFromBossClass(b->class), rb_notifications);
+        printStatusText(notify_win, Burned, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
     break;
     case Frozen: {
@@ -4259,7 +4251,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b, RingaBuf* rb_notifications)
         } else {
             b->vel = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Frozen, stringFromBossClass(b->class), rb_notifications);
+        printStatusText(notify_win, Frozen, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
 
     break;
@@ -4270,8 +4262,6 @@ void applyBStatus(WINDOW *notify_win, Boss *b, RingaBuf* rb_notifications)
 
         break;
     }
-
-    wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
@@ -4280,9 +4270,10 @@ void applyBStatus(WINDOW *notify_win, Boss *b, RingaBuf* rb_notifications)
  * @param notify_win The pointer to the window to use display_notification() on.
  * @param status The fighterStatus at hand.
  * @param subject A string with name of entity owning the fighterStatus.
+ * @param color The color to use for the notification.
  * @param rb_notifications The RingaBuf used for notifications.
  */
-void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject, RingaBuf* rb_notifications)
+void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject, int color, RingaBuf* rb_notifications)
 {
     char msg[500];
     switch (status) {
@@ -4294,19 +4285,19 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject, Ri
     case Burned: {
         sprintf(msg, "%s is hurt by its %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
+        display_notification(notify_win, msg, 500, color, rb_notifications);
     }
     break;
     case Weak:
     case Strong: {
         sprintf(msg, "%s is feeling %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
+        display_notification(notify_win, msg, 500, color, rb_notifications);
     }
     break;
     case Frozen: {
         sprintf(msg, "%s is frozen cold.", subject);
-        display_notification(notify_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
+        display_notification(notify_win, msg, 500, color, rb_notifications);
     }
     break;
     }
