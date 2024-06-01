@@ -3278,6 +3278,8 @@ void display_notification(WINDOW *w, char *text, int time, int color, RingaBuf* 
 #endif
     bool rb_res = rb_push(rb_notifications, notif);
 
+
+    /* Log ring status buffer, from oldest to newest notification.
     Notification* newest_notif = NULL;
     Notification* oldest_notif = NULL;
 
@@ -3308,6 +3310,7 @@ void display_notification(WINDOW *w, char *text, int time, int color, RingaBuf* 
 
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Newest Notification: [%s] Color: [%" PRId8 "]", __func__, newest_notif->buf, newest_notif->color);
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Oldest Notification: [%s] Color: [%" PRId8 "]", __func__, oldest_notif->buf, oldest_notif->color);
+    */
 
 #ifndef _WIN32
     if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Capacity: {%li}", __func__, rb_notifications->head, rb_notifications->tail, rb_notifications->capacity);
