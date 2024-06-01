@@ -174,7 +174,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             res =
                 OP_res_from_fightResult(defer_fight_enemy
                                         (actor, enemy, foe_op,
-                                         notify_win, kls, rb_notifications));
+                                         kls, rb_notifications));
         }
         break;
         case BOSS: {
@@ -185,7 +185,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             res =
                 OP_res_from_fightResult(defer_fight_boss
                                         (actor, boss, path, foe_op,
-                                         notify_win, kls, rb_notifications));
+                                         kls, rb_notifications));
         }
         break;
         default: {
@@ -531,11 +531,6 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
 
         res = NO_OP;
 
-        if (notify_win == NULL) {
-            log_tag("debug_log.txt", "[CRITICAL]",
-                    "Notification WINDOW pointer was null in turnOP(OP_SKILL)");
-            exit(EXIT_FAILURE);
-        }
         if (room == NULL) {
             log_tag("debug_log.txt", "[CRITICAL]",
                     "Room pointer was null in turnOP(OP_SKILL)");
@@ -579,7 +574,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             isBoss = 0;
             //TODO
             //Implement the missing function to wrap skill usage and foe op
-            res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, skill, foe_op, notify_win, kls, rb_notifications));
+            res = OP_res_from_fightResult(defer_skill_enemy(actor, enemy, skill, foe_op, kls, rb_notifications));
         }
         break;
         case BOSS: {
@@ -589,7 +584,7 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             isBoss = 1;
             //TODO
             //Implement the missing function to wrap skill usage and foe op
-            res = OP_res_from_fightResult(defer_skill_boss(actor, boss, skill, path, foe_op, notify_win, kls, rb_notifications));
+            res = OP_res_from_fightResult(defer_skill_boss(actor, boss, skill, path, foe_op, kls, rb_notifications));
         }
         break;
         default: {

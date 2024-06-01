@@ -761,7 +761,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 }
                 //Equip drop, guaranteed on killing a beast
                 if (e->beast || ((hlpd_rand() % 15) - (player->luck / 10) <= 0)) {
-                    dropEquip(player, e->beast, notifications_win, kls, rb_notifications);
+                    dropEquip(player, e->beast, kls, rb_notifications);
                 }
                 //Get xp and free memory from enemy
 
@@ -1119,9 +1119,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                     char msg[50];
                     sprintf(msg, "You found +%i coins.", e->prize);
-                    wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-                    display_notification(notifications_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
-                    wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+                    enqueue_notification(msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
 
                     //Win, get xp and free memory from enemy
                     giveXp(player, e);
@@ -1744,7 +1742,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                         artifactDrop);
             }
             //Equip drop
-            dropEquip(player, b->beast, notifications_win, kls, rb_notifications);
+            dropEquip(player, b->beast, kls, rb_notifications);
 
             //Account for harvester perk
             int harvester_perks = player->perks[HARVESTER]->innerValue;
@@ -2033,18 +2031,13 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 char msg[50];
                 sprintf(msg, "You found +%i coins.", b->prize);
-                wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-                display_notification(notifications_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
-                wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+                enqueue_notification(msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
 
                 //Give key
                 player->keys_balance += 1;
                 player->stats->keysfound += 1;
 
-                wattron(notifications_win, COLOR_PAIR(S4C_MAGENTA));
-                display_notification(notifications_win,
-                                     "You found a key. May be useful.", 800, S4C_MAGENTA, rb_notifications);
-                wattroff(notifications_win, COLOR_PAIR(S4C_MAGENTA));
+                enqueue_notification("You found a key. May be useful.", 800, S4C_MAGENTA, rb_notifications);
 
                 //Win, get xp and free memory from boss
                 giveXp_Boss(player, b);
