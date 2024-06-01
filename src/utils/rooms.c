@@ -906,18 +906,8 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 //sprintf(time_msg,"[DEBUG-TIME]    Time: %d s %d ms.", menu_time_spent/1000, menu_time_spent%1000);
                 //debug_log("debug_log.txt", time_msg);
                 if (menu_time_spent % 1000 > 37) {
-                    s4c_animate_rangeof_sprites_at_coords(enemy_sprites
-                                                          [e->class],
-                                                          enemy_animation_win,
-                                                          frame_counter,
-                                                          frame_counter, 1, 1,
-                                                          60, 19, 19, 0, 0);
-                    s4c_animate_rangeof_sprites_at_coords(fighter_sprites
-                                                          [player->class],
-                                                          fighter_animation_win,
-                                                          frame_counter,
-                                                          frame_counter, 1, 1,
-                                                          60, 19, 19, 0, 0);
+                    s4c_display_sprite_at_coords(enemy_sprites[e->class], frame_counter, enemy_animation_win, 60, 19, 19, 0, 0);
+                    s4c_display_sprite_at_coords(fighter_sprites[player->class], frame_counter, fighter_animation_win, 60, 19, 19, 0, 0);
                     hlpd_draw_notifications(rb_notifications, notifications_win);
                     frame_counter++;
 
@@ -1785,17 +1775,8 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             //debug_log("debug_log.txt", time_msg);
             if (menu_time_spent % 1000 > 37) {
                 //animate_rangeof_sprites_at_coords(enemy_sprites[e->class],enemy_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
-                s4c_animate_rangeof_sprites_at_coords(fighter_sprites
-                                                      [player->class],
-                                                      fighter_animation_win,
-                                                      frame_counter,
-                                                      frame_counter, 1, 1, 60,
-                                                      19, 19, 0, 0);
-                s4c_animate_rangeof_sprites_at_coords(boss_sprites[b->class],
-                                                      boss_animation_win,
-                                                      frame_counter,
-                                                      frame_counter, 1, 1, 60,
-                                                      19, 19, 0, 0);
+                s4c_display_sprite_at_coords(fighter_sprites[player->class], frame_counter, fighter_animation_win, 60, 19, 19, 0, 0);
+                s4c_display_sprite_at_coords(boss_sprites[b->class], frame_counter, boss_animation_win, 60, 19, 19, 0, 0);
 
                 hlpd_draw_notifications(rb_notifications, notifications_win);
 
