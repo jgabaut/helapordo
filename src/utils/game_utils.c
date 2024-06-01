@@ -3314,10 +3314,13 @@ void display_notification(WINDOW *w, char *text, int time, int color, RingaBuf* 
 #else
     if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Size: {%lli}", __func__, rb_notifications->head, rb_notifications->tail, rb_notifications->size);
 #endif
+
+    /*
     wprintw(w, "\n  %s", text);
     wrefresh(w);
     //refresh();
     napms(time);
+    */
 }
 
 /**
@@ -4288,19 +4291,19 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject, Ri
     case Burned: {
         sprintf(msg, "%s is hurt by its %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500, -1, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
     }
     break;
     case Weak:
     case Strong: {
         sprintf(msg, "%s is feeling %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500, -1, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
     }
     break;
     case Frozen: {
         sprintf(msg, "%s is frozen cold.", subject);
-        display_notification(notify_win, msg, 500, -1, rb_notifications);
+        display_notification(notify_win, msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
     }
     break;
     }

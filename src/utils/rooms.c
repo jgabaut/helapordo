@@ -485,18 +485,47 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
         long long time_spent;
 #endif
 
+        start_color();
+        clear();
+        refresh();
+        cbreak();
+        noecho();
+        keypad(stdscr, TRUE);
+
+        // Prepare enemy animation window
+        enemy_animation_win = newwin(19, 19, 3, 2);
+
+        // Prepare fighter animation window
+        fighter_animation_win = newwin(19, 19, 3, 58);
+
+        // Prepare notifications window
+        notifications_win = newwin(8, 70, 24, 4);
+        // Set notifications window to be scrolling
+        //scrollok(notifications_win, TRUE);
+        //Update turnOP_args->notify_win pointer
+        args->notify_win = notifications_win;
+        log_tag("debug_log.txt", "[TURNOP]",
+                "Assigned notifications_wins to turnOP_args: args->notify_win");
+
+        box(notifications_win,0,0);
+        wrefresh(notifications_win);
+        refresh();
+
         while (!
                (fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE
                 || choice == QUIT)) {
             if (choice != FIGHT) {
                 /* Initialize curses */
                 //initscr();
+
+                /*
                 start_color();
                 clear();
                 refresh();
                 cbreak();
                 noecho();
                 keypad(stdscr, TRUE);
+                */
 
                 int cursorCheck = curs_set(0);	// We make the cursor invisible or return early with the error
 
@@ -587,6 +616,8 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 wrefresh(my_menu_win);
                 refresh();
 
+                wrefresh(notifications_win);
+                /*
                 // Prepare enemy animation window
                 enemy_animation_win = newwin(19, 19, 3, 2);
 
@@ -604,6 +635,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 wrefresh(notifications_win);
                 refresh();
+                */
             } else {		//End if choice is not FIGHT
                 // Set notifications window to be scrolling
                 log_tag("debug_log.txt", "[DEBUG]", "Doing init_wins().");
@@ -785,10 +817,12 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                             enemies);
                 }
 
+                /*
                 int res = system("clear");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "handleRoom_Enemies() system(\"clear\") res was (%i)",
                         res);
+                */
                 continue;	//Check while condition again...
             }			//End check for deaths
 
@@ -884,6 +918,65 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                                                           frame_counter,
                                                           frame_counter, 1, 1,
                                                           60, 19, 19, 0, 0);
+                    Notification* newest_notif = NULL;
+                    //Notification* oldest_notif = NULL;
+
+                    if (!rb_notifications->is_full) {
+                        //oldest_notif = (Notification*) &(rb_notifications->data[0]);
+                        newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head - (sizeof(Notification))]);
+                        if (!newest_notif->displayed) {
+                            wclear(notifications_win);
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, rb_notifications->head);
+                            for (int i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
+                                Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%i] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+                                wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                                mvwprintw(notifications_win, i+1, 0, "  %s", read_notif->buf);
+                                wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                                read_notif->displayed = true;
+                            }
+                            box(notifications_win,0,0);
+                            wrefresh(notifications_win);
+                        }
+                    } else {
+                        size_t newest_offset = (rb_notifications->head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (rb_notifications->head - sizeof(Notification)));
+                        newest_notif = (Notification*) &(rb_notifications->data[newest_offset]);
+                        //oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
+                        int current_idx = 0;
+                        if (!newest_notif->displayed) {
+                            wclear(notifications_win);
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (rb_notifications->head / sizeof(Notification)) +1, rb_notifications->capacity / sizeof(Notification));
+                            for (size_t i = (rb_notifications->head / sizeof(Notification)) +1; i < (rb_notifications->capacity / sizeof(Notification)); i++) {
+                                Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+#ifndef _WIN32
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                                wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                                mvwprintw(notifications_win, current_idx+1, 0, "  %s", read_notif->buf);
+                                wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                                read_notif->displayed = true;
+                                current_idx++;
+                            }
+                            for (size_t i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
+                                Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+#ifndef _WIN32
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                                wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                                mvwprintw(notifications_win, current_idx+1, 0, "  %s", read_notif->buf);
+                                wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                                read_notif->displayed = true;
+                                current_idx++;
+                            }
+                            box(notifications_win,0,0);
+                            wrefresh(notifications_win);
+                        }
+                    }
+
                     frame_counter++;
 
                     if (G_EXPERIMENTAL_ON == 1) {
@@ -1060,10 +1153,12 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                                 "%i enemies left in room %i.", enemies - i - 1,
                                 index);
                         //white();
+                        /*
                         int res = system("clear");
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "handleRoom_Enemies() 3 system(\"clear\") res was (%i)",
                                 res);
+                        */
                         fightStatus = OP_RES_NO_DMG;
                         log_tag("debug_log.txt", "[ROOM]",
                                 "Onto next enemy, %i left.", enemies - i);
@@ -1412,6 +1507,30 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     long long time_spent;
 #endif
 
+    start_color();
+    clear();
+    refresh();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
+    // Prepare boss animation window
+    boss_animation_win = newwin(19, 19, 3, 2);
+    // Prepare fighter animation window
+    fighter_animation_win = newwin(19, 19, 3, 58);
+    // Prepare notifications window
+    notifications_win = newwin(8, 70, 24, 4);
+    // Set notifications window to be scrolling
+    //scrollok(notifications_win, TRUE);
+
+    //Update turnOP_args->notify_win pointer
+    args->notify_win = notifications_win;
+    log_tag("debug_log.txt", "[TURNOP]",
+            "Assigned notifications_wins to turnOP_args: args->notify_win");
+
+    wrefresh(notifications_win);
+    refresh();
+
     while (!
            (fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE
             || choice == QUIT)) {
@@ -1419,12 +1538,14 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
         if (choice != FIGHT) {
             /* Initialize curses */
             //initscr();
+            /*
             start_color();
             clear();
             refresh();
             cbreak();
             noecho();
             keypad(stdscr, TRUE);
+            */
             log_tag("debug_log.txt", "[ANIMATE]",
                     "Starting new fighter animation.");
             log_tag("debug_log.txt", "[ANIMATE]",
@@ -1500,6 +1621,10 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             post_menu(my_menu);
             wrefresh(my_menu_win);
             refresh();
+
+            wrefresh(notifications_win);
+
+            /*
             //sleep(2);
             //endwin();
             // Prepare boss animation window
@@ -1518,6 +1643,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
             wrefresh(notifications_win);
             refresh();
+            */
         } else {		//We chose FIGHT so we handle that
             /* Create items */
             n_choices = ARRAY_SIZE(choices);
@@ -1730,6 +1856,64 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                                                       frame_counter,
                                                       frame_counter, 1, 1, 60,
                                                       19, 19, 0, 0);
+                Notification* newest_notif = NULL;
+                //Notification* oldest_notif = NULL;
+
+                if (!rb_notifications->is_full) {
+                    //oldest_notif = (Notification*) &(rb_notifications->data[0]);
+                    newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head - (sizeof(Notification))]);
+                    if (!newest_notif->displayed) {
+                        wclear(notifications_win);
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, rb_notifications->head);
+                        for (int i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
+                            Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%i] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+                            wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                            mvwprintw(notifications_win, i+1, 0, "  %s", read_notif->buf);
+                            wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                            read_notif->displayed = true;
+                        }
+                        box(notifications_win,0,0);
+                        wrefresh(notifications_win);
+                    }
+                } else {
+                    size_t newest_offset = (rb_notifications->head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (rb_notifications->head - sizeof(Notification)));
+                    newest_notif = (Notification*) &(rb_notifications->data[newest_offset]);
+                    //oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
+                    int current_idx = 0;
+                    if (!newest_notif->displayed) {
+                        wclear(notifications_win);
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (rb_notifications->head / sizeof(Notification)) +1, rb_notifications->capacity / sizeof(Notification));
+                        for (size_t i = (rb_notifications->head / sizeof(Notification)) +1; i < (rb_notifications->capacity / sizeof(Notification)); i++) {
+                            Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+#ifndef _WIN32
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                            wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                            mvwprintw(notifications_win, current_idx+1, 0, "  %s", read_notif->buf);
+                            wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                            read_notif->displayed = true;
+                            current_idx++;
+                        }
+                        for (size_t i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
+                            Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+#ifndef _WIN32
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                            wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                            mvwprintw(notifications_win, current_idx+1, 0, "  %s", read_notif->buf);
+                            wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                            read_notif->displayed = true;
+                            current_idx++;
+                        }
+                        box(notifications_win,0,0);
+                        wrefresh(notifications_win);
+                    }
+                }
 
                 if (G_EXPERIMENTAL_ON == 1) {
                     run_time = clock() - gamestate->start_time;
@@ -1871,7 +2055,6 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[DEBUG]",
                         "handleRoom_Boss() 2 system(\"clear\") res was (%i)",
                         res);
-
                 fightStatus = OP_RES_NO_DMG;
                 //FIXME: is this causing a crash?
                 //YES, doing this causes the game to crash when trying to load a subsequent enemies room.
