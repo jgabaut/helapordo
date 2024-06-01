@@ -4611,3 +4611,72 @@ int hlpd_prep_saveslot_path(char save_path[300], Fighter* player, Path* path, lo
 
     return picked_saveslot_index;
 }
+
+/**
+ * Takes a RingaBuf to take the Notification from, and a WINDOW to draw them to.
+ * @param rb_notifications The RingaBuf holding the Notification
+ * @param notifications_win The WINDOW used to draw the notifications
+ * @see Notification
+ * @see enqueue_notification()
+ */
+void hlpd_draw_notifications(RingaBuf* rb_notifications, WINDOW* notifications_win)
+{
+    Notification* newest_notif = NULL;
+    //Notification* oldest_notif = NULL;
+
+    if (!rb_notifications->is_full) {
+        //oldest_notif = (Notification*) &(rb_notifications->data[0]);
+        newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head - (sizeof(Notification))]);
+        if (!newest_notif->displayed) {
+            wclear(notifications_win);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, rb_notifications->head);
+            for (int i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
+                Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%i] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+                wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                mvwprintw(notifications_win, i+1, 0, "  %s", read_notif->buf);
+                wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                read_notif->displayed = true;
+            }
+            box(notifications_win,0,0);
+            wrefresh(notifications_win);
+        }
+    } else {
+        size_t newest_offset = (rb_notifications->head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (rb_notifications->head - sizeof(Notification)));
+        newest_notif = (Notification*) &(rb_notifications->data[newest_offset]);
+        //oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
+        int current_idx = 0;
+        if (!newest_notif->displayed) {
+            wclear(notifications_win);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (rb_notifications->head / sizeof(Notification)) +1, rb_notifications->capacity / sizeof(Notification));
+            for (size_t i = (rb_notifications->head / sizeof(Notification)) +1; i < (rb_notifications->capacity / sizeof(Notification)); i++) {
+                Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+#ifndef _WIN32
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                mvwprintw(notifications_win, current_idx+1, 0, "  %s", read_notif->buf);
+                wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                read_notif->displayed = true;
+                current_idx++;
+            }
+            for (size_t i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
+                Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+#ifndef _WIN32
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                mvwprintw(notifications_win, current_idx+1, 0, "  %s", read_notif->buf);
+                wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                read_notif->displayed = true;
+                current_idx++;
+            }
+            box(notifications_win,0,0);
+            wrefresh(notifications_win);
+        }
+    }
+}

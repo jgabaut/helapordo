@@ -97,4 +97,5 @@ int handleRogueMenu(Gamestate * gmst, Path * p, Fighter * player, Room * room,
 int handleGameOptions(GameOptions * game_options);
 void draw_buildinfo(WINDOW* win);
 int hlpd_prep_saveslot_path(char save_path[300], Fighter* player, Path* path, loadInfo* load_info, GameOptions* game_options);
+void hlpd_draw_notifications(RingaBuf* rb_notifications, WINDOW* notifications_win);
 #endif
