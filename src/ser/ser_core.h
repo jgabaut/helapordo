@@ -374,7 +374,7 @@ typedef struct SerEnemy {
     int8_t stamina;     /**< Current stamina value*/
     int8_t totalstamina;	  /**< Full stamina value*/
 
-    fighterStatus status;     /**< Defines active fighterStatus*/
+    int32_t status;     /**< Defines active fighterStatus*/
     int8_t beast;	   /**< Flag defining the instance as "beast" if set*/
 
     SerSkillslot skills[ENEMY_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
@@ -423,7 +423,7 @@ typedef struct SerBoss {
     int8_t stamina;     /**< Current stamina value*/
     int8_t totalstamina;	  /**< Full stamina value*/
 
-    fighterStatus status;     /**< Defines active fighterStatus*/
+    int32_t status;     /**< Defines active fighterStatus*/
     int8_t beast;	   /**< Flag defining the instance as "beast" if set*/
 
     SerSkillslot skills[BOSS_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
@@ -473,7 +473,7 @@ typedef struct SerFighter {
     int8_t currentlevelxp;	    /**< Xp gained for the current level*/
     int8_t totallevelxp;	  /**< Xp needed to level up*/
     int8_t totalhp;     /**< Full hp value*/
-    fighterStatus status;     /**< Defines active fighterStatus*/
+    int32_t status;     /**< Defines active fighterStatus*/
 
     int8_t energy;	    /**< Current energy value*/
     int8_t totalenergy;	 /**< Full energy value*/
