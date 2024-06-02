@@ -4624,15 +4624,17 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, WINDOW* notifications_w
     Notification* newest_notif = NULL;
     //Notification* oldest_notif = NULL;
 
-    if (!rb_notifications->is_full) {
-        if (rb_notifications->head != 0) {
+    if (!(rb_isfull(*rb_notifications))) {
+        if (rb_get_head(*rb_notifications) != 0) {
             //oldest_notif = (Notification*) &(rb_notifications->data[0]);
-            newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head - (sizeof(Notification))]);
+            int32_t head = rb_get_head(*rb_notifications);
+            char* rb_data = rb_get_data(*rb_notifications);
+            newest_notif = (Notification*) &(rb_data[head - (sizeof(Notification))]);
             if (!newest_notif->displayed) {
                 wclear(notifications_win);
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, rb_notifications->head);
-                for (int i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
-                    Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, head);
+                for (int i = 0; i < (head / sizeof(Notification)); i++) {
+                    Notification* read_notif = (Notification*) &(rb_data[i * sizeof(Notification)]);
                     log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%i] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
                     wattron(notifications_win, COLOR_PAIR(read_notif->color));
                     mvwprintw(notifications_win, i+1, 0, "  %s", read_notif->buf);
@@ -4646,15 +4648,18 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, WINDOW* notifications_w
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification ring is empty.", __func__);
         }
     } else {
-        size_t newest_offset = (rb_notifications->head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (rb_notifications->head - sizeof(Notification)));
-        newest_notif = (Notification*) &(rb_notifications->data[newest_offset]);
+        int32_t head = rb_get_head(*rb_notifications);
+        char* rb_data = rb_get_data(*rb_notifications);
+        size_t capacity = rb_get_capacity(*rb_notifications);
+        size_t newest_offset = (head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (head - sizeof(Notification)));
+        newest_notif = (Notification*) &(rb_data[newest_offset]);
         //oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
         int current_idx = 0;
         if (!newest_notif->displayed) {
             wclear(notifications_win);
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (rb_notifications->head / sizeof(Notification)) +1, rb_notifications->capacity / sizeof(Notification));
-            for (size_t i = (rb_notifications->head / sizeof(Notification)) +1; i < (rb_notifications->capacity / sizeof(Notification)); i++) {
-                Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (head / sizeof(Notification)) +1, capacity / sizeof(Notification));
+            for (size_t i = (head / sizeof(Notification)) +1; i < (capacity / sizeof(Notification)); i++) {
+                Notification* read_notif = (Notification*) &(rb_data[i * sizeof(Notification)]);
 #ifndef _WIN32
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
 #else
@@ -4666,8 +4671,8 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, WINDOW* notifications_w
                 read_notif->displayed = true;
                 current_idx++;
             }
-            for (size_t i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
-                Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+            for (size_t i = 0; i < (head / sizeof(Notification)); i++) {
+                Notification* read_notif = (Notification*) &(rb_data[i * sizeof(Notification)]);
 #ifndef _WIN32
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
 #else

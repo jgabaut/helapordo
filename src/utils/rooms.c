@@ -908,7 +908,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 if (menu_time_spent % 1000 > 37) {
                     s4c_display_sprite_at_coords(enemy_sprites[e->class], frame_counter, enemy_animation_win, 60, 19, 19, 0, 0);
                     s4c_display_sprite_at_coords(fighter_sprites[player->class], frame_counter, fighter_animation_win, 60, 19, 19, 0, 0);
-                    if (rb_notifications->is_full || (rb_notifications->head != 0)) {
+                    if (rb_isfull(*rb_notifications) || (rb_get_head(*rb_notifications) != 0)) {
                         hlpd_draw_notifications(rb_notifications, notifications_win);
                     }
                     frame_counter++;

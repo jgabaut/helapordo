@@ -569,12 +569,17 @@ void gameloop(int argc, char **argv)
 
         char* notifications_buffer = (char*) KLS_PUSH_ARR_TYPED(default_kls, Notification, NOTIFICATIONS_RINGBUFFER_SIZE+1, HR_Notification, "Notification buffer", "Notification");
 
-        RingaBuf rb_notifications = rb_new_arr(notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
+        size_t ringabuf_size = rb_structsize__();
+        size_t ringabuf_align = rb_structalign__();
+        RingaBuf rb_notifications = kls_push_zero_AR(default_kls, ringabuf_size, ringabuf_align, 1);
+
+        rb_notifications = rb_new_arr(rb_notifications, notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
+        size_t capacity = rb_get_capacity(rb_notifications);
 
 #ifndef _WIN32
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%li}", __func__, rb_notifications.capacity);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%li}", __func__, capacity);
 #else
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%lli}", __func__, rb_notifications.capacity);
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%lli}", __func__, capacity);
 #endif
         log_tag("debug_log.txt", "[DEBUG-PREP]", "Prepping done.\n");
         log_tag("debug_log.txt", "[DEBUG]", "Starting wincon loop.\n");
