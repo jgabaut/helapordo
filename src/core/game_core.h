@@ -27,6 +27,8 @@
 #define HELAPORDO_MACHINE "unknown"
 #endif
 
+#include "../../ringabuf/src/ringabuf.h"
+
 #ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
@@ -44,8 +46,6 @@
 #else
 #include <panel.h>
 #endif // _WIN32
-
-#include "../../ringabuf/src/ringabuf.h"
 
 /**
  * Defines GameScreen type, wrapping curses WINDOW.

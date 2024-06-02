@@ -13,8 +13,8 @@ int main(void) {
  if ( ! (( check = strcmp(VERSION, "1.4.9-dev") ) == 0)) {
    fail("VERSION",0,check);
  };
- if ( ! (HLP_MAX_INDEX == 34) ) {
-   fail("HLP_MAX_INDEX",34,HLP_MAX_INDEX);
+ if ( ! (HLP_MAX_INDEX == 35) ) {
+   fail("HLP_MAX_INDEX",35,HLP_MAX_INDEX);
  }
  if ( ! (MAX_SAVESLOTS == 3) ) {
    fail("MAX_SAVESLOTS",3,MAX_SAVESLOTS);
