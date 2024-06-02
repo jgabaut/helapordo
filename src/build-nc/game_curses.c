@@ -4628,10 +4628,11 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, WINDOW* notifications_w
         if (rb_get_head(*rb_notifications) != 0) {
             //oldest_notif = (Notification*) &(rb_notifications->data[0]);
             int32_t head = rb_get_head(*rb_notifications);
-            size_t newest_idx = ((head/sizeof(Notification)) -1);
+            //size_t newest_idx = ((head/sizeof(Notification)) -1);
             bool getelem_success = true;
             //newest_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, head - sizeof(Notification));
-            newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
+            //newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
+            newest_notif = (Notification*) rb_getelem_newest(*rb_notifications, &getelem_success);
             assert(getelem_success);
             if (!newest_notif->displayed) {
                 wclear(notifications_win);
@@ -4655,11 +4656,12 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, WINDOW* notifications_w
     } else {
         int32_t head = rb_get_head(*rb_notifications);
         size_t capacity = rb_get_capacity(*rb_notifications);
-        size_t newest_idx = ( head == 0 ? (NOTIFICATIONS_RINGBUFFER_SIZE-1) : ((head/sizeof(Notification)) -1));
+        //size_t newest_idx = ( head == 0 ? (NOTIFICATIONS_RINGBUFFER_SIZE-1) : ((head/sizeof(Notification)) -1));
         bool getelem_success = true;
         //size_t newest_offset = (head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (head - sizeof(Notification)));
         //newest_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, newest_offset);
-        newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
+        //newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
+        newest_notif = (Notification*) rb_getelem_newest(*rb_notifications, &getelem_success);
         assert(getelem_success);
         //oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
         int current_idx = 0;
