@@ -358,9 +358,9 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.9-dev"
+#define VERSION "1.4.9"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.4-dev"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.4"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
