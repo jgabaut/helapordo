@@ -1780,7 +1780,9 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 s4c_display_sprite_at_coords(fighter_sprites[player->class], frame_counter, fighter_animation_win, 60, 19, 19, 0, 0);
                 s4c_display_sprite_at_coords(boss_sprites[b->class], frame_counter, boss_animation_win, 60, 19, 19, 0, 0);
 
-                hlpd_draw_notifications(rb_notifications, notifications_win);
+                if (rb_isfull(*rb_notifications) || (rb_get_head(*rb_notifications) != 0)) {
+                    hlpd_draw_notifications(rb_notifications, notifications_win);
+                }
 
                 if (G_EXPERIMENTAL_ON == 1) {
                     run_time = clock() - gamestate->start_time;
