@@ -360,7 +360,7 @@ void floor_set_room_types(Floor *floor)
         }
     }
 
-    if (G_EXPERIMENTAL_ON == 1 && floor->from_bsp) {
+    if (floor->from_bsp) {
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Floor is from_bsp. Setting floor->area", __func__);
         floor->area = 0;
         for (size_t i = 0; i < FLOOR_MAX_ROWS; i++) {

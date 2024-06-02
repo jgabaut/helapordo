@@ -33,10 +33,6 @@
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L) //We need C11
 #define HELAPORDO_H
 
-#ifndef _WIN32
-#define _POSIX_C_SOURCE 200809L
-#endif // _WIN32
-
 #include "../utils/rooms.h"
 #include "../core/game_lore.h"
 #include "../ser/ser_core.h"

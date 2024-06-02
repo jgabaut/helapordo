@@ -21,21 +21,32 @@ callback_void_t callback_func_ptrs[SPECIALSMAX];
 callback_void_t callback_artifact_ptrs[ARTIFACTSMAX];
 callback_void_t callback_counter_ptrs[COUNTERSMAX];
 
-/**
- * Runs some shell commands to see all color pairs, then returns exitcode
- * Prints the encoded value of the passed char to the window at the coordinates.
- */
-int display_colorpairs(void)
+void plot_line_in_ncurses(int x1, int y1, int x2, int y2)
 {
-    //Done checking versions, we check colors
-    int status =
-        system
-        (" clear; for C in {0..255}; do {     tput setab $C;     echo -n \"$C \"; } ; done ; tput sgr0 ; echo");
-    int exitcode = status / 256;
-    if (exitcode != 0) {
-        log_tag("debug_log.txt", "[DEBUG]", "\"Diplay colors\" failed.\n");
+    // Calculate dx and dy
+    int dx = abs(x2 - x1);
+    int dy = abs(y2 - y1);
+    // Determine the direction of movement for x and y
+    int sx = (x1 < x2) ? 1 : -1;
+    int sy = (y1 < y2) ? 1 : -1;
+    // Initial error
+    int err = dx - dy;
+    // Draw line
+    while (x1 != x2 || y1 != y2) {
+        mvaddch(y1, x1, '*');
+        refresh();
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x1 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y1 += sy;
+        }
     }
-    return (exitcode);
+    // Wait for user input
+    //getch();
 }
 
 /**
@@ -104,7 +115,7 @@ void print_encoded_char(WINDOW *w, int y, int x, char c)
  * @see gameloop()
  * @return When exiting room, should return NO_DMG.
  */
-int get_saveslot_index(void)
+static int get_saveslot_index(void)
 {
     //Strings for turn menu choices
     char *choices[] = {
@@ -188,45 +199,15 @@ int get_saveslot_index(void)
 
     //Try updating default save names by reading fighter name from each file
     for (int i = 0; i < 3; i++) {
-        char path_to_sv_file[600];
         char static_path[500];
         // Set static_path value to the correct static dir path
         resolve_staticPath(static_path);
 
-        FILE* svfile = NULL;
-        if (G_EXPERIMENTAL_ON == 0) {
-#ifndef _WIN32
-            sprintf(path_to_sv_file, "%s/%s/%s", static_path,
-                    default_saveslots[i].save_path, "save.txt");
-#else
-            sprintf(path_to_sv_file, "%s\\%s\\%s", static_path,
-                    default_saveslots[i].save_path, "save.txt");
-#endif
-            svfile = fopen(path_to_sv_file, "r");
-        }
-        if (!svfile) {
-            if (G_EXPERIMENTAL_ON == 0) {
-                log_tag("debug_log.txt", "[WARN]",
-                        "%s(): Failed opening savefile {%i} at \"%s\".", __func__,
-                        i, path_to_sv_file);
-                continue;
-            } else {
-                log_tag("debug_log.txt", "[LOAD]",
-                        "%s():    Deferring file opening to ser_Saveslot_name().", __func__);
-            }
-        }
-        if (!set_Saveslot_name(svfile, &default_saveslots[i])) {
-            if (G_EXPERIMENTAL_ON == 0) {
-                log_tag("debug_log.txt", "[WARN]",
-                        "%s(): Failed reading savefile {%i} at \"%s\".", __func__,
-                        i, path_to_sv_file);
-            } else {
-                log_tag("debug_log.txt", "[WARN]",
-                        "%s(): Failed reading binary savefile {%i} at \"%s\".", __func__,
-                        i, default_saveslots[i].save_path);
-            }
+        log_tag("debug_log.txt", "[LOAD]", "%s():    Trying to load file for saveslot [%i]", __func__, i);
+
+        if (!set_Saveslot_name(&default_saveslots[i])) {
+            log_tag("debug_log.txt", "[WARN]", "%s(): Failed reading binary savefile {%i} at \"%s\".", __func__, i, default_saveslots[i].save_path);
         };
-        if (svfile) fclose(svfile);
     }
 
     saveslots_win = newwin(12, 24, 2, 5);
@@ -3888,15 +3869,15 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     Enemy *dummy_enemy = NULL;
     Boss *dummy_boss = NULL;
     FILE *dummy_savefile = NULL;
-    FILE *save_file;
     WINDOW *dummy_notify_win = NULL;
+    RingaBuf *dummy_rb = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
     skillType dummy_skill_pick = -1;
     //Declare turnOP_args
     turnOP_args *args =
         init_turnOP_args(gmst, player, p, room, load_info, dummy_enemy,
                          dummy_boss, dummy_savefile, dummy_notify_win, t_kls,
-                         dummy_foe_op, dummy_skill_pick);
+                         dummy_foe_op, dummy_skill_pick, dummy_rb);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -4090,33 +4071,16 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
                     picked_close = 1;
                 }
                 if (choice == SAVE) {
-                    char path_to_savefile[600];
-                    char static_path[500];
-                    char savefile_name[50] = HELAPORDO_SAVEPATH_1;
-
-                    // Set static_path value to the correct static dir path
-                    resolve_staticPath(static_path);
-
-                    sprintf(path_to_savefile, "%s/%s", static_path,
-                            savefile_name);
-                    save_file = fopen(path_to_savefile, "w");
-                    if (save_file == NULL) {
-                        fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                                path_to_savefile);
-                        exit(EXIT_FAILURE);
+                    /*
                     } else {
                         log_tag("debug_log.txt", "[TURNOP]",
                                 "Assigning save_file pointer to args->save_file. Path: [%s]",
                                 path_to_savefile);
                         args->save_file = save_file;
                     }
+                    */
                 }
                 turnOP(turnOP_from_turnOption(choice), args, kls, t_kls);
-                if (choice == SAVE) {
-                    fclose(save_file);
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "Closed save_file pointer.");
-                }
             }			//End if Player char was enter
         }
 
@@ -4154,8 +4118,8 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
  */
 static void toggle_default_back(bool selected_use_default_background)
 {
-#ifndef reset_color_pairs
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    User tried switched default background options, but this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    User tried switched default background options, but this build does not support reset_color_pairs().", __func__);
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
 #else
     log_tag("debug_log.txt", "[DEBUG]", "%s():    User switched default background options, reloading colors", __func__);
@@ -4181,7 +4145,7 @@ static void toggle_default_back(bool selected_use_default_background)
         init_s4c_color_pair_ex(&palette[i], 9 + i, (selected_use_default_background ? -1 : 0));
     }
     G_USE_DEFAULT_BACKGROUND = (G_USE_DEFAULT_BACKGROUND == 1 ? 0 : 1);
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
 }
 
 /**
@@ -4213,11 +4177,11 @@ int handleGameOptions(GameOptions * game_options)
     const char* directional_keys_schema_label = "<- Directional keys set ->";
 
     bool use_default_bg_is_locked = false;
-#ifndef reset_color_pairs
-    log_tag("debug_log.txt", "[DEBUG]", "%s():    Locking use_default_background since this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Locking use_default_background since this build does not support reset_color_pairs().", __func__);
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
     use_default_bg_is_locked = true;
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
 
     // Define menu options and their toggle states
     Toggle toggles[] = {
@@ -4315,10 +4279,10 @@ void draw_buildinfo(WINDOW* win)
             S4C_ANIMATE_VERSION);
     wprintw(win, "  \n  using: koliseo v%s",
             KOLISEO_API_VERSION_STRING);
-    if (G_EXPERIMENTAL_ON == 1) {
-        wprintw(win, "  \n  using: s4c-gui v%s",
-                S4C_GUI_API_VERSION_STRING);
-    }
+    wprintw(win, "  \n  using: s4c-gui v%s",
+            S4C_GUI_API_VERSION_STRING);
+    wprintw(win, "  \n  using: ringabuf v%s",
+            RINGABUF_API_VERSION_STRING);
     wprintw(win, "  \n  using: ncurses v%s", NCURSES_VERSION);
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
@@ -4356,4 +4320,386 @@ void draw_buildinfo(WINDOW* win)
 #endif // ANVIL__helapordo__
     //wprintw(win,"  \n  %s",get_ANVIL__VERSION__DESC__());
     wrefresh(win);
+}
+
+/**
+ * Prompts the user to pick a saveslot and stores the corresponding path into the passed buffer.
+ * @see gameloop()
+ * @param save_path The buffer to print picked saveslot path to
+ * @param player Pointer to the Fighter for player
+ * @param path Pointer to current game Path
+ * @param load_info Pointer to current game load_info
+ * @param game_options Pointer to current game_options
+ * @return The picked saveslot index.
+ */
+int hlpd_prep_saveslot_path(char save_path[300], Fighter* player, Path* path, loadInfo* load_info, GameOptions* game_options)
+{
+    ITEM **savepick_items;
+    MENU *savepick_menu;
+    WINDOW *savepick_menu_win;
+    WINDOW *savepick_side_win;
+
+    Koliseo_Temp *savepick_kls = kls_temp_start(temporary_kls);
+
+    //Declare turnOP_args
+    Room *fakeroom = NULL;
+    Enemy *fakeenemy = NULL;
+    Boss *fakeboss = NULL;
+    FILE *fakesavefile = NULL;
+    WINDOW *fakenotifywin = NULL;
+    RingaBuf *fakerb = NULL;
+    Gamestate *fakegmst = NULL;
+    foeTurnOption_OP fake_foe_op = FOE_OP_INVALID;
+    skillType fake_skill = -1;
+    turnOP_args *savepick_turn_args =
+        init_turnOP_args(fakegmst, player, path, fakeroom, load_info,
+                         fakeenemy, fakeboss, fakesavefile, fakenotifywin,
+                         savepick_kls, fake_foe_op, fake_skill, fakerb);
+    char *savepick_choices[] = {
+        "New game",
+        "Load save",
+        "Tutorial",
+        "Options",
+        "Quit",
+        (char *)NULL,
+    };
+    int savepick_n_choices = ARRAY_SIZE(savepick_choices);
+    //FIXME: remove magic numbers
+    turnOption savepick_choice = 999;
+
+    /* Create menu items */
+    savepick_items = (ITEM **) calloc(savepick_n_choices, sizeof(ITEM *));
+    for (int i = 0; i < savepick_n_choices; i++) {
+        savepick_items[i] =
+            new_item(savepick_choices[i], savepick_choices[i]);
+    }
+    savepick_items[savepick_n_choices - 1] = (ITEM *) NULL;
+
+    /* Create menu */
+    savepick_menu = new_menu((ITEM **) savepick_items);
+
+    /* Set description off */
+    menu_opts_off(savepick_menu, O_SHOWDESC);
+
+    /* Create the window to be associated with the menu */
+    savepick_menu_win = newwin(11, 16, 5, 35);
+    keypad(savepick_menu_win, TRUE);
+
+    /* Set main window and sub window */
+    set_menu_win(savepick_menu, savepick_menu_win);
+    set_menu_sub(savepick_menu, derwin(savepick_menu_win, 4, 14, 4, 1));
+    set_menu_format(savepick_menu, 4, 1);
+
+    /* Set menu mark to the string " >  " */
+    set_menu_mark(savepick_menu, " >  ");
+
+    /* Print a border around main menu window */
+    box(savepick_menu_win, 0, 0);
+    print_label(savepick_menu_win, 1, 0, 16, "Select save", COLOR_PAIR(6));
+    mvwaddch(savepick_menu_win, 2, 0, ACS_LTEE);
+    mvwhline(savepick_menu_win, 2, 1, ACS_HLINE, 16);
+    mvwaddch(savepick_menu_win, 2, 15, ACS_RTEE);
+
+    /* Post the menu */
+    post_menu(savepick_menu);
+    wrefresh(savepick_menu_win);
+
+    //Handle side window for welcome info
+    savepick_side_win = newwin(12, 32, 2, 2);
+    scrollok(savepick_side_win, TRUE);
+    draw_buildinfo(savepick_side_win);
+    refresh();
+
+    int savepick_picked = 0;
+
+    /*
+       //We set the colors to use s4c's palette file...
+       FILE* palette_file;
+       char path_to_palette[600];
+       char palette_name[50] = "palette.gpl";
+     */
+    int pickchar = -1;
+
+    /*
+       // Set static_path value to the correct static dir path
+       resolve_staticPath(static_path);
+
+       sprintf(path_to_palette,"%s/%s",static_path,palette_name);
+
+       palette_file = fopen(path_to_palette, "r");
+
+       init_s4c_color_pairs(palette_file);
+     */
+
+    // NO color init is done for now.
+
+    /*
+    for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+        init_s4c_color_pair_ex(&palette[i], 9 + i, ((game_options.use_default_background || G_USE_DEFAULT_BACKGROUND == 1 ) ? -1 : 0));
+    }
+    */
+
+    int picked_saveslot_index = -1;
+
+    while (!savepick_picked
+           && (pickchar = wgetch(savepick_menu_win)) != KEY_F(1)) {
+        if ( pickchar == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            int menudriver_res = menu_driver(savepick_menu, REQ_DOWN_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(savepick_menu, REQ_FIRST_ITEM);
+            }
+        } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UP)) {
+            int menudriver_res = menu_driver(savepick_menu, REQ_UP_ITEM);
+            if (menudriver_res == E_REQUEST_DENIED) {
+                menudriver_res = menu_driver(savepick_menu, REQ_LAST_ITEM);
+            }
+        } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_LEFT)) {
+            /*Left option pick */
+            ITEM *cur;
+            cur = current_item(savepick_menu);
+            savepick_choice = getTurnChoice((char *)item_name(cur));
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Left on choice: [ %s ] value (%i)", item_name(cur),
+                    savepick_choice);
+            if (savepick_choice == NEW_GAME) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Should do something");
+            }
+        } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
+            /*Right option pick */
+            ITEM *cur;
+            cur = current_item(savepick_menu);
+            savepick_choice = getTurnChoice((char *)item_name(cur));
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Right on choice: [ %s ] value (%i)",
+                    item_name(cur), savepick_choice);
+            if (savepick_choice == NEW_GAME) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Should do something");
+            }
+        } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_DWNPAGE)) {
+            menu_driver(savepick_menu, REQ_SCR_DPAGE);
+        } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_UPPAGE)) {
+            menu_driver(savepick_menu, REQ_SCR_UPAGE);
+        } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_CONFIRM)) {
+            /* Enter */
+            ITEM *cur;
+
+            //move(18,47);
+            //clrtoeol();
+            cur = current_item(savepick_menu);
+            //mvprintw(18, 47, "Item selected is : %s", item_name(cur));
+            savepick_choice = getTurnChoice((char *)item_name(cur));
+            if (savepick_choice != GAME_OPTIONS) {
+                savepick_picked = 1;
+            }
+            pos_menu_cursor(savepick_menu);
+            refresh();
+        } else if ( pickchar == hlpd_d_keyval(HLPD_KEY_QUIT)) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Player used q to quit from savepick menu.");
+            //TODO: take some variable to disable quick quitting with q
+            savepick_picked = 1;
+            savepick_choice = getTurnChoice("Quit");
+            pos_menu_cursor(savepick_menu);
+            refresh();
+        }
+        wrefresh(savepick_menu_win);
+        if (savepick_choice == NEW_GAME) {
+            picked_saveslot_index = get_saveslot_index();
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Saveslot index picked: [%i]", picked_saveslot_index);
+            sprintf(save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
+            //TODO
+            //Get picked_slot with a curses menu.
+            //int picked_slot = handle_pickSave();
+            //sprintf(save_path,default_saveslots[picked_slot].save_path);
+            //TODO
+            //By default we expect the user to press new game, no action needed?
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Running new game from savepick menu");
+            turnOP(OP_NEW_GAME, savepick_turn_args, default_kls,
+                   savepick_kls);
+        } else if (savepick_choice == LOAD_GAME) {
+            picked_saveslot_index = get_saveslot_index();
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Saveslot index picked: [%i]", picked_saveslot_index);
+            sprintf(save_path, "%s", default_saveslots[picked_saveslot_index].save_path);	//Update saveslot_path value
+            //TODO
+            //Get picked_slot with a curses menu.
+            //int picked_slot = handle_pickSave();
+            //sprintf(save_path,default_saveslots[picked_slot].save_path);
+            //ATM we expect a single save.
+            //Setting this to 0 is the only thing we expect here, the actual load is done later.
+            load_info->is_new_game = 0;
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Set load value: load_info->is_new_game == (%i)",
+                    load_info->is_new_game);
+            turnOP(OP_LOAD_GAME, savepick_turn_args, default_kls,
+                   savepick_kls);
+            //TODO
+            //Select which game to load, by preparing the necessary handles to code below (correct savefile/name, for now)
+        } else if (savepick_choice == QUIT) {
+            //TODO
+            //We can quit, I guess.
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Savepick menu: doing exit(%i)", EXIT_SUCCESS);
+            // Unpost menu and free all the memory taken up
+            unpost_menu(savepick_menu);
+            free_menu(savepick_menu);
+            log_tag("debug_log.txt", "[FREE]", "Freed savepick menu");
+            for (int k = 0; k < savepick_n_choices; k++) {
+                free_item(savepick_items[k]);
+                log_tag("debug_log.txt", "[FREE]",
+                        "Freed %i savepick menu item", k);
+            }
+
+            delwin(savepick_menu_win);
+            endwin();
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_SUCCESS);
+        } else if (savepick_choice == TUTORIAL) {
+            log_tag("debug_log.txt", "[DEBUG]", "Doing tutorial.");
+            handleTutorial();
+            exit(EXIT_SUCCESS);
+        } else if (savepick_choice == GAME_OPTIONS) {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Changing options from savepick menu", __func__);
+            handleGameOptions(game_options);
+            clear();
+            refresh();
+            box(savepick_menu_win,0,0);
+            //TODO: is it possible to avoid redrawing this?...
+            wclear(savepick_side_win);
+            draw_buildinfo(savepick_side_win);
+            wrefresh(savepick_menu_win);
+            wrefresh(savepick_side_win);
+            savepick_choice = 999;
+        }
+    }			//End while !savepick_picked
+
+    //Free turnOP_args
+    //free(savepick_turn_args);
+
+    // Unpost menu and free all the memory taken up
+    unpost_menu(savepick_menu);
+    free_menu(savepick_menu);
+    log_tag("debug_log.txt", "[FREE]", "Freed savepick menu");
+    for (int k = 0; k < savepick_n_choices; k++) {
+        free_item(savepick_items[k]);
+        log_tag("debug_log.txt", "[FREE]", "Freed %i savepick menu item",
+                k);
+    }
+
+    delwin(savepick_menu_win);
+    endwin();
+    log_tag("debug_log.txt", "[DEBUG]",
+            "Ended window mode for savepick menu");
+
+    kls_temp_end(savepick_kls);
+
+    //Flush the terminal
+    int clrres = system("clear");
+    log_tag("debug_log.txt", "[DEBUG]",
+            "gameloop() system(\"clear\") after savepick res was (%i)",
+            clrres);
+
+    //By now, we expect load_info->is_new_game to be set to 0 or 1.
+    log_tag("debug_log.txt", "[DEBUG]",
+            "  Checking is_new_game:  load_info->is_new_game == (%i)",
+            load_info->is_new_game);
+
+    return picked_saveslot_index;
+}
+
+/**
+ * Takes a RingaBuf to take the Notification from, and a WINDOW to draw them to.
+ * @param rb_notifications The RingaBuf holding the Notification
+ * @param notifications_win The WINDOW used to draw the notifications
+ * @see Notification
+ * @see enqueue_notification()
+ */
+void hlpd_draw_notifications(RingaBuf* rb_notifications, WINDOW* notifications_win)
+{
+    Notification* newest_notif = NULL;
+    //Notification* oldest_notif = NULL;
+
+    if (!(rb_isfull(*rb_notifications))) {
+        if (rb_get_head(*rb_notifications) != 0) {
+            //oldest_notif = (Notification*) &(rb_notifications->data[0]);
+            int32_t head = rb_get_head(*rb_notifications);
+            //size_t newest_idx = ((head/sizeof(Notification)) -1);
+            bool getelem_success = true;
+            //newest_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, head - sizeof(Notification));
+            //newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
+            newest_notif = (Notification*) rb_getelem_newest(*rb_notifications, &getelem_success);
+            assert(getelem_success);
+            if (!newest_notif->displayed) {
+                wclear(notifications_win);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, head);
+                for (int i = 0; i < (head / sizeof(Notification)); i++) {
+                    //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
+                    Notification* read_notif = (Notification*) rb_getelem_by_index(*rb_notifications, i, &getelem_success);
+                    assert(getelem_success);
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%i] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+                    wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                    mvwprintw(notifications_win, i+1, 0, "  %s", read_notif->buf);
+                    wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                    read_notif->displayed = true;
+                }
+                box(notifications_win,0,0);
+                wrefresh(notifications_win);
+            }
+        } else {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification ring is empty.", __func__);
+        }
+    } else {
+        int32_t head = rb_get_head(*rb_notifications);
+        size_t capacity = rb_get_capacity(*rb_notifications);
+        //size_t newest_idx = ( head == 0 ? (NOTIFICATIONS_RINGBUFFER_SIZE-1) : ((head/sizeof(Notification)) -1));
+        bool getelem_success = true;
+        //size_t newest_offset = (head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (head - sizeof(Notification)));
+        //newest_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, newest_offset);
+        //newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
+        newest_notif = (Notification*) rb_getelem_newest(*rb_notifications, &getelem_success);
+        assert(getelem_success);
+        //oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
+        int current_idx = 0;
+        if (!newest_notif->displayed) {
+            wclear(notifications_win);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (head / sizeof(Notification)) +1, capacity / sizeof(Notification));
+            for (size_t i = (head / sizeof(Notification)) +1; i < (capacity / sizeof(Notification)); i++) {
+                //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
+                Notification* read_notif = (Notification*) rb_getelem_by_index(*rb_notifications, i, &getelem_success);
+                assert(getelem_success);
+#ifndef _WIN32
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                mvwprintw(notifications_win, current_idx+1, 0, "  %s", read_notif->buf);
+                wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                read_notif->displayed = true;
+                current_idx++;
+            }
+            for (size_t i = 0; i < (head / sizeof(Notification)); i++) {
+                //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
+                Notification* read_notif = (Notification*) rb_getelem_by_index(*rb_notifications, i, &getelem_success);
+                assert(getelem_success);
+#ifndef _WIN32
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                wattron(notifications_win, COLOR_PAIR(read_notif->color));
+                mvwprintw(notifications_win, current_idx+1, 0, "  %s", read_notif->buf);
+                wattroff(notifications_win, COLOR_PAIR(read_notif->color));
+                read_notif->displayed = true;
+                current_idx++;
+            }
+            box(notifications_win,0,0);
+            wrefresh(notifications_win);
+        }
+    }
 }

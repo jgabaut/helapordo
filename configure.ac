@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.4.8], [jgabaut@github.com])
+AC_INIT([helapordo], [1.4.9], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -43,6 +43,11 @@ AC_ARG_ENABLE([emoji],
   [AS_HELP_STRING([--enable-emoji], [Enable emoji icons of equips])],
   [enable_emoji=$enableval],
   [enable_emoji=yes])
+
+AC_ARG_ENABLE([default_background],
+  [AS_HELP_STRING([--enable-default-background], [Enable usage of terminal default background])],
+  [enable_default_background=$enableval],
+  [enable_default_background=no])
 
 if test "$enable_anvil" = "yes"; then
     echo "CONF    Building using anvil."
@@ -183,11 +188,12 @@ AM_CONDITIONAL([WINDOWS_BUILD], [test "$build_windows" = "yes"])
 AM_CONDITIONAL([DARWIN_BUILD], [test "$build_mac" = "yes"])
 AM_CONDITIONAL([LINUX_BUILD], [test "$build_linux" = "yes"])
 AM_CONDITIONAL([USE_EMOJI_BUILD], [test "$enable_emoji" = "yes"])
+AM_CONDITIONAL([USE_DEFAULT_BACKGROUND], [test "$enable_default_background" = "yes"])
 
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.4.8"
+  VERSION="1.4.9"
 fi
 
 # Output variables to the config.h header

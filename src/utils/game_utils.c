@@ -347,10 +347,6 @@ void dbg_Path(Path *path)
     log_tag("debug_log.txt", "[PATH]", "Path length: { %i }", path->length);
     log_tag("debug_log.txt", "[PATH]", "Path luck: { %i }", path->luck);
     log_tag("debug_log.txt", "[PATH]", "Path prize: { %i }", path->prize);
-    log_tag("debug_log.txt", "[PATH]", "Path loreCounter: { %i }",
-            path->loreCounter);
-    log_tag("debug_log.txt", "[PATH]", "Path loreCounter: { %i }",
-            path->loreCounter);
     dbg_Wincon(path->win_condition);
     dbg_Saveslot(path->current_saveslot);
     log_tag("debug_log.txt", "[PATH]", "Rng advancements: { %" PRId64 "}", *(path->rng_advancements));
@@ -1002,61 +998,6 @@ void setRoomType(Path *path, int *roadFork_value, roomClass *room_type,
             "setRoomType():  room type (%i) rooms done (%i)", (int)*room_type,
             roomsDone);
     switch (GAMEMODE) {
-    case Standard: {
-        if ((*roadFork_value >= 0)) {
-            *room_type = *roadFork_value;
-            *roadFork_value = -1;
-            log_tag("debug_log.txt", "[TEST]",
-                    "setRoomType() for ROADFORK");
-        } else if ((roomsDone == 1) || (roomsDone % HOMEROOM == 0)) {	//Only the first and every nth room will be a HOME room.
-            //FIXME: why the hell does roomsDone need to start from 1?
-            *room_type = HOME;
-            log_tag("debug_log.txt", "[TEST]", "setRoomType() for HOME");
-        } else if (roomsDone % BOSSROOM == 0) {
-            *room_type = BOSS;
-        } else if (roomsDone % SHOPROOM == 0) {
-            *room_type = SHOP;
-        } else if (hlpd_rand() % 5 == 0) {
-            *room_type = TREASURE;
-        } else if (hlpd_rand() % 4 == 0 && (roomsDone + 2 < path->length)) {
-            *room_type = ROADFORK;
-        } else if (*room_type == -1) {
-            *room_type = ENEMIES;
-        }
-        if (G_DEBUG_ON && G_DEBUG_ROOMTYPE_ON > 0) {
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "setRoomType(): Room debug flag asserted in standard gamemode, room type will always be equal to G_DEBUG_ROOMTYPE (%s).",
-                    stringFromRoom(G_DEBUG_ROOMTYPE));
-            *room_type = G_DEBUG_ROOMTYPE;
-        }
-    }
-    break;
-    case Story: {
-        if (*roadFork_value >= 0) {	//Is this branch needed here?
-            *room_type = *roadFork_value;
-            *roadFork_value = -1;
-        } else if ((roomsDone == 1) || (roomsDone % HOMEROOM == 0)) {	//Only the first and every nth room will be a HOME room.
-            //FIXME: why the hell does roomsDone need to start from 1?
-            *room_type = HOME;
-            log_tag("debug_log.txt", "[TEST]",
-                    "story mode, setRoomType() for HOME");
-        } else if (roomsDone % BOSSROOM == 0) {
-            *room_type = BOSS;
-        } else if (roomsDone % 4 == 0) {
-            *room_type = SHOP;
-        } else if (hlpd_rand() % 20 == 0) {
-            *room_type = TREASURE;
-        } else if (*room_type == -1) {
-            *room_type = ENEMIES;
-        }
-        if (G_DEBUG_ON && G_DEBUG_ROOMTYPE_ON > 0) {
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "setRoomType(): Room debug flag asserted in standard gamemode, room type will always be equal to G_DEBUG_ROOMTYPE (%s).",
-                    stringFromRoom(G_DEBUG_ROOMTYPE));
-            *room_type = G_DEBUG_ROOMTYPE;
-        }
-    }
-    break;
     default: {
         fprintf(stderr, "Unexpected GAMEMODE value: %i\n", GAMEMODE);
         exit(EXIT_FAILURE);
@@ -1201,9 +1142,9 @@ void printVersion(void)
  * Prints formatted version string.
  * @param progName The program name string.
  */
-void printFormattedVersion(char *progName)
+void printFormattedVersion(const char *progname)
 {
-    printf("%s v. %s\n", progName, VERSION);
+    printf("%s v. %s\n", progname, VERSION);
 }
 
 /**
@@ -1230,6 +1171,12 @@ void hlpd_dbg_features(void)
     fprintf(stderr,"[HLP]    Emoji icons are not enabled\n");
 #endif
 
+#ifdef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+    fprintf(stderr,"[HLP]    Default background support is enabled\n");
+#else
+    fprintf(stderr,"[HLP]    Default background support is not enabled\n");
+#endif
+
 #ifdef ANVIL__helapordo__
 #ifdef INVIL__helapordo__HEADER__
     fprintf(stderr,"[HLP]    Built with invil\n");
@@ -1254,7 +1201,7 @@ void hlpd_dbg_features(void)
 /**
  * Prints correct argument syntax for command line invocation.
  */
-void usage(char *progname)
+void usage(const char *progname)
 {
     fprintf(stderr, "\nUsage:        %s [...options] [name] [class]\n",
             progname);
@@ -1262,9 +1209,7 @@ void usage(char *progname)
     fprintf(stderr, "\nOptions:\n");
     fprintf(stderr, "\n    -R        Enable rogue mode\n");
     fprintf(stderr, "\n    -D        Use current working directory (rather than default global dir) for saves and files.\n");
-    fprintf(stderr, "\n    -s        Enable story mode. Deprecated.\n");
     fprintf(stderr, "\n    -S        Pass a seed, instead of using a random one.\n");
-    fprintf(stderr, "    -l        Load a game. Deprecated.\n");
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
     fprintf(stderr, "\n    -d        Enable debug mode\n");
@@ -3056,18 +3001,6 @@ Path *randomise_path(char* seed, Koliseo *kls, const char *path_to_savefile)
             p->current_saveslot->save_path);
 
     switch (GAMEMODE) {
-    case Standard: {
-        p->length = (hlpd_rand() % MAXLENGTH) + 1;
-        p->luck = (hlpd_rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
-    }
-    break;
-    case Story: {
-        p->length = 41;
-        p->luck = (hlpd_rand() % MAXLUCK) + 1;
-        p->prize = 15 / p->luck * (hlpd_rand() % 150) + 500;
-    }
-    break;
     case Rogue: {
         p->length = 1;
         p->luck = (hlpd_rand() % MAXLUCK) + 1;
@@ -3247,7 +3180,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
                 __func__);
         exit(EXIT_FAILURE);
     }
-    if (gamemode != Story && gamemode != Rogue) {
+    if (gamemode != Rogue) {
         log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
                 gamemode);
         exit(EXIT_FAILURE);
@@ -3288,12 +3221,13 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
  * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
  * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
  * @param picked_skill The skillType to assign to turnOP_args->picked_skill.
+ * @param rb_notifications The RingaBuf to assign to turnOP_args->rb_notifications.
  */
 turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
                               Room *room, loadInfo *load_info, Enemy *enemy,
                               Boss *boss, FILE *save_file, WINDOW *notify_win,
                               Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
-                              skillType picked_skill)
+                              skillType picked_skill, RingaBuf* rb_notifications)
 {
     log_tag("debug_log.txt", "[TURNOP]",
             "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
@@ -3315,24 +3249,81 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
     res->t_kls = t_kls;
     res->foe_op = foe_op;
     res->picked_skill = picked_skill;
+    res->rb_notifications = rb_notifications;
 
     return res;
 }
 
 /**
- * Takes a WINDOW pointer and prints the passed text to it ith wprintw(), before sleeping for the specified amount of milliseconds.
+ * Takes a RingaBuf pointer and queues the passed text to it.
  * @see handleRoom_Enemies()
  * @see handleRoom_Boss()
  * @param w The WINDOW pointer to print to.
  * @param text The contents of the notification.
- * @param time The display time in milliseconds
+ * @param time The display time in milliseconds (unused, for now)
+ * @param color The index of color to use for the notification drawing.
+ * @param rb_notifications The Ringabuf to push the notification to.
  */
-void display_notification(WINDOW *w, char *text, int time)
+void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifications)
 {
+    Notification notif = {0};
+
+    sprintf(notif.buf, "%s", text);
+    notif.color = color;
+
+#ifndef _WIN32
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%li} bytes to ringbuf", __func__, sizeof(notif));
+#else
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%lli} bytes to ringbuf", __func__, sizeof(notif));
+#endif
+    bool rb_res = rb_push(*rb_notifications, notif);
+
+
+    /* Log ring status buffer, from oldest to newest notification.
+    Notification* newest_notif = NULL;
+    Notification* oldest_notif = NULL;
+
+    if (!rb_notifications->is_full) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Logging up from 0 to head: { %" PRIu32 " }", __func__, rb_notifications->head);
+        for (int i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
+            Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification: [%s] Color: [%" PRId8 "]", __func__, read_notif->buf, read_notif->color);
+        }
+        oldest_notif = (Notification*) &(rb_notifications->data[0]);
+        newest_notif = (Notification*) &(rb_notifications->data[rb_notifications->head - (sizeof(Notification))]);
+    } else {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Logging up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (rb_notifications->head / sizeof(Notification)) +1, rb_notifications->capacity / sizeof(Notification));
+        for (size_t i = (rb_notifications->head / sizeof(Notification)) +1; i < (rb_notifications->capacity / sizeof(Notification)); i++) {
+            Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    [%li] H+1->sz Notification: [%s] Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+        }
+        for (size_t i = 0; i < (rb_notifications->head / sizeof(Notification)); i++) {
+            Notification* read_notif = (Notification*) &(rb_notifications->data[i * sizeof(Notification)]);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    [%li] 0->H Notification: [%s] Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+        }
+
+        size_t newest_offset = (rb_notifications->head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (rb_notifications->head - sizeof(Notification)));
+        newest_notif = (Notification*) &(rb_notifications->data[newest_offset]);
+        oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
+
+    }
+
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Newest Notification: [%s] Color: [%" PRId8 "]", __func__, newest_notif->buf, newest_notif->color);
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Oldest Notification: [%s] Color: [%" PRId8 "]", __func__, oldest_notif->buf, oldest_notif->color);
+    */
+
+#ifndef _WIN32
+    if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Capacity: {%li}", __func__, rb_get_head(*rb_notifications), rb_get_tail(*rb_notifications), rb_get_capacity(*rb_notifications));
+#else
+    if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Size: {%lli}", __func__, rb_get_head(*rb_notifications), rb_get_tail(*rb_notifications), rb_get_capacity(*rb_notifications));
+#endif
+
+    /*
     wprintw(w, "\n  %s", text);
     wrefresh(w);
     //refresh();
     napms(time);
+    */
 }
 
 /**
@@ -3508,7 +3499,7 @@ void printEquipStats(Equip *e)
 
 /**
  * Takes a Fighter pointer value and an integer indicating if the drop was from a beast enemy, and adds a random Equip to the fighter's equipsBag.
- * Prints notifications to the passed WINDOW pointer.
+ * Prints notifications to the passed RingaBuf pointer.
  * The Equip dropped is initalised here, including stat variations for quality and level boosts (stat increase from base level by adding player level over EQUIPLVLBOOSTRATIO.
  * The values of earliestBagSlot and equipsBagOccupiedSlots are managed.
  * If equipsBag is full (EQUIPSBAGSIZE), user has to choose one Equip not currently equipped to be deleted and replaced by the new one.
@@ -3523,10 +3514,10 @@ void printEquipStats(Equip *e)
  * @see stringFromEquips()
  * @param player The Fighter pointer at hand.
  * @param beast The integer for drops coming from a beast kill if true.
- * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
-void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
+void dropEquip(Fighter *player, int beast, Koliseo *kls, RingaBuf* rb_notifications)
 {
 
     assert(player->equipsBagOccupiedSlots >= 0);
@@ -3662,11 +3653,9 @@ void dropEquip(Fighter *player, int beast, WINDOW *notify_win, Koliseo *kls)
 
     char msg[500];
 
-    wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
     sprintf(msg, "You found %s %s!", stringFromQuality(q),
             stringFromEquips(drop));
-    display_notification(notify_win, msg, 800);
-    wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+    enqueue_notification(msg, 800, S4C_BRIGHT_YELLOW, rb_notifications);
     log_tag("debug_log.txt", "[DEBUG-DROPS]", "Found Equip:    %s.",
             stringFromEquips(drop));
 
@@ -4102,14 +4091,14 @@ void printActivePerks(Fighter *f)
 }
 
 /**
- * Takes a WINDOW pointer to print notifications to, a Fighter pointer value and applies the effect pertaining to its status value.
+ * Takes a RingaBuf pointer to queue notifications to, a Fighter pointer value and applies the effect pertaining to its status value.
  * @see Fighter
  * @see fighterStatus
  * @see printStatusText()
- * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param f The Fighter pointer at hand.
+ * @param rb_notifications The RingaBuf pointer used for notifications.
  */
-void applyStatus(WINDOW *notify_win, Fighter *f)
+void applyStatus(Fighter *f, RingaBuf* rb_notifications)
 {
 
     switch (f->status) {
@@ -4131,15 +4120,15 @@ void applyStatus(WINDOW *notify_win, Fighter *f)
         } else {
             f->hp = 1;	//Will this be a problem?
         }
-        printStatusText(notify_win, Poison, f->name);
+        printStatusText(Poison, f->name, S4C_RED, rb_notifications);
     }
     break;
     case Burned: {
-        printStatusText(notify_win, Burned, f->name);
+        printStatusText(Burned, f->name, S4C_RED, rb_notifications);
     }
     break;
     case Frozen: {
-        printStatusText(notify_win, Frozen, f->name);
+        printStatusText(Frozen, f->name, S4C_RED, rb_notifications);
     }
     break;
     case Weak:
@@ -4152,20 +4141,17 @@ void applyStatus(WINDOW *notify_win, Fighter *f)
 }
 
 /**
- * Takes a WINDOW pointer to print notifications to, a Enemy pointer value and applies the effect pertaining to its status value.
+ * Takes a RingaBuf pointer to queue notifications to, a Enemy pointer value and applies the effect pertaining to its status value.
  * @see Enemy
  * @see fighterStatus
  * @see printStatusText()
  * @see stringFromEClass()
- * @param notify_win The window pointer to call display_notification() on.
  * @param e The Enemy pointer at hand.
- * @see display_notification()
+ * @param rb_notifications The RingaBuf used for notifications.
+ * @see enqueue_notification()
  */
-void applyEStatus(WINDOW *notify_win, Enemy *e)
+void applyEStatus(Enemy *e, RingaBuf* rb_notifications)
 {
-
-    wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
-
     switch (e->status) {
     case Normal: {
         break;
@@ -4177,7 +4163,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e)
         } else {
             e->hp = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Poison, stringFromEClass(e->class));
+        printStatusText(Poison, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
     break;
     case Burned: {
@@ -4192,7 +4178,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e)
         } else {
             e->atk = 1;
         }
-        printStatusText(notify_win, Burned, stringFromEClass(e->class));
+        printStatusText(Burned, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
     break;
     case Frozen: {
@@ -4201,7 +4187,7 @@ void applyEStatus(WINDOW *notify_win, Enemy *e)
         } else {
             e->vel = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Frozen, stringFromEClass(e->class));
+        printStatusText(Frozen, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
 
     break;
@@ -4212,24 +4198,19 @@ void applyEStatus(WINDOW *notify_win, Enemy *e)
 
         break;
     }
-
-    wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
- * Takes a WINDOW pointer to print notifications to, a Boss pointer value and applies the effect pertaining to its status value.
+ * Takes a RingaBuf pointer to queue notifications to, a Boss pointer value and applies the effect pertaining to its status value.
  * @see Boss
  * @see fighterStatus
  * @see printStatusText()
  * @see stringFromBossClass()
- * @param notify_win The window pointer to call disaply_notification() on.
  * @param b The Boss pointer at hand.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
-void applyBStatus(WINDOW *notify_win, Boss *b)
+void applyBStatus(Boss *b, RingaBuf* rb_notifications)
 {
-
-    wattron(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
-
     switch (b->status) {
     case Normal: {
         break;
@@ -4241,7 +4222,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
         } else {
             b->hp = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Poison, stringFromBossClass(b->class));
+        printStatusText(Poison, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
     break;
     case Burned: {
@@ -4256,7 +4237,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
         } else {
             b->atk = 1;
         }
-        printStatusText(notify_win, Burned, stringFromBossClass(b->class));
+        printStatusText(Burned, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
     break;
     case Frozen: {
@@ -4265,7 +4246,7 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
         } else {
             b->vel = 1;	//Will this be a problem for kills in the enemy loop?
         }
-        printStatusText(notify_win, Frozen, stringFromBossClass(b->class));
+        printStatusText(Frozen, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
     }
 
     break;
@@ -4276,18 +4257,17 @@ void applyBStatus(WINDOW *notify_win, Boss *b)
 
         break;
     }
-
-    wattroff(notify_win, COLOR_PAIR(S4C_BRIGHT_GREEN));
 }
 
 /**
- * Takes a WINDOW pointer to print notifications to, a fighterStatus value and a string of who's the entity to print the respective status message.
+ * Takes a RingaBuf pointer to queue notifications to, a fighterStatus value and a string of who's the entity to print the respective status message.
  * @see fighterStatus
- * @param notify_win The pointer to the window to use display_notification() on.
  * @param status The fighterStatus at hand.
  * @param subject A string with name of entity owning the fighterStatus.
+ * @param color The color to use for the notification.
+ * @param rb_notifications The RingaBuf used for notifications.
  */
-void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
+void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications)
 {
     char msg[500];
     switch (status) {
@@ -4299,19 +4279,19 @@ void printStatusText(WINDOW *notify_win, fighterStatus status, char *subject)
     case Burned: {
         sprintf(msg, "%s is hurt by its %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500);
+        enqueue_notification(msg, 500, color, rb_notifications);
     }
     break;
     case Weak:
     case Strong: {
         sprintf(msg, "%s is feeling %s.", subject,
                 stringFromStatus(status));
-        display_notification(notify_win, msg, 500);
+        enqueue_notification(msg, 500, color, rb_notifications);
     }
     break;
     case Frozen: {
         sprintf(msg, "%s is frozen cold.", subject);
-        display_notification(notify_win, msg, 500);
+        enqueue_notification(msg, 500, color, rb_notifications);
     }
     break;
     }
@@ -4386,10 +4366,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         Wincon *w =
             (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
-        if (GAMEMODE == Story) {
-            //Path length must be already initialised before getting here.
-            initWincon(w, path, FULL_PATH);
-        } else if (GAMEMODE == Rogue) {
+        if (GAMEMODE == Rogue) {
             //Path length must be already initialised before getting here.
             initWincon(w, path, ALL_ARTIFACTS);
         } else {
@@ -4420,10 +4397,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         Wincon *w =
             (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
-        if (GAMEMODE == Story) {
-            //Path length must be already initialised before getting here.
-            initWincon(w, path, FULL_PATH);
-        } else if (GAMEMODE == Rogue) {
+        if (GAMEMODE == Rogue) {
             //Path length must be already initialised before getting here.
             initWincon(w, path, ALL_ARTIFACTS);
         } else {
@@ -4450,10 +4424,7 @@ void getParams(int argc, char **argv, Fighter *player, Path *path, int optTot,
         Wincon *w =
             (Wincon *) KLS_PUSH_TYPED(kls, Wincon, HR_Wincon, "Wincon",
                                       "Wincon");
-        if (GAMEMODE == Story) {
-            //Path length must be already initialised before getting here.
-            initWincon(w, path, FULL_PATH);
-        } else if (GAMEMODE == Rogue) {
+        if (GAMEMODE == Rogue) {
             //TODO: what do we set as path length? Number of floors?
             //Path length must be already initialised before getting here.
             initWincon(w, path, ALL_ARTIFACTS);
@@ -4514,7 +4485,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
                 __func__);
         exit(EXIT_FAILURE);
     }
-    if (gamemode != Story && gamemode != Rogue) {
+    if (gamemode != Rogue) {
         log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
                 gamemode);
         exit(EXIT_FAILURE);
@@ -5573,4 +5544,408 @@ bool check_seed(char buffer[PATH_SEED_BUFSIZE])
         }
     }
     return true;
+}
+
+void hlpd_reset_logfile(void)
+{
+#ifndef HELAPORDO_DEBUG_LOG
+#else
+    FILE *debug_file = NULL;
+    FILE *OPS_debug_file = NULL;
+    // Open log file if log flag is set and reset it
+    if (G_LOG_ON == 1) {
+        char path_to_debug_file[600];
+        char path_to_OPS_debug_file[600];
+        char static_path[500];
+        // Set static_path value to the correct static dir path
+        resolve_staticPath(static_path);
+
+        //Truncate "debug_log.txt"
+        sprintf(path_to_debug_file, "%s/%s", static_path, "debug_log.txt");
+        debug_file = fopen(path_to_debug_file, "w");
+        if (!debug_file) {
+            endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+            fprintf(stderr,
+                    "[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n",
+                    static_path);
+            exit(EXIT_FAILURE);
+        }
+        fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
+        if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
+            || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR)
+            || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR == EXPECTED_NCURSES_VERSION_MINOR && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH)) {
+            fprintf(debug_file,
+                    "[WARN]    ncurses version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                    NCURSES_VERSION, NCURSES_VERSION_MAJOR,
+                    NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH,
+                    EXPECTED_NCURSES_VERSION_MAJOR,
+                    EXPECTED_NCURSES_VERSION_MINOR,
+                    EXPECTED_NCURSES_VERSION_PATCH);
+        }
+        fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
+        print_kls_2file(debug_file, default_kls);
+        fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
+        print_kls_2file(debug_file, temporary_kls);
+        fprintf(debug_file,
+                "[DEBUG]    --Closing header for new game.--  \n");
+        fclose(debug_file);
+
+        //Lay debug info
+        log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                G_DEBUG_ON);
+        log_tag("debug_log.txt", "[DEBUG]", "G_LOG_ON == (%i)", G_LOG_ON);
+        log_tag("debug_log.txt", "[DEBUG]", "small DEBUG FLAG ASSERTED");
+        log_tag("debug_log.txt", "[DEBUG]",
+                "[Current position in default_kls] [pos: %li]\n",
+                kls_get_pos(default_kls));
+
+        //Truncate OPS_LOGFILE
+        sprintf(path_to_OPS_debug_file, "%s/%s", static_path, OPS_LOGFILE);
+        OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
+        if (!OPS_debug_file) {
+            endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+            fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s/%s).\n",
+                    static_path, OPS_LOGFILE);
+            exit(EXIT_FAILURE);
+        }
+        fprintf(OPS_debug_file, "[OPLOG]    --New game--  \n");
+        fclose(OPS_debug_file);
+        log_tag("debug_log.txt", "[DEBUG]", "Truncated [%s]", OPS_LOGFILE);
+    }
+#endif
+}
+
+void hlpd_use_forced_flags(const char* whoami)
+{
+    if (G_DEBUG_ENEMYTYPE_ON == 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ENEMYTYPE_ON == (%i)",
+                G_DEBUG_ENEMYTYPE_ON);
+        log_tag("debug_log.txt", "[DEBUG]", "ENEMY DEBUG FLAG ASSERTED");
+        if ((G_DEBUG_ON > 0)) {
+            G_DEBUG_ON += 1;
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                    G_DEBUG_ON);
+            log_tag("debug_log.txt", "[DEBUG]", "Forcing enemy type: (%s)",
+                    G_DEBUG_ENEMYTYPE_ARG);
+            int setenemy_debug = 0;
+            for (int ec = 0; ec < ENEMYCLASSESMAX && (setenemy_debug == 0);
+                 ec++) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Checking optarg for -E: (%s)",
+                        stringFromEClass(ec));
+                if ((strcmp(G_DEBUG_ENEMYTYPE_ARG, stringFromEClass(ec)) ==
+                     0)) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Match on optarg (%s), setting G_DEBUG_ENEMYTYPE to (%i).",
+                            stringFromEClass(ec), ec);
+                    G_DEBUG_ENEMYTYPE = ec;
+                    setenemy_debug = 1;
+                }
+            }
+            if (setenemy_debug == 0) {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Invalid optarg for -E flag: {%s}.\n",
+                        G_DEBUG_ENEMYTYPE_ARG);
+                fprintf(stderr,
+                        "[ERROR]    Incorrect -E \"enemyType\" arg: {%s}.\n",
+                        G_DEBUG_ENEMYTYPE_ARG);
+                fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
+                        whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            };
+        }
+    }
+    if (G_DEBUG_ROOMTYPE_ON == 1) {
+        log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ROOMTYPE_ON == (%i)",
+                G_DEBUG_ROOMTYPE_ON);
+        log_tag("debug_log.txt", "[DEBUG]", "ROOM DEBUG FLAG ASSERTED");
+        if ((G_DEBUG_ON > 0)) {
+            G_DEBUG_ON += 1;
+            log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ON == (%i)",
+                    G_DEBUG_ON);
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Forcing room type: optarg was (%s)",
+                    G_DEBUG_ROOMTYPE_ARG);
+            int setroom_debug = 0;
+            for (int rc = 0;
+                 (rc < ROOM_CLASS_MAX + 1) && (setroom_debug == 0); rc++) {
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Checking optarg (%s) for -R: (%s)", G_DEBUG_ROOMTYPE_ARG,
+                        stringFromRoom(rc));
+                if ((strcmp(G_DEBUG_ROOMTYPE_ARG, stringFromRoom(rc)) == 0)) {
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Match on optarg (%s), setting G_DEBUG_ROOMTYPE to (%i).",
+                            stringFromRoom(rc), rc);
+                    G_DEBUG_ROOMTYPE = rc;
+                    setroom_debug = 1;
+                }
+            }
+            if (setroom_debug == 0) {
+                log_tag("debug_log.txt", "[ERROR]",
+                        "Invalid optarg for -R flag: {%s}.",
+                        G_DEBUG_ROOMTYPE_ARG);
+                fprintf(stderr,
+                        "[ERROR]    Incorrect -R \"roomType\" arg: {%s}.\n",
+                        G_DEBUG_ROOMTYPE_ARG);
+                fprintf(stderr, "[ERROR]    Run \"%s -h\" for help.\n",
+                        whoami);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            };
+        }
+
+    }
+
+}
+
+/**
+ * Runs some shell commands to see all color pairs, then returns exitcode
+ * Prints the encoded value of the passed char to the window at the coordinates.
+ */
+int display_colorpairs(void)
+{
+    //Done checking versions, we check colors
+    int status =
+        system
+        (" clear; for C in {0..255}; do {     tput setab $C;     echo -n \"$C \"; } ; done ; tput sgr0 ; echo");
+    int exitcode = status / 256;
+    if (exitcode != 0) {
+        log_tag("debug_log.txt", "[DEBUG]", "\"Diplay colors\" failed.\n");
+    }
+    return (exitcode);
+}
+
+/**
+ * Parse options from CLI arguments.
+ * @param argc argc from main
+ * @param argv argv from main
+ * @param whoami Name used by the program
+ * @return The value of "optind" at the end of the routine.
+ */
+int hlpd_getopt(size_t argc, char** argv, const char* whoami)
+{
+    int option;
+    while ((option = getopt(argc, argv, "r:E:S:tTGRXQLvdhaVDbjw")) != -1) {
+        switch (option) {
+        case 'j': {
+            G_USE_VIM_DIRECTIONAL_KEYS = 1;
+        }
+        break;
+        case 'w': {
+            G_USE_WASD_DIRECTIONAL_KEYS = 1;
+        }
+        break;
+        case 'b': {
+            G_USE_DEFAULT_BACKGROUND = 1;
+        }
+        break;
+        case 'D': {
+            G_USE_CURRENTDIR = 1;
+        }
+        break;
+        case 'S': {
+            G_SEEDED_RUN_ON = 1;
+            G_SEEDED_RUN_ARG = optarg;
+        }
+        break;
+        case 'd': {
+#ifndef HELAPORDO_DEBUG_ACCESS
+#else
+            G_DEBUG_ON = 1;
+            G_LOG_ON = 1;
+#endif
+        }
+        break;
+        case 'r': {
+            G_DEBUG_ROOMTYPE_ON = 1;
+            G_DEBUG_ROOMTYPE_ARG = optarg;
+        }
+        break;
+        case 'E': {
+            G_DEBUG_ENEMYTYPE_ON = 1;
+            G_DEBUG_ENEMYTYPE_ARG = optarg;
+        }
+        break;
+        case 'L': {
+            G_LOG_ON = 1;
+        }
+        break;
+        case 'G': {
+            G_GODMODE_ON = 1;
+        }
+        break;
+        case 'Q': {
+            G_FASTQUIT_ON = 1;
+        }
+        break;
+        case 'X': {
+            G_EXPERIMENTAL_ON = 1;
+        }
+        break;
+        case 'a': {
+            GS_AUTOSAVE_ON = 0;
+        }
+        break;
+        case 'R': {
+            GAMEMODE = Rogue;
+        }
+        break;
+        case 'h': {
+            usage(whoami);
+            exit(EXIT_SUCCESS);
+        }
+        break;
+        case 'T': {
+            G_DOTUTORIAL_ON = 1;
+        }
+        break;
+        case 't': {
+            //Test all colors
+            printFormattedVersion(whoami);
+            printf("Using:\n");
+            printf("  \'animate\' :\n    s4c/animate.h    ");
+            S4C_ECHOVERSION();
+            printf("[DEBUG]    Testing terminal color capabilities.\n");
+            napms(200);
+            display_colorpairs();
+            napms(200);
+            WINDOW *test_win;
+            initscr();
+            start_color();
+            for (int i = 0; i < PALETTE_S4C_H_TOTCOLORS; i++) {
+                init_s4c_color_pair(&palette[i], 9 + i);
+            }
+            clear();
+            refresh();
+            cbreak();
+            noecho();
+            test_win = newwin(9, 7, 1, 1);
+            keypad(test_win, TRUE);
+            box(test_win, 0, 0);
+
+            refresh();
+
+            test_game_color_pairs(test_win, 5);
+
+            napms(200);
+            delwin(test_win);
+            endwin();
+            exit(EXIT_SUCCESS);
+
+        }
+        break;
+        case 'V': {
+            printf("helapordo build: %s\n", helapordo_build_string);
+            hlpd_dbg_features();
+            printf("  using: s4c-animate v%s\n", S4C_ANIMATE_VERSION);
+            s4c_dbg_features();
+            printf("  using: koliseo v%s\n", string_koliseo_version());
+            kls_dbg_features();
+            printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
+            printf("  using: ringabuf v%s\n", RINGABUF_API_VERSION_STRING);
+            printf("  using: ncurses v%s\n", NCURSES_VERSION);
+#ifdef ANVIL__helapordo__
+#ifndef INVIL__helapordo__HEADER__
+            printf("  Built with: amboso v%s\n",
+                   ANVIL__API_LEVEL__STRING);
+#else
+            printf("  Built with: invil v%s\n",
+                   INVIL__VERSION__STRING);
+            printf("Last commit: %s", get_INVIL__COMMIT__DESC__());
+#endif // INVIL__helapordo__HEADER__
+            printf("Version Info: %.8s\n",
+                   get_ANVIL__VERSION__DESC__());
+            const char* anvil_date = get_ANVIL__VERSION__DATE__();
+            char* anvil_date_end;
+#ifndef _WIN32
+            time_t anvil_build_time = strtol(anvil_date, &anvil_date_end, 10);
+#else
+            time_t anvil_build_time = strtoll(anvil_date, &anvil_date_end, 10);
+#endif //_WIN32
+
+            if (anvil_date_end == anvil_date) {
+                //TODO: error
+            } else {
+                char build_time_buff[20] = {0};
+                struct tm* build_time_tm = localtime(&anvil_build_time);
+
+                if (build_time_tm == NULL) {
+                    //TODO: error
+                } else {
+                    strftime(build_time_buff, 20, "%Y-%m-%d %H:%M:%S", build_time_tm);
+                    printf("\nDate: %s\n", build_time_buff);
+                }
+            }
+            const char* headergen_date = get_ANVIL__HEADER__GENTIME__();
+            char* headergen_date_end;
+#ifndef _WIN32
+            time_t headergen_time = strtol(headergen_date, &headergen_date_end, 10);
+#else
+            time_t headergen_time = strtoll(headergen_date, &headergen_date_end, 10);
+#endif //_WIN32
+
+            if (headergen_date_end == headergen_date) {
+                //TODO: error
+            } else {
+                char headergen_time_buff[20] = {0};
+                struct tm* headergen_time_tm = localtime(&headergen_time);
+
+                if (headergen_time_tm == NULL) {
+                    //TODO: error
+                } else {
+                    strftime(headergen_time_buff, 20, "%Y-%m-%d %H:%M:%S", headergen_time_tm);
+                    printf("Anvil Gen Date: %s\n", headergen_time_buff);
+                }
+            }
+#else
+            printf("  Built without anvil\n");
+#endif // ANVIL__helapordo__
+            exit(EXIT_SUCCESS);
+        }
+        break;
+        case 'v': {
+            printVersion();
+            /*
+               printf("Using:\n");
+               printf("  \'animate\' :\n    s4c/animate.h    ");
+               S4C_ECHOVERSION();
+               printf("\n  \'anvil\' :\n");
+               int status = system("echo \"    $( anvil -vv 2>/dev/null ) \"");
+               int exitcode = status / 256;
+               if (exitcode != 0) {
+               printf("\033[1;31m[DEBUG]\e[0m    \"anvil -vv\" failed.\n\n    Maybe amboso is not installed globally?\n");
+               exit(exitcode);
+               }
+               exit(exitcode);
+             */
+#if 0
+#ifdef HELAPORDO_DEBUG_ACCESS
+            printf("\nSeed: [%i]\n", seed);
+#endif
+#endif
+            exit(EXIT_SUCCESS);
+        }
+        break;
+        case '?': {
+            fprintf(stderr,
+                    "Invalid option: %c\n Check your arguments.\n",
+                    option);
+            usage(whoami);
+            // Handle invalid options
+            exit(EXIT_FAILURE);
+        }
+        break;
+        default: {
+            // Should never get here
+            fprintf(stderr, "Invalid option: %c\n, bad usage.\n",
+                    option);
+            exit(EXIT_FAILURE);
+        }
+        break;
+        }
+    }
+    return optind; // Used to determin total number of options
 }

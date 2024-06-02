@@ -23,29 +23,29 @@
 
 #ifdef HELAPORDO_CURSES_BUILD
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
-                      WINDOW * notify_win, Koliseo * kls);
+                      Koliseo * kls, RingaBuf* rb_notifications);
 int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurnOption_OP foe_op,
-                      WINDOW * notify_win, Koliseo * kls);
+                      Koliseo * kls, RingaBuf* rb_notifications);
 
-int fight(Fighter * player, Enemy * e, WINDOW * notify_win, Koliseo * kls);
+int fight(Fighter * player, Enemy * e, Koliseo * kls, RingaBuf* rb_notifications);
 
-int enemy_attack(Enemy * e, Fighter * target, WINDOW * notify_win,
-                 Koliseo * kls);
+int enemy_attack(Enemy * e, Fighter * target,
+                 Koliseo * kls, RingaBuf* rb_notifications);
 
 int defer_fight_boss(Fighter * player, Boss * b, Path * p,
-                     foeTurnOption_OP foe_op, WINDOW * notify_win,
-                     Koliseo * kls);
+                     foeTurnOption_OP foe_op,
+                     Koliseo * kls, RingaBuf* rb_notifications);
 
 int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, foeTurnOption_OP foe_op,
-                     WINDOW *notify_win, Koliseo *kls);
+                     Koliseo *kls, RingaBuf* rb_notifications);
 
-int boss_fight(Fighter * player, Boss * b, Path * p, WINDOW * notify_win,
-               Koliseo * kls);
+int boss_fight(Fighter * player, Boss * b, Path * p,
+               Koliseo * kls, RingaBuf* rb_notifications);
 
-int boss_attack(Boss * b, Fighter * target, Path * p, WINDOW * notify_win,
-                Koliseo * kls);
-fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, WINDOW * notify_win, Koliseo * kls);
-fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, WINDOW * notify_win, Koliseo * kls);
+int boss_attack(Boss * b, Fighter * target, Path * p,
+                Koliseo * kls, RingaBuf* rb_notifications);
+fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, Koliseo * kls);
+fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, Koliseo * kls);
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"

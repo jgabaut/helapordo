@@ -608,7 +608,10 @@ bool readSerTurncounter(const char* filename, size_t offset, SerTurncounter* dat
         // Close the file
         fclose(file);
     } else {
-        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+#ifdef HELAPORDO_CURSES_BUILD
+        endwin();
+#endif // HELAPORDO_CURSES_BUILD
+        fprintf(stderr, "%s(): Error opening file {%s} for reading\n", __func__, filename);
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
     }
@@ -2319,7 +2322,6 @@ bool deser_Path(SerPath* ser, Path* deser)
     deser->length = ser->length;
     deser->luck = ser->luck;
     deser->prize = ser->prize;
-    deser->loreCounter = ser->loreCounter;
 
     ser->seed[SERPATH_SEED_BUFSIZE-1] = '\0';
     memcpy(deser->seed, ser->seed, PATH_SEED_BUFSIZE-1);
@@ -2362,7 +2364,6 @@ bool ser_Path(Path* deser, SerPath* ser)
     ser->length = deser->length;
     ser->luck = deser->luck;
     ser->prize = deser->prize;
-    ser->loreCounter = deser->loreCounter;
     deser->seed[PATH_SEED_BUFSIZE-1] = '\0';
     memcpy(ser->seed, deser->seed, SERPATH_SEED_BUFSIZE-1);
     ser->seed[SERPATH_SEED_BUFSIZE-1] = '\0';
@@ -2592,9 +2593,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
         fclose(file);
     } else {
         //TODO: Print notice for error. It shouldn't disrupt the screen for saveslot name setting.
-        if (G_EXPERIMENTAL_ON == 0) {
-            fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
-        }
+        /*
+        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        */
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
     }
@@ -2999,11 +3000,55 @@ bool read_savedir(const char* dirpath)
         printf("Gamemode: {%s}\n", stringFromGamemode(s_gmst.gamemode));
         printf("Current room index: {%i}\n", s_gmst.current_room_index);
         printf("Current room type: {%s}\n", stringFromRoom(s_gmst.current_room.class));
-        printf("Player info: {\n    Name: {%s}\n    Class: {%s}\n}\n", s_gmst.player.name, stringFromClass(s_gmst.player.class));
+        printf("Player info: {\n");
+        printf("  " SerFighter_Fmt "\n", SerFighter_Arg(s_gmst.player));
+        printf("}\n");
 
-        for (size_t i = 0; i < PERKSMAX; i++) {
-            printf(SerPerk_Fmt "\n", SerPerk_Arg(s_gmst.player.perks[i]));
+        printf("Player stats: {\n");
+        printf("  " SerCountstats_Fmt "\n", SerCountstats_Arg(s_gmst.player.stats));
+        printf("}\n");
+
+        printf("Player perks: {\n");
+        for (int i = 0; i < PERKSMAX+1; i++) {
+            printf("    [#%i] " SerPerk_Fmt "\n", i, SerPerk_Arg(s_gmst.player.perks[i]));
         }
+        printf("}\n");
+
+        printf("Player equipsBag: {\n");
+        for (int i =0; i < EQUIPSBAGSIZE; i++) {
+            SerEquip se = s_gmst.player.equipsBag[i];
+            printf("    [#%i] " SerEquip_Fmt "\n", i, SerEquip_Arg(se));
+            for (int j = 0; j < se.perksCount; j++) {
+                printf("        [#%i] " SerPerk_Fmt "\n", j, SerPerk_Arg(se.perks[j]));
+            }
+        }
+        printf("}\n");
+        printf("Player consumablesBag: {\n");
+        for (int i =0; i < CONSUMABLESMAX+1; i++) {
+            SerConsumable sc = s_gmst.player.consumablesBag[i];
+            printf("    [#%i] " SerConsumable_Fmt "\n", i, SerConsumable_Arg(sc));
+        }
+        printf("}\n");
+        printf("Player artifactsBag: {\n");
+        for (int i =0; i < ARTIFACTSMAX+1; i++) {
+            SerArtifact sa = s_gmst.player.artifactsBag[i];
+            printf("    [#%i] " SerArtifact_Fmt "\n", i, SerArtifact_Arg(sa));
+        }
+        printf("}\n");
+
+        printf("Player Speciaslots: {\n");
+        for (int i =0; i < SPECIALSMAX+1; i++) {
+            SerSpecialslot sp = s_gmst.player.specials[i];
+            printf("    [#%i] " SerSpecialslot_Fmt "\n", i, SerSpecialslot_Arg(sp));
+        }
+        printf("}\n");
+
+        printf("Player Turncounters: {\n");
+        for (int i =0; i < COUNTERSMAX+1; i++) {
+            SerTurncounter st = s_gmst.player.counters[i];
+            printf("    [#%i] " SerTurncounter_Fmt "\n", i, SerTurncounter_Arg(st));
+        }
+        printf("}\n");
     }
     return true;
 }
@@ -3250,9 +3295,9 @@ bool readSerGameOptions(const char* filename, size_t offset, SerGameOptions* dat
         fclose(file);
     } else {
         //TODO: Print notice for error. It shouldn't disrupt the screen for saveslot name setting.
-        if (G_EXPERIMENTAL_ON == 0) {
-            fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
-        }
+        /*
+        fprintf(stderr, "%s(): Error opening file {%s} for reading", __func__, filename);
+        */
         log_tag("debug_log.txt", "[ERROR]", "%s():    Error opening file {%s} for reading", __func__, filename);
         return false;
     }
@@ -3333,11 +3378,11 @@ bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t
             log_tag("debug_log.txt", "[BINSAVE]", "%s(): success for deser_GameOptions()", __func__);
         }
         if (game_options->use_default_background) {
-#ifndef reset_color_pairs
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build does not support reset_color_pairs().", __func__);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
             game_options->use_default_background = false;
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
         }
 
         return true;
@@ -3389,11 +3434,11 @@ bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t
         }
 
         if (game_options->use_default_background) {
-#ifndef reset_color_pairs
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build does not support reset_color_pairs().", __func__);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
             game_options->use_default_background = false;
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
         }
 
         // Apply read settings
@@ -3436,11 +3481,11 @@ bool prep_GameOptions(GameOptions* game_options, const char* static_path, size_t
         }
 
         if (game_options->use_default_background) {
-#ifndef reset_color_pairs
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build of ncurses lacks support for reset_color_pairs().", __func__);
+#ifndef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Forcing use_default_background to false since this build does not support reset_color_pairs().", __func__);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Using ncurses v%i.%i.%i", __func__, NCURSES_VERSION_MAJOR, NCURSES_VERSION_MINOR, NCURSES_VERSION_PATCH);
             game_options->use_default_background = false;
-#endif // reset_color_pairs
+#endif // HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
         }
 
         HLPD_DirectionalKeys_Schema saved_directional_keys_schema = game_options->directional_keys_schema;

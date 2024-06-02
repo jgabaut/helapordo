@@ -15,6 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#define RINGABUF_IMPLEMENTATION
 #include "game_core.h"
 
 const char* helapordo_title_string = "     __  __  ____  __     ______  _____   ______  ____    _____    ______\n\
@@ -82,8 +83,6 @@ HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_SCHEMAS_
 };
 
 char *gamemodenamestrings[GAMEMODE_MAX + 1] = {
-    "Standard",
-    "Story",
     "Rogue"
 };
 
@@ -120,6 +119,8 @@ char *hlp_regiontype_strings[HLP_MAX_INDEX + 1] = {
     "HLP_Gamescreen",
     "HLP_GameOptions",
     "HLP_BSP_Room",
+    "HLP_Notification",
+    "HLP_RingaBuf",
     "HLP_loadInfo",
 };
 

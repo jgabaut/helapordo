@@ -49,16 +49,15 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     Enemy *dummy_enemy = NULL;
     Boss *dummy_boss = NULL;
     FILE *dummy_savefile = NULL;
-    FILE *save_file = NULL;
-    FILE *autosave_file = NULL;
     WINDOW *dummy_notify_win = NULL;
+    RingaBuf *dummy_rb = NULL;
     foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
     skillType dummy_skill_pick = -1;
     //Declare turnOP_args
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy,
                          dummy_boss, dummy_savefile, dummy_notify_win, t_kls,
-                         dummy_foe_op, dummy_skill_pick);
+                         dummy_foe_op, dummy_skill_pick, dummy_rb);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -81,53 +80,12 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
     log_tag("debug_log.txt", "[ROOM]", "New HOME room, index %i", room->index);
 
     if (gamestate->options->do_autosave) {
-        bool do_autosave = false;
-        if (GAMEMODE == Rogue) {
-            if (G_EXPERIMENTAL_ON == 1) {
-                do_autosave = true;
-            } else {
-                do_autosave = false;
-            }
-        } else {
-            do_autosave = true;
-        }
+        bool do_autosave = true;
         log_tag("debug_log.txt", "[DEBUG]", "Doing autosave.");
 
         if (do_autosave) {
-            if (G_EXPERIMENTAL_ON == 1) {
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
-            } else {
-                // NOT experimental: txtfile
-                log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing autosave file path", __func__);
-
-                char path_to_autosave_file[820];
-                char autosave_static_path[500];
-                char autosave_file_name[300];
-                strcpy(autosave_file_name, p->current_saveslot->save_path);
-
-                // Set static_path value to the correct static dir path
-                resolve_staticPath(autosave_static_path);
-
-                sprintf(path_to_autosave_file, "%s/%s/%s", autosave_static_path,
-                        autosave_file_name, "save.txt");
-
-                autosave_file = fopen(path_to_autosave_file, "w");
-                if (autosave_file == NULL) {
-                    fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                            path_to_autosave_file);
-                    exit(EXIT_FAILURE);
-                } else {
-                    log_tag("debug_log.txt", "[TURNOP]",
-                            "Assigning autosave_file pointer to args->save_file. Path: [%s]",
-                            path_to_autosave_file);
-                    args->save_file = autosave_file;
-                }
-            }
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
             turnOP(turnOP_from_turnOption(SAVE), args, kls, t_kls);
-            if (G_EXPERIMENTAL_ON == 0) {
-                fclose(autosave_file);
-                log_tag("debug_log.txt", "[DEBUG]", "Closed autosave_file pointer.");
-            }
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Done autosave.", __func__);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, p->seed);
@@ -312,49 +270,9 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     picked_explore = 1;
                 }
                 if (choice == SAVE) {
-                    if (G_EXPERIMENTAL_ON == 1) {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
-                    } else {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing save file path", __func__);
-                        char path_to_savefile[820];
-                        char static_path[500];
-                        char savefile_name[300];
-                        sprintf(savefile_name, "%s",
-                                p->current_saveslot->save_path);
-
-                        // Set static_path value to the correct static dir path
-                        resolve_staticPath(static_path);
-                        log_tag("debug_log.txt", "[DEBUG]",
-                                "handleRoom_Home:  savefile_name is [%s].",
-                                savefile_name);
-
-                        sprintf(path_to_savefile, "%s/%s/%s", static_path,
-                                savefile_name, "save.txt");
-
-                        save_file = fopen(path_to_savefile, "w");
-                        if (save_file == NULL) {
-                            endwin();
-                            fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                                    path_to_savefile);
-                            kls_free(default_kls);
-                            kls_free(temporary_kls);
-                            exit(EXIT_FAILURE);
-                        } else {
-                            log_tag("debug_log.txt", "[TURNOP]",
-                                    "Assigning save_file pointer to args->save_file. Path: [%s]",
-                                    path_to_savefile);
-                            args->save_file = save_file;
-                        }
-                    }
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Saving", __func__);
                 }
                 turnOP(turnOP_from_turnOption(choice), args, kls, t_kls);
-                if (choice == SAVE) {
-                    if (G_EXPERIMENTAL_ON == 0) {
-                        fclose(save_file);
-                        log_tag("debug_log.txt", "[DEBUG]",
-                                "Closed save_file pointer.");
-                    }
-                }
             }			//End if Player char was enter
         }
 
@@ -430,6 +348,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
  * @param fighter_sprites The sprites array for all fighter classes.
  * @param kls The Koliseo used for allocations.
  * @param t_kls The Koliseo_Temp used for temp allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  * @see gameloop()
  * @see turnOP()
  * @see enemyClass
@@ -441,7 +360,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                                1][MAXFRAMES][MAXROWS][MAXCOLS],
                        char fighter_sprites[CLASSESMAX +
                                1][MAXFRAMES][MAXROWS][MAXCOLS],
-                       Koliseo *kls, Koliseo_Temp *t_kls)
+                       Koliseo *kls, Koliseo_Temp *t_kls, RingaBuf* rb_notifications)
 {
 
     Boss *dummy_boss = NULL;
@@ -455,7 +374,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, args_enemy,
                          dummy_boss, args_save_file, args_notify_win, t_kls,
-                         dummy_foe_op, dummy_picked_skill);
+                         dummy_foe_op, dummy_picked_skill, rb_notifications);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -566,18 +485,47 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
         long long time_spent;
 #endif
 
+        start_color();
+        clear();
+        refresh();
+        cbreak();
+        noecho();
+        keypad(stdscr, TRUE);
+
+        // Prepare enemy animation window
+        enemy_animation_win = newwin(19, 19, 3, 2);
+
+        // Prepare fighter animation window
+        fighter_animation_win = newwin(19, 19, 3, 58);
+
+        // Prepare notifications window
+        notifications_win = newwin(8, 70, 24, 4);
+        // Set notifications window to be scrolling
+        //scrollok(notifications_win, TRUE);
+        //Update turnOP_args->notify_win pointer
+        args->notify_win = notifications_win;
+        log_tag("debug_log.txt", "[TURNOP]",
+                "Assigned notifications_wins to turnOP_args: args->notify_win");
+
+        box(notifications_win,0,0);
+        wrefresh(notifications_win);
+        refresh();
+
         while (!
                (fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE
                 || choice == QUIT)) {
             if (choice != FIGHT) {
                 /* Initialize curses */
                 //initscr();
+
+                /*
                 start_color();
                 clear();
                 refresh();
                 cbreak();
                 noecho();
                 keypad(stdscr, TRUE);
+                */
 
                 int cursorCheck = curs_set(0);	// We make the cursor invisible or return early with the error
 
@@ -668,6 +616,8 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 wrefresh(my_menu_win);
                 refresh();
 
+                wrefresh(notifications_win);
+                /*
                 // Prepare enemy animation window
                 enemy_animation_win = newwin(19, 19, 3, 2);
 
@@ -685,6 +635,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 wrefresh(notifications_win);
                 refresh();
+                */
             } else {		//End if choice is not FIGHT
                 // Set notifications window to be scrolling
                 log_tag("debug_log.txt", "[DEBUG]", "Doing init_wins().");
@@ -810,7 +761,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 }
                 //Equip drop, guaranteed on killing a beast
                 if (e->beast || ((hlpd_rand() % 15) - (player->luck / 10) <= 0)) {
-                    dropEquip(player, e->beast, notifications_win, kls);
+                    dropEquip(player, e->beast, kls, rb_notifications);
                 }
                 //Get xp and free memory from enemy
 
@@ -866,10 +817,12 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                             enemies);
                 }
 
+                /*
                 int res = system("clear");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "handleRoom_Enemies() system(\"clear\") res was (%i)",
                         res);
+                */
                 continue;	//Check while condition again...
             }			//End check for deaths
 
@@ -953,18 +906,11 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 //sprintf(time_msg,"[DEBUG-TIME]    Time: %d s %d ms.", menu_time_spent/1000, menu_time_spent%1000);
                 //debug_log("debug_log.txt", time_msg);
                 if (menu_time_spent % 1000 > 37) {
-                    s4c_animate_rangeof_sprites_at_coords(enemy_sprites
-                                                          [e->class],
-                                                          enemy_animation_win,
-                                                          frame_counter,
-                                                          frame_counter, 1, 1,
-                                                          60, 19, 19, 0, 0);
-                    s4c_animate_rangeof_sprites_at_coords(fighter_sprites
-                                                          [player->class],
-                                                          fighter_animation_win,
-                                                          frame_counter,
-                                                          frame_counter, 1, 1,
-                                                          60, 19, 19, 0, 0);
+                    s4c_display_sprite_at_coords(enemy_sprites[e->class], frame_counter, enemy_animation_win, 60, 19, 19, 0, 0);
+                    s4c_display_sprite_at_coords(fighter_sprites[player->class], frame_counter, fighter_animation_win, 60, 19, 19, 0, 0);
+                    if (rb_isfull(*rb_notifications) || (rb_get_head(*rb_notifications) != 0)) {
+                        hlpd_draw_notifications(rb_notifications, notifications_win);
+                    }
                     frame_counter++;
 
                     if (G_EXPERIMENTAL_ON == 1) {
@@ -1107,9 +1053,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                     char msg[50];
                     sprintf(msg, "You found +%i coins.", e->prize);
-                    wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-                    display_notification(notifications_win, msg, 500);
-                    wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+                    enqueue_notification(msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
 
                     //Win, get xp and free memory from enemy
                     giveXp(player, e);
@@ -1141,10 +1085,12 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                                 "%i enemies left in room %i.", enemies - i - 1,
                                 index);
                         //white();
+                        /*
                         int res = system("clear");
                         log_tag("debug_log.txt", "[DEBUG]",
                                 "handleRoom_Enemies() 3 system(\"clear\") res was (%i)",
                                 res);
+                        */
                         fightStatus = OP_RES_NO_DMG;
                         log_tag("debug_log.txt", "[ROOM]",
                                 "Onto next enemy, %i left.", enemies - i);
@@ -1261,40 +1207,8 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 endwin();
                 turnOP(OP_STATS, args, kls, t_kls);
             } else if (choice == SAVE) {
-                FILE *save_file = NULL;
-                if (G_EXPERIMENTAL_ON == 1) {
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing save file path", __func__);
-                } else {
-                    char path_to_savefile[820];
-                    char static_path[500];
-                    char savefile_name[300];
-                    sprintf(savefile_name, "%s", p->current_saveslot->save_path);
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "handleRoom_Enemies:  savefile_name is [%s].",
-                            savefile_name);
-
-                    // Set static_path value to the correct static dir path
-                    resolve_staticPath(static_path);
-
-                    sprintf(path_to_savefile, "%s/%s/%s", static_path, savefile_name, "save.txt");
-
-                    save_file = fopen(path_to_savefile, "w");
-                    if (save_file == NULL) {
-                        fprintf(stderr, "[ERROR]    Can't open save file %s!\n",
-                                path_to_savefile);
-                        exit(EXIT_FAILURE);
-                    } else {
-                        log_tag("debug_log.txt", "[TURNOP]",
-                                "Assigning save_file pointer to args->save_file. Path: [%s]",
-                                path_to_savefile);
-                        args->save_file = save_file;
-                    }
-                }
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Saving", __func__);
                 turnOP(OP_SAVE, args, kls, t_kls);
-                if (G_EXPERIMENTAL_ON == 0) {
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Closed save file pointer.", __func__);
-                    fclose(save_file);
-                }
             } else if (choice == DEBUG) {
                 // Unpost menu and free all the memory taken up
                 unpost_menu(my_menu);
@@ -1422,6 +1336,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
  * @param player The Fighter pointer at hand.
  * @param kls The Koliseo used for allocations.
  * @param t_kls The Koliseo_Temp used for temp allocations.
+ * @param rb_notifications The RingaBuf used for notifications.
  * @see turnOP()
  * @return When room is cleared, should return KILL_DONE.
  */
@@ -1431,7 +1346,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                                       1][MAXFRAMES][MAXROWS][MAXCOLS],
                     char fighter_sprites[CLASSESMAX +
                             1][MAXFRAMES][MAXROWS][MAXCOLS],
-                    Koliseo *kls, Koliseo_Temp *t_kls)
+                    Koliseo *kls, Koliseo_Temp *t_kls, RingaBuf* rb_notifications)
 {
 
     Boss *args_boss = NULL;
@@ -1445,7 +1360,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     turnOP_args *args =
         init_turnOP_args(gamestate, player, p, room, load_info, dummy_enemy,
                          args_boss, args_save_file, args_notify_win, t_kls,
-                         dummy_foe_op, dummy_skill_pick);
+                         dummy_foe_op, dummy_skill_pick, rb_notifications);
 
     //Strings for turn menu choices
     char *choices[] = {
@@ -1524,6 +1439,30 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
     long long time_spent;
 #endif
 
+    start_color();
+    clear();
+    refresh();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
+    // Prepare boss animation window
+    boss_animation_win = newwin(19, 19, 3, 2);
+    // Prepare fighter animation window
+    fighter_animation_win = newwin(19, 19, 3, 58);
+    // Prepare notifications window
+    notifications_win = newwin(8, 70, 24, 4);
+    // Set notifications window to be scrolling
+    //scrollok(notifications_win, TRUE);
+
+    //Update turnOP_args->notify_win pointer
+    args->notify_win = notifications_win;
+    log_tag("debug_log.txt", "[TURNOP]",
+            "Assigned notifications_wins to turnOP_args: args->notify_win");
+
+    wrefresh(notifications_win);
+    refresh();
+
     while (!
            (fightStatus == OP_RES_DEATH || fightStatus == OP_RES_KILL_DONE
             || choice == QUIT)) {
@@ -1531,12 +1470,14 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
         if (choice != FIGHT) {
             /* Initialize curses */
             //initscr();
+            /*
             start_color();
             clear();
             refresh();
             cbreak();
             noecho();
             keypad(stdscr, TRUE);
+            */
             log_tag("debug_log.txt", "[ANIMATE]",
                     "Starting new fighter animation.");
             log_tag("debug_log.txt", "[ANIMATE]",
@@ -1612,6 +1553,10 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             post_menu(my_menu);
             wrefresh(my_menu_win);
             refresh();
+
+            wrefresh(notifications_win);
+
+            /*
             //sleep(2);
             //endwin();
             // Prepare boss animation window
@@ -1630,6 +1575,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
             wrefresh(notifications_win);
             refresh();
+            */
         } else {		//We chose FIGHT so we handle that
             /* Create items */
             n_choices = ARRAY_SIZE(choices);
@@ -1730,7 +1676,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                         artifactDrop);
             }
             //Equip drop
-            dropEquip(player, b->beast, notifications_win, kls);
+            dropEquip(player, b->beast, kls, rb_notifications);
 
             //Account for harvester perk
             int harvester_perks = player->perks[HARVESTER]->innerValue;
@@ -1831,17 +1777,12 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             //debug_log("debug_log.txt", time_msg);
             if (menu_time_spent % 1000 > 37) {
                 //animate_rangeof_sprites_at_coords(enemy_sprites[e->class],enemy_animation_win,frame_counter,frame_counter, 1 , 1, 60, 19, 19, 0, 0);
-                s4c_animate_rangeof_sprites_at_coords(fighter_sprites
-                                                      [player->class],
-                                                      fighter_animation_win,
-                                                      frame_counter,
-                                                      frame_counter, 1, 1, 60,
-                                                      19, 19, 0, 0);
-                s4c_animate_rangeof_sprites_at_coords(boss_sprites[b->class],
-                                                      boss_animation_win,
-                                                      frame_counter,
-                                                      frame_counter, 1, 1, 60,
-                                                      19, 19, 0, 0);
+                s4c_display_sprite_at_coords(fighter_sprites[player->class], frame_counter, fighter_animation_win, 60, 19, 19, 0, 0);
+                s4c_display_sprite_at_coords(boss_sprites[b->class], frame_counter, boss_animation_win, 60, 19, 19, 0, 0);
+
+                if (rb_isfull(*rb_notifications) || (rb_get_head(*rb_notifications) != 0)) {
+                    hlpd_draw_notifications(rb_notifications, notifications_win);
+                }
 
                 if (G_EXPERIMENTAL_ON == 1) {
                     run_time = clock() - gamestate->start_time;
@@ -1961,18 +1902,13 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 char msg[50];
                 sprintf(msg, "You found +%i coins.", b->prize);
-                wattron(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
-                display_notification(notifications_win, msg, 500);
-                wattroff(notifications_win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
+                enqueue_notification(msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
 
                 //Give key
                 player->keys_balance += 1;
                 player->stats->keysfound += 1;
 
-                wattron(notifications_win, COLOR_PAIR(S4C_MAGENTA));
-                display_notification(notifications_win,
-                                     "You found a key. May be useful.", 800);
-                wattroff(notifications_win, COLOR_PAIR(S4C_MAGENTA));
+                enqueue_notification("You found a key. May be useful.", 800, S4C_MAGENTA, rb_notifications);
 
                 //Win, get xp and free memory from boss
                 giveXp_Boss(player, b);
@@ -1983,7 +1919,6 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[DEBUG]",
                         "handleRoom_Boss() 2 system(\"clear\") res was (%i)",
                         res);
-
                 fightStatus = OP_RES_NO_DMG;
                 //FIXME: is this causing a crash?
                 //YES, doing this causes the game to crash when trying to load a subsequent enemies room.

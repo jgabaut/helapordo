@@ -46,14 +46,14 @@ int handleRoom_Enemies(Gamestate * gamestate, Room * room, int index, Path * p,
                                1][MAXFRAMES][MAXROWS][MAXCOLS],
                        char fighter_sprites[CLASSESMAX +
                                1][MAXFRAMES][MAXROWS][MAXCOLS],
-                       Koliseo * kls, Koliseo_Temp * t_kls);
+                       Koliseo * kls, Koliseo_Temp * t_kls, RingaBuf* rb_notifications);
 int handleRoom_Boss(Gamestate * gamestate, Room * room, int index, Path * p,
                     Fighter * player, loadInfo * load_info,
                     char boss_sprites[BOSSCLASSESMAX +
                                       1][MAXFRAMES][MAXROWS][MAXCOLS],
                     char fighter_sprites[CLASSESMAX +
                             1][MAXFRAMES][MAXROWS][MAXCOLS],
-                    Koliseo * kls, Koliseo_Temp * t_kls);
+                    Koliseo * kls, Koliseo_Temp * t_kls, RingaBuf* rb_notifications);
 int handleRoom_Shop(Room * room, int roomsDone, Path * path, Fighter * f,
                     Koliseo * kls, Koliseo_Temp * t_kls);
 int handleRoom_Treasure(Room * room, int roomsDone, Path * path, Fighter * f,

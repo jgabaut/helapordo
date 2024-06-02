@@ -27,6 +27,8 @@
 #define HELAPORDO_MACHINE "unknown"
 #endif
 
+#include "../../ringabuf/src/ringabuf.h"
+
 #ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
@@ -216,6 +218,8 @@ typedef enum HLP_Region_Type {
     HR_Gamescreen,
     HR_GameOptions,
     HR_BSP_Room,
+    HR_Notification,
+    HR_RingaBuf,
     HR_loadInfo,
 } HLP_Region_Type;
 
@@ -349,16 +353,14 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 8
+#define HELAPORDO_PATCH_VERSION 9
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.8"
+#define VERSION "1.4.9"
 
-#define HELAPORDO_SAVEFILE_VERSION "0.1.7"
-
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.3"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.4"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -367,14 +369,9 @@ static const int HELAPORDO_API_VERSION_INT =
     (HELAPORDO_MAJOR_VERSION * 1000000 + HELAPORDO_MINOR_VERSION * 10000 + HELAPORDO_PATCH_VERSION * 100);
 /**< Represents current version with numeric format.*/
 
-/**
- * Default savepath.
- * @see handleRoom_Home()
- * @see handleRoom_Enemies()
- * @see handleRogue_Menu()
- * @see handleSave()
- */
-#define HELAPORDO_SAVEPATH_1 "helapordo-save.txt"
+#define EXPECTED_NCURSES_VERSION_MAJOR 6 /**< Defines min expected major ncurses version.*/
+#define EXPECTED_NCURSES_VERSION_MINOR 4 /**< Defines min expected minor ncurses version.*/
+#define EXPECTED_NCURSES_VERSION_PATCH 20230520	/**< Defines min expected patch ncurses version.*/
 
 /**
  * Holds arguments for a saveslot.
@@ -425,15 +422,13 @@ extern Saveslot default_saveslots[MAX_SAVESLOTS + 1];
  * @see gamemodeStrings
  */
 typedef enum {
-    Standard = 0,
-    Story = 1,
-    Rogue = 2,
+    Rogue = 0,
 } Gamemode;
 
 /** Maximum index of Gamemode, so that the size has to add 1 for the 0th index
  * @see roomClass
  */
-#define GAMEMODE_MAX 2
+#define GAMEMODE_MAX 0
 
 /**
  * Array with the name strings for Gamemode.
@@ -1335,7 +1330,6 @@ typedef struct Path {
     int length;	    /**< Defines how many rooms there are in total.*/
     int luck;	  /**< Defines global luck value.*/
     int prize;	   /**< Defines the reward for getting to length*/
-    int loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     Wincon *win_condition;     /**< Defines the win condition for the current game.*/
     Saveslot *current_saveslot;	    /**< Defines current Saveslot for the game.*/
     char seed[PATH_SEED_BUFSIZE+1]; /**< Contains seed for current run.*/
@@ -2096,6 +2090,7 @@ typedef struct {
     Rectangle *notify_win; /**< Pointer to notification area for OP*/
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
+    RingaBuf* rb_notifications; /**< Pointer to RingaBuf for notifications for OP*/
     Koliseo_Temp *t_kls;     /**< Pointer to Koliseo_Temp for OP*/
     Gamestate *gmst;	 /**< Pointer to Gamestate for OP*/
     foeTurnOption_OP foe_op;	 /**< Picked FoeTurnOption_OP, initialised only for some OPs.*/
@@ -2194,4 +2189,18 @@ OP_res OP_res_from_fightResult(fightResult fr);
 extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;
 extern const wchar_t LEGS_CHAR_ICON;
-#endif
+
+#define NOTIFICATION_BUFFER_SIZE 200 /**< Defines message buffer size for Notification.*/
+
+/**
+ * Holds text for a notification.
+ */
+typedef struct Notification {
+    char buf[NOTIFICATION_BUFFER_SIZE+1];
+    int8_t color;
+    bool displayed;
+} Notification;
+
+#define NOTIFICATIONS_RINGBUFFER_SIZE 7 /**< Defines the size for notifications ringbuffer. */
+
+#endif // GAME_CORE_H

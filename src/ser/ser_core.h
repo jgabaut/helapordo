@@ -98,13 +98,17 @@ typedef struct SerTurncounter {
 #endif
     int32_t count;	   /**< Defines the current count.*/
     int32_t innerValue;	/**< Contains an integer for counters that need a state*/
-    Countertype type;	  /**< Defines which kind of Countertype the instance relates to*/
+    int32_t type;	  /**< Defines which kind of Countertype the instance relates to*/
 #ifdef __GNUC__
 } SerTurncounter;
 #else
 } SerTurncounter;
 #pragma pack(pop)
 #endif
+
+#define SerTurncounter_Fmt "SerTurncounter { Type: %" PRId32 ", Count: %" PRId32 ", InnerValue: %" PRId32 " }"
+
+#define SerTurncounter_Arg(st) (st.type), (st.count), (st.innerValue)
 
 /**
  * Serialized Perk. Packed struct.
@@ -190,6 +194,10 @@ typedef struct SerEquip {
 #pragma pack(pop)
 #endif
 
+#define SerEquip_Fmt "SerEquip { Class: %s , Type: %s, Equipped: %" PRId8 ", Level: %" PRId8 ", Atk: %" PRId8 ", Def: %" PRId8 ", Vel: %" PRId8 ", Enr: %" PRId8 ", Bonus: %" PRId8 ", PerksCount: %" PRId8 ", Cost: %" PRId8 ", Quality: %s }"
+
+#define SerEquip_Arg(se) (stringFromEquips(se.class)), (stringFromEquipzones(se.type)), (se.equipped), (se.level), (se.atk), (se.def), (se.vel), (se.enr), (se.bonus), (se.perksCount), (se.cost), (stringFromQuality(se.qual))
+
 /**
  * Serialized Equipslot. Packed struct.
  * Can be turned into an Equipslot with deser_Equipslot().
@@ -228,7 +236,7 @@ typedef struct __attribute__((packed)) SerSpecialslot {
 typedef struct SerSpecialslot {
 #endif
     int8_t enabled;     /**< Flag defining if the current slot is initialised*/
-    specialMove move;	  /**< Defines which kind of specialMove the slot is holding*/
+    int8_t move;	  /**< Defines which kind of specialMove the slot is holding*/
     int8_t cost;	  /**< Cost of use*/
 #ifdef __GNUC__
 } SerSpecialslot;
@@ -236,6 +244,10 @@ typedef struct SerSpecialslot {
 } SerSpecialslot;
 #pragma pack(pop)
 #endif
+
+#define SerSpecialslot_Fmt "SerSpecialslot { Move: %" PRId8 ", Enabled: %s, Cost: %" PRId8 " }"
+
+#define SerSpecialslot_Arg(sp) (sp.move), (sp.enabled >= 1 ? "True" : "False"), (sp.cost)
 
 /**
  * Serialized Consumable. Packed struct.
@@ -252,13 +264,17 @@ typedef struct __attribute__((packed)) SerConsumable {
 typedef struct SerConsumable {
 #endif
     int32_t class;     /**< Defines which kind of Consumable this is*/
-    int qty;	 /**< Indicates how many copies of the consumable the instance of this class holds*/
+    int32_t qty;	 /**< Indicates how many copies of the consumable the instance of this class holds*/
 #ifdef __GNUC__
 } SerConsumable;
 #else
 } SerConsumable;
 #pragma pack(pop)
 #endif
+
+#define SerConsumable_Fmt "SerConsumable { Class: %s , Quantity: %" PRId32 " }"
+
+#define SerConsumable_Arg(sc) (stringFromConsumables(sc.class)), (sc.qty)
 
 /**
  * Serialized Artifact. Packed struct.
@@ -275,15 +291,19 @@ typedef struct __attribute__((packed)) SerArtifact {
 typedef struct SerArtifact {
 #endif
     int32_t class;     /**< Defines which kind of artifactClass the instance relates to*/
-    int qty;	 /**< Indicates how many copies of the artifact the instance of this class holds*/
-    int active;	    /**< Flag used to mark instance whose function pointer has been called already*/
-    int innerValue;	/**< Indicates interal state of the item when needed*/
+    int32_t qty;	 /**< Indicates how many copies of the artifact the instance of this class holds*/
+    int32_t active;	    /**< Flag used to mark instance whose function pointer has been called already*/
+    int32_t innerValue;	/**< Indicates interal state of the item when needed*/
 #ifdef __GNUC__
 } SerArtifact;
 #else
 } SerArtifact;
 #pragma pack(pop)
 #endif
+
+#define SerArtifact_Fmt "SerArtifact { Class: %s , Quantity: %" PRId32 ", Active: %" PRId32 ", InnerValue: %" PRId32 " }"
+
+#define SerArtifact_Arg(sa) (stringFromArtifacts(sa.class)), (sa.qty), (sa.active), (sa.innerValue)
 
 /**
  * Serialized countStats. Packed struct.
@@ -319,6 +339,10 @@ typedef struct SerCountstats {
 #pragma pack(pop)
 #endif
 
+#define SerCountstats_Fmt "SerCountstats {\n    Enemies killed: %" PRId8 ",\n    Consumables Found: %" PRId8 ",\n    Equips Found: %" PRId8 ",\n    Artifacts found: %" PRId8 ",\n    Critical Hits dealt: %" PRId8",\n    Rooms completed: %" PRId8 ",\n    Floors completed: %" PRId8 ",\n    Specials Unlocked: %" PRId8 ",\n    Coins found: %" PRId8 ",\n    Bosses killed: %" PRId8 ",\n    Unique Bosses Killed: %" PRId8 ",\n    Killed Bosses: [\n        %s: %s,\n        %s: %s,\n        %s: %s,\n        %s: %s,\n        %s: %s\n    ],\n    Keys Found: %" PRId8 "\n  }"
+
+#define SerCountstats_Arg(sc) (sc.enemieskilled), (sc.consumablesfound), (sc.equipsfound), (sc.artifactsfound), (sc.criticalhits), (sc.roomscompleted), (sc.floorscompleted), (sc.specialsunlocked), (sc.coinsfound), (sc.bosseskilled), (sc.unique_bosseskilled), (stringFromBossClass(0)), (sc.killed_bosses[0] >= 1 ? "True" : "False"), (stringFromBossClass(1)), (sc.killed_bosses[1] >= 1 ? "True" : "False"), (stringFromBossClass(2)), (sc.killed_bosses[2] >= 1 ? "True" : "False"), (stringFromBossClass(3)), (sc.killed_bosses[3] >= 1 ? "True" : "False"), (stringFromBossClass(4)), (sc.killed_bosses[4] >= 1 ? "True" : "False"), (sc.keysfound)
+
 /**
  * Serialized Enemy. Packed struct.
  * Can be turned into an Enemy with deser_Enemy().
@@ -350,7 +374,7 @@ typedef struct SerEnemy {
     int8_t stamina;     /**< Current stamina value*/
     int8_t totalstamina;	  /**< Full stamina value*/
 
-    fighterStatus status;     /**< Defines active fighterStatus*/
+    int32_t status;     /**< Defines active fighterStatus*/
     int8_t beast;	   /**< Flag defining the instance as "beast" if set*/
 
     SerSkillslot skills[ENEMY_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
@@ -399,7 +423,7 @@ typedef struct SerBoss {
     int8_t stamina;     /**< Current stamina value*/
     int8_t totalstamina;	  /**< Full stamina value*/
 
-    fighterStatus status;     /**< Defines active fighterStatus*/
+    int32_t status;     /**< Defines active fighterStatus*/
     int8_t beast;	   /**< Flag defining the instance as "beast" if set*/
 
     SerSkillslot skills[BOSS_SKILL_SLOTS + 1];   /**< Array with all the SerSkillslot*/
@@ -449,7 +473,7 @@ typedef struct SerFighter {
     int8_t currentlevelxp;	    /**< Xp gained for the current level*/
     int8_t totallevelxp;	  /**< Xp needed to level up*/
     int8_t totalhp;     /**< Full hp value*/
-    fighterStatus status;     /**< Defines active fighterStatus*/
+    int32_t status;     /**< Defines active fighterStatus*/
 
     int8_t energy;	    /**< Current energy value*/
     int8_t totalenergy;	 /**< Full energy value*/
@@ -498,6 +522,10 @@ typedef struct SerFighter {
 } SerFighter;
 #pragma pack(pop)
 #endif
+
+#define SerFighter_Fmt "SerFighter {\n    Name: %s,\n    Class: %s,\n    Hp: %" PRId8 ",\n    Atk: %" PRId8 ",\n    Def: %" PRId8 ",\n    Vel: %" PRId8 ",\n    Level: %" PRId8 ",\n    Luck: %" PRId8 ",\n    Total xp: %" PRId8 ",\n    Current lvl xp: %" PRId8 ",\n    Total lvl xp: %" PRId8 ",\n    Total hp: %" PRId8 ",\n    Status: %s,\n    Energy: %" PRId8 ",\n    Total energy: %" PRId8 ",\n    Stamina: %" PRId8 ",\n    Total Stamina: %" PRId8 ",\n    Turnboost_Atk: %" PRId8 ",\n    Turnboost_Def: %" PRId8 ",\n    Turnboost_Vel: %" PRId8 ",\n    Turnboost_Enr: %" PRId8 ",\n    PerksCount: %" PRId8 ",\n    EquipsBagOccupiedSlots: %" PRId8 ",\n    EarliestBagSlot: %" PRId8 ",\n    Permboost_Atk: %" PRId8 ",\n    Permboost_Def: %" PRId8 ",\n    Permboost_Vel: %" PRId8 ",\n    Permboost_Enr: %" PRId8 ",\n    Equipboost_Atk: %" PRId8 ",\n    Equipboost_Def: %" PRId8 ",\n    Equipboost_Vel: %" PRId8 ",\n    Equipboost_Enr: %" PRId8 ",\n    Balance: %" PRId8 ",\n    Keys Balance: %" PRId8 ",\n    Floor_x: %" PRId8 ",\n    Floor_y: %" PRId8 "\n  }"
+
+#define SerFighter_Arg(sf) (sf.name), (stringFromClass(sf.class)), (sf.hp), (sf.atk), (sf.def), (sf.vel), (sf.level), (sf.luck), (sf.totalxp), (sf.currentlevelxp), (sf.totallevelxp), (sf.totalhp), (stringFromStatus(sf.status)), (sf.energy), (sf.totalenergy), (sf.stamina), (sf.totalstamina), (sf.turnboost_atk), (sf.turnboost_def), (sf.turnboost_vel), (sf.turnboost_enr), (sf.perksCount), (sf.equipsBagOccupiedSlots), (sf.earliestBagSlot), (sf.permboost_atk), (sf.permboost_def), (sf.permboost_vel), (sf.permboost_enr), (sf.equipboost_atk), (sf.equipboost_def), (sf.equipboost_vel), (sf.equipboost_enr), (sf.balance), (sf.keys_balance), (sf.floor_x), (sf.floor_y)
 
 /**
  * Serialized FoeParty. Packed struct.
@@ -769,7 +797,6 @@ typedef struct SerPath {
     int8_t length;	    /**< Defines how many rooms there are in total.*/
     int8_t luck;	  /**< Defines global luck value.*/
     int8_t prize;	   /**< Defines the reward for getting to length*/
-    int8_t loreCounter;	 /**< Counts how many lore prompts have been displayed*/
     SerWincon win_condition;     /**< Defines the win condition for the current game.*/
     SerSaveslot current_saveslot;	    /**< Defines current SerSaveslot for the game.*/
     char seed[SERPATH_SEED_BUFSIZE+1]; /**< Holds seed for current run.*/

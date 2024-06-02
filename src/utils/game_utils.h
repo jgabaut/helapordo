@@ -19,6 +19,10 @@
 #ifndef GAME_UTILS_H
 #define GAME_UTILS_H
 
+#ifndef _WIN32
+#define _POSIX_C_SOURCE 200809L // Needed for getopt
+#endif // _WIN32
+
 #ifdef HELAPORDO_CURSES_BUILD
 #include "../core/sprites.h"
 #ifdef _WIN32
@@ -58,6 +62,8 @@
 #ifdef ANVIL_BUILD
 #include "../anvil__helapordo.h"
 #endif
+
+#include "../release_data/release_data.h"
 
 void* s4c_gui_malloc(size_t size);
 void* s4c_gui_calloc(size_t count, size_t size);
@@ -115,10 +121,10 @@ void freeRoom(Room * room);
 void printTitle(void);
 
 void printVersion(void);
-void printFormattedVersion(char *progName);
+void printFormattedVersion(const char *progname);
 void hlpd_dbg_features(void);
 
-void usage(char *progname);
+void usage(const char *progname);
 void log_tag(char *filename, char *header, const char *format, ...);
 void log_OP(turnOption_OP op);
 
@@ -252,8 +258,8 @@ turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
                               WINDOW * notify_win, Koliseo_Temp * t_kls,
-                              foeTurnOption_OP foe_op, skillType picked_skill);
-void display_notification(WINDOW * w, char *text, int time);
+                              foeTurnOption_OP foe_op, skillType picked_skill, RingaBuf* rb_notifications);
+void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifications);
 void print_label(WINDOW * win, int starty, int startx, int width, char *string,
                  chtype color);
 void setEquipSprite(Equip * e);
@@ -261,14 +267,14 @@ void setConsumableSprite(Consumable * c);
 void setArtifactSprite(Artifact * a);
 void printEquipStats(Equip * e);
 void printQualityColor(quality q);
-void dropEquip(Fighter * player, int beast, WINDOW * notify_win, Koliseo * kls);
+void dropEquip(Fighter * player, int beast, Koliseo * kls, RingaBuf* rb_notifications);
 void unlockSpecial(Fighter * f);
 void printCounters(Turncounter * counters[]);
 void printActivePerks(Fighter * f);
-void applyStatus(WINDOW * notify_win, Fighter * f);
-void applyEStatus(WINDOW * notify_win, Enemy * e);
-void applyBStatus(WINDOW * notify_win, Boss * b);
-void printStatusText(WINDOW * notify_win, fighterStatus status, char *subject);
+void applyStatus(Fighter * f, RingaBuf* rb_notifications);
+void applyEStatus(Enemy * e, RingaBuf* rb_notifications);
+void applyBStatus(Boss * b, RingaBuf* rb_notifications);
+void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications);
 int retry(char* seed);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
@@ -321,4 +327,8 @@ void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1]);
 bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
 
 #define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )
+void hlpd_reset_logfile(void);
+void hlpd_use_forced_flags(const char* whoami);
+int display_colorpairs(void);
+int hlpd_getopt(size_t argc, char** argv, const char* whoami);
 #endif

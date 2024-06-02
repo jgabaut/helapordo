@@ -10,11 +10,11 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.4.8") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.4.9") ) == 0)) {
    fail("VERSION",0,check);
  };
- if ( ! (HLP_MAX_INDEX == 33) ) {
-   fail("HLP_MAX_INDEX",33,HLP_MAX_INDEX);
+ if ( ! (HLP_MAX_INDEX == 35) ) {
+   fail("HLP_MAX_INDEX",35,HLP_MAX_INDEX);
  }
  if ( ! (MAX_SAVESLOTS == 3) ) {
    fail("MAX_SAVESLOTS",3,MAX_SAVESLOTS);
@@ -40,8 +40,8 @@ int main(void) {
  if ( ! (MAXLUCK == 50) ) {
    fail("MAXLUCK",50,MAXLUCK);
  };
- if ( ! (GAMEMODE_MAX == 2 )) {
-   fail("GAMEMODE_MAX",2,GAMEMODE_MAX);
+ if ( ! (GAMEMODE_MAX == 0 )) {
+   fail("GAMEMODE_MAX",0,GAMEMODE_MAX);
  };
  if ( ! (LORES_MAX == 2) ) {
    fail("LORES_MAX",2,LORES_MAX);
