@@ -57,9 +57,8 @@ bool set_Saveslot_name(Saveslot *sv)
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
-bool set_Saveslot_name(FILE *file, Saveslot *sv)
+bool set_Saveslot_name(Saveslot *sv)
 {
-    (void) file;
     (void) sv;
     printf("%s():    TODO - implement set_Saveslot_namefor rl-build.\n", __func__);
     return false;

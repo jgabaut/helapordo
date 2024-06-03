@@ -97,11 +97,13 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
     }
 
     int isBoss = -1;
+    int room_index = -1;
 #ifdef HELAPORDO_RAYLIB_BUILD
     log_tag("debug_log.txt", "[DEBUG]",
             "Logging isBoss: {%i}", isBoss);
+    log_tag("debug_log.txt", "[DEBUG]",
+            "Logging room_index: {%i}", room_index);
 #endif
-    int room_index = -1;
     int enemy_index = -1;
 
     //Log operation code
@@ -610,7 +612,15 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
             exit(EXIT_FAILURE);
         }
         log_tag("debug_log.txt", "[DEBUG]", "OP_CHANGE_OPTIONS");
+#ifdef HELAPORDO_CURSES_BUILD
         handleGameOptions(gmst->options);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
+#else
+        assert(0 && "Implement handleGameOptions() for raylib build\n");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         res = OP_OK;
     }
     break;

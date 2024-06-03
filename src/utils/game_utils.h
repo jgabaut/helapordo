@@ -249,6 +249,12 @@ void printStats(Fighter * f);
 void printEStats(Enemy * e);
 void printConsumablesStats(Consumable * c);
 void printArtifactStats(Artifact * a);
+void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifications);
+void applyStatus(Fighter * f, RingaBuf* rb_notifications);
+void applyEStatus(Enemy * e, RingaBuf* rb_notifications);
+void applyBStatus(Boss * b, RingaBuf* rb_notifications);
+void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications);
+void dropEquip(Fighter * player, int beast, Koliseo * kls, RingaBuf* rb_notifications);
 
 #ifdef HELAPORDO_CURSES_BUILD
 void test_game_color_pairs(WINDOW * win, int colors_per_row);
@@ -259,7 +265,6 @@ turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Boss * boss, FILE * save_file,
                               WINDOW * notify_win, Koliseo_Temp * t_kls,
                               foeTurnOption_OP foe_op, skillType picked_skill, RingaBuf* rb_notifications);
-void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifications);
 void print_label(WINDOW * win, int starty, int startx, int width, char *string,
                  chtype color);
 void setEquipSprite(Equip * e);
@@ -267,14 +272,9 @@ void setConsumableSprite(Consumable * c);
 void setArtifactSprite(Artifact * a);
 void printEquipStats(Equip * e);
 void printQualityColor(quality q);
-void dropEquip(Fighter * player, int beast, Koliseo * kls, RingaBuf* rb_notifications);
 void unlockSpecial(Fighter * f);
 void printCounters(Turncounter * counters[]);
 void printActivePerks(Fighter * f);
-void applyStatus(Fighter * f, RingaBuf* rb_notifications);
-void applyEStatus(Enemy * e, RingaBuf* rb_notifications);
-void applyBStatus(Boss * b, RingaBuf* rb_notifications);
-void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications);
 int retry(char* seed);
 void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
                Koliseo * kls);
@@ -290,7 +290,6 @@ turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Boss * boss, FILE * save_file,
                               Rectangle * notification_area, Koliseo_Temp * t_kls,
                               foeTurnOption_OP foe_op, skillType picked_skill);
-void dropEquip(Fighter * player, int beast, Rectangle* notification_window, Koliseo * kls);
 void unlockSpecial(Fighter * f);
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD

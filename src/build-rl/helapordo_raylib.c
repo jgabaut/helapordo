@@ -123,7 +123,7 @@ void gameloop_rl(int argc, char** argv)
     load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
     load_info->ptr_to_roomindex = &loaded_roomindex;
 
-    while ((option = getopt(argc, argv, "f:r:E:tTGRXQLlvdhsaV")) != -1) {
+    while ((option = getopt(argc, argv, "f:r:E:tTGRXQLvdhaV")) != -1) {
         switch (option) {
         case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
@@ -147,10 +147,6 @@ void gameloop_rl(int argc, char** argv)
             G_LOG_ON = 1;
         }
         break;
-        case 'l': {
-            load_info->is_new_game = 0;
-        }
-        break;
         case 'G': {
             G_GODMODE_ON = 1;
         }
@@ -165,10 +161,6 @@ void gameloop_rl(int argc, char** argv)
         break;
         case 'a': {
             GS_AUTOSAVE_ON = 0;
-        }
-        break;
-        case 's': {
-            GAMEMODE = Story;
         }
         break;
         case 'R': {
@@ -569,6 +561,8 @@ void gameloop_rl(int argc, char** argv)
 
     log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
     kls_log(default_kls, "DEBUG", "Prepping current_floor.");
+
+    Koliseo_Temp* floor_kls = kls_temp_start(temporary_kls);
     Floor *current_floor =
         (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
                                  HR_Floor, "Floor", "Floor");
@@ -598,7 +592,7 @@ void gameloop_rl(int argc, char** argv)
     } else {
         if ((hlpd_rand() % 101) > 20) {
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-            floor_bsp_gen(current_floor, center_x, center_y);
+            floor_bsp_gen(current_floor, floor_kls, center_x, center_y);
             current_floor->from_bsp = true;
         } else {
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
@@ -721,6 +715,7 @@ void gameloop_rl(int argc, char** argv)
             }
             if (IsKeyPressed(KEY_R)) {
                 fprintf(stderr,"%s\n", "Regenerating current floor");
+                kls_temp_end(floor_kls);
                 kls_free(temporary_kls);
                 temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
                 current_floor =
@@ -734,6 +729,7 @@ void gameloop_rl(int argc, char** argv)
 
                 //Init floor rooms
                 init_floor_rooms(current_floor);
+                floor_kls = kls_temp_start(temporary_kls);
 
                 if (G_EXPERIMENTAL_ON != 1) {
                     log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
@@ -745,7 +741,7 @@ void gameloop_rl(int argc, char** argv)
                 } else {
                     if ((hlpd_rand() % 101) > 20) {
                         log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                        floor_bsp_gen(current_floor, center_x, center_y);
+                        floor_bsp_gen(current_floor, floor_kls, center_x, center_y);
                         current_floor->from_bsp = true;
                     } else {
                         log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
