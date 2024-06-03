@@ -5850,9 +5850,37 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
             napms(200);
             delwin(test_win);
             endwin();
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+            int screenWidth = 1000;
+            int screenHeight = 450;
+            Rectangle r = CLITERAL(Rectangle) {
+                0,
+                0,
+                screenWidth,
+                screenHeight
+            };
+
+            SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
+            InitWindow(screenWidth, screenHeight, "helapordo Color test");
+            int fps_target = 30;
+            SetTargetFPS(fps_target);
+            while (!WindowShouldClose()) {
+                screenWidth = GetScreenWidth();
+                screenHeight = GetScreenHeight();
+                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                    break;
+                }
+                test_s4c_color_pairs(&r, palette);
+            }
+            CloseWindow();
+            printf("TODO: add test_s4c_color_pairs() call");
+#endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
             exit(EXIT_SUCCESS);
-
         }
         break;
         case 'V': {

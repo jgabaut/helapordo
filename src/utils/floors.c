@@ -1344,16 +1344,15 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
 void step_floor(Floor *floor, int *current_x,
                 int *current_y, int control)
 {
-
     int picked = 0;
     int target_x = *current_x;
     int target_y = *current_y;
-    while (!picked && control > 0) {
+    while (!picked) {
         target_x = *current_x;
         target_y = *current_y;
         //TODO
         //Implement a working menu for the raylib build
-        if ( (control == hlpd_d_keyval(HLPD_KEY_DOWN))) {
+        if ( control == hlpd_d_keyval(HLPD_KEY_DOWN)) {
             picked = 1;
             target_y += 1;
         } else if ( control == hlpd_d_keyval(HLPD_KEY_UP)) {
