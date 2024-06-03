@@ -5585,6 +5585,7 @@ void hlpd_reset_logfile(void)
             exit(EXIT_FAILURE);
         }
         fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
+#ifdef HELAPORDO_CURSES_BUILD
         if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
             || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR)
             || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR == EXPECTED_NCURSES_VERSION_MINOR && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH)) {
@@ -5596,6 +5597,23 @@ void hlpd_reset_logfile(void)
                     EXPECTED_NCURSES_VERSION_MINOR,
                     EXPECTED_NCURSES_VERSION_PATCH);
         }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined"
+#else
+        if (RAYLIB_VERSION_MAJOR < EXPECTED_RAYLIB_VERSION_MAJOR
+            && RAYLIB_VERSION_MINOR < EXPECTED_RAYLIB_VERSION_MINOR
+            && RAYLIB_VERSION_PATCH < EXPECTED_RAYLIB_VERSION_PATCH) {
+            fprintf(debug_file,
+                    "[WARN]    raylib version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                    RAYLIB_VERSION, RAYLIB_VERSION_MAJOR,
+                    RAYLIB_VERSION_MINOR, RAYLIB_VERSION_PATCH,
+                    EXPECTED_RAYLIB_VERSION_MAJOR,
+                    EXPECTED_RAYLIB_VERSION_MINOR,
+                    EXPECTED_RAYLIB_VERSION_PATCH);
+        }
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
         print_kls_2file(debug_file, default_kls);
         fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
@@ -5890,9 +5908,11 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
             s4c_dbg_features();
             printf("  using: koliseo v%s\n", string_koliseo_version());
             kls_dbg_features();
-            printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
             printf("  using: ringabuf v%s\n", RINGABUF_API_VERSION_STRING);
+#ifdef HELAPORDO_CURSES_BUILD
+            printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
             printf("  using: ncurses v%s\n", NCURSES_VERSION);
+#endif // HELAPORDO_CURSES_BUILD
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
             printf("  Built with: amboso v%s\n",

@@ -519,8 +519,6 @@ void gameloop_rl(int argc, char** argv)
         case GAMEPLAY: {
             // TODO: Update GAMEPLAY screen variables here!
             framesCounter++;    // Count frames
-            fprintf(stderr, "%s(): keys are:\nUP {%i},\nDOWN {%i},\nLEFT {%i},\nRIGHT {%i}\n", __func__, hlpd_d_keyval(HLPD_KEY_UP), hlpd_d_keyval(HLPD_KEY_DOWN), hlpd_d_keyval(HLPD_KEY_LEFT), hlpd_d_keyval(HLPD_KEY_RIGHT));
-            fprintf(stderr, "%s(): raylib keys are:\nUP {%i},\nDOWN {%i},\nLEFT {%i},\nRIGHT {%i}\n", __func__, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT);
 
             // Press enter to change to ENDING screen
             if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
@@ -607,7 +605,6 @@ void gameloop_rl(int argc, char** argv)
 
             }
             if (IsKeyPressed(KEY_UP)) {
-                fprintf(stderr, "Received KEY_UP\n");
                 step_floor(current_floor, &current_x,
                            &current_y, KEY_UP);
                 if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
@@ -617,7 +614,6 @@ void gameloop_rl(int argc, char** argv)
                 }
             }
             if (IsKeyPressed(KEY_DOWN)) {
-                fprintf(stderr, "Received KEY_DOWN\n");
                 step_floor(current_floor, &current_x,
                            &current_y, KEY_DOWN);
                 if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
@@ -627,7 +623,6 @@ void gameloop_rl(int argc, char** argv)
                 }
             }
             if (IsKeyPressed(KEY_LEFT)) {
-                fprintf(stderr, "Received KEY_LEFT\n");
                 step_floor(current_floor, &current_x,
                            &current_y, KEY_LEFT);
                 if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
@@ -637,7 +632,6 @@ void gameloop_rl(int argc, char** argv)
                 }
             }
             if (IsKeyPressed(KEY_RIGHT)) {
-                fprintf(stderr, "Received KEY_RIGHT\n");
                 step_floor(current_floor, &current_x,
                            &current_y, KEY_RIGHT);
                 if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {

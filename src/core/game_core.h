@@ -372,6 +372,9 @@ static const int HELAPORDO_API_VERSION_INT =
 #define EXPECTED_NCURSES_VERSION_MAJOR 6 /**< Defines min expected major ncurses version.*/
 #define EXPECTED_NCURSES_VERSION_MINOR 4 /**< Defines min expected minor ncurses version.*/
 #define EXPECTED_NCURSES_VERSION_PATCH 20230520	/**< Defines min expected patch ncurses version.*/
+#define EXPECTED_RAYLIB_VERSION_MAJOR 4 /**< Defines min expected major ncurses version.*/
+#define EXPECTED_RAYLIB_VERSION_MINOR 5 /**< Defines min expected minor ncurses version.*/
+#define EXPECTED_RAYLIB_VERSION_PATCH 0	/**< Defines min expected patch ncurses version.*/
 
 /**
  * Holds arguments for a saveslot.

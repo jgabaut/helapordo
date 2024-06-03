@@ -58,10 +58,12 @@
 #include <inttypes.h>
 #include <signal.h>
 #include "../core/game_core.h"
+#ifdef HELAPORDO_CURSES_BUILD
 #include "../../s4c-gui/src/s4c_gui.h"
+#endif // HELAPORDO_CURSES_BUILD
 #ifdef ANVIL_BUILD
 #include "../anvil__helapordo.h"
-#endif
+#endif // ANVIL_BUILD
 
 #include "../release_data/release_data.h"
 
