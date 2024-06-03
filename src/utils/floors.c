@@ -1347,7 +1347,7 @@ void step_floor(Floor *floor, int *current_x,
     int picked = 0;
     int target_x = *current_x;
     int target_y = *current_y;
-    while (!picked) {
+    while (!picked && control > 0) {
         target_x = *current_x;
         target_y = *current_y;
         //TODO
