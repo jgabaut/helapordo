@@ -628,7 +628,12 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangle(0, 0, screenWidth, screenHeight, GREEN);
             DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
             DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+            DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 110, 220, 20, DARKGREEN);
+            DrawText("Controls for GAMEPLAY screen", 110, 250, 20, MAROON);
+            DrawText("Arrow keys to move", 110, 280, 20, MAROON);
+            DrawText("PRESS R to regen floor", 110, 310, 20, MAROON);
+            DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
+            DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, MAROON);
 
             char txt[30] = {0};
             char txt_b[30] = {0};
@@ -649,7 +654,7 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangle(0, 0, screenWidth, screenHeight, RAYWHITE);
             DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
             DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
+            DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
             int pl_rect_Y = 20;
             int pl_frame_W = 17;
             int pl_frame_H = pl_frame_W;
