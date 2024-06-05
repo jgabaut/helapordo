@@ -305,6 +305,7 @@ clean:
 	-rm src/palette.*
 	-rm src/ser/*.o
 	-rm src/bsp/*.o
+	-rm src/release_data/*.o
 	-rm koliseo/src/*.o
 	-rm ./*.o
 	-rm src/anvil__helapordo.*
@@ -324,6 +325,7 @@ cleanob:
 	-rm src/utils/*.o
 	-rm src/ser/*.o
 	-rm src/bsp/*.o
+	-rm src/release_data/*.o
 	-rm ./scripts/save2l/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
