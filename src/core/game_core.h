@@ -85,6 +85,17 @@ typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING, DOOR_ANIM } GameScr
 #endif // HELAPORDO_CURSES_BUILD
 
 #include "../../koliseo/src/koliseo.h"
+
+/**
+ * We need to undef these macros if they exist, since windows.h may declare them (and here we inherit that from koliseo.h).
+ */
+#ifdef near
+#undef near
+#endif
+#ifdef far
+#undef far
+#endif
+
 #include "../palette.h" /**< Defines the color palette used for the s4c functions, includes animate.h.*/
 
 extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
