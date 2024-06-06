@@ -26,6 +26,14 @@
 #include "../utils/rooms.h"
 #include "../anvil__helapordo.h"
 #include "../core/game_lore.h"
+#ifdef near
+#undef near
+#endif
+#ifdef far
+#undef far
+#endif
+#include <raymath.h>
 
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 void gameloop_rl(int argc, char** argv);
 #endif

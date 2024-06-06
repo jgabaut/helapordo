@@ -388,16 +388,24 @@ void gameloop_rl(int argc, char** argv)
         current_y = home_room_y;
     }
 
-    int screenWidth = 800;
-    int screenHeight = 450;
+    // TODO: Initialize all required variables and load all required data here!
 
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    const int windowWidth = 1000;
+    const int windowHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "helapordo raylib test");
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
+
+    InitWindow(windowWidth, windowHeight, "helapordo raylib test");
+    SetWindowMinSize(320, 240);
+
+    int gameScreenWidth = 640;
+    int gameScreenHeight = 480;
+
+    RenderTexture2D target_txtr = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
+    SetTextureFilter(target_txtr.texture, TEXTURE_FILTER_BILINEAR);
 
     GameScreen currentScreen = LOGO;
 
-    // TODO: Initialize all required variables and load all required data here!
 
     int framesCounter = 0;          // Useful to count frames
 
@@ -407,27 +415,25 @@ void gameloop_rl(int argc, char** argv)
     //
     int current_anim_frame = 0;
     bool pause_animation = false;
-    float scale_factor = sqrt(screenWidth * screenHeight);
-    float pixel_factor = 0.02;
-    float sprite_w_factor = pixel_factor * scale_factor;
-
     char time_str[20] = {0};
 
     while (!WindowShouldClose()) {
         // Update
         //----------------------------------------------------------------------------------
-        screenWidth = 800;
-        screenHeight = 450;
+        //
+        float scale = MIN((float)GetScreenWidth()/gameScreenWidth, (float)GetScreenHeight()/gameScreenHeight);
+
+        Vector2 mouse = GetMousePosition();
+
+        Vector2 virtualMouse = {0};
+
+        virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.0f)/scale;
+        virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.0f)/scale;
+        virtualMouse = Vector2Clamp(virtualMouse, (Vector2){0, 0}, (Vector2){ (float)gameScreenWidth, (float)gameScreenHeight} );
 
         if (IsKeyPressed(KEY_F) && IsKeyDown(KEY_LEFT_ALT)) {
-            ToggleFullScreenWindow(screenWidth, screenHeight);
+            ToggleFullScreenWindow(gameScreenWidth, gameScreenHeight);
         }
-
-        screenWidth = GetScreenWidth();
-        screenHeight = GetScreenHeight();
-
-        scale_factor = sqrt(screenWidth * screenHeight);
-        sprite_w_factor = pixel_factor * scale_factor;
 
         switch(currentScreen) {
         case LOGO: {
@@ -602,20 +608,19 @@ void gameloop_rl(int argc, char** argv)
         default:
             break;
         }
+
         //----------------------------------------------------------------------------------
 
-        // Draw
+        // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        BeginDrawing();
-
+        BeginTextureMode(target_txtr);
         ClearBackground(RAYWHITE);
-
         switch(currentScreen) {
         case LOGO: {
             // TODO: Draw LOGO screen here!
             DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
-            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("WAIT for 2 SECONDS...", 290, 220, 20, GRAY);
+            DrawText("WIP", 20, 50, 20, RED);
+            DrawText("WAIT for 2 SECONDS...", 20, 90, 20, GRAY);
 #ifdef KOLISEO_HAS_TITLE
             for (int i = 0;  i <  KLS_TITLEROWS+1; i++) {
                 DrawText(kls_title[i], 0, i*12, 12, BLACK);
@@ -625,11 +630,13 @@ void gameloop_rl(int argc, char** argv)
         break;
         case TITLE: {
             // TODO: Draw TITLE screen here!
-            DrawRectangle(0, 0, screenWidth, screenHeight, GREEN);
+            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, GREEN);
+            DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
+            DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
             DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
-            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+            DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 110, 220, 20, DARKGREEN);
-            DrawText("Controls for GAMEPLAY screen", 110, 250, 20, MAROON);
+            DrawText("Controls for GAMEPLAY screen", 110, 220, 20, MAROON);
             DrawText("Arrow keys to move", 110, 280, 20, MAROON);
             DrawText("PRESS R to regen floor", 110, 310, 20, MAROON);
             DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
@@ -638,9 +645,9 @@ void gameloop_rl(int argc, char** argv)
             char txt[30] = {0};
             char txt_b[30] = {0};
             char txt_s4c[30] = {0};
-            int txt_StartX = screenWidth * 0.4;
-            int txt_StartY = screenHeight * 0.65;
-            DrawRectangle(txt_StartX, txt_StartY, screenWidth - txt_StartX, screenHeight - txt_StartY, YELLOW);
+            int txt_StartX = gameScreenWidth * 0.4f;
+            int txt_StartY = gameScreenHeight * 0.65f;
+            DrawRectangle(txt_StartX, txt_StartY, gameScreenWidth - txt_StartX, gameScreenHeight - txt_StartY, YELLOW);
             sprintf(txt,"Koliseo API version: %i\n", int_koliseo_version());
             DrawText(txt, txt_StartX + ( txt_StartX * 0.16), txt_StartY + ( txt_StartY * 0.25), 24, BLACK);
             sprintf(txt_b,"Koliseo version: %s\n", string_koliseo_version());
@@ -651,22 +658,22 @@ void gameloop_rl(int argc, char** argv)
         break;
         case GAMEPLAY: {
             // TODO: Draw GAMEPLAY screen here!
-            DrawRectangle(0, 0, screenWidth, screenHeight, RAYWHITE);
+            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, RAYWHITE);
             DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
-            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+            DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
             int pl_rect_Y = 20;
             int pl_frame_W = 17;
             int pl_frame_H = pl_frame_W;
-            int pl_rect_X = screenWidth - (pl_frame_W * sprite_w_factor ) - 20;
+            int pl_rect_X = gameScreenWidth - (pl_frame_W *scale ) - 20;
             int en_rect_X = 20;
             int en_rect_Y = pl_rect_Y;
             int en_frame_W = pl_frame_W;
             int en_frame_H = pl_frame_H;
-            float stats_label_W = 10 * sprite_w_factor;
-            float stats_label_H = 10 * sprite_w_factor;
+            float stats_label_W = 10 * scale;
+            float stats_label_H = 10 * scale;
             Rectangle stats_label_r = CLITERAL(Rectangle) {
-                ((pl_rect_X - (en_rect_X + (en_frame_W * sprite_w_factor))) / 2) + (en_rect_X + (en_frame_W * sprite_w_factor)) - (stats_label_W/2),
+                ((pl_rect_X - (en_rect_X + (en_frame_W * scale))) / 2) + (en_rect_X + (en_frame_W * scale)) - (stats_label_W/2),
                 en_rect_Y,
                 stats_label_W,
                 stats_label_H
@@ -674,14 +681,14 @@ void gameloop_rl(int argc, char** argv)
             Rectangle pl_r = CLITERAL(Rectangle) {
                 pl_rect_X,
                 pl_rect_Y,
-                pl_frame_W * sprite_w_factor,
-                pl_frame_H * sprite_w_factor
+                pl_frame_W * scale,
+                pl_frame_H * scale
             };
             Rectangle en_r = CLITERAL(Rectangle) {
                 en_rect_X,
                 en_rect_Y,
-                en_frame_W * sprite_w_factor,
-                en_frame_H * sprite_w_factor
+                en_frame_W * scale,
+                en_frame_H * scale
             };
             //TODO: count time by real_clock difference from last frame
             time_t framesTime = framesCounter / fps_target ;// GetFPS();
@@ -694,21 +701,21 @@ void gameloop_rl(int argc, char** argv)
                 DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
             }
             DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
-            int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
-            int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, sprite_w_factor, palette, PALETTE_S4C_H_TOTCOLORS);
+            int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, scale, palette, PALETTE_S4C_H_TOTCOLORS);
+            int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, scale, palette, PALETTE_S4C_H_TOTCOLORS);
 
             Rectangle floor_r = CLITERAL(Rectangle) {
-                screenWidth / 2 - (5 * sprite_w_factor),
+                gameScreenWidth / 2 - (5 * scale),
                             //screenHeight / 2,
-                            stats_label_r.y + (13 * sprite_w_factor),
-                            FLOOR_MAX_COLS * sprite_w_factor,
-                            FLOOR_MAX_ROWS * sprite_w_factor,
+                            stats_label_r.y + (13 * scale),
+                            FLOOR_MAX_COLS * scale,
+                            FLOOR_MAX_ROWS * scale,
             };
 
             if (G_EXPERIMENTAL_ON != 1) {
-                draw_floor_view(current_floor, current_x, current_y, sprite_w_factor, &floor_r);
+                draw_floor_view(current_floor, current_x, current_y, scale, &floor_r);
             } else {
-                display_roomclass_layout(current_floor, &floor_r, sprite_w_factor);
+                display_roomclass_layout(current_floor, &floor_r, scale);
             }
 
             /*
@@ -739,7 +746,7 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangleRec(stats_label_r, st_c);
             */
             if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
-                DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
                 DrawText("Window too small.", 20, 20, 20, RAYWHITE);
                 DrawText("Please resize.", 20, 50, 20, RAYWHITE);
             }
@@ -747,45 +754,60 @@ void gameloop_rl(int argc, char** argv)
         break;
         case ENDING: {
             // TODO: Draw ENDING screen here!
-            DrawRectangle(0, 0, screenWidth, screenHeight, BLUE);
+            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, BLUE);
             DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
-            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+            DrawText("WIP", 20, gameScreenHeight - (10 * scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
         }
         break;
         case DOOR_ANIM: {
             // TODO: Draw ENDING screen here!
-            DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
+            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
             DrawText("DOOR SCREEN", 20, 20, 40, DARKBLUE);
-            DrawText("WIP", 20, screenHeight - (10 * sprite_w_factor), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+            DrawText("WIP", 20, gameScreenHeight - (10 * scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to RETURN to GAMEPLAY SCREEN", 120, 220, 20, DARKBLUE);
 
             int door_frame_W = 21;
             int door_frame_H = 21;
-            int door_rect_X = (screenWidth/2) - ((door_frame_W * sprite_w_factor * 1.5) /2);
-            int door_rect_Y = (screenHeight/2) - ((door_frame_H * sprite_w_factor * 1.5) /2);
+            int door_rect_X = (gameScreenWidth/2) - ((door_frame_W * scale * 1.5) /2);
+            int door_rect_Y = (gameScreenHeight/2) - ((door_frame_H * scale * 1.5) /2);
             Rectangle door_r = CLITERAL(Rectangle) {
                 door_rect_X,
                 door_rect_Y,
-                door_frame_W * sprite_w_factor * 1.5,
-                door_frame_H * sprite_w_factor * 1.5,
+                door_frame_W * scale * 1.5,
+                door_frame_H * scale * 1.5,
             };
-            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, sprite_w_factor*1.5, palette, PALETTE_S4C_H_TOTCOLORS);
+            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, scale*1.5, palette, PALETTE_S4C_H_TOTCOLORS);
             if (door_res != 0 ) {
-                DrawRectangle(0, 0, screenWidth, screenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
                 DrawText("Window too small.", 20, 20, 20, RAYWHITE);
                 DrawText("Please resize.", 20, 50, 20, RAYWHITE);
                 current_anim_frame--;
             }
         }
         break;
-        default:
+        default: {
             break;
         }
+        }
+
+        EndTextureMode();
+
+        //----------------------------------------------------------------------------------
+
+        // Draw
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+
+        ClearBackground(BLACK);
+
+        DrawTexturePro(target_txtr.texture, (Rectangle){ 0.0f, 0.0f, (float)target_txtr.texture.width, (float)-target_txtr.texture.height}, (Rectangle) { (GetScreenWidth() - ((float) gameScreenWidth*scale))*0.5f, (GetScreenHeight() - ((float) gameScreenHeight*scale))*0.5f, (float) gameScreenWidth*scale, (float) gameScreenHeight*scale}, (Vector2){ 0, 0}, 0.0f, WHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
+
+    UnloadRenderTexture(target_txtr);
 
     CloseWindow();
     kls_free(default_kls);
