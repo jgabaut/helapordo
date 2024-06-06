@@ -32,7 +32,7 @@
 #ifdef far
 #undef far
 #endif
-#include <raymath.h>
+#include <raymath.h> // Needed for: Vector2Clamp()
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 void gameloop_rl(int argc, char** argv);
