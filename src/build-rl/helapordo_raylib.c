@@ -662,18 +662,18 @@ void gameloop_rl(int argc, char** argv)
             DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
             DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
-            int pl_rect_Y = 20;
-            int pl_frame_W = 17;
+            int pl_rect_Y = gameScreenHeight * 0.1f;
+            int pl_frame_W = gameScreenWidth * 0.2f;
             int pl_frame_H = pl_frame_W;
-            int pl_rect_X = gameScreenWidth - (pl_frame_W *scale ) - 20;
-            int en_rect_X = 20;
+            int pl_rect_X = gameScreenWidth - pl_frame_W;
+            int en_rect_X = gameScreenWidth *0.1f;
             int en_rect_Y = pl_rect_Y;
             int en_frame_W = pl_frame_W;
             int en_frame_H = pl_frame_H;
-            float stats_label_W = 10 * scale;
-            float stats_label_H = 10 * scale;
+            float stats_label_W = gameScreenWidth * 0.1f;
+            float stats_label_H = stats_label_W;
             Rectangle stats_label_r = CLITERAL(Rectangle) {
-                ((pl_rect_X - (en_rect_X + (en_frame_W * scale))) / 2) + (en_rect_X + (en_frame_W * scale)) - (stats_label_W/2),
+                gameScreenWidth*0.5f - (stats_label_W/2),
                 en_rect_Y,
                 stats_label_W,
                 stats_label_H
@@ -681,14 +681,14 @@ void gameloop_rl(int argc, char** argv)
             Rectangle pl_r = CLITERAL(Rectangle) {
                 pl_rect_X,
                 pl_rect_Y,
-                pl_frame_W * scale,
-                pl_frame_H * scale
+                pl_frame_W,
+                pl_frame_H
             };
             Rectangle en_r = CLITERAL(Rectangle) {
                 en_rect_X,
                 en_rect_Y,
-                en_frame_W * scale,
-                en_frame_H * scale
+                en_frame_W,
+                en_frame_H
             };
             //TODO: count time by real_clock difference from last frame
             time_t framesTime = framesCounter / fps_target ;// GetFPS();
@@ -701,19 +701,18 @@ void gameloop_rl(int argc, char** argv)
                 DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
             }
             DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
-            int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, pl_frame_H, pl_frame_W, scale, palette, PALETTE_S4C_H_TOTCOLORS);
-            int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, en_frame_H, en_frame_W, scale, palette, PALETTE_S4C_H_TOTCOLORS);
+            int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+            int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
 
             Rectangle floor_r = CLITERAL(Rectangle) {
-                gameScreenWidth / 2 - (5 * scale),
-                            //screenHeight / 2,
-                            stats_label_r.y + (13 * scale),
-                            FLOOR_MAX_COLS * scale,
-                            FLOOR_MAX_ROWS * scale,
+                gameScreenHeight *0.5f,
+                gameScreenWidth *0.5f,
+                FLOOR_MAX_COLS * (gameScreenWidth*0.2f),
+                FLOOR_MAX_ROWS * (gameScreenHeight*0.2f),
             };
 
             if (G_EXPERIMENTAL_ON != 1) {
-                draw_floor_view(current_floor, current_x, current_y, scale, &floor_r);
+                draw_floor_view(current_floor, current_x, current_y, 8*scale, &floor_r);
             } else {
                 display_roomclass_layout(current_floor, &floor_r, scale);
             }
@@ -745,6 +744,7 @@ void gameloop_rl(int argc, char** argv)
             DrawRectangleRec(pl_r, pl_c);
             DrawRectangleRec(stats_label_r, st_c);
             */
+
             if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
                 DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
                 DrawText("Window too small.", 20, 20, 20, RAYWHITE);
