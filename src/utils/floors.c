@@ -1332,7 +1332,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
     draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, pixelSize, 3);
 
     //Draw player char
-    DrawRectangle( win->x + ((FLOOR_MAX_COLS/2 -1) * pixelSize), win->y + ((FLOOR_MAX_COLS / 2 - 1) * pixelSize), pixelSize, pixelSize, ColorFromS4CPalette(palette, S4C_BLUE));
+    DrawRectangle(win->x + ((FLOOR_MAX_COLS/2 -1)*pixelSize) - pixelSize/2, win->y + ((FLOOR_MAX_ROWS / 2 -1) *pixelSize) - pixelSize/2, pixelSize, pixelSize, ColorFromS4CPalette(palette, S4C_BLUE));
 }
 
 /**
@@ -1344,89 +1344,88 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
 void step_floor(Floor *floor, int *current_x,
                 int *current_y, int control)
 {
-
     int picked = 0;
     int target_x = *current_x;
     int target_y = *current_y;
     while (!picked && control > 0) {
         target_x = *current_x;
         target_y = *current_y;
-        switch (control) {
-            //TODO
-            //Implement a working menu for the raylib build
-            if ( control == hlpd_d_keyval(HLPD_KEY_DOWN)) {
-                picked = 1;
-                target_y += 1;
-            } else if ( control == hlpd_d_keyval(HLPD_KEY_UP)) {
-                picked = 1;
-                target_y -= 1;
-            } else if ( control == hlpd_d_keyval(HLPD_KEY_LEFT)) {
-                picked = 1;
-                target_x -= 1;
-            } else if ( control == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
-                picked = 1;
-                target_x += 1;
-            } else {
-                log_tag("debug_log.txt", "[FLOOR]",
-                        "move_update():  Player char ( %c ) was not accounted for. Target (x=%i,y=%i) class (%s).",
-                        control, target_x, target_y,
-                        stringFromRoom(floor->
-                                       roomclass_layout[target_x][target_y]));
-                fprintf(stderr, "Invalid char: {%c}\n", control);
-                return;
-            }
-            if (floor->floor_layout[target_x][target_y] != 1) {
-                fprintf(stderr, "%s\n", "floor->floor_layout[target_x][target_y] was not 1.");
-                return;
-            } else {
-                if (floor->roomclass_layout[target_x][target_y] != WALL
-                    && floor->floor_layout[target_x][target_y] > 0) {
-                    if (floor->explored_matrix[target_x][target_y] == 0) {
-                        floor->explored_matrix[target_x][target_y] = 1;
-                        (floor->explored_area)++;
-                        log_tag("debug_log.txt", "[FLOOR]",
-                                "move_update():  target x[%i],y[%i] was not walked before. Class: (%s).",
-                                target_x, target_y,
-                                stringFromRoom(floor->
-                                               roomclass_layout[target_x]
-                                               [target_y]));
-                        log_tag("debug_log.txt", "[FLOOR]",
-                                "move_update(): explored area [%i].",
-                                floor->explored_area);
-                    } else {
-                        log_tag("debug_log.txt", "[FLOOR]",
-                                "move_update():  target x[%i],y[%i] was walked before. Class: (%s).",
-                                target_x, target_y,
-                                stringFromRoom(floor->
-                                               roomclass_layout[target_x]
-                                               [target_y]));
-                        log_tag("debug_log.txt", "[FLOOR]",
-                                "move_update(): explored area [%i], tot area [%i].",
-                                floor->explored_area, floor->area);
-                    }
-                    *current_x = target_x;
-                    *current_y = target_y;
-                    //draw_floor_view(floor, *current_x, *current_y, pixelSize, win);
-                } else {
-                    picked = 0;
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "Bonked in a wall in move_update().");
-                    fprintf(stderr, "%s\n", "BONK!");
-                    return;
-                }
-
-                switch (floor->roomclass_layout[target_x][target_y]) {
-                default: {
+        //TODO
+        //Implement a working menu for the raylib build
+        if ( control == hlpd_d_keyval(HLPD_KEY_DOWN)) {
+            picked = 1;
+            target_y += 1;
+        } else if ( control == hlpd_d_keyval(HLPD_KEY_UP)) {
+            picked = 1;
+            target_y -= 1;
+        } else if ( control == hlpd_d_keyval(HLPD_KEY_LEFT)) {
+            picked = 1;
+            target_x -= 1;
+        } else if ( control == hlpd_d_keyval(HLPD_KEY_RIGHT)) {
+            picked = 1;
+            target_x += 1;
+        } else {
+            log_tag("debug_log.txt", "[FLOOR]",
+                    "move_update():  Player char ( %c ) was not accounted for. Target (x=%i,y=%i) class (%s).",
+                    control, target_x, target_y,
+                    stringFromRoom(floor->
+                                   roomclass_layout[target_x][target_y]));
+            fprintf(stderr, "Invalid char: {%c}\n", control);
+            return;
+        }
+        if (floor->floor_layout[target_x][target_y] != 1) {
+            fprintf(stderr, "%s\n", "floor->floor_layout[target_x][target_y] was not 1.");
+            return;
+        } else {
+            if (floor->roomclass_layout[target_x][target_y] != WALL
+                && floor->floor_layout[target_x][target_y] > 0) {
+                if (floor->explored_matrix[target_x][target_y] == 0) {
+                    floor->explored_matrix[target_x][target_y] = 1;
+                    (floor->explored_area)++;
                     log_tag("debug_log.txt", "[FLOOR]",
-                            "move_update():  target x[%i],y[%i] was of class (%s).",
+                            "move_update():  target x[%i],y[%i] was not walked before. Class: (%s).",
                             target_x, target_y,
                             stringFromRoom(floor->
                                            roomclass_layout[target_x]
                                            [target_y]));
+                    log_tag("debug_log.txt", "[FLOOR]",
+                            "move_update(): explored area [%i].",
+                            floor->explored_area);
+                } else {
+                    log_tag("debug_log.txt", "[FLOOR]",
+                            "move_update():  target x[%i],y[%i] was walked before. Class: (%s).",
+                            target_x, target_y,
+                            stringFromRoom(floor->
+                                           roomclass_layout[target_x]
+                                           [target_y]));
+                    log_tag("debug_log.txt", "[FLOOR]",
+                            "move_update(): explored area [%i], tot area [%i].",
+                            floor->explored_area, floor->area);
                 }
-                }
+                *current_x = target_x;
+                *current_y = target_y;
+                //draw_floor_view(floor, *current_x, *current_y, pixelSize, win);
+            } else {
+                picked = 0;
+                log_tag("debug_log.txt", "[DEBUG]",
+                        "Bonked in a wall in move_update().");
+                fprintf(stderr, "%s\n", "BONK!");
+                return;
+            }
+
+            switch (floor->roomclass_layout[target_x][target_y]) {
+            default: {
+                log_tag("debug_log.txt", "[FLOOR]",
+                        "move_update():  target x[%i],y[%i] was of class (%s).",
+                        target_x, target_y,
+                        stringFromRoom(floor->
+                                       roomclass_layout[target_x]
+                                       [target_y]));
+            }
+            break;
             }
         }
     }
+}
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD

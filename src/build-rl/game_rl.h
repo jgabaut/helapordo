@@ -23,10 +23,6 @@
 #include "../core/sprites.h"
 #include "../core/game_animations.h"
 
-#define EXPECTED_RAYLIB_VERSION_MAJOR 4 /**< Defines min expected major ncurses version.*/
-#define EXPECTED_RAYLIB_VERSION_MINOR 5 /**< Defines min expected minor ncurses version.*/
-#define EXPECTED_RAYLIB_VERSION_PATCH 0	/**< Defines min expected patch ncurses version.*/
-
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);
 void setEquipSprite(Equip * e);

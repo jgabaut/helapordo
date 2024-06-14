@@ -383,6 +383,8 @@ void dbg_BSP_Room(BSP_Room* bsp_room)
     }
 }
 
+#ifdef HELAPORDO_CURSES_BUILD
+
 static void draw_vertical_wall(WINDOW* win, BSP_Wall* w, int start_y, int start_x)
 {
     for (int y = w->start_y; y <= w->end_y; y++) {
@@ -473,3 +475,4 @@ void draw_BSP_Tree(WINDOW* win, BSP_Room* node, int depth, int x, int y, int hz_
 
     wrefresh(win);
 }
+#endif // HELAPORDO_CURSES_BUILD

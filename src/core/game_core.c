@@ -48,8 +48,17 @@ HLPD_Key hlpd_default_keybinds[HLPD_KEYCLASS_MAX+1] = {
     [HLPD_KEY_RIGHT] = {.class = HLPD_KEY_RIGHT, .val = KEY_RIGHT},
     [HLPD_KEY_DOWN] = {.class = HLPD_KEY_DOWN, .val = KEY_DOWN},
     [HLPD_KEY_LEFT] = {.class = HLPD_KEY_LEFT, .val = KEY_LEFT},
+#ifdef HELAPORDO_CURSES_BUILD
     [HLPD_KEY_DWNPAGE] = {.class = HLPD_KEY_DWNPAGE, .val = KEY_NPAGE},
     [HLPD_KEY_UPPAGE] = {.class = HLPD_KEY_UPPAGE, .val = KEY_PPAGE},
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined"
+#else
+    [HLPD_KEY_DWNPAGE] = {.class = HLPD_KEY_DWNPAGE, .val = KEY_PAGE_DOWN},
+    [HLPD_KEY_UPPAGE] = {.class = HLPD_KEY_UPPAGE, .val = KEY_PAGE_UP},
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
     [HLPD_KEY_CONFIRM] = {.class = HLPD_KEY_CONFIRM, .val = 10},
     [HLPD_KEY_QUIT] = {.class = HLPD_KEY_QUIT, .val = 'q'},
     [HLPD_KEY_MENU] = {.class = HLPD_KEY_MENU, .val = 'm'},

@@ -92,7 +92,7 @@ void gameloop_Win(int argc, char **argv)
 
         gen_random_seed(seed);
 
-        while ((option = getopt(argc, argv, "r:E:tTGRXQLlvdhsaV")) != -1) {
+        while ((option = getopt(argc, argv, "r:E:tTGRXQLvdhaV")) != -1) {
             switch (option) {
             case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
@@ -129,10 +129,6 @@ void gameloop_Win(int argc, char **argv)
             break;
             case 'a': {
                 GS_AUTOSAVE_ON = 0;
-            }
-            break;
-            case 's': {
-                GAMEMODE = Story;
             }
             break;
             case 'R': {

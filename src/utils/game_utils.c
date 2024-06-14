@@ -1771,13 +1771,16 @@ void pickClass(Fighter *player)
 {
     int pick = -1;
     do {
+#ifdef HELAPORDO_CURSES_BUILD
         if (G_EXPERIMENTAL_ON != 1) {
+#endif // HELAPORDO_CURSES_BUILD
             int res = system("clear");
             log_tag("debug_log.txt", "[DEBUG]",
                     "pickClass() system(\"clear\") res was (%i)", res);
             printf("\nPick a class.\n");
             printClasses();
             pick = scanClass();
+#ifdef HELAPORDO_CURSES_BUILD
         } else {
             // Initialize ncurses
             if (support_kls == NULL) {
@@ -1822,6 +1825,7 @@ void pickClass(Fighter *player)
             kls_free(support_kls);
             support_kls = NULL;
         }
+#endif // HELAPORDO_CURSES_BUILD
     } while (pick < 0);
 
     player->class = pick;
@@ -1874,8 +1878,11 @@ int scanWincon(void)
  */
 void pickName(Fighter *player)
 {
+#ifdef HELAPORDO_CURSES_BUILD
     if (G_EXPERIMENTAL_ON != 1) {
+#endif // HELAPORDO_CURSES_BUILD
         scanName(player);
+#ifdef HELAPORDO_CURSES_BUILD
     } else {
         bool picked = false;
         do {
@@ -1916,6 +1923,7 @@ void pickName(Fighter *player)
             support_kls = NULL;
         } while (!picked);
     }
+#endif // HELAPORDO_CURSES_BUILD
     log_tag("debug_log.txt", "[DEBUG]", "%s():    player chose name {%s}", __func__, player->name);
 }
 
@@ -3090,170 +3098,6 @@ void printArtifactStats(Artifact *a)
     white();
 }
 
-#ifdef HELAPORDO_CURSES_BUILD
-/**
- * Demoes color pairs from palette.c to the passed WINDOW.
- * @param win The Window pointer to print to.
- * @param colors_per_row How many colors to print in each row.
- */
-void test_game_color_pairs(WINDOW *win, int colors_per_row)
-{
-    if (win == NULL) {
-        fprintf(stderr, "[%s]:  Passed Window was NULL.", __func__);
-        log_tag("debug_log.txt", "[ERROR]", "[%s]:  Passed Window was NULL.",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-
-    int x = 1;
-    int y = 1;
-    int x_offset = 0;
-
-    for (int i = S4C_MIN_COLOR_INDEX; i < S4C_MAX_COLOR_INDEX + 1; i++) {
-        int color_index = i;
-        if (color_index >= 0) {
-            wattron(win, COLOR_PAIR(color_index));
-            mvwaddch(win, y, x + x_offset, ' ' | A_REVERSE);
-            wattroff(win, COLOR_PAIR(color_index));
-        }
-        x_offset++;
-        if ((color_index - S4C_MIN_COLOR_INDEX + 1) % colors_per_row == 0) {
-            x = 1;
-            x_offset = 0;
-            y++;
-        }
-    }
-
-    int picked = 0;
-    int c = -1;
-    wrefresh(win);
-    refresh();
-
-    while (!picked && (c = wgetch(win)) != 'q') {
-        switch (c) {
-        case 10: {		/*Enter */
-            picked = 1;
-
-        };
-        break;
-        }
-    }
-}
-
-/**
- * Inits the passed (preallocated) Gamestate with the passed pointers.
- * @param gmst The allocated Gamestate to init.
- * @param start_time The start time for current game.
- * @param stats Game stats.
- * @param wincon Game Wincon.
- * @param path Game Path.
- * @param player Game main player.
- * @param gamemode Picked gamemode.
- * @param screen The main screen from initscr().
- * @param options The GameOptions for current run.
- * @param is_seeded Denotes if current game was started from a set seed.
- */
-void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded)
-{
-    if (gmst == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (stats == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "countStats was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (wincon == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Wincon was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (path == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Path was NULL in %s()", __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (player == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Player was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    if (gamemode != Rogue) {
-        log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
-                gamemode);
-        exit(EXIT_FAILURE);
-    }
-    if (screen == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "Screen was NULL in %s()",
-                __func__);
-        exit(EXIT_FAILURE);
-    }
-    gmst->start_time = start_time;
-    gmst->stats = stats;
-    gmst->current_fighters = -1;
-    gmst->current_roomtype = -1;
-    gmst->current_room_index = -1;
-    gmst->current_enemy_index = -1;
-    gmst->wincon = wincon;
-    gmst->path = path;
-    gmst->player = player;
-    gmst->gamemode = gamemode;
-    gmst->screen = screen;
-    gmst->is_seeded = is_seeded;
-}
-
-/**
- * Allocates and prepares a turnOP_args and returns a pointer to it.
- * @see turnOP_args
- * @see turnOption_OP
- * @see turnOption
- * @see turnOP()
- * @param gmst The Gamestate pointer to assign to turnOP_args->gmst.
- * @param actor The Fighter pointer to assign to turnOP_args->actor.
- * @param path The Path pointer to assign to turnOP_args->path.
- * @param room The Room pointer to assign to turnOP_args->room.
- * @param Enemy The Enemy pointer to assign to turnOP_args->enemy.
- * @param Boss The Boss pointer to assign to turnOP_args->boss.
- * @param save_file The FILE pointer to assign to turnOP_args->save_file.
- * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
- * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
- * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
- * @param picked_skill The skillType to assign to turnOP_args->picked_skill.
- * @param rb_notifications The RingaBuf to assign to turnOP_args->rb_notifications.
- */
-turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
-                              Room *room, loadInfo *load_info, Enemy *enemy,
-                              Boss *boss, FILE *save_file, WINDOW *notify_win,
-                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
-                              skillType picked_skill, RingaBuf* rb_notifications)
-{
-    log_tag("debug_log.txt", "[TURNOP]",
-            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
-    kls_log(t_kls->kls, "DEBUG", "[TURNOP]",
-            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
-    turnOP_args *res =
-        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, HR_turnOP_args,
-                                         "turnOP_args", "turnOP_args");
-
-    res->gmst = gmst;
-    res->actor = actor;
-    res->path = path;
-    res->room = room;
-    res->load_info = load_info;
-    res->enemy = enemy;
-    res->boss = boss;
-    res->save_file = save_file;
-    res->notify_win = notify_win;
-    res->t_kls = t_kls;
-    res->foe_op = foe_op;
-    res->picked_skill = picked_skill;
-    res->rb_notifications = rb_notifications;
-
-    return res;
-}
-
 /**
  * Takes a RingaBuf pointer and queues the passed text to it.
  * @see handleRoom_Enemies()
@@ -3327,174 +3171,210 @@ void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifica
 }
 
 /**
- * Takes a WINDOW pointer and prints to it the passed string with the passed color.
- * Additional parameters set coordinates for the output.
- * @param win The WINDOW pointer to print to.
- * @param starty The integer indicating starting y coordinate.
- * @param startx The integer indicating starting x coordinate.
- * @param width The integer indicating panel width.
- * @param string The string to print to the window.
- * @param color The color to print in.
+ * Takes a RingaBuf pointer to queue notifications to, a Fighter pointer value and applies the effect pertaining to its status value.
+ * @see Fighter
+ * @see fighterStatus
+ * @see printStatusText()
+ * @param f The Fighter pointer at hand.
+ * @param rb_notifications The RingaBuf pointer used for notifications.
  */
-void print_label(WINDOW *win, int starty, int startx, int width, char *string,
-                 chtype color)
+void applyStatus(Fighter *f, RingaBuf* rb_notifications)
 {
-    int length, x, y;
-    float temp;
 
-    if (win == NULL) {
-        log_tag("debug_log.txt", "[CURSES]",
-                "win was NULL in boss_print_in_panel().");
-        exit(EXIT_FAILURE);
+    switch (f->status) {
+    case Normal: {
+        break;
     }
-    getyx(win, y, x);
-    if (startx != 0)
-        x = startx;
-    if (starty != 0)
-        y = starty;
-    if (width == 0)
-        width = 80;
+    break;
+    case Poison: {
 
-    length = strlen(string);
-    temp = (width - length) / 2;
-    x = startx + (int)temp;
-    wattron(win, color);
-    mvwprintw(win, y, x, "%s", string);
-    wattroff(win, color);
-    refresh();
+        //Account for penicillin perk
+        //ATM multiples don't stack
+        int penicillin = f->perks[PENICILLIN]->innerValue;
+        if (penicillin > 0) {
+            return;
+        }
+
+        if (f->hp >= 4) {
+            f->hp -= 3;
+        } else {
+            f->hp = 1;	//Will this be a problem?
+        }
+        printStatusText(Poison, f->name, S4C_RED, rb_notifications);
+    }
+    break;
+    case Burned: {
+        printStatusText(Burned, f->name, S4C_RED, rb_notifications);
+    }
+    break;
+    case Frozen: {
+        printStatusText(Frozen, f->name, S4C_RED, rb_notifications);
+    }
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
 }
 
 /**
- * Takes a Equip pointer and prepares its sprite field by copying it line by line from equips_sprites, defined in sprites.h header.
- * @see Equip
- * @see dropEquip
- * @see equips_sprites
- * @param e The Equip pointer whose sprite field will be initialised.
+ * Takes a RingaBuf pointer to queue notifications to, a Enemy pointer value and applies the effect pertaining to its status value.
+ * @see Enemy
+ * @see fighterStatus
+ * @see printStatusText()
+ * @see stringFromEClass()
+ * @param e The Enemy pointer at hand.
+ * @param rb_notifications The RingaBuf used for notifications.
+ * @see enqueue_notification()
  */
-void setEquipSprite(Equip *e)
+void applyEStatus(Enemy *e, RingaBuf* rb_notifications)
 {
-    if (e->class < EQUIPSMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(e->sprite[i], equips_sprites[e->class][i]);
+    switch (e->status) {
+    case Normal: {
+        break;
+    }
+    break;
+    case Poison: {
+        if (e->hp >= 4) {
+            e->hp -= 3;
+        } else {
+            e->hp = 1;	//Will this be a problem for kills in the enemy loop?
         }
-    } else {
-        log_tag("debug_log.txt", "[WARN]",
-                "%s():    Unexpected equipClass {%i}.", __func__, e->class);
+        printStatusText(Poison, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+    break;
+    case Burned: {
+        if (e->hp >= 5) {
+            e->hp -= 4;
+        } else {
+            e->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+
+        if (e->atk >= 3) {
+            e->atk -= 3;
+        } else {
+            e->atk = 1;
+        }
+        printStatusText(Burned, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+    break;
+    case Frozen: {
+        if (e->vel >= 3) {
+            e->vel -= 1;
+        } else {
+            e->vel = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(Frozen, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
+}
+
+/**
+ * Takes a RingaBuf pointer to queue notifications to, a Boss pointer value and applies the effect pertaining to its status value.
+ * @see Boss
+ * @see fighterStatus
+ * @see printStatusText()
+ * @see stringFromBossClass()
+ * @param b The Boss pointer at hand.
+ * @param rb_notifications The RingaBuf used for notifications.
+ */
+void applyBStatus(Boss *b, RingaBuf* rb_notifications)
+{
+    switch (b->status) {
+    case Normal: {
+        break;
+    }
+    break;
+    case Poison: {
+        if (b->hp >= 4) {
+            b->hp -= 3;
+        } else {
+            b->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(Poison, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+    break;
+    case Burned: {
+        if (b->hp >= 5) {
+            b->hp -= 4;
+        } else {
+            b->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+
+        if (b->atk >= 3) {
+            b->atk -= 3;
+        } else {
+            b->atk = 1;
+        }
+        printStatusText(Burned, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+    break;
+    case Frozen: {
+        if (b->vel >= 3) {
+            b->vel -= 1;
+        } else {
+            b->vel = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(Frozen, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
+}
+
+/**
+ * Takes a RingaBuf pointer to queue notifications to, a fighterStatus value and a string of who's the entity to print the respective status message.
+ * @see fighterStatus
+ * @param status The fighterStatus at hand.
+ * @param subject A string with name of entity owning the fighterStatus.
+ * @param color The color to use for the notification.
+ * @param rb_notifications The RingaBuf used for notifications.
+ */
+void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications)
+{
+    char msg[500];
+    switch (status) {
+    case Normal: {
         return;
-    }
-}
-
-/**
- * Takes a Consumable pointer and prepares its sprite field by copying it line by line from consumables_sprites, defined in sprites.h header.
- * @see Consumable
- * @see initPlayerStats
- * @see consumables_sprites
- * @param c The Consumable pointer whose sprite field will be initialised.
- */
-void setConsumableSprite(Consumable *c)
-{
-    if (c->class < CONSUMABLESMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(c->sprite[i], consumables_sprites[c->class][i]);
-        }
-    } else {
-        fprintf(stderr,
-                "[ERROR]    Unexpected consumableClass in setConsumableSprite().\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
- * Takes a Artifact pointer and prepares its sprite field by copying it line by line from artifacts_sprites, defined in sprites.h header.
- * @see Artifact
- * @see gameloop()
- * @see artifacts_sprites
- * @param a The Artifact pointer whose sprite field will be initialised.
- */
-void setArtifactSprite(Artifact *a)
-{
-    if (a->class < ARTIFACTSMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(a->sprite[i], artifacts_sprites[a->class][i]);
-        }
-    } else {
-        fprintf(stderr,
-                "[ERROR]    Unexpected artifactClass in setArtifactSprite().\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
- * Takes a quality value and calls the respective color function without actually printing text.
- * @see quality
- * @param q The quality value we want to set text color for.
- */
-void printQualityColor(quality q)
-{
-    switch (q) {
-    case Bad: {
-        lightRed();
+    };
+    break;
+    case Poison:
+    case Burned: {
+        sprintf(msg, "%s is hurt by its %s.", subject,
+                stringFromStatus(status));
+        enqueue_notification(msg, 500, color, rb_notifications);
     }
     break;
-    case Average: {
-        strongWhite();
+    case Weak:
+    case Strong: {
+        sprintf(msg, "%s is feeling %s.", subject,
+                stringFromStatus(status));
+        enqueue_notification(msg, 500, color, rb_notifications);
     }
     break;
-    case Good: {
-        lightCyan();
+    case Frozen: {
+        sprintf(msg, "%s is frozen cold.", subject);
+        enqueue_notification(msg, 500, color, rb_notifications);
     }
     break;
-    };
-}
-
-/**
- * Takes a Equip pointer and prints most of its values formatted.
- * The beginning of the format assumes the caller prepended "(x" on the output before calling, where x is the index of the equip.
- * @see Equip
- * @see stringFromQuality()
- * @param e The Equip pointer with stats to print.
- */
-void printEquipStats(Equip *e)
-{
-    printf(")\t");		//This completes the print started in the calling loop, which supplies the index ATM
-
-    //Quality color
-    printQualityColor(e->qual);
-    printf("%s  ", stringFromQuality(e->qual));
-
-    printf("%s  ", e->name);
-    white();
-
-    printf("\"%s\"  (L%i)\t", e->desc, e->level);
-
-    lightCyan();
-    printf("%s  ", stringFromEquipzones(e->type));
-
-    lightGreen();
-    //Stats, will be then printed only if != 0
-    if (e->atk != 0) {
-        printf("A: %i ", e->atk);
-    };
-    if (e->def != 0) {
-        printf("D: %i ", e->def);
-    };
-    if (e->vel != 0) {
-        printf("V: %i ", e->vel);
-    };
-    if (e->enr != 0) {
-        printf("E: %i", e->enr);
-    };
-
-    printf("\n");
-    white();
-
-    //Perks, will be then printed only if perksCount != 0
-
-    for (int i = 0; i < e->perksCount; i++) {
-        lightPurple();
-        printf("\t\t%s\n", e->perks[i]->name);
-    };
-    white();
+    }
 }
 
 /**
@@ -3547,7 +3427,11 @@ void dropEquip(Fighter *player, int beast, Koliseo *kls, RingaBuf* rb_notificati
     e->type = base->type;
     e->qual = q;
 
+#ifdef HELAPORDO_CURSES_BUILD
     setEquipSprite(e);
+#else
+    //TODO: IMPLEMENT SPRITE INIT FOR RAYLIB BUILD
+#endif // HELAPORDO_CURSES_BUILD
     strcpy(e->name, base->name);
     strcpy(e->desc, base->desc);
 
@@ -3760,6 +3644,341 @@ void dropEquip(Fighter *player, int beast, Koliseo *kls, RingaBuf* rb_notificati
 
     //Update stats
     player->stats->equipsfound++;
+}
+
+#ifdef HELAPORDO_CURSES_BUILD
+/**
+ * Demoes color pairs from palette.c to the passed WINDOW.
+ * @param win The Window pointer to print to.
+ * @param colors_per_row How many colors to print in each row.
+ */
+void test_game_color_pairs(WINDOW *win, int colors_per_row)
+{
+    if (win == NULL) {
+        fprintf(stderr, "[%s]:  Passed Window was NULL.", __func__);
+        log_tag("debug_log.txt", "[ERROR]", "[%s]:  Passed Window was NULL.",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+
+    int x = 1;
+    int y = 1;
+    int x_offset = 0;
+
+    for (int i = S4C_MIN_COLOR_INDEX; i < S4C_MAX_COLOR_INDEX + 1; i++) {
+        int color_index = i;
+        if (color_index >= 0) {
+            wattron(win, COLOR_PAIR(color_index));
+            mvwaddch(win, y, x + x_offset, ' ' | A_REVERSE);
+            wattroff(win, COLOR_PAIR(color_index));
+        }
+        x_offset++;
+        if ((color_index - S4C_MIN_COLOR_INDEX + 1) % colors_per_row == 0) {
+            x = 1;
+            x_offset = 0;
+            y++;
+        }
+    }
+
+    int picked = 0;
+    int c = -1;
+    wrefresh(win);
+    refresh();
+
+    while (!picked && (c = wgetch(win)) != 'q') {
+        switch (c) {
+        case 10: {		/*Enter */
+            picked = 1;
+
+        };
+        break;
+        }
+    }
+}
+
+/**
+ * Inits the passed (preallocated) Gamestate with the passed pointers.
+ * @param gmst The allocated Gamestate to init.
+ * @param start_time The start time for current game.
+ * @param stats Game stats.
+ * @param wincon Game Wincon.
+ * @param path Game Path.
+ * @param player Game main player.
+ * @param gamemode Picked gamemode.
+ * @param screen The main screen from initscr().
+ * @param options The GameOptions for current run.
+ * @param is_seeded Denotes if current game was started from a set seed.
+ */
+void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded)
+{
+    if (gmst == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (stats == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "countStats was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (wincon == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Wincon was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (path == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Path was NULL in %s()", __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (player == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Player was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    if (gamemode != Rogue) {
+        log_tag("debug_log.txt", "[ERROR]", "Invalid gamemode requested: [%i]",
+                gamemode);
+        exit(EXIT_FAILURE);
+    }
+    if (screen == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "Screen was NULL in %s()",
+                __func__);
+        exit(EXIT_FAILURE);
+    }
+    gmst->start_time = start_time;
+    gmst->stats = stats;
+    gmst->current_fighters = -1;
+    gmst->current_roomtype = -1;
+    gmst->current_room_index = -1;
+    gmst->current_enemy_index = -1;
+    gmst->wincon = wincon;
+    gmst->path = path;
+    gmst->player = player;
+    gmst->gamemode = gamemode;
+    gmst->screen = screen;
+    gmst->is_seeded = is_seeded;
+}
+
+/**
+ * Allocates and prepares a turnOP_args and returns a pointer to it.
+ * @see turnOP_args
+ * @see turnOption_OP
+ * @see turnOption
+ * @see turnOP()
+ * @param gmst The Gamestate pointer to assign to turnOP_args->gmst.
+ * @param actor The Fighter pointer to assign to turnOP_args->actor.
+ * @param path The Path pointer to assign to turnOP_args->path.
+ * @param room The Room pointer to assign to turnOP_args->room.
+ * @param Enemy The Enemy pointer to assign to turnOP_args->enemy.
+ * @param Boss The Boss pointer to assign to turnOP_args->boss.
+ * @param save_file The FILE pointer to assign to turnOP_args->save_file.
+ * @param notify_win The WINDOW pointer to assign to turnOP_args->notify_win.
+ * @param t_kls The Koliseo_Temp pointer to assign to turnOP_args->t_kls.
+ * @param foe_op The foeTurnOption_OP to assign to turnOP_args->foe_op.
+ * @param picked_skill The skillType to assign to turnOP_args->picked_skill.
+ * @param rb_notifications The RingaBuf to assign to turnOP_args->rb_notifications.
+ */
+turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
+                              Room *room, loadInfo *load_info, Enemy *enemy,
+                              Boss *boss, FILE *save_file, WINDOW *notify_win,
+                              Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
+                              skillType picked_skill, RingaBuf* rb_notifications)
+{
+    log_tag("debug_log.txt", "[TURNOP]",
+            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+    kls_log(t_kls->kls, "DEBUG", "[TURNOP]",
+            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+    turnOP_args *res =
+        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, HR_turnOP_args,
+                                         "turnOP_args", "turnOP_args");
+
+    res->gmst = gmst;
+    res->actor = actor;
+    res->path = path;
+    res->room = room;
+    res->load_info = load_info;
+    res->enemy = enemy;
+    res->boss = boss;
+    res->save_file = save_file;
+    res->notify_win = notify_win;
+    res->t_kls = t_kls;
+    res->foe_op = foe_op;
+    res->picked_skill = picked_skill;
+    res->rb_notifications = rb_notifications;
+
+    return res;
+}
+
+/**
+ * Takes a WINDOW pointer and prints to it the passed string with the passed color.
+ * Additional parameters set coordinates for the output.
+ * @param win The WINDOW pointer to print to.
+ * @param starty The integer indicating starting y coordinate.
+ * @param startx The integer indicating starting x coordinate.
+ * @param width The integer indicating panel width.
+ * @param string The string to print to the window.
+ * @param color The color to print in.
+ */
+void print_label(WINDOW *win, int starty, int startx, int width, char *string,
+                 chtype color)
+{
+    int length, x, y;
+    float temp;
+
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[CURSES]",
+                "win was NULL in boss_print_in_panel().");
+        exit(EXIT_FAILURE);
+    }
+    getyx(win, y, x);
+    if (startx != 0)
+        x = startx;
+    if (starty != 0)
+        y = starty;
+    if (width == 0)
+        width = 80;
+
+    length = strlen(string);
+    temp = (width - length) / 2;
+    x = startx + (int)temp;
+    wattron(win, color);
+    mvwprintw(win, y, x, "%s", string);
+    wattroff(win, color);
+    refresh();
+}
+
+/**
+ * Takes a Equip pointer and prepares its sprite field by copying it line by line from equips_sprites, defined in sprites.h header.
+ * @see Equip
+ * @see dropEquip
+ * @see equips_sprites
+ * @param e The Equip pointer whose sprite field will be initialised.
+ */
+void setEquipSprite(Equip *e)
+{
+    if (e->class < EQUIPSMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(e->sprite[i], equips_sprites[e->class][i]);
+        }
+    } else {
+        log_tag("debug_log.txt", "[WARN]",
+                "%s():    Unexpected equipClass {%i}.", __func__, e->class);
+        return;
+    }
+}
+
+/**
+ * Takes a Consumable pointer and prepares its sprite field by copying it line by line from consumables_sprites, defined in sprites.h header.
+ * @see Consumable
+ * @see initPlayerStats
+ * @see consumables_sprites
+ * @param c The Consumable pointer whose sprite field will be initialised.
+ */
+void setConsumableSprite(Consumable *c)
+{
+    if (c->class < CONSUMABLESMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(c->sprite[i], consumables_sprites[c->class][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected consumableClass in setConsumableSprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a Artifact pointer and prepares its sprite field by copying it line by line from artifacts_sprites, defined in sprites.h header.
+ * @see Artifact
+ * @see gameloop()
+ * @see artifacts_sprites
+ * @param a The Artifact pointer whose sprite field will be initialised.
+ */
+void setArtifactSprite(Artifact *a)
+{
+    if (a->class < ARTIFACTSMAX + 1) {
+        for (int i = 0; i < 8; i++) {
+            strcpy(a->sprite[i], artifacts_sprites[a->class][i]);
+        }
+    } else {
+        fprintf(stderr,
+                "[ERROR]    Unexpected artifactClass in setArtifactSprite().\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+/**
+ * Takes a quality value and calls the respective color function without actually printing text.
+ * @see quality
+ * @param q The quality value we want to set text color for.
+ */
+void printQualityColor(quality q)
+{
+    switch (q) {
+    case Bad: {
+        lightRed();
+    }
+    break;
+    case Average: {
+        strongWhite();
+    }
+    break;
+    case Good: {
+        lightCyan();
+    }
+    break;
+    };
+}
+
+/**
+ * Takes a Equip pointer and prints most of its values formatted.
+ * The beginning of the format assumes the caller prepended "(x" on the output before calling, where x is the index of the equip.
+ * @see Equip
+ * @see stringFromQuality()
+ * @param e The Equip pointer with stats to print.
+ */
+void printEquipStats(Equip *e)
+{
+    printf(")\t");		//This completes the print started in the calling loop, which supplies the index ATM
+
+    //Quality color
+    printQualityColor(e->qual);
+    printf("%s  ", stringFromQuality(e->qual));
+
+    printf("%s  ", e->name);
+    white();
+
+    printf("\"%s\"  (L%i)\t", e->desc, e->level);
+
+    lightCyan();
+    printf("%s  ", stringFromEquipzones(e->type));
+
+    lightGreen();
+    //Stats, will be then printed only if != 0
+    if (e->atk != 0) {
+        printf("A: %i ", e->atk);
+    };
+    if (e->def != 0) {
+        printf("D: %i ", e->def);
+    };
+    if (e->vel != 0) {
+        printf("V: %i ", e->vel);
+    };
+    if (e->enr != 0) {
+        printf("E: %i", e->enr);
+    };
+
+    printf("\n");
+    white();
+
+    //Perks, will be then printed only if perksCount != 0
+
+    for (int i = 0; i < e->perksCount; i++) {
+        lightPurple();
+        printf("\t\t%s\n", e->perks[i]->name);
+    };
+    white();
 }
 
 /**
@@ -4088,213 +4307,6 @@ void printActivePerks(Fighter *f)
     }
     delwin(win);
     endwin();
-}
-
-/**
- * Takes a RingaBuf pointer to queue notifications to, a Fighter pointer value and applies the effect pertaining to its status value.
- * @see Fighter
- * @see fighterStatus
- * @see printStatusText()
- * @param f The Fighter pointer at hand.
- * @param rb_notifications The RingaBuf pointer used for notifications.
- */
-void applyStatus(Fighter *f, RingaBuf* rb_notifications)
-{
-
-    switch (f->status) {
-    case Normal: {
-        break;
-    }
-    break;
-    case Poison: {
-
-        //Account for penicillin perk
-        //ATM multiples don't stack
-        int penicillin = f->perks[PENICILLIN]->innerValue;
-        if (penicillin > 0) {
-            return;
-        }
-
-        if (f->hp >= 4) {
-            f->hp -= 3;
-        } else {
-            f->hp = 1;	//Will this be a problem?
-        }
-        printStatusText(Poison, f->name, S4C_RED, rb_notifications);
-    }
-    break;
-    case Burned: {
-        printStatusText(Burned, f->name, S4C_RED, rb_notifications);
-    }
-    break;
-    case Frozen: {
-        printStatusText(Frozen, f->name, S4C_RED, rb_notifications);
-    }
-    break;
-    case Weak:
-
-        break;
-    case Strong:
-
-        break;
-    }
-}
-
-/**
- * Takes a RingaBuf pointer to queue notifications to, a Enemy pointer value and applies the effect pertaining to its status value.
- * @see Enemy
- * @see fighterStatus
- * @see printStatusText()
- * @see stringFromEClass()
- * @param e The Enemy pointer at hand.
- * @param rb_notifications The RingaBuf used for notifications.
- * @see enqueue_notification()
- */
-void applyEStatus(Enemy *e, RingaBuf* rb_notifications)
-{
-    switch (e->status) {
-    case Normal: {
-        break;
-    }
-    break;
-    case Poison: {
-        if (e->hp >= 4) {
-            e->hp -= 3;
-        } else {
-            e->hp = 1;	//Will this be a problem for kills in the enemy loop?
-        }
-        printStatusText(Poison, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
-    }
-    break;
-    case Burned: {
-        if (e->hp >= 5) {
-            e->hp -= 4;
-        } else {
-            e->hp = 1;	//Will this be a problem for kills in the enemy loop?
-        }
-
-        if (e->atk >= 3) {
-            e->atk -= 3;
-        } else {
-            e->atk = 1;
-        }
-        printStatusText(Burned, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
-    }
-    break;
-    case Frozen: {
-        if (e->vel >= 3) {
-            e->vel -= 1;
-        } else {
-            e->vel = 1;	//Will this be a problem for kills in the enemy loop?
-        }
-        printStatusText(Frozen, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
-    }
-
-    break;
-    case Weak:
-
-        break;
-    case Strong:
-
-        break;
-    }
-}
-
-/**
- * Takes a RingaBuf pointer to queue notifications to, a Boss pointer value and applies the effect pertaining to its status value.
- * @see Boss
- * @see fighterStatus
- * @see printStatusText()
- * @see stringFromBossClass()
- * @param b The Boss pointer at hand.
- * @param rb_notifications The RingaBuf used for notifications.
- */
-void applyBStatus(Boss *b, RingaBuf* rb_notifications)
-{
-    switch (b->status) {
-    case Normal: {
-        break;
-    }
-    break;
-    case Poison: {
-        if (b->hp >= 4) {
-            b->hp -= 3;
-        } else {
-            b->hp = 1;	//Will this be a problem for kills in the enemy loop?
-        }
-        printStatusText(Poison, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
-    }
-    break;
-    case Burned: {
-        if (b->hp >= 5) {
-            b->hp -= 4;
-        } else {
-            b->hp = 1;	//Will this be a problem for kills in the enemy loop?
-        }
-
-        if (b->atk >= 3) {
-            b->atk -= 3;
-        } else {
-            b->atk = 1;
-        }
-        printStatusText(Burned, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
-    }
-    break;
-    case Frozen: {
-        if (b->vel >= 3) {
-            b->vel -= 1;
-        } else {
-            b->vel = 1;	//Will this be a problem for kills in the enemy loop?
-        }
-        printStatusText(Frozen, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
-    }
-
-    break;
-    case Weak:
-
-        break;
-    case Strong:
-
-        break;
-    }
-}
-
-/**
- * Takes a RingaBuf pointer to queue notifications to, a fighterStatus value and a string of who's the entity to print the respective status message.
- * @see fighterStatus
- * @param status The fighterStatus at hand.
- * @param subject A string with name of entity owning the fighterStatus.
- * @param color The color to use for the notification.
- * @param rb_notifications The RingaBuf used for notifications.
- */
-void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications)
-{
-    char msg[500];
-    switch (status) {
-    case Normal: {
-        return;
-    };
-    break;
-    case Poison:
-    case Burned: {
-        sprintf(msg, "%s is hurt by its %s.", subject,
-                stringFromStatus(status));
-        enqueue_notification(msg, 500, color, rb_notifications);
-    }
-    break;
-    case Weak:
-    case Strong: {
-        sprintf(msg, "%s is feeling %s.", subject,
-                stringFromStatus(status));
-        enqueue_notification(msg, 500, color, rb_notifications);
-    }
-    break;
-    case Frozen: {
-        sprintf(msg, "%s is frozen cold.", subject);
-        enqueue_notification(msg, 500, color, rb_notifications);
-    }
-    break;
-    }
 }
 
 /**
@@ -5564,13 +5576,16 @@ void hlpd_reset_logfile(void)
         sprintf(path_to_debug_file, "%s/%s", static_path, "debug_log.txt");
         debug_file = fopen(path_to_debug_file, "w");
         if (!debug_file) {
+#ifdef HELAPORDO_CURSES_BUILD
             endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+#endif // HELAPORDO_CURSES_BUILD
             fprintf(stderr,
                     "[ERROR]    Can't open debug logfile (%s/debug_log.txt).\n",
                     static_path);
             exit(EXIT_FAILURE);
         }
         fprintf(debug_file, "[DEBUGLOG]    --New game--  \n");
+#ifdef HELAPORDO_CURSES_BUILD
         if (NCURSES_VERSION_MAJOR < EXPECTED_NCURSES_VERSION_MAJOR
             || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR < EXPECTED_NCURSES_VERSION_MINOR)
             || (NCURSES_VERSION_MAJOR == EXPECTED_NCURSES_VERSION_MAJOR && NCURSES_VERSION_MINOR == EXPECTED_NCURSES_VERSION_MINOR && NCURSES_VERSION_PATCH < EXPECTED_NCURSES_VERSION_PATCH)) {
@@ -5582,6 +5597,23 @@ void hlpd_reset_logfile(void)
                     EXPECTED_NCURSES_VERSION_MINOR,
                     EXPECTED_NCURSES_VERSION_PATCH);
         }
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined"
+#else
+        if (RAYLIB_VERSION_MAJOR < EXPECTED_RAYLIB_VERSION_MAJOR
+            && RAYLIB_VERSION_MINOR < EXPECTED_RAYLIB_VERSION_MINOR
+            && RAYLIB_VERSION_PATCH < EXPECTED_RAYLIB_VERSION_PATCH) {
+            fprintf(debug_file,
+                    "[WARN]    raylib version is lower than expected {%s: %i.%i.%i} < {%i.%i.%i}\n",
+                    RAYLIB_VERSION, RAYLIB_VERSION_MAJOR,
+                    RAYLIB_VERSION_MINOR, RAYLIB_VERSION_PATCH,
+                    EXPECTED_RAYLIB_VERSION_MAJOR,
+                    EXPECTED_RAYLIB_VERSION_MINOR,
+                    EXPECTED_RAYLIB_VERSION_PATCH);
+        }
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
         fprintf(debug_file, "[DEBUG]    --Default kls debug info:--  \n");
         print_kls_2file(debug_file, default_kls);
         fprintf(debug_file, "[DEBUG]    --Temporary kls debug info:--  \n");
@@ -5603,7 +5635,9 @@ void hlpd_reset_logfile(void)
         sprintf(path_to_OPS_debug_file, "%s/%s", static_path, OPS_LOGFILE);
         OPS_debug_file = fopen(path_to_OPS_debug_file, "w");
         if (!OPS_debug_file) {
+#ifdef HELAPORDO_CURSES_BUILD
             endwin();	//TODO: Can/should we check if we have to do this only in curses mode?
+#endif // HELAPORDO_CURSES_BUILD
             fprintf(stderr, "[ERROR]    Can't open OPS logfile (%s/%s).\n",
                     static_path, OPS_LOGFILE);
             exit(EXIT_FAILURE);
@@ -5808,6 +5842,7 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
             printf("Using:\n");
             printf("  \'animate\' :\n    s4c/animate.h    ");
             S4C_ECHOVERSION();
+#ifdef HELAPORDO_CURSES_BUILD
             printf("[DEBUG]    Testing terminal color capabilities.\n");
             napms(200);
             display_colorpairs();
@@ -5833,8 +5868,37 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
             napms(200);
             delwin(test_win);
             endwin();
-            exit(EXIT_SUCCESS);
+#else
+#ifndef HELAPORDO_RAYLIB_BUILD
+#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
+#else
+            int screenWidth = 1000;
+            int screenHeight = 450;
+            Rectangle r = CLITERAL(Rectangle) {
+                0,
+                0,
+                screenWidth,
+                screenHeight
+            };
 
+            SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
+            InitWindow(screenWidth, screenHeight, "helapordo Color test");
+            int fps_target = 30;
+            SetTargetFPS(fps_target);
+            while (!WindowShouldClose()) {
+                screenWidth = GetScreenWidth();
+                screenHeight = GetScreenHeight();
+                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                    break;
+                }
+                test_s4c_color_pairs(&r, palette);
+            }
+            CloseWindow();
+            printf("TODO: add test_s4c_color_pairs() call");
+#endif // HELAPORDO_RAYLIB_BUILD
+#endif // HELAPORDO_CURSES_BUILD
+            exit(EXIT_SUCCESS);
         }
         break;
         case 'V': {
@@ -5844,9 +5908,11 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
             s4c_dbg_features();
             printf("  using: koliseo v%s\n", string_koliseo_version());
             kls_dbg_features();
-            printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
             printf("  using: ringabuf v%s\n", RINGABUF_API_VERSION_STRING);
+#ifdef HELAPORDO_CURSES_BUILD
+            printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
             printf("  using: ncurses v%s\n", NCURSES_VERSION);
+#endif // HELAPORDO_CURSES_BUILD
 #ifdef ANVIL__helapordo__
 #ifndef INVIL__helapordo__HEADER__
             printf("  Built with: amboso v%s\n",

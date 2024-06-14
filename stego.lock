@@ -1,6 +1,6 @@
 [ anvil ]
 
-version = "2.0.4"
+version = "2.0.6"
 kern = "amboso-C"
 
 [ build ]
@@ -68,3 +68,4 @@ errortestsdir = "kulpo"
 "1.4.7" = "Handle SIGINT, Add bsp floor layour generation, based on mtsdurica, fix terminal left in a bad state on binary save errors, bump invil to 0.2.13, koliseo to 0.4.3, s4c-scripts to 0.1.1"
 "1.4.8" = "Add HLPD_DirectionalKeys_Schema, default background usage, fixes, add s4c-gui at 0.0.7"
 "1.4.9" = "Add build config option for supporting default background feature, use binary files without -X, drop textfile save/load code, refactor notification logic to allow per-frame updates, add ringabuf at 0.0.4"
+"1.4.10" = "Fix broken raylib build, add raymath usage for texture rendering"

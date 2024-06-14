@@ -85,6 +85,17 @@ typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING, DOOR_ANIM } GameScr
 #endif // HELAPORDO_CURSES_BUILD
 
 #include "../../koliseo/src/koliseo.h"
+
+/**
+ * We need to undef these macros if they exist, since windows.h may declare them (and here we inherit that from koliseo.h).
+ */
+#ifdef near
+#undef near
+#endif
+#ifdef far
+#undef far
+#endif
+
 #include "../palette.h" /**< Defines the color palette used for the s4c functions, includes animate.h.*/
 
 extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
@@ -353,14 +364,14 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 9
+#define HELAPORDO_PATCH_VERSION 10
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.9"
+#define VERSION "1.4.10"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.4"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.5"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -372,6 +383,9 @@ static const int HELAPORDO_API_VERSION_INT =
 #define EXPECTED_NCURSES_VERSION_MAJOR 6 /**< Defines min expected major ncurses version.*/
 #define EXPECTED_NCURSES_VERSION_MINOR 4 /**< Defines min expected minor ncurses version.*/
 #define EXPECTED_NCURSES_VERSION_PATCH 20230520	/**< Defines min expected patch ncurses version.*/
+#define EXPECTED_RAYLIB_VERSION_MAJOR 4 /**< Defines min expected major ncurses version.*/
+#define EXPECTED_RAYLIB_VERSION_MINOR 5 /**< Defines min expected minor ncurses version.*/
+#define EXPECTED_RAYLIB_VERSION_PATCH 0	/**< Defines min expected patch ncurses version.*/
 
 /**
  * Holds arguments for a saveslot.

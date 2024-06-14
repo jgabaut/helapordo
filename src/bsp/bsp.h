@@ -67,7 +67,10 @@ typedef struct BSP_Room {
 BSP_Room* floor_bsp_gen(Floor* floor, Koliseo_Temp* t_kls, int base_x, int base_y);
 
 void dbg_BSP_Room(BSP_Room* bsp_room);
+
+#ifdef HELAPORDO_CURSES_BUILD
 void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, int depth);
 void draw_BSP_Tree(WINDOW* win, BSP_Room* node, int depth, int x, int y, int hz_spacing, int vrt_spacing);
+#endif // HELAPORDO_CURSES_BUILD
 
 #endif
