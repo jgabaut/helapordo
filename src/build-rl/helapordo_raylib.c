@@ -636,7 +636,7 @@ void gameloop_rl(int argc, char** argv)
             DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
             DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
             DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 110, 220, 20, DARKGREEN);
-            DrawText("Controls for GAMEPLAY screen", 110, 220, 20, MAROON);
+            DrawText("Controls for GAMEPLAY screen", 110, 250, 20, MAROON);
             DrawText("Arrow keys to move", 110, 280, 20, MAROON);
             DrawText("PRESS R to regen floor", 110, 310, 20, MAROON);
             DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
@@ -646,14 +646,14 @@ void gameloop_rl(int argc, char** argv)
             char txt_b[30] = {0};
             char txt_s4c[30] = {0};
             int txt_StartX = gameScreenWidth * 0.4f;
-            int txt_StartY = gameScreenHeight * 0.65f;
+            int txt_StartY = gameScreenHeight * 0.85f;
             DrawRectangle(txt_StartX, txt_StartY, gameScreenWidth - txt_StartX, gameScreenHeight - txt_StartY, YELLOW);
             sprintf(txt,"Koliseo API version: %i\n", int_koliseo_version());
-            DrawText(txt, txt_StartX + ( txt_StartX * 0.16), txt_StartY + ( txt_StartY * 0.25), 24, BLACK);
+            DrawText(txt, txt_StartX + ( txt_StartX * 0.16), txt_StartY, 20, BLACK);
             sprintf(txt_b,"Koliseo version: %s\n", string_koliseo_version());
-            DrawText(txt_b, txt_StartX + ( txt_StartX * 0.16), txt_StartY + ( txt_StartY * 0.35), 24, BLACK);
+            DrawText(txt_b, txt_StartX + ( txt_StartX * 0.16), txt_StartY + 20, 20, BLACK);
             sprintf(txt_s4c,"s4c-animate version: %s\n", S4C_ANIMATE_VERSION );
-            DrawText(txt_s4c, txt_StartX + ( txt_StartX * 0.16), txt_StartY + ( txt_StartY * 0.45), 24, BLACK);
+            DrawText(txt_s4c, txt_StartX + ( txt_StartX * 0.16), txt_StartY + 40, 20, BLACK);
         }
         break;
         case GAMEPLAY: {
