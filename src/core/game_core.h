@@ -369,7 +369,7 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.10-dev"
+#define VERSION "1.4.10"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.4"
 
