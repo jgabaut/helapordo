@@ -429,7 +429,11 @@ void gameloop_rl(int argc, char** argv)
 
         virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.0f)/scale;
         virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.0f)/scale;
-        virtualMouse = Vector2Clamp(virtualMouse, (Vector2){0, 0}, (Vector2){ (float)gameScreenWidth, (float)gameScreenHeight} );
+        virtualMouse = Vector2Clamp(virtualMouse, (Vector2) {
+            0, 0
+        }, (Vector2) {
+            (float)gameScreenWidth, (float)gameScreenHeight
+        } );
 
         if (IsKeyPressed(KEY_F) && IsKeyDown(KEY_LEFT_ALT)) {
             ToggleFullScreenWindow(gameScreenWidth, gameScreenHeight);
@@ -674,9 +678,9 @@ void gameloop_rl(int argc, char** argv)
             float stats_label_H = stats_label_W;
             Rectangle stats_label_r = CLITERAL(Rectangle) {
                 gameScreenWidth*0.5f - (stats_label_W/2),
-                en_rect_Y,
-                stats_label_W,
-                stats_label_H
+                                en_rect_Y,
+                                stats_label_W,
+                                stats_label_H
             };
             Rectangle pl_r = CLITERAL(Rectangle) {
                 pl_rect_X,
@@ -706,9 +710,9 @@ void gameloop_rl(int argc, char** argv)
 
             Rectangle floor_r = CLITERAL(Rectangle) {
                 gameScreenHeight *0.5f,
-                gameScreenWidth *0.5f,
-                FLOOR_MAX_COLS * (gameScreenWidth*0.01f),
-                FLOOR_MAX_ROWS * (gameScreenWidth*0.01f),
+                                 gameScreenWidth *0.5f,
+                                 FLOOR_MAX_COLS * (gameScreenWidth*0.01f),
+                                 FLOOR_MAX_ROWS * (gameScreenWidth*0.01f),
             };
 
             //DrawRectangleRec(floor_r, ColorFromS4CPalette(palette, S4C_SALMON));
@@ -771,15 +775,15 @@ void gameloop_rl(int argc, char** argv)
 
             int door_frame_W = 21;
             int door_frame_H = 21;
-            int door_rect_X = (gameScreenWidth/2) - ((door_frame_W * scale * 1.5) /2);
-            int door_rect_Y = (gameScreenHeight/2) - ((door_frame_H * scale * 1.5) /2);
+            int door_rect_X = (gameScreenWidth/2) - ((door_frame_W * scale * 5.5) /2);
+            int door_rect_Y = (gameScreenHeight/2) - ((door_frame_H * scale * 5.5) /2);
             Rectangle door_r = CLITERAL(Rectangle) {
                 door_rect_X,
                 door_rect_Y,
-                door_frame_W * scale * 1.5,
-                door_frame_H * scale * 1.5,
+                door_frame_W * scale * 5.5,
+                door_frame_H * scale * 5.5,
             };
-            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, scale*1.5, palette, PALETTE_S4C_H_TOTCOLORS);
+            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, scale*5.5, palette, PALETTE_S4C_H_TOTCOLORS);
             if (door_res != 0 ) {
                 DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
                 DrawText("Window too small.", 20, 20, 20, RAYWHITE);
@@ -803,7 +807,13 @@ void gameloop_rl(int argc, char** argv)
 
         ClearBackground(BLACK);
 
-        DrawTexturePro(target_txtr.texture, (Rectangle){ 0.0f, 0.0f, (float)target_txtr.texture.width, (float)-target_txtr.texture.height}, (Rectangle) { (GetScreenWidth() - ((float) gameScreenWidth*scale))*0.5f, (GetScreenHeight() - ((float) gameScreenHeight*scale))*0.5f, (float) gameScreenWidth*scale, (float) gameScreenHeight*scale}, (Vector2){ 0, 0}, 0.0f, WHITE);
+        DrawTexturePro(target_txtr.texture, (Rectangle) {
+            0.0f, 0.0f, (float)target_txtr.texture.width, (float)-target_txtr.texture.height
+        }, (Rectangle) {
+            (GetScreenWidth() - ((float) gameScreenWidth*scale))*0.5f, (GetScreenHeight() - ((float) gameScreenHeight*scale))*0.5f, (float) gameScreenWidth*scale, (float) gameScreenHeight*scale
+        }, (Vector2) {
+            0, 0
+        }, 0.0f, WHITE);
 
         EndDrawing();
         //----------------------------------------------------------------------------------

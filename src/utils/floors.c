@@ -1414,15 +1414,15 @@ void step_floor(Floor *floor, int *current_x,
             }
 
             switch (floor->roomclass_layout[target_x][target_y]) {
-                default: {
-                    log_tag("debug_log.txt", "[FLOOR]",
-                            "move_update():  target x[%i],y[%i] was of class (%s).",
-                            target_x, target_y,
-                            stringFromRoom(floor->
-                                           roomclass_layout[target_x]
-                                           [target_y]));
-                }
-                break;
+            default: {
+                log_tag("debug_log.txt", "[FLOOR]",
+                        "move_update():  target x[%i],y[%i] was of class (%s).",
+                        target_x, target_y,
+                        stringFromRoom(floor->
+                                       roomclass_layout[target_x]
+                                       [target_y]));
+            }
+            break;
             }
         }
     }

@@ -2499,7 +2499,7 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
 
         if (blob_size != sergmst_size) {
 #ifdef HELAPORDO_CURSES_BUILD
-                endwin();
+            endwin();
 #endif // HELAPORDO_CURSES_BUILD
 
             log_tag("debug_log.txt", "[ERROR]", "%s():    Header size [%zu] from {%s} doesn't match SerGamestate size [%zu].", __func__, blob_size, filename, sergmst_size);
