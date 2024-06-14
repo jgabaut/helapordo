@@ -1332,7 +1332,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
     draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, pixelSize, 3);
 
     //Draw player char
-    DrawRectangle(win->x + ((current_x)*pixelSize), win->y + ((current_y)*pixelSize), pixelSize, pixelSize, ColorFromS4CPalette(palette, S4C_BLUE));
+    DrawRectangle(win->x + ((FLOOR_MAX_COLS/2 -1)*pixelSize) - pixelSize/2, win->y + ((FLOOR_MAX_ROWS / 2 -1) *pixelSize) - pixelSize/2, pixelSize, pixelSize, ColorFromS4CPalette(palette, S4C_BLUE));
 }
 
 /**

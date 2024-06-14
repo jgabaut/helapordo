@@ -707,12 +707,14 @@ void gameloop_rl(int argc, char** argv)
             Rectangle floor_r = CLITERAL(Rectangle) {
                 gameScreenHeight *0.5f,
                 gameScreenWidth *0.5f,
-                FLOOR_MAX_COLS * (gameScreenWidth*0.2f),
-                FLOOR_MAX_ROWS * (gameScreenHeight*0.2f),
+                FLOOR_MAX_COLS * (gameScreenWidth*0.01f),
+                FLOOR_MAX_ROWS * (gameScreenWidth*0.01f),
             };
 
+            //DrawRectangleRec(floor_r, ColorFromS4CPalette(palette, S4C_SALMON));
+
             if (G_EXPERIMENTAL_ON != 1) {
-                draw_floor_view(current_floor, current_x, current_y, 8*scale, &floor_r);
+                draw_floor_view(current_floor, current_x, current_y, gameScreenWidth*0.01f, &floor_r);
             } else {
                 display_roomclass_layout(current_floor, &floor_r, scale);
             }
