@@ -578,10 +578,10 @@ typedef struct __attribute__((packed)) SerChest {
 typedef struct SerChest {
 #endif
     int32_t class;	  /**< Defines which kind of chesteClass the instance relates to*/
-    int consumablesCount;     /**< Defines how many consumables the chest contains.*/
+    int32_t consumablesCount;     /**< Defines how many consumables the chest contains.*/
 
     SerConsumable consumables[CHEST_CONSUMABLES_MAX];	/**< The contained consumables.*/
-    int equipsCount;	 /**< Defines how many equips the chest contains.*/
+    int32_t equipsCount;	 /**< Defines how many equips the chest contains.*/
 
     SerEquip equips[CHEST_EQUIPS_MAX];	 /**< The contained equips.*/
 #ifdef __GNUC__
