@@ -822,7 +822,7 @@ typedef struct __attribute__((packed)) SerGamestate {
 #pragma pack(push, 1)
 typedef struct SerGamestate {
 #endif
-    clock_t start_time; /**< Keeps track of game start time.*/
+    int64_t start_time; /**< Keeps track of game start time.*/
 
     SerCountstats stats;	   /**< Keeps track of stats for the game.*/
 
