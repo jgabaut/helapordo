@@ -112,6 +112,12 @@ int main(void) {
  if ( ! SAVEHEADER_BUFSIZE == 15 ) {
    fail("SAVEHEADER_BUFSIZE", 15, SAVEHEADER_BUFSIZE);
  };
+ if ( ! (sizeof(SerGamestate) == 7828) ) {
+   fail("sizeof(SerGamestate", 7828, sizeof(SerGamestate));
+ };
+ if ( ! (sizeof(SerSaveHeader) == 68) ) {
+   fail("sizeof(SerSaveHeader", 68, sizeof(SerSaveHeader));
+ };
  if ( ! (EQUIPPERKSMAX == 2) ) {
    fail("EQUIPPERKSMAX",2,EQUIPPERKSMAX);
  };
