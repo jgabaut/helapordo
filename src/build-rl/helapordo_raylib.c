@@ -719,7 +719,8 @@ void gameloop_rl(int argc, char** argv)
             draw_floor_view(current_floor, center_x, center_y, sprite_w_factor, &floor_r);
             */
             //display_floor_layout(current_floor, &map_r, gameScreenWidth*0.01f);
-            display_floor_layout_with_player(current_floor, &map_r, current_x, current_y, gameScreenWidth*0.01f);
+            //display_floor_layout_with_player(current_floor, &map_r, current_x, current_y, gameScreenWidth*0.01f);
+            display_explored_layout_with_player(current_floor, &map_r, current_x, current_y, gameScreenWidth*0.01f);
             //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
             /*
             Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);

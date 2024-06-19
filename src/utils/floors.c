@@ -1129,14 +1129,47 @@ void display_floor_layout(Floor * floor, Rectangle * win, float pixelSize)
         exit(EXIT_FAILURE);
     }
     int isFull = -1;
-    int isColored = -1;
     for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
         for (int x = 0; x < FLOOR_MAX_COLS; x++) {
             isFull = (floor->floor_layout[x][y] == 1 ? 1 : 0);
-            isColored = isFull;
             Color color = {0};
-            if (isColored > 0) {
-                color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
+            if (isFull > 0) {
+                switch(floor->roomclass_layout[x][y]) {
+                    case WALL: {
+                        color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
+                    }
+                    break;
+                    case BASIC: {
+                        color = ColorFromS4CPalette(palette, S4C_DARK_OLIVE);
+                    }
+                    break;
+                    case HOME: {
+                        color = ColorFromS4CPalette(palette, S4C_LIGHT_OLIVE);
+                    }
+                    break;
+                    case BOSS: {
+                        color = ColorFromS4CPalette(palette, S4C_CHERRY);
+                    }
+                    break;
+                    case TREASURE: {
+                        color = ColorFromS4CPalette(palette, S4C_LIGHT_ORANGE);
+                    }
+                    break;
+                    case SHOP: {
+                        color = ColorFromS4CPalette(palette, S4C_TEAL);
+                    }
+                    break;
+                    case ENEMIES: {
+                        color = ColorFromS4CPalette(palette, S4C_DARK_CYAN);
+                    }
+                    break;
+                    default: {
+                        color = ColorFromS4CPalette(palette, S4C_BRIGHT_GREEN);
+                    }
+                    break;
+                }
+            } else {
+                color = ColorFromS4CPalette(palette, S4C_BLACK);
             }
             DrawRectangle(win->x + (x * ((int)pixelSize) ), win->y + (y * ((int)pixelSize)), pixelSize, pixelSize, color);
             //mvwprintw(win, y + 3, x + 3, "%c", (isFull == 1 ? 'X' : ' '));
@@ -1153,7 +1186,7 @@ void display_floor_layout_with_player(Floor * floor, Rectangle * win, int curren
     }
     display_floor_layout(floor, win, pixelSize);
     //Draw player
-    Color color = ColorFromS4CPalette(palette, S4C_PURPLE);
+    Color color = ColorFromS4CPalette(palette, S4C_RED);
     DrawRectangle(win->x + (current_x * ((int)pixelSize) ), win->y + (current_y * ((int)pixelSize)), pixelSize, pixelSize, color);
 }
 
@@ -1178,14 +1211,75 @@ void display_explored_layout(Floor *floor, Rectangle *win, float pixelSize)
             Color color = {0};
             if (isWalkable > 0) {
                 if (isExplored == 1) {
-                    color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
+                    switch (floor->roomclass_layout[x][y]) {
+                        case WALL: {
+                            color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
+                        }
+                        break;
+                        case BASIC: {
+                            color = ColorFromS4CPalette(palette, S4C_DARK_OLIVE);
+                        }
+                        break;
+                        case HOME: {
+                            color = ColorFromS4CPalette(palette, S4C_LIGHT_OLIVE);
+                        }
+                        break;
+                        case BOSS: {
+                            color = ColorFromS4CPalette(palette, S4C_CHERRY);
+                        }
+                        break;
+                        case TREASURE: {
+                            color = ColorFromS4CPalette(palette, S4C_LIGHT_ORANGE);
+                        }
+                        break;
+                        case SHOP: {
+                            color = ColorFromS4CPalette(palette, S4C_TEAL);
+                        }
+                        break;
+                        case ENEMIES: {
+                            color = ColorFromS4CPalette(palette, S4C_DARK_CYAN);
+                        }
+                        break;
+                        default: {
+                            color = ColorFromS4CPalette(palette, S4C_BRIGHT_GREEN);
+                        }
+                        break;
+                    }
                 } else {
-                    color = ColorFromS4CPalette(palette, S4C_PURPLE);
+                    switch (floor->roomclass_layout[x][y]) {
+                        case WALL: {
+                            color = ColorFromS4CPalette(palette, S4C_BLACK);
+                        }
+                        break;
+                        case BASIC: {
+                            color = ColorFromS4CPalette(palette, S4C_PURPLE);
+                        }
+                        break;
+                        default: {
+                            color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
+                        }
+                        break;
+                    }
                 }
-                DrawRectangle(win->x + (x * ((int)pixelSize) ), win->y + (y * ((int)pixelSize)), pixelSize, pixelSize, color);
+            } else {
+                color = ColorFromS4CPalette(palette, S4C_BLACK);
             }
+            DrawRectangle(win->x + (x * ((int)pixelSize) ), win->y + (y * ((int)pixelSize)), pixelSize, pixelSize, color);
         }
     }
+}
+
+void display_explored_layout_with_player(Floor *floor, Rectangle *win, int current_x, int current_y, float pixelSize)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "%s():  win was NULL.", __func__);
+        exit(EXIT_FAILURE);
+    }
+    display_explored_layout(floor, win, pixelSize);
+    //Draw player
+    Color color = ColorFromS4CPalette(palette, S4C_RED);
+    DrawRectangle(win->x + (current_x * ((int)pixelSize) ), win->y + (current_y * ((int)pixelSize)), pixelSize, pixelSize, color);
 }
 
 /**
