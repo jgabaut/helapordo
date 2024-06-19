@@ -53,6 +53,7 @@ void move_update(Gamestate * gamestate, Floor * floor, int *current_x,
 #else
 void display_roomclass_layout(Floor *floor, Rectangle *win, float pixelSize);
 void display_floor_layout(Floor * floor, Rectangle * win, float pixelSize);
+void display_floor_layout_with_player(Floor * floor, Rectangle * win, int current_x, int current_y, float pixelSize);
 void display_explored_layout(Floor *floor, Rectangle *win, float pixelSize);
 void draw_cell(Floor * floor, int cell_x, int cell_y, Rectangle * win,
                int drawcorner_x, int drawcorner_y, int x_size, int y_size, float pixelSize,

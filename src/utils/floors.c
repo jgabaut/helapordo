@@ -1144,6 +1144,19 @@ void display_floor_layout(Floor * floor, Rectangle * win, float pixelSize)
     }
 }
 
+void display_floor_layout_with_player(Floor * floor, Rectangle * win, int current_x, int current_y, float pixelSize)
+{
+    if (win == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "%s():  win was NULL.", __func__);
+        exit(EXIT_FAILURE);
+    }
+    display_floor_layout(floor, win, pixelSize);
+    //Draw player
+    Color color = ColorFromS4CPalette(palette, S4C_PURPLE);
+    DrawRectangle(win->x + (current_x * ((int)pixelSize) ), win->y + (current_y * ((int)pixelSize)), pixelSize, pixelSize, color);
+}
+
 /**
  * Takes a Floor pointer and prints its explored layout using the passed Rectangle as reference position.
  * @see Floor
