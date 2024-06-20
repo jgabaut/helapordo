@@ -123,7 +123,7 @@ void gameloop_rl(int argc, char** argv)
         (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, HR_loadInfo,
                                     "loadInfo", "loadInfo");
 
-    load_info->is_new_game = 1;	//By default we do a new game
+    load_info->is_new_game = -1;     // This is used as state to prompt the user to pick between new game (1) and load game (0)
     load_info->enemy_index = -1;
     load_info->total_foes = -1;
     load_info->save_type = -1;
@@ -403,12 +403,12 @@ void gameloop_rl(int argc, char** argv)
         //----------------------------------------------------------------------------------
         //
 
-        update_GameScreen(&scale, gameScreenWidth, gameScreenHeight, &currentScreen, &framesCounter, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, &mouse, &virtualMouse);
+        update_GameScreen(&scale, gameScreenWidth, gameScreenHeight, &currentScreen, &framesCounter, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, &mouse, &virtualMouse, load_info);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        draw_GameScreen_Texture(target_txtr, currentScreen, gameScreenWidth, gameScreenHeight, mouse, virtualMouse, framesCounter, fps_target, current_anim_frame, current_floor, current_x, current_y, scale);
+        draw_GameScreen_Texture(target_txtr, currentScreen, gameScreenWidth, gameScreenHeight, mouse, virtualMouse, framesCounter, fps_target, current_anim_frame, current_floor, current_x, current_y, scale, load_info);
         //----------------------------------------------------------------------------------
 
         // Draw

@@ -267,7 +267,7 @@ void setChestSprite(Chest *c)
 
 }
 
-void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse)
+void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info)
 {
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
@@ -306,7 +306,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     case TITLE: {
         // TODO: Update TITLE screen variables here!
 
-        // Press enter to change to FLOOR_VIEW screen
+        // Press enter to change to SAVES_VIEW screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             *currentScreen = SAVES_VIEW;
         }
@@ -315,9 +315,37 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     case SAVES_VIEW: {
         // TODO: Update SAVES_VIEW screen variables here!
 
-        // Press enter to change to FLOOR_VIEW screen
-        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            *currentScreen = FLOOR_VIEW;
+        switch(load_info->is_new_game) {
+            case -1: { // User has to pick new (1) or load (0)
+                if (IsKeyPressed(KEY_N)) {
+                    load_info->is_new_game = 1;
+                } else if (IsKeyPressed(KEY_L)) {
+                    load_info->is_new_game = 0;
+                }
+            }
+            break;
+            //TODO: Pick saveslot
+            case 0: {
+                // Load game, Press enter to change to FLOOR_VIEW screen
+                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                    *currentScreen = FLOOR_VIEW;
+                }
+            }
+            break;
+            case 1: {
+                // New game, Press enter to change to FLOOR_VIEW screen
+                if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                    *currentScreen = FLOOR_VIEW;
+                }
+            }
+            break;
+            default: {
+                fprintf(stderr,"%s():    unexpected value for load_info->is_new_game: [%i]\n", __func__, load_info->is_new_game);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
         }
     }
     break;
@@ -455,6 +483,8 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
 
         // Press enter to return to TITLE screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+            //Reset load_info->is_new_game to -1
+            load_info->is_new_game = -1;
             *currentScreen = TITLE;
         }
     }
@@ -476,7 +506,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     }
 }
 
-void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale)
+void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info)
 {
     BeginTextureMode(target_txtr);
     ClearBackground(RAYWHITE);
@@ -523,12 +553,43 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
     break;
     case SAVES_VIEW : {
         // TODO: Draw SAVES_VIEW screen here!
-        DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, WHITE);
-        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
-        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
-        DrawText("SAVE PICK SCREEN", 20, 20, 40, DARKGREEN);
-        DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
+        switch(load_info->is_new_game) {
+            case -1: { // User has to pick new (1) or load (0)
+                DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, RAYWHITE);
+                DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
+                DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+                DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, DARKGREEN);
+                DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+                DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
+            }
+            break;
+            //TODO: Pick saveslot
+            case 0: {
+                DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, WHITE);
+                DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
+                DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+                DrawText("LOADED GAME SCREEN", 20, 20, 40, DARKGREEN);
+                DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+                DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
+            }
+            break;
+            case 1: {
+                DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, PINK);
+                DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
+                DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+                DrawText("NEW GAME SCREEN", 20, 20, 40, DARKGREEN);
+                DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+                DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
+            }
+            break;
+            default: {
+                fprintf(stderr,"%s():    unexpected value for load_info->is_new_game: [%i]\n", __func__, load_info->is_new_game);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+            break;
+        }
     }
     break;
     case FLOOR_VIEW: {
