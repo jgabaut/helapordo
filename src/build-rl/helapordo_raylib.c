@@ -47,6 +47,9 @@ void gameloop_rl(int argc, char** argv)
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
 
+    char seed[PATH_SEED_BUFSIZE+1] = {0};
+
+    bool is_seeded = false;
     int optTot = hlpd_getopt(argc, argv, whoami);
     if (G_DOTUTORIAL_ON == 1) {
         int screenWidth = 1000;
@@ -217,6 +220,34 @@ void gameloop_rl(int argc, char** argv)
     }
     log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
 
+    if (G_SEEDED_RUN_ON == 0) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    G_SEEDED_RUN_ON == 0 after getopt. Rolling random seed", __func__);
+        gen_random_seed(seed);
+    } else {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run. Checking seed: {%s}", __func__, G_SEEDED_RUN_ARG);
+        bool seed_check_res = check_seed(G_SEEDED_RUN_ARG);
+        if (seed_check_res) {
+            // Using a set seed. Uppercasing all letters
+            for (size_t i=0; i < strlen(G_SEEDED_RUN_ARG); i++) {
+                char upp = toupper(G_SEEDED_RUN_ARG[i]);
+                G_SEEDED_RUN_ARG[i] = upp;
+            }
+            strncpy(seed, G_SEEDED_RUN_ARG, PATH_SEED_BUFSIZE);
+            seed[PATH_SEED_BUFSIZE -1] = '\0';
+            is_seeded = true;
+        } else { //Go back to using a random seed
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Can't do a seeded run. Failed checking seed: {%s}. Using gen_random_seed().", __func__, G_SEEDED_RUN_ARG);
+            gen_random_seed(seed);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Using seed: {%s}", __func__, seed);
+        }
+    }
+
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Run is%sseeded.", __func__, (is_seeded ? " " : " not "));
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
+
+    int hashed_seed = hlpd_hash((unsigned char*)seed);
+    srand(hashed_seed);
+
     // Clear screen and print title, wait for user to press enter
 #ifndef _WIN32
     int clearres = system("clear");
@@ -227,6 +258,10 @@ void gameloop_rl(int argc, char** argv)
     log_tag("debug_log.txt", "[DEBUG]",
             "gameloop() system(\"cls\") res was (%i)", clearres);
 #endif
+
+    if (G_DEBUG_ON > 0) {
+        fprintf(stderr, "%s():    Seed: {%s}\n", __func__, seed);
+    }
 
     if (G_EXPERIMENTAL_ON == 1) {
         bool did_init = false;
