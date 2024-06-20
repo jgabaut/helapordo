@@ -306,14 +306,14 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     case TITLE: {
         // TODO: Update TITLE screen variables here!
 
-        // Press enter to change to GAMEPLAY screen
+        // Press enter to change to FLOOR_VIEW screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            *currentScreen = GAMEPLAY;
+            *currentScreen = FLOOR_VIEW;
         }
     }
     break;
-    case GAMEPLAY: {
-        // TODO: Update GAMEPLAY screen variables here!
+    case FLOOR_VIEW: {
+        // TODO: Update FLOOR_VIEW screen variables here!
         (*framesCounter)++;    // Count frames
 
         // Press enter to change to ENDING screen
@@ -432,6 +432,15 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
         }
     }
     break;
+    case ROOM_VIEW: {
+        // TODO: Update ROOM_VIEW screen variables here!
+
+        // Press enter to change to FLOOR_VIEW screen
+        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+            *currentScreen = FLOOR_VIEW;
+        }
+    }
+    break;
     case ENDING: {
         // TODO: Update ENDING screen variables here!
 
@@ -444,9 +453,9 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     case DOOR_ANIM: {
         // TODO: Update DOOR_ANIM screen variables here!
         (*framesCounter)++;    // Count frames
-        // Press enter to return to gameplay screen
-        if (*current_anim_frame == 59 || IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            *currentScreen = GAMEPLAY;
+        // TODO: Press enter to skip animation and go to room screen?
+        if (*current_anim_frame == 59 ) { //|| IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+            *currentScreen = ROOM_VIEW;
             break;
         }
         (*current_anim_frame)++;
@@ -482,8 +491,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
         DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
         DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 110, 220, 20, DARKGREEN);
-        DrawText("Controls for GAMEPLAY screen", 110, 250, 20, MAROON);
+        DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
+        DrawText("Controls for FLOOR_VIEW screen", 110, 250, 20, MAROON);
         DrawText("Arrow keys to move", 110, 280, 20, MAROON);
         DrawText("PRESS R to regen floor", 110, 310, 20, MAROON);
         DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
@@ -503,10 +512,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         DrawText(txt_s4c, txt_StartX + ( txt_StartX * 0.16), txt_StartY + 40, 20, BLACK);
     }
     break;
-    case GAMEPLAY: {
-        // TODO: Draw GAMEPLAY screen here!
+    case FLOOR_VIEW: {
+        // TODO: Draw FLOOR_VIEW screen here!
         DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, RAYWHITE);
-        DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
+        DrawText("FLOOR_VIEW SCREEN", 20, 20, 40, MAROON);
         DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
         int pl_rect_Y = gameScreenHeight * 0.1f;
@@ -612,6 +621,21 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         }
     }
     break;
+    case ROOM_VIEW: {
+        // TODO: Draw ROOM_VIEW screen here!
+        DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette,S4C_CYAN));
+        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
+        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+        DrawText("ROOM SCREEN", 20, 20, 40, DARKGREEN);
+        DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
+        DrawText("Controls for FLOOR_VIEW screen", 110, 250, 20, MAROON);
+        DrawText("Arrow keys to move", 110, 280, 20, MAROON);
+        DrawText("PRESS R to regen floor", 110, 310, 20, MAROON);
+        DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
+        DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, MAROON);
+    }
+    break;
     case ENDING: {
         // TODO: Draw ENDING screen here!
         DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, BLUE);
@@ -621,11 +645,11 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
     }
     break;
     case DOOR_ANIM: {
-        // TODO: Draw ENDING screen here!
+        // TODO: Draw DOOR_ANIM screen here!
         DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
         DrawText("DOOR SCREEN", 20, 20, 40, DARKBLUE);
         DrawText("WIP", 20, gameScreenHeight - (10 * scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to RETURN to GAMEPLAY SCREEN", 120, 220, 20, DARKBLUE);
+        DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, DARKBLUE);
 
         int door_frame_W = 21;
         int door_frame_H = 21;
