@@ -345,6 +345,8 @@ void gameloop_rl(int argc, char** argv)
     int current_x = center_x;
     int current_y = center_y;
 
+    char current_save_path[300] = {0};
+
     // Init dbg_floor
     init_floor_layout(current_floor);
 
@@ -439,12 +441,12 @@ void gameloop_rl(int argc, char** argv)
         //----------------------------------------------------------------------------------
         //
 
-        update_GameScreen(&scale, gameScreenWidth, gameScreenHeight, &currentScreen, &framesCounter, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, &mouse, &virtualMouse, load_info, &saveslot_index);
+        update_GameScreen(&scale, gameScreenWidth, gameScreenHeight, &currentScreen, &framesCounter, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, &mouse, &virtualMouse, load_info, &saveslot_index, current_save_path);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        draw_GameScreen_Texture(target_txtr, currentScreen, gameScreenWidth, gameScreenHeight, mouse, virtualMouse, framesCounter, fps_target, current_anim_frame, current_floor, current_x, current_y, scale, load_info, saveslot_index);
+        draw_GameScreen_Texture(target_txtr, currentScreen, gameScreenWidth, gameScreenHeight, mouse, virtualMouse, framesCounter, fps_target, current_anim_frame, current_floor, current_x, current_y, scale, load_info, saveslot_index, current_save_path);
         //----------------------------------------------------------------------------------
 
         // Draw

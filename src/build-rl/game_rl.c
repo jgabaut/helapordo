@@ -267,7 +267,7 @@ void setChestSprite(Chest *c)
 
 }
 
-void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index)
+void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[300])
 {
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
@@ -318,6 +318,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
         switch(load_info->is_new_game) {
             case -1: { // User has to pick new (1) or load (0)
                 *saveslot_index = -1; // Reset it in case we got here after a whole game
+                sprintf(current_save_path, "%s", ""); // Clear current save path
                 if (IsKeyPressed(KEY_N)) {
                     load_info->is_new_game = 1;
                 } else if (IsKeyPressed(KEY_L)) {
@@ -330,10 +331,13 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
                 if (*saveslot_index == -1) {  // Pick saveslot
                     if (IsKeyPressed(KEY_ONE)) {
                         *saveslot_index = 1;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     } else if (IsKeyPressed(KEY_TWO)) {
                         *saveslot_index = 2;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     } else if (IsKeyPressed(KEY_THREE)) {
                         *saveslot_index = 3;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     }
                 } else {
                     *currentScreen = FLOOR_VIEW;
@@ -345,10 +349,13 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
                 if (*saveslot_index == -1) {  // Pick saveslot
                     if (IsKeyPressed(KEY_ONE)) {
                         *saveslot_index = 1;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     } else if (IsKeyPressed(KEY_TWO)) {
                         *saveslot_index = 2;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     } else if (IsKeyPressed(KEY_THREE)) {
                         *saveslot_index = 3;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     }
                 } else {
                     *currentScreen = FLOOR_VIEW;
@@ -522,7 +529,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     }
 }
 
-void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index)
+void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[300])
 {
     BeginTextureMode(target_txtr);
     ClearBackground(RAYWHITE);
@@ -621,6 +628,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         DrawText("FLOOR_VIEW SCREEN", 20, 20, 40, MAROON);
         DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
+        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, 270, 20, MAROON);
         int pl_rect_Y = gameScreenHeight * 0.1f;
         int pl_frame_W = gameScreenWidth * 0.2f;
         int pl_frame_H = pl_frame_W;
