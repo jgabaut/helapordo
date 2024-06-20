@@ -308,6 +308,15 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
 
         // Press enter to change to FLOOR_VIEW screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+            *currentScreen = SAVES_VIEW;
+        }
+    }
+    break;
+    case SAVES_VIEW: {
+        // TODO: Update SAVES_VIEW screen variables here!
+
+        // Press enter to change to FLOOR_VIEW screen
+        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             *currentScreen = FLOOR_VIEW;
         }
     }
@@ -510,6 +519,16 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         DrawText(txt_b, txt_StartX + ( txt_StartX * 0.16), txt_StartY + 20, 20, BLACK);
         sprintf(txt_s4c,"s4c-animate version: %s\n", S4C_ANIMATE_VERSION );
         DrawText(txt_s4c, txt_StartX + ( txt_StartX * 0.16), txt_StartY + 40, 20, BLACK);
+    }
+    break;
+    case SAVES_VIEW : {
+        // TODO: Draw SAVES_VIEW screen here!
+        DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, WHITE);
+        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
+        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+        DrawText("SAVE PICK SCREEN", 20, 20, 40, DARKGREEN);
+        DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
     }
     break;
     case FLOOR_VIEW: {
