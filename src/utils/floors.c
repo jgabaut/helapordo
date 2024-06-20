@@ -1135,38 +1135,38 @@ void display_floor_layout(Floor * floor, Rectangle * win, float pixelSize)
             Color color = {0};
             if (isFull > 0) {
                 switch(floor->roomclass_layout[x][y]) {
-                    case WALL: {
-                        color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
-                    }
-                    break;
-                    case BASIC: {
-                        color = ColorFromS4CPalette(palette, S4C_DARK_OLIVE);
-                    }
-                    break;
-                    case HOME: {
-                        color = ColorFromS4CPalette(palette, S4C_LIGHT_OLIVE);
-                    }
-                    break;
-                    case BOSS: {
-                        color = ColorFromS4CPalette(palette, S4C_CHERRY);
-                    }
-                    break;
-                    case TREASURE: {
-                        color = ColorFromS4CPalette(palette, S4C_LIGHT_ORANGE);
-                    }
-                    break;
-                    case SHOP: {
-                        color = ColorFromS4CPalette(palette, S4C_TEAL);
-                    }
-                    break;
-                    case ENEMIES: {
-                        color = ColorFromS4CPalette(palette, S4C_DARK_CYAN);
-                    }
-                    break;
-                    default: {
-                        color = ColorFromS4CPalette(palette, S4C_BRIGHT_GREEN);
-                    }
-                    break;
+                case WALL: {
+                    color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
+                }
+                break;
+                case BASIC: {
+                    color = ColorFromS4CPalette(palette, S4C_DARK_OLIVE);
+                }
+                break;
+                case HOME: {
+                    color = ColorFromS4CPalette(palette, S4C_LIGHT_OLIVE);
+                }
+                break;
+                case BOSS: {
+                    color = ColorFromS4CPalette(palette, S4C_CHERRY);
+                }
+                break;
+                case TREASURE: {
+                    color = ColorFromS4CPalette(palette, S4C_LIGHT_ORANGE);
+                }
+                break;
+                case SHOP: {
+                    color = ColorFromS4CPalette(palette, S4C_TEAL);
+                }
+                break;
+                case ENEMIES: {
+                    color = ColorFromS4CPalette(palette, S4C_DARK_CYAN);
+                }
+                break;
+                default: {
+                    color = ColorFromS4CPalette(palette, S4C_BRIGHT_GREEN);
+                }
+                break;
                 }
             } else {
                 color = ColorFromS4CPalette(palette, S4C_BLACK);
@@ -1212,53 +1212,53 @@ void display_explored_layout(Floor *floor, Rectangle *win, float pixelSize)
             if (isWalkable > 0) {
                 if (isExplored == 1) {
                     switch (floor->roomclass_layout[x][y]) {
-                        case WALL: {
-                            color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
-                        }
-                        break;
-                        case BASIC: {
-                            color = ColorFromS4CPalette(palette, S4C_DARK_OLIVE);
-                        }
-                        break;
-                        case HOME: {
-                            color = ColorFromS4CPalette(palette, S4C_LIGHT_OLIVE);
-                        }
-                        break;
-                        case BOSS: {
-                            color = ColorFromS4CPalette(palette, S4C_CHERRY);
-                        }
-                        break;
-                        case TREASURE: {
-                            color = ColorFromS4CPalette(palette, S4C_LIGHT_ORANGE);
-                        }
-                        break;
-                        case SHOP: {
-                            color = ColorFromS4CPalette(palette, S4C_TEAL);
-                        }
-                        break;
-                        case ENEMIES: {
-                            color = ColorFromS4CPalette(palette, S4C_DARK_CYAN);
-                        }
-                        break;
-                        default: {
-                            color = ColorFromS4CPalette(palette, S4C_BRIGHT_GREEN);
-                        }
-                        break;
+                    case WALL: {
+                        color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
+                    }
+                    break;
+                    case BASIC: {
+                        color = ColorFromS4CPalette(palette, S4C_DARK_OLIVE);
+                    }
+                    break;
+                    case HOME: {
+                        color = ColorFromS4CPalette(palette, S4C_LIGHT_OLIVE);
+                    }
+                    break;
+                    case BOSS: {
+                        color = ColorFromS4CPalette(palette, S4C_CHERRY);
+                    }
+                    break;
+                    case TREASURE: {
+                        color = ColorFromS4CPalette(palette, S4C_LIGHT_ORANGE);
+                    }
+                    break;
+                    case SHOP: {
+                        color = ColorFromS4CPalette(palette, S4C_TEAL);
+                    }
+                    break;
+                    case ENEMIES: {
+                        color = ColorFromS4CPalette(palette, S4C_DARK_CYAN);
+                    }
+                    break;
+                    default: {
+                        color = ColorFromS4CPalette(palette, S4C_BRIGHT_GREEN);
+                    }
+                    break;
                     }
                 } else {
                     switch (floor->roomclass_layout[x][y]) {
-                        case WALL: {
-                            color = ColorFromS4CPalette(palette, S4C_BLACK);
-                        }
-                        break;
-                        case BASIC: {
-                            color = ColorFromS4CPalette(palette, S4C_PURPLE);
-                        }
-                        break;
-                        default: {
-                            color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
-                        }
-                        break;
+                    case WALL: {
+                        color = ColorFromS4CPalette(palette, S4C_BLACK);
+                    }
+                    break;
+                    case BASIC: {
+                        color = ColorFromS4CPalette(palette, S4C_PURPLE);
+                    }
+                    break;
+                    default: {
+                        color = ColorFromS4CPalette(palette, S4C_DARK_BLUE);
+                    }
+                    break;
                     }
                 }
             } else {

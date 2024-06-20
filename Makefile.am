@@ -90,7 +90,7 @@ endif
 hlpd_save2l_SOURCES += src/core/game_core.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c koliseo/src/koliseo.c sprites4curses/s4c-animate/animate.c src/palette.c
 
 if HL_RAYLIB_BUILD
-hlpd_save2l_SOURCES += src/build-rl/game_rl.c
+hlpd_save2l_SOURCES += src/utils/floors.c src/bsp/bsp.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/build-rl/game_rl.c
 else
 hlpd_save2l_SOURCES += s4c-gui/src/s4c_gui.c
 endif

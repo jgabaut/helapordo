@@ -26,8 +26,5 @@
 #include "../utils/rooms.h"
 #include "../anvil__helapordo.h"
 #include "../core/game_lore.h"
-#include <raymath.h> // Needed for: Vector2Clamp()
-
-#define MIN(a, b) ((a) < (b) ? (a) : (b)) /**< Macro used to calculate the scale of render texture. */
 void gameloop_rl(int argc, char** argv);
 #endif
