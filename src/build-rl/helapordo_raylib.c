@@ -132,6 +132,7 @@ void gameloop_rl(int argc, char** argv)
     load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
     load_info->ptr_to_roomindex = &loaded_roomindex;
 
+    int saveslot_index = -1;  // This is used as state to prompt the user to pick a saveslot
 
     if (G_DEBUG_ENEMYTYPE_ON == 1) {
         log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ENEMYTYPE_ON == (%i)",
@@ -403,12 +404,12 @@ void gameloop_rl(int argc, char** argv)
         //----------------------------------------------------------------------------------
         //
 
-        update_GameScreen(&scale, gameScreenWidth, gameScreenHeight, &currentScreen, &framesCounter, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, &mouse, &virtualMouse, load_info);
+        update_GameScreen(&scale, gameScreenWidth, gameScreenHeight, &currentScreen, &framesCounter, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, &mouse, &virtualMouse, load_info, &saveslot_index);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        draw_GameScreen_Texture(target_txtr, currentScreen, gameScreenWidth, gameScreenHeight, mouse, virtualMouse, framesCounter, fps_target, current_anim_frame, current_floor, current_x, current_y, scale, load_info);
+        draw_GameScreen_Texture(target_txtr, currentScreen, gameScreenWidth, gameScreenHeight, mouse, virtualMouse, framesCounter, fps_target, current_anim_frame, current_floor, current_x, current_y, scale, load_info, saveslot_index);
         //----------------------------------------------------------------------------------
 
         // Draw
