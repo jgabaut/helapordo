@@ -334,10 +334,8 @@ void gameloop_rl(int argc, char** argv)
     log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
     kls_log(default_kls, "DEBUG", "Prepping current_floor.");
 
-    Koliseo_Temp* floor_kls = kls_temp_start(temporary_kls);
-    Floor *current_floor =
-        (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
-                                 HR_Floor, "Floor", "Floor");
+    Koliseo_Temp* floor_kls = NULL;
+    Floor *current_floor = NULL;
     // Start the random walk from the center of the dungeon
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
@@ -345,65 +343,7 @@ void gameloop_rl(int argc, char** argv)
     int current_x = center_x;
     int current_y = center_y;
 
-    char current_save_path[300] = {0};
-
-    // Init dbg_floor
-    init_floor_layout(current_floor);
-
-    //Set center as filled
-    current_floor->floor_layout[center_x][center_y] = 1;
-
-    //Init floor rooms
-    init_floor_rooms(current_floor);
-
-    if ((hlpd_rand() % 101) > 20) {
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-        floor_bsp_gen(current_floor, floor_kls, center_x, center_y);
-        current_floor->from_bsp = true;
-    } else {
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
-        //Random walk #1
-        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-        //Random walk #2
-        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-        current_floor->from_bsp = false;
-    }
-
-    //Set floor explored matrix
-    load_floor_explored(current_floor);
-
-    //Set room types
-    floor_set_room_types(current_floor);
-
-    if (!current_floor->from_bsp) {
-        log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
-        current_x = center_x;
-        current_y = center_y;
-    } else {
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
-        int home_room_x = -1;
-        int home_room_y = -1;
-        bool done_looking = false;
-        for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
-            for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
-                if (current_floor->roomclass_layout[i][j] == HOME) {
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
-                    home_room_x = i;
-                    home_room_y = j;
-                    done_looking = true;
-                }
-            }
-        }
-        if (!done_looking) {
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
-        }
-        log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
-        current_x = home_room_x;
-        current_y = home_room_y;
-    }
+    char current_save_path[1000] = {0};
 
     // TODO: Initialize all required variables and load all required data here!
 

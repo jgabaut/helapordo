@@ -267,7 +267,7 @@ void setChestSprite(Chest *c)
 
 }
 
-void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[300])
+void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
 {
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
@@ -374,6 +374,71 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     break;
     case FLOOR_VIEW: {
         // TODO: Update FLOOR_VIEW screen variables here!
+        if (*current_floor == NULL) {
+            log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
+            *floor_kls = kls_temp_start(temporary_kls);
+            *current_floor = (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
+                                 HR_Floor, "Floor", "Floor");
+
+            // Init dbg_floor
+            init_floor_layout(*current_floor);
+
+            //Set center as filled
+            (*current_floor)->floor_layout[center_x][center_y] = 1;
+
+            //Init floor rooms
+            init_floor_rooms(*current_floor);
+
+            if ((hlpd_rand() % 101) > 20) {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                floor_bsp_gen(*current_floor, *floor_kls, center_x, center_y);
+                (*current_floor)->from_bsp = true;
+            } else {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                //Random walk #1
+                floor_random_walk(*current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                //Random walk #2
+                floor_random_walk(*current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                (*current_floor)->from_bsp = false;
+            }
+
+            //Set floor explored matrix
+            load_floor_explored(*current_floor);
+
+            //Set room types
+            floor_set_room_types(*current_floor);
+
+            if (!(*current_floor)->from_bsp) {
+                log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                *current_x = center_x;
+                *current_y = center_y;
+            } else {
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+                int home_room_x = -1;
+                int home_room_y = -1;
+                bool done_looking = false;
+                for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+                    for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                        if ((*current_floor)->roomclass_layout[i][j] == HOME) {
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                            home_room_x = i;
+                            home_room_y = j;
+                            done_looking = true;
+                        }
+                    }
+                }
+                if (!done_looking) {
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+                log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+                *current_x = home_room_x;
+                *current_y = home_room_y;
+            }
+        } // End if *current_floor is NULL
+
         (*framesCounter)++;    // Count frames
 
         // Press enter to change to ENDING screen
@@ -529,7 +594,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     }
 }
 
-void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[300])
+void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[1000])
 {
     BeginTextureMode(target_txtr);
     ClearBackground(RAYWHITE);
@@ -682,9 +747,17 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         //DrawRectangleRec(floor_r, ColorFromS4CPalette(palette, S4C_SALMON));
 
         if (G_EXPERIMENTAL_ON != 1) {
-            draw_floor_view(current_floor, current_x, current_y, gameScreenWidth*0.01f, &floor_r);
+            if (current_floor != NULL) {
+                draw_floor_view(current_floor, current_x, current_y, gameScreenWidth*0.01f, &floor_r);
+            } else {
+                log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
+            }
         } else {
-            display_roomclass_layout(current_floor, &floor_r, gameScreenWidth*0.01f);
+            if (current_floor != NULL) {
+                display_roomclass_layout(current_floor, &floor_r, gameScreenWidth*0.01f);
+            } else {
+                log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
+            }
         }
 
         Rectangle map_r = CLITERAL(Rectangle) {
@@ -702,7 +775,12 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         */
         //display_floor_layout(current_floor, &map_r, gameScreenWidth*0.01f);
         //display_floor_layout_with_player(current_floor, &map_r, current_x, current_y, gameScreenWidth*0.01f);
-        display_explored_layout_with_player(current_floor, &map_r, current_x, current_y, gameScreenWidth*0.01f);
+        if (current_floor != NULL) {
+            display_explored_layout_with_player(current_floor, &map_r, current_x, current_y, gameScreenWidth*0.01f);
+        } else {
+            log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
+        }
+
         //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
         /*
         Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);
