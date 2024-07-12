@@ -377,7 +377,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
         if (*current_floor == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
             *floor_kls = kls_temp_start(temporary_kls);
-            *current_floor = (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
+            *current_floor = (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
                                  HR_Floor, "Floor", "Floor");
 
             // Init dbg_floor
@@ -437,6 +437,8 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
                 *current_x = home_room_x;
                 *current_y = home_room_y;
             }
+            // Set starting room as explored already
+            (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
         } // End if *current_floor is NULL
 
         (*framesCounter)++;    // Count frames
@@ -451,10 +453,9 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
             kls_temp_end(*floor_kls);
-            kls_free(temporary_kls);
-            temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
+            *floor_kls = kls_temp_start(temporary_kls);
             *current_floor =
-                (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
+                (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
                                          HR_Floor, "Floor", "Floor");
             // Init dbg_floor
             init_floor_layout(*current_floor);
@@ -464,7 +465,6 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
 
             //Init floor rooms
             init_floor_rooms(*current_floor);
-            (*floor_kls) = kls_temp_start(temporary_kls);
 
             if ((hlpd_rand() % 101) > 20) {
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
