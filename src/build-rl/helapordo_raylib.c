@@ -362,7 +362,8 @@ void gameloop_rl(int argc, char** argv)
     SetTextureFilter(target_txtr.texture, TEXTURE_FILTER_BILINEAR);
 
     GameScreen currentScreen = LOGO;
-
+    Path* game_path = NULL;
+    Fighter* player = NULL;
 
     int framesCounter = 0;          // Useful to count frames
 
@@ -391,12 +392,12 @@ void gameloop_rl(int argc, char** argv)
         //----------------------------------------------------------------------------------
         //
 
-        update_GameScreen(&gui_state, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path);
+        update_GameScreen(&gui_state, &current_floor, &game_path, &player, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path, seed);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        draw_GameScreen_Texture(target_txtr, gui_state, fps_target, current_anim_frame, current_floor, current_x, current_y, load_info, saveslot_index, current_save_path);
+        draw_GameScreen_Texture(target_txtr, gui_state, fps_target, current_anim_frame, current_floor, game_path, player, current_x, current_y, load_info, saveslot_index, current_save_path, seed);
         //----------------------------------------------------------------------------------
 
         // Draw
