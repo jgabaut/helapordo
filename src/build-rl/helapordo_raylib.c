@@ -331,9 +331,6 @@ void gameloop_rl(int argc, char** argv)
     log_tag("debug_log.txt", "[DEBUG]", "gameloop() scanf() res was (%i)",
             scanfres);
 
-    log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
-    kls_log(default_kls, "DEBUG", "Prepping current_floor.");
-
     Koliseo_Temp* floor_kls = NULL;
     Floor *current_floor = NULL;
     // Start the random walk from the center of the dungeon
@@ -364,6 +361,7 @@ void gameloop_rl(int argc, char** argv)
     GameScreen currentScreen = LOGO;
     Path* game_path = NULL;
     Fighter* player = NULL;
+    Room* current_room = NULL;
 
     int framesCounter = 0;          // Useful to count frames
 
@@ -392,12 +390,12 @@ void gameloop_rl(int argc, char** argv)
         //----------------------------------------------------------------------------------
         //
 
-        update_GameScreen(&gui_state, &current_floor, &game_path, &player, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path, seed);
+        update_GameScreen(&gui_state, &current_floor, &game_path, &player, &current_room, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path, seed);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        draw_GameScreen_Texture(target_txtr, gui_state, fps_target, current_anim_frame, current_floor, game_path, player, current_x, current_y, load_info, saveslot_index, current_save_path, seed);
+        draw_GameScreen_Texture(target_txtr, gui_state, fps_target, current_anim_frame, current_floor, game_path, player, current_room, current_x, current_y, load_info, saveslot_index, current_save_path, seed);
         //----------------------------------------------------------------------------------
 
         // Draw

@@ -268,7 +268,7 @@ void setChestSprite(Chest *c)
 }
 
 // void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
-void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1])
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1])
 {
     assert(gui_state != NULL);
     int center_x = FLOOR_MAX_COLS / 2;
@@ -379,21 +379,21 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (*game_path == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
             gen_random_seed(seed);
-            *game_path = randomise_path(seed, default_kls, current_save_path);
+            *game_path = randomise_path(seed, temporary_kls, current_save_path);
             (*game_path)->current_saveslot->index = *saveslot_index;
             log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
         }
         if (*player == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
             *player =
-                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
+                (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
                                            "Fighter", "Fighter");
 
             strncpy((*player)->name, "Test", strlen("Test")+1);
             (*player)->class = Knight;
             //getParams(argc, argv, player, path, optTot, default_kls);
             //TODO: ensure class and name are taken before this update
-            initPlayerStats(*player, *game_path, default_kls);
+            initPlayerStats(*player, *game_path, temporary_kls);
             log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Fighter", __func__);
         }
         if (*current_floor == NULL) {
@@ -475,6 +475,29 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
             kls_temp_end(*floor_kls);
+            kls_free(temporary_kls);
+            temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
+
+            srand(time(NULL));
+            G_RNG_ADVANCEMENTS = 0;
+            gen_random_seed(seed);
+
+            *game_path = randomise_path(seed, temporary_kls, current_save_path);
+
+            (*game_path)->current_saveslot->index = *saveslot_index;
+
+            *player =
+                (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
+                                           "Fighter", "Fighter");
+
+            strncpy((*player)->name, "Test", strlen("Test")+1);
+            (*player)->class = Knight;
+            //getParams(argc, argv, player, path, optTot, default_kls);
+            //TODO: ensure class and name are taken before this update
+            initPlayerStats(*player, *game_path, temporary_kls);
+
+            log_tag("debug_log.txt", "DEBUG", "%s():    Reset rng, seed, Path, Fighter", __func__);
+
             *floor_kls = kls_temp_start(temporary_kls);
             *current_floor =
                 (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
@@ -617,7 +640,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 }
 
 // void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[1000])
-void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, Path* game_path, Fighter* player, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1])
+void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, Path* game_path, Fighter* player, Room* current_room, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1])
 {
     BeginTextureMode(target_txtr);
     ClearBackground(RAYWHITE);
@@ -717,6 +740,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
         DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, 270, 20, MAROON);
+        if (game_path != NULL) {
+            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, 300, 20, MAROON);
+        }
         int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
         int pl_frame_W = gui_state.gameScreenWidth * 0.2f;
         int pl_frame_H = pl_frame_W;
