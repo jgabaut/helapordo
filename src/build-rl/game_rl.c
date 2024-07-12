@@ -267,39 +267,41 @@ void setChestSprite(Chest *c)
 
 }
 
-void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
+// void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
 {
+    assert(gui_state != NULL);
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
-    *scale = MIN((float)GetScreenWidth()/gameScreenWidth, (float)GetScreenHeight()/gameScreenHeight);
+    gui_state->scale = MIN((float)GetScreenWidth()/gui_state->gameScreenWidth, (float)GetScreenHeight()/gui_state->gameScreenHeight);
 
-    *mouse = GetMousePosition();
+    gui_state->mouse = GetMousePosition();
 
-    *virtualMouse = (Vector2) {
+    gui_state->virtualMouse = (Vector2) {
         0
     };
 
-    virtualMouse->x = (mouse->x - (GetScreenWidth() - (gameScreenWidth*(*scale)))*0.0f)/ (*scale);
-    virtualMouse->y = (mouse->y - (GetScreenHeight() - (gameScreenHeight* (*scale)))*0.0f)/ (*scale);
-    *virtualMouse = Vector2Clamp(*virtualMouse, (Vector2) {
+    gui_state->virtualMouse.x = (gui_state->mouse.x - (GetScreenWidth() - (gui_state->gameScreenWidth*(gui_state->scale)))*0.0f)/ (gui_state->scale);
+    gui_state->virtualMouse.y = (gui_state->mouse.y - (GetScreenHeight() - (gui_state->gameScreenHeight* (gui_state->scale)))*0.0f)/ (gui_state->scale);
+    gui_state->virtualMouse = Vector2Clamp(gui_state->virtualMouse, (Vector2) {
         0, 0
     }, (Vector2) {
-        (float)gameScreenWidth, (float)gameScreenHeight
+        (float)gui_state->gameScreenWidth, (float)gui_state->gameScreenHeight
     } );
 
     if (IsKeyPressed(KEY_F) && IsKeyDown(KEY_LEFT_ALT)) {
-        ToggleFullScreenWindow(gameScreenWidth, gameScreenHeight);
+        ToggleFullScreenWindow(gui_state->gameScreenWidth, gui_state->gameScreenHeight);
     }
 
-    switch(*currentScreen) {
+    switch(gui_state->currentScreen) {
     case LOGO: {
         // TODO: Update LOGO screen variables here!
 
-        (*framesCounter)++;    // Count frames
+        gui_state->framesCounter += 1;    // Count frames
 
         // Wait for 2 seconds (120 frames) before jumping to TITLE screen
-        if (*framesCounter > logo_sleep) {
-            *currentScreen = TITLE;
+        if (gui_state->framesCounter > logo_sleep) {
+            gui_state->currentScreen = TITLE;
         }
     }
     break;
@@ -308,7 +310,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
 
         // Press enter to change to SAVES_VIEW screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            *currentScreen = SAVES_VIEW;
+            gui_state->currentScreen = SAVES_VIEW;
         }
     }
     break;
@@ -340,7 +342,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
                         sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     }
                 } else {
-                    *currentScreen = FLOOR_VIEW;
+                    gui_state->currentScreen = FLOOR_VIEW;
                 }
             }
             break;
@@ -358,7 +360,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
                         sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     }
                 } else {
-                    *currentScreen = FLOOR_VIEW;
+                    gui_state->currentScreen = FLOOR_VIEW;
                 }
             }
             break;
@@ -441,11 +443,11 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
             (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
         } // End if *current_floor is NULL
 
-        (*framesCounter)++;    // Count frames
+        gui_state->framesCounter += 1;    // Count frames
 
         // Press enter to change to ENDING screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            *currentScreen = ENDING;
+            gui_state->currentScreen = ENDING;
         }
         if (IsKeyPressed(KEY_P)) {
             *pause_animation = !(*pause_animation);
@@ -520,7 +522,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
             step_floor(*current_floor, current_x,
                        current_y, KEY_UP);
             if ((*current_floor)->roomclass_layout[*current_x][*current_y] != BASIC) {
-                *currentScreen = DOOR_ANIM;
+                gui_state->currentScreen = DOOR_ANIM;
                 *current_anim_frame = 0;
                 break;
             }
@@ -529,7 +531,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
             step_floor(*current_floor, current_x,
                        current_y, KEY_DOWN);
             if ((*current_floor)->roomclass_layout[*current_x][*current_y] != BASIC) {
-                *currentScreen = DOOR_ANIM;
+                gui_state->currentScreen = DOOR_ANIM;
                 *current_anim_frame = 0;
                 break;
             }
@@ -538,7 +540,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
             step_floor(*current_floor, current_x,
                        current_y, KEY_LEFT);
             if ((*current_floor)->roomclass_layout[*current_x][*current_y] != BASIC) {
-                *currentScreen = DOOR_ANIM;
+                gui_state->currentScreen = DOOR_ANIM;
                 *current_anim_frame = 0;
                 break;
             }
@@ -547,13 +549,13 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
             step_floor(*current_floor, current_x,
                        current_y, KEY_RIGHT);
             if ((*current_floor)->roomclass_layout[*current_x][*current_y] != BASIC) {
-                *currentScreen = DOOR_ANIM;
+                gui_state->currentScreen = DOOR_ANIM;
                 *current_anim_frame = 0;
                 break;
             }
         }
         if (!(*pause_animation)) {
-            *current_anim_frame = (*framesCounter)%60;
+            *current_anim_frame = (gui_state->framesCounter)%60;
         }
     }
     break;
@@ -562,7 +564,7 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
 
         // Press enter to change to FLOOR_VIEW screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            *currentScreen = FLOOR_VIEW;
+            gui_state->currentScreen = FLOOR_VIEW;
         }
     }
     break;
@@ -573,16 +575,16 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             //Reset load_info->is_new_game to -1
             load_info->is_new_game = -1;
-            *currentScreen = TITLE;
+            gui_state->currentScreen = TITLE;
         }
     }
     break;
     case DOOR_ANIM: {
         // TODO: Update DOOR_ANIM screen variables here!
-        (*framesCounter)++;    // Count frames
+        (gui_state->framesCounter)++;    // Count frames
         // TODO: Press enter to skip animation and go to room screen?
         if (*current_anim_frame == 59 ) { //|| IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            *currentScreen = ROOM_VIEW;
+            gui_state->currentScreen = ROOM_VIEW;
             break;
         }
         (*current_anim_frame)++;
@@ -594,11 +596,12 @@ void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeig
     }
 }
 
-void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[1000])
+// void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[1000])
+void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1000])
 {
     BeginTextureMode(target_txtr);
     ClearBackground(RAYWHITE);
-    switch(currentScreen) {
+    switch(gui_state.currentScreen) {
     case LOGO: {
         // TODO: Draw LOGO screen here!
         DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
@@ -613,11 +616,11 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
     break;
     case TITLE: {
         // TODO: Draw TITLE screen here!
-        DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, GREEN);
-        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
-        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, GREEN);
+        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
+        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
         DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
-        DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
         DrawText("Controls for FLOOR_VIEW screen", 110, 250, 20, MAROON);
         DrawText("Arrow keys to move", 110, 280, 20, MAROON);
@@ -628,9 +631,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         char txt[30] = {0};
         char txt_b[30] = {0};
         char txt_s4c[30] = {0};
-        int txt_StartX = gameScreenWidth * 0.4f;
-        int txt_StartY = gameScreenHeight * 0.85f;
-        DrawRectangle(txt_StartX, txt_StartY, gameScreenWidth - txt_StartX, gameScreenHeight - txt_StartY, YELLOW);
+        int txt_StartX = gui_state.gameScreenWidth * 0.4f;
+        int txt_StartY = gui_state.gameScreenHeight * 0.85f;
+        DrawRectangle(txt_StartX, txt_StartY, gui_state.gameScreenWidth - txt_StartX, gui_state.gameScreenHeight - txt_StartY, YELLOW);
         sprintf(txt,"Koliseo API version: %i\n", int_koliseo_version());
         DrawText(txt, txt_StartX + ( txt_StartX * 0.16), txt_StartY, 20, BLACK);
         sprintf(txt_b,"Koliseo version: %s\n", string_koliseo_version());
@@ -643,37 +646,37 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         // TODO: Draw SAVES_VIEW screen here!
         switch(load_info->is_new_game) {
             case -1: { // User has to pick new (1) or load (0)
-                DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, RAYWHITE);
-                DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
-                DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+                DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RAYWHITE);
+                DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
+                DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
                 DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, DARKGREEN);
-                DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+                DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                 DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
             }
             break;
             case 0: {
                 if (saveslot_index == -1) {  // Pick saveslot
-                    DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, WHITE);
-                    DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
-                    DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, WHITE);
+                    DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
+                    DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
                     DrawText("LOADED GAME SCREEN", 20, 20, 40, DARKGREEN);
-                    DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+                    DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                     DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
                 } else {
-                    DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, RED);
+                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
                 }
             }
             break;
             case 1: {
                 if (saveslot_index == -1) {  // Pick saveslot
-                    DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, WHITE);
-                    DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
-                    DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, WHITE);
+                    DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
+                    DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
                     DrawText("NEW GAME SCREEN", 20, 20, 40, DARKGREEN);
-                    DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+                    DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                     DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
                 } else {
-                    DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, RED);
+                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
                 }
             }
             break;
@@ -689,23 +692,23 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
     break;
     case FLOOR_VIEW: {
         // TODO: Draw FLOOR_VIEW screen here!
-        DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, RAYWHITE);
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RAYWHITE);
         DrawText("FLOOR_VIEW SCREEN", 20, 20, 40, MAROON);
-        DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
         DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, 270, 20, MAROON);
-        int pl_rect_Y = gameScreenHeight * 0.1f;
-        int pl_frame_W = gameScreenWidth * 0.2f;
+        int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
+        int pl_frame_W = gui_state.gameScreenWidth * 0.2f;
         int pl_frame_H = pl_frame_W;
-        int pl_rect_X = gameScreenWidth - pl_frame_W;
-        int en_rect_X = gameScreenWidth *0.1f;
+        int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W;
+        int en_rect_X = gui_state.gameScreenWidth *0.1f;
         int en_rect_Y = pl_rect_Y;
         int en_frame_W = pl_frame_W;
         int en_frame_H = pl_frame_H;
-        float stats_label_W = gameScreenWidth * 0.1f;
+        float stats_label_W = gui_state.gameScreenWidth * 0.1f;
         float stats_label_H = stats_label_W;
         Rectangle stats_label_r = CLITERAL(Rectangle) {
-            gameScreenWidth*0.5f - (stats_label_W/2),
+            gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
                             en_rect_Y,
                             stats_label_W,
                             stats_label_H
@@ -723,7 +726,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
             en_frame_H
         };
         //TODO: count time by real_clock difference from last frame
-        time_t framesTime = framesCounter / fps_target ;// GetFPS();
+        time_t framesTime = gui_state.framesCounter / fps_target ;// GetFPS();
         struct tm* time_tm = localtime(&framesTime);
         char time_str[20] = {0};
 
@@ -738,33 +741,33 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
 
         Rectangle floor_r = CLITERAL(Rectangle) {
-            gameScreenHeight *0.5f,
-                             gameScreenWidth *0.5f,
-                             FLOOR_MAX_COLS * (gameScreenWidth*0.01f),
-                             FLOOR_MAX_ROWS * (gameScreenWidth*0.01f),
+            gui_state.gameScreenHeight *0.5f,
+                             gui_state.gameScreenWidth *0.5f,
+                             FLOOR_MAX_COLS * (gui_state.gameScreenWidth*0.01f),
+                             FLOOR_MAX_ROWS * (gui_state.gameScreenWidth*0.01f),
         };
 
         //DrawRectangleRec(floor_r, ColorFromS4CPalette(palette, S4C_SALMON));
 
         if (G_EXPERIMENTAL_ON != 1) {
             if (current_floor != NULL) {
-                draw_floor_view(current_floor, current_x, current_y, gameScreenWidth*0.01f, &floor_r);
+                draw_floor_view(current_floor, current_x, current_y, gui_state.gameScreenWidth*0.01f, &floor_r);
             } else {
                 log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
             }
         } else {
             if (current_floor != NULL) {
-                display_roomclass_layout(current_floor, &floor_r, gameScreenWidth*0.01f);
+                display_roomclass_layout(current_floor, &floor_r, gui_state.gameScreenWidth*0.01f);
             } else {
                 log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
             }
         }
 
         Rectangle map_r = CLITERAL(Rectangle) {
-            gameScreenHeight *0.85f,
-                             gameScreenWidth *0.5f,
-                             FLOOR_MAX_COLS * (gameScreenWidth*0.01f),
-                             FLOOR_MAX_ROWS * (gameScreenWidth*0.01f),
+            gui_state.gameScreenHeight *0.85f,
+                             gui_state.gameScreenWidth *0.5f,
+                             FLOOR_MAX_COLS * (gui_state.gameScreenWidth*0.01f),
+                             FLOOR_MAX_ROWS * (gui_state.gameScreenWidth*0.01f),
         };
 
 
@@ -776,7 +779,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         //display_floor_layout(current_floor, &map_r, gameScreenWidth*0.01f);
         //display_floor_layout_with_player(current_floor, &map_r, current_x, current_y, gameScreenWidth*0.01f);
         if (current_floor != NULL) {
-            display_explored_layout_with_player(current_floor, &map_r, current_x, current_y, gameScreenWidth*0.01f);
+            display_explored_layout_with_player(current_floor, &map_r, current_x, current_y, gui_state.gameScreenWidth*0.01f);
         } else {
             log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
         }
@@ -804,7 +807,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
         */
 
         if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
-            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
+            DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
             DrawText("Window too small.", 20, 20, 20, RAYWHITE);
             DrawText("Please resize.", 20, 50, 20, RAYWHITE);
         }
@@ -812,11 +815,11 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
     break;
     case ROOM_VIEW: {
         // TODO: Draw ROOM_VIEW screen here!
-        DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette,S4C_CYAN));
-        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
-        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette,S4C_CYAN));
+        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
+        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
         DrawText("ROOM SCREEN", 20, 20, 40, DARKGREEN);
-        DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
         DrawText("Controls for FLOOR_VIEW screen", 110, 250, 20, MAROON);
         DrawText("Arrow keys to move", 110, 280, 20, MAROON);
@@ -827,32 +830,32 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScre
     break;
     case ENDING: {
         // TODO: Draw ENDING screen here!
-        DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, BLUE);
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, BLUE);
         DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
-        DrawText("WIP", 20, gameScreenHeight - (10 * scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
     }
     break;
     case DOOR_ANIM: {
         // TODO: Draw DOOR_ANIM screen here!
-        DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
         DrawText("DOOR SCREEN", 20, 20, 40, DARKBLUE);
-        DrawText("WIP", 20, gameScreenHeight - (10 * scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, DARKBLUE);
 
         int door_frame_W = 21;
         int door_frame_H = 21;
-        int door_rect_X = (gameScreenWidth/2) - ((door_frame_W * scale * 5.5) /2);
-        int door_rect_Y = (gameScreenHeight/2) - ((door_frame_H * scale * 5.5) /2);
+        int door_rect_X = (gui_state.gameScreenWidth/2) - ((door_frame_W * gui_state.scale * 5.5) /2);
+        int door_rect_Y = (gui_state.gameScreenHeight/2) - ((door_frame_H * gui_state.scale * 5.5) /2);
         Rectangle door_r = CLITERAL(Rectangle) {
             door_rect_X,
             door_rect_Y,
-            door_frame_W * scale * 5.5,
-            door_frame_H * scale * 5.5,
+            door_frame_W * gui_state.scale * 5.5,
+            door_frame_H * gui_state.scale * 5.5,
         };
-        int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, scale*5.5, palette, PALETTE_S4C_H_TOTCOLORS);
+        int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, gui_state.scale*5.5, palette, PALETTE_S4C_H_TOTCOLORS);
         if (door_res != 0 ) {
-            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
+            DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
             DrawText("Window too small.", 20, 20, 20, RAYWHITE);
             DrawText("Please resize.", 20, 50, 20, RAYWHITE);
             //current_anim_frame--; // TODO: can't update the current animation frame since it's not being taken as a reference as of now.

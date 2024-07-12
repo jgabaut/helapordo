@@ -376,17 +376,27 @@ void gameloop_rl(int argc, char** argv)
     Vector2 mouse = {0};
     Vector2 virtualMouse = {0};
 
+    Gui_State gui_state = (Gui_State) {
+        .scale = scale,
+        .gameScreenWidth = gameScreenWidth,
+        .gameScreenHeight = gameScreenHeight,
+        .currentScreen = currentScreen,
+        .framesCounter = framesCounter,
+        .mouse = mouse,
+        .virtualMouse = virtualMouse,
+    };
+
     while (!WindowShouldClose()) {
         // Update
         //----------------------------------------------------------------------------------
         //
 
-        update_GameScreen(&scale, gameScreenWidth, gameScreenHeight, &currentScreen, &framesCounter, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, &mouse, &virtualMouse, load_info, &saveslot_index, current_save_path);
+        update_GameScreen(&gui_state, &current_floor, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        draw_GameScreen_Texture(target_txtr, currentScreen, gameScreenWidth, gameScreenHeight, mouse, virtualMouse, framesCounter, fps_target, current_anim_frame, current_floor, current_x, current_y, scale, load_info, saveslot_index, current_save_path);
+        draw_GameScreen_Texture(target_txtr, gui_state, fps_target, current_anim_frame, current_floor, current_x, current_y, load_info, saveslot_index, current_save_path);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -398,7 +408,7 @@ void gameloop_rl(int argc, char** argv)
         DrawTexturePro(target_txtr.texture, (Rectangle) {
             0.0f, 0.0f, (float)target_txtr.texture.width, (float)-target_txtr.texture.height
         }, (Rectangle) {
-            (GetScreenWidth() - ((float) gameScreenWidth*scale))*0.5f, (GetScreenHeight() - ((float) gameScreenHeight*scale))*0.5f, (float) gameScreenWidth*scale, (float) gameScreenHeight*scale
+            (GetScreenWidth() - ((float) gui_state.gameScreenWidth * gui_state.scale))*0.5f, (GetScreenHeight() - ((float) gui_state.gameScreenHeight * gui_state.scale))*0.5f, (float) gui_state.gameScreenWidth * gui_state.scale, (float) gui_state.gameScreenHeight * gui_state.scale
         }, (Vector2) {
             0, 0
         }, 0.0f, WHITE);

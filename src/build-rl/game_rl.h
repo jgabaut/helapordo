@@ -27,6 +27,16 @@
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b)) /**< Macro used to calculate the scale of render texture. */
 
+typedef struct Gui_State {
+    float scale;
+    float gameScreenWidth;
+    float gameScreenHeight;
+    GameScreen currentScreen;
+    int framesCounter;
+    Vector2 mouse;
+    Vector2 virtualMouse;
+} Gui_State;
+
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);
 void setEquipSprite(Equip * e);
@@ -37,6 +47,6 @@ void setBossSprite(Boss * b);
 void setFighterSprite(Fighter * f);
 void setChestSprite(Chest * c);
 void ToggleFullScreenWindow(int w_W, int w_H);
-void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000]);
-void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[1000]);
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000]);
+void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1000]);
 #endif // GAMECURSES_RL_H
