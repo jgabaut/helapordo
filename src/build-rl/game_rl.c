@@ -560,6 +560,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 *current_y = home_room_y;
             }
 
+            // Set starting room as explored already
+            (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
         }
         if (IsKeyPressed(KEY_UP)) {
             step_floor(*current_floor, current_x,
