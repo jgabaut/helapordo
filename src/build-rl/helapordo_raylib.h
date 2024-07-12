@@ -23,7 +23,6 @@
 #endif
 
 #include "game_rl.h"
-#include "../utils/rooms.h"
 #include "../anvil__helapordo.h"
 #include "../core/game_lore.h"
 void gameloop_rl(int argc, char** argv);

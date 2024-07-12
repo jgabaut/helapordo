@@ -385,12 +385,15 @@ void gameloop_rl(int argc, char** argv)
         .virtualMouse = virtualMouse,
     };
 
+    int roomsDone = 0;
+    int enemyTotal = -1;
+
     while (!WindowShouldClose()) {
         // Update
         //----------------------------------------------------------------------------------
         //
 
-        update_GameScreen(&gui_state, &current_floor, &game_path, &player, &current_room, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path, seed);
+        update_GameScreen(&gui_state, &current_floor, &game_path, &player, &current_room, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path, seed, &roomsDone, &enemyTotal);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet

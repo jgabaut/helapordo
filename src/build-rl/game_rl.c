@@ -268,7 +268,7 @@ void setChestSprite(Chest *c)
 }
 
 // void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
-void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1])
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1], int* roomsDone, int* enemyTotal)
 {
     assert(gui_state != NULL);
     int center_x = FLOOR_MAX_COLS / 2;
@@ -564,6 +564,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_UP)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_UP);
+            (*player)->floor_x = *current_x;
+            (*player)->floor_y = *current_y;
             if ((*current_floor)->roomclass_layout[*current_x][*current_y] != BASIC) {
                 gui_state->currentScreen = DOOR_ANIM;
                 *current_anim_frame = 0;
@@ -573,6 +575,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_DOWN)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_DOWN);
+            (*player)->floor_x = *current_x;
+            (*player)->floor_y = *current_y;
             if ((*current_floor)->roomclass_layout[*current_x][*current_y] != BASIC) {
                 gui_state->currentScreen = DOOR_ANIM;
                 *current_anim_frame = 0;
@@ -582,6 +586,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_LEFT)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_LEFT);
+            (*player)->floor_x = *current_x;
+            (*player)->floor_y = *current_y;
             if ((*current_floor)->roomclass_layout[*current_x][*current_y] != BASIC) {
                 gui_state->currentScreen = DOOR_ANIM;
                 *current_anim_frame = 0;
@@ -591,6 +597,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_RIGHT)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_RIGHT);
+            (*player)->floor_x = *current_x;
+            (*player)->floor_y = *current_y;
             if ((*current_floor)->roomclass_layout[*current_x][*current_y] != BASIC) {
                 gui_state->currentScreen = DOOR_ANIM;
                 *current_anim_frame = 0;
@@ -604,9 +612,36 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case ROOM_VIEW: {
         // TODO: Update ROOM_VIEW screen variables here!
+        if (*current_room == NULL) {
+
+            log_tag("debug_log.txt", "DEBUG",
+                    "Prepping Room for Rogue Gamemode. roomsDone=(%i)",
+                    *roomsDone);
+            *current_room =
+                (Room *) KLS_PUSH_T_TYPED(*floor_kls, Room,
+                                          HR_Room, "Room", "Room");
+
+            (*current_room)->index = *roomsDone;
+            //setRoomType(path, &roadFork_value, &room_type, roomsDone);
+
+            roomClass room_type =
+                (*current_floor)->
+                roomclass_layout[(*player)->floor_x][(*player)->floor_y];
+            log_tag("debug_log.txt", "[ROOM]",
+                    "Set Room #%i type:    (%s)\n", *roomsDone,
+                    stringFromRoom(room_type));
+
+            initRoom(*current_room, *player, *roomsDone, room_type,
+                     *enemyTotal, load_info, *floor_kls);
+            log_tag("debug_log.txt", "[ROOM]",
+                    "Init Room #%i:    (%s)\n", *roomsDone,
+                    stringFromRoom(room_type));
+        }
 
         // Press enter to change to FLOOR_VIEW screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+            log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+            *current_room = NULL;
             gui_state->currentScreen = FLOOR_VIEW;
         }
     }
@@ -865,6 +900,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
         DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
         DrawText("ROOM SCREEN", 20, 20, 40, DARKGREEN);
+        if (current_room != NULL) {
+            DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, DARKGREEN);
+        }
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
         DrawText("Controls for FLOOR_VIEW screen", 110, 250, 20, MAROON);

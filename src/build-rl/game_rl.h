@@ -23,6 +23,7 @@
 #include "../core/sprites.h"
 #include "../utils/turn_op.h"
 #include "../core/game_animations.h"
+#include "../utils/rooms.h"
 #include <raymath.h> // Needed for: Vector2Clamp()
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b)) /**< Macro used to calculate the scale of render texture. */
@@ -47,6 +48,6 @@ void setBossSprite(Boss * b);
 void setFighterSprite(Fighter * f);
 void setChestSprite(Chest * c);
 void ToggleFullScreenWindow(int w_W, int w_H);
-void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1]);
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1], int* roomsDone, int* enemyTotal);
 void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, Path* game_path, Fighter* player, Room* current_room, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1]);
 #endif // GAMECURSES_RL_H
