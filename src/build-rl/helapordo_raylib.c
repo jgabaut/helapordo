@@ -340,7 +340,7 @@ void gameloop_rl(int argc, char** argv)
     int current_x = center_x;
     int current_y = center_y;
 
-    char current_save_path[1000] = {0};
+    char current_save_path[1500] = {0};
 
     // TODO: Initialize all required variables and load all required data here!
 

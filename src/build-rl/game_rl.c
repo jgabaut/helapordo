@@ -268,7 +268,7 @@ void setChestSprite(Chest *c)
 }
 
 // void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
-void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1], int* roomsDone, int* enemyTotal)
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], int* roomsDone, int* enemyTotal)
 {
     assert(gui_state != NULL);
     int center_x = FLOOR_MAX_COLS / 2;
@@ -332,15 +332,16 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 // Load game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
                 if (*saveslot_index == -1) {  // Pick saveslot
                     if (IsKeyPressed(KEY_ONE)) {
-                        *saveslot_index = 1;
+                        *saveslot_index = 0;
                         sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     } else if (IsKeyPressed(KEY_TWO)) {
-                        *saveslot_index = 2;
+                        *saveslot_index = 1;
                         sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     } else if (IsKeyPressed(KEY_THREE)) {
-                        *saveslot_index = 3;
+                        *saveslot_index = 2;
                         sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     }
+                    if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
                 } else {
                     gui_state->currentScreen = FLOOR_VIEW;
                 }
@@ -350,15 +351,16 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 // New game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
                 if (*saveslot_index == -1) {  // Pick saveslot
                     if (IsKeyPressed(KEY_ONE)) {
-                        *saveslot_index = 1;
+                        *saveslot_index = 0;
                         sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     } else if (IsKeyPressed(KEY_TWO)) {
-                        *saveslot_index = 2;
+                        *saveslot_index = 1;
                         sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     } else if (IsKeyPressed(KEY_THREE)) {
-                        *saveslot_index = 3;
+                        *saveslot_index = 2;
                         sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                     }
+                    if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
                 } else {
                     gui_state->currentScreen = FLOOR_VIEW;
                 }
@@ -677,7 +679,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 }
 
 // void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[1000])
-void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, Path* game_path, Fighter* player, Room* current_room, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1000], char seed[PATH_SEED_BUFSIZE+1])
+void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, Path* game_path, Fighter* player, Room* current_room, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1])
 {
     BeginTextureMode(target_txtr);
     ClearBackground(RAYWHITE);
