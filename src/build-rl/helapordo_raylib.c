@@ -263,15 +263,6 @@ void gameloop_rl(int argc, char** argv)
         fprintf(stderr, "%s():    Seed: {%s}\n", __func__, seed);
     }
 
-    if (G_EXPERIMENTAL_ON == 1) {
-        bool did_init = false;
-        int saveslot_idx = 0;
-        //TODO: handle saveslot selection instead of passing 0
-        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, saveslot_idx);
-
-        log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
-    }
-
     printf("\n\tDISCLAIMER: THIS BUILD IS STILL WIP.\n\n\tNO GUARANTEES ARE MADE.\n\n");
     printf("helapordo\n");
     printf("  build: %s\n", helapordo_build_string);
@@ -362,6 +353,7 @@ void gameloop_rl(int argc, char** argv)
     Path* game_path = NULL;
     Fighter* player = NULL;
     Room* current_room = NULL;
+    Gamestate* gameState = NULL;
 
     int framesCounter = 0;          // Useful to count frames
 
@@ -393,12 +385,12 @@ void gameloop_rl(int argc, char** argv)
         //----------------------------------------------------------------------------------
         //
 
-        update_GameScreen(&gui_state, &current_floor, &game_path, &player, &current_room, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path, seed, &roomsDone, &enemyTotal);
+        update_GameScreen(&gui_state, &current_floor, &game_path, &player, &current_room, &gameState, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path, seed, &roomsDone, &enemyTotal);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        draw_GameScreen_Texture(target_txtr, gui_state, fps_target, current_anim_frame, current_floor, game_path, player, current_room, current_x, current_y, load_info, saveslot_index, current_save_path, seed);
+        draw_GameScreen_Texture(target_txtr, gui_state, fps_target, current_anim_frame, current_floor, game_path, player, current_room, gameState, current_x, current_y, load_info, saveslot_index, current_save_path, seed);
         //----------------------------------------------------------------------------------
 
         // Draw

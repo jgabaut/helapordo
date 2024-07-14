@@ -375,6 +375,31 @@ SaveHeader* prep_saveHeader(const char* static_path, Koliseo* kls, bool force_in
             .os = HELAPORDO_OS,
             .machine = HELAPORDO_MACHINE,
         };
+        struct stat sb;
+
+        if (stat(path_to_bin_savefile_dir, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+            // Current saveslot dir exists
+        } else {
+            // Current saveslot dir doesn't exist, try creating it
+#ifndef _WIN32
+            int mkdir_saveslot_res = mkdir(path_to_bin_savefile_dir, 0777);
+#else
+            int mkdir_saveslot_res = mkdir(path_to_bin_savefile_dir);
+#endif
+            if (mkdir_saveslot_res != 0) {
+                //sprintf(msg,"[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in \"%s/helapordo-local/static/\". Quitting.\n", homedir_path);
+                log_tag("debug_log.txt", "[BINSAVE]", "%s():    Failed creating saveslot dir {%s}", __func__, path_to_bin_savefile_dir);
+#ifndef HELAPORDO_RAYLIB_BUILD
+                endwin();
+#endif
+                fprintf(stderr, "\n[ERROR]    Failed creating saveslot directory at {%s}\n", path_to_bin_savefile_dir);
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            } else {
+                log_tag("debug_log.txt", "%s():    Could not find {%s} at first, so it was created.\n", __func__, path_to_bin_savefile_dir);
+            }
+        }
 
         // Write packed structure to a binary file
         bool write_res = writeSerSaveHeader(path_to_bin_savefile, &ser_saveheader);

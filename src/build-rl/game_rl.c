@@ -90,14 +90,13 @@ void setEnemySprite(Enemy *e)
  */
 void setEquipSprite(Equip *e)
 {
+    assert(e != NULL);
     if (e->class < EQUIPSMAX + 1) {
         for (int i = 0; i < 8; i++) {
             strcpy(e->sprite[i], equips_sprites[e->class][i]);
         }
     } else {
-        fprintf(stderr,
-                "[ERROR]    Unexpected equipClass in setEquipSprite().\n");
-        exit(EXIT_FAILURE);
+        log_tag("debug_log.txt", "ERROR", "%s():    Unexpected equipClass {%i}", __func__, e->class);
     }
 }
 
@@ -268,7 +267,7 @@ void setChestSprite(Chest *c)
 }
 
 // void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
-void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], int* roomsDone, int* enemyTotal)
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, Gamestate** gamestate, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], int* roomsDone, int* enemyTotal)
 {
     assert(gui_state != NULL);
     int center_x = FLOOR_MAX_COLS / 2;
@@ -292,6 +291,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     if (IsKeyPressed(KEY_F) && IsKeyDown(KEY_LEFT_ALT)) {
         ToggleFullScreenWindow(gui_state->gameScreenWidth, gui_state->gameScreenHeight);
     }
+
+    char static_path[500];
+    // Set static_path value to the correct static dir path
+    resolve_staticPath(static_path);
 
     switch(gui_state->currentScreen) {
     case LOGO: {
@@ -343,6 +346,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                     if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
                 } else {
+                    bool did_init = false;
+                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, *saveslot_index);
+
+                    log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                     gui_state->currentScreen = FLOOR_VIEW;
                 }
             }
@@ -362,6 +369,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                     if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
                 } else {
+                    bool did_init = false;
+                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, *saveslot_index);
+
+                    log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                     gui_state->currentScreen = FLOOR_VIEW;
                 }
             }
@@ -383,6 +394,12 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             gen_random_seed(seed);
             *game_path = randomise_path(seed, temporary_kls, current_save_path);
             (*game_path)->current_saveslot->index = *saveslot_index;
+            Wincon *w =
+                (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
+                                          "Wincon", "Wincon");
+            w->class = FULL_PATH;
+            initWincon(w, *game_path, w->class);
+            (*game_path)->win_condition = w;
             log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
         }
         if (*player == NULL) {
@@ -464,6 +481,37 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             // Set starting room as explored already
             (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
         } // End if *current_floor is NULL
+
+        if (*gamestate == NULL) {
+            log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
+            *gamestate =
+                KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
+                               "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+            G_GAMESTATE = *gamestate;
+#endif
+            clock_t start_time = clock(); //TODO: get this before?
+            init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
+                           *player, GAMEMODE);
+
+            (*gamestate)->current_floor = *current_floor;
+            (*gamestate)->current_room = *current_room;
+
+            bool did_exper_init = false;
+            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
+            log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
+
+            bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+            if (prep_res) {
+                log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+            } else {
+                log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+            }
+        }
 
         gui_state->framesCounter += 1;    // Count frames
 
@@ -679,7 +727,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 }
 
 // void draw_GameScreen_Texture(RenderTexture2D target_txtr, GameScreen currentScreen, float gameScreenWidth, float gameScreenHeight, Vector2 mouse, Vector2 virtualMouse, int framesCounter, int fps_target, int current_anim_frame, Floor* current_floor, int current_x, int current_y, float scale, loadInfo* load_info, int saveslot_index, char current_save_path[1000])
-void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, Path* game_path, Fighter* player, Room* current_room, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1])
+void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, Path* game_path, Fighter* player, Room* current_room, Gamestate* gamestate, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1])
 {
     BeginTextureMode(target_txtr);
     ClearBackground(RAYWHITE);
