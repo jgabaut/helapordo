@@ -3836,7 +3836,7 @@ void handleTutorial(void)
     mvwprintw(win, 14, 1, "%s",
               "When in floor map, you can open the menu with the \"m\" key.");
     mvwprintw(win, 16, 1, "%s",
-              "Remember, you can't really save in Rogue mode ! Run with \"-s\" to try Story mode.");
+              "By default, the game autosaves when you get to an Home room.");
 
     wattroff(win, COLOR_PAIR(S4C_BRIGHT_YELLOW));
 
