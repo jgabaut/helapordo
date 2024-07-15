@@ -267,7 +267,7 @@ void setChestSprite(Chest *c)
 }
 
 // void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
-void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, Gamestate** gamestate, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], int* roomsDone, int* enemyTotal)
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, Gamestate** gamestate, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], bool is_seeded, int* roomsDone, int* enemyTotal)
 {
     assert(gui_state != NULL);
     int center_x = FLOOR_MAX_COLS / 2;
@@ -346,6 +346,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                     if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
                 } else {
+                    *floor_kls = kls_temp_start(temporary_kls);
                     bool did_init = false;
                     SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, *saveslot_index);
 
@@ -390,7 +391,17 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                        *player, GAMEMODE);
 
                         (*gamestate)->current_floor = *current_floor; // Should be NULL here
-                        (*gamestate)->current_room = *current_room; // Should be NULL here
+
+                        *current_room = KLS_PUSH_TYPED(default_kls, Room, HR_Floor, "Room", "Loady Room");
+                        (*gamestate)->current_room = *current_room;
+                        // TODO Prep loading room memory
+
+                        for (int e_idx=0; e_idx < ROOM_ENEMIES_MAX; e_idx++) {
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing loading room enemy {%i}", __func__, e_idx);
+                            (*current_room)->enemies[e_idx] = KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy, "Enemy", "Loading room enemy");
+                            prepareRoomEnemy((*current_room)->enemies[e_idx], 1, 3, 1,
+                                             *floor_kls);
+                        }
 
                         bool did_exper_init = false;
                         SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
@@ -404,6 +415,97 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             kls_free(default_kls);
                             kls_free(temporary_kls);
                             exit(EXIT_FAILURE);
+                        }
+
+                        load_info->enemy_index = (*gamestate)->current_enemy_index;
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
+                        (*gamestate)->path->seed[PATH_SEED_BUFSIZE] = '\0';
+                        memcpy(seed, (*gamestate)->path->seed, PATH_SEED_BUFSIZE);
+                        seed[PATH_SEED_BUFSIZE] = '\0';
+                        log_tag("debug_log.txt", "[DEBUG]",
+                                "Seed after loading: [%s]", seed);
+
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting is_seeded {%s} to gamestate->is_seeded {%s}", __func__, (is_seeded ? "true" : "false"), ((*gamestate)->is_seeded ? "true" : "false"));
+                        is_seeded = (*gamestate)->is_seeded;
+
+                        //TODO: set the other load_info fields properly?
+                        //
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking save type", __func__);
+                        if ((*gamestate)->current_room != NULL) {
+                            *current_room = (*gamestate)->current_room;
+                            switch ((*current_room)->class) {
+                            case ENEMIES: {
+                                if (load_info->enemy_index < 0) {
+                                    log_tag("debug_log.txt", "[ERROR]", "%s():    load_info->enemy_index was <0: {%i}", __func__, load_info->enemy_index);
+                                    fprintf(stderr, "%s():    Failed preparing gamestate. Invalid enemy index.\n", __func__);
+                                    kls_free(default_kls);
+                                    kls_free(temporary_kls);
+                                    exit(EXIT_FAILURE);
+                                }
+                                load_info->save_type = ENEMIES_SAVE;
+                            }
+                            break;
+                            case HOME: {
+                                load_info->save_type = HOME_SAVE;
+                            }
+                            break;
+                            case BASIC: {
+                                load_info->save_type = FLOORMENU_SAVE;
+                            }
+                            break;
+                            default: {
+                                log_tag("debug_log.txt", "[ERROR]", "%s():    unexpected class for current room. {%i}", __func__, (*current_room)->class);
+                                kls_free(default_kls);
+                                kls_free(temporary_kls);
+                                exit(EXIT_FAILURE);
+                                break;
+                            }
+                            }
+
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    save_type: [%s]", __func__, stringFrom_saveType(load_info->save_type));
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, (*gamestate)->player->stats->roomscompleted);
+                            *(load_info->ptr_to_roomindex) = (*gamestate)->player->stats->roomscompleted;
+                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomtotalenemies) to {%i}.", __func__, (*current_room)->enemyTotal);
+                            *(load_info->ptr_to_roomtotalenemies) = (*current_room)->enemyTotal;
+
+                            if ((*current_room)->class == ENEMIES) {
+                                // TODO Load && Store current enemy somewhere.
+                                kls_log(default_kls, "DEBUG", "Prepping Loady Enemy: gamestate->current_room->enemies[%i]", (*gamestate)->current_enemy_index);
+                                if ((*gamestate)->current_enemy_index >= (*current_room)->enemyTotal) {
+                                    log_tag("debug_log.txt", "[ERROR]", "%s():    gmst current_enemy_idex > gmst enemyTotal.", __func__);
+                                    kls_free(default_kls);
+                                    kls_free(temporary_kls);
+                                    exit(EXIT_FAILURE);
+                                }
+                                Enemy** loady_room_enemies = (*current_room)->enemies;
+                                if (loady_room_enemies == NULL) {
+                                    log_tag("debug_log.txt", "[ERROR]", "%s():    Loady room_enemies is NULL.", __func__);
+                                    log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", (*gamestate)->current_enemy_index, (*current_room)->enemyTotal);
+                                    kls_free(default_kls);
+                                    kls_free(temporary_kls);
+                                    exit(EXIT_FAILURE);
+                                }
+
+                                Enemy* loady_enemy = loady_room_enemies[(*gamestate)->current_enemy_index];
+                                if (loady_enemy == NULL) {
+                                    log_tag("debug_log.txt", "[ERROR]", "%s():    Loady enemy_idx is NULL.", __func__);
+                                    log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", (*gamestate)->current_enemy_index, (*current_room)->enemyTotal);
+                                    kls_free(default_kls);
+                                    kls_free(temporary_kls);
+                                    exit(EXIT_FAILURE);
+                                } else {
+                                    //log_tag("debug_log.txt", "[DEBUG]", "%s():    Loady enemy: {%s}", __func__, stringFromEClass(loady_enemy->class));
+                                }
+                                load_info->loaded_enemy = loady_enemy;
+                                //(Enemy *) KLS_PUSH_T_TYPED(gamestate_kls, Enemy, HR_Enemy,
+                                //                         "Enemy", "Loaded Enemy");
+                                //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                                //Update loading_room_turn_args->enemy pointer
+                                //loading_room_turn_args->enemy = load_info->loaded_enemy;
+                            }
+                        } else {
+                            log_tag("debug_log.txt", "[WARN-TURNOP]",
+                                    "%s():    gamestate->room was NULL. Not setting load_info's room info.", __func__);
                         }
                     }
                     gui_state->currentScreen = FLOOR_VIEW;
@@ -425,6 +527,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                     if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
                 } else {
+                    *floor_kls = kls_temp_start(temporary_kls);
                     bool did_init = false;
                     SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, *saveslot_index);
 
@@ -475,6 +578,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
                         log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
 
+                        /*
                         bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                         if (prep_res) {
                             log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
@@ -484,6 +588,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             kls_free(temporary_kls);
                             exit(EXIT_FAILURE);
                         }
+                        */
                     }
                     gui_state->currentScreen = FLOOR_VIEW;
                 }
@@ -503,7 +608,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         // TODO: Update FLOOR_VIEW screen variables here!
         if (*current_floor == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
-            *floor_kls = kls_temp_start(temporary_kls);
             *current_floor = (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
                                  HR_Floor, "Floor", "Floor");
 
