@@ -321,286 +321,286 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         // TODO: Update SAVES_VIEW screen variables here!
 
         switch(load_info->is_new_game) {
-            case -1: { // User has to pick new (1) or load (0)
-                *saveslot_index = -1; // Reset it in case we got here after a whole game
-                sprintf(current_save_path, "%s", ""); // Clear current save path
-                if (IsKeyPressed(KEY_N)) {
-                    load_info->is_new_game = 1;
-                } else if (IsKeyPressed(KEY_L)) {
-                    load_info->is_new_game = 0;
-                }
+        case -1: { // User has to pick new (1) or load (0)
+            *saveslot_index = -1; // Reset it in case we got here after a whole game
+            sprintf(current_save_path, "%s", ""); // Clear current save path
+            if (IsKeyPressed(KEY_N)) {
+                load_info->is_new_game = 1;
+            } else if (IsKeyPressed(KEY_L)) {
+                load_info->is_new_game = 0;
             }
-            break;
-            case 0: {
-                // Load game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
-                if (*saveslot_index == -1) {  // Pick saveslot
-                    if (IsKeyPressed(KEY_ONE)) {
-                        *saveslot_index = 0;
-                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                    } else if (IsKeyPressed(KEY_TWO)) {
-                        *saveslot_index = 1;
-                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                    } else if (IsKeyPressed(KEY_THREE)) {
-                        *saveslot_index = 2;
-                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                    }
-                    if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
-                } else {
-                    *floor_kls = kls_temp_start(temporary_kls);
-                    bool did_save_init = false;
-                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_save_init, *saveslot_index);
+        }
+        break;
+        case 0: {
+            // Load game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
+            if (*saveslot_index == -1) {  // Pick saveslot
+                if (IsKeyPressed(KEY_ONE)) {
+                    *saveslot_index = 0;
+                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                } else if (IsKeyPressed(KEY_TWO)) {
+                    *saveslot_index = 1;
+                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                } else if (IsKeyPressed(KEY_THREE)) {
+                    *saveslot_index = 2;
+                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                }
+                if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
+            } else {
+                *floor_kls = kls_temp_start(temporary_kls);
+                bool did_save_init = false;
+                SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_save_init, *saveslot_index);
 
-                    log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
-                    if (*game_path == NULL) {
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
-                        *game_path = randomise_path(seed, temporary_kls, current_save_path);
-                        (*game_path)->current_saveslot->index = *saveslot_index;
-                        Wincon *w =
-                            (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
-                                                      "Wincon", "Loady Wincon");
-                        w->class = FULL_PATH;
-                        initWincon(w, *game_path, w->class);
-                        (*game_path)->win_condition = w;
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
-                    }
-                    if (*player == NULL) {
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
-                        *player =
-                            (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
-                                                       "Fighter", "Loady Fighter");
+                log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+                if (*game_path == NULL) {
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
+                    *game_path = randomise_path(seed, temporary_kls, current_save_path);
+                    (*game_path)->current_saveslot->index = *saveslot_index;
+                    Wincon *w =
+                        (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
+                                                  "Wincon", "Loady Wincon");
+                    w->class = FULL_PATH;
+                    initWincon(w, *game_path, w->class);
+                    (*game_path)->win_condition = w;
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
+                }
+                if (*player == NULL) {
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
+                    *player =
+                        (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
+                                                   "Fighter", "Loady Fighter");
 
-                        strncpy((*player)->name, "Test", strlen("Test")+1);
-                        (*player)->class = Knight;
-                        //getParams(argc, argv, player, path, optTot, default_kls);
-                        //TODO: ensure class and name are taken before this update
-                        initPlayerStats(*player, *game_path, temporary_kls);
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Loady Fighter", __func__);
-                    }
-                    if (*gamestate == NULL) {
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
-                        *gamestate =
-                            KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
-                                           "Gamestate");
+                    strncpy((*player)->name, "Test", strlen("Test")+1);
+                    (*player)->class = Knight;
+                    //getParams(argc, argv, player, path, optTot, default_kls);
+                    //TODO: ensure class and name are taken before this update
+                    initPlayerStats(*player, *game_path, temporary_kls);
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Loady Fighter", __func__);
+                }
+                if (*gamestate == NULL) {
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
+                    *gamestate =
+                        KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
+                                       "Gamestate");
 #ifndef KOLISEO_HAS_REGION
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
-                        G_GAMESTATE = *gamestate;
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+                    G_GAMESTATE = *gamestate;
 #endif
-                        clock_t start_time = clock(); //TODO: get this before?
-                        init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
-                                       *player, GAMEMODE);
+                    clock_t start_time = clock(); //TODO: get this before?
+                    init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
+                                   *player, GAMEMODE);
 
-                        (*gamestate)->current_floor = *current_floor; // Should be NULL here
+                    (*gamestate)->current_floor = *current_floor; // Should be NULL here
 
-                        *current_room = KLS_PUSH_TYPED(default_kls, Room, HR_Floor, "Room", "Loady Room");
-                        (*current_room)->class = BASIC;
-                        (*gamestate)->current_room = *current_room;
-                        // TODO Prep loading room memory
+                    *current_room = KLS_PUSH_TYPED(default_kls, Room, HR_Floor, "Room", "Loady Room");
+                    (*current_room)->class = BASIC;
+                    (*gamestate)->current_room = *current_room;
+                    // TODO Prep loading room memory
 
-                        for (int e_idx=0; e_idx < ROOM_ENEMIES_MAX; e_idx++) {
-                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing loading room enemy {%i}", __func__, e_idx);
-                            (*current_room)->enemies[e_idx] = KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy, "Enemy", "Loading room enemy");
-                            prepareRoomEnemy((*current_room)->enemies[e_idx], 1, 3, 1,
-                                             *floor_kls);
-                        }
+                    for (int e_idx=0; e_idx < ROOM_ENEMIES_MAX; e_idx++) {
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing loading room enemy {%i}", __func__, e_idx);
+                        (*current_room)->enemies[e_idx] = KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy, "Enemy", "Loading room enemy");
+                        prepareRoomEnemy((*current_room)->enemies[e_idx], 1, 3, 1,
+                                         *floor_kls);
+                    }
 
-                        bool force_init = false;
-                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_init, &did_save_init, (*game_path)->current_saveslot->index);
-                        log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
+                    bool force_init = false;
+                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_init, &did_save_init, (*game_path)->current_saveslot->index);
+                    log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
 
-                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_save_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
-                        if (prep_res) {
-                            log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
-                        } else {
-                            log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
-                            kls_free(default_kls);
-                            kls_free(temporary_kls);
-                            exit(EXIT_FAILURE);
-                        }
+                    bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_save_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                    if (prep_res) {
+                        log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+                    } else {
+                        log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                        kls_free(default_kls);
+                        kls_free(temporary_kls);
+                        exit(EXIT_FAILURE);
+                    }
 
-                        load_info->enemy_index = (*gamestate)->current_enemy_index;
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
-                        (*gamestate)->path->seed[PATH_SEED_BUFSIZE] = '\0';
-                        memcpy(seed, (*gamestate)->path->seed, PATH_SEED_BUFSIZE);
-                        seed[PATH_SEED_BUFSIZE] = '\0';
-                        log_tag("debug_log.txt", "[DEBUG]",
-                                "Seed after loading: [%s]", seed);
+                    load_info->enemy_index = (*gamestate)->current_enemy_index;
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    load_info->enemy_index: {%i}", __func__, load_info->enemy_index);
+                    (*gamestate)->path->seed[PATH_SEED_BUFSIZE] = '\0';
+                    memcpy(seed, (*gamestate)->path->seed, PATH_SEED_BUFSIZE);
+                    seed[PATH_SEED_BUFSIZE] = '\0';
+                    log_tag("debug_log.txt", "[DEBUG]",
+                            "Seed after loading: [%s]", seed);
 
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting is_seeded {%s} to gamestate->is_seeded {%s}", __func__, (is_seeded ? "true" : "false"), ((*gamestate)->is_seeded ? "true" : "false"));
-                        is_seeded = (*gamestate)->is_seeded;
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting is_seeded {%s} to gamestate->is_seeded {%s}", __func__, (is_seeded ? "true" : "false"), ((*gamestate)->is_seeded ? "true" : "false"));
+                    is_seeded = (*gamestate)->is_seeded;
 
-                        //TODO: set the other load_info fields properly?
-                        //
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking save type", __func__);
-                        if ((*gamestate)->current_room != NULL) {
-                            *current_room = (*gamestate)->current_room;
-                            switch ((*current_room)->class) {
-                            case ENEMIES: {
-                                if (load_info->enemy_index < 0) {
-                                    log_tag("debug_log.txt", "[ERROR]", "%s():    load_info->enemy_index was <0: {%i}", __func__, load_info->enemy_index);
-                                    fprintf(stderr, "%s():    Failed preparing gamestate. Invalid enemy index.\n", __func__);
-                                    kls_free(default_kls);
-                                    kls_free(temporary_kls);
-                                    exit(EXIT_FAILURE);
-                                }
-                                load_info->save_type = ENEMIES_SAVE;
-                            }
-                            break;
-                            case HOME: {
-                                load_info->save_type = HOME_SAVE;
-                            }
-                            break;
-                            case BASIC: {
-                                load_info->save_type = FLOORMENU_SAVE;
-                            }
-                            break;
-                            default: {
-                                log_tag("debug_log.txt", "[ERROR]", "%s():    unexpected class for current room. {%i}", __func__, (*current_room)->class);
+                    //TODO: set the other load_info fields properly?
+                    //
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking save type", __func__);
+                    if ((*gamestate)->current_room != NULL) {
+                        *current_room = (*gamestate)->current_room;
+                        switch ((*current_room)->class) {
+                        case ENEMIES: {
+                            if (load_info->enemy_index < 0) {
+                                log_tag("debug_log.txt", "[ERROR]", "%s():    load_info->enemy_index was <0: {%i}", __func__, load_info->enemy_index);
+                                fprintf(stderr, "%s():    Failed preparing gamestate. Invalid enemy index.\n", __func__);
                                 kls_free(default_kls);
                                 kls_free(temporary_kls);
                                 exit(EXIT_FAILURE);
-                                break;
                             }
-                            }
-
-                            log_tag("debug_log.txt", "[DEBUG]", "%s():    save_type: [%s]", __func__, stringFrom_saveType(load_info->save_type));
-                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, (*gamestate)->player->stats->roomscompleted);
-                            *(load_info->ptr_to_roomindex) = (*gamestate)->player->stats->roomscompleted;
-                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomtotalenemies) to {%i}.", __func__, (*current_room)->enemyTotal);
-                            *(load_info->ptr_to_roomtotalenemies) = (*current_room)->enemyTotal;
-
-                            if ((*current_room)->class == ENEMIES) {
-                                // TODO Load && Store current enemy somewhere.
-                                kls_log(default_kls, "DEBUG", "Prepping Loady Enemy: gamestate->current_room->enemies[%i]", (*gamestate)->current_enemy_index);
-                                if ((*gamestate)->current_enemy_index >= (*current_room)->enemyTotal) {
-                                    log_tag("debug_log.txt", "[ERROR]", "%s():    gmst current_enemy_idex > gmst enemyTotal.", __func__);
-                                    kls_free(default_kls);
-                                    kls_free(temporary_kls);
-                                    exit(EXIT_FAILURE);
-                                }
-                                Enemy** loady_room_enemies = (*current_room)->enemies;
-                                if (loady_room_enemies == NULL) {
-                                    log_tag("debug_log.txt", "[ERROR]", "%s():    Loady room_enemies is NULL.", __func__);
-                                    log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", (*gamestate)->current_enemy_index, (*current_room)->enemyTotal);
-                                    kls_free(default_kls);
-                                    kls_free(temporary_kls);
-                                    exit(EXIT_FAILURE);
-                                }
-
-                                Enemy* loady_enemy = loady_room_enemies[(*gamestate)->current_enemy_index];
-                                if (loady_enemy == NULL) {
-                                    log_tag("debug_log.txt", "[ERROR]", "%s():    Loady enemy_idx is NULL.", __func__);
-                                    log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", (*gamestate)->current_enemy_index, (*current_room)->enemyTotal);
-                                    kls_free(default_kls);
-                                    kls_free(temporary_kls);
-                                    exit(EXIT_FAILURE);
-                                } else {
-                                    //log_tag("debug_log.txt", "[DEBUG]", "%s():    Loady enemy: {%s}", __func__, stringFromEClass(loady_enemy->class));
-                                }
-                                load_info->loaded_enemy = loady_enemy;
-                                //(Enemy *) KLS_PUSH_T_TYPED(gamestate_kls, Enemy, HR_Enemy,
-                                //                         "Enemy", "Loaded Enemy");
-                                //FIXME: the structs related to loaded enemy are not loaded on default_kls
-                                //Update loading_room_turn_args->enemy pointer
-                                //loading_room_turn_args->enemy = load_info->loaded_enemy;
-                            }
-                        } else {
-                            log_tag("debug_log.txt", "[WARN-TURNOP]",
-                                    "%s():    gamestate->room was NULL. Not setting load_info's room info.", __func__);
+                            load_info->save_type = ENEMIES_SAVE;
                         }
-                    }
-                    gui_state->currentScreen = FLOOR_VIEW;
-                }
-            }
-            break;
-            case 1: {
-                // New game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
-                if (*saveslot_index == -1) {  // Pick saveslot
-                    if (IsKeyPressed(KEY_ONE)) {
-                        *saveslot_index = 0;
-                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                    } else if (IsKeyPressed(KEY_TWO)) {
-                        *saveslot_index = 1;
-                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                    } else if (IsKeyPressed(KEY_THREE)) {
-                        *saveslot_index = 2;
-                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                    }
-                    if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
-                } else {
-                    *floor_kls = kls_temp_start(temporary_kls);
-                    bool did_save_init = false;
-                    bool force_save_init = true;
-                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, *saveslot_index);
-
-                    log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
-                    if (*game_path == NULL) {
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
-                        *game_path = randomise_path(seed, temporary_kls, current_save_path);
-                        (*game_path)->current_saveslot->index = *saveslot_index;
-                        Wincon *w =
-                            (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
-                                                      "Wincon", "Wincon");
-                        w->class = FULL_PATH;
-                        initWincon(w, *game_path, w->class);
-                        (*game_path)->win_condition = w;
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
-                    }
-                    if (*player == NULL) {
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
-                        *player =
-                            (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
-                                                       "Fighter", "Fighter");
-
-                        strncpy((*player)->name, "Test", strlen("Test")+1);
-                        (*player)->class = Knight;
-                        //getParams(argc, argv, player, path, optTot, default_kls);
-                        //TODO: ensure class and name are taken before this update
-                        initPlayerStats(*player, *game_path, temporary_kls);
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared new Fighter", __func__);
-                    }
-                    if (*gamestate == NULL) {
-                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
-                        *gamestate =
-                            KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
-                                           "Gamestate");
-#ifndef KOLISEO_HAS_REGION
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
-                        G_GAMESTATE = *gamestate;
-#endif
-                        clock_t start_time = clock(); //TODO: get this before?
-                        init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
-                                       *player, GAMEMODE);
-
-                        (*gamestate)->current_floor = *current_floor; // Should be NULL here
-                        (*gamestate)->current_room = *current_room; // Should be NULL here
-                        (*gamestate)->is_seeded = is_seeded;
-                        (*gamestate)->current_enemy_index = 0;
-
-                        bool did_save_init = false;
-                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, (*game_path)->current_saveslot->index);
-                        log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
-
-                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_save_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
-                        if (prep_res) {
-                            log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
-                        } else {
-                            log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                        break;
+                        case HOME: {
+                            load_info->save_type = HOME_SAVE;
+                        }
+                        break;
+                        case BASIC: {
+                            load_info->save_type = FLOORMENU_SAVE;
+                        }
+                        break;
+                        default: {
+                            log_tag("debug_log.txt", "[ERROR]", "%s():    unexpected class for current room. {%i}", __func__, (*current_room)->class);
                             kls_free(default_kls);
                             kls_free(temporary_kls);
                             exit(EXIT_FAILURE);
+                            break;
                         }
+                        }
+
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    save_type: [%s]", __func__, stringFrom_saveType(load_info->save_type));
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomindex) to {%i}.", __func__, (*gamestate)->player->stats->roomscompleted);
+                        *(load_info->ptr_to_roomindex) = (*gamestate)->player->stats->roomscompleted;
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting *(load_info->ptr_to_roomtotalenemies) to {%i}.", __func__, (*current_room)->enemyTotal);
+                        *(load_info->ptr_to_roomtotalenemies) = (*current_room)->enemyTotal;
+
+                        if ((*current_room)->class == ENEMIES) {
+                            // TODO Load && Store current enemy somewhere.
+                            kls_log(default_kls, "DEBUG", "Prepping Loady Enemy: gamestate->current_room->enemies[%i]", (*gamestate)->current_enemy_index);
+                            if ((*gamestate)->current_enemy_index >= (*current_room)->enemyTotal) {
+                                log_tag("debug_log.txt", "[ERROR]", "%s():    gmst current_enemy_idex > gmst enemyTotal.", __func__);
+                                kls_free(default_kls);
+                                kls_free(temporary_kls);
+                                exit(EXIT_FAILURE);
+                            }
+                            Enemy** loady_room_enemies = (*current_room)->enemies;
+                            if (loady_room_enemies == NULL) {
+                                log_tag("debug_log.txt", "[ERROR]", "%s():    Loady room_enemies is NULL.", __func__);
+                                log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", (*gamestate)->current_enemy_index, (*current_room)->enemyTotal);
+                                kls_free(default_kls);
+                                kls_free(temporary_kls);
+                                exit(EXIT_FAILURE);
+                            }
+
+                            Enemy* loady_enemy = loady_room_enemies[(*gamestate)->current_enemy_index];
+                            if (loady_enemy == NULL) {
+                                log_tag("debug_log.txt", "[ERROR]", "%s():    Loady enemy_idx is NULL.", __func__);
+                                log_tag("debug_log.txt", "[ERROR]", "idx/tot: {%i/%i}", (*gamestate)->current_enemy_index, (*current_room)->enemyTotal);
+                                kls_free(default_kls);
+                                kls_free(temporary_kls);
+                                exit(EXIT_FAILURE);
+                            } else {
+                                //log_tag("debug_log.txt", "[DEBUG]", "%s():    Loady enemy: {%s}", __func__, stringFromEClass(loady_enemy->class));
+                            }
+                            load_info->loaded_enemy = loady_enemy;
+                            //(Enemy *) KLS_PUSH_T_TYPED(gamestate_kls, Enemy, HR_Enemy,
+                            //                         "Enemy", "Loaded Enemy");
+                            //FIXME: the structs related to loaded enemy are not loaded on default_kls
+                            //Update loading_room_turn_args->enemy pointer
+                            //loading_room_turn_args->enemy = load_info->loaded_enemy;
+                        }
+                    } else {
+                        log_tag("debug_log.txt", "[WARN-TURNOP]",
+                                "%s():    gamestate->room was NULL. Not setting load_info's room info.", __func__);
                     }
-                    gui_state->currentScreen = FLOOR_VIEW;
                 }
+                gui_state->currentScreen = FLOOR_VIEW;
             }
-            break;
-            default: {
-                fprintf(stderr,"%s():    unexpected value for load_info->is_new_game: [%i]\n", __func__, load_info->is_new_game);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+        }
+        break;
+        case 1: {
+            // New game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
+            if (*saveslot_index == -1) {  // Pick saveslot
+                if (IsKeyPressed(KEY_ONE)) {
+                    *saveslot_index = 0;
+                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                } else if (IsKeyPressed(KEY_TWO)) {
+                    *saveslot_index = 1;
+                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                } else if (IsKeyPressed(KEY_THREE)) {
+                    *saveslot_index = 2;
+                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                }
+                if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
+            } else {
+                *floor_kls = kls_temp_start(temporary_kls);
+                bool did_save_init = false;
+                bool force_save_init = true;
+                SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, *saveslot_index);
+
+                log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+                if (*game_path == NULL) {
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
+                    *game_path = randomise_path(seed, temporary_kls, current_save_path);
+                    (*game_path)->current_saveslot->index = *saveslot_index;
+                    Wincon *w =
+                        (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
+                                                  "Wincon", "Wincon");
+                    w->class = FULL_PATH;
+                    initWincon(w, *game_path, w->class);
+                    (*game_path)->win_condition = w;
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
+                }
+                if (*player == NULL) {
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
+                    *player =
+                        (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
+                                                   "Fighter", "Fighter");
+
+                    strncpy((*player)->name, "Test", strlen("Test")+1);
+                    (*player)->class = Knight;
+                    //getParams(argc, argv, player, path, optTot, default_kls);
+                    //TODO: ensure class and name are taken before this update
+                    initPlayerStats(*player, *game_path, temporary_kls);
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Prepared new Fighter", __func__);
+                }
+                if (*gamestate == NULL) {
+                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
+                    *gamestate =
+                        KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
+                                       "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+                    G_GAMESTATE = *gamestate;
+#endif
+                    clock_t start_time = clock(); //TODO: get this before?
+                    init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
+                                   *player, GAMEMODE);
+
+                    (*gamestate)->current_floor = *current_floor; // Should be NULL here
+                    (*gamestate)->current_room = *current_room; // Should be NULL here
+                    (*gamestate)->is_seeded = is_seeded;
+                    (*gamestate)->current_enemy_index = 0;
+
+                    bool did_save_init = false;
+                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, (*game_path)->current_saveslot->index);
+                    log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
+
+                    bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_save_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                    if (prep_res) {
+                        log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+                    } else {
+                        log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                        kls_free(default_kls);
+                        kls_free(temporary_kls);
+                        exit(EXIT_FAILURE);
+                    }
+                }
+                gui_state->currentScreen = FLOOR_VIEW;
             }
-            break;
+        }
+        break;
+        default: {
+            fprintf(stderr,"%s():    unexpected value for load_info->is_new_game: [%i]\n", __func__, load_info->is_new_game);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
         }
     }
     break;
@@ -609,7 +609,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (*current_floor == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
             *current_floor = (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
-                                 HR_Floor, "Floor", "Floor");
+                             HR_Floor, "Floor", "Floor");
 
             // Init dbg_floor
             init_floor_layout(*current_floor);
@@ -710,7 +710,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             *floor_kls = kls_temp_start(temporary_kls);
             *current_floor =
                 (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
-                                         HR_Floor, "Floor", "Floor");
+                                           HR_Floor, "Floor", "Floor");
             // Init dbg_floor
             init_floor_layout(*current_floor);
 
@@ -872,11 +872,14 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     case ENDING: {
         // TODO: Update ENDING screen variables here!
 
-        // Press enter to return to TITLE screen
+        // Press enter to quit the game
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             //Reset load_info->is_new_game to -1
-            load_info->is_new_game = -1;
-            gui_state->currentScreen = TITLE;
+            log_tag("debug_log.txt", "DEBUG", "%s():    Quitting", __func__);
+            fprintf(stderr, "[DEBUG] [%s()]    Quitting\n", __func__);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_SUCCESS);
         }
     }
     break;
@@ -927,7 +930,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("PRESS R to regen floor", 110, 160, 20, MAROON);
         DrawText("PRESS P to pause animations", 110, 190, 20, MAROON);
         DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 220, 20, MAROON);
-        DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 280, 20, DARKGREEN);
+        DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 280, 20, DARKGREEN);
 
         char txt[30] = {0};
         char txt_b[30] = {0};
@@ -946,48 +949,48 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
     case SAVES_VIEW : {
         // TODO: Draw SAVES_VIEW screen here!
         switch(load_info->is_new_game) {
-            case -1: { // User has to pick new (1) or load (0)
-                DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RAYWHITE);
+        case -1: { // User has to pick new (1) or load (0)
+            DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RAYWHITE);
+            DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
+            DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
+            DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, DARKGREEN);
+            DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+            DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
+        }
+        break;
+        case 0: {
+            if (saveslot_index == -1) {  // Pick saveslot
+                DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, WHITE);
                 DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
                 DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
-                DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, DARKGREEN);
+                DrawText("LOADED GAME SCREEN", 20, 20, 40, DARKGREEN);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-                DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
+                DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
+            } else {
+                DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
             }
-            break;
-            case 0: {
-                if (saveslot_index == -1) {  // Pick saveslot
-                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, WHITE);
-                    DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
-                    DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
-                    DrawText("LOADED GAME SCREEN", 20, 20, 40, DARKGREEN);
-                    DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-                    DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
-                } else {
-                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
-                }
+        }
+        break;
+        case 1: {
+            if (saveslot_index == -1) {  // Pick saveslot
+                DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, WHITE);
+                DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
+                DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
+                DrawText("NEW GAME SCREEN", 20, 20, 40, DARKGREEN);
+                DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+                DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
+            } else {
+                DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
             }
-            break;
-            case 1: {
-                if (saveslot_index == -1) {  // Pick saveslot
-                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, WHITE);
-                    DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, WHITE);
-                    DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
-                    DrawText("NEW GAME SCREEN", 20, 20, 40, DARKGREEN);
-                    DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-                    DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
-                } else {
-                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
-                }
-            }
-            break;
-            default: {
-                fprintf(stderr,"%s():    unexpected value for load_info->is_new_game: [%i]\n", __func__, load_info->is_new_game);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
-            }
-            break;
+        }
+        break;
+        default: {
+            fprintf(stderr,"%s():    unexpected value for load_info->is_new_game: [%i]\n", __func__, load_info->is_new_game);
+            kls_free(default_kls);
+            kls_free(temporary_kls);
+            exit(EXIT_FAILURE);
+        }
+        break;
         }
     }
     break;
@@ -1003,13 +1006,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Controls for FLOOR_VIEW screen", 110, 160, 20, MAROON);
         DrawText("Arrow keys to move", 110, 190, 20, MAROON);
         DrawText("PRESS R to regen floor", 110, 220, 20, MAROON);
-        DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 280, 20, MAROON);
+        DrawText("PRESS ENTER or TAP to go to ENDING SCREEN", 110, 280, 20, MAROON);
 
         Rectangle floor_r = CLITERAL(Rectangle) {
             gui_state.gameScreenHeight *0.5f,
-                             gui_state.gameScreenWidth *0.5f,
-                             FLOOR_MAX_COLS * (gui_state.gameScreenWidth*0.01f),
-                             FLOOR_MAX_ROWS * (gui_state.gameScreenWidth*0.01f),
+                                       gui_state.gameScreenWidth *0.5f,
+                                       FLOOR_MAX_COLS * (gui_state.gameScreenWidth*0.01f),
+                                       FLOOR_MAX_ROWS * (gui_state.gameScreenWidth*0.01f),
         };
 
         //DrawRectangleRec(floor_r, ColorFromS4CPalette(palette, S4C_SALMON));
@@ -1030,9 +1033,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
 
         Rectangle map_r = CLITERAL(Rectangle) {
             gui_state.gameScreenHeight *0.85f,
-                             gui_state.gameScreenWidth *0.5f,
-                             FLOOR_MAX_COLS * (gui_state.gameScreenWidth*0.01f),
-                             FLOOR_MAX_ROWS * (gui_state.gameScreenWidth*0.01f),
+                                       gui_state.gameScreenWidth *0.5f,
+                                       FLOOR_MAX_COLS * (gui_state.gameScreenWidth*0.01f),
+                                       FLOOR_MAX_ROWS * (gui_state.gameScreenWidth*0.01f),
         };
 
 
@@ -1081,146 +1084,146 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         if (current_room != NULL) {
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, DARKGREEN);
             switch (current_room->class) {
-                case ENEMIES: {
-                    int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
-                    int pl_frame_W = gui_state.gameScreenWidth * 0.2f;
-                    int pl_frame_H = pl_frame_W;
-                    int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W;
-                    int en_rect_X = gui_state.gameScreenWidth *0.1f;
-                    int en_rect_Y = pl_rect_Y;
-                    int en_frame_W = pl_frame_W;
-                    int en_frame_H = pl_frame_H;
-                    float stats_label_W = gui_state.gameScreenWidth * 0.1f;
-                    float stats_label_H = stats_label_W;
-                    Rectangle stats_label_r = CLITERAL(Rectangle) {
-                        gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
-                                        en_rect_Y,
-                                        stats_label_W,
-                                        stats_label_H
-                    };
-                    Rectangle pl_r = CLITERAL(Rectangle) {
-                        pl_rect_X,
-                        pl_rect_Y,
-                        pl_frame_W,
-                        pl_frame_H
-                    };
-                    Rectangle en_r = CLITERAL(Rectangle) {
-                        en_rect_X,
-                        en_rect_Y,
-                        en_frame_W,
-                        en_frame_H
-                    };
-                    //TODO: count time by real_clock difference from last frame
-                    time_t framesTime = gui_state.framesCounter / fps_target ;// GetFPS();
-                    struct tm* time_tm = localtime(&framesTime);
-                    char time_str[20] = {0};
+            case ENEMIES: {
+                int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
+                int pl_frame_W = gui_state.gameScreenWidth * 0.2f;
+                int pl_frame_H = pl_frame_W;
+                int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W;
+                int en_rect_X = gui_state.gameScreenWidth *0.1f;
+                int en_rect_Y = pl_rect_Y;
+                int en_frame_W = pl_frame_W;
+                int en_frame_H = pl_frame_H;
+                float stats_label_W = gui_state.gameScreenWidth * 0.1f;
+                float stats_label_H = stats_label_W;
+                Rectangle stats_label_r = CLITERAL(Rectangle) {
+                    gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
+                                              en_rect_Y,
+                                              stats_label_W,
+                                              stats_label_H
+                };
+                Rectangle pl_r = CLITERAL(Rectangle) {
+                    pl_rect_X,
+                    pl_rect_Y,
+                    pl_frame_W,
+                    pl_frame_H
+                };
+                Rectangle en_r = CLITERAL(Rectangle) {
+                    en_rect_X,
+                    en_rect_Y,
+                    en_frame_W,
+                    en_frame_H
+                };
+                //TODO: count time by real_clock difference from last frame
+                time_t framesTime = gui_state.framesCounter / fps_target ;// GetFPS();
+                struct tm* time_tm = localtime(&framesTime);
+                char time_str[20] = {0};
 
-                    if (time_tm == NULL) {
-                        fprintf(stderr, "%s():    time_tm was NULL.\n", __func__);
-                    } else {
-                        strftime(time_str, 20, "Time: %M:%S", time_tm);
-                        DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
-                    }
-                    DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
+                if (time_tm == NULL) {
+                    fprintf(stderr, "%s():    time_tm was NULL.\n", __func__);
+                } else {
+                    strftime(time_str, 20, "Time: %M:%S", time_tm);
+                    DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
+                }
+                DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
 
-                    fighterClass player_class = player->class;
-                    int pl_res = -1;
-                    switch (player_class) {
-                        case Knight: {
-                            pl_res = DrawSpriteRect(knight_tapis[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Archer: {
-                            pl_res = DrawSpriteRect(archer_drop[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Mage: {
-                            pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Assassin: {
-                            pl_res = DrawSpriteRect(assassin_poof[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        default: {
-                            log_tag("debug_log.txt", "ERROR", "%s():    Unexpected player_class: {%i}", __func__, player_class);
-                            fprintf(stderr, "[ERROR] [%s()]    Unexpected player_class: {%i}\n", __func__, player_class);
-                            kls_free(default_kls);
-                            kls_free(temporary_kls);
-                            exit(EXIT_FAILURE);
-                        }
-                        break;
-                    }
-                    int en_res = -1;
-                    enemyClass enemy_class = current_room->enemies[gamestate->current_enemy_index]->class;
-                    switch (enemy_class) {
-                        case Mummy: {
-                            en_res = DrawSpriteRect(mummy_shuffle[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Ghost: {
-                            en_res = DrawSpriteRect(ghost_spell[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Zombie: {
-                            en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Goblin: {
-                            en_res = DrawSpriteRect(goblin_shoot[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Imp: {
-                            en_res = DrawSpriteRect(imp_fireball[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Troll: {
-                            en_res = DrawSpriteRect(troll_club[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Boar: {
-                            en_res = DrawSpriteRect(boar_scream[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Werewolf: {
-                            en_res = DrawSpriteRect(werewolf_transform[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        default: {
-                            log_tag("debug_log.txt", "ERROR", "%s():    Unexpected enemy_class: {%i}", __func__, enemy_class);
-                            fprintf(stderr, "[ERROR] [%s()]    Unexpected enemy_class: {%i}\n", __func__, enemy_class);
-                            kls_free(default_kls);
-                            kls_free(temporary_kls);
-                            exit(EXIT_FAILURE);
-                        }
-                        break;
-                    }
-                    if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
-                        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
-                        DrawText("Window too small.", 20, 20, 20, RAYWHITE);
-                        DrawText("Please resize.", 20, 50, 20, RAYWHITE);
-                    }
+                fighterClass player_class = player->class;
+                int pl_res = -1;
+                switch (player_class) {
+                case Knight: {
+                    pl_res = DrawSpriteRect(knight_tapis[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Archer: {
+                    pl_res = DrawSpriteRect(archer_drop[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Mage: {
+                    pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Assassin: {
+                    pl_res = DrawSpriteRect(assassin_poof[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
                 }
                 break;
                 default: {
-                    log_tag("debug_log.txt", "ERROR", "%s():    Unexpected roomClass value: {%i}", __func__, current_room->class);
-                    if (current_room->class > 0) {
-                        fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i} {%s}", __func__, current_room->class, stringFromRoom(current_room->class));
-                    } else {
-                        fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i}", __func__, current_room->class);
-                    }
-
-                    /*
+                    log_tag("debug_log.txt", "ERROR", "%s():    Unexpected player_class: {%i}", __func__, player_class);
+                    fprintf(stderr, "[ERROR] [%s()]    Unexpected player_class: {%i}\n", __func__, player_class);
                     kls_free(default_kls);
                     kls_free(temporary_kls);
                     exit(EXIT_FAILURE);
-                    */
                 }
                 break;
+                }
+                int en_res = -1;
+                enemyClass enemy_class = current_room->enemies[gamestate->current_enemy_index]->class;
+                switch (enemy_class) {
+                case Mummy: {
+                    en_res = DrawSpriteRect(mummy_shuffle[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Ghost: {
+                    en_res = DrawSpriteRect(ghost_spell[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Zombie: {
+                    en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Goblin: {
+                    en_res = DrawSpriteRect(goblin_shoot[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Imp: {
+                    en_res = DrawSpriteRect(imp_fireball[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Troll: {
+                    en_res = DrawSpriteRect(troll_club[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Boar: {
+                    en_res = DrawSpriteRect(boar_scream[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Werewolf: {
+                    en_res = DrawSpriteRect(werewolf_transform[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                default: {
+                    log_tag("debug_log.txt", "ERROR", "%s():    Unexpected enemy_class: {%i}", __func__, enemy_class);
+                    fprintf(stderr, "[ERROR] [%s()]    Unexpected enemy_class: {%i}\n", __func__, enemy_class);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+                break;
+                }
+                if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
+                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                    DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+                    DrawText("Please resize.", 20, 50, 20, RAYWHITE);
+                }
+            }
+            break;
+            default: {
+                log_tag("debug_log.txt", "ERROR", "%s():    Unexpected roomClass value: {%i}", __func__, current_room->class);
+                if (current_room->class > 0) {
+                    fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i} {%s}", __func__, current_room->class, stringFromRoom(current_room->class));
+                } else {
+                    fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i}", __func__, current_room->class);
+                }
+
+                /*
+                kls_free(default_kls);
+                kls_free(temporary_kls);
+                exit(EXIT_FAILURE);
+                */
+            }
+            break;
             }
         }
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
+        DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
         DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
         DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, MAROON);
     }
@@ -1230,7 +1233,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, BLUE);
         DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
+        DrawText("PRESS ENTER or TAP to RETURN to quit the game", 120, 220, 20, DARKBLUE);
     }
     break;
     case DOOR_ANIM: {
