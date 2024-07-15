@@ -623,7 +623,7 @@
 ### Changed
 
 - Bump amboso to 1.6.3
-- Fix wrong error message for Turncounter generation
+- Fix: wrong error message for Turncounter generation
 
 ## [1.0.5] - 2023-08-22
 
@@ -664,9 +664,9 @@
 
 ### Changed
 
-- Fix memory leak in unlockSpecial()
-- Fix use after free in handleRoom_Enemies()
-- Fix handleStats() being called twice on death in an ENEMIES room.
+- Fix: memory leak in unlockSpecial()
+- Fix: use after free in handleRoom_Enemies()
+- Fix: handleStats() being called twice on death in an ENEMIES room.
 
 ## [1.0.0] - 2023-08-05
 

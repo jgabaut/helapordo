@@ -350,6 +350,62 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, *saveslot_index);
 
                     log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+                    if (*game_path == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
+                        gen_random_seed(seed);
+                        *game_path = randomise_path(seed, temporary_kls, current_save_path);
+                        (*game_path)->current_saveslot->index = *saveslot_index;
+                        Wincon *w =
+                            (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
+                                                      "Wincon", "Loady Wincon");
+                        w->class = FULL_PATH;
+                        initWincon(w, *game_path, w->class);
+                        (*game_path)->win_condition = w;
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
+                    }
+                    if (*player == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
+                        *player =
+                            (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
+                                                       "Fighter", "Loady Fighter");
+
+                        strncpy((*player)->name, "Test", strlen("Test")+1);
+                        (*player)->class = Knight;
+                        //getParams(argc, argv, player, path, optTot, default_kls);
+                        //TODO: ensure class and name are taken before this update
+                        initPlayerStats(*player, *game_path, temporary_kls);
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Loady Fighter", __func__);
+                    }
+                    if (*gamestate == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
+                        *gamestate =
+                            KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
+                                           "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+                        G_GAMESTATE = *gamestate;
+#endif
+                        clock_t start_time = clock(); //TODO: get this before?
+                        init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
+                                       *player, GAMEMODE);
+
+                        (*gamestate)->current_floor = *current_floor; // Should be NULL here
+                        (*gamestate)->current_room = *current_room; // Should be NULL here
+
+                        bool did_exper_init = false;
+                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
+                        log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
+
+                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                        if (prep_res) {
+                            log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+                        } else {
+                            log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                    }
                     gui_state->currentScreen = FLOOR_VIEW;
                 }
             }
@@ -373,6 +429,62 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, *saveslot_index);
 
                     log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+                    if (*game_path == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
+                        gen_random_seed(seed);
+                        *game_path = randomise_path(seed, temporary_kls, current_save_path);
+                        (*game_path)->current_saveslot->index = *saveslot_index;
+                        Wincon *w =
+                            (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
+                                                      "Wincon", "Wincon");
+                        w->class = FULL_PATH;
+                        initWincon(w, *game_path, w->class);
+                        (*game_path)->win_condition = w;
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
+                    }
+                    if (*player == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
+                        *player =
+                            (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
+                                                       "Fighter", "Fighter");
+
+                        strncpy((*player)->name, "Test", strlen("Test")+1);
+                        (*player)->class = Knight;
+                        //getParams(argc, argv, player, path, optTot, default_kls);
+                        //TODO: ensure class and name are taken before this update
+                        initPlayerStats(*player, *game_path, temporary_kls);
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared new Fighter", __func__);
+                    }
+                    if (*gamestate == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
+                        *gamestate =
+                            KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
+                                           "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+                        G_GAMESTATE = *gamestate;
+#endif
+                        clock_t start_time = clock(); //TODO: get this before?
+                        init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
+                                       *player, GAMEMODE);
+
+                        (*gamestate)->current_floor = *current_floor; // Should be NULL here
+                        (*gamestate)->current_room = *current_room; // Should be NULL here
+
+                        bool did_exper_init = false;
+                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
+                        log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
+
+                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                        if (prep_res) {
+                            log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+                        } else {
+                            log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                    }
                     gui_state->currentScreen = FLOOR_VIEW;
                 }
             }
@@ -389,32 +501,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case FLOOR_VIEW: {
         // TODO: Update FLOOR_VIEW screen variables here!
-        if (*game_path == NULL) {
-            log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
-            gen_random_seed(seed);
-            *game_path = randomise_path(seed, temporary_kls, current_save_path);
-            (*game_path)->current_saveslot->index = *saveslot_index;
-            Wincon *w =
-                (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
-                                          "Wincon", "Wincon");
-            w->class = FULL_PATH;
-            initWincon(w, *game_path, w->class);
-            (*game_path)->win_condition = w;
-            log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
-        }
-        if (*player == NULL) {
-            log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
-            *player =
-                (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
-                                           "Fighter", "Fighter");
-
-            strncpy((*player)->name, "Test", strlen("Test")+1);
-            (*player)->class = Knight;
-            //getParams(argc, argv, player, path, optTot, default_kls);
-            //TODO: ensure class and name are taken before this update
-            initPlayerStats(*player, *game_path, temporary_kls);
-            log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Fighter", __func__);
-        }
         if (*current_floor == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
             *floor_kls = kls_temp_start(temporary_kls);
@@ -480,38 +566,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             }
             // Set starting room as explored already
             (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
-        } // End if *current_floor is NULL
-
-        if (*gamestate == NULL) {
-            log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
-            *gamestate =
-                KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
-                               "Gamestate");
-#ifndef KOLISEO_HAS_REGION
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
-            G_GAMESTATE = *gamestate;
-#endif
-            clock_t start_time = clock(); //TODO: get this before?
-            init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
-                           *player, GAMEMODE);
-
             (*gamestate)->current_floor = *current_floor;
-            (*gamestate)->current_room = *current_room;
-
-            bool did_exper_init = false;
-            SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
-            log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
-
-            bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
-            if (prep_res) {
-                log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
-            } else {
-                log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
-            }
-        }
+            (*gamestate)->current_room = *current_room; // Should be NULL here
+        } // End if *current_floor is NULL
 
         gui_state->framesCounter += 1;    // Count frames
 
@@ -612,6 +669,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
             // Set starting room as explored already
             (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
+            (*gamestate)->current_floor = *current_floor;
+            (*gamestate)->current_room = *current_room; // Should be NULL here
         }
         if (IsKeyPressed(KEY_UP)) {
             step_floor(*current_floor, current_x,
