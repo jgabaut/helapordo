@@ -679,9 +679,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             gui_state->currentScreen = ENDING;
         }
-        if (IsKeyPressed(KEY_P)) {
-            *pause_animation = !(*pause_animation);
-        }
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
             kls_temp_end(*floor_kls);
@@ -819,9 +816,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 break;
             }
         }
-        if (!(*pause_animation)) {
-            *current_anim_frame = (gui_state->framesCounter)%60;
-        }
     }
     break;
     case ROOM_VIEW: {
@@ -852,12 +846,25 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     stringFromRoom(room_type));
         }
 
+        gui_state->framesCounter += 1;    // Count frames
+
+        if (IsKeyPressed(KEY_P)) {
+            *pause_animation = !(*pause_animation);
+        }
+
+        if ((*current_room)->class == ENEMIES) {
+            if (!(*pause_animation)) {
+                *current_anim_frame = (gui_state->framesCounter)%60;
+            }
+        }
+
         // Press enter to change to FLOOR_VIEW screen
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
             *current_room = NULL;
             gui_state->currentScreen = FLOOR_VIEW;
         }
+
     }
     break;
     case ENDING: {
@@ -873,7 +880,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case DOOR_ANIM: {
         // TODO: Update DOOR_ANIM screen variables here!
-        (gui_state->framesCounter)++;    // Count frames
+        (gui_state->framesCounter) += 1;    // Count frames
         // TODO: Press enter to skip animation and go to room screen?
         if (*current_anim_frame == 59 ) { //|| IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             gui_state->currentScreen = ROOM_VIEW;
@@ -913,12 +920,12 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
         DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
-        DrawText("Controls for FLOOR_VIEW screen", 110, 250, 20, MAROON);
-        DrawText("Arrow keys to move", 110, 280, 20, MAROON);
-        DrawText("PRESS R to regen floor", 110, 310, 20, MAROON);
-        DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
-        DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, MAROON);
+        DrawText("Controls for FLOOR_VIEW screen", 110, 100, 20, MAROON);
+        DrawText("Arrow keys to move", 110, 130, 20, MAROON);
+        DrawText("PRESS R to regen floor", 110, 160, 20, MAROON);
+        DrawText("PRESS P to pause animations", 110, 190, 20, MAROON);
+        DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 220, 20, MAROON);
+        DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 280, 20, DARKGREEN);
 
         char txt[30] = {0};
         char txt_b[30] = {0};
@@ -987,53 +994,14 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RAYWHITE);
         DrawText("FLOOR_VIEW SCREEN", 20, 20, 40, MAROON);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
-        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, 270, 20, MAROON);
+        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, 100, 20, MAROON);
         if (game_path != NULL) {
-            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, 300, 20, MAROON);
+            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, 130, 20, MAROON);
         }
-        int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
-        int pl_frame_W = gui_state.gameScreenWidth * 0.2f;
-        int pl_frame_H = pl_frame_W;
-        int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W;
-        int en_rect_X = gui_state.gameScreenWidth *0.1f;
-        int en_rect_Y = pl_rect_Y;
-        int en_frame_W = pl_frame_W;
-        int en_frame_H = pl_frame_H;
-        float stats_label_W = gui_state.gameScreenWidth * 0.1f;
-        float stats_label_H = stats_label_W;
-        Rectangle stats_label_r = CLITERAL(Rectangle) {
-            gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
-                            en_rect_Y,
-                            stats_label_W,
-                            stats_label_H
-        };
-        Rectangle pl_r = CLITERAL(Rectangle) {
-            pl_rect_X,
-            pl_rect_Y,
-            pl_frame_W,
-            pl_frame_H
-        };
-        Rectangle en_r = CLITERAL(Rectangle) {
-            en_rect_X,
-            en_rect_Y,
-            en_frame_W,
-            en_frame_H
-        };
-        //TODO: count time by real_clock difference from last frame
-        time_t framesTime = gui_state.framesCounter / fps_target ;// GetFPS();
-        struct tm* time_tm = localtime(&framesTime);
-        char time_str[20] = {0};
-
-        if (time_tm == NULL) {
-            fprintf(stderr, "%s():    time_tm was NULL.\n", __func__);
-        } else {
-            strftime(time_str, 20, "Time: %M:%S", time_tm);
-            DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
-        }
-        DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
-        int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-        int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+        DrawText("Controls for FLOOR_VIEW screen", 110, 160, 20, MAROON);
+        DrawText("Arrow keys to move", 110, 190, 20, MAROON);
+        DrawText("PRESS R to regen floor", 110, 220, 20, MAROON);
+        DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 280, 20, MAROON);
 
         Rectangle floor_r = CLITERAL(Rectangle) {
             gui_state.gameScreenHeight *0.5f,
@@ -1100,12 +1068,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangleRec(pl_r, pl_c);
         DrawRectangleRec(stats_label_r, st_c);
         */
-
-        if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
-            DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
-            DrawText("Window too small.", 20, 20, 20, RAYWHITE);
-            DrawText("Please resize.", 20, 50, 20, RAYWHITE);
-        }
     }
     break;
     case ROOM_VIEW: {
@@ -1116,12 +1078,76 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("ROOM SCREEN", 20, 20, 40, DARKGREEN);
         if (current_room != NULL) {
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, DARKGREEN);
+            switch (current_room->class) {
+                case ENEMIES: {
+                    int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
+                    int pl_frame_W = gui_state.gameScreenWidth * 0.2f;
+                    int pl_frame_H = pl_frame_W;
+                    int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W;
+                    int en_rect_X = gui_state.gameScreenWidth *0.1f;
+                    int en_rect_Y = pl_rect_Y;
+                    int en_frame_W = pl_frame_W;
+                    int en_frame_H = pl_frame_H;
+                    float stats_label_W = gui_state.gameScreenWidth * 0.1f;
+                    float stats_label_H = stats_label_W;
+                    Rectangle stats_label_r = CLITERAL(Rectangle) {
+                        gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
+                                        en_rect_Y,
+                                        stats_label_W,
+                                        stats_label_H
+                    };
+                    Rectangle pl_r = CLITERAL(Rectangle) {
+                        pl_rect_X,
+                        pl_rect_Y,
+                        pl_frame_W,
+                        pl_frame_H
+                    };
+                    Rectangle en_r = CLITERAL(Rectangle) {
+                        en_rect_X,
+                        en_rect_Y,
+                        en_frame_W,
+                        en_frame_H
+                    };
+                    //TODO: count time by real_clock difference from last frame
+                    time_t framesTime = gui_state.framesCounter / fps_target ;// GetFPS();
+                    struct tm* time_tm = localtime(&framesTime);
+                    char time_str[20] = {0};
+
+                    if (time_tm == NULL) {
+                        fprintf(stderr, "%s():    time_tm was NULL.\n", __func__);
+                    } else {
+                        strftime(time_str, 20, "Time: %M:%S", time_tm);
+                        DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
+                    }
+                    DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
+                    int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
+                        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                        DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+                        DrawText("Please resize.", 20, 50, 20, RAYWHITE);
+                    }
+                }
+                break;
+                default: {
+                    log_tag("debug_log.txt", "ERROR", "%s():    Unexpected roomClass value: {%i}", __func__, current_room->class);
+                    if (current_room->class > 0) {
+                        fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i} {%s}", __func__, current_room->class, stringFromRoom(current_room->class));
+                    } else {
+                        fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i}", __func__, current_room->class);
+                    }
+
+                    /*
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                    */
+                }
+                break;
+            }
         }
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to JUMP to FLOOR_VIEW SCREEN", 110, 220, 20, DARKGREEN);
-        DrawText("Controls for FLOOR_VIEW screen", 110, 250, 20, MAROON);
-        DrawText("Arrow keys to move", 110, 280, 20, MAROON);
-        DrawText("PRESS R to regen floor", 110, 310, 20, MAROON);
         DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
         DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, MAROON);
     }
