@@ -353,7 +353,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                     if (*game_path == NULL) {
                         log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
-                        gen_random_seed(seed);
                         *game_path = randomise_path(seed, temporary_kls, current_save_path);
                         (*game_path)->current_saveslot->index = *saveslot_index;
                         Wincon *w =
@@ -534,7 +533,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                     if (*game_path == NULL) {
                         log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
-                        gen_random_seed(seed);
                         *game_path = randomise_path(seed, temporary_kls, current_save_path);
                         (*game_path)->current_saveslot->index = *saveslot_index;
                         Wincon *w =
@@ -573,6 +571,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
                         (*gamestate)->current_floor = *current_floor; // Should be NULL here
                         (*gamestate)->current_room = *current_room; // Should be NULL here
+                        (*gamestate)->is_seeded = is_seeded;
 
                         bool did_exper_init = false;
                         SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
@@ -691,7 +690,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
             srand(time(NULL));
             G_RNG_ADVANCEMENTS = 0;
-            gen_random_seed(seed);
+            if (!is_seeded) gen_random_seed(seed);
 
             *game_path = randomise_path(seed, temporary_kls, current_save_path);
 
