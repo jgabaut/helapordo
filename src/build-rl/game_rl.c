@@ -574,6 +574,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         (*gamestate)->current_floor = *current_floor; // Should be NULL here
                         (*gamestate)->current_room = *current_room; // Should be NULL here
                         (*gamestate)->is_seeded = is_seeded;
+                        (*gamestate)->current_enemy_index = 0;
 
                         bool did_save_init = false;
                         SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, (*game_path)->current_saveslot->index);
@@ -670,7 +671,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             // Set starting room as explored already
             (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
             (*gamestate)->current_floor = *current_floor;
-            (*gamestate)->current_room = *current_room; // Should be NULL here
+            (*gamestate)->current_room = *current_room; // Could be NULL here
         } // End if *current_floor is NULL
 
         gui_state->framesCounter += 1;    // Count frames
@@ -679,6 +680,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             gui_state->currentScreen = ENDING;
         }
+
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
             kls_temp_end(*floor_kls);
@@ -1120,8 +1122,79 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                         DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
                     }
                     DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
-                    int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                    int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+
+                    fighterClass player_class = player->class;
+                    int pl_res = -1;
+                    switch (player_class) {
+                        case Knight: {
+                            pl_res = DrawSpriteRect(knight_tapis[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Archer: {
+                            pl_res = DrawSpriteRect(archer_drop[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Mage: {
+                            pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Assassin: {
+                            pl_res = DrawSpriteRect(assassin_poof[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        default: {
+                            log_tag("debug_log.txt", "ERROR", "%s():    Unexpected player_class: {%i}", __func__, player_class);
+                            fprintf(stderr, "[ERROR] [%s()]    Unexpected player_class: {%i}\n", __func__, player_class);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                        break;
+                    }
+                    int en_res = -1;
+                    enemyClass enemy_class = current_room->enemies[gamestate->current_enemy_index]->class;
+                    switch (enemy_class) {
+                        case Mummy: {
+                            en_res = DrawSpriteRect(mummy_shuffle[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Ghost: {
+                            en_res = DrawSpriteRect(ghost_spell[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Zombie: {
+                            en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Goblin: {
+                            en_res = DrawSpriteRect(goblin_shoot[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Imp: {
+                            en_res = DrawSpriteRect(imp_fireball[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Troll: {
+                            en_res = DrawSpriteRect(troll_club[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Boar: {
+                            en_res = DrawSpriteRect(boar_scream[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Werewolf: {
+                            en_res = DrawSpriteRect(werewolf_transform[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        default: {
+                            log_tag("debug_log.txt", "ERROR", "%s():    Unexpected enemy_class: {%i}", __func__, enemy_class);
+                            fprintf(stderr, "[ERROR] [%s()]    Unexpected enemy_class: {%i}\n", __func__, enemy_class);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                        break;
+                    }
                     if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
                         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
                         DrawText("Window too small.", 20, 20, 20, RAYWHITE);
