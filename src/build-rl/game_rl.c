@@ -347,8 +347,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
                 } else {
                     *floor_kls = kls_temp_start(temporary_kls);
-                    bool did_init = false;
-                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, *saveslot_index);
+                    bool did_save_init = false;
+                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_save_init, *saveslot_index);
 
                     log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                     if (*game_path == NULL) {
@@ -392,6 +392,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         (*gamestate)->current_floor = *current_floor; // Should be NULL here
 
                         *current_room = KLS_PUSH_TYPED(default_kls, Room, HR_Floor, "Room", "Loady Room");
+                        (*current_room)->class = BASIC;
                         (*gamestate)->current_room = *current_room;
                         // TODO Prep loading room memory
 
@@ -402,11 +403,11 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                              *floor_kls);
                         }
 
-                        bool did_exper_init = false;
-                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
+                        bool force_init = false;
+                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_init, &did_save_init, (*game_path)->current_saveslot->index);
                         log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
 
-                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_save_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                         if (prep_res) {
                             log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
                         } else {
@@ -527,8 +528,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
                 } else {
                     *floor_kls = kls_temp_start(temporary_kls);
-                    bool did_init = false;
-                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, *saveslot_index);
+                    bool did_save_init = false;
+                    bool force_save_init = true;
+                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, *saveslot_index);
 
                     log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                     if (*game_path == NULL) {
@@ -573,12 +575,11 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         (*gamestate)->current_room = *current_room; // Should be NULL here
                         (*gamestate)->is_seeded = is_seeded;
 
-                        bool did_exper_init = false;
-                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, (*game_path)->current_saveslot->index);
+                        bool did_save_init = false;
+                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, (*game_path)->current_saveslot->index);
                         log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
 
-                        /*
-                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_exper_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_save_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
                         if (prep_res) {
                             log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
                         } else {
@@ -587,7 +588,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             kls_free(temporary_kls);
                             exit(EXIT_FAILURE);
                         }
-                        */
                     }
                     gui_state->currentScreen = FLOOR_VIEW;
                 }
