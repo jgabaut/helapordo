@@ -1189,8 +1189,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                 //DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
                 for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
-                    DrawRectangleRec(gui_state.buttons[i].r, gui_state.buttons[i].box_color);
-                    DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, gui_state.buttons[i].text_color);
+                    Gui_Button button = gui_state.buttons[i];
+                    if (button.state == BUTTON_HOVER) {
+                        DrawRectangleRec(button.r, RED);
+                    } else {
+                        DrawRectangleRec(button.r, button.box_color);
+                    }
+                    DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
                 }
             } else {
                 DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
@@ -1205,8 +1210,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText("NEW GAME SCREEN", 20, 20, 40, DARKGREEN);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                 for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
-                    DrawRectangleRec(gui_state.buttons[i].r, gui_state.buttons[i].box_color);
-                    DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, gui_state.buttons[i].text_color);
+                    Gui_Button button = gui_state.buttons[i];
+                    if (button.state == BUTTON_HOVER) {
+                        DrawRectangleRec(button.r, RED);
+                    } else {
+                        DrawRectangleRec(button.r, button.box_color);
+                    }
+                    DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
                 }
                 //DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
             } else {
@@ -1260,8 +1270,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("PICK CLASS SCREEN", 20, 20, 40, DARKGREEN);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         for (int i=BUTTON_CLASS_KNIGHT; i < BUTTON_CLASS_ASSASSIN+1; i++) {
-            DrawRectangleRec(gui_state.buttons[i].r, gui_state.buttons[i].box_color);
-            DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, gui_state.buttons[i].text_color);
+            Gui_Button button = gui_state.buttons[i];
+            if (button.state == BUTTON_HOVER) {
+                DrawRectangleRec(button.r, RED);
+            } else {
+                DrawRectangleRec(button.r, button.box_color);
+            }
+            DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
         }
     }
     break;
