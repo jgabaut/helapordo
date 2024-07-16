@@ -339,7 +339,7 @@ HLPD_Release_Data release_data[HLPD_RELEASE_DATA_TOTAL+1] = {
     },
     [HLPD_LATEST_TAG] = {
         .date = "2024-06-14",
-        .int_date = 1718370180
+        .int_date = 1718370180,
         .version = "1.4.10",
         .phase = "Beta",
         .days_since_last = 161,
