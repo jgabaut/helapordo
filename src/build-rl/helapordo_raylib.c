@@ -368,17 +368,21 @@ void gameloop_rl(int argc, char** argv)
     Vector2 virtualMouse = {0};
 
     Gui_Button bt_newgame = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 80},
+        .r = (Rectangle){.x = 100, .y = 100, .width = 150, .height = 80},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "New Game",
+        .box_color = DARKGRAY,
+        .text_color = GREEN,
     };
 
     Gui_Button bt_loadgame = {
-        .r = (Rectangle){.x = 300, .y = 100, .width = 200, .height = 80},
+        .r = (Rectangle){.x = 300, .y = 100, .width = 150, .height = 80},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Load Game",
+        .box_color = DARKGRAY,
+        .text_color = ColorFromS4CPalette(palette, S4C_CYAN),
     };
 
     Gui_State gui_state = (Gui_State) {

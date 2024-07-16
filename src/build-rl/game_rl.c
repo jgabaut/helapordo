@@ -978,8 +978,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, DARKGREEN);
             DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
             for (int i=0; i < 2; i++) {
-                DrawRectangleRec(gui_state.buttons[i].r, ColorFromS4CPalette(palette, 10 +i));
-                DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.05f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.05f), gui_state.gameScreenHeight * 0.05f, ColorFromS4CPalette(palette, 11 +i));
+                DrawRectangleRec(gui_state.buttons[i].r, gui_state.buttons[i].box_color);
+                DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, gui_state.buttons[i].text_color);
             }
             //DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
         }
