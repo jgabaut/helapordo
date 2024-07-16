@@ -527,21 +527,6 @@ void gameloop_rl(int argc, char** argv)
         .framesCounter = framesCounter,
         .mouse = mouse,
         .virtualMouse = virtualMouse,
-        /*
-        .buttons = {
-            [BUTTON_NEW_GAME] = bt_newgame,
-            [BUTTON_LOAD_GAME] = bt_loadgame,
-            [BUTTON_CLASS_TXTFIELD] = bt_classfield,
-            [BUTTON_CLASS_KNIGHT] = bt_class_knight,
-            [BUTTON_CLASS_ARCHER] = bt_class_archer,
-            [BUTTON_CLASS_MAGE] = bt_class_mage,
-            [BUTTON_CLASS_ASSASSIN] = bt_class_assassin,
-            [BUTTON_NAME_TXTFIELD] = bt_namefield,
-            [BUTTON_SAVESLOT_1] = bt_slot1,
-            [BUTTON_SAVESLOT_2] = bt_slot2,
-            [BUTTON_SAVESLOT_3] = bt_slot3,
-        },
-        */
         .screens = {
             [LOGO] = {
                 .class = LOGO,
