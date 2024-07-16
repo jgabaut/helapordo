@@ -572,120 +572,132 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         break;
         case 1: {
             // New game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
-            if (*saveslot_index == -1) {  // Pick saveslot
-                gui_state->buttons[BUTTON_SAVESLOT_1].on = false;
-                gui_state->buttons[BUTTON_SAVESLOT_2].on = false;
-                gui_state->buttons[BUTTON_SAVESLOT_3].on = false;
-                sprintf(current_save_path, "%s", ""); // Clear current save path
-                for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
-
-                    if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
-                        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                            gui_state->buttons[i].state = BUTTON_PRESSED;
-                        } else {
-                            gui_state->buttons[i].state = BUTTON_HOVER;
-                        }
-                        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                            gui_state->buttons[i].on = true;
-                        }
-                    } else {
-                        gui_state->buttons[i].state = BUTTON_NORMAL;
-                    }
-                    if (gui_state->buttons[i].on) {
-                        fprintf(stderr, "%s():    [EFFECT]\n", __func__);
-                        //TODO: may use i to se is_new_game for now but its weak to changes in the array
-                        // load_info->is_new_game = i;
-                        if (i == BUTTON_SAVESLOT_1) { // New game is the first button
-                            *saveslot_index = 0;
-                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                        } else if ( i == BUTTON_SAVESLOT_2) {
-                            *saveslot_index = 1;
-                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                        } else if ( i == BUTTON_SAVESLOT_3) {
-                            *saveslot_index = 2;
-                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                        }
-                    }
-                }
-                /*
-                if (IsKeyPressed(KEY_ONE)) {
-                    *saveslot_index = 0;
-                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                } else if (IsKeyPressed(KEY_TWO)) {
-                    *saveslot_index = 1;
-                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                } else if (IsKeyPressed(KEY_THREE)) {
-                    *saveslot_index = 2;
-                    sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
-                }
-                */
-                if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
+            if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len == 0) {
+                gui_state->currentScreen = NAMEPICK_VIEW;
             } else {
-                *floor_kls = kls_temp_start(temporary_kls);
-                bool did_save_init = false;
-                bool force_save_init = true;
-                SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, *saveslot_index);
+                if (*saveslot_index == -1) {  // Pick saveslot
+                    gui_state->buttons[BUTTON_SAVESLOT_1].on = false;
+                    gui_state->buttons[BUTTON_SAVESLOT_2].on = false;
+                    gui_state->buttons[BUTTON_SAVESLOT_3].on = false;
+                    sprintf(current_save_path, "%s", ""); // Clear current save path
+                    for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
 
-                log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
-                if (*game_path == NULL) {
-                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
-                    *game_path = randomise_path(seed, temporary_kls, current_save_path);
-                    (*game_path)->current_saveslot->index = *saveslot_index;
-                    Wincon *w =
-                        (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
-                                                  "Wincon", "Wincon");
-                    w->class = FULL_PATH;
-                    initWincon(w, *game_path, w->class);
-                    (*game_path)->win_condition = w;
-                    log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
-                }
-                if (*player == NULL) {
-                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
-                    *player =
-                        (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
-                                                   "Fighter", "Fighter");
-
-                    strncpy((*player)->name, "Test", strlen("Test")+1);
-                    (*player)->class = Knight;
-                    //getParams(argc, argv, player, path, optTot, default_kls);
-                    //TODO: ensure class and name are taken before this update
-                    initPlayerStats(*player, *game_path, temporary_kls);
-                    log_tag("debug_log.txt", "DEBUG", "%s():    Prepared new Fighter", __func__);
-                }
-                if (*gamestate == NULL) {
-                    log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
-                    *gamestate =
-                        KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
-                                       "Gamestate");
-#ifndef KOLISEO_HAS_REGION
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
-                    G_GAMESTATE = *gamestate;
-#endif
-                    clock_t start_time = clock(); //TODO: get this before?
-                    init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
-                                   *player, GAMEMODE);
-
-                    (*gamestate)->current_floor = *current_floor; // Should be NULL here
-                    (*gamestate)->current_room = *current_room; // Should be NULL here
-                    (*gamestate)->is_seeded = is_seeded;
-                    (*gamestate)->current_enemy_index = 0;
-
-                    bool did_save_init = false;
-                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, (*game_path)->current_saveslot->index);
-                    log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
-
-                    bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_save_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
-                    if (prep_res) {
-                        log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
-                    } else {
-                        log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
-                        kls_free(default_kls);
-                        kls_free(temporary_kls);
-                        exit(EXIT_FAILURE);
+                        if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                            if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                                gui_state->buttons[i].state = BUTTON_PRESSED;
+                            } else {
+                                gui_state->buttons[i].state = BUTTON_HOVER;
+                            }
+                            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                                gui_state->buttons[i].on = true;
+                            }
+                        } else {
+                            gui_state->buttons[i].state = BUTTON_NORMAL;
+                        }
+                        if (gui_state->buttons[i].on) {
+                            fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                            //TODO: may use i to se is_new_game for now but its weak to changes in the array
+                            // load_info->is_new_game = i;
+                            if (i == BUTTON_SAVESLOT_1) { // New game is the first button
+                                *saveslot_index = 0;
+                                sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                            } else if ( i == BUTTON_SAVESLOT_2) {
+                                *saveslot_index = 1;
+                                sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                            } else if ( i == BUTTON_SAVESLOT_3) {
+                                *saveslot_index = 2;
+                                sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                            }
+                        }
                     }
-                }
-                gui_state->currentScreen = FLOOR_VIEW;
-            }
+                    /*
+                    if (IsKeyPressed(KEY_ONE)) {
+                        *saveslot_index = 0;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                    } else if (IsKeyPressed(KEY_TWO)) {
+                        *saveslot_index = 1;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                    } else if (IsKeyPressed(KEY_THREE)) {
+                        *saveslot_index = 2;
+                        sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                    }
+                    */
+                    if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
+                } else {
+                    *floor_kls = kls_temp_start(temporary_kls);
+                    bool did_save_init = false;
+                    bool force_save_init = true;
+                    SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, *saveslot_index);
+
+                    log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+                    if (*game_path == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
+                        *game_path = randomise_path(seed, temporary_kls, current_save_path);
+                        (*game_path)->current_saveslot->index = *saveslot_index;
+                        Wincon *w =
+                            (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
+                                                      "Wincon", "Wincon");
+                        w->class = FULL_PATH;
+                        initWincon(w, *game_path, w->class);
+                        (*game_path)->win_condition = w;
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Path", __func__);
+                    }
+                    if (*player == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
+                        *player =
+                            (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
+                                                       "Fighter", "Fighter");
+
+                        Gui_Button namefield = gui_state->buttons[BUTTON_NAME_TXTFIELD];
+                        if (namefield.label_len > 0) {
+                            log_tag("debug_log.txt", "DEBUG", "%s():    Using {%s} for player name", __func__, namefield.label);
+                            fprintf(stderr, "[DEBUG] [%s()]    Using {%s} for player name\n", __func__, namefield.label);
+                            strncpy((*player)->name, namefield.label, namefield.label_len+1);
+                        } else {
+                            assert(false);
+                            strncpy((*player)->name, "Test", strlen("Test")+1);
+                        }
+                        (*player)->class = Knight;
+                        //getParams(argc, argv, player, path, optTot, default_kls);
+                        //TODO: ensure class and name are taken before this update
+                        initPlayerStats(*player, *game_path, temporary_kls);
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Prepared new Fighter", __func__);
+                    }
+                    if (*gamestate == NULL) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Init for gamestate", __func__);
+                        *gamestate =
+                            KLS_PUSH_TYPED(default_kls, Gamestate, HR_Gamestate, "Gamestate",
+                                           "Gamestate");
+#ifndef KOLISEO_HAS_REGION
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    setting G_GAMESTATE", __func__);
+                        G_GAMESTATE = *gamestate;
+#endif
+                        clock_t start_time = clock(); //TODO: get this before?
+                        init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
+                                       *player, GAMEMODE);
+
+                        (*gamestate)->current_floor = *current_floor; // Should be NULL here
+                        (*gamestate)->current_room = *current_room; // Should be NULL here
+                        (*gamestate)->is_seeded = is_seeded;
+                        (*gamestate)->current_enemy_index = 0;
+
+                        bool did_save_init = false;
+                        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, force_save_init, &did_save_init, (*game_path)->current_saveslot->index);
+                        log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}", current_saveHeader->game_version);
+
+                        bool prep_res = prep_Gamestate(*gamestate, static_path, 0, default_kls, did_save_init); //+ (idx* (sizeof(int64_t) + sizeof(SerGamestate))) , default_kls);
+                        if (prep_res) {
+                            log_tag("debug_log.txt", "[DEBUG]", "Done prep_Gamestate().");
+                        } else {
+                            log_tag("debug_log.txt", "[ERROR]", "Failed prep_Gamestate().");
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                    }
+                    gui_state->currentScreen = FLOOR_VIEW;
+                } // End else saveslot is picked
+            } // End else name is not empty
         }
         break;
         default: {
@@ -696,6 +708,53 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
         break;
         }
+    }
+    break;
+    case NAMEPICK_VIEW: {
+        if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[BUTTON_NAME_TXTFIELD].r)) {
+            gui_state->buttons[BUTTON_NAME_TXTFIELD].on = true;
+        } else {
+            gui_state->buttons[BUTTON_NAME_TXTFIELD].on = false;
+        }
+        if (gui_state->buttons[BUTTON_NAME_TXTFIELD].on) {
+            SetMouseCursor(MOUSE_CURSOR_IBEAM);
+
+            int key = GetCharPressed();
+
+            while (key > 0) {
+                if ((key >= 32) && (key <= 125) && (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len < 20)) {
+                    size_t l = gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len;
+                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l] = (char) key;
+                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l+1] = '\0';
+
+                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len += 1;
+
+                }
+
+                key = GetCharPressed();
+            }
+
+            if (IsKeyPressed(KEY_BACKSPACE)) {
+                gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len -= 1;
+                if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len < 0) {
+                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len = 0;
+                }
+                size_t l = gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len;
+                gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l] = '\0';
+
+            }
+
+            if (IsKeyPressed(KEY_ENTER)) {
+                if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len > 0) {
+                    //TODO: Use the name
+                    gui_state->currentScreen = SAVES_VIEW;
+                }
+            }
+        } else {
+            SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        }
+
+        gui_state->framesCounter += 1;
     }
     break;
     case FLOOR_VIEW: {
@@ -1097,6 +1156,37 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             exit(EXIT_FAILURE);
         }
         break;
+        }
+    }
+    break;
+    case NAMEPICK_VIEW: {
+
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RAYWHITE);
+        DrawText("PICK NAME SCREEN", 20, 20, 40, DARKGREEN);
+        DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+
+        DrawRectangleRec(gui_state.buttons[BUTTON_NAME_TXTFIELD].r, gui_state.buttons[BUTTON_NAME_TXTFIELD].box_color);
+
+        Gui_Button namefield = gui_state.buttons[BUTTON_NAME_TXTFIELD];
+
+        if (namefield.on) {
+            DrawRectangleLines((int)namefield.r.x, (int)namefield.r.y, (int)namefield.r.width, (int)namefield.r.height, RED);
+        } else {
+            DrawRectangleLines((int)namefield.r.x, (int)namefield.r.y, (int)namefield.r.width, (int)namefield.r.height, DARKGRAY);
+        }
+
+        DrawText(namefield.label, (int)namefield.r.x + 5, (int) namefield.r.y + 8, 20, MAROON);
+
+        DrawText(TextFormat("INPUT CHARS: %i/%i", namefield.label_len, 20), 315, 250, 20, DARKGRAY);
+
+        if (namefield.on) {
+            if (namefield.label_len < 20) {
+                if ((gui_state.framesCounter%120) == 0) {
+                    DrawText("_", (int)namefield.r.x + 8 + MeasureText(namefield.label, 20), (int) namefield.r.y + 12, 20, MAROON);
+                }
+            } else {
+                DrawText("Press BACKSPACE to delete...", 230, 300, 20, GRAY);
+            }
         }
     }
     break;

@@ -39,6 +39,7 @@ typedef struct Gui_Button {
     bool on;
     Gui_Button_State state;
     char label[50];
+    size_t label_len;
     Color box_color;
     Color text_color;
 } Gui_Button;

@@ -372,6 +372,7 @@ void gameloop_rl(int argc, char** argv)
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "New Game",
+        .label_len = strlen("New Game"),
         .box_color = DARKGREEN,
         .text_color = DARKGRAY,
     };
@@ -381,8 +382,19 @@ void gameloop_rl(int argc, char** argv)
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Load Game",
+        .label_len = strlen("Load Game"),
         .box_color = ORANGE,
         .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_namefield = {
+        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "",
+        .label_len = 0,
+        .box_color = LIGHTGRAY,
+        .text_color = BLACK,
     };
 
     Gui_Button bt_slot1 = {
@@ -390,6 +402,7 @@ void gameloop_rl(int argc, char** argv)
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Slot 1",
+        .label_len = strlen("Slot 1"),
         .box_color = DARKGREEN,
         .text_color = DARKGRAY,
     };
@@ -399,6 +412,7 @@ void gameloop_rl(int argc, char** argv)
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Slot 2",
+        .label_len = strlen("Slot 2"),
         .box_color = DARKGREEN,
         .text_color = DARKGRAY,
     };
@@ -408,6 +422,7 @@ void gameloop_rl(int argc, char** argv)
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Slot 3",
+        .label_len = strlen("Slot 3"),
         .box_color = DARKGREEN,
         .text_color = DARKGRAY,
     };
@@ -423,6 +438,7 @@ void gameloop_rl(int argc, char** argv)
         .buttons = {
             [BUTTON_NEW_GAME] = bt_newgame,
             [BUTTON_LOAD_GAME] = bt_loadgame,
+            [BUTTON_NAME_TXTFIELD] = bt_namefield,
             [BUTTON_SAVESLOT_1] = bt_slot1,
             [BUTTON_SAVESLOT_2] = bt_slot2,
             [BUTTON_SAVESLOT_3] = bt_slot3,
