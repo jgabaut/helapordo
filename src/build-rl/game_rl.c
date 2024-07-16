@@ -356,8 +356,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         case 0: {
             // Load game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
             if (*saveslot_index == -1) {  // Pick saveslot
-                gui_state->buttons[BUTTON_NEW_GAME].on = false;
-                gui_state->buttons[BUTTON_LOAD_GAME].on = false;
+                gui_state->buttons[BUTTON_SAVESLOT_1].on = false;
+                gui_state->buttons[BUTTON_SAVESLOT_2].on = false;
+                gui_state->buttons[BUTTON_SAVESLOT_3].on = false;
                 sprintf(current_save_path, "%s", ""); // Clear current save path
                 for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
 
@@ -572,8 +573,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         case 1: {
             // New game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
             if (*saveslot_index == -1) {  // Pick saveslot
-                gui_state->buttons[BUTTON_NEW_GAME].on = false;
-                gui_state->buttons[BUTTON_LOAD_GAME].on = false;
+                gui_state->buttons[BUTTON_SAVESLOT_1].on = false;
+                gui_state->buttons[BUTTON_SAVESLOT_2].on = false;
+                gui_state->buttons[BUTTON_SAVESLOT_3].on = false;
                 sprintf(current_save_path, "%s", ""); // Clear current save path
                 for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
 
