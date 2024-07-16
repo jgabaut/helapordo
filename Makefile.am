@@ -249,7 +249,7 @@ pack: versioncheck
 	install ./s4c-gui/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/src/
 	install ./s4c-gui/LICENSE ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/
 	install ./s4c-gui/README.md ~/helapordo-local/share/$(PACK_NAME)/s4c-gui/
-	install ./ringabuf/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/ringabuf/src/
+	install ./ringabuf/src/*.h ~/helapordo-local/share/$(PACK_NAME)/ringabuf/src/
 	install ./ringabuf/LICENSE ~/helapordo-local/share/$(PACK_NAME)/ringabuf/
 	install ./ringabuf/README.md ~/helapordo-local/share/$(PACK_NAME)/ringabuf/
 	install ./src/release_data/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/release_data/
