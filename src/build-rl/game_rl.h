@@ -46,6 +46,9 @@ typedef struct Gui_Button {
 typedef enum Gui_Button_Idx {
     BUTTON_NEW_GAME = 0,
     BUTTON_LOAD_GAME,
+    BUTTON_SAVESLOT_1,
+    BUTTON_SAVESLOT_2,
+    BUTTON_SAVESLOT_3,
     BUTTON_NAME_TXTFIELD,
 } Gui_Button_Idx;
 

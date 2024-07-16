@@ -385,6 +385,33 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_slot1 = {
+        .r = (Rectangle){.x = 100, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 1",
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_slot2 = {
+        .r = (Rectangle){.x = 210, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 2",
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_slot3 = {
+        .r = (Rectangle){.x = 320, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 3",
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -396,6 +423,9 @@ void gameloop_rl(int argc, char** argv)
         .buttons = {
             [BUTTON_NEW_GAME] = bt_newgame,
             [BUTTON_LOAD_GAME] = bt_loadgame,
+            [BUTTON_SAVESLOT_1] = bt_slot1,
+            [BUTTON_SAVESLOT_2] = bt_slot2,
+            [BUTTON_SAVESLOT_3] = bt_slot3,
         },
     };
 

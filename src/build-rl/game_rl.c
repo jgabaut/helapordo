@@ -323,10 +323,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         switch(load_info->is_new_game) {
         case -1: { // User has to pick new (1) or load (0)
             *saveslot_index = -1; // Reset it in case we got here after a whole game
-            gui_state->buttons[0].on = false;
-            gui_state->buttons[1].on = false;
+            gui_state->buttons[BUTTON_NEW_GAME].on = false;
+            gui_state->buttons[BUTTON_LOAD_GAME].on = false;
             sprintf(current_save_path, "%s", ""); // Clear current save path
-            for (int i=0; i < 2; i++) {
+            for (int i=BUTTON_NEW_GAME; i < BUTTON_LOAD_GAME+1; i++) {
 
                 if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -356,6 +356,40 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         case 0: {
             // Load game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
             if (*saveslot_index == -1) {  // Pick saveslot
+                gui_state->buttons[BUTTON_NEW_GAME].on = false;
+                gui_state->buttons[BUTTON_LOAD_GAME].on = false;
+                sprintf(current_save_path, "%s", ""); // Clear current save path
+                for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
+
+                    if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                            gui_state->buttons[i].state = BUTTON_PRESSED;
+                        } else {
+                            gui_state->buttons[i].state = BUTTON_HOVER;
+                        }
+                        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                            gui_state->buttons[i].on = true;
+                        }
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_NORMAL;
+                    }
+                    if (gui_state->buttons[i].on) {
+                        fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                        //TODO: may use i to se is_new_game for now but its weak to changes in the array
+                        // load_info->is_new_game = i;
+                        if (i == BUTTON_SAVESLOT_1) { // New game is the first button
+                            *saveslot_index = 0;
+                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                        } else if ( i == BUTTON_SAVESLOT_2) {
+                            *saveslot_index = 1;
+                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                        } else if ( i == BUTTON_SAVESLOT_3) {
+                            *saveslot_index = 2;
+                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                        }
+                    }
+                }
+                /*
                 if (IsKeyPressed(KEY_ONE)) {
                     *saveslot_index = 0;
                     sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
@@ -366,6 +400,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     *saveslot_index = 2;
                     sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                 }
+                */
                 if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
             } else {
                 *floor_kls = kls_temp_start(temporary_kls);
@@ -537,6 +572,40 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         case 1: {
             // New game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
             if (*saveslot_index == -1) {  // Pick saveslot
+                gui_state->buttons[BUTTON_NEW_GAME].on = false;
+                gui_state->buttons[BUTTON_LOAD_GAME].on = false;
+                sprintf(current_save_path, "%s", ""); // Clear current save path
+                for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
+
+                    if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                            gui_state->buttons[i].state = BUTTON_PRESSED;
+                        } else {
+                            gui_state->buttons[i].state = BUTTON_HOVER;
+                        }
+                        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                            gui_state->buttons[i].on = true;
+                        }
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_NORMAL;
+                    }
+                    if (gui_state->buttons[i].on) {
+                        fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                        //TODO: may use i to se is_new_game for now but its weak to changes in the array
+                        // load_info->is_new_game = i;
+                        if (i == BUTTON_SAVESLOT_1) { // New game is the first button
+                            *saveslot_index = 0;
+                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                        } else if ( i == BUTTON_SAVESLOT_2) {
+                            *saveslot_index = 1;
+                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                        } else if ( i == BUTTON_SAVESLOT_3) {
+                            *saveslot_index = 2;
+                            sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
+                        }
+                    }
+                }
+                /*
                 if (IsKeyPressed(KEY_ONE)) {
                     *saveslot_index = 0;
                     sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
@@ -547,6 +616,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     *saveslot_index = 2;
                     sprintf(current_save_path, "%s", default_saveslots[*saveslot_index].save_path);	//Update saveslot_path value
                 }
+                */
                 if (*saveslot_index != -1) log_tag("debug_log.txt", "DEBUG", "%s():    User picked saveslot {%i} {%s}", __func__, *saveslot_index, default_saveslots[*saveslot_index].save_path);
             } else {
                 *floor_kls = kls_temp_start(temporary_kls);
@@ -991,7 +1061,11 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
                 DrawText("LOADED GAME SCREEN", 20, 20, 40, DARKGREEN);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-                DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
+                //DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
+                for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
+                    DrawRectangleRec(gui_state.buttons[i].r, gui_state.buttons[i].box_color);
+                    DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, gui_state.buttons[i].text_color);
+                }
             } else {
                 DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
             }
@@ -1004,7 +1078,11 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
                 DrawText("NEW GAME SCREEN", 20, 20, 40, DARKGREEN);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-                DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
+                for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
+                    DrawRectangleRec(gui_state.buttons[i].r, gui_state.buttons[i].box_color);
+                    DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, gui_state.buttons[i].text_color);
+                }
+                //DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
             } else {
                 DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
             }
