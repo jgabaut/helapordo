@@ -2527,8 +2527,9 @@ bool readSerGamestate(const char* filename, size_t offset, SerGamestate* data)
             endwin();
 #endif // HELAPORDO_CURSES_BUILD
 
-            log_tag("debug_log.txt", "[ERROR]", "%s():    Header size [%zu] from {%s} doesn't match SerGamestate size [%zu].", __func__, blob_size, filename, sergmst_size);
-            fprintf(stderr, "%s():    Header size [%zu] from {%s} doesn't match SerGamestate size [%zu].\n", __func__, blob_size, filename, sergmst_size);
+            log_tag("debug_log.txt", "[ERROR]", "%s():    Header size [%" PRId64 "] from {%s} doesn't match SerGamestate size [%zu].", __func__, blob_size, filename, sergmst_size);
+            fprintf(stderr, "%s():    Header size [%" PRId64 "] from {%s} doesn't match SerGamestate size [%zu].\n", __func__, blob_size, filename, sergmst_size);
+
             if (blob_size < sergmst_size) {
 
 #ifdef _WIN32
