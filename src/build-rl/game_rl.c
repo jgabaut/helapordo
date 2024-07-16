@@ -1479,9 +1479,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             default: {
                 log_tag("debug_log.txt", "ERROR", "%s():    Unexpected roomClass value: {%i}", __func__, current_room->class);
                 if (current_room->class > 0) {
-                    fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i} {%s}", __func__, current_room->class, stringFromRoom(current_room->class));
+                    fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i} {%s}\n", __func__, current_room->class, stringFromRoom(current_room->class));
                 } else {
-                    fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i}", __func__, current_room->class);
+                    fprintf(stderr, "[ERROR] [%s()]    Unexpected roomClass value: {%i}\n", __func__, current_room->class);
                 }
 
                 /*
