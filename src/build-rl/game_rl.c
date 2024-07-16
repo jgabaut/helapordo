@@ -323,11 +323,33 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         switch(load_info->is_new_game) {
         case -1: { // User has to pick new (1) or load (0)
             *saveslot_index = -1; // Reset it in case we got here after a whole game
+            gui_state->buttons[0].on = false;
+            gui_state->buttons[1].on = false;
             sprintf(current_save_path, "%s", ""); // Clear current save path
-            if (IsKeyPressed(KEY_N)) {
-                load_info->is_new_game = 1;
-            } else if (IsKeyPressed(KEY_L)) {
-                load_info->is_new_game = 0;
+            for (int i=0; i < 2; i++) {
+
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    //TODO: may use i to se is_new_game for now but its weak to changes in the array
+                    // load_info->is_new_game = i;
+                    if (i == 0) { // New game is the first button
+                        load_info->is_new_game = 1;
+                    } else {
+                        load_info->is_new_game = 0;
+                    }
+                }
             }
         }
         break;
@@ -955,7 +977,11 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, YELLOW);
             DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, DARKGREEN);
             DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
+            for (int i=0; i < 2; i++) {
+                DrawRectangleRec(gui_state.buttons[i].r, ColorFromS4CPalette(palette, 10 +i));
+                DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.05f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.05f), gui_state.gameScreenHeight * 0.05f, ColorFromS4CPalette(palette, 11 +i));
+            }
+            //DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
         }
         break;
         case 0: {

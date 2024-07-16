@@ -28,6 +28,19 @@
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b)) /**< Macro used to calculate the scale of render texture. */
 
+typedef enum Gui_Button_State {
+    BUTTON_NORMAL,
+    BUTTON_HOVER,
+    BUTTON_PRESSED
+} Gui_Button_State;
+
+typedef struct Gui_Button {
+    Rectangle r;
+    bool on;
+    Gui_Button_State state;
+    char label[50];
+} Gui_Button;
+
 typedef struct Gui_State {
     float scale;
     float gameScreenWidth;
@@ -36,6 +49,7 @@ typedef struct Gui_State {
     int framesCounter;
     Vector2 mouse;
     Vector2 virtualMouse;
+    Gui_Button buttons[50];
 } Gui_State;
 
 void handleTutorial(S4C_Color* palette);

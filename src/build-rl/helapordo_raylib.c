@@ -367,6 +367,20 @@ void gameloop_rl(int argc, char** argv)
     Vector2 mouse = {0};
     Vector2 virtualMouse = {0};
 
+    Gui_Button bt_newgame = {
+        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "New Game",
+    };
+
+    Gui_Button bt_loadgame = {
+        .r = (Rectangle){.x = 300, .y = 100, .width = 200, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Load Game",
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -375,6 +389,10 @@ void gameloop_rl(int argc, char** argv)
         .framesCounter = framesCounter,
         .mouse = mouse,
         .virtualMouse = virtualMouse,
+        .buttons = {
+            [0] = bt_newgame,
+            [1] = bt_loadgame,
+        },
     };
 
     int roomsDone = 0;
