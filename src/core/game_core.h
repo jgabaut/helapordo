@@ -64,10 +64,62 @@ typedef struct GameScreen {
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined."
 #else
+#include "raylib.h" // Needed here for Rectangle, Color, Vector2
 /**
- * Defines GameScreen type, as an enum.
+ * Defines GameScreenClass type, as an enum.
  */
-typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_VIEW, FLOOR_VIEW, ROOM_VIEW, ENDING, DOOR_ANIM } GameScreen;
+typedef enum GameScreenClass { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_VIEW, FLOOR_VIEW, ROOM_VIEW, ENDING, DOOR_ANIM } GameScreenClass;
+
+#define GAMESCREENCLASS_MAX DOOR_ANIM
+
+typedef enum Gui_Button_State {
+    BUTTON_NORMAL,
+    BUTTON_HOVER,
+    BUTTON_PRESSED
+} Gui_Button_State;
+
+typedef struct Gui_Button {
+    Rectangle r;
+    bool on;
+    Gui_Button_State state;
+    char label[50];
+    size_t label_len;
+    Color box_color;
+    Color text_color;
+} Gui_Button;
+
+typedef enum Gui_Button_Idx {
+    BUTTON_NEW_GAME = 0,
+    BUTTON_LOAD_GAME,
+    BUTTON_SAVESLOT_1,
+    BUTTON_SAVESLOT_2,
+    BUTTON_SAVESLOT_3,
+    BUTTON_CLASS_TXTFIELD,
+    BUTTON_CLASS_KNIGHT,
+    BUTTON_CLASS_ARCHER,
+    BUTTON_CLASS_MAGE,
+    BUTTON_CLASS_ASSASSIN,
+    BUTTON_NAME_TXTFIELD,
+} Gui_Button_Idx;
+
+#define GUI_BUTTONS_MAX BUTTON_NAME_TXTFIELD
+
+typedef struct GameScreen {
+    GameScreenClass class;
+    Gui_Button* buttons[GUI_BUTTONS_MAX+1];
+} GameScreen;
+
+typedef struct Gui_State {
+    float scale;
+    float gameScreenWidth;
+    float gameScreenHeight;
+    GameScreenClass currentScreen;
+    GameScreen screens[GAMESCREENCLASS_MAX+1];
+    int framesCounter;
+    Vector2 mouse;
+    Vector2 virtualMouse;
+} Gui_State;
+
 // Add more includes for rl-build here
 #ifdef _WIN32
 /**

@@ -323,24 +323,25 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         switch(load_info->is_new_game) {
         case -1: { // User has to pick new (1) or load (0)
             *saveslot_index = -1; // Reset it in case we got here after a whole game
-            gui_state->buttons[BUTTON_NEW_GAME].on = false;
-            gui_state->buttons[BUTTON_LOAD_GAME].on = false;
+            gui_state->screens[gui_state->currentScreen].buttons[BUTTON_NEW_GAME]->on = false;
+            gui_state->screens[gui_state->currentScreen].buttons[BUTTON_LOAD_GAME]->on = false;
             sprintf(current_save_path, "%s", ""); // Clear current save path
             for (int i=BUTTON_NEW_GAME; i < BUTTON_LOAD_GAME+1; i++) {
 
-                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                Gui_Button* bt = gui_state->screens[gui_state->currentScreen].buttons[i];
+                if (CheckCollisionPointRec(gui_state->virtualMouse, bt->r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                        bt->state = BUTTON_PRESSED;
                     } else {
-                        gui_state->buttons[i].state = BUTTON_HOVER;
+                        bt->state = BUTTON_HOVER;
                     }
                     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        gui_state->buttons[i].on = true;
+                        bt->on = true;
                     }
                 } else {
-                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                    bt->state = BUTTON_NORMAL;
                 }
-                if (gui_state->buttons[i].on) {
+                if (bt->on) {
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     //TODO: may use i to se is_new_game for now but its weak to changes in the array
                     // load_info->is_new_game = i;
@@ -357,25 +358,25 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             // Load game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
             if (*saveslot_index == -1) {  // Pick saveslot
                 // Reference: https://www.raylib.com/examples/textures/loader.html?name=textures_sprite_button
-                gui_state->buttons[BUTTON_SAVESLOT_1].on = false;
-                gui_state->buttons[BUTTON_SAVESLOT_2].on = false;
-                gui_state->buttons[BUTTON_SAVESLOT_3].on = false;
+                gui_state->screens[gui_state->currentScreen].buttons[BUTTON_SAVESLOT_1]->on = false;
+                gui_state->screens[gui_state->currentScreen].buttons[BUTTON_SAVESLOT_2]->on = false;
+                gui_state->screens[gui_state->currentScreen].buttons[BUTTON_SAVESLOT_3]->on = false;
                 sprintf(current_save_path, "%s", ""); // Clear current save path
                 for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
-
-                    if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    Gui_Button* bt = gui_state->screens[gui_state->currentScreen].buttons[i];
+                    if (CheckCollisionPointRec(gui_state->virtualMouse, bt->r)) {
                         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                            gui_state->buttons[i].state = BUTTON_PRESSED;
+                            bt->state = BUTTON_PRESSED;
                         } else {
-                            gui_state->buttons[i].state = BUTTON_HOVER;
+                            bt->state = BUTTON_HOVER;
                         }
                         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                            gui_state->buttons[i].on = true;
+                            bt->on = true;
                         }
                     } else {
-                        gui_state->buttons[i].state = BUTTON_NORMAL;
+                        bt->state = BUTTON_NORMAL;
                     }
-                    if (gui_state->buttons[i].on) {
+                    if (bt->on) {
                         fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                         //TODO: may use i to se is_new_game for now but its weak to changes in the array
                         // load_info->is_new_game = i;
@@ -573,33 +574,33 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         break;
         case 1: {
             // New game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
-            if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len == 0) {
+            if (gui_state->screens[NAMEPICK_VIEW].buttons[BUTTON_NAME_TXTFIELD]->label_len == 0) {
                 gui_state->currentScreen = NAMEPICK_VIEW;
             } else {
-                if (gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len == 0) {
+                if (gui_state->screens[CLASSPICK_VIEW].buttons[BUTTON_CLASS_TXTFIELD]->label_len == 0) {
                     gui_state->currentScreen = CLASSPICK_VIEW;
                 } else {
                     // Reference: https://www.raylib.com/examples/textures/loader.html?name=textures_sprite_button
                     if (*saveslot_index == -1) {  // Pick saveslot
-                        gui_state->buttons[BUTTON_SAVESLOT_1].on = false;
-                        gui_state->buttons[BUTTON_SAVESLOT_2].on = false;
-                        gui_state->buttons[BUTTON_SAVESLOT_3].on = false;
+                        gui_state->screens[gui_state->currentScreen].buttons[BUTTON_SAVESLOT_1]->on = false;
+                        gui_state->screens[gui_state->currentScreen].buttons[BUTTON_SAVESLOT_2]->on = false;
+                        gui_state->screens[gui_state->currentScreen].buttons[BUTTON_SAVESLOT_3]->on = false;
                         sprintf(current_save_path, "%s", ""); // Clear current save path
                         for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
-
-                            if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                            Gui_Button* bt = gui_state->screens[gui_state->currentScreen].buttons[i];
+                            if (CheckCollisionPointRec(gui_state->virtualMouse, bt->r)) {
                                 if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                                    gui_state->buttons[i].state = BUTTON_PRESSED;
+                                    bt->state = BUTTON_PRESSED;
                                 } else {
-                                    gui_state->buttons[i].state = BUTTON_HOVER;
+                                    bt->state = BUTTON_HOVER;
                                 }
                                 if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                                    gui_state->buttons[i].on = true;
+                                    bt->on = true;
                                 }
                             } else {
-                                gui_state->buttons[i].state = BUTTON_NORMAL;
+                                bt->state = BUTTON_NORMAL;
                             }
-                            if (gui_state->buttons[i].on) {
+                            if (bt->on) {
                                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                                 //TODO: may use i to se is_new_game for now but its weak to changes in the array
                                 // load_info->is_new_game = i;
@@ -653,26 +654,26 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                 (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
                                                            "Fighter", "Fighter");
 
-                            Gui_Button namefield = gui_state->buttons[BUTTON_NAME_TXTFIELD];
-                            if (namefield.label_len > 0) {
-                                log_tag("debug_log.txt", "DEBUG", "%s():    Using {%s} for player name", __func__, namefield.label);
-                                fprintf(stderr, "[DEBUG] [%s()]    Using {%s} for player name\n", __func__, namefield.label);
-                                strncpy((*player)->name, namefield.label, namefield.label_len+1);
+                            Gui_Button* namefield = gui_state->screens[NAMEPICK_VIEW].buttons[BUTTON_NAME_TXTFIELD];
+                            if (namefield->label_len > 0) {
+                                log_tag("debug_log.txt", "DEBUG", "%s():    Using {%s} for player name", __func__, namefield->label);
+                                fprintf(stderr, "[DEBUG] [%s()]    Using {%s} for player name\n", __func__, namefield->label);
+                                strncpy((*player)->name, namefield->label, namefield->label_len+1);
                             } else {
                                 assert(false);
                                 strncpy((*player)->name, "Test", strlen("Test")+1);
                             }
-                            Gui_Button classfield = gui_state->buttons[BUTTON_CLASS_TXTFIELD];
-                            if (classfield.label_len > 0) {
-                                log_tag("debug_log.txt", "DEBUG", "%s():    Using {%s} for player class", __func__, classfield.label);
-                                fprintf(stderr, "[DEBUG] [%s()]    Using {%s} for player class\n", __func__, classfield.label);
-                                if (strcmp(classfield.label, "Knight") == 0) {
+                            Gui_Button* classfield = gui_state->screens[CLASSPICK_VIEW].buttons[BUTTON_CLASS_TXTFIELD];
+                            if (classfield->label_len > 0) {
+                                log_tag("debug_log.txt", "DEBUG", "%s():    Using {%s} for player class", __func__, classfield->label);
+                                fprintf(stderr, "[DEBUG] [%s()]    Using {%s} for player class\n", __func__, classfield->label);
+                                if (strcmp(classfield->label, "Knight") == 0) {
                                     (*player)->class = Knight;
-                                } else if (strcmp(classfield.label, "Archer") == 0) {
+                                } else if (strcmp(classfield->label, "Archer") == 0) {
                                     (*player)->class = Archer;
-                                } else if (strcmp(classfield.label, "Mage") == 0) {
+                                } else if (strcmp(classfield->label, "Mage") == 0) {
                                     (*player)->class = Mage;
-                                } else if (strcmp(classfield.label, "Assassin") == 0) {
+                                } else if (strcmp(classfield->label, "Assassin") == 0) {
                                     (*player)->class = Assassin;
                                 }
                             } else {
@@ -734,23 +735,24 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case NAMEPICK_VIEW: {
         // Reference: https://www.raylib.com/examples/text/loader.html?name=text_input_box
-        if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[BUTTON_NAME_TXTFIELD].r)) {
-            gui_state->buttons[BUTTON_NAME_TXTFIELD].on = true;
+        Gui_Button* bt = gui_state->screens[gui_state->currentScreen].buttons[BUTTON_NAME_TXTFIELD];
+        if (CheckCollisionPointRec(gui_state->virtualMouse, bt->r)) {
+            bt->on = true;
         } else {
-            gui_state->buttons[BUTTON_NAME_TXTFIELD].on = false;
+            bt->on = false;
         }
-        if (gui_state->buttons[BUTTON_NAME_TXTFIELD].on) {
+        if (bt->on) {
             SetMouseCursor(MOUSE_CURSOR_IBEAM);
 
             int key = GetCharPressed();
 
             while (key > 0) {
-                if ((key >= 32) && (key <= 125) && (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len < 20)) {
-                    size_t l = gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len;
-                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l] = (char) key;
-                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l+1] = '\0';
+                if ((key >= 32) && (key <= 125) && (bt->label_len < 20)) {
+                    size_t l = bt->label_len;
+                    bt->label[l] = (char) key;
+                    bt->label[l+1] = '\0';
 
-                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len += 1;
+                    bt->label_len += 1;
 
                 }
 
@@ -758,17 +760,17 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             }
 
             if (IsKeyPressed(KEY_BACKSPACE)) {
-                gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len -= 1;
-                if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len < 0) {
-                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len = 0;
+                bt->label_len -= 1;
+                if (bt->label_len < 0) {
+                    bt->label_len = 0;
                 }
-                size_t l = gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len;
-                gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l] = '\0';
+                size_t l = bt->label_len;
+                bt->label[l] = '\0';
 
             }
 
             if (IsKeyPressed(KEY_ENTER)) {
-                if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len > 0) {
+                if (bt->label_len > 0) {
                     //TODO: Use the name
                     gui_state->currentScreen = SAVES_VIEW;
                 }
@@ -781,41 +783,42 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     }
     break;
     case CLASSPICK_VIEW: {
-        gui_state->buttons[BUTTON_CLASS_KNIGHT].on = false;
-        gui_state->buttons[BUTTON_CLASS_ARCHER].on = false;
-        gui_state->buttons[BUTTON_CLASS_MAGE].on = false;
-        gui_state->buttons[BUTTON_CLASS_ASSASSIN].on = false;
+        gui_state->screens[gui_state->currentScreen].buttons[BUTTON_CLASS_KNIGHT]->on = false;
+        gui_state->screens[gui_state->currentScreen].buttons[BUTTON_CLASS_ARCHER]->on = false;
+        gui_state->screens[gui_state->currentScreen].buttons[BUTTON_CLASS_MAGE]->on = false;
+        gui_state->screens[gui_state->currentScreen].buttons[BUTTON_CLASS_ASSASSIN]->on = false;
         for (int i=BUTTON_CLASS_KNIGHT; i < BUTTON_CLASS_ASSASSIN+1; i++) {
 
-            if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+            Gui_Button* bt = gui_state->screens[gui_state->currentScreen].buttons[i];
+            if (CheckCollisionPointRec(gui_state->virtualMouse, bt->r)) {
                 if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                    gui_state->buttons[i].state = BUTTON_PRESSED;
+                    bt->state = BUTTON_PRESSED;
                 } else {
-                    gui_state->buttons[i].state = BUTTON_HOVER;
+                    bt->state = BUTTON_HOVER;
                 }
                 if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                    gui_state->buttons[i].on = true;
+                    bt->on = true;
                 }
             } else {
-                gui_state->buttons[i].state = BUTTON_NORMAL;
+                bt->state = BUTTON_NORMAL;
             }
-            if (gui_state->buttons[i].on) {
+            if (bt->on) {
                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                 if (i == BUTTON_CLASS_KNIGHT) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Knight", strlen("Knight")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                    memcpy(bt->label, "Knight", strlen("Knight")+1);
+                    bt->label_len = strlen(gui_state->screens[gui_state->currentScreen].buttons[BUTTON_CLASS_TXTFIELD]->label);
                     gui_state->currentScreen = SAVES_VIEW;
                 } else if ( i == BUTTON_CLASS_ARCHER) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Archer", strlen("Archer")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                    memcpy(bt->label, "Archer", strlen("Archer")+1);
+                    bt->label_len = strlen(gui_state->screens[gui_state->currentScreen].buttons[BUTTON_CLASS_TXTFIELD]->label);
                     gui_state->currentScreen = SAVES_VIEW;
                 } else if ( i == BUTTON_CLASS_MAGE) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Mage", strlen("Mage")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                    memcpy(bt-> label, "Mage", strlen("Mage")+1);
+                    bt->label_len = strlen(gui_state->screens[gui_state->currentScreen].buttons[BUTTON_CLASS_TXTFIELD]->label);
                     gui_state->currentScreen = SAVES_VIEW;
                 } else if ( i == BUTTON_CLASS_ASSASSIN) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Assassin", strlen("Assassin")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                    memcpy(bt->label, "Assassin", strlen("Assassin")+1);
+                    bt->label_len = strlen(gui_state->screens[gui_state->currentScreen].buttons[BUTTON_CLASS_TXTFIELD]->label);
                     gui_state->currentScreen = SAVES_VIEW;
                 }
             }
@@ -1174,8 +1177,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, DARKGREEN);
             DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
             for (int i=BUTTON_NEW_GAME; i < BUTTON_LOAD_GAME+1; i++) {
-                DrawRectangleRec(gui_state.buttons[i].r, gui_state.buttons[i].box_color);
-                DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, gui_state.buttons[i].text_color);
+                Gui_Button* bt = gui_state.screens[gui_state.currentScreen].buttons[i];
+                DrawRectangleRec(bt->r, bt->box_color);
+                DrawText(bt->label, bt->r.x + (gui_state.gameScreenWidth * 0.02f), bt->r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, bt->text_color);
             }
             //DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
         }
@@ -1189,13 +1193,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                 //DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
                 for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
-                    Gui_Button button = gui_state.buttons[i];
-                    if (button.state == BUTTON_HOVER) {
-                        DrawRectangleRec(button.r, RED);
+                    Gui_Button* bt = gui_state.screens[gui_state.currentScreen].buttons[i];
+                    if (bt->state == BUTTON_HOVER) {
+                        DrawRectangleRec(bt->r, RED);
                     } else {
-                        DrawRectangleRec(button.r, button.box_color);
+                        DrawRectangleRec(bt->r, bt->box_color);
                     }
-                    DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+                    DrawText(bt->label, bt->r.x + (gui_state.gameScreenWidth * 0.02f), bt->r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, bt->text_color);
                 }
             } else {
                 DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, RED);
@@ -1210,13 +1214,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText("NEW GAME SCREEN", 20, 20, 40, DARKGREEN);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                 for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
-                    Gui_Button button = gui_state.buttons[i];
-                    if (button.state == BUTTON_HOVER) {
-                        DrawRectangleRec(button.r, RED);
+                    Gui_Button* bt = gui_state.screens[gui_state.currentScreen].buttons[i];
+                    if (bt->state == BUTTON_HOVER) {
+                        DrawRectangleRec(bt->r, RED);
                     } else {
-                        DrawRectangleRec(button.r, button.box_color);
+                        DrawRectangleRec(bt->r, bt->box_color);
                     }
-                    DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+                    DrawText(bt->label, bt->r.x + (gui_state.gameScreenWidth * 0.02f), bt->r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, bt->text_color);
                 }
                 //DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
             } else {
@@ -1240,24 +1244,25 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("PICK NAME SCREEN", 20, 20, 40, DARKGREEN);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
 
-        DrawRectangleRec(gui_state.buttons[BUTTON_NAME_TXTFIELD].r, gui_state.buttons[BUTTON_NAME_TXTFIELD].box_color);
+        Gui_Button* namefield = gui_state.screens[gui_state.currentScreen].buttons[BUTTON_NAME_TXTFIELD];
 
-        Gui_Button namefield = gui_state.buttons[BUTTON_NAME_TXTFIELD];
+        DrawRectangleRec(namefield->r, namefield->box_color);
 
-        if (namefield.on) {
-            DrawRectangleLines((int)namefield.r.x, (int)namefield.r.y, (int)namefield.r.width, (int)namefield.r.height, RED);
+
+        if (namefield->on) {
+            DrawRectangleLines((int)namefield->r.x, (int)namefield->r.y, (int)namefield->r.width, (int)namefield->r.height, RED);
         } else {
-            DrawRectangleLines((int)namefield.r.x, (int)namefield.r.y, (int)namefield.r.width, (int)namefield.r.height, DARKGRAY);
+            DrawRectangleLines((int)namefield->r.x, (int)namefield->r.y, (int)namefield->r.width, (int)namefield->r.height, DARKGRAY);
         }
 
-        DrawText(namefield.label, (int)namefield.r.x + 5, (int) namefield.r.y + 8, 20, MAROON);
+        DrawText(namefield->label, (int)namefield->r.x + 5, (int) namefield->r.y + 8, 20, MAROON);
 
-        DrawText(TextFormat("INPUT CHARS: %i/%i", namefield.label_len, 20), 315, 250, 20, DARKGRAY);
+        DrawText(TextFormat("INPUT CHARS: %i/%i", namefield->label_len, 20), 315, 250, 20, DARKGRAY);
 
-        if (namefield.on) {
-            if (namefield.label_len < 20) {
+        if (namefield->on) {
+            if (namefield->label_len < 20) {
                 if ((gui_state.framesCounter%120) == 0) {
-                    DrawText("_", (int)namefield.r.x + 8 + MeasureText(namefield.label, 20), (int) namefield.r.y + 12, 20, MAROON);
+                    DrawText("_", (int)namefield->r.x + 8 + MeasureText(namefield->label, 20), (int) namefield->r.y + 12, 20, MAROON);
                 }
             } else {
                 DrawText("Press BACKSPACE to delete...", 230, 300, 20, GRAY);
@@ -1270,13 +1275,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("PICK CLASS SCREEN", 20, 20, 40, DARKGREEN);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         for (int i=BUTTON_CLASS_KNIGHT; i < BUTTON_CLASS_ASSASSIN+1; i++) {
-            Gui_Button button = gui_state.buttons[i];
-            if (button.state == BUTTON_HOVER) {
-                DrawRectangleRec(button.r, RED);
+            Gui_Button* bt = gui_state.screens[gui_state.currentScreen].buttons[i];
+            if (bt->state == BUTTON_HOVER) {
+                DrawRectangleRec(bt->r, RED);
             } else {
-                DrawRectangleRec(button.r, button.box_color);
+                DrawRectangleRec(bt->r, bt->box_color);
             }
-            DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+            DrawText(bt->label, bt->r.x + (gui_state.gameScreenWidth * 0.02f), bt->r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, bt->text_color);
         }
     }
     break;

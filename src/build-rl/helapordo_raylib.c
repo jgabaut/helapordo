@@ -369,7 +369,7 @@ void gameloop_rl(int argc, char** argv)
     RenderTexture2D target_txtr = LoadRenderTexture(gameScreenWidth, gameScreenHeight);
     SetTextureFilter(target_txtr.texture, TEXTURE_FILTER_BILINEAR);
 
-    GameScreen currentScreen = LOGO;
+    GameScreenClass currentScreen = LOGO;
     Path* game_path = NULL;
     Fighter* player = NULL;
     Room* current_room = NULL;
@@ -527,6 +527,7 @@ void gameloop_rl(int argc, char** argv)
         .framesCounter = framesCounter,
         .mouse = mouse,
         .virtualMouse = virtualMouse,
+        /*
         .buttons = {
             [BUTTON_NEW_GAME] = bt_newgame,
             [BUTTON_LOAD_GAME] = bt_loadgame,
@@ -539,6 +540,53 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_SAVESLOT_1] = bt_slot1,
             [BUTTON_SAVESLOT_2] = bt_slot2,
             [BUTTON_SAVESLOT_3] = bt_slot3,
+        },
+        */
+        .screens = {
+            [LOGO] = {
+                .class = LOGO,
+            },
+            [TITLE] = {
+                .class = TITLE,
+            },
+            [SAVES_VIEW] = {
+                .class = SAVES_VIEW,
+                .buttons = {
+                    [BUTTON_NEW_GAME] = &bt_newgame,
+                    [BUTTON_LOAD_GAME] = &bt_loadgame,
+                    [BUTTON_SAVESLOT_1] = &bt_slot1,
+                    [BUTTON_SAVESLOT_2] = &bt_slot2,
+                    [BUTTON_SAVESLOT_3] = &bt_slot3,
+                },
+            },
+            [NAMEPICK_VIEW] = {
+                .class = NAMEPICK_VIEW,
+                .buttons = {
+                    [BUTTON_NAME_TXTFIELD] = &bt_namefield,
+                },
+            },
+            [CLASSPICK_VIEW] = {
+                .class = CLASSPICK_VIEW,
+                .buttons = {
+                    [BUTTON_CLASS_TXTFIELD] = &bt_classfield,
+                    [BUTTON_CLASS_KNIGHT] = &bt_class_knight,
+                    [BUTTON_CLASS_ARCHER] = &bt_class_archer,
+                    [BUTTON_CLASS_MAGE] = &bt_class_mage,
+                    [BUTTON_CLASS_ASSASSIN] = &bt_class_assassin,
+                },
+            },
+            [FLOOR_VIEW] = {
+                .class = FLOOR_VIEW,
+            },
+            [ROOM_VIEW] = {
+                .class = ROOM_VIEW,
+            },
+            [ENDING] = {
+                .class = ENDING,
+            },
+            [DOOR_ANIM] = {
+                .class = DOOR_ANIM,
+            },
         },
     };
 
