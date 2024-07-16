@@ -280,8 +280,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         0
     };
 
-    gui_state->virtualMouse.x = (gui_state->mouse.x - (GetScreenWidth() - (gui_state->gameScreenWidth*(gui_state->scale)))*0.0f)/ (gui_state->scale);
-    gui_state->virtualMouse.y = (gui_state->mouse.y - (GetScreenHeight() - (gui_state->gameScreenHeight* (gui_state->scale)))*0.0f)/ (gui_state->scale);
+    gui_state->virtualMouse.x = (gui_state->mouse.x - (GetScreenWidth() - (gui_state->gameScreenWidth*(gui_state->scale)))*0.5f)/ (gui_state->scale);
+    gui_state->virtualMouse.y = (gui_state->mouse.y - (GetScreenHeight() - (gui_state->gameScreenHeight* (gui_state->scale)))*0.5f)/ (gui_state->scale);
     gui_state->virtualMouse = Vector2Clamp(gui_state->virtualMouse, (Vector2) {
         0, 0
     }, (Vector2) {
