@@ -51,6 +51,12 @@ void gameloop_rl(int argc, char** argv)
 
     bool is_seeded = false;
     int optTot = hlpd_getopt(argc, argv, whoami);
+    char player_name[21] = "";
+    if (argc >= 2) {
+        memcpy(player_name, argv[optTot], 21);
+        player_name[20] = '\0';
+        log_tag("debug_log.txt", "DEBUG", "%s():    Passed player name is {%s}", __func__, player_name);
+    }
     if (G_DOTUTORIAL_ON == 1) {
         int screenWidth = 1000;
         int screenHeight = 450;
@@ -396,6 +402,13 @@ void gameloop_rl(int argc, char** argv)
         .box_color = LIGHTGRAY,
         .text_color = BLACK,
     };
+
+    if (strlen(player_name) > 0) {
+        player_name[20] = '\0';
+        memcpy(bt_namefield.label, player_name, 21);
+        bt_namefield.label[20] = '\0';
+        bt_namefield.label_len = strlen(bt_namefield.label);
+    }
 
     Gui_Button bt_slot1 = {
         .r = (Rectangle){.x = 100, .y = 100, .width = 100, .height = 80},
