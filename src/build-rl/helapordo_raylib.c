@@ -372,8 +372,8 @@ void gameloop_rl(int argc, char** argv)
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "New Game",
-        .box_color = DARKGRAY,
-        .text_color = GREEN,
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
     };
 
     Gui_Button bt_loadgame = {
@@ -381,8 +381,8 @@ void gameloop_rl(int argc, char** argv)
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Load Game",
-        .box_color = DARKGRAY,
-        .text_color = ColorFromS4CPalette(palette, S4C_CYAN),
+        .box_color = ORANGE,
+        .text_color = DARKGRAY,
     };
 
     Gui_State gui_state = (Gui_State) {
