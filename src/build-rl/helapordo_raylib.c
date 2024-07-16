@@ -394,8 +394,8 @@ void gameloop_rl(int argc, char** argv)
         .mouse = mouse,
         .virtualMouse = virtualMouse,
         .buttons = {
-            [0] = bt_newgame,
-            [1] = bt_loadgame,
+            [BUTTON_NEW_GAME] = bt_newgame,
+            [BUTTON_LOAD_GAME] = bt_loadgame,
         },
     };
 

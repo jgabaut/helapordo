@@ -344,9 +344,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     //TODO: may use i to se is_new_game for now but its weak to changes in the array
                     // load_info->is_new_game = i;
-                    if (i == 0) { // New game is the first button
+                    if (i == BUTTON_NEW_GAME) { // New game is the first button
                         load_info->is_new_game = 1;
-                    } else {
+                    } else if ( i == BUTTON_LOAD_GAME) {
                         load_info->is_new_game = 0;
                     }
                 }
