@@ -52,10 +52,24 @@ void gameloop_rl(int argc, char** argv)
     bool is_seeded = false;
     int optTot = hlpd_getopt(argc, argv, whoami);
     char player_name[21] = "";
+    char class_name[21] = "";
     if (argc >= 2) {
-        memcpy(player_name, argv[optTot], 21);
-        player_name[20] = '\0';
-        log_tag("debug_log.txt", "DEBUG", "%s():    Passed player name is {%s}", __func__, player_name);
+        if (argv[optTot] != NULL) {
+            memcpy(player_name, argv[optTot], 21);
+            player_name[20] = '\0';
+            log_tag("debug_log.txt", "DEBUG", "%s():    Passed player name is {%s}", __func__, player_name);
+        } else {
+            log_tag("debug_log.txt", "WARN", "%s():    Passed player name was NULL.", __func__);
+        }
+    }
+    if (argc >= 3) {
+        if (argv[optTot+1] != NULL) {
+            memcpy(class_name, argv[optTot+1], 21);
+            class_name[20] = '\0';
+            log_tag("debug_log.txt", "DEBUG", "%s():    Passed player class is {%s}", __func__, class_name);
+        } else {
+            log_tag("debug_log.txt", "WARN", "%s():    Passed player class was NULL.", __func__);
+        }
     }
     if (G_DOTUTORIAL_ON == 1) {
         int screenWidth = 1000;
@@ -440,6 +454,71 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_classfield = {
+        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "",
+        .label_len = 0,
+        .box_color = LIGHTGRAY,
+        .text_color = BLACK,
+    };
+
+    if (strlen(class_name) > 0) {
+        if ((strcmp(class_name, "Knight") == 0) ||
+                (strcmp(class_name, "Archer") == 0) ||
+                (strcmp(class_name, "Mage") == 0) ||
+                (strcmp(class_name, "Assassin") == 0)) {
+            class_name[20] = '\0';
+            memcpy(bt_classfield.label, class_name, 21);
+            bt_classfield.label[20] = '\0';
+            bt_classfield.label_len = strlen(bt_classfield.label);
+        } else {
+            log_tag("debug_log.txt", "DEBUG", "%s():    Rejecting invalid class arg {%s}", __func__, class_name);
+            fprintf(stderr, "[DEBUG] [%s()]    Rejecting invalid class arg {%s}\n", __func__, class_name);
+        }
+    }
+
+    Gui_Button bt_class_knight = {
+        .r = (Rectangle){.x = 50, .y = 50, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Knight",
+        .label_len = strlen("Knight"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_class_archer = {
+        .r = (Rectangle){.x = 160, .y = 50, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Archer",
+        .label_len = strlen("Archer"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_class_mage = {
+        .r = (Rectangle){.x = 270, .y = 50, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Mage",
+        .label_len = strlen("Mage"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_class_assassin = {
+        .r = (Rectangle){.x = 380, .y = 50, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Assassin",
+        .label_len = strlen("Assassin"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -451,6 +530,11 @@ void gameloop_rl(int argc, char** argv)
         .buttons = {
             [BUTTON_NEW_GAME] = bt_newgame,
             [BUTTON_LOAD_GAME] = bt_loadgame,
+            [BUTTON_CLASS_TXTFIELD] = bt_classfield,
+            [BUTTON_CLASS_KNIGHT] = bt_class_knight,
+            [BUTTON_CLASS_ARCHER] = bt_class_archer,
+            [BUTTON_CLASS_MAGE] = bt_class_mage,
+            [BUTTON_CLASS_ASSASSIN] = bt_class_assassin,
             [BUTTON_NAME_TXTFIELD] = bt_namefield,
             [BUTTON_SAVESLOT_1] = bt_slot1,
             [BUTTON_SAVESLOT_2] = bt_slot2,
