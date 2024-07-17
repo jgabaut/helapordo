@@ -23,7 +23,9 @@
 #endif
 
 #include "game_rl.h"
+#ifdef ANVIL_BUILD
 #include "../anvil__helapordo.h"
+#endif // ANVIL_BUILD
 #include "../core/game_lore.h"
 void gameloop_rl(int argc, char** argv);
 #endif
