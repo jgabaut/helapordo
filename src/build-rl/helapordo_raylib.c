@@ -540,6 +540,10 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_SAVESLOT_2] = bt_slot2,
             [BUTTON_SAVESLOT_3] = bt_slot3,
         },
+        .theme = {
+            .bg_color = GRAY,
+            .txt_color = DARKGRAY,
+        },
     };
 
     int roomsDone = 0;

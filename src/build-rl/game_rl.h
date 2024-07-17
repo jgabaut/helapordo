@@ -60,6 +60,11 @@ typedef enum Gui_Button_Idx {
 
 #define GUI_BUTTONS_MAX BUTTON_NAME_TXTFIELD
 
+typedef struct Gui_Theme {
+    Color bg_color;
+    Color txt_color;
+} Gui_Theme;
+
 typedef struct Gui_State {
     float scale;
     float gameScreenWidth;
@@ -69,6 +74,7 @@ typedef struct Gui_State {
     Vector2 mouse;
     Vector2 virtualMouse;
     Gui_Button buttons[GUI_BUTTONS_MAX+1];
+    Gui_Theme theme;
 } Gui_State;
 
 void handleTutorial(S4C_Color* palette);
