@@ -1295,23 +1295,23 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("PRESS ENTER or TAP to go to ENDING SCREEN", 110, 280, 20, gui_state.theme.txt_color);
 
         Rectangle floor_r = CLITERAL(Rectangle) {
-            gui_state.gameScreenHeight *0.5f,
-                                       gui_state.gameScreenWidth *0.5f,
-                                       FLOOR_MAX_COLS * (gui_state.gameScreenWidth*0.01f),
-                                       FLOOR_MAX_ROWS * (gui_state.gameScreenWidth*0.01f),
+            gui_state.gameScreenHeight *0.1f,
+                                       gui_state.gameScreenWidth *0.1f,
+                                       (FLOOR_MAX_COLS-1) * (gui_state.gameScreenWidth*0.02f),
+                                       (FLOOR_MAX_ROWS-1) * (gui_state.gameScreenWidth*0.02f),
         };
 
-        //DrawRectangleRec(floor_r, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawRectangleRec(floor_r, ColorFromS4CPalette(palette, S4C_SALMON));
 
         if (G_EXPERIMENTAL_ON != 1) {
             if (current_floor != NULL) {
-                draw_floor_view(current_floor, current_x, current_y, gui_state.gameScreenWidth*0.01f, &floor_r);
+                draw_floor_view(current_floor, current_x, current_y, gui_state.gameScreenWidth*0.02f, &floor_r);
             } else {
                 log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
             }
         } else {
             if (current_floor != NULL) {
-                display_roomclass_layout(current_floor, &floor_r, gui_state.gameScreenWidth*0.01f);
+                display_roomclass_layout(current_floor, &floor_r, gui_state.gameScreenWidth*0.02f);
             } else {
                 log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
             }
@@ -1372,10 +1372,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             switch (current_room->class) {
             case ENEMIES: {
                 int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
-                int pl_frame_W = gui_state.gameScreenWidth * 0.2f;
+                int pl_frame_W = gui_state.gameScreenWidth * 0.3f;
                 int pl_frame_H = pl_frame_W;
-                int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W;
-                int en_rect_X = gui_state.gameScreenWidth *0.1f;
+                int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W - (gui_state.gameScreenWidth * 0.1f);
+                int en_rect_X = gui_state.gameScreenWidth * 0.1f;
                 int en_rect_Y = pl_rect_Y;
                 int en_frame_W = pl_frame_W;
                 int en_frame_H = pl_frame_H;
