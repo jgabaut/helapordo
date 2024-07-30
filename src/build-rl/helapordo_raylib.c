@@ -374,6 +374,27 @@ void gameloop_rl(int argc, char** argv)
     Fighter* player = NULL;
     Room* current_room = NULL;
     Gamestate* gameState = NULL;
+    char* notifications_buffer = (char*) KLS_PUSH_ARR_TYPED(default_kls, Notification, NOTIFICATIONS_RINGBUFFER_SIZE+1, HR_Notification, "Notification buffer", "Notification");
+
+    size_t ringabuf_size = rb_structsize__();
+    size_t ringabuf_align = rb_structalign__();
+
+#ifndef KOLISEO_HAS_REGION
+    RingaBuf rb_notifications = kls_push_zero_AR(default_kls, ringabuf_size, ringabuf_align, 1);
+#else
+    RingaBuf rb_notifications = kls_push_zero_typed(default_kls, ringabuf_size, ringabuf_align, 1, HR_RingaBuf, "RingaBuf for notifications", "RingaBuf");
+#endif // KOLISEO_HAS_REGION
+
+    rb_notifications = rb_new_arr(rb_notifications, notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
+    size_t capacity = rb_get_capacity(rb_notifications);
+
+#ifndef _WIN32
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%li}", __func__, capacity);
+#else
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%lli}", __func__, capacity);
+#endif
+
+
 
     int framesCounter = 0;          // Useful to count frames
 
