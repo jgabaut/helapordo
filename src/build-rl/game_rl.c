@@ -266,6 +266,94 @@ void setChestSprite(Chest *c)
 
 }
 
+/**
+ * Takes a RingaBuf to take the Notification from, and a Rectangle to draw them to.
+ * @param rb_notifications The RingaBuf holding the Notification
+ * @param notifications_rect The Rectangle used to draw the notifications
+ * @see Notification
+ * @see enqueue_notification()
+ */
+void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications_rect)
+{
+    Notification* newest_notif = NULL;
+    //Notification* oldest_notif = NULL;
+
+    if (!(rb_isfull(*rb_notifications))) {
+        if (rb_get_head(*rb_notifications) != 0) {
+            //oldest_notif = (Notification*) &(rb_notifications->data[0]);
+            int32_t head = rb_get_head(*rb_notifications);
+            //size_t newest_idx = ((head/sizeof(Notification)) -1);
+            bool getelem_success = true;
+            //newest_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, head - sizeof(Notification));
+            //newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
+            newest_notif = (Notification*) rb_getelem_newest(*rb_notifications, &getelem_success);
+            assert(getelem_success);
+            if (!newest_notif->displayed) {
+                //wclear(notifications_win);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, head);
+                for (int i = 0; i < (head / sizeof(Notification)); i++) {
+                    //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
+                    Notification* read_notif = (Notification*) rb_getelem_by_index(*rb_notifications, i, &getelem_success);
+                    assert(getelem_success);
+                    log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%i] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+                    Color notif_color = ColorFromS4CPalette(palette, read_notif->color);
+                    int txt_height = notifications_rect.height * 0.125f;
+                    DrawText(read_notif->buf, notifications_rect.x, notifications_rect.y + ((i+1)* txt_height), txt_height, notif_color);
+                    read_notif->displayed = true;
+                }
+            }
+        } else {
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification ring is empty.", __func__);
+        }
+    } else {
+        int32_t head = rb_get_head(*rb_notifications);
+        size_t capacity = rb_get_capacity(*rb_notifications);
+        //size_t newest_idx = ( head == 0 ? (NOTIFICATIONS_RINGBUFFER_SIZE-1) : ((head/sizeof(Notification)) -1));
+        bool getelem_success = true;
+        //size_t newest_offset = (head == 0 ? ((NOTIFICATIONS_RINGBUFFER_SIZE-1)* sizeof(Notification)) : (head - sizeof(Notification)));
+        //newest_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, newest_offset);
+        //newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
+        newest_notif = (Notification*) rb_getelem_newest(*rb_notifications, &getelem_success);
+        assert(getelem_success);
+        //oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
+        int current_idx = 0;
+        if (!newest_notif->displayed) {
+            //wclear(notifications_win);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (head / sizeof(Notification)) +1, capacity / sizeof(Notification));
+            for (size_t i = (head / sizeof(Notification)) +1; i < (capacity / sizeof(Notification)); i++) {
+                //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
+                Notification* read_notif = (Notification*) rb_getelem_by_index(*rb_notifications, i, &getelem_success);
+                assert(getelem_success);
+#ifndef _WIN32
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    H+1->S [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                Color notif_color = ColorFromS4CPalette(palette, read_notif->color);
+                int txt_height = notifications_rect.height * 0.125f;
+                DrawText(read_notif->buf, notifications_rect.x, notifications_rect.y + ((current_idx+1)* txt_height), txt_height, notif_color);
+                read_notif->displayed = true;
+                current_idx++;
+            }
+            for (size_t i = 0; i < (head / sizeof(Notification)); i++) {
+                //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
+                Notification* read_notif = (Notification*) rb_getelem_by_index(*rb_notifications, i, &getelem_success);
+                assert(getelem_success);
+#ifndef _WIN32
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%li] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#else
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%lli] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
+#endif
+                Color notif_color = ColorFromS4CPalette(palette, read_notif->color);
+                int txt_height = notifications_rect.height * 0.125f;
+                DrawText(read_notif->buf, notifications_rect.x, notifications_rect.y + ((current_idx+1)* txt_height), txt_height, notif_color);
+                read_notif->displayed = true;
+                current_idx++;
+            }
+        }
+    }
+}
+
 // void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
 void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, Gamestate** gamestate, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], bool is_seeded, int* roomsDone, int* enemyTotal)
 {

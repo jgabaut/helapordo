@@ -87,6 +87,7 @@ void setBossSprite(Boss * b);
 void setFighterSprite(Fighter * f);
 void setChestSprite(Chest * c);
 void ToggleFullScreenWindow(int w_W, int w_H);
+void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications_rect);
 void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, Gamestate** gamestate, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], bool is_seeded, int* roomsDone, int* enemyTotal);
 void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, int fps_target, int current_anim_frame, Floor* current_floor, Path* game_path, Fighter* player, Room* current_room, Gamestate* gamestate, int current_x, int current_y, loadInfo* load_info, int saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1]);
 #endif // GAMECURSES_RL_H
