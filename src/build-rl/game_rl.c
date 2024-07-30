@@ -1379,7 +1379,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int en_rect_Y = pl_rect_Y;
                 int en_frame_W = pl_frame_W;
                 int en_frame_H = pl_frame_H;
-                float stats_label_W = gui_state.gameScreenWidth * 0.1f;
+                float stats_label_W = gui_state.gameScreenWidth * 0.15f;
                 float stats_label_H = stats_label_W;
                 Rectangle stats_label_r = CLITERAL(Rectangle) {
                     gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
@@ -1411,6 +1411,15 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                     DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
                 }
                 DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
+                Enemy* enemy = current_room->enemies[gamestate->current_enemy_index];
+                int stats_height = stats_label_r.height * 0.135f;
+                Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
+                DrawText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + stats_height, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Def  %i", enemy->def, player->def), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Def  %i", enemy->def, player->def), stats_height)/2)), (int)stats_label_r.y + 2*stats_height, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), stats_height)/2)), (int)stats_label_r.y + 3*stats_height, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + 4*stats_height, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + 5*stats_height, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + 6*stats_height, stats_height, stats_txt_color);
 
                 fighterClass player_class = player->class;
                 int pl_res = -1;
