@@ -388,6 +388,8 @@ void gameloop_rl(int argc, char** argv)
     rb_notifications = rb_new_arr(rb_notifications, notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
     size_t capacity = rb_get_capacity(rb_notifications);
 
+    enqueue_notification("HI", 500, S4C_RED, &rb_notifications);
+
 #ifndef _WIN32
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%li}", __func__, capacity);
 #else

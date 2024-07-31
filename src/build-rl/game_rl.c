@@ -287,8 +287,9 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
             //newest_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, head - sizeof(Notification));
             //newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
             newest_notif = (Notification*) rb_getelem_newest(*rb_notifications, &getelem_success);
+            (void) newest_notif;
             assert(getelem_success);
-            if (!newest_notif->displayed) {
+            //if (!newest_notif->displayed) {
                 //wclear(notifications_win);
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, head);
                 for (int i = 0; i < (head / sizeof(Notification)); i++) {
@@ -298,10 +299,10 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
                     log_tag("debug_log.txt", "[DEBUG]", "%s():    0->H [%i] Displaying notification {%s} Color: [%" PRId8 "]", __func__, i, read_notif->buf, read_notif->color);
                     Color notif_color = ColorFromS4CPalette(palette, read_notif->color);
                     int txt_height = notifications_rect.height * 0.125f;
-                    DrawText(read_notif->buf, notifications_rect.x, notifications_rect.y + ((i+1)* txt_height), txt_height, notif_color);
+                    DrawText(TextFormat(" %s", read_notif->buf), notifications_rect.x, notifications_rect.y + ((i+1)* txt_height), txt_height, notif_color);
                     read_notif->displayed = true;
                 }
-            }
+            //}
         } else {
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Notification ring is empty.", __func__);
         }
@@ -314,10 +315,11 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
         //newest_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, newest_offset);
         //newest_notif = (Notification*) rb_getelem_by_index(*rb_notifications, newest_idx, &getelem_success);
         newest_notif = (Notification*) rb_getelem_newest(*rb_notifications, &getelem_success);
+        (void) newest_notif;
         assert(getelem_success);
         //oldest_notif = (Notification*) &(rb_notifications->data[(rb_notifications->head)]);
         int current_idx = 0;
-        if (!newest_notif->displayed) {
+        //if (!newest_notif->displayed) {
             //wclear(notifications_win);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (head / sizeof(Notification)) +1, capacity / sizeof(Notification));
             for (size_t i = (head / sizeof(Notification)) +1; i < (capacity / sizeof(Notification)); i++) {
@@ -331,7 +333,7 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
 #endif
                 Color notif_color = ColorFromS4CPalette(palette, read_notif->color);
                 int txt_height = notifications_rect.height * 0.125f;
-                DrawText(read_notif->buf, notifications_rect.x, notifications_rect.y + ((current_idx+1)* txt_height), txt_height, notif_color);
+                DrawText(TextFormat(" %s", read_notif->buf), notifications_rect.x, notifications_rect.y + ((current_idx+1)* txt_height), txt_height, notif_color);
                 read_notif->displayed = true;
                 current_idx++;
             }
@@ -346,11 +348,11 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
 #endif
                 Color notif_color = ColorFromS4CPalette(palette, read_notif->color);
                 int txt_height = notifications_rect.height * 0.125f;
-                DrawText(read_notif->buf, notifications_rect.x, notifications_rect.y + ((current_idx+1)* txt_height), txt_height, notif_color);
+                DrawText(TextFormat(" %s", read_notif->buf), notifications_rect.x, notifications_rect.y + ((current_idx+1)* txt_height), txt_height, notif_color);
                 read_notif->displayed = true;
                 current_idx++;
             }
-        }
+        //}
     }
 }
 
@@ -1487,6 +1489,14 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                     en_frame_W,
                     en_frame_H
                 };
+
+                Rectangle rb_r = CLITERAL(Rectangle) {
+                    gui_state.gameScreenWidth*0.1f,
+                    gui_state.gameScreenHeight*0.5f,
+                    gui_state.gameScreenWidth*0.8f,
+                    gui_state.gameScreenHeight*0.45f,
+                };
+
                 //TODO: count time by real_clock difference from last frame
                 time_t framesTime = gui_state.framesCounter / fps_target ;// GetFPS();
                 struct tm* time_tm = localtime(&framesTime);
@@ -1508,6 +1518,12 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + 4*stats_height, stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + 5*stats_height, stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + 6*stats_height, stats_height, stats_txt_color);
+
+                DrawRectangleRec(rb_r, DARKGRAY);
+
+                if (rb_isfull(*rb_notifications) || (rb_get_head(*rb_notifications) != 0)) {
+                    hlpd_draw_notifications(rb_notifications, rb_r);
+                }
 
                 fighterClass player_class = player->class;
                 int pl_res = -1;
