@@ -489,9 +489,9 @@ void gameloop_rl(int argc, char** argv)
 
     if (strlen(class_name) > 0) {
         if ((strcmp(class_name, "Knight") == 0) ||
-                (strcmp(class_name, "Archer") == 0) ||
-                (strcmp(class_name, "Mage") == 0) ||
-                (strcmp(class_name, "Assassin") == 0)) {
+            (strcmp(class_name, "Archer") == 0) ||
+            (strcmp(class_name, "Mage") == 0) ||
+            (strcmp(class_name, "Assassin") == 0)) {
             class_name[20] = '\0';
             memcpy(bt_classfield.label, class_name, 21);
             bt_classfield.label[20] = '\0';
