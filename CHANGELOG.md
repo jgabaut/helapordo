@@ -1,3 +1,47 @@
+## [1.4.11-dev] - Unreleased
+
+### Added
+
+- Add display_floor_layout_with_player() to have a still view of the Floor
+- Add display_explored_layout_with_player() to have a live view of the Floor
+  - Improved colors for display_floor_layout(), display_explored_layout()
+- Add ROOM_VIEW
+- Add SAVES_PICK
+- Add Gui_State
+- Add Gui_Button
+
+### Changed
+
+- Factor out draw and update functions to game_rl.c
+
+- Handle Floor regen by passing double pointers to update_GameScreen()
+- Rename GAMEPLAY screen to FLOOR_VIEW
+- Roll seed for rl build
+- Prep current_save_path for rl build
+- Push current floor on kls_t, set starting room as explored
+- Init Path, Fighter for rl build
+- Pressing R also resets Path and Player
+- Added room init on floor_kls
+- Added Gamestate prep for rl build
+- Fix: writeSerSaveHeader() now tries to create a missing directory even when not forced
+- Moved animation to ROOM_VIEW, only for Enemy rooms
+- Use current enemy class for animation instead of a set Zombie class
+- Ending screen goes to quit
+- Fix: update tutorial text to drop Story mode mention
+- Fix: proper transform on virtualMouse
+- Fix: use PRId64 to print int64_t blob_size in readSerGamestate()
+- Fix: install doesn't try copying invalid .c file from ringabuf/src
+- Take name, class from CLI args for rl build
+- Fix: wrap anvil header inclusion for rl build
+- Bump bootstrap_anvil.sh to 0.3-dev
+- Added stats print to ROOM_VIEW
+- Added rb_notifications prep
+- Added rectangle for drawing notifications
+- Added name/class drawing
+- Added CHANGELOG
+- Bump invil to 0.2.15
+- Bump s4c-scripts, s4c
+
 ## [1.4.10] - 2024-06-14
 
 ### Changed
