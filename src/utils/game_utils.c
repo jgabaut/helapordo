@@ -1140,7 +1140,7 @@ void printVersion(void)
 
 /**
  * Prints formatted version string.
- * @param progName The program name string.
+ * @param progname The program name string.
  */
 void printFormattedVersion(const char *progname)
 {
@@ -3102,7 +3102,6 @@ void printArtifactStats(Artifact *a)
  * Takes a RingaBuf pointer and queues the passed text to it.
  * @see handleRoom_Enemies()
  * @see handleRoom_Boss()
- * @param w The WINDOW pointer to print to.
  * @param text The contents of the notification.
  * @param time The display time in milliseconds (unused, for now)
  * @param color The index of color to use for the notification drawing.
