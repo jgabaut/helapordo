@@ -1488,9 +1488,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
 
                 Rectangle rb_r = CLITERAL(Rectangle) {
                     gui_state.gameScreenWidth*0.1f,
-                                              gui_state.gameScreenHeight*0.5f,
+                                              gui_state.gameScreenHeight*0.65f,
                                               gui_state.gameScreenWidth*0.8f,
-                                              gui_state.gameScreenHeight*0.45f,
+                                              gui_state.gameScreenHeight*0.3f,
                 };
 
                 //TODO: count time by real_clock difference from last frame
