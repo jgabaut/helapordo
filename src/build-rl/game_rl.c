@@ -1429,26 +1429,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         }
 
         //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
-        /*
-        Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);
-        Rectangle st_pl_coll = GetCollisionRec(stats_label_r,pl_r);
-        Rectangle st_en_coll = GetCollisionRec(stats_label_r,en_r);
-        */
-        // Draw collision boxes
-        //DrawRectangleRec(en_pl_coll, ColorFromS4CPalette(palette, S4C_TEAL));
-        //DrawRectangleRec(st_pl_coll, ColorFromS4CPalette(palette, S4C_MAGENTA));
-        //DrawRectangleRec(st_en_coll, ColorFromS4CPalette(palette, S4C_CYAN));
-        /* Draw expected boxes
-        Color en_c = ColorFromS4CPalette(palette, S4C_CYAN);
-        Color pl_c = ColorFromS4CPalette(palette, S4C_MAGENTA);
-        Color st_c = ColorFromS4CPalette(palette, S4C_TEAL);
-        en_c.a = 125;
-        pl_c.a = 125;
-        st_c.a = 125;
-        DrawRectangleRec(en_r, en_c);
-        DrawRectangleRec(pl_r, pl_c);
-        DrawRectangleRec(stats_label_r, st_c);
-        */
     }
     break;
     case ROOM_VIEW: {
@@ -1483,11 +1463,27 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                     pl_frame_W,
                     pl_frame_H
                 };
+                float pr_name_r_height = gui_state.gameScreenHeight * 0.05f;
+                Rectangle pr_name_r = CLITERAL(Rectangle) {
+                    pl_rect_X,
+                    pl_rect_Y - pr_name_r_height,
+                    pl_frame_W,
+                    pr_name_r_height,
+                };
+
                 Rectangle en_r = CLITERAL(Rectangle) {
                     en_rect_X,
                     en_rect_Y,
                     en_frame_W,
                     en_frame_H
+                };
+
+                float en_name_r_height = gui_state.gameScreenHeight * 0.05f;
+                Rectangle en_name_r = CLITERAL(Rectangle) {
+                    en_rect_X,
+                    en_rect_Y - en_name_r_height,
+                    en_frame_W,
+                    en_name_r_height,
                 };
 
                 Rectangle rb_r = CLITERAL(Rectangle) {
@@ -1518,6 +1514,14 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + 4*stats_height, stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + 5*stats_height, stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + 6*stats_height, stats_height, stats_txt_color);
+
+                DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
+                int name_height = pr_name_r.height * 0.6f;
+                Color name_color = ColorFromS4CPalette(palette, S4C_BLACK);
+                DrawText(TextFormat("%s", player->name), (int)(pr_name_r.x + (pr_name_r.width/2) - (MeasureText(TextFormat("%s", player->name), name_height)/2)), (int)(pr_name_r.y + ((pr_name_r.height - name_height)/2)), name_height, name_color);
+                DrawRectangleRec(en_name_r, ColorFromS4CPalette(palette, S4C_CYAN));
+                DrawText(TextFormat("%s", stringFromEClass(enemy->class)), (int)(en_name_r.x + (en_name_r.width/2) - (MeasureText(TextFormat("%s", stringFromEClass(enemy->class)), name_height)/2)), (int)(en_name_r.y + ((en_name_r.height - name_height)/2)), name_height, name_color);
+                //DrawText(TextFormat("%s    %s", stringFromEClass(enemy->class), player->name), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%s    %s", stringFromEClass(enemy->class), player->name), stats_height)/2)), (int)stats_label_r.y + 7*stats_height, stats_height, stats_txt_color);
 
                 DrawRectangleRec(rb_r, DARKGRAY);
 
@@ -1625,6 +1629,27 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
         DrawText("PRESS P to pause animations", 110, 350, 20, gui_state.theme.txt_color);
         DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, gui_state.theme.txt_color);
+
+        /*
+        Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);
+        Rectangle st_pl_coll = GetCollisionRec(stats_label_r,pl_r);
+        Rectangle st_en_coll = GetCollisionRec(stats_label_r,en_r);
+        */
+        // Draw collision boxes
+        //DrawRectangleRec(en_pl_coll, ColorFromS4CPalette(palette, S4C_TEAL));
+        //DrawRectangleRec(st_pl_coll, ColorFromS4CPalette(palette, S4C_MAGENTA));
+        //DrawRectangleRec(st_en_coll, ColorFromS4CPalette(palette, S4C_CYAN));
+        /* Draw expected boxes
+        Color en_c = ColorFromS4CPalette(palette, S4C_CYAN);
+        Color pl_c = ColorFromS4CPalette(palette, S4C_MAGENTA);
+        Color st_c = ColorFromS4CPalette(palette, S4C_TEAL);
+        en_c.a = 125;
+        pl_c.a = 125;
+        st_c.a = 125;
+        DrawRectangleRec(en_r, en_c);
+        DrawRectangleRec(pl_r, pl_c);
+        DrawRectangleRec(stats_label_r, st_c);
+        */
     }
     break;
     case ENDING: {
