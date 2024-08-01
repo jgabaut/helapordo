@@ -1517,9 +1517,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
 
                 DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
                 int name_height = pr_name_r.height * 0.6f;
-                Color name_color = ColorFromS4CPalette(palette, S4C_BLACK);
+                Color name_color = ColorFromS4CPalette(palette, S4C_RED);
                 DrawText(TextFormat("%s", player->name), (int)(pr_name_r.x + (pr_name_r.width/2) - (MeasureText(TextFormat("%s", player->name), name_height)/2)), (int)(pr_name_r.y + ((pr_name_r.height - name_height)/2)), name_height, name_color);
-                DrawRectangleRec(en_name_r, ColorFromS4CPalette(palette, S4C_CYAN));
+                DrawRectangleRec(en_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
                 DrawText(TextFormat("%s", stringFromEClass(enemy->class)), (int)(en_name_r.x + (en_name_r.width/2) - (MeasureText(TextFormat("%s", stringFromEClass(enemy->class)), name_height)/2)), (int)(en_name_r.y + ((en_name_r.height - name_height)/2)), name_height, name_color);
                 //DrawText(TextFormat("%s    %s", stringFromEClass(enemy->class), player->name), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%s    %s", stringFromEClass(enemy->class), player->name), stats_height)/2)), (int)stats_label_r.y + 7*stats_height, stats_height, stats_txt_color);
 
