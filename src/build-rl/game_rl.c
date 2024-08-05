@@ -502,7 +502,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                 if (*game_path == NULL) {
                     log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
-                    *game_path = randomise_path(seed, temporary_kls, current_save_path);
+                    *game_path = randomise_path(seed, default_kls, current_save_path);
                     (*game_path)->current_saveslot->index = *saveslot_index;
                     Wincon *w =
                         (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
@@ -515,14 +515,14 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 if (*player == NULL) {
                     log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
                     *player =
-                        (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
+                        (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
                                                    "Fighter", "Loady Fighter");
 
                     strncpy((*player)->name, "Test", strlen("Test")+1);
                     (*player)->class = Knight;
                     //getParams(argc, argv, player, path, optTot, default_kls);
                     //TODO: ensure class and name are taken before this update
-                    initPlayerStats(*player, *game_path, temporary_kls);
+                    initPlayerStats(*player, *game_path, default_kls);
                     log_tag("debug_log.txt", "DEBUG", "%s():    Prepared Loady Fighter", __func__);
                 }
                 if (*gamestate == NULL) {
@@ -727,7 +727,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
                         if (*game_path == NULL) {
                             log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
-                            *game_path = randomise_path(seed, temporary_kls, current_save_path);
+                            *game_path = randomise_path(seed, default_kls, current_save_path);
                             (*game_path)->current_saveslot->index = *saveslot_index;
                             Wincon *w =
                                 (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
@@ -740,7 +740,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         if (*player == NULL) {
                             log_tag("debug_log.txt", "DEBUG", "%s():    Init for player", __func__);
                             *player =
-                                (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
+                                (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
                                                            "Fighter", "Fighter");
 
                             Gui_Button namefield = gui_state->buttons[BUTTON_NAME_TXTFIELD];
@@ -771,7 +771,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             }
                             //getParams(argc, argv, player, path, optTot, default_kls);
                             //TODO: ensure class and name are taken before this update
-                            initPlayerStats(*player, *game_path, temporary_kls);
+                            initPlayerStats(*player, *game_path, default_kls);
                             log_tag("debug_log.txt", "DEBUG", "%s():    Prepared new Fighter", __func__);
                         }
                         if (*gamestate == NULL) {
