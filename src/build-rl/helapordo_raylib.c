@@ -505,7 +505,7 @@ void gameloop_rl(int argc, char** argv)
     }
 
     Gui_Button bt_class_knight = {
-        .r = (Rectangle){.x = 50, .y = 50, .width = 100, .height = 50},
+        .r = (Rectangle){.x = 50, .y = 100, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Knight",
@@ -515,7 +515,7 @@ void gameloop_rl(int argc, char** argv)
     };
 
     Gui_Button bt_class_archer = {
-        .r = (Rectangle){.x = 160, .y = 50, .width = 100, .height = 50},
+        .r = (Rectangle){.x = 160, .y = 100, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Archer",
@@ -525,7 +525,7 @@ void gameloop_rl(int argc, char** argv)
     };
 
     Gui_Button bt_class_mage = {
-        .r = (Rectangle){.x = 270, .y = 50, .width = 100, .height = 50},
+        .r = (Rectangle){.x = 270, .y = 100, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Mage",
@@ -535,7 +535,7 @@ void gameloop_rl(int argc, char** argv)
     };
 
     Gui_Button bt_class_assassin = {
-        .r = (Rectangle){.x = 380, .y = 50, .width = 100, .height = 50},
+        .r = (Rectangle){.x = 380, .y = 100, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Assassin",

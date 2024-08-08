@@ -910,6 +910,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 }
             }
         }
+        gui_state->framesCounter += 1;
     }
     break;
     case FLOOR_VIEW: {
@@ -1363,6 +1364,41 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             Gui_Button button = gui_state.buttons[i];
             if (button.state == BUTTON_HOVER) {
                 DrawRectangleRec(button.r, RED);
+
+                int anim_res = -1;
+                // Draw the current class animation frame somewhere
+                Rectangle anim_r = {
+                    .x = gui_state.gameScreenWidth*0.50f,
+                    .y = gui_state.gameScreenHeight*0.45f,
+                    .width = gui_state.gameScreenWidth*0.25f,
+                    .height = gui_state.gameScreenWidth*0.25f,
+                };
+                switch (i) {
+                    case BUTTON_CLASS_KNIGHT: {
+                        anim_res = DrawSpriteRect(knight_tapis[gui_state.framesCounter%61], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case BUTTON_CLASS_ARCHER: {
+                        anim_res = DrawSpriteRect(archer_drop[gui_state.framesCounter%61], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case BUTTON_CLASS_MAGE: {
+                        anim_res = DrawSpriteRect(mage_spark[gui_state.framesCounter%61], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case BUTTON_CLASS_ASSASSIN: {
+                        anim_res = DrawSpriteRect(assassin_poof[gui_state.framesCounter%61], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    default: {
+                        fprintf(stderr, "%s():    Unexpected button value: {%i}\n", __func__, i);
+                        kls_free(default_kls);
+                        kls_free(temporary_kls);
+                        exit(EXIT_FAILURE);
+                    }
+                    break;
+                }
+                (void) anim_res; // TODO: check this return value
             } else {
                 DrawRectangleRec(button.r, button.box_color);
             }
