@@ -79,6 +79,7 @@ void gameloop(int argc, char **argv)
                                     1, //kls_autoset_temp_regions
                                     1, //collect_stats
                                     1, //kls_verbose_lvl
+                                    1, // block_on_has_temp
                                     NULL, //kls_log_fp
                                     path_to_kls_debug_file //.kls_log_filepath
                                 );
@@ -89,6 +90,7 @@ void gameloop(int argc, char **argv)
                                       1, //kls_autoset_temp_regions
                                       1, //collect_stats
                                       0, //kls_verbose_lvl
+                                      1, // block_on_has_temp
                                       stderr, //kls_log_fp
                                       NULL
                                   );
