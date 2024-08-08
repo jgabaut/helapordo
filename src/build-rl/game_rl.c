@@ -1667,17 +1667,17 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, gui_state.theme.txt_color);
 
-        int door_frame_W = 21;
-        int door_frame_H = 21;
-        int door_rect_X = (gui_state.gameScreenWidth/2) - ((door_frame_W * gui_state.scale * 5.5) /2);
-        int door_rect_Y = (gui_state.gameScreenHeight/2) - ((door_frame_H * gui_state.scale * 5.5) /2);
+        int door_frame_W = gui_state.gameScreenWidth * 0.3f;
+        int door_frame_H = door_frame_W;
+        int door_rect_X = (gui_state.gameScreenWidth/2) - (door_frame_W/2);
+        int door_rect_Y = (gui_state.gameScreenHeight/2) - (door_frame_H/2);
         Rectangle door_r = CLITERAL(Rectangle) {
             door_rect_X,
             door_rect_Y,
-            door_frame_W * gui_state.scale * 5.5,
-            door_frame_H * gui_state.scale * 5.5,
+            door_frame_W,
+            door_frame_H,
         };
-        int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, gui_state.scale*5.5, palette, PALETTE_S4C_H_TOTCOLORS);
+        int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, 21, 21, door_frame_W/21, palette, PALETTE_S4C_H_TOTCOLORS);
         if (door_res != 0 ) {
             DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
             DrawText("Window too small.", 20, 20, 20, RAYWHITE);
