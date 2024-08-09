@@ -64,7 +64,7 @@ case "${host_os}" in
         if test "$enable_raylib" = "yes"; then
             echo "CONF    Building with raylib"
             build_raylib=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DS4C_RAYLIB_EXTENSION"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lraylib -lm -lgdi32 -lwinmm -static"])
             AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
             AC_SUBST([OS], ["w64-mingw32"])
@@ -104,7 +104,7 @@ case "${host_os}" in
             echo "CONF    Building with raylib"
             build_raylib=yes
             build_curses=no
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/raylib/include -DS4C_RAYLIB_EXTENSION"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/raylib/include -DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/raylib/lib -lraylib"])
             AC_SUBST([OS], ["darwin"])
             AC_SUBST([TARGET], ["helapordo"])
@@ -142,7 +142,7 @@ case "${host_os}" in
             echo "CONF    Building with raylib"
             build_raylib=yes
             build_curses=no
-            AC_SUBST([HELAPORDO_CFLAGS], ["-DS4C_RAYLIB_EXTENSION"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-lraylib"])
             AC_SUBST([OS], ["Linux"])
             AC_SUBST([CCOMP], ["gcc"]) #Yes
