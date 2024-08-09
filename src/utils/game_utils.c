@@ -1154,48 +1154,117 @@ void hlpd_dbg_features(void)
 {
 
 #ifdef HELAPORDO_DEBUG_ACCESS
-    fprintf(stderr,"[HLP]    Debug access in enabled\n");
+    bool hlpd_debug_access = true;
 #else
-    fprintf(stderr,"[HLP]    Debug access in not enabled\n");
+    bool hlpd_debug_access = false;
 #endif
 
 #ifdef HELAPORDO_DEBUG_LOG
-    fprintf(stderr,"[HLP]    Debug log is enabled\n");
+    bool hlpd_debug_log = true;
 #else
-    fprintf(stderr,"[HLP]    Debug log is off\n");
+    bool hlpd_debug_log = false;
 #endif
 
 #ifdef HELAPORDO_EMOJI_ICONS
-    fprintf(stderr,"[HLP]    Emoji icons are enabled\n");
+    bool hlpd_emoji_icons = true;
 #else
-    fprintf(stderr,"[HLP]    Emoji icons are not enabled\n");
+    bool hlpd_emoji_icons = false;
 #endif
 
 #ifdef HELAPORDO_SUPPORT_DEFAULT_BACKGROUND
-    fprintf(stderr,"[HLP]    Default background support is enabled\n");
+    bool hlpd_default_bg = true;
 #else
-    fprintf(stderr,"[HLP]    Default background support is not enabled\n");
+    bool hlpd_default_bg = false;
 #endif
 
 #ifdef ANVIL__helapordo__
+    bool hlpd_anvil = true;
 #ifdef INVIL__helapordo__HEADER__
-    fprintf(stderr,"[HLP]    Built with invil\n");
+    bool hlpd_anvil_invil = true;
+    bool hlpd_anvil_amboso = false;
 #else
-    fprintf(stderr,"[HLP]    Built with amboso\n");
+    bool hlpd_anvil_amboso = true;
+    bool hlpd_anvil_invil = false;
 #endif // INVIL
 #else
-    fprintf(stderr,"[HLP]    Built without anvil\n");
+    bool hlpd_anvil = false;
+    bool hlpd_anvil_amboso = false;
+    bool hlpd_anvil_invil = false;
 #endif // ANVIL
 
 #ifdef HELAPORDO_CURSES_BUILD
-    fprintf(stderr,"[HLP]    ncurses build enabled\n");
+    bool hlpd_ncurses = true;
+    bool hlpd_raylib = false;
 #else
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
 #else
-    fprintf(stderr,"[HLP]    raylib build enabled\n");
+    bool hlpd_raylib = true;
+    bool hlpd_ncurses = false;
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
+
+    bool features[9] = {
+        [0] = hlpd_ncurses,
+        [1] = hlpd_raylib,
+        [2] = hlpd_anvil,
+        [3] = hlpd_anvil_amboso,
+        [4] = hlpd_anvil_invil,
+        [5] = hlpd_debug_access,
+        [6] = hlpd_debug_log,
+        [7] = hlpd_emoji_icons,
+        [8] = hlpd_default_bg,
+    };
+    int total_enabled = 0;
+    for (int i=0; i<9; i++) {
+        if (features[i]) {
+            total_enabled += 1;
+        }
+    }
+
+    fprintf(stderr, "[HLP]    Enabled features: {");
+
+    if (total_enabled == 0) {
+        fprintf(stderr, "none}\n");
+        return;
+    } else {
+        if (hlpd_ncurses) {
+            fprintf(stderr, "ncurses%s", (total_enabled > 1 ? ", " : ""));
+            total_enabled -= 1;
+        }
+        if (hlpd_raylib) {
+            fprintf(stderr, "raylib%s", (total_enabled > 1 ? ", " : ""));
+            total_enabled -= 1;
+        }
+        if (hlpd_anvil) {
+            if (hlpd_anvil_amboso) {
+                fprintf(stderr, "amboso%s", (total_enabled > 1 ? ", " : ""));
+                total_enabled -= 1;
+            } else if (hlpd_anvil_invil) {
+                fprintf(stderr, "invil%s", (total_enabled > 1 ? ", " : ""));
+                total_enabled -= 1;
+            } else {
+                fprintf(stderr, "anvil?%s", (total_enabled > 1 ? ", " : ""));
+            }
+            total_enabled -= 1;
+        }
+        if (hlpd_debug_access) {
+            fprintf(stderr, "debug-access%s", (total_enabled > 1 ? ", " : ""));
+            total_enabled -= 1;
+        }
+        if (hlpd_debug_log) {
+            fprintf(stderr, "debug-log%s", (total_enabled > 1 ? ", " : ""));
+            total_enabled -= 1;
+        }
+        if (hlpd_emoji_icons) {
+            fprintf(stderr, "emoji-icons%s", (total_enabled > 1 ? ", " : ""));
+            total_enabled -= 1;
+        }
+        if (hlpd_default_bg) {
+            fprintf(stderr, "default-bg");
+        }
+        fprintf(stderr, "}\n");
+    }
 }
 
 /**
