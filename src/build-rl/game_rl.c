@@ -49,9 +49,9 @@ void handleTutorial(S4C_Color* palette)
     Color tut_color = ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW);
     DrawText("You can use the arrow keys and Enter to do everything needed for the game.", 14, 3*fontSize, fontSize, tut_color);
     DrawText("Buying things from a Shop may be tricky: you have to select one, then choose Buy.\nTo select one, First go up/down to 'View Item', then press Enter,\nthen you can scroll them with left/right. Press Enter to confirm your selection,\nthen go back up to Buy.", 14, 6*fontSize, fontSize, tut_color);
-    DrawText("When running in Rogue mode, you can change floors by killing a Boss.", 14, 12*fontSize, fontSize, tut_color);
+    DrawText("You can change floors by killing a Boss.", 14, 12*fontSize, fontSize, tut_color);
     DrawText("When in floor map, you can open the menu with the \"m\" key.", 14, 15*fontSize, fontSize, tut_color);
-    DrawText("Rememeber, you can't really save in Rogue mode ! Run with \"-s\" to try Story mode.", 14, 18*fontSize, fontSize, tut_color);
+    DrawText("By default, the game autosaves when you get to an Home room,\nbut for now it's not fully baked for this build.", 14, 18*fontSize, fontSize, tut_color);
 
     DrawText("[ Press ENTER or TAP to quit ]", 14, 21*fontSize, fontSize, ColorFromS4CPalette(palette,S4C_RED));
 
