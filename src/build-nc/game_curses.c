@@ -3832,7 +3832,7 @@ void handleTutorial(void)
     mvwprintw(win, 7, 1, "%s",
               "Buying things from a Shop may be tricky: you have to select one, then choose Buy. To select one, First go up/down to 'View Item', then press Enter, then you can scroll them with left/right. Press Enter to confirm your selection, then go back up to Buy.");
     mvwprintw(win, 12, 1, "%s",
-              "When running in Rogue mode, you can change floors by killing a Boss.");
+              "You can change floors by killing a Boss.");
     mvwprintw(win, 14, 1, "%s",
               "When in floor map, you can open the menu with the \"m\" key.");
     mvwprintw(win, 16, 1, "%s",
