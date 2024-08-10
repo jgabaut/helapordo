@@ -1,4 +1,4 @@
-## [1.4.11-dev] - Unreleased
+## [1.4.11] - 2024-08-10
 
 ### Added
 
@@ -33,14 +33,18 @@
 - Fix: install doesn't try copying invalid .c file from ringabuf/src
 - Take name, class from CLI args for rl build
 - Fix: wrap anvil header inclusion for rl build
-- Bump bootstrap_anvil.sh to 0.3-dev
 - Added stats print to ROOM_VIEW
 - Added rb_notifications prep
 - Added rectangle for drawing notifications
 - Added name/class drawing
+- Refactor hlpd_dbg_features()
 - Added CHANGELOG
-- Bump invil to 0.2.15
-- Bump s4c-scripts, s4c
+- Bump koliseo to 0.4.5, turning on the block of Koliseo usage while it has an active Koliseo_Temp
+- Debug build uses Koliseo's caller location extension
+- Bump invil to 0.2.16
+- Bump s4c-scripts to 0.1.2
+- Bump sprites4curses to 0.4.7
+- Raylib build uses S4C_QUIETER to avoid frame drops due to transparent tiles in some animations
 
 ## [1.4.10] - 2024-06-14
 

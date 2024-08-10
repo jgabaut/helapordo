@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.4.11-dev], [jgabaut@github.com])
+AC_INIT([helapordo], [1.4.11], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -193,7 +193,7 @@ AM_CONDITIONAL([USE_DEFAULT_BACKGROUND], [test "$enable_default_background" = "y
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.4.11-dev"
+  VERSION="1.4.11"
 fi
 
 # Output variables to the config.h header
