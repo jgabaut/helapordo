@@ -67,7 +67,7 @@ typedef struct GameScreen {
 /**
  * Defines GameScreen type, as an enum.
  */
-typedef enum GameScreen { LOGO = 0, TITLE, GAMEPLAY, ENDING, DOOR_ANIM } GameScreen;
+typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_VIEW, FLOOR_VIEW, ROOM_VIEW, ENDING, DOOR_ANIM } GameScreen;
 // Add more includes for rl-build here
 #ifdef _WIN32
 /**
@@ -364,12 +364,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 10
+#define HELAPORDO_PATCH_VERSION 11
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.10"
+#define VERSION "1.4.11"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.5"
 

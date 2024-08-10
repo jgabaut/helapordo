@@ -1029,7 +1029,23 @@ void assassinSpecial_Venomblade(Rectangle * win, Fighter * f, Enemy * e, Boss * 
 }
 void setSpecials(Fighter *f, Koliseo *kls)
 {
-
+    char movename[80];
+    char movedesc[80];
+    for (int i = 0; i <= SPECIALSMAX; i++) {
+        kls_log(kls, "DEBUG", "Prepping Specialslot (%i)", i);
+        Specialslot *s =
+            (Specialslot *) KLS_PUSH_TYPED(kls, Specialslot, HR_Specialslot,
+                                           "Specialslot", "Specialslot");
+        s->enabled = 0;
+        s->move = i + (f->class * (SPECIALSMAX + 1));	// Assign the i-th move offsetting by classNum * specialsMax
+        s->cost = costFromSpecial(f->class, i);
+        strcpy(movename, nameStringFromSpecial(f->class, i));
+        strcpy(movedesc, descStringFromSpecial(f->class, i));
+        //printf("DEBUG\n%i\t%s\n",(i+ (f->class * (SPECIALSMAX + 1))),stringFromSpecial(f->class,i));
+        strcpy(s->name, movename);
+        strcpy(s->desc, movedesc);
+        f->specials[i] = s;
+    };
 }
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD

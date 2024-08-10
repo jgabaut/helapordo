@@ -23,11 +23,9 @@
 #endif
 
 #include "game_rl.h"
-#include "../utils/rooms.h"
+#ifdef ANVIL_BUILD
 #include "../anvil__helapordo.h"
+#endif // ANVIL_BUILD
 #include "../core/game_lore.h"
-#include <raymath.h> // Needed for: Vector2Clamp()
-
-#define MIN(a, b) ((a) < (b) ? (a) : (b)) /**< Macro used to calculate the scale of render texture. */
 void gameloop_rl(int argc, char** argv);
 #endif

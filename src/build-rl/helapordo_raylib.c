@@ -17,18 +17,6 @@
 */
 #include "helapordo_raylib.h"
 
-void ToggleFullScreenWindow(int w_W, int w_H)
-{
-    if (!IsWindowFullscreen()) {
-        int mon = GetCurrentMonitor();
-        SetWindowSize(GetMonitorWidth(mon), GetMonitorHeight(mon));
-        ToggleFullscreen();
-    } else {
-        ToggleFullscreen();
-        SetWindowSize(w_W, w_H);
-    }
-}
-
 int GetDisplayWidth(void)
 {
     if (IsWindowFullscreen()) {
@@ -59,7 +47,30 @@ void gameloop_rl(int argc, char** argv)
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
 
+    char seed[PATH_SEED_BUFSIZE+1] = {0};
+
+    bool is_seeded = false;
     int optTot = hlpd_getopt(argc, argv, whoami);
+    char player_name[21] = "";
+    char class_name[21] = "";
+    if (argc >= 2) {
+        if (argv[optTot] != NULL) {
+            memcpy(player_name, argv[optTot], 21);
+            player_name[20] = '\0';
+            log_tag("debug_log.txt", "DEBUG", "%s():    Passed player name is {%s}", __func__, player_name);
+        } else {
+            log_tag("debug_log.txt", "WARN", "%s():    Passed player name was NULL.", __func__);
+        }
+    }
+    if (argc >= 3) {
+        if (argv[optTot+1] != NULL) {
+            memcpy(class_name, argv[optTot+1], 21);
+            class_name[20] = '\0';
+            log_tag("debug_log.txt", "DEBUG", "%s():    Passed player class is {%s}", __func__, class_name);
+        } else {
+            log_tag("debug_log.txt", "WARN", "%s():    Passed player class was NULL.", __func__);
+        }
+    }
     if (G_DOTUTORIAL_ON == 1) {
         int screenWidth = 1000;
         int screenHeight = 450;
@@ -103,6 +114,7 @@ void gameloop_rl(int argc, char** argv)
                                     1, //kls_autoset_temp_regions
                                     1, //collect_stats
                                     1, //kls_verbose_lvl
+                                    1, //kls_block_usage_with_temp
                                     NULL, //kls_log_fp
                                     path_to_kls_debug_file //.kls_log_filepath
                                 );
@@ -113,6 +125,7 @@ void gameloop_rl(int argc, char** argv)
                                       1, //kls_autoset_temp_regions
                                       1, //collect_stats
                                       0, //kls_verbose_lvl
+                                      1, //kls_block_usage_with_temp
                                       stderr, //kls_log_fp
                                       NULL
                                   );
@@ -135,7 +148,7 @@ void gameloop_rl(int argc, char** argv)
         (loadInfo *) KLS_PUSH_TYPED(default_kls, loadInfo, HR_loadInfo,
                                     "loadInfo", "loadInfo");
 
-    load_info->is_new_game = 1;	//By default we do a new game
+    load_info->is_new_game = -1;     // This is used as state to prompt the user to pick between new game (1) and load game (0)
     load_info->enemy_index = -1;
     load_info->total_foes = -1;
     load_info->save_type = -1;
@@ -144,6 +157,7 @@ void gameloop_rl(int argc, char** argv)
     load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
     load_info->ptr_to_roomindex = &loaded_roomindex;
 
+    int saveslot_index = -1;  // This is used as state to prompt the user to pick a saveslot
 
     if (G_DEBUG_ENEMYTYPE_ON == 1) {
         log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ENEMYTYPE_ON == (%i)",
@@ -228,6 +242,34 @@ void gameloop_rl(int argc, char** argv)
     }
     log_tag("debug_log.txt", "[DEBUG]", "Done getopt.");
 
+    if (G_SEEDED_RUN_ON == 0) {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    G_SEEDED_RUN_ON == 0 after getopt. Rolling random seed", __func__);
+        gen_random_seed(seed);
+    } else {
+        log_tag("debug_log.txt", "[DEBUG]", "%s():    Seeded run. Checking seed: {%s}", __func__, G_SEEDED_RUN_ARG);
+        bool seed_check_res = check_seed(G_SEEDED_RUN_ARG);
+        if (seed_check_res) {
+            // Using a set seed. Uppercasing all letters
+            for (size_t i=0; i < strlen(G_SEEDED_RUN_ARG); i++) {
+                char upp = toupper(G_SEEDED_RUN_ARG[i]);
+                G_SEEDED_RUN_ARG[i] = upp;
+            }
+            strncpy(seed, G_SEEDED_RUN_ARG, PATH_SEED_BUFSIZE);
+            seed[PATH_SEED_BUFSIZE -1] = '\0';
+            is_seeded = true;
+        } else { //Go back to using a random seed
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Can't do a seeded run. Failed checking seed: {%s}. Using gen_random_seed().", __func__, G_SEEDED_RUN_ARG);
+            gen_random_seed(seed);
+            log_tag("debug_log.txt", "[DEBUG]", "%s():    Using seed: {%s}", __func__, seed);
+        }
+    }
+
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Run is%sseeded.", __func__, (is_seeded ? " " : " not "));
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Calling srand(seed)", __func__);
+
+    int hashed_seed = hlpd_hash((unsigned char*)seed);
+    srand(hashed_seed);
+
     // Clear screen and print title, wait for user to press enter
 #ifndef _WIN32
     int clearres = system("clear");
@@ -239,13 +281,8 @@ void gameloop_rl(int argc, char** argv)
             "gameloop() system(\"cls\") res was (%i)", clearres);
 #endif
 
-    if (G_EXPERIMENTAL_ON == 1) {
-        bool did_init = false;
-        int saveslot_idx = 0;
-        //TODO: handle saveslot selection instead of passing 0
-        SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_init, saveslot_idx);
-
-        log_tag("debug_log.txt", "[DEBUG]", "Loaded Save Header version {%s}\n", current_saveHeader->game_version);
+    if (G_DEBUG_ON > 0) {
+        fprintf(stderr, "%s():    Seed: {%s}\n", __func__, seed);
     }
 
     printf("\n\tDISCLAIMER: THIS BUILD IS STILL WIP.\n\n\tNO GUARANTEES ARE MADE.\n\n");
@@ -307,13 +344,8 @@ void gameloop_rl(int argc, char** argv)
     log_tag("debug_log.txt", "[DEBUG]", "gameloop() scanf() res was (%i)",
             scanfres);
 
-    log_tag("debug_log.txt", "[DEBUG]", "Prepping current_floor.");
-    kls_log(default_kls, "DEBUG", "Prepping current_floor.");
-
-    Koliseo_Temp* floor_kls = kls_temp_start(temporary_kls);
-    Floor *current_floor =
-        (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
-                                 HR_Floor, "Floor", "Floor");
+    Koliseo_Temp* floor_kls = NULL;
+    Floor *current_floor = NULL;
     // Start the random walk from the center of the dungeon
     int center_x = FLOOR_MAX_COLS / 2;
     int center_y = FLOOR_MAX_ROWS / 2;
@@ -321,72 +353,7 @@ void gameloop_rl(int argc, char** argv)
     int current_x = center_x;
     int current_y = center_y;
 
-    // Init dbg_floor
-    init_floor_layout(current_floor);
-
-    //Set center as filled
-    current_floor->floor_layout[center_x][center_y] = 1;
-
-    //Init floor rooms
-    init_floor_rooms(current_floor);
-
-    if (G_EXPERIMENTAL_ON != 1) {
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
-        //Random walk #1
-        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-        //Random walk #2
-        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-        current_floor->from_bsp = false;
-    } else {
-        if ((hlpd_rand() % 101) > 20) {
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-            floor_bsp_gen(current_floor, floor_kls, center_x, center_y);
-            current_floor->from_bsp = true;
-        } else {
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
-            //Random walk #1
-            floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-            //Random walk #2
-            floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-            current_floor->from_bsp = false;
-        }
-    }
-
-    //Set floor explored matrix
-    load_floor_explored(current_floor);
-
-    //Set room types
-    floor_set_room_types(current_floor);
-
-    if (G_EXPERIMENTAL_ON != 1) {
-        log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
-        current_x = center_x;
-        current_y = center_y;
-    } else {
-        log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
-        int home_room_x = -1;
-        int home_room_y = -1;
-        bool done_looking = false;
-        for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
-            for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
-                if (current_floor->roomclass_layout[i][j] == HOME) {
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
-                    home_room_x = i;
-                    home_room_y = j;
-                    done_looking = true;
-                }
-            }
-        }
-        if (!done_looking) {
-            log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
-        }
-        log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
-        current_x = home_room_x;
-        current_y = home_room_y;
-    }
+    char current_save_path[1500] = {0};
 
     // TODO: Initialize all required variables and load all required data here!
 
@@ -405,6 +372,32 @@ void gameloop_rl(int argc, char** argv)
     SetTextureFilter(target_txtr.texture, TEXTURE_FILTER_BILINEAR);
 
     GameScreen currentScreen = LOGO;
+    Path* game_path = NULL;
+    Fighter* player = NULL;
+    Room* current_room = NULL;
+    Gamestate* gameState = NULL;
+    char* notifications_buffer = (char*) KLS_PUSH_ARR_TYPED(default_kls, Notification, NOTIFICATIONS_RINGBUFFER_SIZE+1, HR_Notification, "Notification buffer", "Notification");
+
+    size_t ringabuf_size = rb_structsize__();
+    size_t ringabuf_align = rb_structalign__();
+
+#ifndef KOLISEO_HAS_REGION
+    RingaBuf rb_notifications = kls_push_zero_AR(default_kls, ringabuf_size, ringabuf_align, 1);
+#else
+    RingaBuf rb_notifications = kls_push_zero_typed(default_kls, ringabuf_size, ringabuf_align, 1, HR_RingaBuf, "RingaBuf for notifications", "RingaBuf");
+#endif // KOLISEO_HAS_REGION
+
+    rb_notifications = rb_new_arr(rb_notifications, notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
+    size_t capacity = rb_get_capacity(rb_notifications);
+
+    enqueue_notification("HI", 500, S4C_RED, &rb_notifications);
+
+#ifndef _WIN32
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%li}", __func__, capacity);
+#else
+    log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%lli}", __func__, capacity);
+#endif
+
 
 
     int framesCounter = 0;          // Useful to count frames
@@ -415,390 +408,183 @@ void gameloop_rl(int argc, char** argv)
     //
     int current_anim_frame = 0;
     bool pause_animation = false;
-    char time_str[20] = {0};
+    float scale = -1;
+    Vector2 mouse = {0};
+    Vector2 virtualMouse = {0};
+
+    Gui_Button bt_newgame = {
+        .r = (Rectangle){.x = 100, .y = 100, .width = 150, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "New Game",
+        .label_len = strlen("New Game"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_loadgame = {
+        .r = (Rectangle){.x = 300, .y = 100, .width = 150, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Load Game",
+        .label_len = strlen("Load Game"),
+        .box_color = ORANGE,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_namefield = {
+        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "",
+        .label_len = 0,
+        .box_color = LIGHTGRAY,
+        .text_color = BLACK,
+    };
+
+    if (strlen(player_name) > 0) {
+        player_name[20] = '\0';
+        memcpy(bt_namefield.label, player_name, 21);
+        bt_namefield.label[20] = '\0';
+        bt_namefield.label_len = strlen(bt_namefield.label);
+    }
+
+    Gui_Button bt_slot1 = {
+        .r = (Rectangle){.x = 100, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 1",
+        .label_len = strlen("Slot 1"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_slot2 = {
+        .r = (Rectangle){.x = 210, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 2",
+        .label_len = strlen("Slot 2"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_slot3 = {
+        .r = (Rectangle){.x = 320, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 3",
+        .label_len = strlen("Slot 3"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_classfield = {
+        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "",
+        .label_len = 0,
+        .box_color = LIGHTGRAY,
+        .text_color = BLACK,
+    };
+
+    if (strlen(class_name) > 0) {
+        if ((strcmp(class_name, "Knight") == 0) ||
+            (strcmp(class_name, "Archer") == 0) ||
+            (strcmp(class_name, "Mage") == 0) ||
+            (strcmp(class_name, "Assassin") == 0)) {
+            class_name[20] = '\0';
+            memcpy(bt_classfield.label, class_name, 21);
+            bt_classfield.label[20] = '\0';
+            bt_classfield.label_len = strlen(bt_classfield.label);
+        } else {
+            log_tag("debug_log.txt", "DEBUG", "%s():    Rejecting invalid class arg {%s}", __func__, class_name);
+            fprintf(stderr, "[DEBUG] [%s()]    Rejecting invalid class arg {%s}\n", __func__, class_name);
+        }
+    }
+
+    Gui_Button bt_class_knight = {
+        .r = (Rectangle){.x = 50, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Knight",
+        .label_len = strlen("Knight"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_class_archer = {
+        .r = (Rectangle){.x = 160, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Archer",
+        .label_len = strlen("Archer"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_class_mage = {
+        .r = (Rectangle){.x = 270, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Mage",
+        .label_len = strlen("Mage"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_class_assassin = {
+        .r = (Rectangle){.x = 380, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Assassin",
+        .label_len = strlen("Assassin"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_State gui_state = (Gui_State) {
+        .scale = scale,
+        .gameScreenWidth = gameScreenWidth,
+        .gameScreenHeight = gameScreenHeight,
+        .currentScreen = currentScreen,
+        .framesCounter = framesCounter,
+        .mouse = mouse,
+        .virtualMouse = virtualMouse,
+        .buttons = {
+            [BUTTON_NEW_GAME] = bt_newgame,
+            [BUTTON_LOAD_GAME] = bt_loadgame,
+            [BUTTON_CLASS_TXTFIELD] = bt_classfield,
+            [BUTTON_CLASS_KNIGHT] = bt_class_knight,
+            [BUTTON_CLASS_ARCHER] = bt_class_archer,
+            [BUTTON_CLASS_MAGE] = bt_class_mage,
+            [BUTTON_CLASS_ASSASSIN] = bt_class_assassin,
+            [BUTTON_NAME_TXTFIELD] = bt_namefield,
+            [BUTTON_SAVESLOT_1] = bt_slot1,
+            [BUTTON_SAVESLOT_2] = bt_slot2,
+            [BUTTON_SAVESLOT_3] = bt_slot3,
+        },
+        .theme = {
+            .bg_color = GRAY,
+            .txt_color = DARKGRAY,
+        },
+    };
+
+    int roomsDone = 0;
+    int enemyTotal = -1;
 
     while (!WindowShouldClose()) {
         // Update
         //----------------------------------------------------------------------------------
         //
-        float scale = MIN((float)GetScreenWidth()/gameScreenWidth, (float)GetScreenHeight()/gameScreenHeight);
 
-        Vector2 mouse = GetMousePosition();
-
-        Vector2 virtualMouse = {0};
-
-        virtualMouse.x = (mouse.x - (GetScreenWidth() - (gameScreenWidth*scale))*0.0f)/scale;
-        virtualMouse.y = (mouse.y - (GetScreenHeight() - (gameScreenHeight*scale))*0.0f)/scale;
-        virtualMouse = Vector2Clamp(virtualMouse, (Vector2) {
-            0, 0
-        }, (Vector2) {
-            (float)gameScreenWidth, (float)gameScreenHeight
-        } );
-
-        if (IsKeyPressed(KEY_F) && IsKeyDown(KEY_LEFT_ALT)) {
-            ToggleFullScreenWindow(gameScreenWidth, gameScreenHeight);
-        }
-
-        switch(currentScreen) {
-        case LOGO: {
-            // TODO: Update LOGO screen variables here!
-
-            framesCounter++;    // Count frames
-
-            // Wait for 2 seconds (120 frames) before jumping to TITLE screen
-            if (framesCounter > logo_sleep) {
-                currentScreen = TITLE;
-            }
-        }
-        break;
-        case TITLE: {
-            // TODO: Update TITLE screen variables here!
-
-            // Press enter to change to GAMEPLAY screen
-            if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-                currentScreen = GAMEPLAY;
-            }
-        }
-        break;
-        case GAMEPLAY: {
-            // TODO: Update GAMEPLAY screen variables here!
-            framesCounter++;    // Count frames
-
-            // Press enter to change to ENDING screen
-            if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-                currentScreen = ENDING;
-            }
-            if (IsKeyPressed(KEY_P)) {
-                pause_animation = !pause_animation;
-            }
-            if (IsKeyPressed(KEY_R)) {
-                fprintf(stderr,"%s\n", "Regenerating current floor");
-                kls_temp_end(floor_kls);
-                kls_free(temporary_kls);
-                temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
-                current_floor =
-                    (Floor *) KLS_PUSH_TYPED(temporary_kls, Floor,
-                                             HR_Floor, "Floor", "Floor");
-                // Init dbg_floor
-                init_floor_layout(current_floor);
-
-                //Set center as filled
-                current_floor->floor_layout[center_x][center_y] = 1;
-
-                //Init floor rooms
-                init_floor_rooms(current_floor);
-                floor_kls = kls_temp_start(temporary_kls);
-
-                if (G_EXPERIMENTAL_ON != 1) {
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init, no experimental.", __func__);
-                    //Random walk #1
-                    floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                    //Random walk #2
-                    floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-                    current_floor->from_bsp = false;
-                } else {
-                    if ((hlpd_rand() % 101) > 20) {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
-                        floor_bsp_gen(current_floor, floor_kls, center_x, center_y);
-                        current_floor->from_bsp = true;
-                    } else {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
-                        //Random walk #1
-                        floor_random_walk(current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
-                        //Random walk #2
-                        floor_random_walk(current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
-                        current_floor->from_bsp = false;
-                    }
-                }
-
-                //Set floor explored matrix
-                load_floor_explored(current_floor);
-
-                //Set room types
-                floor_set_room_types(current_floor);
-
-                if (G_EXPERIMENTAL_ON != 1) {
-                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
-                    current_x = center_x;
-                    current_y = center_y;
-                } else {
-                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
-                    int home_room_x = -1;
-                    int home_room_y = -1;
-                    bool done_looking = false;
-                    for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
-                        for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
-                            if (current_floor->roomclass_layout[i][j] == HOME) {
-                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
-                                home_room_x = i;
-                                home_room_y = j;
-                                done_looking = true;
-                            }
-                        }
-                    }
-                    if (!done_looking) {
-                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
-                        kls_free(default_kls);
-                        kls_free(temporary_kls);
-                        exit(EXIT_FAILURE);
-                    }
-                    log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
-                    current_x = home_room_x;
-                    current_y = home_room_y;
-                }
-
-            }
-            if (IsKeyPressed(KEY_UP)) {
-                step_floor(current_floor, &current_x,
-                           &current_y, KEY_UP);
-                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
-                    currentScreen = DOOR_ANIM;
-                    current_anim_frame = 0;
-                    break;
-                }
-            }
-            if (IsKeyPressed(KEY_DOWN)) {
-                step_floor(current_floor, &current_x,
-                           &current_y, KEY_DOWN);
-                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
-                    currentScreen = DOOR_ANIM;
-                    current_anim_frame = 0;
-                    break;
-                }
-            }
-            if (IsKeyPressed(KEY_LEFT)) {
-                step_floor(current_floor, &current_x,
-                           &current_y, KEY_LEFT);
-                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
-                    currentScreen = DOOR_ANIM;
-                    current_anim_frame = 0;
-                    break;
-                }
-            }
-            if (IsKeyPressed(KEY_RIGHT)) {
-                step_floor(current_floor, &current_x,
-                           &current_y, KEY_RIGHT);
-                if (current_floor->roomclass_layout[current_x][current_y] != BASIC) {
-                    currentScreen = DOOR_ANIM;
-                    current_anim_frame = 0;
-                    break;
-                }
-            }
-            if (!pause_animation) {
-                current_anim_frame = framesCounter%60;
-            }
-        }
-        break;
-        case ENDING: {
-            // TODO: Update ENDING screen variables here!
-
-            // Press enter to return to TITLE screen
-            if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-                currentScreen = TITLE;
-            }
-        }
-        break;
-        case DOOR_ANIM: {
-            // TODO: Update DOOR_ANIM screen variables here!
-            framesCounter++;    // Count frames
-            // Press enter to return to gameplay screen
-            if (current_anim_frame == 59 || IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-                currentScreen = GAMEPLAY;
-                break;
-            }
-            current_anim_frame++;
-        }
-        break;
-        default:
-            break;
-        }
-
+        update_GameScreen(&gui_state, &current_floor, &game_path, &player, &current_room, &gameState, &rb_notifications, &current_x, &current_y, logo_sleep, &pause_animation, &floor_kls, temporary_kls_conf, &current_anim_frame, load_info, &saveslot_index, current_save_path, seed, is_seeded, &roomsDone, &enemyTotal);
         //----------------------------------------------------------------------------------
 
         // Draw render texture, will not go on screen yet
         //----------------------------------------------------------------------------------
-        BeginTextureMode(target_txtr);
-        ClearBackground(RAYWHITE);
-        switch(currentScreen) {
-        case LOGO: {
-            // TODO: Draw LOGO screen here!
-            DrawText("LOGO SCREEN", 20, 20, 40, LIGHTGRAY);
-            DrawText("WIP", 20, 50, 20, RED);
-            DrawText("WAIT for 2 SECONDS...", 20, 90, 20, GRAY);
-#ifdef KOLISEO_HAS_TITLE
-            for (int i = 0;  i <  KLS_TITLEROWS+1; i++) {
-                DrawText(kls_title[i], 0, i*12, 12, BLACK);
-            }
-#endif // KOLISEO_HAS_TITLE
-        }
-        break;
-        case TITLE: {
-            // TODO: Draw TITLE screen here!
-            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, GREEN);
-            DrawText(TextFormat("Default Mouse: [%i, %i]", (int)mouse.x, (int)mouse.y), 350, 25, 20, WHITE);
-            DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)virtualMouse.x, (int)virtualMouse.y), 350, 55, 20, YELLOW);
-            DrawText("TITLE SCREEN", 20, 20, 40, DARKGREEN);
-            DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 110, 220, 20, DARKGREEN);
-            DrawText("Controls for GAMEPLAY screen", 110, 250, 20, MAROON);
-            DrawText("Arrow keys to move", 110, 280, 20, MAROON);
-            DrawText("PRESS R to regen floor", 110, 310, 20, MAROON);
-            DrawText("PRESS P to pause animations", 110, 350, 20, MAROON);
-            DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, MAROON);
-
-            char txt[30] = {0};
-            char txt_b[30] = {0};
-            char txt_s4c[30] = {0};
-            int txt_StartX = gameScreenWidth * 0.4f;
-            int txt_StartY = gameScreenHeight * 0.85f;
-            DrawRectangle(txt_StartX, txt_StartY, gameScreenWidth - txt_StartX, gameScreenHeight - txt_StartY, YELLOW);
-            sprintf(txt,"Koliseo API version: %i\n", int_koliseo_version());
-            DrawText(txt, txt_StartX + ( txt_StartX * 0.16), txt_StartY, 20, BLACK);
-            sprintf(txt_b,"Koliseo version: %s\n", string_koliseo_version());
-            DrawText(txt_b, txt_StartX + ( txt_StartX * 0.16), txt_StartY + 20, 20, BLACK);
-            sprintf(txt_s4c,"s4c-animate version: %s\n", S4C_ANIMATE_VERSION );
-            DrawText(txt_s4c, txt_StartX + ( txt_StartX * 0.16), txt_StartY + 40, 20, BLACK);
-        }
-        break;
-        case GAMEPLAY: {
-            // TODO: Draw GAMEPLAY screen here!
-            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, RAYWHITE);
-            DrawText("GAMEPLAY SCREEN", 20, 20, 40, MAROON);
-            DrawText("WIP", 20, gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 110, 240, 20, MAROON);
-            int pl_rect_Y = gameScreenHeight * 0.1f;
-            int pl_frame_W = gameScreenWidth * 0.2f;
-            int pl_frame_H = pl_frame_W;
-            int pl_rect_X = gameScreenWidth - pl_frame_W;
-            int en_rect_X = gameScreenWidth *0.1f;
-            int en_rect_Y = pl_rect_Y;
-            int en_frame_W = pl_frame_W;
-            int en_frame_H = pl_frame_H;
-            float stats_label_W = gameScreenWidth * 0.1f;
-            float stats_label_H = stats_label_W;
-            Rectangle stats_label_r = CLITERAL(Rectangle) {
-                gameScreenWidth*0.5f - (stats_label_W/2),
-                                en_rect_Y,
-                                stats_label_W,
-                                stats_label_H
-            };
-            Rectangle pl_r = CLITERAL(Rectangle) {
-                pl_rect_X,
-                pl_rect_Y,
-                pl_frame_W,
-                pl_frame_H
-            };
-            Rectangle en_r = CLITERAL(Rectangle) {
-                en_rect_X,
-                en_rect_Y,
-                en_frame_W,
-                en_frame_H
-            };
-            //TODO: count time by real_clock difference from last frame
-            time_t framesTime = framesCounter / fps_target ;// GetFPS();
-            struct tm* time_tm = localtime(&framesTime);
-
-            if (time_tm == NULL) {
-                fprintf(stderr, "%s():    time_tm was NULL.\n", __func__);
-            } else {
-                strftime(time_str, 20, "Time: %M:%S", time_tm);
-                DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
-            }
-            DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
-            int pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-            int en_res = DrawSpriteRect(zombie_walk[current_anim_frame], en_r, 17, 17, en_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-
-            Rectangle floor_r = CLITERAL(Rectangle) {
-                gameScreenHeight *0.5f,
-                                 gameScreenWidth *0.5f,
-                                 FLOOR_MAX_COLS * (gameScreenWidth*0.01f),
-                                 FLOOR_MAX_ROWS * (gameScreenWidth*0.01f),
-            };
-
-            //DrawRectangleRec(floor_r, ColorFromS4CPalette(palette, S4C_SALMON));
-
-            if (G_EXPERIMENTAL_ON != 1) {
-                draw_floor_view(current_floor, current_x, current_y, gameScreenWidth*0.01f, &floor_r);
-            } else {
-                display_roomclass_layout(current_floor, &floor_r, scale);
-            }
-
-            /*
-            int center_x = FLOOR_MAX_COLS / 2;
-            int center_y = FLOOR_MAX_ROWS / 2;
-            draw_floor_view(current_floor, center_x, center_y, sprite_w_factor, &floor_r);
-            */
-            //display_floor_layout(current_floor, &floor_r, sprite_w_factor);
-            //display_explored_layout(current_floor, &floor_r, sprite_w_factor);
-            /*
-            Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);
-            Rectangle st_pl_coll = GetCollisionRec(stats_label_r,pl_r);
-            Rectangle st_en_coll = GetCollisionRec(stats_label_r,en_r);
-            */
-            // Draw collision boxes
-            //DrawRectangleRec(en_pl_coll, ColorFromS4CPalette(palette, S4C_TEAL));
-            //DrawRectangleRec(st_pl_coll, ColorFromS4CPalette(palette, S4C_MAGENTA));
-            //DrawRectangleRec(st_en_coll, ColorFromS4CPalette(palette, S4C_CYAN));
-            /* Draw expected boxes
-            Color en_c = ColorFromS4CPalette(palette, S4C_CYAN);
-            Color pl_c = ColorFromS4CPalette(palette, S4C_MAGENTA);
-            Color st_c = ColorFromS4CPalette(palette, S4C_TEAL);
-            en_c.a = 125;
-            pl_c.a = 125;
-            st_c.a = 125;
-            DrawRectangleRec(en_r, en_c);
-            DrawRectangleRec(pl_r, pl_c);
-            DrawRectangleRec(stats_label_r, st_c);
-            */
-
-            if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
-                DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
-                DrawText("Window too small.", 20, 20, 20, RAYWHITE);
-                DrawText("Please resize.", 20, 50, 20, RAYWHITE);
-            }
-        }
-        break;
-        case ENDING: {
-            // TODO: Draw ENDING screen here!
-            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, BLUE);
-            DrawText("ENDING SCREEN", 20, 20, 40, DARKBLUE);
-            DrawText("WIP", 20, gameScreenHeight - (10 * scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("PRESS ENTER or TAP to RETURN to TITLE SCREEN", 120, 220, 20, DARKBLUE);
-        }
-        break;
-        case DOOR_ANIM: {
-            // TODO: Draw ENDING screen here!
-            DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette,S4C_TEAL));
-            DrawText("DOOR SCREEN", 20, 20, 40, DARKBLUE);
-            DrawText("WIP", 20, gameScreenHeight - (10 * scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            DrawText("PRESS ENTER or TAP to RETURN to GAMEPLAY SCREEN", 120, 220, 20, DARKBLUE);
-
-            int door_frame_W = 21;
-            int door_frame_H = 21;
-            int door_rect_X = (gameScreenWidth/2) - ((door_frame_W * scale * 5.5) /2);
-            int door_rect_Y = (gameScreenHeight/2) - ((door_frame_H * scale * 5.5) /2);
-            Rectangle door_r = CLITERAL(Rectangle) {
-                door_rect_X,
-                door_rect_Y,
-                door_frame_W * scale * 5.5,
-                door_frame_H * scale * 5.5,
-            };
-            int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, door_frame_H, door_frame_W, scale*5.5, palette, PALETTE_S4C_H_TOTCOLORS);
-            if (door_res != 0 ) {
-                DrawRectangle(0, 0, gameScreenWidth, gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
-                DrawText("Window too small.", 20, 20, 20, RAYWHITE);
-                DrawText("Please resize.", 20, 50, 20, RAYWHITE);
-                current_anim_frame--;
-            }
-        }
-        break;
-        default: {
-            break;
-        }
-        }
-
-        EndTextureMode();
-
+        draw_GameScreen_Texture(target_txtr, gui_state, fps_target, current_anim_frame, current_floor, game_path, player, current_room, gameState, &rb_notifications, current_x, current_y, load_info, saveslot_index, current_save_path, seed);
         //----------------------------------------------------------------------------------
 
         // Draw
@@ -810,7 +596,7 @@ void gameloop_rl(int argc, char** argv)
         DrawTexturePro(target_txtr.texture, (Rectangle) {
             0.0f, 0.0f, (float)target_txtr.texture.width, (float)-target_txtr.texture.height
         }, (Rectangle) {
-            (GetScreenWidth() - ((float) gameScreenWidth*scale))*0.5f, (GetScreenHeight() - ((float) gameScreenHeight*scale))*0.5f, (float) gameScreenWidth*scale, (float) gameScreenHeight*scale
+            (GetScreenWidth() - ((float) gui_state.gameScreenWidth * gui_state.scale))*0.5f, (GetScreenHeight() - ((float) gui_state.gameScreenHeight * gui_state.scale))*0.5f, (float) gui_state.gameScreenWidth * gui_state.scale, (float) gui_state.gameScreenHeight * gui_state.scale
         }, (Vector2) {
             0, 0
         }, 0.0f, WHITE);

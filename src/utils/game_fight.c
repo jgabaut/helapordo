@@ -323,9 +323,8 @@ int fight(Fighter *player, Enemy *e, Koliseo *kls, RingaBuf* rb_notifications)
  * @see dropConsumable()
  * @see dropEquip()
  * @see dropArtifact()
- * @param player The Fighter pointer at hand.
+ * @param target The Fighter pointer at hand.
  * @param e The Enemy pointer at hand.
- * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
  * @param rb_notifications The RingaBuf used for notifications.
  * @see enqueue_notification()
@@ -1017,7 +1016,6 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
  * @param player The Fighter pointer at hand.
  * @param b The Enemy pointer at hand.
  * @param p The Path pointer for the game.
- * @param notify_win The WINDOW pointer to call display_notification() on.
  * @param kls The Koliseo used for allocations.
  * @param rb_notifications The RingaBuf used for notifications.
  * @see enqueue_notification()
@@ -1604,6 +1602,7 @@ int boss_attack(Boss *b, Fighter *target, Path *p,
  * @see boss_fight()
  * @param player The Fighter pointer at hand.
  * @param b The Boss pointer at hand.
+ * @param p The Path pointer for the game.
  * @param foe_op The foeTurnOption_OP for the foe.
  * @param kls The Koliseo used for allocations.
  * @param rb_notifications The RingaBuf used for notifications.
@@ -1769,6 +1768,7 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
  * @see do_Skill_boss()
  * @param player The Fighter pointer at hand.
  * @param b The Boss pointer at hand.
+ * @param p The Path pointer for the game.
  * @param picked_skill The skill picked by Fighter.
  * @param foe_op The foeTurnOption_OP for the foe.
  * @param kls The Koliseo used for allocations.
