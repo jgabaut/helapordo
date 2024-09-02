@@ -344,21 +344,6 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
             kls_showList_toFile(temporary_kls->regs, kls_file);
             kls_usageReport_toFile(temporary_kls, kls_file);
             fprintf(kls_file, "--END debug of temporary_kls--\n\n");
-            WINDOW *win = NULL;
-            /* Initialize curses */
-            clear();
-            refresh();
-            start_color();
-            cbreak();
-            noecho();
-            keypad(stdscr, TRUE);
-            win = newwin(20, 50, 1, 2);
-            keypad(win, TRUE);
-            wclear(win);
-            wrefresh(win);
-            kls_showList_toWin(temporary_kls, win);
-            delwin(win);
-            endwin();
 
             fclose(kls_file);
         }
@@ -431,21 +416,6 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
             kls_showList_toFile(kls->regs, kls_file);
             kls_usageReport_toFile(kls, kls_file);
             fprintf(kls_file, "--END debug of passed kls--\n\n");
-            WINDOW *win = NULL;
-            /* Initialize curses */
-            clear();
-            refresh();
-            start_color();
-            cbreak();
-            noecho();
-            keypad(stdscr, TRUE);
-            win = newwin(20, 50, 1, 2);
-            keypad(win, TRUE);
-            wclear(win);
-            wrefresh(win);
-            kls_showList_toWin(kls, win);
-            delwin(win);
-            endwin();
 
             fclose(kls_file);
         }
@@ -1014,21 +984,6 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
             kls_showList_toFile(temporary_kls->regs, kls_file);
             kls_usageReport_toFile(temporary_kls, kls_file);
             fprintf(kls_file, "--END debug of temporary_kls--\n\n");
-            WINDOW *win = NULL;
-            /* Initialize curses */
-            clear();
-            refresh();
-            start_color();
-            cbreak();
-            noecho();
-            keypad(stdscr, TRUE);
-            win = newwin(20, 50, 1, 2);
-            keypad(win, TRUE);
-            wclear(win);
-            wrefresh(win);
-            kls_showList_toWin(temporary_kls, win);
-            delwin(win);
-            endwin();
 
             fclose(kls_file);
         }
@@ -1101,21 +1056,6 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
             kls_showList_toFile(kls->regs, kls_file);
             kls_usageReport_toFile(kls, kls_file);
             fprintf(kls_file, "--END debug of passed kls--\n\n");
-            WINDOW *win = NULL;
-            /* Initialize curses */
-            clear();
-            refresh();
-            start_color();
-            cbreak();
-            noecho();
-            keypad(stdscr, TRUE);
-            win = newwin(20, 50, 1, 2);
-            keypad(win, TRUE);
-            wclear(win);
-            wrefresh(win);
-            kls_showList_toWin(kls, win);
-            delwin(win);
-            endwin();
             fclose(kls_file);
         }
         break;
