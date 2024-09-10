@@ -8,7 +8,7 @@
 
   Here's a gif of a new game being started.
 
-  ![Gif of game screen](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExc2x0eHJhYjkwYjJwMHVwMnN2eWF6a3U1NHNpYjRqamZuMDQxbHgyaiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wNJsbCHDtXmoK614vE/giphy.gif)
+  ![Gif of game screen](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjZvM2o4cGZrYnp1ZjBqMHg0bjN3ZHNkNGZmMTl3bDRzdXpnc2xidCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3IwUfOkjcxWg2cQuIU/giphy.gif)
 
 
 ## Table of Contents <a name = "index"></a>
