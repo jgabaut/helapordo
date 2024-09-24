@@ -1243,7 +1243,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
 
         char txt[30] = {0};
         char txt_b[30] = {0};
-        char txt_s4c[30] = {0};
+        char txt_s4c[50] = {0};
         int txt_StartX = gui_state.gameScreenWidth * 0.4f;
         int txt_StartY = gui_state.gameScreenHeight * 0.85f;
         DrawRectangle(txt_StartX, txt_StartY, gui_state.gameScreenWidth - txt_StartX, gui_state.gameScreenHeight - txt_StartY, YELLOW);

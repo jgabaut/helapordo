@@ -13,9 +13,6 @@
 [submodule "s4c-scripts"]
 	path = s4c-scripts
 	url = git@github.com:jgabaut/s4c-scripts.git
-[submodule "s4c-gui"]
-	path = s4c-gui
-	url = git@github.com:jgabaut/s4c-gui.git
 [submodule "ringabuf"]
 	path = ringabuf
 	url = git@github.com:jgabaut/ringabuf.git

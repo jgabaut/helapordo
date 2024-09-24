@@ -96,7 +96,7 @@ typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_
 #undef far
 #endif
 
-#include "../palette.h" /**< Defines the color palette used for the s4c functions, includes animate.h.*/
+#include "../palette.h" /**< Defines the color palette used for the s4c functions, includes s4c.h.*/
 
 extern const char* helapordo_title_string; /**< Defines a formatted string for title output to FILE.*/
 
@@ -364,12 +364,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 11
+#define HELAPORDO_PATCH_VERSION 12
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.11"
+#define VERSION "1.4.12-dev"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.5"
 

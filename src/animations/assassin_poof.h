@@ -18,7 +18,7 @@
 #ifndef ASSASSIN_POOF_S4C_H_
 #define ASSASSIN_POOF_S4C_H_
 #define ASSASSIN_POOF_S4C_H_VERSION "0.2.2"
-#include "../../sprites4curses/s4c-animate/animate.h"
+#include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for assassin_poof.
