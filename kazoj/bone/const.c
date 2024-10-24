@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #define HELAPORDO_CURSES_BUILD
+#define S4C_HAS_ANIMATE
 #include "../../src/core/game_core.h"
 #include "../../src/ser/ser_core.h"
 
