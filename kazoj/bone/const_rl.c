@@ -11,7 +11,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.4.11") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.4.12") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (HLP_MAX_INDEX == 35) ) {
