@@ -98,8 +98,8 @@ int main(void) {
  if ( ! (PERKSMAX == 8) ) {
    fail("PERKSMAX",8,PERKSMAX);
  };
- if ( ! (sizeof(SerGamestate) == 7828) ) {
-   fail("sizeof(SerGamestate", 7828, sizeof(SerGamestate));
+ if ( ! (sizeof(SerGamestate) == 7831) ) {
+   fail("sizeof(SerGamestate", 7831, sizeof(SerGamestate));
  };
  if ( ! (sizeof(SerSaveHeader) == 68) ) {
    fail("sizeof(SerSaveHeader", 68, sizeof(SerSaveHeader));
