@@ -27,6 +27,8 @@
 
 ## Latest Release <a name = "latest_release"></a>
 
+  [![GitHub commits since tagged version](https://img.shields.io/github/commits-since/jgabaut/helapordo/1.4.0)](https://github.com/jgabaut/helapordo/commits/master)
+
   📦 v1.4.11 10/08/2024
   I try to upload precompiled binaries for the `ncurses` build:
 
