@@ -81,7 +81,7 @@ void gameloop(int argc, char **argv)
                                     1, //kls_verbose_lvl
                                     1, // block_on_has_temp
                                     NULL, //kls_log_fp
-                                    path_to_kls_debug_file //.kls_log_filepath
+                                    path_to_kls_debug_file //kls_log_filepath
                                 );
     KLS_Conf temporary_kls_conf = kls_conf_init(
                                       1, //kls_autoset_regions
@@ -92,7 +92,7 @@ void gameloop(int argc, char **argv)
                                       0, //kls_verbose_lvl
                                       1, // block_on_has_temp
                                       stderr, //kls_log_fp
-                                      NULL
+                                      NULL //kls_log_filepath
                                   );
 
     char seed[PATH_SEED_BUFSIZE+1] = {0};

@@ -18,7 +18,7 @@
 #ifndef TROLL_CLUB_S4C_H_
 #define TROLL_CLUB_S4C_H_
 #define TROLL_CLUB_S4C_H_VERSION "0.2.2"
-#include "../../sprites4curses/s4c-animate/animate.h"
+#include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for troll_club.

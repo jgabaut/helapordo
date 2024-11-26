@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #define HELAPORDO_RAYLIB_BUILD
+#define S4C_HAS_ANIMATE
 #include "../../src/core/game_core.h"
 #include "../../src/ser/ser_core.h"
 #include <raylib.h>
@@ -11,7 +12,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.4.11") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.4.12") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (HLP_MAX_INDEX == 35) ) {
@@ -98,8 +99,8 @@ int main(void) {
  if ( ! (PERKSMAX == 8) ) {
    fail("PERKSMAX",8,PERKSMAX);
  };
- if ( ! (sizeof(SerGamestate) == 7828) ) {
-   fail("sizeof(SerGamestate", 7828, sizeof(SerGamestate));
+ if ( ! (sizeof(SerGamestate) == 7831) ) {
+   fail("sizeof(SerGamestate", 7831, sizeof(SerGamestate));
  };
  if ( ! (sizeof(SerSaveHeader) == 68) ) {
    fail("sizeof(SerSaveHeader", 68, sizeof(SerSaveHeader));

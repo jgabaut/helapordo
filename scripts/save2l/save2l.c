@@ -49,7 +49,7 @@ int main(int argc, char** argv)
         const char* dir_arg = argv[1];
         bool res = read_savedir(dir_arg);
         if (!res) {
-            fprintf(stderr, "%s():    Failed read_savedir().", __func__);
+            fprintf(stderr, "%s():    Failed read_savedir().\n", __func__);
         }
     }
     return 0;

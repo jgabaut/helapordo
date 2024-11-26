@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.4.11], [jgabaut@github.com])
+AC_INIT([helapordo], [1.4.12], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -37,7 +37,7 @@ AC_ARG_ENABLE([raylib],
 AC_ARG_ENABLE([anvil],
   [AS_HELP_STRING([--enable-anvil], [Enable anvil-backed build])],
   [enable_anvil=$enableval],
-  [enable_anvil=yes])
+  [enable_anvil=no])
 
 AC_ARG_ENABLE([emoji],
   [AS_HELP_STRING([--enable-emoji], [Enable emoji icons of equips])],
@@ -64,7 +64,7 @@ case "${host_os}" in
         if test "$enable_raylib" = "yes"; then
             echo "CONF    Building with raylib"
             build_raylib=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DS4C_HAS_ANIMATE -DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lraylib -lm -lgdi32 -lwinmm -static"])
             AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
             AC_SUBST([OS], ["w64-mingw32"])
@@ -81,7 +81,7 @@ case "${host_os}" in
             echo "CONF    Building with ncurses"
             #build_raylib=no
             #build_curses=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DKOLISEO_HAS_CURSES -DNCURSES_NO_PADDING -DNCURSES_STATIC -DS4C_UNCHECKED"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DNCURSES_NO_PADDING -DNCURSES_STATIC -DS4C_HAS_ANIMATE -DS4C_HAS_GUI -DS4C_UNCHECKED"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lpanelw -lmenuw -lncursesw -static"])
             AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
             AC_SUBST([OS], ["w64-mingw32"])
@@ -104,7 +104,7 @@ case "${host_os}" in
             echo "CONF    Building with raylib"
             build_raylib=yes
             build_curses=no
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/raylib/include -DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/raylib/include -DS4C_HAS_ANIMATE -DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/raylib/lib -lraylib"])
             AC_SUBST([OS], ["darwin"])
             AC_SUBST([TARGET], ["helapordo"])
@@ -120,7 +120,7 @@ case "${host_os}" in
             echo "CONF    Building with ncurses"
             #build_raylib=no
             #build_curses=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/ncurses/include -DKOLISEO_HAS_CURSES -DNCURSES_NO_PADDING -DS4C_UNCHECKED"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/ncurses/include -DNCURSES_NO_PADDING -DS4C_HAS_ANIMATE -DS4C_HAS_GUI -DS4C_UNCHECKED"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/ncurses/lib -lmenu -lpanel -lncurses"])
             AC_SUBST([OS], ["darwin"])
             AC_SUBST([TARGET], ["helapordo"])
@@ -142,7 +142,7 @@ case "${host_os}" in
             echo "CONF    Building with raylib"
             build_raylib=yes
             build_curses=no
-            AC_SUBST([HELAPORDO_CFLAGS], ["-DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-DS4C_HAS_ANIMATE -DS4C_RAYLIB_EXTENSION -DS4C_RL_QUIETER"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-lraylib"])
             AC_SUBST([OS], ["Linux"])
             AC_SUBST([CCOMP], ["gcc"]) #Yes
@@ -160,7 +160,7 @@ case "${host_os}" in
             echo "CONF    Building with ncurses"
             #build_raylib=no
             #build_curses=yes
-            AC_SUBST([HELAPORDO_CFLAGS], ["-DKOLISEO_HAS_CURSES -DNCURSES_NO_PADDING -DS4C_UNCHECKED"])
+            AC_SUBST([HELAPORDO_CFLAGS], ["-DNCURSES_NO_PADDING -DS4C_HAS_ANIMATE -DS4C_HAS_GUI -DS4C_UNCHECKED"])
             AC_SUBST([HELAPORDO_LDFLAGS], ["-lmenu -lpanel -lncurses"])
             AC_SUBST([OS], ["Linux"])
             AC_SUBST([CCOMP], ["gcc"]) #Yes
@@ -193,7 +193,7 @@ AM_CONDITIONAL([USE_DEFAULT_BACKGROUND], [test "$enable_default_background" = "y
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.4.11"
+  VERSION="1.4.12"
 fi
 
 # Output variables to the config.h header
