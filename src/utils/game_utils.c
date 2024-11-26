@@ -4398,7 +4398,7 @@ int retry(char* seed)
             *ptr = tolower(*ptr);
         }
 
-        if ( (c[0] == '\0') || (strcmp(c, "no") == 0) || (strcmp(c, "n") == 0) ) {
+        if ((c[0] == '\0') || (strcmp(c, "no") == 0) || (strcmp(c, "n") == 0) ) {
             log_tag("debug_log.txt", "[DEBUG]", "%s(): input was no.",
                     __func__);
             return 0;

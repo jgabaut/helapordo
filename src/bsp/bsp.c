@@ -419,7 +419,7 @@ void draw_BSP_Room(WINDOW* win, BSP_Room* bsp_room, int start_y, int start_x, in
 
     if (bsp_room->child_left != NULL && bsp_room->child_right != NULL) {
         draw_BSP_Room(win, bsp_room->child_left, start_y, start_x, (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
-        draw_BSP_Room(win, bsp_room->child_right, start_y, start_x,  (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
+        draw_BSP_Room(win, bsp_room->child_right, start_y, start_x, (depth+1 == PALETTE_S4C_H_TOTCOLORS ? 0 : depth+1));
     } else {
         wattron(win, COLOR_PAIR(depth+9));
         for (int i=0; i<4; i++) {
