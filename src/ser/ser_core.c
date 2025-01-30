@@ -2654,7 +2654,7 @@ bool deser_Gamestate(SerGamestate* ser, Gamestate* deser)
 
     deser->current_fighters = ser->current_fighters;
 
-    deser->current_roomtype = deser->current_roomtype;
+    deser->current_roomtype = ser->current_roomtype;
     deser->current_room_index = ser->current_room_index;
     deser->current_enemy_index = ser->current_enemy_index;
 
