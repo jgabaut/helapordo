@@ -95,7 +95,7 @@
 
 ### Autoreconf and ./configure <a name = "autotools"></a>
 
-  You may need to run `automake --add-missing` to ensure your system provides the missing files needed by `autoreconf`.
+  You may need to run `aclocal` and `automake --add-missing` to ensure your system provides the missing files needed by `autoreconf`.
 
   Run `autoreconf` to generate the `./configure` script. Run the script to generate the `Makefile` used for the project.
 
