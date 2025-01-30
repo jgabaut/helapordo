@@ -319,19 +319,19 @@ typedef struct __attribute__((packed)) SerCountstats {
 #pragma pack(push, 1)
 typedef struct SerCountstats {
 #endif
-    int8_t enemieskilled;	   /**< How many enemies were defeated*/
-    int8_t consumablesfound;     /**< How many consumabls were found*/
-    int8_t equipsfound;	 /**< How many equips were found*/
-    int8_t artifactsfound;	    /**< How many artifacts were found*/
-    int8_t criticalhits;	  /**< How many criticals were dealt*/
-    int8_t roomscompleted;	    /**< How many rooms were completed*/
-    int8_t floorscompleted;     /**< How many floors were completed*/
-    int8_t specialsunlocked;     /**< How many special move were unlocked*/
-    int8_t coinsfound;	/**< How many coins you found in total*/
-    int8_t bosseskilled;	  /**< How many bosses were defeated*/
+    int32_t enemieskilled;	   /**< How many enemies were defeated*/
+    int32_t consumablesfound;     /**< How many consumabls were found*/
+    int32_t equipsfound;	 /**< How many equips were found*/
+    int32_t artifactsfound;	    /**< How many artifacts were found*/
+    int32_t criticalhits;	  /**< How many criticals were dealt*/
+    int32_t roomscompleted;	    /**< How many rooms were completed*/
+    int32_t floorscompleted;     /**< How many floors were completed*/
+    int32_t specialsunlocked;     /**< How many special move were unlocked*/
+    int32_t coinsfound;	/**< How many coins you found in total*/
+    int32_t bosseskilled;	  /**< How many bosses were defeated*/
     int8_t unique_bosseskilled;	 /**< How many unique bosses were defeated*/
     int8_t killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
-    int8_t keysfound;     /**< How many keys you found in total*/
+    int32_t keysfound;     /**< How many keys you found in total*/
 #ifdef __GNUC__
 } SerCountstats;
 #else
