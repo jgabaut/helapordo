@@ -113,7 +113,7 @@ void initCounters(Fighter *f, Koliseo *kls)
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof(stringFromStatus(i)),
+                (char *)KLS_PUSH_ARR_TYPED(kls, char *, strlen(stringFromStatus(i))+1,
                                            HR_Turncounter_desc, "Turncounter desc",
                                            "Turncounter desc");
             strcpy(c->desc, stringFromStatus(i));
@@ -265,7 +265,7 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
         if (i < STATUSMAX + 1) {
             c->desc =
                 (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                             sizeof(stringFromStatus(i)),
+                                             strlen(stringFromStatus(i)) +1,
                                              HR_Turncounter_desc,
                                              "Turncounter desc",
                                              "Turncounter desc");
@@ -413,7 +413,7 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
         if (i < STATUSMAX + 1) {
             c->desc =
                 (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                             sizeof(stringFromStatus(i)),
+                                             strlen(stringFromStatus(i))+1,
                                              HR_Turncounter_desc,
                                              "Turncounter desc",
                                              "Turncounter desc");
@@ -561,7 +561,7 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
         if (i < STATUSMAX + 1) {
             c->desc =
                 (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                             sizeof(stringFromStatus(i)),
+                                             strlen(stringFromStatus(i))+1,
                                              HR_Turncounter_desc,
                                              "Turncounter desc",
                                              "Turncounter desc");
