@@ -1027,15 +1027,15 @@ void gameloop(int argc, char **argv)
                                     "You completed room %i.", roomsDone);
                             //white();
                         }
-                        roomsDone++;
-
-                        //Update stats
-                        player->stats->roomscompleted++;
 
                         //Free room memory
                         //freeRoom(current_room);
 
                         if (current_room->class != HOME) {
+                            roomsDone++;
+
+                            //Update stats
+                            player->stats->roomscompleted++;
                             log_tag("debug_log.txt", "[DEBUG]", "%s():    updating Gamestate to clear current_room reference", __func__);
                             update_Gamestate(gamestate, 1, BASIC,
                                              roomsDone, -1,
