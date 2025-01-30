@@ -111,14 +111,14 @@ endif
 
 ./koliseo/src/koliseo.o:
 	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
-	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./koliseo/src/koliseo.o\e[0m] with curses:  "
+	@echo -en "\033[1;34m[Makefile]\e[0m    Building [\033[1;35m./koliseo/src/koliseo.o\e[0m]:  "
 	$(CCOMP) -c ./koliseo/src/koliseo.c $(AM_CFLAGS) -o ./koliseo/src/koliseo.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 ./src/palette.c:
 	@echo -en "\033[1;34m[Makefile]\e[0m    Using \033[1;33mpython3\e[0m to generate C [\033[1;34m./src/palette.c\e[0m and \033[1;34m./src/palette.h\e[0m] files from \033[1;35m[$(PALETTE_PATH)]:\e[0m  "
-	python3 -m s4c-scripts.s4c.core.palette C-impl $(PALETTE_PATH) .. > ./src/palette.c
-	python3 -m s4c-scripts.s4c.core.palette C-header $(PALETTE_PATH) .. > ./src/palette.h
+	python3 -m sprites4curses.s4c-scripts.s4c.core.palette C-impl $(PALETTE_PATH) .. > ./src/palette.c
+	python3 -m sprites4curses.s4c-scripts.s4c.core.palette C-header $(PALETTE_PATH) .. > ./src/palette.h
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for object files

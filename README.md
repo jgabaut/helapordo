@@ -67,7 +67,7 @@
 
   You can initialise the submodules by running:
 
-    `git submodule update --init`
+    `git submodule update --init --recursive`
 
 ### Anvil <a name = "anvil"></a>
 
