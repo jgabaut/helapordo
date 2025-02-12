@@ -1375,19 +1375,19 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 };
                 switch (i) {
                 case BUTTON_CLASS_KNIGHT: {
-                    anim_res = DrawSpriteRect(knight_tapis[gui_state.framesCounter%61], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    anim_res = DrawSpriteRect(knight_tapis[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
                 }
                 break;
                 case BUTTON_CLASS_ARCHER: {
-                    anim_res = DrawSpriteRect(archer_drop[gui_state.framesCounter%61], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    anim_res = DrawSpriteRect(archer_drop[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
                 }
                 break;
                 case BUTTON_CLASS_MAGE: {
-                    anim_res = DrawSpriteRect(mage_spark[gui_state.framesCounter%61], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    anim_res = DrawSpriteRect(mage_spark[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
                 }
                 break;
                 case BUTTON_CLASS_ASSASSIN: {
-                    anim_res = DrawSpriteRect(assassin_poof[gui_state.framesCounter%61], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    anim_res = DrawSpriteRect(assassin_poof[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
                 }
                 break;
                 default: {
