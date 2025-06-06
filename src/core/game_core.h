@@ -196,6 +196,10 @@ typedef struct GameOptions {
 
 extern const GameOptions default_GameOptions;
 
+#ifndef KLS_HAS_REGION
+#define KLS_REGIONTYPE_MAX 2
+#endif // KLS_HAS_REGION
+
 /**
  * Defines indexes for all types that are allocated with Koliseo.
  */
