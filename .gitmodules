@@ -1,18 +1,15 @@
 [submodule "amboso"]
 	path = amboso
-	url = git@github.com:jgabaut/amboso.git
+	url = https://github.com/jgabaut/amboso.git
 [submodule "sprites4curses"]
 	path = sprites4curses
-	url = git@github.com:jgabaut/sprites4curses.git
+	url = https://github.com/jgabaut/sprites4curses.git
 [submodule "koliseo"]
 	path = koliseo
-	url = git@github.com:jgabaut/koliseo.git
+	url = https://github.com/jgabaut/koliseo.git
 [submodule "invil"]
 	path = invil
-	url = git@github.com:jgabaut/invil
-[submodule "s4c-scripts"]
-	path = s4c-scripts
-	url = git@github.com:jgabaut/s4c-scripts.git
+	url = https://github.com/jgabaut/invil
 [submodule "ringabuf"]
 	path = ringabuf
-	url = git@github.com:jgabaut/ringabuf.git
+	url = https://github.com/jgabaut/ringabuf.git

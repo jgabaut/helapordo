@@ -1,3 +1,38 @@
+## [1.4.13] - 2025-06-06
+
+### Changed
+- Drop `s4c-scripts` to use the one provided by `sprites4curses`
+- Update submodule URLs to use https
+- Add missing `aclocal` mention for build instructions in `README`
+- Fix: use `int32_t` for `SerCountstats` values
+- Fix: `deser_Gamestate()` uses proper `current_roomtype`
+- Fix: proper allocation size for status `Turncounter` desc field
+- Fix: don't update rooms done counter for HOME rooms
+- Regen `archer_drop`, `srwarthog_square`, `werewolf_transform` for transparency
+- Fix: correct `draw_GameScreen_Texture()` sprite index modulo, drops `-DS4C_RL_QUIETER`
+- Bump `koliseo` to `0.4.9`
+- Bump `amboso` to `2.0.11`
+- Bump `invil` to `0.2.23`
+- Bump `sprites4curses` to `0.4.9`
+
+## [1.4.12] - 2024-11-26
+
+### Changed
+
+- Drop `s4c-gui` submodule since it's now included in `sprites4curses`
+- Change `anvil` header inclusion to be off by default
+  - Improves #52
+- Use `int32_t` for coins balance in `SerFighter`
+  - Closes #107
+- Bump `HELAPORDO_BINSAVEFILE_VERSION` to `0.0.6`
+- Bump `sprites4curses` to `0.4.8`
+- Bump `koliseo` to `0.4.6`
+- Bump `invil` to `0.2.19`
+- Bump `amboso` to `2.0.9`
+  - Closes #52
+- Bump `s4c-scripts` to `0.1.3`
+- Update gif in `README` by @AliShahabzadeh
+
 ## [1.4.11] - 2024-08-10
 
 ### Added

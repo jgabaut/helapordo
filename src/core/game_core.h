@@ -196,6 +196,10 @@ typedef struct GameOptions {
 
 extern const GameOptions default_GameOptions;
 
+#ifndef KLS_HAS_REGION
+#define KLS_REGIONTYPE_MAX 2
+#endif // KLS_HAS_REGION
+
 /**
  * Defines indexes for all types that are allocated with Koliseo.
  */
@@ -364,14 +368,14 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 12
+#define HELAPORDO_PATCH_VERSION 13
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.12"
+#define VERSION "1.4.13"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.6"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.

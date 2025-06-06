@@ -80,6 +80,7 @@ void gameloop(int argc, char **argv)
                                     1, //collect_stats
                                     1, //kls_verbose_lvl
                                     1, // block_on_has_temp
+                                    0, // allow_zerocount_push
                                     NULL, //kls_log_fp
                                     path_to_kls_debug_file //kls_log_filepath
                                 );
@@ -91,6 +92,7 @@ void gameloop(int argc, char **argv)
                                       1, //collect_stats
                                       0, //kls_verbose_lvl
                                       1, // block_on_has_temp
+                                      0, // allow_zerocount_push
                                       stderr, //kls_log_fp
                                       NULL //kls_log_filepath
                                   );
@@ -1025,15 +1027,15 @@ void gameloop(int argc, char **argv)
                                     "You completed room %i.", roomsDone);
                             //white();
                         }
-                        roomsDone++;
-
-                        //Update stats
-                        player->stats->roomscompleted++;
 
                         //Free room memory
                         //freeRoom(current_room);
 
                         if (current_room->class != HOME) {
+                            roomsDone++;
+
+                            //Update stats
+                            player->stats->roomscompleted++;
                             log_tag("debug_log.txt", "[DEBUG]", "%s():    updating Gamestate to clear current_room reference", __func__);
                             update_Gamestate(gamestate, 1, BASIC,
                                              roomsDone, -1,
