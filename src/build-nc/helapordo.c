@@ -577,7 +577,7 @@ void gameloop(int argc, char **argv)
         size_t ringabuf_align = rb_structalign__();
 
 #ifndef KOLISEO_HAS_REGION
-        RingaBuf rb_notifications = kls_push_zero_AR(default_kls, ringabuf_size, ringabuf_align, 1);
+        RingaBuf rb_notifications = kls_push_zero_ext(default_kls, ringabuf_size, ringabuf_align, 1);
 #else
         RingaBuf rb_notifications = kls_push_zero_typed(default_kls, ringabuf_size, ringabuf_align, 1, HR_RingaBuf, "RingaBuf for notifications", "RingaBuf");
 #endif // KOLISEO_HAS_REGION

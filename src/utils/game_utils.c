@@ -25,7 +25,7 @@ void* s4c_gui_malloc(size_t size)
 #else
     log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating {%lli} bytes.", __func__, size);
 #endif // _WIN32
-    return kls_push_zero_AR(support_kls, size, _Alignof(char), 1);
+    return kls_push_zero_ext(support_kls, size, _Alignof(char), 1);
 }
 void* s4c_gui_calloc(size_t count, size_t size)
 {
@@ -34,7 +34,7 @@ void* s4c_gui_calloc(size_t count, size_t size)
 #else
     log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating [%lli]x{%lli} bytes.", __func__, count, size);
 #endif // _WIN32
-    return kls_push_zero_AR(support_kls, size, _Alignof(char), count);
+    return kls_push_zero_ext(support_kls, size, _Alignof(char), count);
 }
 
 /**
