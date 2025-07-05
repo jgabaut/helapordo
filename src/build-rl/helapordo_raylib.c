@@ -101,17 +101,8 @@ void gameloop_rl(int argc, char** argv)
 
     //Truncate "debug_log.txt"
     sprintf(path_to_kls_debug_file, "%s/%s", static_path, "kls_debug_log.txt");
-#ifdef KOLISEO_HAS_REGION
-    KLS_RegList_Alloc_Backend reglist_backend = KLS_REGLIST_ALLOC_KLS_BASIC;
-#else
-    int reglist_backend = -1;
-#endif
 
     KLS_Conf default_kls_conf = kls_conf_init(
-                                    1, //kls_autoset_regions
-                                    reglist_backend, //kls_reglist_alloc_backend
-                                    KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
-                                    1, //kls_autoset_temp_regions
                                     1, //collect_stats
                                     1, //kls_verbose_lvl
                                     1, //kls_block_usage_with_temp
@@ -120,10 +111,6 @@ void gameloop_rl(int argc, char** argv)
                                     path_to_kls_debug_file //.kls_log_filepath
                                 );
     KLS_Conf temporary_kls_conf = kls_conf_init(
-                                      1, //kls_autoset_regions
-                                      reglist_backend, //kls_reglist_alloc_backend
-                                      KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
-                                      1, //kls_autoset_temp_regions
                                       1, //collect_stats
                                       0, //kls_verbose_lvl
                                       1, //kls_block_usage_with_temp
@@ -384,7 +371,7 @@ void gameloop_rl(int argc, char** argv)
     size_t ringabuf_align = rb_structalign__();
 
 #ifndef KOLISEO_HAS_REGION
-    RingaBuf rb_notifications = kls_push_zero_AR(default_kls, ringabuf_size, ringabuf_align, 1);
+    RingaBuf rb_notifications = kls_push_zero_ext(default_kls, ringabuf_size, ringabuf_align, 1);
 #else
     RingaBuf rb_notifications = kls_push_zero_typed(default_kls, ringabuf_size, ringabuf_align, 1, HR_RingaBuf, "RingaBuf for notifications", "RingaBuf");
 #endif // KOLISEO_HAS_REGION
