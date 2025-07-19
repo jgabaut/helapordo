@@ -4586,10 +4586,29 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
                               Room *room, loadInfo *load_info, Enemy *enemy,
                               Boss *boss, FILE *save_file, Rectangle *notification_area,
                               Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
-                              skillType picked_skill)
+                              skillType picked_skill, RingaBuf* rb_notifications)
 {
-    printf("%s():    TODO - implement turnOP init for rl-build\n", __func__);
-    return NULL;
+    log_tag("debug_log.txt", "[TURNOP]",
+            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+    kls_log(t_kls->kls, "DEBUG", "[TURNOP]",
+            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+    turnOP_args *res =
+        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, HR_turnOP_args,
+                                         "turnOP_args", "turnOP_args");
+    res->gmst = gmst;
+    res->actor = actor;
+    res->path = path;
+    res->room = room;
+    res->load_info = load_info;
+    res->enemy = enemy;
+    res->boss = boss;
+    res->save_file = save_file;
+    res->notify_win = notification_area;
+    res->t_kls = t_kls;
+    res->foe_op = foe_op;
+    res->picked_skill = picked_skill;
+    res->rb_notifications = rb_notifications;
+    return res;
 }
 
 /**

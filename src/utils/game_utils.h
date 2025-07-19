@@ -290,7 +290,7 @@ turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
                               Rectangle * notification_area, Koliseo_Temp * t_kls,
-                              foeTurnOption_OP foe_op, skillType picked_skill);
+                              foeTurnOption_OP foe_op, skillType picked_skill, RingaBuf* rb_notifications);
 void unlockSpecial(Fighter * f);
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD

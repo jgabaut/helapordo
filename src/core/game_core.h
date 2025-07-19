@@ -85,7 +85,6 @@ typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_
 #endif // HELAPORDO_CURSES_BUILD
 
 #ifdef HELAPORDO_DEBUG_ACCESS
-#define KLS_AUTOREGION_REGLIST_SIZE_DEFAULT 16*16*1024
 #include "../../koliseo/src/kls_region.h"
 #else
 #include "../../koliseo/src/koliseo.h"

@@ -64,6 +64,7 @@ helapordo_SOURCES += src/core/game_core.c src/utils/game_utils.c src/core/game_a
 
 if DEBUG_BUILD
 helapordo_SOURCES += koliseo/src/kls_region.c
+AM_CFLAGS += -DKLS_AUTOREGION_REGLIST_SIZE_DEFAULT="16*16*1024" -DKLS_AUTOREGION_REGLIST_TEMP_SIZE_DEFAULT="16*16*1024"
 else
 helapordo_SOURCES += koliseo/src/koliseo.c
 endif

@@ -56,9 +56,10 @@ typedef enum Gui_Button_Idx {
     BUTTON_CLASS_MAGE,
     BUTTON_CLASS_ASSASSIN,
     BUTTON_NAME_TXTFIELD,
+    BUTTON_FIGHT
 } Gui_Button_Idx;
 
-#define GUI_BUTTONS_MAX BUTTON_NAME_TXTFIELD
+#define GUI_BUTTONS_MAX BUTTON_FIGHT
 
 typedef struct Gui_Theme {
     Color bg_color;

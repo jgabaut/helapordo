@@ -986,7 +986,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         gui_state->framesCounter += 1;    // Count frames
 
         // Press enter to change to ENDING screen
-        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+        if (IsKeyPressed(KEY_ENTER)) { //|| IsGestureDetected(GESTURE_TAP)) {
+            death(*player, load_info);
             gui_state->currentScreen = ENDING;
         }
 
@@ -1164,16 +1165,153 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
 
         if ((*current_room)->class == ENEMIES) {
+            gui_state->buttons[BUTTON_FIGHT].on = false;
             if (!(*pause_animation)) {
                 *current_anim_frame = (gui_state->framesCounter)%60;
             }
-        }
 
-        // Press enter to change to FLOOR_VIEW screen
-        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
-            *current_room = NULL;
-            gui_state->currentScreen = FLOOR_VIEW;
+            for (int i=BUTTON_FIGHT; i < BUTTON_FIGHT+1; i++) {
+
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    //TODO: may use i to se is_new_game for now but its weak to changes in the array
+                    // load_info->is_new_game = i;
+                    if (i == BUTTON_FIGHT) { // New game is the first button
+                        Boss *dummy_boss = NULL;
+                        Enemy* enemy = (*current_room)->enemies[(*gamestate)->current_enemy_index];
+                        FILE *args_save_file = NULL;
+                        foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+                        skillType dummy_picked_skill = -1;
+
+                        Rectangle rb_r = CLITERAL(Rectangle) {
+                            gui_state->gameScreenWidth*0.1f,
+                                                      gui_state->gameScreenHeight*0.65f,
+                                                      gui_state->gameScreenWidth*0.8f,
+                                                      gui_state->gameScreenHeight*0.3f,
+                        };
+
+                        //Declare turnOP_args
+                        turnOP_args *args =
+                            init_turnOP_args(*gamestate, *player, *game_path, *current_room, load_info, enemy,
+                                             dummy_boss, args_save_file, &rb_r, *floor_kls,
+                                             dummy_foe_op, dummy_picked_skill, rb_notifications);
+                        args->foe_op =
+                            foeTurnOP_from_foeTurnOption(enemyTurnPick(enemy, *player));
+                        log_tag("debug_log.txt", "[FOETURN]", "foePick was: [ %s ]",
+                                stringFromFoeTurnOP(args->foe_op));
+
+                        fprintf(stderr, "%s(): TODO: turnOP(OP_FIGHT)\n", __func__);
+                        OP_res fightStatus = turnOP(OP_FIGHT, args, default_kls, *floor_kls);
+                        //Lost battle
+                        if (fightStatus == OP_RES_DEATH) {
+                            //Account for oracle gift perk
+                            int oracle_perks = (*player)->perks[ORACLE_GIFT]->innerValue;
+                            if (oracle_perks > 0) {
+                                (*player)->hp = round((*player)->totalhp / 3);
+
+                                (*player)->perks[ORACLE_GIFT]->innerValue -= 1;
+
+                                e_death(enemy);
+                                log_tag("debug_log.txt", "[DEBUG-ROOM-PERKS]",
+                                        "Oraclegift proc.");
+
+                                if ((*current_room)->foes->tot_alive > 0) {
+                                    //Go to next battle
+                                    //Display current party info
+                                    //display_printFoeParty(room->foes);
+                                    (*gamestate)->current_enemy_index++;
+                                    fightStatus = OP_RES_NO_DMG;
+                                    log_tag("debug_log.txt", "[ROOM]",
+                                            "Onto next enemy, %i left.", (*current_room)->foes->tot_alive - (*current_room)->foes->current_index);
+                                } else {
+                                    log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                                    *current_room = NULL;
+                                    (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                    (*gamestate)->current_enemy_index = 0;
+                                    gui_state->currentScreen = FLOOR_VIEW;
+                                    break;
+                                }
+                                break;	//We go to next enemy
+                            }
+
+                            e_death(enemy);
+                            int player_luck = (*player)->luck;
+                            log_tag("debug_log.txt", "[DEBUG]", "Player luck was [%i]",
+                                    player_luck);
+                            death((*player), load_info);
+                            //free(room->foes);
+
+                            //printf("\t\tLuck:  %i Path luck:  %i\n",player_luck,p->luck);
+                            //red();
+                            //printf("\n\n\tYOU DIED.\n");
+                            //white();
+                            //free(args);
+                            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+                            *current_room = NULL;
+                            gui_state->currentScreen = ENDING;
+                            break;
+                        } else if (fightStatus == OP_RES_KILL_DONE) {
+                            //Give coins
+
+                            (*player)->balance += enemy->prize;
+                            (*player)->stats->coinsfound += enemy->prize;
+
+                            char msg[50];
+                            sprintf(msg, "You found +%i coins.", enemy->prize);
+                            enqueue_notification(msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
+
+                            //Win, get xp and free memory from enemy
+                            giveXp((*player), enemy);
+
+                            e_death(enemy);
+
+                            (*current_room)->foes->alive_enemies[(*current_room)->foes->current_index] = 0;
+                            (*current_room)->foes->current_index++;
+                            (*current_room)->foes->tot_alive--;
+
+                            if ((*current_room)->foes->tot_alive > 0) {
+                                //Go to next battle
+                                //Display current party info
+                                //display_printFoeParty(room->foes);
+                                (*gamestate)->current_enemy_index++;
+                                fightStatus = OP_RES_NO_DMG;
+                                log_tag("debug_log.txt", "[ROOM]",
+                                        "Onto next enemy, %i left.", (*current_room)->foes->tot_alive - (*current_room)->foes->current_index);
+                            } else {
+                                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                (*gamestate)->current_enemy_index = 0;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                                break;
+                            }
+
+                            break;
+                        }
+
+                        fprintf(stderr, "%s(): fightResult was %s\n", __func__, stringFrom_OP_res(fightStatus));
+                    } // End of fight button
+                }
+            }
+        } else {
+            // Press enter to change to FLOOR_VIEW screen
+            if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                *current_room = NULL;
+                gui_state->currentScreen = FLOOR_VIEW;
+            }
         }
 
     }
@@ -1186,8 +1324,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             //Reset load_info->is_new_game to -1
             log_tag("debug_log.txt", "DEBUG", "%s():    Quitting", __func__);
             fprintf(stderr, "[DEBUG] [%s()]    Quitting\n", __func__);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
+            assert(default_kls != NULL);
             exit(EXIT_SUCCESS);
         }
     }
@@ -1418,7 +1555,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Controls for FLOOR_VIEW screen", 110, 160, 20, gui_state.theme.txt_color);
         DrawText("Arrow keys to move", 110, 190, 20, gui_state.theme.txt_color);
         DrawText("PRESS R to regen floor", 110, 220, 20, gui_state.theme.txt_color);
-        DrawText("PRESS ENTER or TAP to go to ENDING SCREEN", 110, 280, 20, gui_state.theme.txt_color);
+        DrawText("PRESS ENTER to go to ENDING SCREEN", 110, 280, 20, gui_state.theme.txt_color);
 
         Rectangle floor_r = CLITERAL(Rectangle) {
             gui_state.gameScreenHeight *0.1f,
@@ -1477,6 +1614,15 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, gui_state.theme.txt_color);
             switch (current_room->class) {
             case ENEMIES: {
+                for (int i=BUTTON_FIGHT; i < BUTTON_FIGHT +1; i++) {
+                    Gui_Button button = gui_state.buttons[i];
+                    if (button.state == BUTTON_HOVER) {
+                        DrawRectangleRec(button.r, RED);
+                    } else {
+                        DrawRectangleRec(button.r, button.box_color);
+                    }
+                    DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+                }
                 int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
                 int pl_frame_W = gui_state.gameScreenWidth * 0.3f;
                 int pl_frame_H = pl_frame_W;
@@ -1542,6 +1688,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 }
                 DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
                 Enemy* enemy = current_room->enemies[gamestate->current_enemy_index];
+                assert(enemy != NULL);
                 int stats_height = stats_label_r.height * 0.135f;
                 Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
                 DrawText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + stats_height, stats_height, stats_txt_color);
@@ -1662,7 +1809,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             }
         }
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
+        //DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
         DrawText("PRESS P to pause animations", 110, 350, 20, gui_state.theme.txt_color);
         DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, gui_state.theme.txt_color);
 
