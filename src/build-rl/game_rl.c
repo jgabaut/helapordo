@@ -1164,6 +1164,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             *pause_animation = !(*pause_animation);
         }
 
+        if ((*current_room)->class == BASIC) {
+            gui_state->currentScreen = FLOOR_VIEW;
+        }
+
         if ((*current_room)->class == ENEMIES) {
             gui_state->buttons[BUTTON_FIGHT].on = false;
             if (!(*pause_animation)) {
@@ -1273,7 +1277,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             enqueue_notification(msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
 
                             //Win, get xp and free memory from enemy
-                            giveXp((*player), enemy);
+                            int special_unlock = giveXp((*player), enemy);
 
                             e_death(enemy);
 
@@ -1295,9 +1299,15 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                 (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
                                 (*gamestate)->current_enemy_index = 0;
                                 gui_state->currentScreen = FLOOR_VIEW;
+                                if (special_unlock == 1) {
+                                    gui_state->currentScreen = UNLOCK_SPECIAL_VIEW;
+                                }
                                 break;
                             }
 
+                            if (special_unlock == 1) {
+                                gui_state->currentScreen = UNLOCK_SPECIAL_VIEW;
+                            }
                             break;
                         }
 
@@ -1316,6 +1326,41 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
     }
     break;
+    case UNLOCK_SPECIAL_VIEW: {
+        // TODO: Update UNLOCK_SPECIAL_VIEW screen variables here!
+        for (int i=BUTTON_SPECIAL_UNLOCK_1; i < BUTTON_SPECIAL_UNLOCK_4 +1; i++) {
+            gui_state->buttons[i].on = false;
+        }
+        for (int i=BUTTON_SPECIAL_UNLOCK_1; i < BUTTON_SPECIAL_UNLOCK_4 +1; i++) {
+            if (!((*player)->specials[i - BUTTON_SPECIAL_UNLOCK_1]->enabled)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    Specialslot *selected = (*player)->specials[i - BUTTON_SPECIAL_UNLOCK_1];
+
+                    //Check if the selected move is NOT enabled
+                    if (!(selected->enabled)) {
+                        //Enable the move
+                        selected->enabled = 1;
+                    }
+                    (*player)->stats->specialsunlocked += 1;
+                    gui_state->currentScreen = ROOM_VIEW;
+                }
+            }
+        }
+    }
+    break;
     case ENDING: {
         // TODO: Update ENDING screen variables here!
 
@@ -1324,7 +1369,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             //Reset load_info->is_new_game to -1
             log_tag("debug_log.txt", "DEBUG", "%s():    Quitting", __func__);
             fprintf(stderr, "[DEBUG] [%s()]    Quitting\n", __func__);
-            assert(default_kls != NULL);
             exit(EXIT_SUCCESS);
         }
     }
@@ -1835,12 +1879,32 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         */
     }
     break;
+    case UNLOCK_SPECIAL_VIEW: {
+        // TODO: Draw UNLOCK_SPECIAL_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("UNLOCK SPECIAL SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        for (int i=BUTTON_SPECIAL_UNLOCK_1; i < BUTTON_SPECIAL_UNLOCK_4 +1; i++) {
+            if (!(player->specials[i - BUTTON_SPECIAL_UNLOCK_1]->enabled)) {
+                Gui_Button button = gui_state.buttons[i];
+                if (button.state == BUTTON_HOVER) {
+                    DrawRectangleRec(button.r, RED);
+                    DrawText(nameStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
+                    DrawText(descStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
+                } else {
+                    DrawRectangleRec(button.r, button.box_color);
+                }
+                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+            }
+        }
+    }
+    break;
     case ENDING: {
         // TODO: Draw ENDING screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("ENDING SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to RETURN to quit the game", 120, 220, 20, gui_state.theme.txt_color);
+        DrawText("PRESS ENTER or TAP to quit the game", 120, 220, 20, gui_state.theme.txt_color);
     }
     break;
     case DOOR_ANIM: {

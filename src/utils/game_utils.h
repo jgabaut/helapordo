@@ -304,12 +304,12 @@ void updateCounters(Turncounter * counters[], int isEnemy, Fighter * f,
 void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
                          Boss * b);
 
-void checkremainder(Fighter * player, int xp);
-void giveXp(Fighter * player, Enemy * e);
+int checkremainder(Fighter * player, int xp);
+int giveXp(Fighter * player, Enemy * e);
 void giveXp_Boss(Fighter * player, Boss * b);
 int getEnemyXpGain(Enemy * e);
 int getBossXpGain(Boss * b);
-void onLevelUp(Fighter * player);
+int onLevelUp(Fighter * player);
 int getBoost(int lvl, int luck);
 void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
 

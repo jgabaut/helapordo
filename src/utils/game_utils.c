@@ -4982,8 +4982,9 @@ void updateCounters_Boss(Turncounter *counters[], int isBoss, Fighter *f,
  * @see onLevelUp()
  * @param player The Fighter pointer that gets xp.
  * @param xp The amount of xp.
+ * @return 1 when player unlocked a new Special
  */
-void checkremainder(Fighter *player, int xp)
+int checkremainder(Fighter *player, int xp)
 {
     int curr = player->currentlevelxp;
     int tot = player->totallevelxp;
@@ -5000,19 +5001,22 @@ void checkremainder(Fighter *player, int xp)
         //white();
 
         //Stats gains on level up
-        onLevelUp(player);
+        int special_unlock = onLevelUp(player);
 
         player->currentlevelxp = abs((tot - curr - xp));
         int nextLevelMoreXp =
             round(1.75 * (player->level + 1)) + player->level + 1;
         player->totallevelxp = (tot / player->level) + nextLevelMoreXp;
         checkremainder(player, 0);
+
+        return special_unlock;
     } else {
         player->currentlevelxp += xp;
         player->totalxp += xp;
         if (xp != 0) {
             //printf("\n\t%s obtained %i xp.", player->name, xp);
         }
+        return 0;
     }
 }
 
@@ -5025,12 +5029,12 @@ void checkremainder(Fighter *player, int xp)
  * @param player The Fighter pointer that gets xp.
  * @param e The Enemy pointer that gives xp.
  */
-void giveXp(Fighter *player, Enemy *e)
+int giveXp(Fighter *player, Enemy *e)
 {
 
     int xp = getEnemyXpGain(e);
 
-    checkremainder(player, xp);
+    return checkremainder(player, xp);
 }
 
 /**
@@ -5090,8 +5094,9 @@ int getBossXpGain(Boss *b)
  * @see SPECIALLVLRATIO
  * @see unlockSpecial()
  * @param player The Fighter pointer that levels up.
+ * @return 1 when player unlocked a new Special
  */
-void onLevelUp(Fighter *player)
+int onLevelUp(Fighter *player)
 {
     int boost = getBoost(player->level, player->luck);
 
@@ -5113,9 +5118,11 @@ void onLevelUp(Fighter *player)
     if (player->level % SPECIALLVLRATIO == 0
         && (player->stats->specialsunlocked < (SPECIALSMAX + 1))) {
         unlockSpecial(player);
+        return 1;
     }
 
     log_tag("debug_log.txt", "[LEVELUP]", "Player leveled up.");
+    return 0;
 
     /*
        lightCyan();
