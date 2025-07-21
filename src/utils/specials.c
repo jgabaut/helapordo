@@ -51,7 +51,7 @@ void knightSpecial_Slash(WINDOW *w, Fighter *f, Enemy *e, Boss *b, Path *p,
     mvwprintw(w, y, x, "%s strikes %s.", f->name, victim);
 
     if (isBoss) {
-        e->hp -= f->atk * 0.5;	//Dmg the boss
+        b->hp -= f->atk * 0.5;	//Dmg the boss
     } else {
         e->hp -= f->atk * 0.5;	//Dmg the enemy
     }
@@ -937,96 +937,492 @@ void setSpecials(Fighter *f, Koliseo *kls)
 void knightSpecial_Slash(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
                          int roomIndex, int enemyIndex, int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
 
+    BeginDrawing();
+    DrawText(TextFormat("%s strikes %s", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+    if (isBoss) {
+        b->hp -= f->atk * 0.5;	//Dmg the boss
+    } else {
+        e->hp -= f->atk * 0.5;	//Dmg the enemy
+    }
+    f->energy -= costFromSpecial(f->class, KSlash);	//Reduce fighter energy
+    DrawText(TextFormat("%s was deeply hurt", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    EndDrawing();
+    sleep(2);
 }
 
 void knightSpecial_Cover(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
                          int roomIndex, int enemyIndex, int isBoss)
 {
+    BeginDrawing();
+    DrawText(TextFormat("%s uses his shield to cover.", f->name), win->x, win->y, win->height*0.15f, DARKGREEN);
 
+    f->def += 10;		//Raise fighter def
+    f->energy -= costFromSpecial(f->class, KCover);	//Reduce fighter energy
+
+    DrawText("+10 DEF", win->x, win->y + win->height * 0.2f, win->height*0.15f, DARKGREEN);
+    EndDrawing();
+    sleep(2);
 }
 
 void knightSpecial_Armordrop(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                              Path * p, int roomIndex, int enemyIndex,
                              int isBoss)
 {
+    BeginDrawing();
+    if (f->def >= 11) {
+        DrawText(TextFormat("%s drops his armor to strike faster.", f->name), win->x, win->y, win->height*0.15f, DARKGREEN);
+        f->def -= 10;
+        f->vel += 10;
+        f->atk += 2;
 
+        f->energy -= costFromSpecial(f->class, KArmordrop);	//Reduce fighter energy
+
+        DrawText("+10 VEL    +2 ATK", win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+        DrawText("-10 DEF", win->x, win->y + win->height*0.4f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s is too exposed to drop his armor.", f->name), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
 
 void knightSpecial_Berserk(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                            Path * p, int roomIndex, int enemyIndex, int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
+    BeginDrawing();
+    if (isBoss) {		//Boss
+        if (f->hp > 2 && b->hp > 5) {	//Check if both boss and you can lose at least 2 hp...
+            DrawText(TextFormat("%s is getting mad at %s!", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+            f->atk += 9;
+            b->hp -= 5;		//Deal damage
+            f->hp -= 2;		//Deal damage
+            f->energy -= costFromSpecial(f->class, KBerserk);	//Reduce fighter energy
+            DrawText(TextFormat("%s was stunned and hurt!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+        } else if (b->hp <= 2) {
+            DrawText(TextFormat("%s is weak and not impressionable.", victim), win->x, win->y, win->height*0.15f, RED);
+        } else if (f->hp <= 2) {
+            DrawText(TextFormat("%s is too weak.", f->name), win->x, win->y, win->height*0.15f, RED);
+        }
 
+    } else {			//Enemy
+        if (f->hp > 2 && e->hp > 5) {	//Check if both enemy and you can lose at least 2 hp...
+            DrawText(TextFormat("%s is getting mad at %s!", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+            f->atk += 9;
+            e->hp -= 5;		//Deal damage
+            f->hp -= 2;		//Deal damage
+            f->energy -= costFromSpecial(f->class, KBerserk);	//Reduce fighter energy
+            DrawText(TextFormat("%s was stunned and hurt!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+        } else if (e->hp <= 2) {
+            DrawText(TextFormat("%s is weak and not impressionable.", victim), win->x, win->y, win->height*0.15f, RED);
+        } else if (f->hp <= 2) {
+            DrawText(TextFormat("%s is too weak.", f->name), win->x, win->y, win->height*0.15f, RED);
+        }
+    }
+    EndDrawing();
+    sleep(2);
 }
 void archerSpecial_Headshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                             Path * p, int roomIndex, int enemyIndex,
                             int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
 
+    BeginDrawing();
+
+    if (isBoss && b->hp > 1) {	//Check if boss has some hp
+        DrawText(TextFormat("%s aims an arrow at %s's head!", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        b->hp /= 1.75;		//Deal damage
+        f->energy -= costFromSpecial(f->class, AHeadshot);	//Reduce fighter energy
+        DrawText(TextFormat("%s got headshot!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+
+    } else if (e->hp > 1) {
+        DrawText(TextFormat("%s aims an arrow at %s's head!", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        e->hp /= 2;		//Deal damage
+        f->energy -= costFromSpecial(f->class, AHeadshot);	//Reduce fighter energy
+        DrawText(TextFormat("%s got headshot!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s is weak already.", victim), win->x, win->y, win->height*0.15f, RED);
+    }
+
+    EndDrawing();
+    sleep(2);
 }
+
 void archerSpecial_Quivercheck(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                                Path * p, int roomIndex, int enemyIndex,
                                int isBoss)
 {
-
+    BeginDrawing();
+    DrawText(TextFormat("%s checks its quiver for more arrows.", f->name), win->x, win->y, win->height*0.15, DARKGREEN);
+    if (f->atk > 10) {		//Check if atk is high enough
+        f->atk += 8;		//Gain atk
+        f->energy -= costFromSpecial(f->class, AQuivercheck);	//Reduce fighter energy
+        DrawText(TextFormat("%s found stronger arrows inside itself.", f->name), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s can't help but feel weak.", f->name), win->x, win->y + win->height*0.2f, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
+
 void archerSpecial_Poisonshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                               Path * p, int roomIndex, int enemyIndex,
                               int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
 
+    BeginDrawing();
+
+    if (isBoss && b->hp > 1) {	//Check if boss has some hp
+        if (b->hp >= 4) {
+            b->hp -= 3;
+        }
+
+        DrawText(TextFormat("%s aims a poisoned arrow at %s!", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
+        setCounter((Turncounter *) b->counters[POISON], 4);	//Give 4 turns of Poison status
+        f->energy -= costFromSpecial(f->class, APoisonshot);	//Reduce fighter energy
+        DrawText(TextFormat("%s was hit and poisoned!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else if (e->hp > 1) {	//Check if enemy has some hp
+        if (e->hp >= 4) {
+            e->hp -= 3;
+        }
+
+        DrawText(TextFormat("%s aims a poisoned arrow at %s!", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
+        setCounter((Turncounter *) e->counters[POISON], 4);	//Give 4 turns of Poison status
+        f->energy -= costFromSpecial(f->class, APoisonshot);	//Reduce fighter energy
+        DrawText(TextFormat("%s was hit and poisoned!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s is weak already.", victim), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
+
 void archerSpecial_Fireshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                             Path * p, int roomIndex, int enemyIndex,
                             int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
 
+    BeginDrawing();
+
+    if (isBoss && b->hp > 1) {	//Check if boss has some hp
+        if (b->hp >= 5) {
+            b->hp -= 4;
+        }
+
+        DrawText(TextFormat("%s lights an arrow on fire and shoots at %s's!",
+                  f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
+        setCounter((Turncounter *) b->counters[BURNED], 3);	//Give 3 turns of Burned status
+        f->energy -= costFromSpecial(f->class, AFireshot);	//Reduce fighter energy
+        DrawText(TextFormat("%s was hit and set on fire!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else if (e->hp > 1) {	//Check if enemy has some hp
+        if (e->hp >= 5) {
+            e->hp -= 4;
+        }
+
+        DrawText(TextFormat("%s lights an arrow on fire and shoots at %s's!",
+                  f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
+        setCounter((Turncounter *) e->counters[BURNED], 3);	//Give 3 turns of Burned status
+        f->energy -= costFromSpecial(f->class, AFireshot);	//Reduce fighter energy
+        DrawText(TextFormat("%s was hit and set on fire!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s's is weak already.", victim), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
+
 void mageSpecial_Fatewarp(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                           Path * p, int roomIndex, int enemyIndex, int isBoss)
 {
+    BeginDrawing();
+    if (f->luck < MAXPLAYERLUCK - 6) {
+        DrawText(TextFormat("%s warps fate to fulfill its destiny.", f->name), win->x, win->y, win->height*0.15f, DARKGREEN);
+        f->luck += 5;
 
+        f->energy -= costFromSpecial(f->class, MFatewarp);	//Reduce fighter energy
+        DrawText("+5 LUCK", win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s's fate is bright already.", f->name), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
+
 void mageSpecial_Powerup(Rectangle * win, Fighter * f, Enemy * e, Boss * b, Path * p,
                          int roomIndex, int enemyIndex, int isBoss)
 {
+    BeginDrawing();
+    DrawText(TextFormat("%s channels its energy.", f->name), win->x, win->y, win->height*0.15f, DARKGREEN);
+    f->atk += 5;
 
+    f->energy -= costFromSpecial(f->class, MPowerup);	//Reduce fighter energy
+    DrawText("+5 ATK", win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    EndDrawing();
+    sleep(2);
 }
+
 void mageSpecial_Spellstrike(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                              Path * p, int roomIndex, int enemyIndex,
                              int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
+    BeginDrawing();
+    if (isBoss && b->hp > 1) {	//Check if boss has some hp
+        if (b->hp >= 11) {
+            b->hp -= 10;	//Deal damage
+        } else if (b->hp > 1) {
+            b->hp = 1;		//Set enemy hp to 1
+        }
 
+        DrawText(TextFormat("%s casts a deadly spell on %s!", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        f->energy -= costFromSpecial(f->class, MSpellstrike);	//Reduce fighter energy
+        DrawText(TextFormat("%s feels the spell!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+
+    } else if (e->hp > 1) {	//Check if enemy has some hp
+        if (e->hp >= 11) {
+            e->hp -= 10;	//Deal damage
+        } else if (e->hp > 1) {
+            e->hp = 1;		//Set enemy hp to 1
+        }
+
+        DrawText(TextFormat("%s casts a deadly spell on %s!", f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        f->energy -= costFromSpecial(f->class, MSpellstrike);	//Reduce fighter energy
+        DrawText(TextFormat("%s feels the spell!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s's is weak already.", victim), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
+
 void mageSpecial_Flamering(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                            Path * p, int roomIndex, int enemyIndex, int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
+    BeginDrawing();
+    if (isBoss && b->hp > 1) {	//Check if boss has some hp
+        if (b->hp >= 5) {
+            b->hp -= 4;
+        }
 
+        DrawText(TextFormat("%s summons a ring of fire around %s!", f->name,
+                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
+        setCounter((Turncounter *) b->counters[BURNED], 3);	//Give 3 turns of Burned status
+        f->energy -= costFromSpecial(f->class, MFlamering);	//Reduce fighter energy
+        DrawText(TextFormat("%s was set on fire!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else if (e->hp > 1) {	//Check if enemy has some hp
+        if (e->hp >= 5) {
+            e->hp -= 4;
+        }
+
+        DrawText(TextFormat("%s summons a ring of fire around %s!", f->name,
+                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
+        setCounter((Turncounter *) e->counters[BURNED], 3);	//Give 3 turns of Burned status
+        f->energy -= costFromSpecial(f->class, MFlamering);	//Reduce fighter energy
+        DrawText(TextFormat("%s was set on fire!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s's is weak already.", victim), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
+
 void assassinSpecial_Grimdagger(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                                 Path * p, int roomIndex, int enemyIndex,
                                 int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
+    BeginDrawing();
+    if (isBoss && b->hp > 1 && b->def >= 5) {	//Check if boss has some hp and defense
+        DrawText(TextFormat("%s throws its dagger at %s's heart.", f->name,
+                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+        b->def = 0;		//Set boss def
 
+        f->energy -= costFromSpecial(f->class, XGrimdagger);	//Reduce fighter energy
+        DrawText(TextFormat("%s is defenseless!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else if (e->hp > 1 && e->def >= 5) {	//Check if enemy has some hp and defense
+
+        DrawText(TextFormat("%s throws its dagger at %s's heart.", f->name,
+                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+        e->def = 0;		//Set enemy def
+
+        f->energy -= costFromSpecial(f->class, XGrimdagger);	//Reduce fighter energy
+        DrawText(TextFormat("%s is defenseless!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s's is weak already.", victim), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
 void assassinSpecial_Leechknife(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                                 Path * p, int roomIndex, int enemyIndex,
                                 int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
+    BeginDrawing();
+    if (isBoss && b->hp >= 6) {	//Check if boss has some hp
+        if (f->hp <= f->totalhp - 6) {	//Check if fighter has some space in his healthbar
 
+            DrawText(TextFormat("%s strikes %s with its vampire knife.", f->name,
+                      victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+            f->hp += 5;
+            b->hp -= 5;
+
+            f->energy -= costFromSpecial(f->class, XLeechknife);	//Reduce fighter energy
+            DrawText(TextFormat("%s's health was sapped!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+        } else {
+            DrawText(TextFormat("%s is feeling good enough.", f->name), win->x, win->y, win->height*0.15f, RED);
+        }
+
+    } else if (e->hp >= 6) {	//Check if enemy has some hp
+        if (f->hp <= f->totalhp - 6) {	//Check if fighter has some space in his healthbar
+
+            DrawText(TextFormat("%s strikes %s with its vampire knife.", f->name,
+                      victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+            f->hp += 5;
+            e->hp -= 5;
+
+            f->energy -= costFromSpecial(f->class, XLeechknife);	//Reduce fighter energy
+            DrawText(TextFormat("%s's health was sapped!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+        } else {
+            DrawText(TextFormat("%s is feeling good enough.", f->name), win->x, win->y, win->height*0.15f, RED);
+        }
+    } else {
+        DrawText(TextFormat("%s's is too weak.", victim), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
+
 void assassinSpecial_Disguise(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                               Path * p, int roomIndex, int enemyIndex,
                               int isBoss)
 {
+    BeginDrawing();
+    if (f->def >= 8 && f->vel >= 3) {
+        DrawText(TextFormat("%s disguises himself as a %s.", f->name,
+                  stringFromEClass(e->class)), win->x, win->y, win->height*0.15f, DARKGREEN);
+        f->def += 8;
+        f->vel -= 2;
+        f->energy -= costFromSpecial(f->class, XDisguise);	//Reduce fighter energy
 
+        DrawText("+8 DEF", win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+        DrawText("-2 VEL", win->x, win->y + win->height*0.4f, win->height*0.15f, RED);
+    } else {
+        DrawText(TextFormat("%s is too weak to disguise.", f->name), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
 void assassinSpecial_Venomblade(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
                                 Path * p, int roomIndex, int enemyIndex,
                                 int isBoss)
 {
+    char victim[30];
+    if (isBoss) {
+        strcpy(victim, stringFromBossClass(b->class));
+    } else {
+        strcpy(victim, stringFromEClass(e->class));
+    }
+    BeginDrawing();
+    if (isBoss && b->hp > 1) {	//Check if boss has some hp
+        if (b->hp >= 4) {
+            b->hp -= 3;
+        }
 
+        DrawText(TextFormat("%s throws venomous daggers at %s!", f->name,
+                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
+        setCounter((Turncounter *) b->counters[POISON], 4);	//Give 4 turns of Poison status
+        f->energy -= costFromSpecial(f->class, XVenomblade);	//Reduce fighter energy
+        DrawText(TextFormat("%s was hit and poisoned!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else if (e->hp > 1) {	//Check if enemy has some hp
+        if (e->hp >= 4) {
+            e->hp -= 3;
+        }
+
+        DrawText(TextFormat("%s throws venomous daggers at %s!", f->name,
+                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+
+        e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
+        setCounter((Turncounter *) e->counters[POISON], 4);	//Give 4 turns of Poison status
+        f->energy -= costFromSpecial(f->class, XVenomblade);	//Reduce fighter energy
+        DrawText(TextFormat("%s was hit and poisoned!", victim), win->x, win->y + win->height*0.2f, win->height*0.15f, DARKGREEN);
+    } else {
+        DrawText(TextFormat("%s's is weak already.", victim), win->x, win->y, win->height*0.15f, RED);
+    }
+    EndDrawing();
+    sleep(2);
 }
+
 void setSpecials(Fighter *f, Koliseo *kls)
 {
     char movename[80];

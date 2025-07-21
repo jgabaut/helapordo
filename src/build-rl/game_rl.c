@@ -1169,12 +1169,14 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
 
         if ((*current_room)->class == ENEMIES) {
-            gui_state->buttons[BUTTON_FIGHT].on = false;
+            for (int i=BUTTON_FIGHT; i < BUTTON_SPECIAL+1; i++) {
+                gui_state->buttons[i].on = false;
+            }
             if (!(*pause_animation)) {
                 *current_anim_frame = (gui_state->framesCounter)%60;
             }
 
-            for (int i=BUTTON_FIGHT; i < BUTTON_FIGHT+1; i++) {
+            for (int i=BUTTON_FIGHT; i < BUTTON_SPECIAL+1; i++) {
 
                 if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -1216,7 +1218,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         log_tag("debug_log.txt", "[FOETURN]", "foePick was: [ %s ]",
                                 stringFromFoeTurnOP(args->foe_op));
 
-                        fprintf(stderr, "%s(): TODO: turnOP(OP_FIGHT)\n", __func__);
                         OP_res fightStatus = turnOP(OP_FIGHT, args, default_kls, *floor_kls);
                         //Lost battle
                         if (fightStatus == OP_RES_DEATH) {
@@ -1311,8 +1312,12 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             break;
                         }
 
-                        fprintf(stderr, "%s(): fightResult was %s\n", __func__, stringFrom_OP_res(fightStatus));
-                    } // End of fight button
+                    // End of fight button
+                    } else if (i == BUTTON_SPECIAL) {
+                        if ((*player)->stats->specialsunlocked > 0) {
+                            gui_state->currentScreen = PICK_SPECIAL_VIEW;
+                        }
+                    }
                 }
             }
         } else {
@@ -1321,6 +1326,47 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
                 *current_room = NULL;
                 gui_state->currentScreen = FLOOR_VIEW;
+            }
+        }
+
+    }
+    break;
+    case PICK_SPECIAL_VIEW: {
+        // TODO: Update PICK_SPECIAL_VIEW screen variables here!
+        for (int i=BUTTON_SPECIAL_1; i < BUTTON_SPECIAL_4 +1; i++) {
+            gui_state->buttons[i].on = false;
+        }
+        for (int i=BUTTON_SPECIAL_1; i < BUTTON_SPECIAL_4 +1; i++) {
+            if (((*player)->specials[i - BUTTON_SPECIAL_1]->enabled)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    Rectangle special_notice_r = CLITERAL(Rectangle) {
+                        gui_state->gameScreenHeight *0.5f,
+                                                   gui_state->gameScreenWidth *0.5f,
+                                                   (gui_state->gameScreenHeight*0.3f),
+                                                   (gui_state->gameScreenWidth*0.3f),
+                    };
+                    Enemy* enemy = (*current_room)->enemies[(*gamestate)->current_enemy_index];
+                    Boss* boss = (*current_room)->boss;
+                    int enemyIndex = (*gamestate)->current_enemy_index;
+                    if ((*player)->specials[i - BUTTON_SPECIAL_1]->cost <= (*player)->energy + (*player)->equipboost_enr) {
+                        fight_Special((*player)->specials[i - BUTTON_SPECIAL_1]->move, &special_notice_r, *player, enemy, boss,
+                                *game_path, *roomsDone, enemyIndex, (*current_room)->class == BOSS);
+                    }
+                    gui_state->currentScreen = ROOM_VIEW;
+                }
             }
         }
 
@@ -1658,7 +1704,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, gui_state.theme.txt_color);
             switch (current_room->class) {
             case ENEMIES: {
-                for (int i=BUTTON_FIGHT; i < BUTTON_FIGHT +1; i++) {
+                for (int i=BUTTON_FIGHT; i < BUTTON_SPECIAL +1; i++) {
                     Gui_Button button = gui_state.buttons[i];
                     if (button.state == BUTTON_HOVER) {
                         DrawRectangleRec(button.r, RED);
@@ -1675,7 +1721,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int en_rect_Y = pl_rect_Y;
                 int en_frame_W = pl_frame_W;
                 int en_frame_H = pl_frame_H;
-                float stats_label_W = gui_state.gameScreenWidth * 0.15f;
+                float stats_label_W = gui_state.gameScreenWidth * 0.18f;
                 float stats_label_H = stats_label_W;
                 Rectangle stats_label_r = CLITERAL(Rectangle) {
                     gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
@@ -1735,12 +1781,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 assert(enemy != NULL);
                 int stats_height = stats_label_r.height * 0.135f;
                 Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
-                DrawText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i  Def  %i", enemy->def, player->def), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Def  %i", enemy->def, player->def), stats_height)/2)), (int)stats_label_r.y + 2*stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), stats_height)/2)), (int)stats_label_r.y + 3*stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + 4*stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + 5*stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + 6*stats_height, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Hp  %i", enemy->hp, player->hp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Hp  %i", enemy->hp, player->hp), stats_height)/2)), (int)stats_label_r.y + stats_height /2, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + (stats_height*3/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Def  %i", enemy->def, player->def), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Def  %i", enemy->def, player->def), stats_height)/2)), (int)stats_label_r.y + (stats_height*5/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), stats_height)/2)), (int)stats_label_r.y + (stats_height*7/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + (stats_height*9/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + (stats_height*11/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + (stats_height*13/2), stats_height, stats_txt_color);
 
                 DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
                 int name_height = pr_name_r.height * 0.6f;
@@ -1879,6 +1926,26 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         */
     }
     break;
+    case PICK_SPECIAL_VIEW: {
+        // TODO: Draw UNLOCK_SPECIAL_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("PICK SPECIAL SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        for (int i=BUTTON_SPECIAL_1; i < BUTTON_SPECIAL_4 +1; i++) {
+            if ((player->specials[i - BUTTON_SPECIAL_1]->enabled)) {
+                Gui_Button button = gui_state.buttons[i];
+                if (button.state == BUTTON_HOVER) {
+                    DrawRectangleRec(button.r, RED);
+                    DrawText(nameStringFromSpecial(player->class, i - BUTTON_SPECIAL_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
+                    DrawText(descStringFromSpecial(player->class, i - BUTTON_SPECIAL_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
+                } else {
+                    DrawRectangleRec(button.r, button.box_color);
+                }
+                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+            }
+        }
+    }
+    break;
     case UNLOCK_SPECIAL_VIEW: {
         // TODO: Draw UNLOCK_SPECIAL_VIEW screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
@@ -1939,4 +2006,109 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
     }
 
     EndTextureMode();
+}
+
+/**
+ * Takes a specialMove, a Fighter, a Enemy, a Boss and a Path pointers (and integers for current room and enemy indexes) and uses the requested special move.
+ * Prints the result to the passed WINDOW.
+ * The isBoss integer determines if the receiver is the Enemy or the Boss.
+ * @see Fighter
+ * @see SpecialSlot
+ * @see SPECIALSMAX
+ * @param move The specialMove to execute.
+ * @param w The WINDOW pointer to print results to.
+ * @param f The Fighter pointer with a equipsBag.
+ * @param e The Enemy pointer for current enemy.
+ * @param b The Boss pointer.
+ * @param p The Path pointer of the current game.
+ * @param roomIndex The index of current room.
+ * @param enemyIndex The index of current enemy.
+ * @param isBoss Is equal to 1 when receiver is a Boss.
+ */
+void fight_Special(specialMove move, Rectangle *w, Fighter *f, Enemy *e, Boss *b,
+                   Path *p, int roomIndex, int enemyIndex, int isBoss)
+{
+
+    switch (move) {
+    case KSlash: {
+        knightSpecial_Slash(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case KCover: {
+        knightSpecial_Cover(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case KArmordrop: {
+        knightSpecial_Armordrop(w, f, e, b, p, roomIndex, enemyIndex,
+                                isBoss);
+    }
+    break;
+    case KBerserk: {
+        knightSpecial_Berserk(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case AHeadshot: {
+        archerSpecial_Headshot(w, f, e, b, p, roomIndex, enemyIndex,
+                               isBoss);
+    }
+    break;
+    case AQuivercheck: {
+        archerSpecial_Quivercheck(w, f, e, b, p, roomIndex, enemyIndex,
+                                  isBoss);
+    }
+    break;
+    case APoisonshot: {
+        archerSpecial_Poisonshot(w, f, e, b, p, roomIndex, enemyIndex,
+                                 isBoss);
+    }
+    break;
+    case AFireshot: {
+        archerSpecial_Fireshot(w, f, e, b, p, roomIndex, enemyIndex,
+                               isBoss);
+    }
+    break;
+    case MFatewarp: {
+        mageSpecial_Fatewarp(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case MPowerup: {
+        mageSpecial_Powerup(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case MSpellstrike: {
+        mageSpecial_Spellstrike(w, f, e, b, p, roomIndex, enemyIndex,
+                                isBoss);
+    }
+    break;
+    case MFlamering: {
+        mageSpecial_Flamering(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case XGrimdagger: {
+        assassinSpecial_Grimdagger(w, f, e, b, p, roomIndex, enemyIndex,
+                                   isBoss);
+    }
+    break;
+    case XLeechknife: {
+        assassinSpecial_Leechknife(w, f, e, b, p, roomIndex, enemyIndex,
+                                   isBoss);
+    }
+    break;
+    case XDisguise: {
+        assassinSpecial_Disguise(w, f, e, b, p, roomIndex, enemyIndex,
+                                 isBoss);
+    }
+    break;
+    case XVenomblade: {
+        assassinSpecial_Venomblade(w, f, e, b, p, roomIndex, enemyIndex,
+                                   isBoss);
+    }
+    break;
+    default: {
+        fprintf(stderr, "%i is not a valid move.\n", move);
+        exit(EXIT_FAILURE);
+    }
+    break;
+    }
+
 }

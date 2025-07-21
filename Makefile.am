@@ -103,7 +103,7 @@ endif
 
 
 if HL_RAYLIB_BUILD
-hlpd_save2l_SOURCES += src/utils/floors.c src/utils/game_init.c src/utils/specials.c src/utils/rooms.c src/bsp/bsp.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/build-rl/game_rl.c
+hlpd_save2l_SOURCES += src/utils/floors.c src/utils/game_init.c src/utils/specials.c src/utils/rooms.c src/bsp/bsp.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/build-rl/game_rl.c src/utils/turn_op.c src/utils/game_fight.c
 endif
 
 ./anvil:

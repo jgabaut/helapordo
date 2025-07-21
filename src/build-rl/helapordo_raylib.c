@@ -543,6 +543,16 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_special = {
+        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Special",
+        .label_len = strlen("Special"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_Button bt_special_unlock_1 = {
         .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
         .on = false,
@@ -583,6 +593,46 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_special_1 = {
+        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "1",
+        .label_len = strlen("1"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_2 = {
+        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "2",
+        .label_len = strlen("2"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_3 = {
+        .r = (Rectangle){.x = 280, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "3",
+        .label_len = strlen("3"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_4 = {
+        .r = (Rectangle){.x = 390, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "4",
+        .label_len = strlen("4"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -604,10 +654,15 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_SAVESLOT_2] = bt_slot2,
             [BUTTON_SAVESLOT_3] = bt_slot3,
             [BUTTON_FIGHT] = bt_fight,
+            [BUTTON_SPECIAL] = bt_special,
             [BUTTON_SPECIAL_UNLOCK_1] = bt_special_unlock_1,
             [BUTTON_SPECIAL_UNLOCK_2] = bt_special_unlock_2,
             [BUTTON_SPECIAL_UNLOCK_3] = bt_special_unlock_3,
             [BUTTON_SPECIAL_UNLOCK_4] = bt_special_unlock_4,
+            [BUTTON_SPECIAL_1] = bt_special_1,
+            [BUTTON_SPECIAL_2] = bt_special_2,
+            [BUTTON_SPECIAL_3] = bt_special_3,
+            [BUTTON_SPECIAL_4] = bt_special_4,
         },
         .theme = {
             .bg_color = GRAY,
