@@ -107,6 +107,7 @@ void gameloop_rl(int argc, char** argv)
                                     1, //kls_verbose_lvl
                                     1, //kls_block_usage_with_temp
                                     0, // allow_zerocount_push
+                                    0, // kls_growable
                                     NULL, //kls_log_fp
                                     path_to_kls_debug_file //.kls_log_filepath
                                 );
@@ -115,6 +116,7 @@ void gameloop_rl(int argc, char** argv)
                                       0, //kls_verbose_lvl
                                       1, //kls_block_usage_with_temp
                                       0, // allow_zerocount_push
+                                      0, // kls_growable
                                       stderr, //kls_log_fp
                                       NULL
                                   );

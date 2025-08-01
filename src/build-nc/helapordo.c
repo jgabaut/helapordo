@@ -71,6 +71,7 @@ void gameloop(int argc, char **argv)
                                     1, //kls_verbose_lvl
                                     1, // block_on_has_temp
                                     0, // allow_zerocount_push
+                                    0, // kls_growable
                                     NULL, //kls_log_fp
                                     path_to_kls_debug_file //kls_log_filepath
                                 );
@@ -79,6 +80,7 @@ void gameloop(int argc, char **argv)
                                       0, //kls_verbose_lvl
                                       1, // block_on_has_temp
                                       0, // allow_zerocount_push
+                                      0, // kls_growable
                                       stderr, //kls_log_fp
                                       NULL //kls_log_filepath
                                   );
