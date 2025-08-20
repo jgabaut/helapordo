@@ -635,6 +635,36 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_equips = {
+        .r = (Rectangle){.x = 280, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Equips",
+        .label_len = strlen("Equips"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_open_bag = {
+        .r = (Rectangle){.x = 60, .y = 125, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Open Bag",
+        .label_len = strlen("Open Bag"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_check_loadout = {
+        .r = (Rectangle){.x = 60, .y = 195, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Loadout",
+        .label_len = strlen("Loadout"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -657,6 +687,9 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_SAVESLOT_3] = bt_slot3,
             [BUTTON_FIGHT] = bt_fight,
             [BUTTON_SPECIAL] = bt_special,
+            [BUTTON_EQUIPS] = bt_equips,
+            [BUTTON_OPEN_BAG] = bt_open_bag,
+            [BUTTON_CHECK_LOADOUT] = bt_check_loadout,
             [BUTTON_SPECIAL_UNLOCK_1] = bt_special_unlock_1,
             [BUTTON_SPECIAL_UNLOCK_2] = bt_special_unlock_2,
             [BUTTON_SPECIAL_UNLOCK_3] = bt_special_unlock_3,

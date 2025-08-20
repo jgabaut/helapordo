@@ -1169,14 +1169,14 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
 
         if ((*current_room)->class == ENEMIES) {
-            for (int i=BUTTON_FIGHT; i < BUTTON_SPECIAL+1; i++) {
+            for (int i=BUTTON_FIGHT; i < BUTTON_EQUIPS+1; i++) {
                 gui_state->buttons[i].on = false;
             }
             if (!(*pause_animation)) {
                 *current_anim_frame = (gui_state->framesCounter)%60;
             }
 
-            for (int i=BUTTON_FIGHT; i < BUTTON_SPECIAL+1; i++) {
+            for (int i=BUTTON_FIGHT; i < BUTTON_EQUIPS+1; i++) {
 
                 if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -1317,6 +1317,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         if ((*player)->stats->specialsunlocked > 0) {
                             gui_state->currentScreen = PICK_SPECIAL_VIEW;
                         }
+                    } else if (i == BUTTON_EQUIPS) {
+                        gui_state->currentScreen = EQUIPS_VIEW;
                     }
                 }
             }
@@ -1404,6 +1406,57 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     gui_state->currentScreen = ROOM_VIEW;
                 }
             }
+        }
+    }
+    break;
+    case EQUIPS_VIEW: {
+        // TODO: Update EQUIPS_VIEW screen variables here!
+        for (int i=BUTTON_OPEN_BAG; i < BUTTON_CHECK_LOADOUT +1; i++) {
+            gui_state->buttons[i].on = false;
+        }
+        for (int i=BUTTON_OPEN_BAG; i < BUTTON_CHECK_LOADOUT +1; i++) {
+            if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                    gui_state->buttons[i].state = BUTTON_PRESSED;
+                } else {
+                    gui_state->buttons[i].state = BUTTON_HOVER;
+                }
+                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                    gui_state->buttons[i].on = true;
+                }
+            } else {
+                gui_state->buttons[i].state = BUTTON_NORMAL;
+            }
+            if (gui_state->buttons[i].on) {
+                fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                //Specialslot *selected = (*player)->specials[i - BUTTON_SPECIAL_UNLOCK_1];
+
+                //Check if the selected move is NOT enabled
+                //if (!(selected->enabled)) {
+                    //Enable the move
+                //   selected->enabled = 1;
+                //}
+                //(*player)->stats->specialsunlocked += 1;
+                if (i == BUTTON_OPEN_BAG) {
+                    gui_state->currentScreen = OPEN_BAG_VIEW;
+                } else if (i == BUTTON_CHECK_LOADOUT) {
+                    gui_state->currentScreen = CHECK_LOADOUT_VIEW;
+                }
+            }
+        }
+    }
+    break;
+    case OPEN_BAG_VIEW: {
+        // Press q to change to SAVES_VIEW screen
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = EQUIPS_VIEW;
+        }
+    }
+    break;
+    case CHECK_LOADOUT_VIEW: {
+        // Press q to change to SAVES_VIEW screen
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = EQUIPS_VIEW;
         }
     }
     break;
@@ -1704,7 +1757,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, gui_state.theme.txt_color);
             switch (current_room->class) {
             case ENEMIES: {
-                for (int i=BUTTON_FIGHT; i < BUTTON_SPECIAL +1; i++) {
+                for (int i=BUTTON_FIGHT; i < BUTTON_EQUIPS +1; i++) {
                     Gui_Button button = gui_state.buttons[i];
                     if (button.state == BUTTON_HOVER) {
                         DrawRectangleRec(button.r, RED);
@@ -1964,6 +2017,89 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
             }
         }
+    }
+    break;
+    case EQUIPS_VIEW: {
+        // TODO: Draw EQUIPS_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("EQUIPS SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        for (int i=BUTTON_OPEN_BAG; i < BUTTON_CHECK_LOADOUT +1; i++) {
+            Gui_Button button = gui_state.buttons[i];
+            if (button.state == BUTTON_HOVER) {
+                DrawRectangleRec(button.r, RED);
+                //DrawText(nameStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
+                //DrawText(descStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
+            } else {
+                DrawRectangleRec(button.r, button.box_color);
+            }
+            DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+        }
+        float equips_box_x = gui_state.gameScreenWidth/2 - (100 * gui_state.scale);
+        float equips_box_y = 60;
+        float equips_box_width = gui_state.gameScreenWidth/2 + (100 * gui_state.scale);
+        float equips_box_height = gui_state.gameScreenHeight - 60 - (10 * gui_state.scale);
+        DrawRectangleLines(equips_box_x, equips_box_y, equips_box_width, equips_box_height, RED);
+        Rectangle head_label_box = {
+            .x = equips_box_x + 0.05*equips_box_width,
+            .y = equips_box_y + 0.05*equips_box_height,
+            .width = equips_box_width * 0.25,
+            .height = equips_box_height * 0.3,
+        };
+        Rectangle torso_label_box = {
+            .x = head_label_box.x + head_label_box.width + 0.05*equips_box_width,
+            .y = head_label_box.y,
+            .width = head_label_box.width,
+            .height = head_label_box.height,
+        };
+        Rectangle legs_label_box = {
+            .x = torso_label_box.x + torso_label_box.width + 0.05*equips_box_width,
+            .y = torso_label_box.y,
+            .width = torso_label_box.width,
+            .height = torso_label_box.height
+        };
+        Rectangle head_box = {
+            .x = equips_box_x + 0.05*equips_box_width,
+            .y = head_label_box.y + head_label_box.height + 0.05*equips_box_height,
+            .width = equips_box_width * 0.25,
+            .height = equips_box_height * 0.3,
+        };
+        Rectangle torso_box = {
+            .x = head_box.x + head_box.width + 0.05*equips_box_width,
+            .y = head_box.y,
+            .width = head_box.width,
+            .height = head_box.height,
+        };
+        Rectangle legs_box = {
+            .x = torso_box.x + torso_box.width + 0.05*equips_box_width,
+            .y = torso_box.y,
+            .width = torso_box.width,
+            .height = torso_box.height
+        };
+        DrawRectangleLines(equips_box_x, equips_box_y, equips_box_width, equips_box_height, RED);
+        DrawRectangleLines(head_label_box.x, head_label_box.y, head_label_box.width, head_label_box.height, RED);
+        DrawRectangleLines(torso_label_box.x, torso_label_box.y, torso_label_box.width, torso_label_box.height, RED);
+        DrawRectangleLines(legs_label_box.x, legs_label_box.y, legs_label_box.width, legs_label_box.height, RED);
+        DrawRectangleLines(head_box.x, head_box.y, head_box.width, head_box.height, RED);
+        DrawRectangleLines(torso_box.x, torso_box.y, torso_box.width, torso_box.height, RED);
+        DrawRectangleLines(legs_box.x, legs_box.y, legs_box.width, legs_box.height, RED);
+        DrawSpriteRect(equipzones_sprites_proper[HEAD], head_label_box, 8, 12, head_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+        DrawSpriteRect(equipzones_sprites_proper[TORSO], torso_label_box, 8, 12, torso_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+        DrawSpriteRect(equipzones_sprites_proper[LEGS], legs_label_box, 8, 12, legs_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+    }
+    break;
+    case OPEN_BAG_VIEW: {
+        // TODO: Draw EQUIPS_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("BAG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+    }
+    break;
+    case CHECK_LOADOUT_VIEW: {
+        // TODO: Draw EQUIPS_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("LOADOUT SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
     }
     break;
     case ENDING: {
