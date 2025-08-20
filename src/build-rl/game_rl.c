@@ -2086,6 +2086,24 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawSpriteRect(equipzones_sprites_proper[HEAD], head_label_box, 8, 12, head_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
         DrawSpriteRect(equipzones_sprites_proper[TORSO], torso_label_box, 8, 12, torso_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
         DrawSpriteRect(equipzones_sprites_proper[LEGS], legs_label_box, 8, 12, legs_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+        for (Equipzone i=0; i<EQUIPZONES+1; i++) {
+            if (player->equipslots[i]->active) {
+                switch (i) {
+                    case HEAD: {
+                        DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], head_box, 8, 12, head_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case TORSO: {
+                        DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], torso_box, 8, 12, torso_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case LEGS: {
+                        DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], legs_box, 8, 12, legs_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                }
+            }
+        }
     }
     break;
     case OPEN_BAG_VIEW: {
