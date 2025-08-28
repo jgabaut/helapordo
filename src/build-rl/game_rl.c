@@ -1410,6 +1410,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     }
     break;
     case EQUIPS_VIEW: {
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = ROOM_VIEW;
+        }
         // TODO: Update EQUIPS_VIEW screen variables here!
         for (int i=BUTTON_OPEN_BAG; i < BUTTON_CHECK_LOADOUT +1; i++) {
             gui_state->buttons[i].on = false;
@@ -2111,6 +2114,20 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("BAG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        Rectangle textbox_bounds = (Rectangle) {
+            .x = 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth/2,
+            .height = gui_state.gameScreenHeight/2
+        };
+        //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        for (int i=0; i < player->equipsBagOccupiedSlots; i++) {
+            Equip* e = player->equipsBag[i];
+            if (e) {
+                //printf("%s\n", stringFromEquips(e->class));
+                DrawText(TextFormat("%s", stringFromEquips(e->class)), textbox_bounds.x + 20, textbox_bounds.y + 20*i, 20, gui_state.theme.txt_color);
+            }
+        }
     }
     break;
     case CHECK_LOADOUT_VIEW: {
