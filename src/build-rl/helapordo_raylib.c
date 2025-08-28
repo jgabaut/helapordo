@@ -703,6 +703,7 @@ void gameloop_rl(int argc, char** argv)
             .bg_color = GRAY,
             .txt_color = DARKGRAY,
         },
+        .selectedIndex = 0,
     };
 
     int roomsDone = 0;

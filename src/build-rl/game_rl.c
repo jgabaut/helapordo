@@ -1453,6 +1453,46 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         // Press q to change to SAVES_VIEW screen
         if (IsKeyPressed(KEY_Q)) {
             gui_state->currentScreen = EQUIPS_VIEW;
+            gui_state->selectedIndex = 0;
+        }
+        if (gui_state->selectedIndex >= (*player)->equipsBagOccupiedSlots) {
+            gui_state->selectedIndex = 0;
+        }
+        if (IsKeyPressed(KEY_DOWN)) {
+            gui_state->selectedIndex += 1;
+        }
+        if (IsKeyPressed(KEY_UP)) {
+            if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
+            //Retrieve item info
+            Equip *e = (Equip *) (*player)->equipsBag[gui_state->selectedIndex];
+            Equipslot *slot = (Equipslot *) (*player)->equipslots[e->type];
+            if (slot->active == 1) {
+                //We reset status for equipped item
+                slot->item->equipped = 0;
+
+                removeEquipPerks(slot->item, *player);
+
+                //We adjust total boost removing current values
+                (*player)->equipboost_atk -= slot->item->atk;
+                (*player)->equipboost_def -= slot->item->def;
+                (*player)->equipboost_vel -= slot->item->vel;
+                (*player)->equipboost_enr -= slot->item->enr;
+            };
+
+            //We equip the item
+            slot->item = e;
+            slot->item->equipped = 1;
+
+            applyEquipPerks(slot->item, *player);
+            slot->active = 1;
+
+            //Apply the new item stats
+            (*player)->equipboost_atk += slot->item->atk;
+            (*player)->equipboost_def += slot->item->def;
+            (*player)->equipboost_vel += slot->item->vel;
+            (*player)->equipboost_enr += slot->item->enr;
         }
     }
     break;
@@ -2120,12 +2160,23 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             .width = gui_state.gameScreenWidth/2,
             .height = gui_state.gameScreenHeight/2
         };
+        Rectangle spritebox_bounds = (Rectangle) {
+            .x = textbox_bounds.x + textbox_bounds.width + 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth - textbox_bounds.width - textbox_bounds.x - 40,
+            .height = gui_state.gameScreenHeight/2
+        };
         //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        int selected_index = gui_state.selectedIndex;
         for (int i=0; i < player->equipsBagOccupiedSlots; i++) {
             Equip* e = player->equipsBag[i];
             if (e) {
                 //printf("%s\n", stringFromEquips(e->class));
                 DrawText(TextFormat("%s", stringFromEquips(e->class)), textbox_bounds.x + 20, textbox_bounds.y + 20*i, 20, gui_state.theme.txt_color);
+            }
+            if (i == selected_index) {
+                DrawSpriteRect(equips_sprites_proper[e->class], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
             }
         }
     }

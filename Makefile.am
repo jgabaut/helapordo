@@ -93,7 +93,7 @@ else
 hlpd_save2l_SOURCES =
 endif
 
-hlpd_save2l_SOURCES += src/core/game_core.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c sprites4curses/src/s4c.c src/palette.c
+hlpd_save2l_SOURCES += src/core/game_core.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c sprites4curses/src/s4c.c src/palette.c src/core/equips.c
 
 if DEBUG_BUILD
 hlpd_save2l_SOURCES += koliseo/src/kls_region.c

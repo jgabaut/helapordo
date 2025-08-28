@@ -88,6 +88,7 @@ typedef struct Gui_State {
     Vector2 virtualMouse;
     Gui_Button buttons[GUI_BUTTONS_MAX+1];
     Gui_Theme theme;
+    int selectedIndex;
 } Gui_State;
 
 void handleTutorial(S4C_Color* palette);
