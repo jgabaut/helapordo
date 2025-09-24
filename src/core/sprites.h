@@ -23,6 +23,7 @@
 
 extern char bosses_sprites[BOSSCLASSESMAX + 1][9][15];
 extern char consumables_sprites[CONSUMABLESMAX + 1][9][14];
+extern char consumables_sprites_proper[CONSUMABLESMAX + 1][9][MAXCOLS];
 extern char equips_sprites[EQUIPSMAX + 1][9][15];
 extern char equips_sprites_proper[EQUIPSMAX + 1][9][MAXCOLS];
 extern char equipzones_sprites[EQUIPZONES + 1][9][15];

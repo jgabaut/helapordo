@@ -1169,14 +1169,14 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
 
         if ((*current_room)->class == ENEMIES) {
-            for (int i=BUTTON_FIGHT; i < BUTTON_EQUIPS+1; i++) {
+            for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES+1; i++) {
                 gui_state->buttons[i].on = false;
             }
             if (!(*pause_animation)) {
                 *current_anim_frame = (gui_state->framesCounter)%60;
             }
 
-            for (int i=BUTTON_FIGHT; i < BUTTON_EQUIPS+1; i++) {
+            for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES+1; i++) {
 
                 if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -1319,6 +1319,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         }
                     } else if (i == BUTTON_EQUIPS) {
                         gui_state->currentScreen = EQUIPS_VIEW;
+                    } else if (i == BUTTON_CONSUMABLES) {
+                        gui_state->currentScreen = CONSUMABLES_VIEW;
                     }
                 }
             }
@@ -1497,9 +1499,36 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     }
     break;
     case CHECK_LOADOUT_VIEW: {
-        // Press q to change to SAVES_VIEW screen
+        // Press q to change to EQUIPS_VIEW screen
         if (IsKeyPressed(KEY_Q)) {
             gui_state->currentScreen = EQUIPS_VIEW;
+        }
+    }
+    break;
+    case CONSUMABLES_VIEW: {
+        // Press q to change to ROOM_VIEW screen
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = ROOM_VIEW;
+            gui_state->selectedIndex = 0;
+        }
+        if (gui_state->selectedIndex >= CONSUMABLESMAX) {
+            gui_state->selectedIndex = 0;
+        }
+        if (IsKeyPressed(KEY_DOWN)) {
+            gui_state->selectedIndex += 1;
+        }
+        if (IsKeyPressed(KEY_UP)) {
+            if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
+            Consumable* c = (*player)->consumablesBag[gui_state->selectedIndex];
+            if (c->qty > 0) {
+                Enemy* enemy = (*current_room)->enemies[(*gamestate)->current_enemy_index];
+                Boss* boss = (*current_room)->boss;
+                bool isBoss = false;
+                if (boss) isBoss = true;
+                useConsumable(*player, enemy, boss, consumablestrings[gui_state->selectedIndex], isBoss);
+            }
         }
     }
     break;
@@ -1800,7 +1829,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, gui_state.theme.txt_color);
             switch (current_room->class) {
             case ENEMIES: {
-                for (int i=BUTTON_FIGHT; i < BUTTON_EQUIPS +1; i++) {
+                for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES +1; i++) {
                     Gui_Button button = gui_state.buttons[i];
                     if (button.state == BUTTON_HOVER) {
                         DrawRectangleRec(button.r, RED);
@@ -2245,6 +2274,37 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("Qual: %i", e->qual), slot_r.x, slot_r.y + text_start_y + 100, 20, gui_state.theme.txt_color);
                 DrawText(TextFormat("Lvl: %i", e->level), slot_r.x, slot_r.y + text_start_y + 120, 20, gui_state.theme.txt_color);
                 DrawText(TextFormat("Perks: %i", e->perksCount), slot_r.x, slot_r.y + text_start_y + 140, 20, gui_state.theme.txt_color);
+            }
+        }
+    }
+    break;
+    case CONSUMABLES_VIEW: {
+        // TODO: Draw CONSUMABLES_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("CONSUMABLES SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        Rectangle textbox_bounds = (Rectangle) {
+            .x = 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth/2,
+            .height = gui_state.gameScreenHeight/2
+        };
+        Rectangle spritebox_bounds = (Rectangle) {
+            .x = textbox_bounds.x + textbox_bounds.width + 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth - textbox_bounds.width - textbox_bounds.x - 40,
+            .height = gui_state.gameScreenHeight/2
+        };
+        //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        int selected_index = gui_state.selectedIndex;
+        for (int i=0; i < CONSUMABLESMAX; i++) {
+            Consumable* c = player->consumablesBag[i];
+            Color color = gui_state.theme.txt_color;
+            if (i == selected_index) color = RED;
+            DrawText(TextFormat("%s    x%i", stringFromConsumables(c->class), c->qty), textbox_bounds.x + 20, textbox_bounds.y + 20 * i, 20, color);
+            if (i == selected_index) {
+                DrawSpriteRect(consumables_sprites_proper[c->class], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
             }
         }
     }

@@ -665,6 +665,16 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_consumables = {
+        .r = (Rectangle){.x = 390, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Consumables",
+        .label_len = strlen("Consumables"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -688,6 +698,7 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_FIGHT] = bt_fight,
             [BUTTON_SPECIAL] = bt_special,
             [BUTTON_EQUIPS] = bt_equips,
+            [BUTTON_CONSUMABLES] = bt_consumables,
             [BUTTON_OPEN_BAG] = bt_open_bag,
             [BUTTON_CHECK_LOADOUT] = bt_check_loadout,
             [BUTTON_SPECIAL_UNLOCK_1] = bt_special_unlock_1,
