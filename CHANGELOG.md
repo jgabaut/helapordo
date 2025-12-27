@@ -1,3 +1,20 @@
+## [1.4.14] - Unreleased
+
+### Added
+
+- More functionality in `raylib` build
+  - Fight
+  - Special
+  - Equips (Using `ENTER`)
+  - Consumables
+
+### Changed
+- Bump `koliseo` to `0.5.8`
+- Define `KLS_AUTOREGION_REGLIST_SIZE_DEFAULT`
+- Bump `invil` to `0.2.28`
+- Bump `amboso` to `2.1.0`
+- Bump `s4c` to `0.4.10`
+
 ## [1.4.13] - 2025-06-06
 
 ### Changed
