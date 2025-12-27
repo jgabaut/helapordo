@@ -1203,9 +1203,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
                         Rectangle rb_r = CLITERAL(Rectangle) {
                             gui_state->gameScreenWidth*0.1f,
-                                                      gui_state->gameScreenHeight*0.65f,
-                                                      gui_state->gameScreenWidth*0.8f,
-                                                      gui_state->gameScreenHeight*0.3f,
+                                      gui_state->gameScreenHeight*0.65f,
+                                      gui_state->gameScreenWidth*0.8f,
+                                      gui_state->gameScreenHeight*0.3f,
                         };
 
                         //Declare turnOP_args
@@ -1312,7 +1312,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             break;
                         }
 
-                    // End of fight button
+                        // End of fight button
                     } else if (i == BUTTON_SPECIAL) {
                         if ((*player)->stats->specialsunlocked > 0) {
                             gui_state->currentScreen = PICK_SPECIAL_VIEW;
@@ -1358,16 +1358,16 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     Rectangle special_notice_r = CLITERAL(Rectangle) {
                         gui_state->gameScreenHeight *0.5f,
-                                                   gui_state->gameScreenWidth *0.5f,
-                                                   (gui_state->gameScreenHeight*0.3f),
-                                                   (gui_state->gameScreenWidth*0.3f),
+                                  gui_state->gameScreenWidth *0.5f,
+                                  (gui_state->gameScreenHeight*0.3f),
+                                  (gui_state->gameScreenWidth*0.3f),
                     };
                     Enemy* enemy = (*current_room)->enemies[(*gamestate)->current_enemy_index];
                     Boss* boss = (*current_room)->boss;
                     int enemyIndex = (*gamestate)->current_enemy_index;
                     if ((*player)->specials[i - BUTTON_SPECIAL_1]->cost <= (*player)->energy + (*player)->equipboost_enr) {
                         fight_Special((*player)->specials[i - BUTTON_SPECIAL_1]->move, &special_notice_r, *player, enemy, boss,
-                                *game_path, *roomsDone, enemyIndex, (*current_room)->class == BOSS);
+                                      *game_path, *roomsDone, enemyIndex, (*current_room)->class == BOSS);
                     }
                     gui_state->currentScreen = ROOM_VIEW;
                 }
@@ -1438,7 +1438,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
                 //Check if the selected move is NOT enabled
                 //if (!(selected->enabled)) {
-                    //Enable the move
+                //Enable the move
                 //   selected->enabled = 1;
                 //}
                 //(*player)->stats->specialsunlocked += 1;
@@ -2161,18 +2161,18 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         for (Equipzone i=0; i<EQUIPZONES+1; i++) {
             if (player->equipslots[i]->active) {
                 switch (i) {
-                    case HEAD: {
-                        DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], head_box, 8, 12, head_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
-                    }
-                    break;
-                    case TORSO: {
-                        DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], torso_box, 8, 12, torso_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
-                    }
-                    break;
-                    case LEGS: {
-                        DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], legs_box, 8, 12, legs_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
-                    }
-                    break;
+                case HEAD: {
+                    DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], head_box, 8, 12, head_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case TORSO: {
+                    DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], torso_box, 8, 12, torso_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case LEGS: {
+                    DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], legs_box, 8, 12, legs_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
                 }
             }
         }
@@ -2251,18 +2251,18 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 Equip* e = slot->item;
                 Rectangle slot_r = {0};
                 switch(i) {
-                    case HEAD: {
-                        slot_r = headbox_bounds;
-                    }
-                    break;
-                    case TORSO: {
-                        slot_r = torsobox_bounds;
-                    }
-                    break;
-                    case LEGS: {
-                        slot_r = legsbox_bounds;
-                    }
-                    break;
+                case HEAD: {
+                    slot_r = headbox_bounds;
+                }
+                break;
+                case TORSO: {
+                    slot_r = torsobox_bounds;
+                }
+                break;
+                case LEGS: {
+                    slot_r = legsbox_bounds;
+                }
+                break;
                 }
                 DrawSpriteRect(equips_sprites_proper[e->class], slot_r, 8, 12, slot_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                 int text_start_y = slot_r.width/12*10;

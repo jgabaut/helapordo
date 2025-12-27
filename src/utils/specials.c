@@ -1147,7 +1147,7 @@ void archerSpecial_Fireshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
         }
 
         DrawText(TextFormat("%s lights an arrow on fire and shoots at %s's!",
-                  f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
 
         b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
         setCounter((Turncounter *) b->counters[BURNED], 3);	//Give 3 turns of Burned status
@@ -1159,7 +1159,7 @@ void archerSpecial_Fireshot(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
         }
 
         DrawText(TextFormat("%s lights an arrow on fire and shoots at %s's!",
-                  f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            f->name, victim), win->x, win->y, win->height*0.15f, DARKGREEN);
 
         e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
         setCounter((Turncounter *) e->counters[BURNED], 3);	//Give 3 turns of Burned status
@@ -1259,7 +1259,7 @@ void mageSpecial_Flamering(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
         }
 
         DrawText(TextFormat("%s summons a ring of fire around %s!", f->name,
-                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            victim), win->x, win->y, win->height*0.15f, DARKGREEN);
 
         b->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
         setCounter((Turncounter *) b->counters[BURNED], 3);	//Give 3 turns of Burned status
@@ -1271,7 +1271,7 @@ void mageSpecial_Flamering(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
         }
 
         DrawText(TextFormat("%s summons a ring of fire around %s!", f->name,
-                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            victim), win->x, win->y, win->height*0.15f, DARKGREEN);
 
         e->status = Burned;	//Set status to Burned. May need change to manage multiple statuses active at once
         setCounter((Turncounter *) e->counters[BURNED], 3);	//Give 3 turns of Burned status
@@ -1297,7 +1297,7 @@ void assassinSpecial_Grimdagger(Rectangle * win, Fighter * f, Enemy * e, Boss * 
     BeginDrawing();
     if (isBoss && b->hp > 1 && b->def >= 5) {	//Check if boss has some hp and defense
         DrawText(TextFormat("%s throws its dagger at %s's heart.", f->name,
-                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            victim), win->x, win->y, win->height*0.15f, DARKGREEN);
         b->def = 0;		//Set boss def
 
         f->energy -= costFromSpecial(f->class, XGrimdagger);	//Reduce fighter energy
@@ -1305,7 +1305,7 @@ void assassinSpecial_Grimdagger(Rectangle * win, Fighter * f, Enemy * e, Boss * 
     } else if (e->hp > 1 && e->def >= 5) {	//Check if enemy has some hp and defense
 
         DrawText(TextFormat("%s throws its dagger at %s's heart.", f->name,
-                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            victim), win->x, win->y, win->height*0.15f, DARKGREEN);
         e->def = 0;		//Set enemy def
 
         f->energy -= costFromSpecial(f->class, XGrimdagger);	//Reduce fighter energy
@@ -1331,7 +1331,7 @@ void assassinSpecial_Leechknife(Rectangle * win, Fighter * f, Enemy * e, Boss * 
         if (f->hp <= f->totalhp - 6) {	//Check if fighter has some space in his healthbar
 
             DrawText(TextFormat("%s strikes %s with its vampire knife.", f->name,
-                      victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                                victim), win->x, win->y, win->height*0.15f, DARKGREEN);
             f->hp += 5;
             b->hp -= 5;
 
@@ -1345,7 +1345,7 @@ void assassinSpecial_Leechknife(Rectangle * win, Fighter * f, Enemy * e, Boss * 
         if (f->hp <= f->totalhp - 6) {	//Check if fighter has some space in his healthbar
 
             DrawText(TextFormat("%s strikes %s with its vampire knife.", f->name,
-                      victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                                victim), win->x, win->y, win->height*0.15f, DARKGREEN);
             f->hp += 5;
             e->hp -= 5;
 
@@ -1368,7 +1368,7 @@ void assassinSpecial_Disguise(Rectangle * win, Fighter * f, Enemy * e, Boss * b,
     BeginDrawing();
     if (f->def >= 8 && f->vel >= 3) {
         DrawText(TextFormat("%s disguises himself as a %s.", f->name,
-                  stringFromEClass(e->class)), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            stringFromEClass(e->class)), win->x, win->y, win->height*0.15f, DARKGREEN);
         f->def += 8;
         f->vel -= 2;
         f->energy -= costFromSpecial(f->class, XDisguise);	//Reduce fighter energy
@@ -1398,7 +1398,7 @@ void assassinSpecial_Venomblade(Rectangle * win, Fighter * f, Enemy * e, Boss * 
         }
 
         DrawText(TextFormat("%s throws venomous daggers at %s!", f->name,
-                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            victim), win->x, win->y, win->height*0.15f, DARKGREEN);
 
         b->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
         setCounter((Turncounter *) b->counters[POISON], 4);	//Give 4 turns of Poison status
@@ -1410,7 +1410,7 @@ void assassinSpecial_Venomblade(Rectangle * win, Fighter * f, Enemy * e, Boss * 
         }
 
         DrawText(TextFormat("%s throws venomous daggers at %s!", f->name,
-                  victim), win->x, win->y, win->height*0.15f, DARKGREEN);
+                            victim), win->x, win->y, win->height*0.15f, DARKGREEN);
 
         e->status = Poison;	//Set status to Poison. May need change to manage multiple statuses active at once
         setCounter((Turncounter *) e->counters[POISON], 4);	//Give 4 turns of Poison status

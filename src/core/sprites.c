@@ -401,7 +401,7 @@ char equipzones_sprites_proper[EQUIPZONES + 1][9][MAXCOLS] = {
         "111881188111",
         "111188881111",
         "111111111111",
-	},
+    },
     {
         //TORSO
         "111111111111",
