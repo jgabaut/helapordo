@@ -243,7 +243,6 @@ pack: versioncheck
 	install ./sprites4curses/LICENSE ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/
 	install ./sprites4curses/README.md ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/
 	install ./amboso/amboso ~/helapordo-local/share/$(PACK_NAME)/amboso/
-	install ./amboso/amboso_fn.sh ~/helapordo-local/share/$(PACK_NAME)/amboso/
 	install ./amboso/LICENSE ~/helapordo-local/share/$(PACK_NAME)/amboso/
 	install ./amboso/README.md ~/helapordo-local/share/$(PACK_NAME)/amboso/
 	install ./koliseo/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/koliseo/src/
