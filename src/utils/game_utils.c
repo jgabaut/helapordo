@@ -25,7 +25,7 @@ void* s4c_gui_malloc(size_t size)
 #else
     log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating {%lli} bytes.", __func__, size);
 #endif // _WIN32
-    return kls_push_zero_AR(support_kls, size, _Alignof(char), 1);
+    return kls_push_zero_ext(support_kls, size, _Alignof(char), 1);
 }
 void* s4c_gui_calloc(size_t count, size_t size)
 {
@@ -34,7 +34,7 @@ void* s4c_gui_calloc(size_t count, size_t size)
 #else
     log_tag("debug_log.txt", "[S4C-GUI]", "%s():    Allocating [%lli]x{%lli} bytes.", __func__, count, size);
 #endif // _WIN32
-    return kls_push_zero_AR(support_kls, size, _Alignof(char), count);
+    return kls_push_zero_ext(support_kls, size, _Alignof(char), count);
 }
 
 /**
@@ -4586,10 +4586,29 @@ turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
                               Room *room, loadInfo *load_info, Enemy *enemy,
                               Boss *boss, FILE *save_file, Rectangle *notification_area,
                               Koliseo_Temp *t_kls, foeTurnOption_OP foe_op,
-                              skillType picked_skill)
+                              skillType picked_skill, RingaBuf* rb_notifications)
 {
-    printf("%s():    TODO - implement turnOP init for rl-build\n", __func__);
-    return NULL;
+    log_tag("debug_log.txt", "[TURNOP]",
+            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+    kls_log(t_kls->kls, "DEBUG", "[TURNOP]",
+            "Allocated size %lu for new turnOP_args", sizeof(turnOP_args));
+    turnOP_args *res =
+        (turnOP_args *) KLS_PUSH_T_TYPED(t_kls, turnOP_args, HR_turnOP_args,
+                                         "turnOP_args", "turnOP_args");
+    res->gmst = gmst;
+    res->actor = actor;
+    res->path = path;
+    res->room = room;
+    res->load_info = load_info;
+    res->enemy = enemy;
+    res->boss = boss;
+    res->save_file = save_file;
+    res->notify_win = notification_area;
+    res->t_kls = t_kls;
+    res->foe_op = foe_op;
+    res->picked_skill = picked_skill;
+    res->rb_notifications = rb_notifications;
+    return res;
 }
 
 /**
@@ -4963,8 +4982,9 @@ void updateCounters_Boss(Turncounter *counters[], int isBoss, Fighter *f,
  * @see onLevelUp()
  * @param player The Fighter pointer that gets xp.
  * @param xp The amount of xp.
+ * @return 1 when player unlocked a new Special
  */
-void checkremainder(Fighter *player, int xp)
+int checkremainder(Fighter *player, int xp)
 {
     int curr = player->currentlevelxp;
     int tot = player->totallevelxp;
@@ -4981,19 +5001,22 @@ void checkremainder(Fighter *player, int xp)
         //white();
 
         //Stats gains on level up
-        onLevelUp(player);
+        int special_unlock = onLevelUp(player);
 
         player->currentlevelxp = abs((tot - curr - xp));
         int nextLevelMoreXp =
             round(1.75 * (player->level + 1)) + player->level + 1;
         player->totallevelxp = (tot / player->level) + nextLevelMoreXp;
         checkremainder(player, 0);
+
+        return special_unlock;
     } else {
         player->currentlevelxp += xp;
         player->totalxp += xp;
         if (xp != 0) {
             //printf("\n\t%s obtained %i xp.", player->name, xp);
         }
+        return 0;
     }
 }
 
@@ -5006,12 +5029,12 @@ void checkremainder(Fighter *player, int xp)
  * @param player The Fighter pointer that gets xp.
  * @param e The Enemy pointer that gives xp.
  */
-void giveXp(Fighter *player, Enemy *e)
+int giveXp(Fighter *player, Enemy *e)
 {
 
     int xp = getEnemyXpGain(e);
 
-    checkremainder(player, xp);
+    return checkremainder(player, xp);
 }
 
 /**
@@ -5071,8 +5094,9 @@ int getBossXpGain(Boss *b)
  * @see SPECIALLVLRATIO
  * @see unlockSpecial()
  * @param player The Fighter pointer that levels up.
+ * @return 1 when player unlocked a new Special
  */
-void onLevelUp(Fighter *player)
+int onLevelUp(Fighter *player)
 {
     int boost = getBoost(player->level, player->luck);
 
@@ -5094,9 +5118,11 @@ void onLevelUp(Fighter *player)
     if (player->level % SPECIALLVLRATIO == 0
         && (player->stats->specialsunlocked < (SPECIALSMAX + 1))) {
         unlockSpecial(player);
+        return 1;
     }
 
     log_tag("debug_log.txt", "[LEVELUP]", "Player leveled up.");
+    return 0;
 
     /*
        lightCyan();

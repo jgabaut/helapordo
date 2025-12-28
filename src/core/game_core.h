@@ -67,7 +67,7 @@ typedef struct GameScreen {
 /**
  * Defines GameScreen type, as an enum.
  */
-typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_VIEW, FLOOR_VIEW, ROOM_VIEW, ENDING, DOOR_ANIM } GameScreen;
+typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_VIEW, FLOOR_VIEW, ROOM_VIEW, UNLOCK_SPECIAL_VIEW, PICK_SPECIAL_VIEW, EQUIPS_VIEW, OPEN_BAG_VIEW, CHECK_LOADOUT_VIEW, CONSUMABLES_VIEW, ENDING, DOOR_ANIM } GameScreen;
 // Add more includes for rl-build here
 #ifdef _WIN32
 /**
@@ -84,7 +84,11 @@ typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 
+#ifdef HELAPORDO_DEBUG_ACCESS
+#include "../../koliseo/src/kls_region.h"
+#else
 #include "../../koliseo/src/koliseo.h"
+#endif // HELAPORDO_DEBUG_ACCESS
 
 /**
  * We need to undef these macros if they exist, since windows.h may declare them (and here we inherit that from koliseo.h).
@@ -368,12 +372,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 13
+#define HELAPORDO_PATCH_VERSION 14
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.13"
+#define VERSION "1.4.14"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
 

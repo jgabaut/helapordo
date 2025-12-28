@@ -986,7 +986,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         gui_state->framesCounter += 1;    // Count frames
 
         // Press enter to change to ENDING screen
-        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+        if (IsKeyPressed(KEY_ENTER)) { //|| IsGestureDetected(GESTURE_TAP)) {
+            death(*player, load_info);
             gui_state->currentScreen = ENDING;
         }
 
@@ -1163,19 +1164,372 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             *pause_animation = !(*pause_animation);
         }
 
-        if ((*current_room)->class == ENEMIES) {
-            if (!(*pause_animation)) {
-                *current_anim_frame = (gui_state->framesCounter)%60;
-            }
-        }
-
-        // Press enter to change to FLOOR_VIEW screen
-        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
-            *current_room = NULL;
+        if ((*current_room)->class == BASIC) {
             gui_state->currentScreen = FLOOR_VIEW;
         }
 
+        if ((*current_room)->class == ENEMIES) {
+            for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES+1; i++) {
+                gui_state->buttons[i].on = false;
+            }
+            if (!(*pause_animation)) {
+                *current_anim_frame = (gui_state->framesCounter)%60;
+            }
+
+            for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES+1; i++) {
+
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    //TODO: may use i to se is_new_game for now but its weak to changes in the array
+                    // load_info->is_new_game = i;
+                    if (i == BUTTON_FIGHT) { // New game is the first button
+                        Boss *dummy_boss = NULL;
+                        Enemy* enemy = (*current_room)->enemies[(*gamestate)->current_enemy_index];
+                        FILE *args_save_file = NULL;
+                        foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+                        skillType dummy_picked_skill = -1;
+
+                        Rectangle rb_r = CLITERAL(Rectangle) {
+                            gui_state->gameScreenWidth*0.1f,
+                                      gui_state->gameScreenHeight*0.65f,
+                                      gui_state->gameScreenWidth*0.8f,
+                                      gui_state->gameScreenHeight*0.3f,
+                        };
+
+                        //Declare turnOP_args
+                        turnOP_args *args =
+                            init_turnOP_args(*gamestate, *player, *game_path, *current_room, load_info, enemy,
+                                             dummy_boss, args_save_file, &rb_r, *floor_kls,
+                                             dummy_foe_op, dummy_picked_skill, rb_notifications);
+                        args->foe_op =
+                            foeTurnOP_from_foeTurnOption(enemyTurnPick(enemy, *player));
+                        log_tag("debug_log.txt", "[FOETURN]", "foePick was: [ %s ]",
+                                stringFromFoeTurnOP(args->foe_op));
+
+                        OP_res fightStatus = turnOP(OP_FIGHT, args, default_kls, *floor_kls);
+                        //Lost battle
+                        if (fightStatus == OP_RES_DEATH) {
+                            //Account for oracle gift perk
+                            int oracle_perks = (*player)->perks[ORACLE_GIFT]->innerValue;
+                            if (oracle_perks > 0) {
+                                (*player)->hp = round((*player)->totalhp / 3);
+
+                                (*player)->perks[ORACLE_GIFT]->innerValue -= 1;
+
+                                e_death(enemy);
+                                log_tag("debug_log.txt", "[DEBUG-ROOM-PERKS]",
+                                        "Oraclegift proc.");
+
+                                if ((*current_room)->foes->tot_alive > 0) {
+                                    //Go to next battle
+                                    //Display current party info
+                                    //display_printFoeParty(room->foes);
+                                    (*gamestate)->current_enemy_index++;
+                                    fightStatus = OP_RES_NO_DMG;
+                                    log_tag("debug_log.txt", "[ROOM]",
+                                            "Onto next enemy, %i left.", (*current_room)->foes->tot_alive - (*current_room)->foes->current_index);
+                                } else {
+                                    log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                                    *current_room = NULL;
+                                    (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                    (*gamestate)->current_enemy_index = 0;
+                                    gui_state->currentScreen = FLOOR_VIEW;
+                                    break;
+                                }
+                                break;	//We go to next enemy
+                            }
+
+                            e_death(enemy);
+                            int player_luck = (*player)->luck;
+                            log_tag("debug_log.txt", "[DEBUG]", "Player luck was [%i]",
+                                    player_luck);
+                            death((*player), load_info);
+                            //free(room->foes);
+
+                            //printf("\t\tLuck:  %i Path luck:  %i\n",player_luck,p->luck);
+                            //red();
+                            //printf("\n\n\tYOU DIED.\n");
+                            //white();
+                            //free(args);
+                            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+                            *current_room = NULL;
+                            gui_state->currentScreen = ENDING;
+                            break;
+                        } else if (fightStatus == OP_RES_KILL_DONE) {
+                            //Give coins
+
+                            (*player)->balance += enemy->prize;
+                            (*player)->stats->coinsfound += enemy->prize;
+
+                            char msg[50];
+                            sprintf(msg, "You found +%i coins.", enemy->prize);
+                            enqueue_notification(msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
+
+                            //Win, get xp and free memory from enemy
+                            int special_unlock = giveXp((*player), enemy);
+
+                            e_death(enemy);
+
+                            (*current_room)->foes->alive_enemies[(*current_room)->foes->current_index] = 0;
+                            (*current_room)->foes->current_index++;
+                            (*current_room)->foes->tot_alive--;
+
+                            if ((*current_room)->foes->tot_alive > 0) {
+                                //Go to next battle
+                                //Display current party info
+                                //display_printFoeParty(room->foes);
+                                (*gamestate)->current_enemy_index++;
+                                fightStatus = OP_RES_NO_DMG;
+                                log_tag("debug_log.txt", "[ROOM]",
+                                        "Onto next enemy, %i left.", (*current_room)->foes->tot_alive - (*current_room)->foes->current_index);
+                            } else {
+                                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                (*gamestate)->current_enemy_index = 0;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                                if (special_unlock == 1) {
+                                    gui_state->currentScreen = UNLOCK_SPECIAL_VIEW;
+                                }
+                                break;
+                            }
+
+                            if (special_unlock == 1) {
+                                gui_state->currentScreen = UNLOCK_SPECIAL_VIEW;
+                            }
+                            break;
+                        }
+
+                        // End of fight button
+                    } else if (i == BUTTON_SPECIAL) {
+                        if ((*player)->stats->specialsunlocked > 0) {
+                            gui_state->currentScreen = PICK_SPECIAL_VIEW;
+                        }
+                    } else if (i == BUTTON_EQUIPS) {
+                        gui_state->currentScreen = EQUIPS_VIEW;
+                    } else if (i == BUTTON_CONSUMABLES) {
+                        gui_state->currentScreen = CONSUMABLES_VIEW;
+                    }
+                }
+            }
+        } else {
+            // Press enter to change to FLOOR_VIEW screen
+            if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                *current_room = NULL;
+                gui_state->currentScreen = FLOOR_VIEW;
+            }
+        }
+
+    }
+    break;
+    case PICK_SPECIAL_VIEW: {
+        // TODO: Update PICK_SPECIAL_VIEW screen variables here!
+        for (int i=BUTTON_SPECIAL_1; i < BUTTON_SPECIAL_4 +1; i++) {
+            gui_state->buttons[i].on = false;
+        }
+        for (int i=BUTTON_SPECIAL_1; i < BUTTON_SPECIAL_4 +1; i++) {
+            if (((*player)->specials[i - BUTTON_SPECIAL_1]->enabled)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    Rectangle special_notice_r = CLITERAL(Rectangle) {
+                        gui_state->gameScreenHeight *0.5f,
+                                  gui_state->gameScreenWidth *0.5f,
+                                  (gui_state->gameScreenHeight*0.3f),
+                                  (gui_state->gameScreenWidth*0.3f),
+                    };
+                    Enemy* enemy = (*current_room)->enemies[(*gamestate)->current_enemy_index];
+                    Boss* boss = (*current_room)->boss;
+                    int enemyIndex = (*gamestate)->current_enemy_index;
+                    if ((*player)->specials[i - BUTTON_SPECIAL_1]->cost <= (*player)->energy + (*player)->equipboost_enr) {
+                        fight_Special((*player)->specials[i - BUTTON_SPECIAL_1]->move, &special_notice_r, *player, enemy, boss,
+                                      *game_path, *roomsDone, enemyIndex, (*current_room)->class == BOSS);
+                    }
+                    gui_state->currentScreen = ROOM_VIEW;
+                }
+            }
+        }
+
+    }
+    break;
+    case UNLOCK_SPECIAL_VIEW: {
+        // TODO: Update UNLOCK_SPECIAL_VIEW screen variables here!
+        for (int i=BUTTON_SPECIAL_UNLOCK_1; i < BUTTON_SPECIAL_UNLOCK_4 +1; i++) {
+            gui_state->buttons[i].on = false;
+        }
+        for (int i=BUTTON_SPECIAL_UNLOCK_1; i < BUTTON_SPECIAL_UNLOCK_4 +1; i++) {
+            if (!((*player)->specials[i - BUTTON_SPECIAL_UNLOCK_1]->enabled)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    Specialslot *selected = (*player)->specials[i - BUTTON_SPECIAL_UNLOCK_1];
+
+                    //Check if the selected move is NOT enabled
+                    if (!(selected->enabled)) {
+                        //Enable the move
+                        selected->enabled = 1;
+                    }
+                    (*player)->stats->specialsunlocked += 1;
+                    gui_state->currentScreen = ROOM_VIEW;
+                }
+            }
+        }
+    }
+    break;
+    case EQUIPS_VIEW: {
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = ROOM_VIEW;
+        }
+        // TODO: Update EQUIPS_VIEW screen variables here!
+        for (int i=BUTTON_OPEN_BAG; i < BUTTON_CHECK_LOADOUT +1; i++) {
+            gui_state->buttons[i].on = false;
+        }
+        for (int i=BUTTON_OPEN_BAG; i < BUTTON_CHECK_LOADOUT +1; i++) {
+            if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                    gui_state->buttons[i].state = BUTTON_PRESSED;
+                } else {
+                    gui_state->buttons[i].state = BUTTON_HOVER;
+                }
+                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                    gui_state->buttons[i].on = true;
+                }
+            } else {
+                gui_state->buttons[i].state = BUTTON_NORMAL;
+            }
+            if (gui_state->buttons[i].on) {
+                fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                //Specialslot *selected = (*player)->specials[i - BUTTON_SPECIAL_UNLOCK_1];
+
+                //Check if the selected move is NOT enabled
+                //if (!(selected->enabled)) {
+                //Enable the move
+                //   selected->enabled = 1;
+                //}
+                //(*player)->stats->specialsunlocked += 1;
+                if (i == BUTTON_OPEN_BAG) {
+                    gui_state->currentScreen = OPEN_BAG_VIEW;
+                } else if (i == BUTTON_CHECK_LOADOUT) {
+                    gui_state->currentScreen = CHECK_LOADOUT_VIEW;
+                }
+            }
+        }
+    }
+    break;
+    case OPEN_BAG_VIEW: {
+        // Press q to change to SAVES_VIEW screen
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = EQUIPS_VIEW;
+            gui_state->selectedIndex = 0;
+        }
+        if (gui_state->selectedIndex >= (*player)->equipsBagOccupiedSlots) {
+            gui_state->selectedIndex = 0;
+        }
+        if (IsKeyPressed(KEY_DOWN)) {
+            gui_state->selectedIndex += 1;
+        }
+        if (IsKeyPressed(KEY_UP)) {
+            if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
+            //Retrieve item info
+            Equip *e = (Equip *) (*player)->equipsBag[gui_state->selectedIndex];
+            Equipslot *slot = (Equipslot *) (*player)->equipslots[e->type];
+            if (slot->active == 1) {
+                //We reset status for equipped item
+                slot->item->equipped = 0;
+
+                removeEquipPerks(slot->item, *player);
+
+                //We adjust total boost removing current values
+                (*player)->equipboost_atk -= slot->item->atk;
+                (*player)->equipboost_def -= slot->item->def;
+                (*player)->equipboost_vel -= slot->item->vel;
+                (*player)->equipboost_enr -= slot->item->enr;
+            };
+
+            //We equip the item
+            slot->item = e;
+            slot->item->equipped = 1;
+
+            applyEquipPerks(slot->item, *player);
+            slot->active = 1;
+
+            //Apply the new item stats
+            (*player)->equipboost_atk += slot->item->atk;
+            (*player)->equipboost_def += slot->item->def;
+            (*player)->equipboost_vel += slot->item->vel;
+            (*player)->equipboost_enr += slot->item->enr;
+        }
+    }
+    break;
+    case CHECK_LOADOUT_VIEW: {
+        // Press q to change to EQUIPS_VIEW screen
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = EQUIPS_VIEW;
+        }
+    }
+    break;
+    case CONSUMABLES_VIEW: {
+        // Press q to change to ROOM_VIEW screen
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = ROOM_VIEW;
+            gui_state->selectedIndex = 0;
+        }
+        if (gui_state->selectedIndex >= CONSUMABLESMAX) {
+            gui_state->selectedIndex = 0;
+        }
+        if (IsKeyPressed(KEY_DOWN)) {
+            gui_state->selectedIndex += 1;
+        }
+        if (IsKeyPressed(KEY_UP)) {
+            if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
+        }
+        if (IsKeyPressed(KEY_ENTER)) {
+            Consumable* c = (*player)->consumablesBag[gui_state->selectedIndex];
+            if (c->qty > 0) {
+                Enemy* enemy = (*current_room)->enemies[(*gamestate)->current_enemy_index];
+                Boss* boss = (*current_room)->boss;
+                bool isBoss = false;
+                if (boss) isBoss = true;
+                useConsumable(*player, enemy, boss, consumablestrings[gui_state->selectedIndex], isBoss);
+            }
+        }
     }
     break;
     case ENDING: {
@@ -1186,8 +1540,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             //Reset load_info->is_new_game to -1
             log_tag("debug_log.txt", "DEBUG", "%s():    Quitting", __func__);
             fprintf(stderr, "[DEBUG] [%s()]    Quitting\n", __func__);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
             exit(EXIT_SUCCESS);
         }
     }
@@ -1418,7 +1770,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Controls for FLOOR_VIEW screen", 110, 160, 20, gui_state.theme.txt_color);
         DrawText("Arrow keys to move", 110, 190, 20, gui_state.theme.txt_color);
         DrawText("PRESS R to regen floor", 110, 220, 20, gui_state.theme.txt_color);
-        DrawText("PRESS ENTER or TAP to go to ENDING SCREEN", 110, 280, 20, gui_state.theme.txt_color);
+        DrawText("PRESS ENTER to go to ENDING SCREEN", 110, 280, 20, gui_state.theme.txt_color);
 
         Rectangle floor_r = CLITERAL(Rectangle) {
             gui_state.gameScreenHeight *0.1f,
@@ -1477,6 +1829,15 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, gui_state.theme.txt_color);
             switch (current_room->class) {
             case ENEMIES: {
+                for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES +1; i++) {
+                    Gui_Button button = gui_state.buttons[i];
+                    if (button.state == BUTTON_HOVER) {
+                        DrawRectangleRec(button.r, RED);
+                    } else {
+                        DrawRectangleRec(button.r, button.box_color);
+                    }
+                    DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+                }
                 int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
                 int pl_frame_W = gui_state.gameScreenWidth * 0.3f;
                 int pl_frame_H = pl_frame_W;
@@ -1485,7 +1846,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int en_rect_Y = pl_rect_Y;
                 int en_frame_W = pl_frame_W;
                 int en_frame_H = pl_frame_H;
-                float stats_label_W = gui_state.gameScreenWidth * 0.15f;
+                float stats_label_W = gui_state.gameScreenWidth * 0.18f;
                 float stats_label_H = stats_label_W;
                 Rectangle stats_label_r = CLITERAL(Rectangle) {
                     gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
@@ -1542,14 +1903,16 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 }
                 DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
                 Enemy* enemy = current_room->enemies[gamestate->current_enemy_index];
+                assert(enemy != NULL);
                 int stats_height = stats_label_r.height * 0.135f;
                 Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
-                DrawText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i  Def  %i", enemy->def, player->def), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Def  %i", enemy->def, player->def), stats_height)/2)), (int)stats_label_r.y + 2*stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), stats_height)/2)), (int)stats_label_r.y + 3*stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + 4*stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + 5*stats_height, stats_height, stats_txt_color);
-                DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + 6*stats_height, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Hp  %i", enemy->hp, player->hp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Hp  %i", enemy->hp, player->hp), stats_height)/2)), (int)stats_label_r.y + stats_height /2, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + (stats_height*3/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Def  %i", enemy->def, player->def), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Def  %i", enemy->def, player->def), stats_height)/2)), (int)stats_label_r.y + (stats_height*5/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Vel  %i", enemy->vel, player->vel), stats_height)/2)), (int)stats_label_r.y + (stats_height*7/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + (stats_height*9/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + (stats_height*11/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + (stats_height*13/2), stats_height, stats_txt_color);
 
                 DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
                 int name_height = pr_name_r.height * 0.6f;
@@ -1662,7 +2025,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             }
         }
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
+        //DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
         DrawText("PRESS P to pause animations", 110, 350, 20, gui_state.theme.txt_color);
         DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, gui_state.theme.txt_color);
 
@@ -1688,12 +2051,270 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         */
     }
     break;
+    case PICK_SPECIAL_VIEW: {
+        // TODO: Draw UNLOCK_SPECIAL_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("PICK SPECIAL SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        for (int i=BUTTON_SPECIAL_1; i < BUTTON_SPECIAL_4 +1; i++) {
+            if ((player->specials[i - BUTTON_SPECIAL_1]->enabled)) {
+                Gui_Button button = gui_state.buttons[i];
+                if (button.state == BUTTON_HOVER) {
+                    DrawRectangleRec(button.r, RED);
+                    DrawText(nameStringFromSpecial(player->class, i - BUTTON_SPECIAL_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
+                    DrawText(descStringFromSpecial(player->class, i - BUTTON_SPECIAL_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
+                } else {
+                    DrawRectangleRec(button.r, button.box_color);
+                }
+                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+            }
+        }
+    }
+    break;
+    case UNLOCK_SPECIAL_VIEW: {
+        // TODO: Draw UNLOCK_SPECIAL_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("UNLOCK SPECIAL SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        for (int i=BUTTON_SPECIAL_UNLOCK_1; i < BUTTON_SPECIAL_UNLOCK_4 +1; i++) {
+            if (!(player->specials[i - BUTTON_SPECIAL_UNLOCK_1]->enabled)) {
+                Gui_Button button = gui_state.buttons[i];
+                if (button.state == BUTTON_HOVER) {
+                    DrawRectangleRec(button.r, RED);
+                    DrawText(nameStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
+                    DrawText(descStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
+                } else {
+                    DrawRectangleRec(button.r, button.box_color);
+                }
+                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+            }
+        }
+    }
+    break;
+    case EQUIPS_VIEW: {
+        // TODO: Draw EQUIPS_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("EQUIPS SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        for (int i=BUTTON_OPEN_BAG; i < BUTTON_CHECK_LOADOUT +1; i++) {
+            Gui_Button button = gui_state.buttons[i];
+            if (button.state == BUTTON_HOVER) {
+                DrawRectangleRec(button.r, RED);
+                //DrawText(nameStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
+                //DrawText(descStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
+            } else {
+                DrawRectangleRec(button.r, button.box_color);
+            }
+            DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+        }
+        float equips_box_x = gui_state.gameScreenWidth/2 - (100 * gui_state.scale);
+        float equips_box_y = 60;
+        float equips_box_width = gui_state.gameScreenWidth/2 + (100 * gui_state.scale);
+        float equips_box_height = gui_state.gameScreenHeight - 60 - (10 * gui_state.scale);
+        //DrawRectangleLines(equips_box_x, equips_box_y, equips_box_width, equips_box_height, RED);
+        Rectangle head_label_box = {
+            .x = equips_box_x + 0.05*equips_box_width,
+            .y = equips_box_y + 0.05*equips_box_height,
+            .width = equips_box_width * 0.25,
+            .height = equips_box_height * 0.3,
+        };
+        Rectangle torso_label_box = {
+            .x = head_label_box.x + head_label_box.width + 0.05*equips_box_width,
+            .y = head_label_box.y,
+            .width = head_label_box.width,
+            .height = head_label_box.height,
+        };
+        Rectangle legs_label_box = {
+            .x = torso_label_box.x + torso_label_box.width + 0.05*equips_box_width,
+            .y = torso_label_box.y,
+            .width = torso_label_box.width,
+            .height = torso_label_box.height
+        };
+        Rectangle head_box = {
+            .x = equips_box_x + 0.05*equips_box_width,
+            .y = head_label_box.y + head_label_box.height + 0.05*equips_box_height,
+            .width = equips_box_width * 0.25,
+            .height = equips_box_height * 0.3,
+        };
+        Rectangle torso_box = {
+            .x = head_box.x + head_box.width + 0.05*equips_box_width,
+            .y = head_box.y,
+            .width = head_box.width,
+            .height = head_box.height,
+        };
+        Rectangle legs_box = {
+            .x = torso_box.x + torso_box.width + 0.05*equips_box_width,
+            .y = torso_box.y,
+            .width = torso_box.width,
+            .height = torso_box.height
+        };
+        //DrawRectangleLines(equips_box_x, equips_box_y, equips_box_width, equips_box_height, RED);
+        //DrawRectangleLines(head_label_box.x, head_label_box.y, head_label_box.width, head_label_box.height, RED);
+        //DrawRectangleLines(torso_label_box.x, torso_label_box.y, torso_label_box.width, torso_label_box.height, RED);
+        //DrawRectangleLines(legs_label_box.x, legs_label_box.y, legs_label_box.width, legs_label_box.height, RED);
+        //DrawRectangleLines(head_box.x, head_box.y, head_box.width, head_box.height, RED);
+        //DrawRectangleLines(torso_box.x, torso_box.y, torso_box.width, torso_box.height, RED);
+        //DrawRectangleLines(legs_box.x, legs_box.y, legs_box.width, legs_box.height, RED);
+        DrawSpriteRect(equipzones_sprites_proper[HEAD], head_label_box, 8, 12, head_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+        DrawSpriteRect(equipzones_sprites_proper[TORSO], torso_label_box, 8, 12, torso_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+        DrawSpriteRect(equipzones_sprites_proper[LEGS], legs_label_box, 8, 12, legs_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+        for (Equipzone i=0; i<EQUIPZONES+1; i++) {
+            if (player->equipslots[i]->active) {
+                switch (i) {
+                case HEAD: {
+                    DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], head_box, 8, 12, head_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case TORSO: {
+                    DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], torso_box, 8, 12, torso_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case LEGS: {
+                    DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], legs_box, 8, 12, legs_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                }
+            }
+        }
+    }
+    break;
+    case OPEN_BAG_VIEW: {
+        // TODO: Draw EQUIPS_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("BAG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        Rectangle textbox_bounds = (Rectangle) {
+            .x = 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth/2,
+            .height = gui_state.gameScreenHeight/2
+        };
+        Rectangle spritebox_bounds = (Rectangle) {
+            .x = textbox_bounds.x + textbox_bounds.width + 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth - textbox_bounds.width - textbox_bounds.x - 40,
+            .height = gui_state.gameScreenHeight/2
+        };
+        //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        int selected_index = gui_state.selectedIndex;
+        for (int i=0; i < player->equipsBagOccupiedSlots; i++) {
+            Equip* e = player->equipsBag[i];
+            if (e) {
+                //printf("%s\n", stringFromEquips(e->class));
+                DrawText(TextFormat("%s", stringFromEquips(e->class)), textbox_bounds.x + 20, textbox_bounds.y + 20*i, 20, gui_state.theme.txt_color);
+            }
+            if (i == selected_index) {
+                DrawSpriteRect(equips_sprites_proper[e->class], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+            }
+        }
+    }
+    break;
+    case CHECK_LOADOUT_VIEW: {
+        // TODO: Draw EQUIPS_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("LOADOUT SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        int x_spacing = 20;
+        int y_spacing = 70;
+        Rectangle spritebox_bounds = (Rectangle) {
+            .x = x_spacing,
+            .y = y_spacing,
+            .width = gui_state.gameScreenWidth - x_spacing*2,
+            .height = gui_state.gameScreenHeight - y_spacing*2
+        };
+        Rectangle headbox_bounds = (Rectangle) {
+            .x = x_spacing,
+            .y = y_spacing,
+            .width = spritebox_bounds.width/3 - x_spacing,
+            .height = spritebox_bounds.height,
+        };
+        Rectangle torsobox_bounds = (Rectangle) {
+            .x = headbox_bounds.x + headbox_bounds.width + x_spacing,
+            .y = y_spacing,
+            .width = headbox_bounds.width,
+            .height = headbox_bounds.height,
+        };
+        Rectangle legsbox_bounds = (Rectangle) {
+            .x = torsobox_bounds.x + torsobox_bounds.width + x_spacing,
+            .y = y_spacing,
+            .width = torsobox_bounds.width,
+            .height = torsobox_bounds.height,
+        };
+        //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        //DrawRectangleLines(headbox_bounds.x, headbox_bounds.y, headbox_bounds.width, headbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_BLUE));
+        //DrawRectangleLines(torsobox_bounds.x, torsobox_bounds.y, torsobox_bounds.width, torsobox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_BLUE));
+        //DrawRectangleLines(legsbox_bounds.x, legsbox_bounds.y, legsbox_bounds.width, legsbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_BLUE));
+        for (int i=0; i < 3; i++) {
+            Equipslot* slot = player->equipslots[i];
+            if (slot->active) {
+                Equip* e = slot->item;
+                Rectangle slot_r = {0};
+                switch(i) {
+                case HEAD: {
+                    slot_r = headbox_bounds;
+                }
+                break;
+                case TORSO: {
+                    slot_r = torsobox_bounds;
+                }
+                break;
+                case LEGS: {
+                    slot_r = legsbox_bounds;
+                }
+                break;
+                }
+                DrawSpriteRect(equips_sprites_proper[e->class], slot_r, 8, 12, slot_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                int text_start_y = slot_r.width/12*10;
+                DrawText(TextFormat("%s", stringFromEquips(e->class)), slot_r.x, slot_r.y + text_start_y, 20, gui_state.theme.txt_color);
+                DrawText(TextFormat("Atk: %i", e->atk), slot_r.x, slot_r.y + text_start_y + 20, 20, gui_state.theme.txt_color);
+                DrawText(TextFormat("Def: %i", e->def), slot_r.x, slot_r.y + text_start_y + 40, 20, gui_state.theme.txt_color);
+                DrawText(TextFormat("Vel: %i", e->vel), slot_r.x, slot_r.y + text_start_y + 60, 20, gui_state.theme.txt_color);
+                DrawText(TextFormat("Enr: %i", e->enr), slot_r.x, slot_r.y + text_start_y + 80, 20, gui_state.theme.txt_color);
+                DrawText(TextFormat("Qual: %i", e->qual), slot_r.x, slot_r.y + text_start_y + 100, 20, gui_state.theme.txt_color);
+                DrawText(TextFormat("Lvl: %i", e->level), slot_r.x, slot_r.y + text_start_y + 120, 20, gui_state.theme.txt_color);
+                DrawText(TextFormat("Perks: %i", e->perksCount), slot_r.x, slot_r.y + text_start_y + 140, 20, gui_state.theme.txt_color);
+            }
+        }
+    }
+    break;
+    case CONSUMABLES_VIEW: {
+        // TODO: Draw CONSUMABLES_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("CONSUMABLES SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        Rectangle textbox_bounds = (Rectangle) {
+            .x = 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth/2,
+            .height = gui_state.gameScreenHeight/2
+        };
+        Rectangle spritebox_bounds = (Rectangle) {
+            .x = textbox_bounds.x + textbox_bounds.width + 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth - textbox_bounds.width - textbox_bounds.x - 40,
+            .height = gui_state.gameScreenHeight/2
+        };
+        //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        int selected_index = gui_state.selectedIndex;
+        for (int i=0; i < CONSUMABLESMAX; i++) {
+            Consumable* c = player->consumablesBag[i];
+            Color color = gui_state.theme.txt_color;
+            if (i == selected_index) color = RED;
+            DrawText(TextFormat("%s    x%i", stringFromConsumables(c->class), c->qty), textbox_bounds.x + 20, textbox_bounds.y + 20 * i, 20, color);
+            if (i == selected_index) {
+                DrawSpriteRect(consumables_sprites_proper[c->class], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+            }
+        }
+    }
+    break;
     case ENDING: {
         // TODO: Draw ENDING screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("ENDING SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to RETURN to quit the game", 120, 220, 20, gui_state.theme.txt_color);
+        DrawText("PRESS ENTER or TAP to quit the game", 120, 220, 20, gui_state.theme.txt_color);
     }
     break;
     case DOOR_ANIM: {
@@ -1728,4 +2349,109 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
     }
 
     EndTextureMode();
+}
+
+/**
+ * Takes a specialMove, a Fighter, a Enemy, a Boss and a Path pointers (and integers for current room and enemy indexes) and uses the requested special move.
+ * Prints the result to the passed WINDOW.
+ * The isBoss integer determines if the receiver is the Enemy or the Boss.
+ * @see Fighter
+ * @see SpecialSlot
+ * @see SPECIALSMAX
+ * @param move The specialMove to execute.
+ * @param w The WINDOW pointer to print results to.
+ * @param f The Fighter pointer with a equipsBag.
+ * @param e The Enemy pointer for current enemy.
+ * @param b The Boss pointer.
+ * @param p The Path pointer of the current game.
+ * @param roomIndex The index of current room.
+ * @param enemyIndex The index of current enemy.
+ * @param isBoss Is equal to 1 when receiver is a Boss.
+ */
+void fight_Special(specialMove move, Rectangle *w, Fighter *f, Enemy *e, Boss *b,
+                   Path *p, int roomIndex, int enemyIndex, int isBoss)
+{
+
+    switch (move) {
+    case KSlash: {
+        knightSpecial_Slash(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case KCover: {
+        knightSpecial_Cover(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case KArmordrop: {
+        knightSpecial_Armordrop(w, f, e, b, p, roomIndex, enemyIndex,
+                                isBoss);
+    }
+    break;
+    case KBerserk: {
+        knightSpecial_Berserk(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case AHeadshot: {
+        archerSpecial_Headshot(w, f, e, b, p, roomIndex, enemyIndex,
+                               isBoss);
+    }
+    break;
+    case AQuivercheck: {
+        archerSpecial_Quivercheck(w, f, e, b, p, roomIndex, enemyIndex,
+                                  isBoss);
+    }
+    break;
+    case APoisonshot: {
+        archerSpecial_Poisonshot(w, f, e, b, p, roomIndex, enemyIndex,
+                                 isBoss);
+    }
+    break;
+    case AFireshot: {
+        archerSpecial_Fireshot(w, f, e, b, p, roomIndex, enemyIndex,
+                               isBoss);
+    }
+    break;
+    case MFatewarp: {
+        mageSpecial_Fatewarp(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case MPowerup: {
+        mageSpecial_Powerup(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case MSpellstrike: {
+        mageSpecial_Spellstrike(w, f, e, b, p, roomIndex, enemyIndex,
+                                isBoss);
+    }
+    break;
+    case MFlamering: {
+        mageSpecial_Flamering(w, f, e, b, p, roomIndex, enemyIndex, isBoss);
+    }
+    break;
+    case XGrimdagger: {
+        assassinSpecial_Grimdagger(w, f, e, b, p, roomIndex, enemyIndex,
+                                   isBoss);
+    }
+    break;
+    case XLeechknife: {
+        assassinSpecial_Leechknife(w, f, e, b, p, roomIndex, enemyIndex,
+                                   isBoss);
+    }
+    break;
+    case XDisguise: {
+        assassinSpecial_Disguise(w, f, e, b, p, roomIndex, enemyIndex,
+                                 isBoss);
+    }
+    break;
+    case XVenomblade: {
+        assassinSpecial_Venomblade(w, f, e, b, p, roomIndex, enemyIndex,
+                                   isBoss);
+    }
+    break;
+    default: {
+        fprintf(stderr, "%i is not a valid move.\n", move);
+        exit(EXIT_FAILURE);
+    }
+    break;
+    }
+
 }

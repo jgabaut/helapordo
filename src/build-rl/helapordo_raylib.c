@@ -101,33 +101,22 @@ void gameloop_rl(int argc, char** argv)
 
     //Truncate "debug_log.txt"
     sprintf(path_to_kls_debug_file, "%s/%s", static_path, "kls_debug_log.txt");
-#ifdef KOLISEO_HAS_REGION
-    KLS_RegList_Alloc_Backend reglist_backend = KLS_REGLIST_ALLOC_KLS_BASIC;
-#else
-    int reglist_backend = -1;
-#endif
 
     KLS_Conf default_kls_conf = kls_conf_init(
-                                    1, //kls_autoset_regions
-                                    reglist_backend, //kls_reglist_alloc_backend
-                                    KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
-                                    1, //kls_autoset_temp_regions
                                     1, //collect_stats
                                     1, //kls_verbose_lvl
                                     1, //kls_block_usage_with_temp
                                     0, // allow_zerocount_push
+                                    0, // kls_growable
                                     NULL, //kls_log_fp
                                     path_to_kls_debug_file //.kls_log_filepath
                                 );
     KLS_Conf temporary_kls_conf = kls_conf_init(
-                                      1, //kls_autoset_regions
-                                      reglist_backend, //kls_reglist_alloc_backend
-                                      KLS_DEFAULT_SIZE*16, //kls_reglist_kls_size
-                                      1, //kls_autoset_temp_regions
                                       1, //collect_stats
                                       0, //kls_verbose_lvl
                                       1, //kls_block_usage_with_temp
                                       0, // allow_zerocount_push
+                                      0, // kls_growable
                                       stderr, //kls_log_fp
                                       NULL
                                   );
@@ -384,7 +373,7 @@ void gameloop_rl(int argc, char** argv)
     size_t ringabuf_align = rb_structalign__();
 
 #ifndef KOLISEO_HAS_REGION
-    RingaBuf rb_notifications = kls_push_zero_AR(default_kls, ringabuf_size, ringabuf_align, 1);
+    RingaBuf rb_notifications = kls_push_zero_ext(default_kls, ringabuf_size, ringabuf_align, 1);
 #else
     RingaBuf rb_notifications = kls_push_zero_typed(default_kls, ringabuf_size, ringabuf_align, 1, HR_RingaBuf, "RingaBuf for notifications", "RingaBuf");
 #endif // KOLISEO_HAS_REGION
@@ -546,6 +535,146 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_fight = {
+        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Fight",
+        .label_len = strlen("Fight"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special = {
+        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Special",
+        .label_len = strlen("Special"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_unlock_1 = {
+        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "1",
+        .label_len = strlen("1"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_unlock_2 = {
+        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "2",
+        .label_len = strlen("2"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_unlock_3 = {
+        .r = (Rectangle){.x = 280, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "3",
+        .label_len = strlen("3"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_unlock_4 = {
+        .r = (Rectangle){.x = 390, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "4",
+        .label_len = strlen("4"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_1 = {
+        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "1",
+        .label_len = strlen("1"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_2 = {
+        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "2",
+        .label_len = strlen("2"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_3 = {
+        .r = (Rectangle){.x = 280, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "3",
+        .label_len = strlen("3"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_special_4 = {
+        .r = (Rectangle){.x = 390, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "4",
+        .label_len = strlen("4"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_equips = {
+        .r = (Rectangle){.x = 280, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Equips",
+        .label_len = strlen("Equips"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_open_bag = {
+        .r = (Rectangle){.x = 60, .y = 125, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Open Bag",
+        .label_len = strlen("Open Bag"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_check_loadout = {
+        .r = (Rectangle){.x = 60, .y = 195, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Loadout",
+        .label_len = strlen("Loadout"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_consumables = {
+        .r = (Rectangle){.x = 390, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Consumables",
+        .label_len = strlen("Consumables"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -566,11 +695,26 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_SAVESLOT_1] = bt_slot1,
             [BUTTON_SAVESLOT_2] = bt_slot2,
             [BUTTON_SAVESLOT_3] = bt_slot3,
+            [BUTTON_FIGHT] = bt_fight,
+            [BUTTON_SPECIAL] = bt_special,
+            [BUTTON_EQUIPS] = bt_equips,
+            [BUTTON_CONSUMABLES] = bt_consumables,
+            [BUTTON_OPEN_BAG] = bt_open_bag,
+            [BUTTON_CHECK_LOADOUT] = bt_check_loadout,
+            [BUTTON_SPECIAL_UNLOCK_1] = bt_special_unlock_1,
+            [BUTTON_SPECIAL_UNLOCK_2] = bt_special_unlock_2,
+            [BUTTON_SPECIAL_UNLOCK_3] = bt_special_unlock_3,
+            [BUTTON_SPECIAL_UNLOCK_4] = bt_special_unlock_4,
+            [BUTTON_SPECIAL_1] = bt_special_1,
+            [BUTTON_SPECIAL_2] = bt_special_2,
+            [BUTTON_SPECIAL_3] = bt_special_3,
+            [BUTTON_SPECIAL_4] = bt_special_4,
         },
         .theme = {
             .bg_color = GRAY,
             .txt_color = DARKGRAY,
         },
+        .selectedIndex = 0,
     };
 
     int roomsDone = 0;
