@@ -17,12 +17,12 @@
 */
 #ifndef CHEST_OPEN_S4C_H_
 #define CHEST_OPEN_S4C_H_
-#define CHEST_OPEN_S4C_H_VERSION "0.2.2"
+#define CHEST_OPEN_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for chest_open.
  */
-extern char alt_chest_opening[26][MAXROWS][MAXCOLS];
+extern char alt_chest_opening[26][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

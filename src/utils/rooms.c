@@ -43,7 +43,7 @@
 int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     Fighter *player, loadInfo *load_info,
                     char fighter_sprites[CLASSESMAX +
-                            1][MAXFRAMES][MAXROWS][MAXCOLS],
+                            1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     Koliseo *kls, Koliseo_Temp *t_kls)
 {
     Enemy *dummy_enemy = NULL;
@@ -357,9 +357,9 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
 int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                        Fighter *player, loadInfo *load_info,
                        char enemy_sprites[ENEMYCLASSESMAX +
-                               1][MAXFRAMES][MAXROWS][MAXCOLS],
+                               1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                        char fighter_sprites[CLASSESMAX +
-                               1][MAXFRAMES][MAXROWS][MAXCOLS],
+                               1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                        Koliseo *kls, Koliseo_Temp *t_kls, RingaBuf* rb_notifications)
 {
 
@@ -1343,9 +1343,9 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                     Fighter *player, loadInfo *load_info,
                     char boss_sprites[BOSSCLASSESMAX +
-                                      1][MAXFRAMES][MAXROWS][MAXCOLS],
+                                      1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     char fighter_sprites[CLASSESMAX +
-                            1][MAXFRAMES][MAXROWS][MAXCOLS],
+                            1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     Koliseo *kls, Koliseo_Temp *t_kls, RingaBuf* rb_notifications)
 {
 
@@ -2681,7 +2681,7 @@ void open_chest(WINDOW *w, Chest *c, Fighter *f, Koliseo *kls,
     int frame_width = CHEST_COLS;
 
     // Prepare the frames
-    char sprites[MAXFRAMES][MAXROWS][MAXCOLS];
+    char sprites[S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS];
 
     s4c_copy_animation(alt_chest_opening, sprites, num_frames, frame_height,
                        frame_width);

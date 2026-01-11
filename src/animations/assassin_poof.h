@@ -17,12 +17,12 @@
 */
 #ifndef ASSASSIN_POOF_S4C_H_
 #define ASSASSIN_POOF_S4C_H_
-#define ASSASSIN_POOF_S4C_H_VERSION "0.2.2"
+#define ASSASSIN_POOF_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for assassin_poof.
  */
-extern char assassin_poof[61][MAXROWS][MAXCOLS];
+extern char assassin_poof[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

@@ -17,7 +17,7 @@
 */
 #include "werewolf_transform.h"
 
-char werewolf_transform[61][MAXROWS][MAXCOLS] = {
+char werewolf_transform[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

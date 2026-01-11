@@ -17,7 +17,7 @@
 */
 #include "ghost_spell.h"
 
-char ghost_spell[61][MAXROWS][MAXCOLS] = {
+char ghost_spell[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

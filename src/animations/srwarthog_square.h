@@ -17,12 +17,12 @@
 */
 #ifndef SRWARTHOG_SQUARE_S4C_H_
 #define SRWARTHOG_SQUARE_S4C_H_
-#define SRWARTHOG_SQUARE_S4C_H_VERSION "0.2.2"
+#define SRWARTHOG_SQUARE_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for srwarthog_square.
  */
-extern char srwarthog_square[61][MAXROWS][MAXCOLS];
+extern char srwarthog_square[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

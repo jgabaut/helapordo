@@ -17,7 +17,7 @@
 */
 #include "mummy_shuffle.h"
 
-char mummy_shuffle[61][MAXROWS][MAXCOLS] = {
+char mummy_shuffle[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

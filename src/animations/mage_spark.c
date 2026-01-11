@@ -17,7 +17,7 @@
 */
 #include "mage_spark.h"
 
-char mage_spark[61][MAXROWS][MAXCOLS] = {
+char mage_spark[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

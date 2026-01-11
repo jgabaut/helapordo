@@ -17,12 +17,12 @@
 */
 #ifndef GOBLIN_SHOOT_S4C_H_
 #define GOBLIN_SHOOT_S4C_H_
-#define GOBLIN_SHOOT_S4C_H_VERSION "0.2.2"
+#define GOBLIN_SHOOT_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for goblin_shoot.
  */
-extern char goblin_shoot[61][MAXROWS][MAXCOLS];
+extern char goblin_shoot[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

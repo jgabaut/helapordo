@@ -17,12 +17,12 @@
 */
 #ifndef IMP_FIREBALL_S4C_H_
 #define IMP_FIREBALL_S4C_H_
-#define IMP_FIREBALL_S4C_H_VERSION "0.2.2"
+#define IMP_FIREBALL_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for imp_fireball.
  */
-extern char imp_fireball[61][MAXROWS][MAXCOLS];
+extern char imp_fireball[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

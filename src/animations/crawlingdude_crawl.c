@@ -17,7 +17,7 @@
 */
 #include "crawlingdude_crawl.h"
 
-char crawlingdude_crawl[61][MAXROWS][MAXCOLS] = {
+char crawlingdude_crawl[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

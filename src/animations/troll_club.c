@@ -17,7 +17,7 @@
 */
 #include "troll_club.h"
 
-char troll_club[61][MAXROWS][MAXCOLS] = {
+char troll_club[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

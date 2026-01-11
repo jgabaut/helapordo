@@ -1,3 +1,10 @@
+## [1.4.15] - Unreleased
+
+### Changed
+
+- Bump `s4c` to `0.5.0`
+- Fix `make pack`
+
 ## [1.4.14] - 2025-12-28
 
 ### Added

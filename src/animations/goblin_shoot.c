@@ -17,7 +17,7 @@
 */
 #include "goblin_shoot.h"
 
-char goblin_shoot[61][MAXROWS][MAXCOLS] = {
+char goblin_shoot[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

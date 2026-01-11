@@ -145,7 +145,7 @@ char consumables_sprites[CONSUMABLESMAX + 1][9][14] = {
     }
 };
 
-char consumables_sprites_proper[CONSUMABLESMAX + 1][9][MAXCOLS] = {
+char consumables_sprites_proper[CONSUMABLESMAX + 1][9][S4C_MAXCOLS] = {
     {
         //Potion
         "111188881111",
@@ -284,7 +284,7 @@ char equips_sprites[EQUIPSMAX + 1][9][15] = {
     }
 };
 
-char equips_sprites_proper[EQUIPSMAX + 1][9][MAXCOLS] = {
+char equips_sprites_proper[EQUIPSMAX + 1][9][S4C_MAXCOLS] = {
 
     {
         //Vest
@@ -390,7 +390,7 @@ char equipzones_sprites[EQUIPZONES + 1][9][15] = {
     },
 };
 
-char equipzones_sprites_proper[EQUIPZONES + 1][9][MAXCOLS] = {
+char equipzones_sprites_proper[EQUIPZONES + 1][9][S4C_MAXCOLS] = {
     {
         //HEAD
         "111111111111",

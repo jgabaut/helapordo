@@ -17,12 +17,12 @@
 */
 #ifndef BLUETROLL_WONDER_S4C_H_
 #define BLUETROLL_WONDER_S4C_H_
-#define BLUETROLL_WONDER_S4C_H_VERSION "0.2.2"
+#define BLUETROLL_WONDER_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for bluetroll_wonder.
  */
-extern char bluetroll_wonder[61][MAXROWS][MAXCOLS];
+extern char bluetroll_wonder[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

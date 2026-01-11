@@ -17,12 +17,12 @@
 */
 #ifndef KNIGHT_TAPIS_S4C_H_
 #define KNIGHT_TAPIS_S4C_H_
-#define KNIGHT_TAPIS_S4C_H_VERSION "0.2.2"
+#define KNIGHT_TAPIS_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for knight_tapis.
  */
-extern char knight_tapis[61][MAXROWS][MAXCOLS];
+extern char knight_tapis[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

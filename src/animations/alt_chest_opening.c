@@ -17,7 +17,7 @@
 */
 #include "alt_chest_opening.h"
 
-char alt_chest_opening[26][MAXROWS][MAXCOLS] = {
+char alt_chest_opening[26][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

@@ -17,12 +17,12 @@
 */
 #ifndef GHOST_SPELL_S4C_H_
 #define GHOST_SPELL_S4C_H_
-#define GHOST_SPELL_S4C_H_VERSION "0.2.2"
+#define GHOST_SPELL_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for ghost_spell.
  */
-extern char ghost_spell[61][MAXROWS][MAXCOLS];
+extern char ghost_spell[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

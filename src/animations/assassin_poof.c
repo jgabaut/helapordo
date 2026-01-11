@@ -17,7 +17,7 @@
 */
 #include "assassin_poof.h"
 
-char assassin_poof[61][MAXROWS][MAXCOLS] = {
+char assassin_poof[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

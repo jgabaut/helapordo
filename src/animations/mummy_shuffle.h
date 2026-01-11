@@ -17,12 +17,12 @@
 */
 #ifndef MUMMY_SHUFFLE_S4C_H_
 #define MUMMY_SHUFFLE_S4C_H_
-#define MUMMY_SHUFFLE_S4C_H_VERSION "0.2.2"
+#define MUMMY_SHUFFLE_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for mummy_shuffle.
  */
-extern char mummy_shuffle[61][MAXROWS][MAXCOLS];
+extern char mummy_shuffle[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

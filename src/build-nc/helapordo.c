@@ -196,9 +196,9 @@ void gameloop(int argc, char **argv)
         clock_t start_time = clock(), diff_time;
 
         // Prepare the fighter frames
-        char fighter_sprites[CLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
-        char enemy_sprites[ENEMYCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
-        char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS];
+        char fighter_sprites[CLASSESMAX + 1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS];
+        char enemy_sprites[ENEMYCLASSESMAX + 1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS];
+        char boss_sprites[BOSSCLASSESMAX + 1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS];
 
         char static_path[500];
 
@@ -876,7 +876,7 @@ void gameloop(int argc, char **argv)
                     door_win =
                         newwin(frame_height + 1, frame_width + 1, 0, 25);
 
-                    char door_sprites[MAXFRAMES][MAXROWS][MAXCOLS];
+                    char door_sprites[S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS];
 
                     s4c_copy_animation(enter_door, door_sprites, num_frames,
                                        frame_height, frame_width);

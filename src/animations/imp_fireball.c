@@ -17,7 +17,7 @@
 */
 #include "imp_fireball.h"
 
-char imp_fireball[61][MAXROWS][MAXCOLS] = {
+char imp_fireball[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

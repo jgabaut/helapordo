@@ -41,8 +41,8 @@
 
 #include "../utils/game_utils.h"
 
-void hlpd_load_fighter_animations(char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS]);
-void hlpd_load_enemy_animations(char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS]);
-void hlpd_load_boss_animations(char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS]);
-void hlpd_load_animations(char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS]);
+void hlpd_load_fighter_animations(char fighter_sprites[CLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS]);
+void hlpd_load_enemy_animations(char enemy_sprites[ENEMYCLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS]);
+void hlpd_load_boss_animations(char boss_sprites[BOSSCLASSESMAX + 1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS]);
+void hlpd_load_animations(char fighter_sprites[CLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS], char enemy_sprites[ENEMYCLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS], char boss_sprites[BOSSCLASSESMAX + 1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS]);
 #endif // GAME_ANIMATIONS_H_

@@ -17,7 +17,7 @@
 */
 #include "headlessninja_throw.h"
 
-char headlessninja_throw[61][MAXROWS][MAXCOLS] = {
+char headlessninja_throw[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

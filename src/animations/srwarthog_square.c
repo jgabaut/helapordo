@@ -17,7 +17,7 @@
 */
 #include "srwarthog_square.h"
 
-char srwarthog_square[61][MAXROWS][MAXCOLS] = {
+char srwarthog_square[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

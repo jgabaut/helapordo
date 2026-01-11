@@ -17,7 +17,7 @@
 */
 #include "zombie_walk.h"
 
-char zombie_walk[61][MAXROWS][MAXCOLS] = {
+char zombie_walk[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

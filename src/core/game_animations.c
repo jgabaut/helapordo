@@ -17,7 +17,7 @@
 */
 #include "game_animations.h"
 
-void hlpd_load_fighter_animations(char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS])
+void hlpd_load_fighter_animations(char fighter_sprites[CLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS])
 {
     /*
      * Legacy code for loading animations from an s4c-file.
@@ -80,10 +80,10 @@ void hlpd_load_fighter_animations(char fighter_sprites[CLASSESMAX+1][MAXFRAMES][
 
         //Massive log of all loaded lines
         /*
-           for (int k=0; k<MAXFRAMES+1; k++) {
+           for (int k=0; k<S4C_MAXFRAMES+1; k++) {
            sprintf(load_msg,"[DEBUG]    frame %i:", k);
            debug_log("debug_log.txt",load_msg);
-           for (int z=0; z<MAXROWS+1;z++) {
+           for (int z=0; z<S4C_MAXROWS+1;z++) {
            sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, fighter_sprites[i][k][z]);
            debug_log("debug_log.txt",load_msg);
            }
@@ -92,7 +92,7 @@ void hlpd_load_fighter_animations(char fighter_sprites[CLASSESMAX+1][MAXFRAMES][
     }
 }
 
-void hlpd_load_enemy_animations(char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS])
+void hlpd_load_enemy_animations(char enemy_sprites[ENEMYCLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS])
 {
     //Try preloading all enemy animations
     for (int i = 0; i < (ENEMYCLASSESMAX + 1); i++) {
@@ -177,10 +177,10 @@ void hlpd_load_enemy_animations(char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES]
 
         //Massive log of all loaded lines
         /*
-           for (int k=0; k<MAXFRAMES+1; k++) {
+           for (int k=0; k<S4C_MAXFRAMES+1; k++) {
            sprintf(load_msg,"[DEBUG]    frame %i:", k);
            debug_log("debug_log.txt",load_msg);
-           for (int z=0; z<MAXROWS+1;z++) {
+           for (int z=0; z<S4C_MAXROWS+1;z++) {
            sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, enemy_sprites[i][k][z]);
            debug_log("debug_log.txt",load_msg);
            }
@@ -189,7 +189,7 @@ void hlpd_load_enemy_animations(char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES]
     }
 }
 
-void hlpd_load_boss_animations(char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS])
+void hlpd_load_boss_animations(char boss_sprites[BOSSCLASSESMAX + 1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS])
 {
     //Try preloading all boss animations
     for (int i = 0; i < (BOSSCLASSESMAX + 1); i++) {
@@ -261,10 +261,10 @@ void hlpd_load_boss_animations(char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][
 
         //Massive log of all loaded lines
         /*
-           for (int k=0; k<MAXFRAMES+1; k++) {
+           for (int k=0; k<S4C_MAXFRAMES+1; k++) {
            sprintf(load_msg,"[DEBUG]    frame %i:", k);
            debug_log("debug_log.txt",load_msg);
-           for (int z=0; z<MAXROWS+1;z++) {
+           for (int z=0; z<S4C_MAXROWS+1;z++) {
            sprintf(load_msg,"[DEBUG] %i  ( %s ).", z, enemy_sprites[i][k][z]);
            debug_log("debug_log.txt",load_msg);
            }
@@ -274,7 +274,7 @@ void hlpd_load_boss_animations(char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][
 
 }
 
-void hlpd_load_animations(char fighter_sprites[CLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char enemy_sprites[ENEMYCLASSESMAX+1][MAXFRAMES][MAXROWS][MAXCOLS], char boss_sprites[BOSSCLASSESMAX + 1][MAXFRAMES][MAXROWS][MAXCOLS])
+void hlpd_load_animations(char fighter_sprites[CLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS], char enemy_sprites[ENEMYCLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS], char boss_sprites[BOSSCLASSESMAX + 1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS])
 {
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Moving sprites from global arrays to passed arrays", __func__);
     hlpd_load_fighter_animations(fighter_sprites);

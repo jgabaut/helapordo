@@ -17,7 +17,7 @@
 */
 #include "knight_tapis.h"
 
-char knight_tapis[61][MAXROWS][MAXCOLS] = {
+char knight_tapis[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{
