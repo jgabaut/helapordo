@@ -4,6 +4,7 @@
 
 - Bump `s4c` to `0.5.0`
 - Fix `make pack`
+- Bump `koliseo` to `0.6.0`
 - Bump `invil` to `0.2.29`
 - Bump `amboso` to `2.1.1`
 
