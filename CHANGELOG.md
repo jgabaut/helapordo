@@ -2,7 +2,8 @@
 
 ### Added
 
-- Functionality for `Boss`, `Treasure` rooms
+- Functionality for `Boss` rooms
+- Partial functionality for `Treasure`, `Shop` rooms
 
 ### Changed
 

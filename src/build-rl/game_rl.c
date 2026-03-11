@@ -2563,6 +2563,66 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 }
             }
             break;
+            case SHOP: {
+                Shop* shop = current_room->shop;
+                int equip_cell_w = ((int)(gui_state.gameScreenWidth * 0.15f) / 12) * 12;
+                int equip_cell_h = ((int)(gui_state.gameScreenHeight * 0.15f) / 8) * 8;
+                int equip_cell_w_spacing = 10;
+                int equip_cells = EQUIP_SHOP_MAX;
+                int equip_consum_h_spacing = equip_cell_h;
+                int equips_r_width = (equip_cell_w + equip_cell_w_spacing) * equip_cells;
+                Rectangle equips_r = {
+                    .x = (gui_state.gameScreenWidth - equips_r_width) / 2,
+                    .y = 50,
+                    .width = equips_r_width,
+                    .height = equip_cell_h,
+                };
+                int consumable_cell_w = equip_cell_w;
+                int consumable_cell_h = equip_cell_h;
+                int consumable_cell_w_spacing = equip_cell_w_spacing;
+                int consumable_cells = CONSUMABLE_SHOP_MAX;
+                int consumables_r_width = (consumable_cell_w + consumable_cell_w) * consumable_cells;
+                Rectangle consumables_r = {
+                    .x = (gui_state.gameScreenWidth - consumables_r_width) / 2,
+                    .y = equips_r.y + equips_r.height + equip_consum_h_spacing,
+                    .width = consumables_r_width,
+                    .height = consumable_cell_h,
+                };
+                DrawRectangleRec(equips_r, RED);
+                DrawRectangleRec(consumables_r, RED);
+                int eq_res = -1;
+                for (int i = 0; i < equip_cells; i++) {
+                    Rectangle cell = {
+                        equips_r.x + (i*equip_cell_w) + (i*equip_cell_w_spacing),
+                        equips_r.y,
+                        equip_cell_w,
+                        equip_cell_h,
+                    };
+                    DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
+                    if (i < shop->equipsCount) {
+                        eq_res = DrawSpriteRect(equips_sprites_proper[shop->equips[i]->class], cell, 8, 12, cell.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                }
+                int cs_res = -1;
+                for (int i = 0; i < consumable_cells; i++) {
+                    Rectangle cell = {
+                        .x = consumables_r.x + (i*consumable_cell_w) + (i*consumable_cell_w_spacing),
+                        .y = consumables_r.y,
+                        .width = consumable_cell_w,
+                        .height = consumable_cell_h,
+                    };
+                    DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
+                    if (i < shop->consumablesCount) {
+                        cs_res = DrawSpriteRect(consumables_sprites_proper[shop->consumables[i]->class], cell, 8, 12, cell.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                }
+                if (eq_res != 0 || cs_res != 0) {
+                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                    DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+                    DrawText("Please resize.", 20, 50, 20, RAYWHITE);
+                }
+            }
+            break;
             default: {
                 log_tag("debug_log.txt", "ERROR", "%s():    Unexpected roomClass value: {%i}", __func__, current_room->class);
                 if (current_room->class > 0) {
