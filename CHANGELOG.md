@@ -17,6 +17,7 @@
 - Avoid drawing control hints over notifications
 - Avoid breaking `win_condition`, `player` name and class on debug floor regen
 - Use `BLACK` for `rb_notifications` rect
+- Add `DEBUG_VIEW` for debug
 
 ## [1.4.14] - 2025-12-28
 

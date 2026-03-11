@@ -915,6 +915,30 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case FLOOR_VIEW: {
         // TODO: Update FLOOR_VIEW screen variables here!
+        if (G_DEBUG_ON == 1) {
+            for (int i=BUTTON_FLOOR_DEBUG; i < BUTTON_FLOOR_DEBUG +1; i++) {
+                gui_state->buttons[i].on = false;
+            }
+            for (int i=BUTTON_FLOOR_DEBUG; i < BUTTON_FLOOR_DEBUG +1; i++) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    gui_state->currentScreen = DEBUG_VIEW;
+                    break;
+                }
+            }
+        }
         if (*current_floor == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
             *current_floor = (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
@@ -1892,6 +1916,13 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         (*current_anim_frame)++;
     }
     break;
+    case DEBUG_VIEW: {
+        // Press Enter to change to FLOOR_VIEW screen
+        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+            gui_state->currentScreen = FLOOR_VIEW;
+        }
+    }
+    break;
     default: {
     }
     break;
@@ -2108,6 +2139,17 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Arrow keys to move", 110, 190, 20, gui_state.theme.txt_color);
         DrawText("PRESS R to regen floor", 110, 220, 20, gui_state.theme.txt_color);
         DrawText("PRESS ENTER to go to ENDING SCREEN", 110, 280, 20, gui_state.theme.txt_color);
+        if (G_DEBUG_ON == 1) {
+            for (int i=BUTTON_FLOOR_DEBUG; i < BUTTON_FLOOR_DEBUG +1; i++) {
+                Gui_Button button = gui_state.buttons[i];
+                if (button.state == BUTTON_HOVER) {
+                    DrawRectangleRec(button.r, RED);
+                } else {
+                    DrawRectangleRec(button.r, button.box_color);
+                }
+                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+            }
+        }
 
         Rectangle floor_r = CLITERAL(Rectangle) {
             gui_state.gameScreenHeight *0.1f,
@@ -3014,6 +3056,50 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText("Please resize.", 20, 50, 20, RAYWHITE);
             //current_anim_frame--; // TODO: can't update the current animation frame since it's not being taken as a reference as of now.
         }
+    }
+    break;
+    case DEBUG_VIEW: {
+        // TODO: Draw DEBUG_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("DEBUG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, gui_state.theme.txt_color);
+
+        int default_kls_r_w = gui_state.gameScreenWidth * 0.5f;
+        int default_kls_r_h = gui_state.gameScreenHeight * 0.1f;
+        Rectangle default_kls_r = {
+            .x = (gui_state.gameScreenWidth - default_kls_r_w) /2,
+            .y = (gui_state.gameScreenHeight/4) - (default_kls_r_h/2),
+            .width = default_kls_r_w,
+            .height = default_kls_r_h,
+        };
+
+        float default_kls_usage = (100 * default_kls->offset) / default_kls->size;
+
+        Rectangle default_kls_used_r = default_kls_r;
+        default_kls_used_r.width *= (default_kls_usage / 100);
+        DrawRectangleRec(default_kls_r, DARKGRAY);
+        DrawRectangleRec(default_kls_used_r, ColorFromS4CPalette(palette, S4C_CYAN));
+
+        DrawText(TextFormat("Default kls usage: %.2lf%%", default_kls_usage), default_kls_r.x + default_kls_r.width/2 - (MeasureText(TextFormat("Default kls usage: %.2lf%%", default_kls_usage), 20) /2), default_kls_r.y + default_kls_r.height/2 - (20/2), 20, BLACK);
+
+        int temporary_kls_r_w = default_kls_r_w;
+        int temporary_kls_r_h = default_kls_r_h;
+        int default_temporary_kls_h_spacing = 50;
+        Rectangle temporary_kls_r = {
+            .x = (gui_state.gameScreenWidth - temporary_kls_r_w) /2,
+            .y = default_kls_r.y + temporary_kls_r.height + default_temporary_kls_h_spacing,
+            .width = temporary_kls_r_w,
+            .height = temporary_kls_r_h,
+        };
+        float temporary_kls_usage = (100 * temporary_kls->offset) / temporary_kls->size;
+        Rectangle temporary_kls_used_r = temporary_kls_r;
+        temporary_kls_used_r.width *= (temporary_kls_usage / 100);
+        DrawRectangleRec(temporary_kls_r, DARKGRAY);
+        DrawRectangleRec(temporary_kls_used_r, ColorFromS4CPalette(palette, S4C_CYAN));
+
+        const char* txt = TextFormat("Temp kls usage: %.2lf%%", temporary_kls_usage);
+        DrawText(txt, temporary_kls_r.x + temporary_kls_r.width/2 - (MeasureText(txt, 20) /2), temporary_kls_r.y + temporary_kls_r.height/2 - (20/2), 20, BLACK);
     }
     break;
     default: {

@@ -71,10 +71,11 @@ typedef enum Gui_Button_Idx {
     BUTTON_SPECIAL_UNLOCK_3,
     BUTTON_SPECIAL_UNLOCK_4,
     BUTTON_TAKE_TREASURE,
-    BUTTON_LEAVE_TREASURE
+    BUTTON_LEAVE_TREASURE,
+    BUTTON_FLOOR_DEBUG,
 } Gui_Button_Idx;
 
-#define GUI_BUTTONS_MAX BUTTON_LEAVE_TREASURE
+#define GUI_BUTTONS_MAX BUTTON_FLOOR_DEBUG
 
 typedef struct Gui_Theme {
     Color bg_color;

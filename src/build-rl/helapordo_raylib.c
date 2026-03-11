@@ -695,6 +695,16 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_floor_debug = {
+        .r = (Rectangle){.x = 400, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Debug",
+        .label_len = strlen("Debug"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -731,6 +741,7 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_SPECIAL_4] = bt_special_4,
             [BUTTON_TAKE_TREASURE] = bt_take_treasure,
             [BUTTON_LEAVE_TREASURE] = bt_leave_treasure,
+            [BUTTON_FLOOR_DEBUG] = bt_floor_debug,
         },
         .theme = {
             .bg_color = GRAY,
