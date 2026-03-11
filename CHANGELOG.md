@@ -15,6 +15,7 @@
 - Update `configure.ac` to use `-lX11` for `raylib` build on `linux`, `macOS`
 - Avoid drawing control hints over notifications
 - Avoid breaking `win_condition` on debug floor regen
+- Use `BLACK` for `rb_notifications` rect
 
 ## [1.4.14] - 2025-12-28
 

@@ -2163,7 +2163,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("%s", stringFromEClass(enemy->class)), (int)(en_name_r.x + (en_name_r.width/2) - (MeasureText(TextFormat("%s", stringFromEClass(enemy->class)), name_height)/2)), (int)(en_name_r.y + ((en_name_r.height - name_height)/2)), name_height, name_color);
                 //DrawText(TextFormat("%s    %s", stringFromEClass(enemy->class), player->name), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%s    %s", stringFromEClass(enemy->class), player->name), stats_height)/2)), (int)stats_label_r.y + 7*stats_height, stats_height, stats_txt_color);
 
-                DrawRectangleRec(rb_r, DARKGRAY);
+                DrawRectangleRec(rb_r, BLACK);
 
                 if (rb_isfull(*rb_notifications) || (rb_get_head(*rb_notifications) != 0)) {
                     hlpd_draw_notifications(rb_notifications, rb_r);
