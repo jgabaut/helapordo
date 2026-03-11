@@ -306,7 +306,7 @@ void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
 
 int checkremainder(Fighter * player, int xp);
 int giveXp(Fighter * player, Enemy * e);
-void giveXp_Boss(Fighter * player, Boss * b);
+int giveXp_Boss(Fighter * player, Boss * b);
 int getEnemyXpGain(Enemy * e);
 int getBossXpGain(Boss * b);
 int onLevelUp(Fighter * player);

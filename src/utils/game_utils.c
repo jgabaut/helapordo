@@ -5046,12 +5046,12 @@ int giveXp(Fighter *player, Enemy *e)
  * @param player The Fighter pointer that gets xp.
  * @param b The Boss pointer that gives xp.
  */
-void giveXp_Boss(Fighter *player, Boss *b)
+int giveXp_Boss(Fighter *player, Boss *b)
 {
 
     int xp = getBossXpGain(b);
 
-    checkremainder(player, xp);
+    return checkremainder(player, xp);
 }
 
 /**

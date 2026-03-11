@@ -1326,6 +1326,245 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                 }
             }
+        } else if ((*current_room)->class == BOSS) {
+            for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES+1; i++) {
+                gui_state->buttons[i].on = false;
+            }
+            if (!(*pause_animation)) {
+                *current_anim_frame = (gui_state->framesCounter)%60;
+            }
+
+            for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES+1; i++) {
+
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    //TODO: may use i to se is_new_game for now but its weak to changes in the array
+                    // load_info->is_new_game = i;
+                    if (i == BUTTON_FIGHT) { // New game is the first button
+                        Boss *boss = (*current_room)->boss;
+                        Enemy* dummy_enemy = NULL;
+                        FILE *args_save_file = NULL;
+                        foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+                        skillType dummy_picked_skill = -1;
+
+                        Rectangle rb_r = CLITERAL(Rectangle) {
+                            gui_state->gameScreenWidth*0.1f,
+                                      gui_state->gameScreenHeight*0.65f,
+                                      gui_state->gameScreenWidth*0.8f,
+                                      gui_state->gameScreenHeight*0.3f,
+                        };
+
+                        //Declare turnOP_args
+                        turnOP_args *args =
+                            init_turnOP_args(*gamestate, *player, *game_path, *current_room, load_info, dummy_enemy,
+                                             boss, args_save_file, &rb_r, *floor_kls,
+                                             dummy_foe_op, dummy_picked_skill, rb_notifications);
+
+                        args->foe_op =
+                            foeTurnOP_from_foeTurnOption(bossTurnPick(boss, *player));
+                        log_tag("debug_log.txt", "[FOETURN]", "foePick was: [ %s ]",
+                                stringFromFoeTurnOP(args->foe_op));
+
+                        OP_res fightStatus = turnOP(OP_FIGHT, args, default_kls, *floor_kls);
+                        //Lost battle
+                        if (fightStatus == OP_RES_DEATH) {
+                            //Account for oracle gift perk
+                            int oracle_perks = (*player)->perks[ORACLE_GIFT]->innerValue;
+                            if (oracle_perks > 0) {
+                                (*player)->hp = round((*player)->totalhp / 3);
+
+                                (*player)->perks[ORACLE_GIFT]->innerValue -= 1;
+
+                                b_death(boss);
+                                log_tag("debug_log.txt", "[DEBUG-ROOM-PERKS]",
+                                        "Oraclegift proc.");
+
+                                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                (*gamestate)->current_enemy_index = 0;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                                break;
+                            }
+
+                            b_death(boss);
+                            int player_luck = (*player)->luck;
+                            log_tag("debug_log.txt", "[DEBUG]", "Player luck was [%i]",
+                                    player_luck);
+                            death((*player), load_info);
+                            //free(room->foes);
+
+                            //printf("\t\tLuck:  %i Path luck:  %i\n",player_luck,p->luck);
+                            //red();
+                            //printf("\n\n\tYOU DIED.\n");
+                            //white();
+                            //free(args);
+                            log_tag("debug_log.txt", "[FREE]", "Freed turnOP_args");
+                            *current_room = NULL;
+                            gui_state->currentScreen = ENDING;
+                            break;
+                        } else if (fightStatus == OP_RES_KILL_DONE) {
+                            //Give coins
+
+                            (*player)->balance += boss->prize;
+                            (*player)->stats->coinsfound += boss->prize;
+
+                            char msg[50];
+                            sprintf(msg, "You found +%i coins.", boss->prize);
+                            enqueue_notification(msg, 500, S4C_BRIGHT_YELLOW, rb_notifications);
+
+                            //Consumable drop
+                            int consDrop = dropConsumable(*player);
+                            log_tag("debug_log.txt", "[DEBUG]", "consDrop was (%i)", consDrop);
+
+                            //Artifact drop (if we don't have all of them)
+                            if (((*player)->stats->artifactsfound != ARTIFACTSMAX + 1)) {
+                                int artifactDrop = dropArtifact(*player);
+                                log_tag("debug_log.txt", "[DEBUG]", "artifactDrop was (%i)",
+                                        artifactDrop);
+                            }
+                            //Equip drop
+                            dropEquip(*player, boss->beast, default_kls, rb_notifications);
+
+                            //Account for harvester perk
+                            int harvester_perks = (*player)->perks[HARVESTER]->innerValue;
+                            if (harvester_perks > 0) {
+                                float xpboost = harvester_perks * 0.1;
+                                boss->xp *= (1 + xpboost);
+                            }
+
+                            //Give key
+                            (*player)->keys_balance += 1;
+                            (*player)->stats->keysfound += 1;
+
+                            enqueue_notification("You found a key. May be useful.", 800, S4C_MAGENTA, rb_notifications);
+
+
+                            //Win, get xp and free memory from enemy
+                            int special_unlock = giveXp_Boss((*player), boss);
+
+                            b_death(boss);
+
+                            log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                            *current_room = NULL;
+                            (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                            (*gamestate)->current_enemy_index = 0;
+                            gui_state->currentScreen = FLOOR_VIEW;
+                            (*current_floor)->
+                            roomclass_layout[(*player)->floor_x][(*player)->floor_y] =
+                                BASIC;
+                            (*player)->stats->floorscompleted++;
+                            log_tag("debug_log.txt", "[DEBUG]",
+                                    "Floors done: [%i]", (*player)->stats->floorscompleted);
+                            //Check if we need to update the win condition
+                            if ((*game_path)->win_condition->class == FULL_PATH) {
+                                (*game_path)->win_condition->current_val++;
+                            }
+                            // Reset floor_kls
+                            kls_temp_end(*floor_kls);
+                            *floor_kls =
+                                kls_temp_start(temporary_kls);
+
+                            (*current_floor) =
+                                (Floor *)
+                                KLS_PUSH_T_TYPED(*floor_kls, Floor,
+                                                 HR_Floor, "Floor",
+                                                 "Floor");
+                            /*
+                            update_Gamestate(gamestate, 1, HOME,
+                                             roomsDone, -1,
+                                             current_floor, NULL, &game_options); // Passing NULL for current_room
+                            */
+
+                            //Regenerate floor
+                            log_tag("debug_log.txt", "[DEBUG]",
+                                    "Beaten a boss, regenerating current floor.");
+                            // Init
+                            init_floor_layout(*current_floor);
+                            //Set center as filled
+                            (*current_floor)->
+                            floor_layout[center_x][center_y] = 1;
+                            //Init floor rooms
+                            init_floor_rooms(*current_floor);
+                            if ((hlpd_rand() % 101) > 20) {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing bsp init", __func__);
+                                BSP_Room* bsp_tree = floor_bsp_gen(*current_floor, *floor_kls, center_x, center_y);
+                                dbg_BSP_Room(bsp_tree);
+                                (*current_floor)->from_bsp = true;
+                            } else {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Doing random walk init", __func__);
+                                //Random walk #1
+                                floor_random_walk(*current_floor, center_x, center_y, 100, 1);	// Perform 100 steps of random walk, reset floor_layout if needed.
+                                //Random walk #2
+                                floor_random_walk(*current_floor, center_x, center_y, 100, 0);	// Perform 100 more steps of random walk, DON'T reset floor_layout if needed.
+                                (*current_floor)->from_bsp = false;
+                            }
+                            //Set floor explored matrix
+                            load_floor_explored(*current_floor);
+                            //Set room types
+                            floor_set_room_types(*current_floor);
+
+                            if (!(*current_floor)->from_bsp) {
+                                log_tag("debug_log.txt", "[DEBUG]", "Putting player at center: {%i,%i}", center_x, center_y);
+                                (*player)->floor_x = center_x;
+                                (*player)->floor_y = center_y;
+                            } else {
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Finding HOME room x/y for floor, and putting player there", __func__);
+                                int home_room_x = -1;
+                                int home_room_y = -1;
+                                bool done_looking = false;
+                                for(size_t i=0; i < FLOOR_MAX_COLS && !done_looking; i++) {
+                                    for (size_t j=0; j < FLOOR_MAX_ROWS && !done_looking; j++) {
+                                        if ((*current_floor)->roomclass_layout[i][j] == HOME) {
+                                            log_tag("debug_log.txt", "[DEBUG]", "%s():    Found HOME room at {x:%i, y:%i}.", __func__, i, j);
+                                            home_room_x = i;
+                                            home_room_y = j;
+                                            done_looking = true;
+                                        }
+                                    }
+                                }
+                                if (!done_looking) {
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Could not find HOME room.", __func__);
+                                    kls_free(default_kls);
+                                    kls_free(temporary_kls);
+                                    exit(EXIT_FAILURE);
+                                }
+                                log_tag("debug_log.txt", "[DEBUG]", "Putting player at HOME room: {%i,%i}", home_room_x, home_room_y);
+                                (*player)->floor_x = home_room_x;
+                                (*player)->floor_y = home_room_y;
+                            }
+                            *current_x = (*player)->floor_x;
+                            *current_y = (*player)->floor_y;
+                            if (special_unlock == 1) {
+                                gui_state->currentScreen = UNLOCK_SPECIAL_VIEW;
+                            }
+                            break;
+                        }
+
+                        // End of fight button
+                    } else if (i == BUTTON_SPECIAL) {
+                        if ((*player)->stats->specialsunlocked > 0) {
+                            gui_state->currentScreen = PICK_SPECIAL_VIEW;
+                        }
+                    } else if (i == BUTTON_EQUIPS) {
+                        gui_state->currentScreen = EQUIPS_VIEW;
+                    } else if (i == BUTTON_CONSUMABLES) {
+                        gui_state->currentScreen = CONSUMABLES_VIEW;
+                    }
+                }
+            }
         } else {
             // Press enter to change to FLOOR_VIEW screen
             if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
@@ -2003,6 +2242,198 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 break;
                 }
                 if (pl_res != 0 || en_res != 0 || CheckCollisionRecs(en_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(en_r,pl_r)) {
+                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                    DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+                    DrawText("Please resize.", 20, 50, 20, RAYWHITE);
+                }
+            }
+            break;
+            case BOSS: {
+                for (int i=BUTTON_FIGHT; i < BUTTON_CONSUMABLES +1; i++) {
+                    Gui_Button button = gui_state.buttons[i];
+                    if (button.state == BUTTON_HOVER) {
+                        DrawRectangleRec(button.r, RED);
+                    } else {
+                        DrawRectangleRec(button.r, button.box_color);
+                    }
+                    DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+                }
+                int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
+                int pl_frame_W = ((int)(gui_state.gameScreenWidth * 0.3f) / 17) * 17;
+                int pl_frame_H = pl_frame_W;
+                int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W - (gui_state.gameScreenWidth * 0.1f);
+                int bs_rect_X = gui_state.gameScreenWidth * 0.1f;
+                int bs_rect_Y = pl_rect_Y;
+                int bs_frame_W = pl_frame_W;
+                int bs_frame_H = pl_frame_H;
+                float stats_label_W = gui_state.gameScreenWidth * 0.18f;
+                float stats_label_H = stats_label_W;
+                Rectangle stats_label_r = CLITERAL(Rectangle) {
+                    gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
+                                              bs_rect_Y,
+                                              stats_label_W,
+                                              stats_label_H
+                };
+                Rectangle pl_r = CLITERAL(Rectangle) {
+                    pl_rect_X,
+                    pl_rect_Y,
+                    pl_frame_W,
+                    pl_frame_H
+                };
+                float pr_name_r_height = gui_state.gameScreenHeight * 0.05f;
+                Rectangle pr_name_r = CLITERAL(Rectangle) {
+                    pl_rect_X,
+                    pl_rect_Y - pr_name_r_height,
+                    pl_frame_W,
+                    pr_name_r_height,
+                };
+
+                Rectangle bs_r = CLITERAL(Rectangle) {
+                    bs_rect_X,
+                    bs_rect_Y,
+                    bs_frame_W,
+                    bs_frame_H
+                };
+
+                float bs_name_r_height = gui_state.gameScreenHeight * 0.05f;
+                Rectangle bs_name_r = CLITERAL(Rectangle) {
+                    bs_rect_X,
+                    bs_rect_Y - bs_name_r_height,
+                    bs_frame_W,
+                    bs_name_r_height,
+                };
+
+                Rectangle rb_r = CLITERAL(Rectangle) {
+                    gui_state.gameScreenWidth*0.1f,
+                                              gui_state.gameScreenHeight*0.65f,
+                                              gui_state.gameScreenWidth*0.8f,
+                                              gui_state.gameScreenHeight*0.3f,
+                };
+
+                //TODO: count time by real_clock difference from last frame
+                time_t framesTime = gui_state.framesCounter / fps_target ;// GetFPS();
+                struct tm* time_tm = localtime(&framesTime);
+                char time_str[20] = {0};
+
+                if (time_tm == NULL) {
+                    fprintf(stderr, "%s():    time_tm was NULL.\n", __func__);
+                } else {
+                    strftime(time_str, 20, "Time: %M:%S", time_tm);
+                    DrawText(time_str, 0, 0, 20, ColorFromS4CPalette(palette, S4C_MAGENTA));
+                }
+                DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
+                Boss* boss = current_room->boss;
+                assert(boss != NULL);
+                int stats_height = stats_label_r.height * 0.135f;
+                Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
+                DrawText(TextFormat("%i  Hp  %i", boss->hp, player->hp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Hp  %i", boss->hp, player->hp), stats_height)/2)), (int)stats_label_r.y + stats_height /2, stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Atk  %i", boss->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", boss->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + (stats_height*3/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Def  %i", boss->def, player->def), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Def  %i", boss->def, player->def), stats_height)/2)), (int)stats_label_r.y + (stats_height*5/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Vel  %i", boss->vel, player->vel), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Vel  %i", boss->vel, player->vel), stats_height)/2)), (int)stats_label_r.y + (stats_height*7/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i/%i Enr %i/%i", boss->energy, boss->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", boss->energy, boss->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + (stats_height*9/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Lvl  %i", boss->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", boss->level, player->level), stats_height)/2)), (int)stats_label_r.y + (stats_height*11/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%i  Xp  %i/%i", boss->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", boss->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + (stats_height*13/2), stats_height, stats_txt_color);
+
+                DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
+                int name_height = pr_name_r.height * 0.6f;
+                Color name_color = ColorFromS4CPalette(palette, S4C_RED);
+                DrawText(TextFormat("%s", player->name), (int)(pr_name_r.x + (pr_name_r.width/2) - (MeasureText(TextFormat("%s", player->name), name_height)/2)), (int)(pr_name_r.y + ((pr_name_r.height - name_height)/2)), name_height, name_color);
+                DrawRectangleRec(bs_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
+                DrawText(TextFormat("%s", stringFromBossClass(boss->class)), (int)(bs_name_r.x + (bs_name_r.width/2) - (MeasureText(TextFormat("%s", stringFromBossClass(boss->class)), name_height)/2)), (int)(bs_name_r.y + ((bs_name_r.height - name_height)/2)), name_height, name_color);
+                //DrawText(TextFormat("%s    %s", stringFromBossClass(boss->class), player->name), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%s    %s", stringFromBossClass(boss->class), player->name), stats_height)/2)), (int)stats_label_r.y + 7*stats_height, stats_height, stats_txt_color);
+
+                DrawRectangleRec(rb_r, DARKGRAY);
+
+                if (rb_isfull(*rb_notifications) || (rb_get_head(*rb_notifications) != 0)) {
+                    hlpd_draw_notifications(rb_notifications, rb_r);
+                }
+
+                fighterClass player_class = player->class;
+                int pl_res = -1;
+                switch (player_class) {
+                case Knight: {
+                    pl_res = DrawSpriteRect(knight_tapis[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Archer: {
+                    pl_res = DrawSpriteRect(archer_drop[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Mage: {
+                    pl_res = DrawSpriteRect(mage_spark[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Assassin: {
+                    pl_res = DrawSpriteRect(assassin_poof[current_anim_frame], pl_r, 17, 17, pl_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                default: {
+                    log_tag("debug_log.txt", "ERROR", "%s():    Unexpected player_class: {%i}", __func__, player_class);
+                    fprintf(stderr, "[ERROR] [%s()]    Unexpected player_class: {%i}\n", __func__, player_class);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+                break;
+                }
+                int bs_res = -1;
+                bossClass boss_class = current_room->boss->class;
+                switch (boss_class) {
+                case Blue_Troll: {
+                    bs_res = DrawSpriteRect(bluetroll_wonder[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Headless_Ninja: {
+                    bs_res = DrawSpriteRect(headlessninja_throw[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Crawling_Dude: {
+                    bs_res = DrawSpriteRect(crawlingdude_crawl[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Sr_Warthog: {
+                    bs_res = DrawSpriteRect(srwarthog_square[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case Doppelganger: {
+                    switch (player_class) {
+                        case Knight: {
+                            bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Archer: {
+                            bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Mage: {
+                            bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case Assassin: {
+                            bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        default: {
+                            log_tag("debug_log.txt", "ERROR", "%s():    Unexpected player_class: {%i}", __func__, player_class);
+                            fprintf(stderr, "[ERROR] [%s()]    Unexpected player_class: {%i}\n", __func__, player_class);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
+                        break;
+                    }
+                }
+                break;
+                default: {
+                    log_tag("debug_log.txt", "ERROR", "%s():    Unexpected boss_class: {%i}", __func__, boss_class);
+                    fprintf(stderr, "[ERROR] [%s()]    Unexpected boss_class: {%i}\n", __func__, boss_class);
+                    kls_free(default_kls);
+                    kls_free(temporary_kls);
+                    exit(EXIT_FAILURE);
+                }
+                break;
+                }
+                if (pl_res != 0 || bs_res != 0 || CheckCollisionRecs(bs_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(bs_r,pl_r)) {
                     DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
                     DrawText("Window too small.", 20, 20, 20, RAYWHITE);
                     DrawText("Please resize.", 20, 50, 20, RAYWHITE);
