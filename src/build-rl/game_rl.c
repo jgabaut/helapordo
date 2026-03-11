@@ -1009,12 +1009,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
         gui_state->framesCounter += 1;    // Count frames
 
-        // Press enter to change to ENDING screen
-        if (IsKeyPressed(KEY_ENTER)) { //|| IsGestureDetected(GESTURE_TAP)) {
-            death(*player, load_info);
-            gui_state->currentScreen = ENDING;
-        }
-
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
             Wincon* w = (*game_path)->win_condition;
@@ -2126,7 +2120,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Controls for FLOOR_VIEW screen", 110, 160, 20, gui_state.theme.txt_color);
         DrawText("Arrow keys to move", 110, 190, 20, gui_state.theme.txt_color);
         DrawText("PRESS R to regen floor", 110, 220, 20, gui_state.theme.txt_color);
-        DrawText("PRESS ENTER to go to ENDING SCREEN", 110, 280, 20, gui_state.theme.txt_color);
         if (G_DEBUG_ON == 1) {
             for (int i=BUTTON_FLOOR_DEBUG; i < BUTTON_FLOOR_DEBUG +1; i++) {
                 Gui_Button button = gui_state.buttons[i];
