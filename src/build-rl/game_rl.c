@@ -1950,8 +1950,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
     case TITLE: {
         // TODO: Draw TITLE screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
-        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, gui_state.theme.txt_color);
-        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, gui_state.theme.txt_color);
         DrawText("TITLE SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("Controls for FLOOR_VIEW screen", 110, 100, 20, gui_state.theme.txt_color);
@@ -1980,8 +1978,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         switch(load_info->is_new_game) {
         case -1: { // User has to pick new (1) or load (0)
             DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
-            DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, gui_state.theme.txt_color);
-            DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, gui_state.theme.txt_color);
             DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, gui_state.theme.txt_color);
             DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
             for (int i=BUTTON_NEW_GAME; i < BUTTON_LOAD_GAME+1; i++) {
@@ -1994,8 +1990,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         case 0: {
             if (saveslot_index == -1) {  // Pick saveslot
                 DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
-                DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, gui_state.theme.txt_color);
                 DrawText("LOADED GAME SCREEN", 20, 20, 40, gui_state.theme.txt_color);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                 //DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
@@ -2016,8 +2010,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         case 1: {
             if (saveslot_index == -1) {  // Pick saveslot
                 DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
-                DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, gui_state.theme.txt_color);
                 DrawText("NEW GAME SCREEN", 20, 20, 40, gui_state.theme.txt_color);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                 for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
@@ -2131,10 +2123,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("FLOOR_VIEW SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, 100, 20, gui_state.theme.txt_color);
-        if (game_path != NULL) {
-            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, 130, 20, gui_state.theme.txt_color);
-        }
         DrawText("Controls for FLOOR_VIEW screen", 110, 160, 20, gui_state.theme.txt_color);
         DrawText("Arrow keys to move", 110, 190, 20, gui_state.theme.txt_color);
         DrawText("PRESS R to regen floor", 110, 220, 20, gui_state.theme.txt_color);
@@ -2201,8 +2189,6 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
     case ROOM_VIEW: {
         // TODO: Draw ROOM_VIEW screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
-        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, gui_state.theme.txt_color);
-        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, gui_state.theme.txt_color);
         DrawText("ROOM SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         if (current_room != NULL) {
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, gui_state.theme.txt_color);
@@ -3061,6 +3047,12 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
     case DEBUG_VIEW: {
         // TODO: Draw DEBUG_VIEW screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, gui_state.theme.txt_color);
+        DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, gui_state.theme.txt_color);
+        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, 100, 20, gui_state.theme.txt_color);
+        if (game_path != NULL) {
+            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, 130, 20, gui_state.theme.txt_color);
+        }
         DrawText("DEBUG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, gui_state.theme.txt_color);
@@ -3069,7 +3061,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         int default_kls_r_h = gui_state.gameScreenHeight * 0.1f;
         Rectangle default_kls_r = {
             .x = (gui_state.gameScreenWidth - default_kls_r_w) /2,
-            .y = (gui_state.gameScreenHeight/4) - (default_kls_r_h/2),
+            .y = ((gui_state.gameScreenHeight/4) *3) - (default_kls_r_h/2),
             .width = default_kls_r_w,
             .height = default_kls_r_h,
         };
