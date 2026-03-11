@@ -1599,7 +1599,21 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     } else if (i == BUTTON_TAKE_TREASURE) {
                         switch ((*current_room)->treasure->class) {
                             case TREASURE_CHEST: {
-                                log_tag("debug_log.txt", "TODO", "%s(): handle taking treasure chest.", __func__);
+                                if ((*player)->keys_balance > 0) {
+                                    log_tag("debug_log.txt", "[TREASURE]",
+                                            "Opened chest in Treasure room, index %i.\n",
+                                            (*current_room)->index);
+                                    (*player)->keys_balance--;
+                                    gui_state->currentScreen = CHEST_ANIM;
+                                    *current_anim_frame = 0;
+                                    open_chest(rb_notifications, (*current_room)->treasure->chest, *player, default_kls, *floor_kls);
+                                } else {
+                                    //TODO: display this in some way
+                                    //mvwprintw(win, 18, 5, "You don't have any key.");
+                                    log_tag("debug_log.txt", "[TREASURE]",
+                                            "Tried Opening a chest in Treasure room with no keys, index %i.\n",
+                                            (*current_room)->index);
+                                }
                             }
                             break;
                             case TREASURE_CONSUMABLE: {
@@ -1608,6 +1622,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                                                      consumable->class];
                                 bagged->qty += (*current_room)->treasure->consumable->qty;
                                 (*player)->stats->consumablesfound++;
+                                char msg[100];
+                                sprintf(msg, "You found a %s!", stringFromConsumables(bagged->class));
+                                enqueue_notification(msg, 500, S4C_BRIGHT_GREEN, rb_notifications);
                                 log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
                                 *current_room = NULL;
                                 (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
@@ -1620,6 +1637,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                                                  class];
                                 bagged->qty += 1;
                                 (*player)->stats->artifactsfound++;
+                                char msg[100];
+                                sprintf(msg, "You found a %s!", stringFromArtifacts(bagged->class));
+                                enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
                                 log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
                                 *current_room = NULL;
                                 (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
@@ -1855,6 +1875,17 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         (gui_state->framesCounter) += 1;    // Count frames
         // TODO: Press enter to skip animation and go to room screen?
         if (*current_anim_frame == 59 ) { //|| IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+            gui_state->currentScreen = ROOM_VIEW;
+            break;
+        }
+        (*current_anim_frame)++;
+    }
+    break;
+    case CHEST_ANIM: {
+        // TODO: Update CHEST_ANIM screen variables here!
+        (gui_state->framesCounter) += 1;    // Count frames
+        // TODO: Press enter to skip animation and go to room screen?
+        if (*current_anim_frame == 24 ) { //|| IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             gui_state->currentScreen = ROOM_VIEW;
             break;
         }
@@ -2952,6 +2983,32 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         };
         int door_res = DrawSpriteRect(enter_door[current_anim_frame], door_r, 21, 21, door_frame_W/21, palette, PALETTE_S4C_H_TOTCOLORS);
         if (door_res != 0 ) {
+            DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
+            DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+            DrawText("Please resize.", 20, 50, 20, RAYWHITE);
+            //current_anim_frame--; // TODO: can't update the current animation frame since it's not being taken as a reference as of now.
+        }
+    }
+    break;
+    case CHEST_ANIM: {
+        // TODO: Draw CHEST_ANIM screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("CHEST SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, gui_state.theme.txt_color);
+
+        int chest_frame_W = ((int)(gui_state.gameScreenWidth * 0.3f) / 21) * 21;
+        int chest_frame_H = chest_frame_W;
+        int chest_rect_X = (gui_state.gameScreenWidth/2) - (chest_frame_W/2);
+        int chest_rect_Y = (gui_state.gameScreenHeight/2) - (chest_frame_H/2);
+        Rectangle chest_r = CLITERAL(Rectangle) {
+            chest_rect_X,
+            chest_rect_Y,
+            chest_frame_W,
+            chest_frame_H,
+        };
+        int chest_res = DrawSpriteRect(alt_chest_opening[current_anim_frame], chest_r, 21, 21, chest_frame_W/21, palette, PALETTE_S4C_H_TOTCOLORS);
+        if (chest_res != 0 ) {
             DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
             DrawText("Window too small.", 20, 20, 20, RAYWHITE);
             DrawText("Please resize.", 20, 50, 20, RAYWHITE);
