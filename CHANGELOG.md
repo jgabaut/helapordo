@@ -2,7 +2,7 @@
 
 ### Added
 
-- Functionality for `Boss` rooms
+- Functionality for `Boss`, `Treasure` rooms
 
 ### Changed
 

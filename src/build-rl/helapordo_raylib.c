@@ -675,6 +675,26 @@ void gameloop_rl(int argc, char** argv)
         .text_color = DARKGRAY,
     };
 
+    Gui_Button bt_take_treasure = {
+        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Take",
+        .label_len = strlen("Take"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
+    Gui_Button bt_leave_treasure = {
+        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Leave",
+        .label_len = strlen("Leave"),
+        .box_color = DARKGREEN,
+        .text_color = DARKGRAY,
+    };
+
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -709,6 +729,8 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_SPECIAL_2] = bt_special_2,
             [BUTTON_SPECIAL_3] = bt_special_3,
             [BUTTON_SPECIAL_4] = bt_special_4,
+            [BUTTON_TAKE_TREASURE] = bt_take_treasure,
+            [BUTTON_LEAVE_TREASURE] = bt_leave_treasure,
         },
         .theme = {
             .bg_color = GRAY,

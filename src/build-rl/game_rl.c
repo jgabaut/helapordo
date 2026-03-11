@@ -1565,6 +1565,67 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                 }
             }
+        } else if ((*current_room)->class == TREASURE) {
+            for (int i=BUTTON_TAKE_TREASURE; i < BUTTON_LEAVE_TREASURE+1; i++) {
+                gui_state->buttons[i].on = false;
+            }
+
+            for (int i=BUTTON_TAKE_TREASURE; i < BUTTON_LEAVE_TREASURE+1; i++) {
+
+                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        gui_state->buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        gui_state->buttons[i].on = true;
+                    }
+                } else {
+                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                }
+                if (gui_state->buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    if (i == BUTTON_LEAVE_TREASURE) {
+                        log_tag("debug_log.txt", "DEBUG", "%s():    Leaving treasure behind.", __func__);
+                        log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                        *current_room = NULL;
+                        (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                        gui_state->currentScreen = FLOOR_VIEW;
+                    } else if (i == BUTTON_TAKE_TREASURE) {
+                        switch ((*current_room)->treasure->class) {
+                            case TREASURE_CHEST: {
+                                log_tag("debug_log.txt", "TODO", "%s(): handle taking treasure chest.", __func__);
+                            }
+                            break;
+                            case TREASURE_CONSUMABLE: {
+                                Consumable *bagged =
+                                    (Consumable *) (*player)->consumablesBag[(*current_room)->treasure->
+                                                                     consumable->class];
+                                bagged->qty += (*current_room)->treasure->consumable->qty;
+                                (*player)->stats->consumablesfound++;
+                                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                            }
+                            break;
+                            case TREASURE_ARTIFACT: {
+                                Artifact *bagged =
+                                    (Artifact *) (*player)->artifactsBag[(*current_room)->treasure->artifact->
+                                                                 class];
+                                bagged->qty += 1;
+                                (*player)->stats->artifactsfound++;
+                                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         } else {
             // Press enter to change to FLOOR_VIEW screen
             if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
@@ -2434,6 +2495,64 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 break;
                 }
                 if (pl_res != 0 || bs_res != 0 || CheckCollisionRecs(bs_r,stats_label_r) || CheckCollisionRecs(stats_label_r,pl_r) || CheckCollisionRecs(bs_r,pl_r)) {
+                    DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
+                    DrawText("Window too small.", 20, 20, 20, RAYWHITE);
+                    DrawText("Please resize.", 20, 50, 20, RAYWHITE);
+                }
+            }
+            break;
+            case TREASURE: {
+                for (int i=BUTTON_TAKE_TREASURE; i < BUTTON_LEAVE_TREASURE +1; i++) {
+                    Gui_Button button = gui_state.buttons[i];
+                    if (button.state == BUTTON_HOVER) {
+                        DrawRectangleRec(button.r, RED);
+                    } else {
+                        DrawRectangleRec(button.r, button.box_color);
+                    }
+                    DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+                }
+
+                int tr_r_w = -1;
+                int tr_r_h = -1;
+                switch (current_room->treasure->class) {
+                    case TREASURE_CHEST: {
+                        tr_r_w = ((int)(gui_state.gameScreenWidth * 0.3f) / CHEST_COLS) * CHEST_COLS;
+                        tr_r_h = ((int)(gui_state.gameScreenHeight * 0.3f) / CHEST_ROWS) * CHEST_ROWS;
+                    }
+                    break;
+                    case TREASURE_CONSUMABLE:
+                    case TREASURE_ARTIFACT: {
+                        tr_r_w = ((int)(gui_state.gameScreenWidth * 0.3f) / 12) * 12;
+                        tr_r_h = ((int)(gui_state.gameScreenHeight * 0.3f) / 8) * 8;
+                    }
+                    break;
+                }
+                Rectangle tr_r = {
+                    .x = (gui_state.gameScreenWidth - tr_r_w) /2,
+                    .y = (gui_state.gameScreenHeight / 4  - tr_r_h /2),
+                    .width = tr_r_w,
+                    .height = tr_r_h,
+                };
+                int tr_res = -1;
+                switch (current_room->treasure->class) {
+                    case TREASURE_CHEST: {
+                        int frame_height = CHEST_ROWS;
+
+                        int frame_width = CHEST_COLS;
+
+                        tr_res = DrawSpriteRect(alt_chest_opening[0], tr_r, frame_height, frame_width, tr_r.width/frame_width, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case TREASURE_CONSUMABLE: {
+                        tr_res = DrawSpriteRect(consumables_sprites_proper[current_room->treasure->consumable->class], tr_r, 8, 12, tr_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case TREASURE_ARTIFACT: {
+                        tr_res = DrawSpriteRect(artifacts_sprites_proper[current_room->treasure->artifact->class], tr_r, 8, 12, tr_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                }
+                if (tr_res != 0) {
                     DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
                     DrawText("Window too small.", 20, 20, 20, RAYWHITE);
                     DrawText("Please resize.", 20, 50, 20, RAYWHITE);

@@ -29,6 +29,7 @@ extern char equips_sprites_proper[EQUIPSMAX + 1][9][S4C_MAXCOLS];
 extern char equipzones_sprites[EQUIPZONES + 1][9][15];
 extern char equipzones_sprites_proper[EQUIPZONES + 1][9][S4C_MAXCOLS];
 extern char artifacts_sprites[ARTIFACTSMAX + 1][9][15];
+extern char artifacts_sprites_proper[ARTIFACTSMAX + 1][9][S4C_MAXCOLS];
 extern char enemies_sprites[ENEMYCLASSESMAX + 1][9][15];
 
 #define MISC_SPRITES_MAX 1
