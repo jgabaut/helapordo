@@ -10,8 +10,8 @@
 - Bump `s4c` to `0.5.0`
 - Fix `make pack`
 - Bump `koliseo` to `0.6.0`
-- Bump `invil` to `0.2.29`
-- Bump `amboso` to `2.1.1`
+- Bump `invil` to `0.2.30`
+- Bump `amboso` to `2.1.2`
 - Ensure width of animations is divisible by pixel count
 - Update `configure.ac` to use `-lX11` for `raylib` build on `linux`, `macOS`
 - Avoid drawing control hints over notifications
