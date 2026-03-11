@@ -994,6 +994,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
             Wincon* w = (*game_path)->win_condition;
+            const char* player_name = (*player)->name;
+            const int player_name_len = strlen(player_name);
+            fighterClass player_class = (*player)->class;
             kls_temp_end(*floor_kls);
             kls_free(temporary_kls);
             temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
@@ -1011,8 +1014,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
                                            "Fighter", "Fighter");
 
-            strncpy((*player)->name, "Test", strlen("Test")+1);
-            (*player)->class = Knight;
+            strncpy((*player)->name, player_name, player_name_len);
+            (*player)->name[player_name_len] = '\0';
+            (*player)->class = player_class;
             //getParams(argc, argv, player, path, optTot, default_kls);
             //TODO: ensure class and name are taken before this update
             initPlayerStats(*player, *game_path, temporary_kls);
