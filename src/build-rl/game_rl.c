@@ -2026,8 +2026,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         }
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         //DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
-        DrawText("PRESS P to pause animations", 110, 350, 20, gui_state.theme.txt_color);
-        DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, gui_state.theme.txt_color);
+        //DrawText("PRESS P to pause animations", 110, 350, 20, gui_state.theme.txt_color);
+        //DrawText("PRESS Left_Alt + F to toggle fullscreen", 110, 390, 20, gui_state.theme.txt_color);
 
         /*
         Rectangle en_pl_coll = GetCollisionRec(en_r,pl_r);

@@ -9,6 +9,7 @@
 - Bump `amboso` to `2.1.1`
 - Ensure width of animations is divisible by pixel count
 - Update `configure.ac` to use `-lX11` for `raylib` build on `linux`, `macOS`
+- Avoid drawing control hints over notifications
 
 ## [1.4.14] - 2025-12-28
 
