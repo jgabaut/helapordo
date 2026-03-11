@@ -1722,7 +1722,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 Rectangle anim_r = {
                     .x = gui_state.gameScreenWidth*0.50f,
                     .y = gui_state.gameScreenHeight*0.45f,
-                    .width = gui_state.gameScreenWidth*0.25f,
+                    .width = ((int)(gui_state.gameScreenWidth * 0.25f) / 17) * 17,
                     .height = gui_state.gameScreenWidth*0.25f,
                 };
                 switch (i) {
@@ -1839,7 +1839,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                     DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
                 }
                 int pl_rect_Y = gui_state.gameScreenHeight * 0.1f;
-                int pl_frame_W = gui_state.gameScreenWidth * 0.3f;
+                int pl_frame_W = ((int)(gui_state.gameScreenWidth * 0.3f) / 17) * 17;
                 int pl_frame_H = pl_frame_W;
                 int pl_rect_X = gui_state.gameScreenWidth - pl_frame_W - (gui_state.gameScreenWidth * 0.1f);
                 int en_rect_X = gui_state.gameScreenWidth * 0.1f;
@@ -2324,7 +2324,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, gui_state.theme.txt_color);
 
-        int door_frame_W = gui_state.gameScreenWidth * 0.3f;
+        int door_frame_W = ((int)(gui_state.gameScreenWidth * 0.3f) / 21) * 21;
         int door_frame_H = door_frame_W;
         int door_rect_X = (gui_state.gameScreenWidth/2) - (door_frame_W/2);
         int door_rect_Y = (gui_state.gameScreenHeight/2) - (door_frame_H/2);
