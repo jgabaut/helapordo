@@ -993,6 +993,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
+            Wincon* w = (*game_path)->win_condition;
             kls_temp_end(*floor_kls);
             kls_free(temporary_kls);
             temporary_kls = kls_new_conf(KLS_DEFAULT_SIZE * 32, temporary_kls_conf);
@@ -1004,6 +1005,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             *game_path = randomise_path(seed, temporary_kls, current_save_path);
 
             (*game_path)->current_saveslot->index = *saveslot_index;
+            (*game_path)->win_condition = w;
 
             *player =
                 (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
