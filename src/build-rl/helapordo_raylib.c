@@ -748,6 +748,7 @@ void gameloop_rl(int argc, char** argv)
             .txt_color = DARKGRAY,
         },
         .selectedIndex = 0,
+        .shop_buttons = shop_buttons_layout,
     };
 
     int roomsDone = 0;

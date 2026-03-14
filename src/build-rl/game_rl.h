@@ -82,6 +82,28 @@ typedef struct Gui_Theme {
     Color txt_color;
 } Gui_Theme;
 
+typedef struct Gui_Button_Row {
+    Gui_Button* buttons;
+    int len;
+    int x;
+    int y;
+    int cell_width;
+    int cell_height;
+    int cell_w_spacing;
+} Gui_Button_Row;
+
+typedef struct Gui_Button_Layout {
+    Gui_Button_Row** rows;
+    int len;
+} Gui_Button_Layout;
+
+typedef enum Gui_Shop_Layout_Row_Index {
+    SHOP_LAYOUT_EQUIPS_ROW,
+    SHOP_LAYOUT_CONSUMABLES_ROW
+} Gui_Shop_Layout_Row_Index;
+
+#define GUI_SHOP_LAYOUT_ROWS_MAX SHOP_LAYOUT_CONSUMABLES_ROW
+
 typedef struct Gui_State {
     float scale;
     float gameScreenWidth;
@@ -93,7 +115,15 @@ typedef struct Gui_State {
     Gui_Button buttons[GUI_BUTTONS_MAX+1];
     Gui_Theme theme;
     int selectedIndex;
+    Gui_Button_Layout shop_buttons;
 } Gui_State;
+
+extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
+extern Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX];
+extern Gui_Button_Row shop_equip_buttons_row;
+extern Gui_Button_Row shop_consumable_buttons_row;
+extern Gui_Button_Row* shop_buttons_rows[GUI_SHOP_LAYOUT_ROWS_MAX+1];
+extern Gui_Button_Layout shop_buttons_layout;
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);

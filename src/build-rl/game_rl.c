@@ -21,6 +21,25 @@ callback_void_t callback_func_ptrs[SPECIALSMAX];
 callback_void_t callback_artifact_ptrs[ARTIFACTSMAX];
 callback_void_t callback_counter_ptrs[COUNTERSMAX];
 
+Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX] = {0};
+Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX] = {0};
+Gui_Button_Row shop_equip_buttons_row = {
+    .buttons = &(shop_equip_buttons[0]),
+    .len = EQUIP_SHOP_MAX
+};
+Gui_Button_Row shop_consumable_buttons_row = {
+    .buttons = &(shop_consumable_buttons[0]),
+    .len = CONSUMABLE_SHOP_MAX
+};
+Gui_Button_Row* shop_buttons_rows[GUI_SHOP_LAYOUT_ROWS_MAX+1] = {
+    &shop_equip_buttons_row,
+    &shop_consumable_buttons_row
+};
+Gui_Button_Layout shop_buttons_layout = {
+    .rows = shop_buttons_rows,
+    .len = GUI_SHOP_LAYOUT_ROWS_MAX+1
+};
+
 /**
  * Shows tutorial info.
  * @see gameloop_rl()
@@ -1668,6 +1687,68 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                 }
             }
+        } else if ((*current_room)->class == SHOP) {
+            Shop* shop = (*current_room)->shop;
+            Gui_Button_Row* equips_row = gui_state->shop_buttons.rows[SHOP_LAYOUT_EQUIPS_ROW];
+            equips_row->cell_width = ((int)(gui_state->gameScreenWidth * 0.15f) / 12) * 12;
+            equips_row->cell_height = ((int)(gui_state->gameScreenHeight * 0.15f) / 8) * 8;
+            equips_row->cell_w_spacing = 10;
+            int equip_cells = shop->equipsCount;
+            equips_row->len = equip_cells;
+            int equips_r_width = (equips_row->cell_width + equips_row->cell_w_spacing) * equip_cells;
+            equips_row->x = (gui_state->gameScreenWidth - equips_r_width)/2;
+            equips_row->y = 50;
+
+            Gui_Button_Row* consumables_row = gui_state->shop_buttons.rows[SHOP_LAYOUT_CONSUMABLES_ROW];
+            consumables_row->cell_width = equips_row->cell_width;
+            consumables_row->cell_height = equips_row->cell_height;
+            consumables_row->cell_w_spacing = equips_row->cell_w_spacing;
+            int consumable_cells = shop->consumablesCount;
+            consumables_row->len = consumable_cells;
+            int consumables_r_width = (consumables_row->cell_width + consumables_row->cell_w_spacing) * consumable_cells;
+            int consumables_r_h_spacing = equips_row->cell_height;
+            consumables_row->x = (gui_state->gameScreenWidth - consumables_r_width)/2;
+            consumables_row->y = equips_row->y + equips_row->cell_height + consumables_r_h_spacing;
+
+            for (Gui_Shop_Layout_Row_Index i = 0; i < gui_state->shop_buttons.len; i++) {
+                Gui_Button_Row* row = gui_state->shop_buttons.rows[i];
+                for (int j = 0; j < row->len; j++) {
+                    Rectangle cell = {
+                        .x = row->x + (j*row->cell_width) + (j*row->cell_w_spacing),
+                        .y = row->y,
+                        .width = row->cell_width,
+                        .height = row->cell_height,
+                    };
+                    row->buttons[j].r = cell;
+                    //TODO: Detect mouse in cells
+                    if (CheckCollisionPointRec(gui_state->virtualMouse, cell)) {
+                        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                            row->buttons[j].state = BUTTON_PRESSED;
+                        } else {
+                            row->buttons[j].state = BUTTON_HOVER;
+                        }
+                        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                            row->buttons[j].on = true;
+                        }
+                    } else {
+                        row->buttons[j].state = BUTTON_NORMAL;
+                    }
+                    if (row->buttons[j].on) {
+                        switch (i) {
+                            case SHOP_LAYOUT_EQUIPS_ROW: {
+                                fprintf(stderr, "{%s} price: %i\n", stringFromEquips(shop->equips[j]->class), shop->equipPrices[j]);
+                            }
+                            break;
+                            case SHOP_LAYOUT_CONSUMABLES_ROW: {
+                                Consumable* c = shop->consumables[j];
+                                fprintf(stderr, "{%s x%i} price: %i\n", stringFromConsumables(c->class), c->qty, shop->consumablePrices[j]);
+                            }
+                            break;
+                        }
+                        row->buttons[j].on = false;
+                    }
+                }
+            }
         } else {
             // Press enter to change to FLOOR_VIEW screen
             if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
@@ -2617,57 +2698,43 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             break;
             case SHOP: {
                 Shop* shop = current_room->shop;
-                int equip_cell_w = ((int)(gui_state.gameScreenWidth * 0.15f) / 12) * 12;
-                int equip_cell_h = ((int)(gui_state.gameScreenHeight * 0.15f) / 8) * 8;
-                int equip_cell_w_spacing = 10;
-                int equip_cells = EQUIP_SHOP_MAX;
-                int equip_consum_h_spacing = equip_cell_h;
-                int equips_r_width = (equip_cell_w + equip_cell_w_spacing) * equip_cells;
-                Rectangle equips_r = {
-                    .x = (gui_state.gameScreenWidth - equips_r_width) / 2,
-                    .y = 50,
-                    .width = equips_r_width,
-                    .height = equip_cell_h,
-                };
-                int consumable_cell_w = equip_cell_w;
-                int consumable_cell_h = equip_cell_h;
-                int consumable_cell_w_spacing = equip_cell_w_spacing;
-                int consumable_cells = CONSUMABLE_SHOP_MAX;
-                int consumables_r_width = (consumable_cell_w + consumable_cell_w) * consumable_cells;
-                Rectangle consumables_r = {
-                    .x = (gui_state.gameScreenWidth - consumables_r_width) / 2,
-                    .y = equips_r.y + equips_r.height + equip_consum_h_spacing,
-                    .width = consumables_r_width,
-                    .height = consumable_cell_h,
-                };
-                DrawRectangleRec(equips_r, RED);
-                DrawRectangleRec(consumables_r, RED);
+
                 int eq_res = -1;
-                for (int i = 0; i < equip_cells; i++) {
-                    Rectangle cell = {
-                        equips_r.x + (i*equip_cell_w) + (i*equip_cell_w_spacing),
-                        equips_r.y,
-                        equip_cell_w,
-                        equip_cell_h,
-                    };
-                    DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
-                    if (i < shop->equipsCount) {
-                        eq_res = DrawSpriteRect(equips_sprites_proper[shop->equips[i]->class], cell, 8, 12, cell.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
-                    }
-                }
                 int cs_res = -1;
-                for (int i = 0; i < consumable_cells; i++) {
-                    Rectangle cell = {
-                        .x = consumables_r.x + (i*consumable_cell_w) + (i*consumable_cell_w_spacing),
-                        .y = consumables_r.y,
-                        .width = consumable_cell_w,
-                        .height = consumable_cell_h,
-                    };
-                    DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
-                    if (i < shop->consumablesCount) {
-                        cs_res = DrawSpriteRect(consumables_sprites_proper[shop->consumables[i]->class], cell, 8, 12, cell.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                for (Gui_Shop_Layout_Row_Index i=0; i < gui_state.shop_buttons.len; i++) {
+                    Gui_Button_Row* row = gui_state.shop_buttons.rows[i];
+                    for (int j=0; j < row->len; j++) {
+                        Gui_Button button = row->buttons[j];
+
+                        if (button.state == BUTTON_HOVER) {
+                            DrawRectangleRec(button.r, ColorFromS4CPalette(palette, S4C_CYAN));
+                        } else {
+                            DrawRectangleRec(button.r, YELLOW);
+                        }
+                        DrawRectangleLines(button.r.x, button.r.y, button.r.width, button.r.height, BLACK);
+                        switch (i) {
+                            case SHOP_LAYOUT_EQUIPS_ROW: {
+                                if (j < shop->equipsCount) {
+                                    eq_res = DrawSpriteRect(equips_sprites_proper[shop->equips[j]->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                                }
+                            }
+                            break;
+                            case SHOP_LAYOUT_CONSUMABLES_ROW: {
+                                if (j < shop->consumablesCount) {
+                                    cs_res = DrawSpriteRect(consumables_sprites_proper[shop->consumables[j]->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                                }
+                            }
+                            break;
+                            default: {
+                                log_tag("debug_log.txt", "ERROR", "%s():    Unexpected row for shop_buttons: {%i}", __func__, i);
+                                kls_free(default_kls);
+                                kls_free(temporary_kls);
+                                exit(EXIT_FAILURE);
+                            }
+                        }
                     }
                 }
+
                 if (eq_res != 0 || cs_res != 0) {
                     DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
                     DrawText("Window too small.", 20, 20, 20, RAYWHITE);
