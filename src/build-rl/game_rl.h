@@ -51,10 +51,6 @@ typedef enum Gui_Button_Idx {
     BUTTON_SAVESLOT_2,
     BUTTON_SAVESLOT_3,
     BUTTON_CLASS_TXTFIELD,
-    BUTTON_CLASS_KNIGHT,
-    BUTTON_CLASS_ARCHER,
-    BUTTON_CLASS_MAGE,
-    BUTTON_CLASS_ASSASSIN,
     BUTTON_NAME_TXTFIELD,
     BUTTON_OPEN_BAG,
     BUTTON_CHECK_LOADOUT,
@@ -110,6 +106,15 @@ typedef enum Gui_Special_Layout_Button_Index {
 
 #define GUI_SPECIAL_LAYOUT_BUTTONS_MAX BUTTON_SPECIAL_4
 
+typedef enum Gui_ClassPick_Layout_Button_Index {
+    BUTTON_CLASS_KNIGHT,
+    BUTTON_CLASS_MAGE,
+    BUTTON_CLASS_ARCHER,
+    BUTTON_CLASS_ASSASSIN
+} Gui_ClassPick_Layout_Button_Index;
+
+#define GUI_CLASSPICK_LAYOUT_BUTTONS_MAX BUTTON_CLASS_ASSASSIN
+
 typedef struct Gui_State {
     float scale;
     float gameScreenWidth;
@@ -121,6 +126,7 @@ typedef struct Gui_State {
     Gui_Button buttons[GUI_BUTTONS_MAX+1];
     Gui_Theme theme;
     int selectedIndex;
+    Gui_Button_Layout classpick_buttons;
     Gui_Button_Layout shop_buttons;
     Gui_Button_Layout fight_buttons;
     Gui_Button_Layout special_buttons;
@@ -142,6 +148,11 @@ extern Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1];
 extern Gui_Button_Row special_buttons_row;
 extern Gui_Button_Row* special_buttons_rows[1];
 extern Gui_Button_Layout special_buttons_layout;
+
+extern Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1];
+extern Gui_Button_Row classpick_buttons_row;
+extern Gui_Button_Row* classpick_buttons_rows[1];
+extern Gui_Button_Layout classpick_buttons_layout;
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);

@@ -495,46 +495,6 @@ void gameloop_rl(int argc, char** argv)
         }
     }
 
-    Gui_Button bt_class_knight = {
-        .r = (Rectangle){.x = 50, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Knight",
-        .label_len = strlen("Knight"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_class_archer = {
-        .r = (Rectangle){.x = 160, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Archer",
-        .label_len = strlen("Archer"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_class_mage = {
-        .r = (Rectangle){.x = 270, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Mage",
-        .label_len = strlen("Mage"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_class_assassin = {
-        .r = (Rectangle){.x = 380, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Assassin",
-        .label_len = strlen("Assassin"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
     Gui_Button bt_open_bag = {
         .r = (Rectangle){.x = 60, .y = 125, .width = 100, .height = 50},
         .on = false,
@@ -597,10 +557,6 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_NEW_GAME] = bt_newgame,
             [BUTTON_LOAD_GAME] = bt_loadgame,
             [BUTTON_CLASS_TXTFIELD] = bt_classfield,
-            [BUTTON_CLASS_KNIGHT] = bt_class_knight,
-            [BUTTON_CLASS_ARCHER] = bt_class_archer,
-            [BUTTON_CLASS_MAGE] = bt_class_mage,
-            [BUTTON_CLASS_ASSASSIN] = bt_class_assassin,
             [BUTTON_NAME_TXTFIELD] = bt_namefield,
             [BUTTON_SAVESLOT_1] = bt_slot1,
             [BUTTON_SAVESLOT_2] = bt_slot2,
@@ -616,6 +572,7 @@ void gameloop_rl(int argc, char** argv)
             .txt_color = DARKGRAY,
         },
         .selectedIndex = 0,
+        .classpick_buttons = classpick_buttons_layout,
         .shop_buttons = shop_buttons_layout,
         .fight_buttons = fight_buttons_layout,
         .special_buttons = special_buttons_layout,

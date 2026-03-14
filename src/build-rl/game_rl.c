@@ -140,6 +140,56 @@ Gui_Button_Layout special_buttons_layout = {
     .len = ARRAY_SIZE(special_buttons_rows),
 };
 
+Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
+    [BUTTON_CLASS_KNIGHT] = {
+        .r = {.x = 50, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Knight",
+        .label_len = ARRAY_SIZE("Knight")-1,
+        .box_color = { 0, 117, 44, 255 },
+        .text_color = { 80, 80, 80, 255 },
+    },
+    [BUTTON_CLASS_MAGE] = {
+        .r = {.x = 160, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Mage",
+        .label_len = ARRAY_SIZE("Mage")-1,
+        .box_color = { 0, 117, 44, 255 },
+        .text_color = { 80, 80, 80, 255 },
+    },
+    [BUTTON_CLASS_ARCHER] = {
+        .r = {.x = 270, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Archer",
+        .label_len = ARRAY_SIZE("Archer")-1,
+        .box_color = { 0, 117, 44, 255 },
+        .text_color = { 80, 80, 80, 255 },
+    },
+    [BUTTON_CLASS_ASSASSIN] = {
+        .r = {.x = 380, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Assassin",
+        .label_len = ARRAY_SIZE("Assassin")-1,
+        .box_color = { 0, 117, 44, 255 },
+        .text_color = { 80, 80, 80, 255 },
+    }
+};
+Gui_Button_Row classpick_buttons_row = {
+    .buttons = &(classpick_buttons[0]),
+    .len = ARRAY_SIZE(classpick_buttons),
+};
+Gui_Button_Row* classpick_buttons_rows[1] = {
+    &classpick_buttons_row,
+};
+Gui_Button_Layout classpick_buttons_layout = {
+    .rows = classpick_buttons_rows,
+    .len = ARRAY_SIZE(classpick_buttons_rows),
+};
+
 /**
  * Shows tutorial info.
  * @see gameloop_rl()
@@ -990,42 +1040,47 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     }
     break;
     case CLASSPICK_VIEW: {
-        gui_state->buttons[BUTTON_CLASS_KNIGHT].on = false;
-        gui_state->buttons[BUTTON_CLASS_ARCHER].on = false;
-        gui_state->buttons[BUTTON_CLASS_MAGE].on = false;
-        gui_state->buttons[BUTTON_CLASS_ASSASSIN].on = false;
-        for (int i=BUTTON_CLASS_KNIGHT; i < BUTTON_CLASS_ASSASSIN+1; i++) {
-
-            if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
-                if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                    gui_state->buttons[i].state = BUTTON_PRESSED;
-                } else {
-                    gui_state->buttons[i].state = BUTTON_HOVER;
-                }
-                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                    gui_state->buttons[i].on = true;
-                }
-            } else {
-                gui_state->buttons[i].state = BUTTON_NORMAL;
+        for (int i = 0; i < gui_state->classpick_buttons.len; i++) {
+            Gui_Button_Row* row = gui_state->classpick_buttons.rows[i];
+            for (Gui_ClassPick_Layout_Button_Index j = 0; j < row->len; j++) {
+                row->buttons[j].on = false;
             }
-            if (gui_state->buttons[i].on) {
-                fprintf(stderr, "%s():    [EFFECT]\n", __func__);
-                if (i == BUTTON_CLASS_KNIGHT) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Knight", strlen("Knight")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
-                    gui_state->currentScreen = SAVES_VIEW;
-                } else if ( i == BUTTON_CLASS_ARCHER) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Archer", strlen("Archer")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
-                    gui_state->currentScreen = SAVES_VIEW;
-                } else if ( i == BUTTON_CLASS_MAGE) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Mage", strlen("Mage")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
-                    gui_state->currentScreen = SAVES_VIEW;
-                } else if ( i == BUTTON_CLASS_ASSASSIN) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Assassin", strlen("Assassin")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
-                    gui_state->currentScreen = SAVES_VIEW;
+        }
+        for (int i = 0; i < gui_state->classpick_buttons.len; i++) {
+            Gui_Button_Row* row = gui_state->classpick_buttons.rows[i];
+            for (Gui_ClassPick_Layout_Button_Index j = 0; j < row->len; j++) {
+
+                if (CheckCollisionPointRec(gui_state->virtualMouse, row->buttons[j].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        row->buttons[j].state = BUTTON_PRESSED;
+                    } else {
+                        row->buttons[j].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        row->buttons[j].on = true;
+                    }
+                } else {
+                    row->buttons[j].state = BUTTON_NORMAL;
+                }
+                if (row->buttons[j].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    if (j == BUTTON_CLASS_KNIGHT) {
+                        memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Knight", strlen("Knight")+1);
+                        gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                        gui_state->currentScreen = SAVES_VIEW;
+                    } else if ( j == BUTTON_CLASS_ARCHER) {
+                        memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Archer", strlen("Archer")+1);
+                        gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                        gui_state->currentScreen = SAVES_VIEW;
+                    } else if ( j == BUTTON_CLASS_MAGE) {
+                        memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Mage", strlen("Mage")+1);
+                        gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                        gui_state->currentScreen = SAVES_VIEW;
+                    } else if ( j == BUTTON_CLASS_ASSASSIN) {
+                        memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Assassin", strlen("Assassin")+1);
+                        gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                        gui_state->currentScreen = SAVES_VIEW;
+                    }
                 }
             }
         }
@@ -2272,49 +2327,52 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("PICK CLASS SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        for (int i=BUTTON_CLASS_KNIGHT; i < BUTTON_CLASS_ASSASSIN+1; i++) {
-            Gui_Button button = gui_state.buttons[i];
-            if (button.state == BUTTON_HOVER) {
-                DrawRectangleRec(button.r, RED);
+        for (int i = 0; i < gui_state.classpick_buttons.len; i++) {
+            Gui_Button_Row* row = gui_state.classpick_buttons.rows[i];
+            for (Gui_ClassPick_Layout_Button_Index j = 0; j < row->len; j++) {
+                Gui_Button button = row->buttons[j];
+                if (button.state == BUTTON_HOVER) {
+                    DrawRectangleRec(button.r, RED);
 
-                int anim_res = -1;
-                // Draw the current class animation frame somewhere
-                Rectangle anim_r = {
-                    .x = gui_state.gameScreenWidth*0.50f,
-                    .y = gui_state.gameScreenHeight*0.45f,
-                    .width = ((int)(gui_state.gameScreenWidth * 0.25f) / 17) * 17,
-                    .height = gui_state.gameScreenWidth*0.25f,
-                };
-                switch (i) {
-                case BUTTON_CLASS_KNIGHT: {
-                    anim_res = DrawSpriteRect(knight_tapis[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    int anim_res = -1;
+                    // Draw the current class animation frame somewhere
+                    Rectangle anim_r = {
+                        .x = gui_state.gameScreenWidth*0.50f,
+                        .y = gui_state.gameScreenHeight*0.45f,
+                        .width = ((int)(gui_state.gameScreenWidth * 0.25f) / 17) * 17,
+                        .height = gui_state.gameScreenWidth*0.25f,
+                    };
+                    switch (j) {
+                    case BUTTON_CLASS_KNIGHT: {
+                        anim_res = DrawSpriteRect(knight_tapis[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case BUTTON_CLASS_ARCHER: {
+                        anim_res = DrawSpriteRect(archer_drop[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case BUTTON_CLASS_MAGE: {
+                        anim_res = DrawSpriteRect(mage_spark[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case BUTTON_CLASS_ASSASSIN: {
+                        anim_res = DrawSpriteRect(assassin_poof[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    default: {
+                        fprintf(stderr, "%s():    Unexpected button value: {%i}\n", __func__, i);
+                        kls_free(default_kls);
+                        kls_free(temporary_kls);
+                        exit(EXIT_FAILURE);
+                    }
+                    break;
+                    }
+                    (void) anim_res; // TODO: check this return value
+                } else {
+                    DrawRectangleRec(button.r, button.box_color);
                 }
-                break;
-                case BUTTON_CLASS_ARCHER: {
-                    anim_res = DrawSpriteRect(archer_drop[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                }
-                break;
-                case BUTTON_CLASS_MAGE: {
-                    anim_res = DrawSpriteRect(mage_spark[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                }
-                break;
-                case BUTTON_CLASS_ASSASSIN: {
-                    anim_res = DrawSpriteRect(assassin_poof[gui_state.framesCounter%60], anim_r, 17, 17, anim_r.width/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                }
-                break;
-                default: {
-                    fprintf(stderr, "%s():    Unexpected button value: {%i}\n", __func__, i);
-                    kls_free(default_kls);
-                    kls_free(temporary_kls);
-                    exit(EXIT_FAILURE);
-                }
-                break;
-                }
-                (void) anim_res; // TODO: check this return value
-            } else {
-                DrawRectangleRec(button.r, button.box_color);
+                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
             }
-            DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
         }
     }
     break;
