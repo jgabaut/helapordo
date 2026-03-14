@@ -20,6 +20,7 @@
 - Use `BLACK` for `rb_notifications` rect
 - Add `DEBUG_VIEW` for debug
 - Refactor `ROOM_VIEW` for `Enemies` to use `Gui_Button_Layout`
+- Refactor `PICK_SPECIAL_VIEW`, `UNLOCK_SPECIAL_VIEW` to use `Gui_Button_Layout`
 
 ## [1.4.14] - 2025-12-28
 
