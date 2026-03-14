@@ -749,6 +749,7 @@ void gameloop_rl(int argc, char** argv)
         },
         .selectedIndex = 0,
         .shop_buttons = shop_buttons_layout,
+        .fight_buttons = fight_buttons_layout,
     };
 
     int roomsDone = 0;

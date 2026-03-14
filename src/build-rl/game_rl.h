@@ -104,6 +104,15 @@ typedef enum Gui_Shop_Layout_Row_Index {
 
 #define GUI_SHOP_LAYOUT_ROWS_MAX SHOP_LAYOUT_CONSUMABLES_ROW
 
+typedef enum Gui_Fight_Layout_Button_Index {
+    LAYOUT_BUTTON_FIGHT,
+    LAYOUT_BUTTON_SPECIAL,
+    LAYOUT_BUTTON_EQUIPS,
+    LAYOUT_BUTTON_CONSUMABLES
+} Gui_Fight_Layout_Button_Index;
+
+#define GUI_FIGHT_LAYOUT_BUTTONS_MAX LAYOUT_BUTTON_CONSUMABLES
+
 typedef struct Gui_State {
     float scale;
     float gameScreenWidth;
@@ -116,6 +125,7 @@ typedef struct Gui_State {
     Gui_Theme theme;
     int selectedIndex;
     Gui_Button_Layout shop_buttons;
+    Gui_Button_Layout fight_buttons;
 } Gui_State;
 
 extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
@@ -124,6 +134,11 @@ extern Gui_Button_Row shop_equip_buttons_row;
 extern Gui_Button_Row shop_consumable_buttons_row;
 extern Gui_Button_Row* shop_buttons_rows[GUI_SHOP_LAYOUT_ROWS_MAX+1];
 extern Gui_Button_Layout shop_buttons_layout;
+
+extern Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1];
+extern Gui_Button_Row fight_buttons_row;
+extern Gui_Button_Row* fight_buttons_rows[1];
+extern Gui_Button_Layout fight_buttons_layout;
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);
