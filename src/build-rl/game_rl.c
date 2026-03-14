@@ -41,7 +41,7 @@ Gui_Button_Layout shop_buttons_layout = {
 };
 
 Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
-    [LAYOUT_BUTTON_FIGHT] = {
+    [BUTTON_FIGHT] = {
         .r = {.x = 60, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
@@ -50,7 +50,7 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .box_color = { 0, 117, 44, 255 },
         .text_color = { 80, 80, 80, 255 },
     },
-    [LAYOUT_BUTTON_SPECIAL] = {
+    [BUTTON_SPECIAL] = {
         .r = {.x = 170, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
@@ -59,7 +59,7 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .box_color = { 0, 117, 44, 255 },
         .text_color = { 80, 80, 80, 255 },
     },
-    [LAYOUT_BUTTON_EQUIPS] = {
+    [BUTTON_EQUIPS] = {
         .r = {.x = 280, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
@@ -68,7 +68,7 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .box_color = { 0, 117, 44, 255 },
         .text_color = { 80, 80, 80, 255 },
     },
-    [LAYOUT_BUTTON_CONSUMABLES] = {
+    [BUTTON_CONSUMABLES] = {
         .r = {.x = 390, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
@@ -91,7 +91,7 @@ Gui_Button_Layout fight_buttons_layout = {
 };
 
 Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
-    [LAYOUT_BUTTON_SPECIAL_1] = {
+    [BUTTON_SPECIAL_1] = {
         .r = {.x = 60, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
@@ -100,7 +100,7 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .box_color = { 0, 117, 44, 255 },
         .text_color = { 80, 80, 80, 255 },
     },
-    [LAYOUT_BUTTON_SPECIAL_2] = {
+    [BUTTON_SPECIAL_2] = {
         .r = {.x = 170, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
@@ -109,7 +109,7 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .box_color = { 0, 117, 44, 255 },
         .text_color = { 80, 80, 80, 255 },
     },
-    [LAYOUT_BUTTON_SPECIAL_3] = {
+    [BUTTON_SPECIAL_3] = {
         .r = {.x = 280, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
@@ -118,7 +118,7 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .box_color = { 0, 117, 44, 255 },
         .text_color = { 80, 80, 80, 255 },
     },
-    [LAYOUT_BUTTON_SPECIAL_4] = {
+    [BUTTON_SPECIAL_4] = {
         .r = {.x = 390, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
@@ -1341,7 +1341,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     if (row->buttons[j].on) {
                         assert(i == 0); // The code below assumes there's only one row.
                         fprintf(stderr, "%s():    [EFFECT]\n", __func__);
-                        if (j == LAYOUT_BUTTON_FIGHT) {
+                        if (j == BUTTON_FIGHT) {
                             Boss *dummy_boss = NULL;
                             Enemy* enemy = (*current_room)->enemies[(*gamestate)->current_enemy_index];
                             FILE *args_save_file = NULL;
@@ -1460,13 +1460,13 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             }
 
                             // End of fight button
-                        } else if (j == LAYOUT_BUTTON_SPECIAL) {
+                        } else if (j == BUTTON_SPECIAL) {
                             if ((*player)->stats->specialsunlocked > 0) {
                                 gui_state->currentScreen = PICK_SPECIAL_VIEW;
                             }
-                        } else if (j == LAYOUT_BUTTON_EQUIPS) {
+                        } else if (j == BUTTON_EQUIPS) {
                             gui_state->currentScreen = EQUIPS_VIEW;
-                        } else if (j == LAYOUT_BUTTON_CONSUMABLES) {
+                        } else if (j == BUTTON_CONSUMABLES) {
                             gui_state->currentScreen = CONSUMABLES_VIEW;
                         }
                     }
@@ -1504,7 +1504,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                         //TODO: may use i to se is_new_game for now but its weak to changes in the array
                         // load_info->is_new_game = i;
-                        if (j == LAYOUT_BUTTON_FIGHT) { // New game is the first button
+                        if (j == BUTTON_FIGHT) { // New game is the first button
                             Boss *boss = (*current_room)->boss;
                             Enemy* dummy_enemy = NULL;
                             FILE *args_save_file = NULL;
@@ -1706,13 +1706,13 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             }
 
                             // End of fight button
-                        } else if (j == LAYOUT_BUTTON_SPECIAL) {
+                        } else if (j == BUTTON_SPECIAL) {
                             if ((*player)->stats->specialsunlocked > 0) {
                                 gui_state->currentScreen = PICK_SPECIAL_VIEW;
                             }
-                        } else if (j == LAYOUT_BUTTON_EQUIPS) {
+                        } else if (j == BUTTON_EQUIPS) {
                             gui_state->currentScreen = EQUIPS_VIEW;
-                        } else if (j == LAYOUT_BUTTON_CONSUMABLES) {
+                        } else if (j == BUTTON_CONSUMABLES) {
                             gui_state->currentScreen = CONSUMABLES_VIEW;
                         }
                     }
