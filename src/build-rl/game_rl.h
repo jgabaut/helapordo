@@ -96,6 +96,8 @@ typedef enum Gui_Fight_Layout_Button_Index {
 } Gui_Fight_Layout_Button_Index;
 
 #define GUI_FIGHT_LAYOUT_BUTTONS_MAX BUTTON_CONSUMABLES
+#define GUI_FIGHT_LAYOUT_BOX_COLOR { 0, 117, 44, 255 }
+#define GUI_FIGHT_LAYOUT_TEXT_COLOR { 80, 80, 80, 255 }
 
 typedef enum Gui_Special_Layout_Button_Index {
     BUTTON_SPECIAL_1,
@@ -105,6 +107,8 @@ typedef enum Gui_Special_Layout_Button_Index {
 } Gui_Special_Layout_Button_Index;
 
 #define GUI_SPECIAL_LAYOUT_BUTTONS_MAX BUTTON_SPECIAL_4
+#define GUI_SPECIAL_LAYOUT_BOX_COLOR GUI_FIGHT_LAYOUT_BOX_COLOR
+#define GUI_SPECIAL_LAYOUT_TEXT_COLOR GUI_FIGHT_LAYOUT_TEXT_COLOR
 
 typedef enum Gui_ClassPick_Layout_Button_Index {
     BUTTON_CLASS_KNIGHT,
@@ -114,6 +118,8 @@ typedef enum Gui_ClassPick_Layout_Button_Index {
 } Gui_ClassPick_Layout_Button_Index;
 
 #define GUI_CLASSPICK_LAYOUT_BUTTONS_MAX BUTTON_CLASS_ASSASSIN
+#define GUI_CLASSPICK_LAYOUT_BOX_COLOR GUI_FIGHT_LAYOUT_BOX_COLOR
+#define GUI_CLASSPICK_LAYOUT_TEXT_COLOR GUI_FIGHT_LAYOUT_TEXT_COLOR
 
 typedef struct Gui_State {
     float scale;

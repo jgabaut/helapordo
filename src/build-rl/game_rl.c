@@ -47,8 +47,8 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Fight",
         .label_len = ARRAY_SIZE("Fight")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_FIGHT_LAYOUT_BOX_COLOR,
+        .text_color = GUI_FIGHT_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_SPECIAL] = {
         .r = {.x = 170, .y = 250, .width = 100, .height = 50},
@@ -56,8 +56,8 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Special",
         .label_len = ARRAY_SIZE("Special")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_FIGHT_LAYOUT_BOX_COLOR,
+        .text_color = GUI_FIGHT_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_EQUIPS] = {
         .r = {.x = 280, .y = 250, .width = 100, .height = 50},
@@ -65,8 +65,8 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Equips",
         .label_len = ARRAY_SIZE("Equips")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_FIGHT_LAYOUT_BOX_COLOR,
+        .text_color = GUI_FIGHT_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_CONSUMABLES] = {
         .r = {.x = 390, .y = 250, .width = 100, .height = 50},
@@ -74,8 +74,8 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Consumables",
         .label_len = ARRAY_SIZE("Consumables")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_FIGHT_LAYOUT_BOX_COLOR,
+        .text_color = GUI_FIGHT_LAYOUT_TEXT_COLOR,
     }
 };
 Gui_Button_Row fight_buttons_row = {
@@ -97,8 +97,8 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "1",
         .label_len = ARRAY_SIZE("1")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_SPECIAL_LAYOUT_BOX_COLOR,
+        .text_color = GUI_SPECIAL_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_SPECIAL_2] = {
         .r = {.x = 170, .y = 250, .width = 100, .height = 50},
@@ -106,8 +106,8 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "2",
         .label_len = ARRAY_SIZE("2")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_SPECIAL_LAYOUT_BOX_COLOR,
+        .text_color = GUI_SPECIAL_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_SPECIAL_3] = {
         .r = {.x = 280, .y = 250, .width = 100, .height = 50},
@@ -115,8 +115,8 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "3",
         .label_len = ARRAY_SIZE("3")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_SPECIAL_LAYOUT_BOX_COLOR,
+        .text_color = GUI_SPECIAL_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_SPECIAL_4] = {
         .r = {.x = 390, .y = 250, .width = 100, .height = 50},
@@ -124,8 +124,8 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "4",
         .label_len = ARRAY_SIZE("4")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_SPECIAL_LAYOUT_BOX_COLOR,
+        .text_color = GUI_SPECIAL_LAYOUT_TEXT_COLOR,
     }
 };
 Gui_Button_Row special_buttons_row = {
@@ -147,8 +147,8 @@ Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Knight",
         .label_len = ARRAY_SIZE("Knight")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_CLASSPICK_LAYOUT_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_CLASS_MAGE] = {
         .r = {.x = 160, .y = 100, .width = 100, .height = 50},
@@ -156,8 +156,8 @@ Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Mage",
         .label_len = ARRAY_SIZE("Mage")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_CLASSPICK_LAYOUT_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_CLASS_ARCHER] = {
         .r = {.x = 270, .y = 100, .width = 100, .height = 50},
@@ -165,8 +165,8 @@ Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Archer",
         .label_len = ARRAY_SIZE("Archer")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_CLASSPICK_LAYOUT_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_LAYOUT_TEXT_COLOR,
     },
     [BUTTON_CLASS_ASSASSIN] = {
         .r = {.x = 380, .y = 100, .width = 100, .height = 50},
@@ -174,8 +174,8 @@ Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Assassin",
         .label_len = ARRAY_SIZE("Assassin")-1,
-        .box_color = { 0, 117, 44, 255 },
-        .text_color = { 80, 80, 80, 255 },
+        .box_color = GUI_CLASSPICK_LAYOUT_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_LAYOUT_TEXT_COLOR,
     }
 };
 Gui_Button_Row classpick_buttons_row = {
