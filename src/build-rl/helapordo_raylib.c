@@ -495,26 +495,6 @@ void gameloop_rl(int argc, char** argv)
         }
     }
 
-    Gui_Button bt_open_bag = {
-        .r = (Rectangle){.x = 60, .y = 125, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Open Bag",
-        .label_len = strlen("Open Bag"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_check_loadout = {
-        .r = (Rectangle){.x = 60, .y = 195, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Loadout",
-        .label_len = strlen("Loadout"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
     Gui_Button bt_take_treasure = {
         .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
         .on = false,
@@ -561,8 +541,6 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_SAVESLOT_1] = bt_slot1,
             [BUTTON_SAVESLOT_2] = bt_slot2,
             [BUTTON_SAVESLOT_3] = bt_slot3,
-            [BUTTON_OPEN_BAG] = bt_open_bag,
-            [BUTTON_CHECK_LOADOUT] = bt_check_loadout,
             [BUTTON_TAKE_TREASURE] = bt_take_treasure,
             [BUTTON_LEAVE_TREASURE] = bt_leave_treasure,
             [BUTTON_FLOOR_DEBUG] = bt_floor_debug,
@@ -576,6 +554,7 @@ void gameloop_rl(int argc, char** argv)
         .shop_buttons = shop_buttons_layout,
         .fight_buttons = fight_buttons_layout,
         .special_buttons = special_buttons_layout,
+        .equips_buttons = equips_buttons_layout,
     };
 
     int roomsDone = 0;

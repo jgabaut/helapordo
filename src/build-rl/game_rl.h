@@ -52,8 +52,6 @@ typedef enum Gui_Button_Idx {
     BUTTON_SAVESLOT_3,
     BUTTON_CLASS_TXTFIELD,
     BUTTON_NAME_TXTFIELD,
-    BUTTON_OPEN_BAG,
-    BUTTON_CHECK_LOADOUT,
     BUTTON_TAKE_TREASURE,
     BUTTON_LEAVE_TREASURE,
     BUTTON_FLOOR_DEBUG,
@@ -110,6 +108,15 @@ typedef enum Gui_Special_Layout_Button_Index {
 #define GUI_SPECIAL_LAYOUT_BOX_COLOR GUI_FIGHT_LAYOUT_BOX_COLOR
 #define GUI_SPECIAL_LAYOUT_TEXT_COLOR GUI_FIGHT_LAYOUT_TEXT_COLOR
 
+typedef enum Gui_Equips_Layout_Button_Index {
+    BUTTON_OPEN_BAG,
+    BUTTON_CHECK_LOADOUT,
+} Gui_Equips_Layout_Button_Index;
+
+#define GUI_EQUIPS_LAYOUT_BUTTONS_MAX BUTTON_CHECK_LOADOUT
+#define GUI_EQUIPS_LAYOUT_BOX_COLOR GUI_FIGHT_LAYOUT_BOX_COLOR
+#define GUI_EQUIPS_LAYOUT_TEXT_COLOR GUI_FIGHT_LAYOUT_TEXT_COLOR
+
 typedef enum Gui_ClassPick_Layout_Button_Index {
     BUTTON_CLASS_KNIGHT,
     BUTTON_CLASS_MAGE,
@@ -136,6 +143,7 @@ typedef struct Gui_State {
     Gui_Button_Layout shop_buttons;
     Gui_Button_Layout fight_buttons;
     Gui_Button_Layout special_buttons;
+    Gui_Button_Layout equips_buttons;
 } Gui_State;
 
 extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
@@ -154,6 +162,11 @@ extern Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1];
 extern Gui_Button_Row special_buttons_row;
 extern Gui_Button_Row* special_buttons_rows[1];
 extern Gui_Button_Layout special_buttons_layout;
+
+extern Gui_Button equips_buttons[GUI_EQUIPS_LAYOUT_BUTTONS_MAX+1];
+extern Gui_Button_Row equips_buttons_row;
+extern Gui_Button_Row* equips_buttons_rows[1];
+extern Gui_Button_Layout equips_buttons_layout;
 
 extern Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1];
 extern Gui_Button_Row classpick_buttons_row;
