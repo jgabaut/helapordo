@@ -5,6 +5,7 @@
 - Functionality for `Boss` rooms
 - Partial functionality for `Treasure`, `Shop` rooms
 - Add `Gui_Button_Row`, `Gui_Button_Layout` for dynamic buttons in shop
+- Add `DEBUG_VIEW` for debug
 
 ### Changed
 
@@ -18,9 +19,11 @@
 - Avoid drawing control hints over notifications
 - Avoid breaking `win_condition`, `player` name and class on debug floor regen
 - Use `BLACK` for `rb_notifications` rect
-- Add `DEBUG_VIEW` for debug
-- Refactor `ROOM_VIEW` for `Enemies` to use `Gui_Button_Layout`
-- Refactor `PICK_SPECIAL_VIEW`, `UNLOCK_SPECIAL_VIEW` to use `Gui_Button_Layout`
+- Refactor views to use `Gui_Button_Layout`
+  - `ROOM_VIEW` for `Enemies`
+  - `CLASSPICK_VIEW`
+  - `PICK_SPECIAL_VIEW`
+  - `UNLOCK_SPECIAL_VIEW`
 
 ## [1.4.14] - 2025-12-28
 
