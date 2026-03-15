@@ -150,6 +150,31 @@ Gui_Button_Group equips_buttons_group = {
     .len = ARRAY_SIZE(equips_buttons),
 };
 
+Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_TAKE_TREASURE] = {
+        .r = {.x = 60, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Take",
+        .label_len = ARRAY_SIZE("Take")-1,
+        .box_color = GUI_TREASURE_GROUP_BOX_COLOR,
+        .text_color = GUI_TREASURE_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_LEAVE_TREASURE] = {
+        .r = {.x = 170, .y = 250, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Leave",
+        .label_len = ARRAY_SIZE("Leave")-1,
+        .box_color = GUI_TREASURE_GROUP_BOX_COLOR,
+        .text_color = GUI_TREASURE_GROUP_TEXT_COLOR,
+    }
+};
+Gui_Button_Group treasure_buttons_group = {
+    .buttons = &(treasure_buttons[0]),
+    .len = ARRAY_SIZE(treasure_buttons),
+};
+
 Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_CLASS_KNIGHT] = {
         .r = {.x = 50, .y = 100, .width = 100, .height = 50},
@@ -1796,25 +1821,26 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 }
             }
         } else if ((*current_room)->class == TREASURE) {
-            for (int i=BUTTON_TAKE_TREASURE; i < BUTTON_LEAVE_TREASURE+1; i++) {
-                gui_state->buttons[i].on = false;
+            Gui_Button_Group group = gui_state->treasure_buttons;
+            for (Gui_Treasure_Group_Button_Index i = 0; i < group.len; i++) {
+                group.buttons[i].on = false;
             }
 
-            for (int i=BUTTON_TAKE_TREASURE; i < BUTTON_LEAVE_TREASURE+1; i++) {
+            for (Gui_Treasure_Group_Button_Index i = 0; i < group.len; i++) {
 
-                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                        group.buttons[i].state = BUTTON_PRESSED;
                     } else {
-                        gui_state->buttons[i].state = BUTTON_HOVER;
+                        group.buttons[i].state = BUTTON_HOVER;
                     }
                     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        gui_state->buttons[i].on = true;
+                        group.buttons[i].on = true;
                     }
                 } else {
-                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                    group.buttons[i].state = BUTTON_NORMAL;
                 }
-                if (gui_state->buttons[i].on) {
+                if (group.buttons[i].on) {
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     if (i == BUTTON_LEAVE_TREASURE) {
                         log_tag("debug_log.txt", "DEBUG", "%s():    Leaving treasure behind.", __func__);
@@ -2836,8 +2862,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             }
             break;
             case TREASURE: {
-                for (int i=BUTTON_TAKE_TREASURE; i < BUTTON_LEAVE_TREASURE +1; i++) {
-                    Gui_Button button = gui_state.buttons[i];
+                Gui_Button_Group group = gui_state.treasure_buttons;
+                for (Gui_Treasure_Group_Button_Index i = 0; i < group.len; i++) {
+                    Gui_Button button = group.buttons[i];
                     if (button.state == BUTTON_HOVER) {
                         DrawRectangleRec(button.r, RED);
                     } else {

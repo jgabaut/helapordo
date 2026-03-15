@@ -465,26 +465,6 @@ void gameloop_rl(int argc, char** argv)
         }
     }
 
-    Gui_Button bt_take_treasure = {
-        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Take",
-        .label_len = strlen("Take"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_leave_treasure = {
-        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Leave",
-        .label_len = strlen("Leave"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
     Gui_Button bt_floor_debug = {
         .r = (Rectangle){.x = 400, .y = 250, .width = 100, .height = 50},
         .on = false,
@@ -508,8 +488,6 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_LOAD_GAME] = bt_loadgame,
             [BUTTON_CLASS_TXTFIELD] = bt_classfield,
             [BUTTON_NAME_TXTFIELD] = bt_namefield,
-            [BUTTON_TAKE_TREASURE] = bt_take_treasure,
-            [BUTTON_LEAVE_TREASURE] = bt_leave_treasure,
             [BUTTON_FLOOR_DEBUG] = bt_floor_debug,
         },
         .theme = {
@@ -522,7 +500,8 @@ void gameloop_rl(int argc, char** argv)
         .shop_buttons = shop_buttons_layout,
         .fight_buttons = fight_buttons_group,
         .special_buttons = special_buttons_group,
-        .equips_buttons = equips_buttons_group
+        .equips_buttons = equips_buttons_group,
+        .treasure_buttons = treasure_buttons_group
     };
 
     int roomsDone = 0;

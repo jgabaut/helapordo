@@ -49,8 +49,6 @@ typedef enum Gui_Button_Idx {
     BUTTON_LOAD_GAME,
     BUTTON_CLASS_TXTFIELD,
     BUTTON_NAME_TXTFIELD,
-    BUTTON_TAKE_TREASURE,
-    BUTTON_LEAVE_TREASURE,
     BUTTON_FLOOR_DEBUG,
 } Gui_Button_Idx;
 
@@ -114,6 +112,15 @@ typedef enum Gui_Equips_Group_Button_Index {
 #define GUI_EQUIPS_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
 #define GUI_EQUIPS_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
+typedef enum Gui_Treasure_Group_Button_Index {
+    BUTTON_TAKE_TREASURE,
+    BUTTON_LEAVE_TREASURE
+} Gui_Treasure_Group_Button_Index;
+
+#define GUI_TREASURE_GROUP_BUTTONS_MAX BUTTON_LEAVE_TREASURE
+#define GUI_TREASURE_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
+#define GUI_TREASURE_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
+
 typedef enum Gui_ClassPick_Group_Button_Index {
     BUTTON_CLASS_KNIGHT,
     BUTTON_CLASS_MAGE,
@@ -152,6 +159,7 @@ typedef struct Gui_State {
     Gui_Button_Group fight_buttons;
     Gui_Button_Group special_buttons;
     Gui_Button_Group equips_buttons;
+    Gui_Button_Group treasure_buttons;
 } Gui_State;
 
 extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
@@ -169,6 +177,9 @@ extern Gui_Button_Group special_buttons_group;
 
 extern Gui_Button equips_buttons[GUI_EQUIPS_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group equips_buttons_group;
+
+extern Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group treasure_buttons_group;
 
 extern Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group classpick_buttons_group;
