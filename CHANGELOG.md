@@ -5,6 +5,7 @@
 - Functionality for `Boss`, `Treasure`, `Shop` rooms
 - Add `Gui_Button_Group`, `Gui_Button_Layout`
 - Add `DEBUG_VIEW` for debug
+- Add `STATS_VIEW`
 
 ### Changed
 
@@ -28,6 +29,7 @@
 - Fix crash on leaving `UNLOCK_SPECIAL_VIEW` in the case of last remaining enemy
 - Fix `CONSUMABLES_VIEW` off-by-one
 - Refactor `sell_all_equips()` to reuse old slots
+- Update position for buttons in `Enemies` room
 
 ## [1.4.14] - 2025-12-28
 

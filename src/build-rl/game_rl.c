@@ -125,7 +125,7 @@ Gui_Button_Group saveslotpick_buttons_group = {
 
 Gui_Button fight_buttons[GUI_FIGHT_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_FIGHT] = {
-        .r = {.x = 60, .y = 250, .width = 100, .height = 50},
+        .r = {.x = 64, .y = 250, .width = 80, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Fight",
@@ -134,7 +134,7 @@ Gui_Button fight_buttons[GUI_FIGHT_GROUP_BUTTONS_MAX+1] = {
         .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
     },
     [BUTTON_SPECIAL] = {
-        .r = {.x = 170, .y = 250, .width = 100, .height = 50},
+        .r = {.x = 159, .y = 250, .width = 80, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Special",
@@ -143,7 +143,7 @@ Gui_Button fight_buttons[GUI_FIGHT_GROUP_BUTTONS_MAX+1] = {
         .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
     },
     [BUTTON_EQUIPS] = {
-        .r = {.x = 280, .y = 250, .width = 100, .height = 50},
+        .r = {.x = 254, .y = 250, .width = 80, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Equips",
@@ -152,11 +152,20 @@ Gui_Button fight_buttons[GUI_FIGHT_GROUP_BUTTONS_MAX+1] = {
         .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
     },
     [BUTTON_CONSUMABLES] = {
-        .r = {.x = 390, .y = 250, .width = 100, .height = 50},
+        .r = {.x = 349, .y = 250, .width = 130, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Consumables",
         .label_len = ARRAY_SIZE("Consumables")-1,
+        .box_color = GUI_FIGHT_GROUP_BOX_COLOR,
+        .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_STATS] = {
+        .r = {.x = 494, .y = 250, .width = 80, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Stats",
+        .label_len = ARRAY_SIZE("Stats")-1,
         .box_color = GUI_FIGHT_GROUP_BOX_COLOR,
         .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
     }
@@ -1623,6 +1632,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         gui_state->currentScreen = EQUIPS_VIEW;
                     } else if (i == BUTTON_CONSUMABLES) {
                         gui_state->currentScreen = CONSUMABLES_VIEW;
+                    } else if (i == BUTTON_STATS) {
+                        gui_state->currentScreen = STATS_VIEW;
                     }
                 }
             }
@@ -1863,6 +1874,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         gui_state->currentScreen = EQUIPS_VIEW;
                     } else if (i == BUTTON_CONSUMABLES) {
                         gui_state->currentScreen = CONSUMABLES_VIEW;
+                    } else if (i == BUTTON_STATS) {
+                        gui_state->currentScreen = STATS_VIEW;
                     }
                 }
             }
@@ -2361,6 +2374,13 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 if (boss) isBoss = true;
                 useConsumable(*player, enemy, boss, consumablestrings[gui_state->selectedIndex], isBoss);
             }
+        }
+    }
+    break;
+    case STATS_VIEW: {
+        // TODO: Update STATS_VIEW screen variables here!
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = (*current_room ? ROOM_VIEW : FLOOR_VIEW);
         }
     }
     break;
@@ -3518,6 +3538,59 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawSpriteRect(consumables_sprites_proper[c->class], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
             }
         }
+    }
+    break;
+    case STATS_VIEW: {
+        // TODO: Draw STATS_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("STATS_VIEW SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS Q to go back", 120, 120, 20, gui_state.theme.txt_color);
+        int txt_height = 20;
+        int y = 220;
+        int label_x = (gui_state.gameScreenWidth/2)*0.75f;
+        int value_x = (gui_state.gameScreenWidth/2)*1.5f;
+        const char* txt = NULL;
+        DrawText("Enemies killed:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->enemieskilled);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Critical hits done:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->criticalhits);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Consumables found:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->consumablesfound);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Rooms completed:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->roomscompleted);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Equips found.", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->equipsfound);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Artifacts found:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->artifactsfound);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Coins found:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->coinsfound);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Bosses killed:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->bosseskilled);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Keys found:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->keysfound);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Floors completed:", label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->stats->floorscompleted);
+        DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
     }
     break;
     case ENDING: {
