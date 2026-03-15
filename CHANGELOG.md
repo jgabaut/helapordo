@@ -19,7 +19,7 @@
 - Avoid drawing control hints over notifications
 - Avoid breaking `win_condition`, `player` name and class on debug floor regen
 - Use `BLACK` for `rb_notifications` rect
-- Refactor views to use `Gui_Button_Layout`
+- Refactor views to use `Gui_Button_Row`
   - `ROOM_VIEW` for `Enemies`
   - `CLASSPICK_VIEW`
   - `PICK_SPECIAL_VIEW`

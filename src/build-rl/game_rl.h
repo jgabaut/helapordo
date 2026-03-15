@@ -139,11 +139,11 @@ typedef struct Gui_State {
     Gui_Button buttons[GUI_BUTTONS_MAX+1];
     Gui_Theme theme;
     int selectedIndex;
-    Gui_Button_Layout classpick_buttons;
+    Gui_Button_Row classpick_buttons;
     Gui_Button_Layout shop_buttons;
-    Gui_Button_Layout fight_buttons;
-    Gui_Button_Layout special_buttons;
-    Gui_Button_Layout equips_buttons;
+    Gui_Button_Row fight_buttons;
+    Gui_Button_Row special_buttons;
+    Gui_Button_Row equips_buttons;
 } Gui_State;
 
 extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
@@ -155,23 +155,15 @@ extern Gui_Button_Layout shop_buttons_layout;
 
 extern Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1];
 extern Gui_Button_Row fight_buttons_row;
-extern Gui_Button_Row* fight_buttons_rows[1];
-extern Gui_Button_Layout fight_buttons_layout;
 
 extern Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1];
 extern Gui_Button_Row special_buttons_row;
-extern Gui_Button_Row* special_buttons_rows[1];
-extern Gui_Button_Layout special_buttons_layout;
 
 extern Gui_Button equips_buttons[GUI_EQUIPS_LAYOUT_BUTTONS_MAX+1];
 extern Gui_Button_Row equips_buttons_row;
-extern Gui_Button_Row* equips_buttons_rows[1];
-extern Gui_Button_Layout equips_buttons_layout;
 
 extern Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1];
 extern Gui_Button_Row classpick_buttons_row;
-extern Gui_Button_Row* classpick_buttons_rows[1];
-extern Gui_Button_Layout classpick_buttons_layout;
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);
