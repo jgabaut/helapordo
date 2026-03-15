@@ -47,9 +47,6 @@ typedef struct Gui_Button {
 typedef enum Gui_Button_Idx {
     BUTTON_NEW_GAME = 0,
     BUTTON_LOAD_GAME,
-    BUTTON_SAVESLOT_1,
-    BUTTON_SAVESLOT_2,
-    BUTTON_SAVESLOT_3,
     BUTTON_CLASS_TXTFIELD,
     BUTTON_NAME_TXTFIELD,
     BUTTON_TAKE_TREASURE,
@@ -128,6 +125,16 @@ typedef enum Gui_ClassPick_Group_Button_Index {
 #define GUI_CLASSPICK_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
 #define GUI_CLASSPICK_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
+typedef enum Gui_SaveSlotPick_Group_Button_Index {
+    BUTTON_SAVESLOT_1,
+    BUTTON_SAVESLOT_2,
+    BUTTON_SAVESLOT_3
+} Gui_SaveSlotPick_Group_Button_Index;
+
+#define GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX BUTTON_SAVESLOT_3
+#define GUI_SAVESLOTPICK_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
+#define GUI_SAVESLOTPICK_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
+
 typedef struct Gui_State {
     float scale;
     float gameScreenWidth;
@@ -140,6 +147,7 @@ typedef struct Gui_State {
     Gui_Theme theme;
     int selectedIndex;
     Gui_Button_Group classpick_buttons;
+    Gui_Button_Group saveslotpick_buttons;
     Gui_Button_Layout shop_buttons;
     Gui_Button_Group fight_buttons;
     Gui_Button_Group special_buttons;
@@ -164,6 +172,9 @@ extern Gui_Button_Group equips_buttons_group;
 
 extern Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group classpick_buttons_group;
+
+extern Gui_Button saveslotpick_buttons[GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group saveslotpick_buttons_group;
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);

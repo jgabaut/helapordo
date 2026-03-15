@@ -193,6 +193,40 @@ Gui_Button_Group classpick_buttons_group = {
     .len = ARRAY_SIZE(classpick_buttons),
 };
 
+Gui_Button saveslotpick_buttons[GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_SAVESLOT_1] = {
+        .r = {.x = 100, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 1",
+        .label_len = ARRAY_SIZE("Slot 1")-1,
+        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_SAVESLOT_2] = {
+        .r = {.x = 210, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 2",
+        .label_len = ARRAY_SIZE("Slot 2")-1,
+        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_SAVESLOT_3] = {
+        .r = {.x = 320, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 3",
+        .label_len = ARRAY_SIZE("Slot 3")-1,
+        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
+    }
+};
+Gui_Button_Group saveslotpick_buttons_group = {
+    .buttons = &(saveslotpick_buttons[0]),
+    .len = ARRAY_SIZE(saveslotpick_buttons),
+};
+
 /**
  * Shows tutorial info.
  * @see gameloop_rl()
@@ -619,25 +653,26 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             // Load game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
             if (*saveslot_index == -1) {  // Pick saveslot
                 // Reference: https://www.raylib.com/examples/textures/loader.html?name=textures_sprite_button
-                gui_state->buttons[BUTTON_SAVESLOT_1].on = false;
-                gui_state->buttons[BUTTON_SAVESLOT_2].on = false;
-                gui_state->buttons[BUTTON_SAVESLOT_3].on = false;
+                Gui_Button_Group group = gui_state->saveslotpick_buttons;
+                for (Gui_SaveSlotPick_Group_Button_Index i = 0; i < group.len; i++) {
+                    group.buttons[i].on = false;
+                }
                 sprintf(current_save_path, "%s", ""); // Clear current save path
-                for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
+                for (Gui_SaveSlotPick_Group_Button_Index i = 0; i < group.len; i++) {
 
-                    if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                    if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                            gui_state->buttons[i].state = BUTTON_PRESSED;
+                            group.buttons[i].state = BUTTON_PRESSED;
                         } else {
-                            gui_state->buttons[i].state = BUTTON_HOVER;
+                            group.buttons[i].state = BUTTON_HOVER;
                         }
                         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                            gui_state->buttons[i].on = true;
+                            group.buttons[i].on = true;
                         }
                     } else {
-                        gui_state->buttons[i].state = BUTTON_NORMAL;
+                        group.buttons[i].state = BUTTON_NORMAL;
                     }
-                    if (gui_state->buttons[i].on) {
+                    if (group.buttons[i].on) {
                         fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                         //TODO: may use i to se is_new_game for now but its weak to changes in the array
                         // load_info->is_new_game = i;
@@ -843,25 +878,26 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 } else {
                     // Reference: https://www.raylib.com/examples/textures/loader.html?name=textures_sprite_button
                     if (*saveslot_index == -1) {  // Pick saveslot
-                        gui_state->buttons[BUTTON_SAVESLOT_1].on = false;
-                        gui_state->buttons[BUTTON_SAVESLOT_2].on = false;
-                        gui_state->buttons[BUTTON_SAVESLOT_3].on = false;
+                        Gui_Button_Group group = gui_state->saveslotpick_buttons;
+                        for (Gui_SaveSlotPick_Group_Button_Index i = 0; i < group.len; i++) {
+                            group.buttons[i].on = false;
+                        }
                         sprintf(current_save_path, "%s", ""); // Clear current save path
-                        for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3+1; i++) {
+                        for (Gui_SaveSlotPick_Group_Button_Index i = 0; i < group.len; i++) {
 
-                            if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                            if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                                 if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                                    gui_state->buttons[i].state = BUTTON_PRESSED;
+                                    group.buttons[i].state = BUTTON_PRESSED;
                                 } else {
-                                    gui_state->buttons[i].state = BUTTON_HOVER;
+                                    group.buttons[i].state = BUTTON_HOVER;
                                 }
                                 if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                                    gui_state->buttons[i].on = true;
+                                    group.buttons[i].on = true;
                                 }
                             } else {
-                                gui_state->buttons[i].state = BUTTON_NORMAL;
+                                group.buttons[i].state = BUTTON_NORMAL;
                             }
-                            if (gui_state->buttons[i].on) {
+                            if (group.buttons[i].on) {
                                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                                 //TODO: may use i to se is_new_game for now but its weak to changes in the array
                                 // load_info->is_new_game = i;
@@ -2224,8 +2260,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText("LOADED GAME SCREEN", 20, 20, 40, gui_state.theme.txt_color);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
                 //DrawText("PRESS 1-3 to pick a saveslot", 110, 220, 20, DARKGREEN);
-                for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
-                    Gui_Button button = gui_state.buttons[i];
+                Gui_Button_Group group = gui_state.saveslotpick_buttons;
+                for (Gui_SaveSlotPick_Group_Button_Index i = 0; i < group.len; i++) {
+                    Gui_Button button = group.buttons[i];
                     if (button.state == BUTTON_HOVER) {
                         DrawRectangleRec(button.r, RED);
                     } else {
@@ -2243,8 +2280,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
                 DrawText("NEW GAME SCREEN", 20, 20, 40, gui_state.theme.txt_color);
                 DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-                for (int i=BUTTON_SAVESLOT_1; i < BUTTON_SAVESLOT_3 +1; i++) {
-                    Gui_Button button = gui_state.buttons[i];
+                Gui_Button_Group group = gui_state.saveslotpick_buttons;
+                for (Gui_SaveSlotPick_Group_Button_Index i = 0; i < group.len; i++) {
+                    Gui_Button button = group.buttons[i];
                     if (button.state == BUTTON_HOVER) {
                         DrawRectangleRec(button.r, RED);
                     } else {

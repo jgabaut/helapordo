@@ -22,6 +22,7 @@
 - Refactor views to use `Gui_Button_Group`
   - `ROOM_VIEW` for `Enemies`
   - `CLASSPICK_VIEW`
+  - `SAVES_VIEW`
   - `PICK_SPECIAL_VIEW`
   - `UNLOCK_SPECIAL_VIEW`
   - `EQUIPS_VIEW`

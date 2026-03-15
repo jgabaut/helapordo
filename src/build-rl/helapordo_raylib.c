@@ -440,36 +440,6 @@ void gameloop_rl(int argc, char** argv)
         bt_namefield.label_len = strlen(bt_namefield.label);
     }
 
-    Gui_Button bt_slot1 = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 1",
-        .label_len = strlen("Slot 1"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_slot2 = {
-        .r = (Rectangle){.x = 210, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 2",
-        .label_len = strlen("Slot 2"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_slot3 = {
-        .r = (Rectangle){.x = 320, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 3",
-        .label_len = strlen("Slot 3"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
     Gui_Button bt_classfield = {
         .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
         .on = false,
@@ -538,9 +508,6 @@ void gameloop_rl(int argc, char** argv)
             [BUTTON_LOAD_GAME] = bt_loadgame,
             [BUTTON_CLASS_TXTFIELD] = bt_classfield,
             [BUTTON_NAME_TXTFIELD] = bt_namefield,
-            [BUTTON_SAVESLOT_1] = bt_slot1,
-            [BUTTON_SAVESLOT_2] = bt_slot2,
-            [BUTTON_SAVESLOT_3] = bt_slot3,
             [BUTTON_TAKE_TREASURE] = bt_take_treasure,
             [BUTTON_LEAVE_TREASURE] = bt_leave_treasure,
             [BUTTON_FLOOR_DEBUG] = bt_floor_debug,
@@ -551,6 +518,7 @@ void gameloop_rl(int argc, char** argv)
         },
         .selectedIndex = 0,
         .classpick_buttons = classpick_buttons_group,
+        .saveslotpick_buttons = saveslotpick_buttons_group,
         .shop_buttons = shop_buttons_layout,
         .fight_buttons = fight_buttons_group,
         .special_buttons = special_buttons_group,
