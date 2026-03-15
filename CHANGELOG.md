@@ -6,6 +6,7 @@
 - Add `Gui_Button_Group`, `Gui_Button_Layout`
 - Add `DEBUG_VIEW` for debug
 - Add `STATS_VIEW`
+- Partial functionality for `Home` rooms
 
 ### Changed
 

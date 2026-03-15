@@ -2162,6 +2162,13 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                 }
             }
+        } else if ((*current_room)->class == HOME) {
+            // Press Q to change to FLOOR_VIEW screen
+            if (IsKeyPressed(KEY_Q)) {
+                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                *current_room = NULL;
+                gui_state->currentScreen = FLOOR_VIEW;
+            }
         } else {
             // Press enter to change to FLOOR_VIEW screen
             if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
@@ -3233,6 +3240,13 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                     DrawText("Window too small.", 20, 20, 20, RAYWHITE);
                     DrawText("Please resize.", 20, 50, 20, RAYWHITE);
                 }
+            }
+            break;
+            case HOME: {
+                DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+                DrawText("HOME_VIEW SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+                DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
+                DrawText("PRESS Q to go back exploring", 110, 160, 20, gui_state.theme.txt_color);
             }
             break;
             default: {
