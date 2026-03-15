@@ -2409,6 +2409,28 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         // TODO: Press enter to skip animation and go to room screen?
         if (*current_anim_frame == 59 ) { //|| IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
             gui_state->currentScreen = ROOM_VIEW;
+            if ((*current_floor)->roomclass_layout[*current_x][*current_y] == HOME) {
+                log_tag("debug_log.txt", "[DEBUG]", "Doing autosave.");
+
+                Enemy *dummy_enemy = NULL;
+                Boss *dummy_boss = NULL;
+                FILE *dummy_savefile = NULL;
+                Rectangle rect = {0};
+                RingaBuf *dummy_rb = NULL;
+                foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+                skillType dummy_skill_pick = -1;
+                //Declare turnOP_args
+                turnOP_args *args =
+                    init_turnOP_args(*gamestate, *player, *game_path, *current_room, load_info, dummy_enemy,
+                                     dummy_boss, dummy_savefile, &rect, *floor_kls,
+                                     dummy_foe_op, dummy_skill_pick, dummy_rb);
+
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
+                turnOP(turnOP_from_turnOption(SAVE), args, default_kls, *floor_kls);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Done autosave.", __func__);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, (*game_path)->seed);
+            }
             break;
         }
         (*current_anim_frame)++;
