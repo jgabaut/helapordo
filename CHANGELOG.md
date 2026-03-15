@@ -2,8 +2,7 @@
 
 ### Added
 
-- Functionality for `Boss`, `Treasure` rooms
-- Partial functionality for `Shop` rooms
+- Functionality for `Boss`, `Treasure`, `Shop` rooms
 - Add `Gui_Button_Group`, `Gui_Button_Layout`
 - Add `DEBUG_VIEW` for debug
 

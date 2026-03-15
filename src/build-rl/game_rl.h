@@ -74,10 +74,20 @@ typedef struct Gui_Button_Layout {
 
 typedef enum Gui_Shop_Layout_Group_Index {
     SHOP_LAYOUT_EQUIPS_GROUP,
-    SHOP_LAYOUT_CONSUMABLES_GROUP
+    SHOP_LAYOUT_CONSUMABLES_GROUP,
+    SHOP_LAYOUT_OTHERS_GROUP
 } Gui_Shop_Layout_Group_Index;
 
-#define GUI_SHOP_LAYOUT_GROUPS_MAX SHOP_LAYOUT_CONSUMABLES_GROUP
+#define GUI_SHOP_LAYOUT_GROUPS_MAX SHOP_LAYOUT_OTHERS_GROUP
+
+typedef enum Gui_Shop_Others_Group_Button_Index {
+    BUTTON_LEAVE_SHOP,
+    BUTTON_SELL_ALL
+} Gui_Shop_Others_Group_Button_Index;
+
+#define GUI_SHOP_OTHERS_GROUP_BUTTONS_MAX BUTTON_SELL_ALL
+#define GUI_SHOP_OTHERS_GROUP_BOX_COLOR { 0, 117, 44, 255 }
+#define GUI_SHOP_OTHERS_GROUP_TEXT_COLOR { 80, 80, 80, 255 }
 
 typedef enum Gui_Fight_Group_Button_Index {
     BUTTON_FIGHT,
@@ -190,8 +200,10 @@ extern Gui_Button_Group equips_buttons_group;
 
 extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
 extern Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX];
+extern Gui_Button shop_other_buttons[GUI_SHOP_OTHERS_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group shop_equip_buttons_group;
 extern Gui_Button_Group shop_consumable_buttons_group;
+extern Gui_Button_Group shop_other_buttons_group;
 extern Gui_Button_Group* shop_buttons_groups[GUI_SHOP_LAYOUT_GROUPS_MAX+1];
 extern Gui_Button_Layout shop_buttons_layout;
 

@@ -235,6 +235,20 @@ Gui_Button_Group equips_buttons_group = {
 
 Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX] = {0};
 Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX] = {0};
+Gui_Button shop_other_buttons[GUI_SHOP_OTHERS_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_LEAVE_SHOP] = {
+        .label = "Leave",
+        .label_len = ARRAY_SIZE("Leave")-1,
+        .box_color = GUI_SHOP_OTHERS_GROUP_BOX_COLOR,
+        .text_color = GUI_SHOP_OTHERS_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_SELL_ALL] = {
+        .label = "Sell all",
+        .label_len = ARRAY_SIZE("Sell all")-1,
+        .box_color = GUI_SHOP_OTHERS_GROUP_BOX_COLOR,
+        .text_color = GUI_SHOP_OTHERS_GROUP_TEXT_COLOR,
+    }
+};
 Gui_Button_Group shop_equip_buttons_group = {
     .buttons = &(shop_equip_buttons[0]),
     .len = EQUIP_SHOP_MAX
@@ -243,9 +257,14 @@ Gui_Button_Group shop_consumable_buttons_group = {
     .buttons = &(shop_consumable_buttons[0]),
     .len = CONSUMABLE_SHOP_MAX
 };
+Gui_Button_Group shop_other_buttons_group = {
+    .buttons = &(shop_other_buttons[0]),
+    .len = 2,
+};
 Gui_Button_Group* shop_buttons_groups[GUI_SHOP_LAYOUT_GROUPS_MAX+1] = {
     &shop_equip_buttons_group,
-    &shop_consumable_buttons_group
+    &shop_consumable_buttons_group,
+    &shop_other_buttons_group
 };
 Gui_Button_Layout shop_buttons_layout = {
     .groups = shop_buttons_groups,
@@ -1954,6 +1973,13 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             consumables_group->x = (gui_state->gameScreenWidth - consumables_r_width)/2;
             consumables_group->y = equips_group->y + equips_group->cell_height + consumables_r_h_spacing;
 
+            Gui_Button_Group* others_group = gui_state->shop_buttons.groups[SHOP_LAYOUT_OTHERS_GROUP];
+            others_group->cell_width = 80;
+            others_group->cell_height = 50;
+            others_group->cell_w_spacing = 10;
+            others_group->x = 20;
+            others_group->y = 200;
+
             for (Gui_Shop_Layout_Group_Index i = 0; i < gui_state->shop_buttons.len; i++) {
                 Gui_Button_Group* group = gui_state->shop_buttons.groups[i];
                 for (int j = 0; j < group->len; j++) {
@@ -2088,6 +2114,33 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                             "Buying Consumable %s, TODO: Print NOT ENOUGH MONEY.\n",
                                             stringFromConsumables(c->
                                                                   class));
+                                }
+                            }
+                            break;
+                            case SHOP_LAYOUT_OTHERS_GROUP: {
+                                switch (j) {
+                                    case BUTTON_LEAVE_SHOP: {
+                                        log_tag("debug_log.txt", "[SHOP]",
+                                                "Leaving shop");
+                                        *current_room = NULL;
+                                        (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                        gui_state->currentScreen = FLOOR_VIEW;
+                                        return; // End of update step
+                                    }
+                                    break;
+                                    case BUTTON_SELL_ALL: {
+                                        log_tag("debug_log.txt", "[SHOP]",
+                                                "Selling all Equips");
+                                        sell_all_equips(*player, *floor_kls);
+                                        *current_room = NULL;
+                                        (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                        gui_state->currentScreen = FLOOR_VIEW;
+                                        return; // End of update step
+                                    }
+                                    break;
+                                    default: {
+                                    }
+                                    break;
                                 }
                             }
                             break;
@@ -3067,16 +3120,16 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                         Gui_Button button = group->buttons[j];
 
                         if (button.state == BUTTON_HOVER) {
-                            DrawRectangleRec(button.r, ColorFromS4CPalette(palette, S4C_CYAN));
+                            DrawRectangleRec(button.r, RED);
                         } else {
-                            DrawRectangleRec(button.r, YELLOW);
+                            DrawRectangleRec(button.r, button.box_color);
                         }
                         DrawRectangleLines(button.r.x, button.r.y, button.r.width, button.r.height, BLACK);
-                            int details_r_width = button.r.width;
-                            int details_r_x = button.r.x + button.r.width/2 - details_r_width/2;
-                            int details_r_y = button.r.y + button.r.height;
-                            Rectangle details_r = {
-                                .x = details_r_x,
+                        int details_r_width = button.r.width;
+                        int details_r_x = button.r.x + button.r.width/2 - details_r_width/2;
+                        int details_r_y = button.r.y + button.r.height;
+                        Rectangle details_r = {
+                            .x = details_r_x,
                             .y = details_r_y,
                             .width = details_r_width,
                             .height = (i == SHOP_LAYOUT_EQUIPS_GROUP ? button.r.height*2 : button.r.height),
@@ -3139,6 +3192,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                                 y_pos += txt_height;
                                 DrawText(TextFormat("x%i", consumable->qty), details_r.x + details_r.width/2 - MeasureText(TextFormat("x%i", consumable->qty), txt_height)/2, y_pos, txt_height, txt_color);
                                 cs_res = DrawSpriteRect(consumables_sprites_proper[consumable->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                            }
+                            break;
+                            case SHOP_LAYOUT_OTHERS_GROUP: {
+                                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
                             }
                             break;
                             default: {
