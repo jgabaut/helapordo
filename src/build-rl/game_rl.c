@@ -1883,9 +1883,11 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                             "Opened chest in Treasure room, index %i.\n",
                                             (*current_room)->index);
                                     (*player)->keys_balance--;
+                                    open_chest(rb_notifications, (*current_room)->treasure->chest, *player, default_kls, *floor_kls);
+                                    *current_room = NULL;
+                                    (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
                                     gui_state->currentScreen = CHEST_ANIM;
                                     *current_anim_frame = 0;
-                                    open_chest(rb_notifications, (*current_room)->treasure->chest, *player, default_kls, *floor_kls);
                                 } else {
                                     //TODO: display this in some way
                                     //mvwprintw(win, 18, 5, "You don't have any key.");
@@ -2234,7 +2236,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         (gui_state->framesCounter) += 1;    // Count frames
         // TODO: Press enter to skip animation and go to room screen?
         if (*current_anim_frame == 24 ) { //|| IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
-            gui_state->currentScreen = ROOM_VIEW;
+            gui_state->currentScreen = FLOOR_VIEW;
             break;
         }
         (*current_anim_frame)++;
@@ -2909,8 +2911,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int tr_r_h = -1;
                 switch (current_room->treasure->class) {
                     case TREASURE_CHEST: {
-                        tr_r_w = ((int)(gui_state.gameScreenWidth * 0.3f) / CHEST_COLS) * CHEST_COLS;
-                        tr_r_h = ((int)(gui_state.gameScreenHeight * 0.3f) / CHEST_ROWS) * CHEST_ROWS;
+                        tr_r_w = ((int)(gui_state.gameScreenWidth * 0.3f)/ (CHEST_COLS-1)) * (CHEST_COLS-1);
+                        tr_r_h = tr_r_w;
                     }
                     break;
                     case TREASURE_CONSUMABLE:
@@ -2921,17 +2923,16 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                     break;
                 }
                 Rectangle tr_r = {
-                    .x = (gui_state.gameScreenWidth - tr_r_w) /2,
-                    .y = (gui_state.gameScreenHeight / 4  - tr_r_h /2),
+                    .x = ((gui_state.gameScreenWidth/4)*3 - tr_r_w/2),
+                    .y = (gui_state.gameScreenHeight / 2  - tr_r_h /2),
                     .width = tr_r_w,
                     .height = tr_r_h,
                 };
                 int tr_res = -1;
                 switch (current_room->treasure->class) {
                     case TREASURE_CHEST: {
-                        int frame_height = CHEST_ROWS;
-
-                        int frame_width = CHEST_COLS;
+                        int frame_height = CHEST_ROWS-1;
+                        int frame_width = CHEST_COLS-1;
 
                         tr_res = DrawSpriteRect(alt_chest_opening[0], tr_r, frame_height, frame_width, tr_r.width/frame_width, palette, PALETTE_S4C_H_TOTCOLORS);
                     }
@@ -3398,7 +3399,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, gui_state.theme.txt_color);
 
-        int chest_frame_W = ((int)(gui_state.gameScreenWidth * 0.3f) / 21) * 21;
+        int chest_frame_W = ((int)(gui_state.gameScreenWidth * 0.3f) / (CHEST_COLS-1)) * (CHEST_COLS-1);
         int chest_frame_H = chest_frame_W;
         int chest_rect_X = (gui_state.gameScreenWidth/2) - (chest_frame_W/2);
         int chest_rect_Y = (gui_state.gameScreenHeight/2) - (chest_frame_H/2);
@@ -3408,7 +3409,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             chest_frame_W,
             chest_frame_H,
         };
-        int chest_res = DrawSpriteRect(alt_chest_opening[current_anim_frame], chest_r, 21, 21, chest_frame_W/21, palette, PALETTE_S4C_H_TOTCOLORS);
+        int chest_res = DrawSpriteRect(alt_chest_opening[current_anim_frame], chest_r, CHEST_ROWS-1, CHEST_COLS-1, chest_frame_W/(CHEST_COLS-1), palette, PALETTE_S4C_H_TOTCOLORS);
         if (chest_res != 0 ) {
             DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
             DrawText("Window too small.", 20, 20, 20, RAYWHITE);
