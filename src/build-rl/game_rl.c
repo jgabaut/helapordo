@@ -1985,7 +1985,32 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             break;
                             case SHOP_LAYOUT_CONSUMABLES_GROUP: {
                                 Consumable* c = shop->consumables[j];
-                                fprintf(stderr, "{%s x%i} price: %i\n", stringFromConsumables(c->class), c->qty, shop->consumablePrices[j]);
+                                int price =
+                                    shop->consumablePrices[j];
+                                int qty = c->qty;
+                                fprintf(stderr, "{%s x%i} price: %i\n", stringFromConsumables(c->class), qty, price);
+                                if ((*player)->balance >= price * qty) {
+                                    log_tag("debug_log.txt", "[SHOP]",
+                                            "Buying x%i of Consumable %s.\n", qty,
+                                            stringFromConsumables(c->
+                                                                  class));
+                                    Consumable *bagged =
+                                        (Consumable *) (*player)->
+                                        consumablesBag[c->class];
+                                    bagged->qty += qty;
+                                    (*player)->balance -= (qty * price);
+                                    *current_room = NULL;
+                                    (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                    gui_state->currentScreen = FLOOR_VIEW;
+                                    return; // End of update step
+                                } else {
+                                    //TODO
+                                    //PRINT NOT ENOUGH MONEY
+                                    log_tag("debug_log.txt", "[SHOP]",
+                                            "Buying Consumable %s, TODO: Print NOT ENOUGH MONEY.\n",
+                                            stringFromConsumables(c->
+                                                                  class));
+                                }
                             }
                             break;
                         }
@@ -3033,6 +3058,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                                 DrawText(TextFormat("$ %i", shop->consumablePrices[j]), details_r.x + details_r.width/2 - MeasureText(TextFormat("$ %i", shop->consumablePrices[j]), txt_height)/2, y_pos, txt_height, txt_color);
                                 y_pos += txt_height;
                                 DrawText(TextFormat("%s", stringFromConsumables(consumable->class)), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s", stringFromConsumables(consumable->class)), txt_height)/2, y_pos, txt_height, txt_color);
+                                y_pos += txt_height;
+                                DrawText(TextFormat("x%i", consumable->qty), details_r.x + details_r.width/2 - MeasureText(TextFormat("x%i", consumable->qty), txt_height)/2, y_pos, txt_height, txt_color);
                                 cs_res = DrawSpriteRect(consumables_sprites_proper[consumable->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                             }
                             break;
