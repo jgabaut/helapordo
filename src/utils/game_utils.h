@@ -311,7 +311,7 @@ int getEnemyXpGain(Enemy * e);
 int getBossXpGain(Boss * b);
 int onLevelUp(Fighter * player);
 int getBoost(int lvl, int luck);
-void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
+void sell_all_equips(Fighter * f);
 
 turnOption getTurnChoice(char *ch);
 foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);

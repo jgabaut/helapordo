@@ -2131,7 +2131,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                     case BUTTON_SELL_ALL: {
                                         log_tag("debug_log.txt", "[SHOP]",
                                                 "Selling all Equips");
-                                        sell_all_equips(*player, *floor_kls);
+                                        sell_all_equips(*player);
                                         *current_room = NULL;
                                         (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
                                         gui_state->currentScreen = FLOOR_VIEW;

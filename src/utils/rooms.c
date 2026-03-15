@@ -2231,7 +2231,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                 end_shop = 1;
             } else if ((check = strcmp("Sell Equips", item_name(cur))) == 0) {
                 end_shop = 1;
-                sell_all_equips(f, t_kls);
+                sell_all_equips(f);
             } else if ((check = strcmp("View Equips", item_name(cur))) == 0) {
                 equips_index = 0;
                 while (!end_scrolling && (ec = wgetch(wins[1])) != 'q') {

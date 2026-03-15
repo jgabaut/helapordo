@@ -5157,100 +5157,64 @@ int getBoost(int lvl, int luck)
  * @see handleRoom_Shop()
  * @see Fighter
  * @param f The Fighter pointer at hand.
- * @param t_kls The Koliseo_Temp used for temp allocations.
  */
-void sell_all_equips(Fighter *f, Koliseo_Temp *t_kls)
+void sell_all_equips(Fighter *f)
 {
-    char msg[200];
+    Equip *equipped[EQUIPZONES + 1];
+    int count = 0;
+    int pay = 0;
+    int old_slots = f->equipsBagOccupiedSlots;
 
-    Equip *saved_equips[EQUIPZONES + 1];
-    int saved_count = 0;
-    Koliseo *kls = t_kls->kls;
-
+    // Snapshot equipped items
     for (int i = 0; i < EQUIPZONES + 1; i++) {
         if (f->equipslots[i]->active) {
-            sprintf(msg,
-                    "sell_all_equips(): Prepping Equip to save f->equipslot[%i]",
-                    i);
-            log_tag("debug_log.txt", "[DEBUG]", msg);
-            kls_log(kls, "DEBUG", msg);
-            Equip *saved =
-                (Equip *) KLS_PUSH_T_TYPED(t_kls, Equip, HR_Equip, "Equip",
-                                           msg);
-            Equip *to_save = f->equipslots[i]->item;
-
-            saved->class = to_save->class;
-            saved->type = to_save->type;
-            strcpy(saved->name, to_save->name);
-            strcpy(saved->desc, to_save->desc);
-            saved->qty = to_save->qty;
-            saved->equipped = 0;	//Will be set after when re-equipped
-            saved->level = to_save->level;
-            saved->atk = to_save->atk;
-            saved->def = to_save->def;
-            saved->vel = to_save->vel;
-            saved->enr = to_save->enr;
-            saved->bonus = to_save->bonus;
-            saved->perksCount = 0;	//Will be set during perks copy
-            saved->qual = to_save->qual;
-            saved->equip_fun = to_save->equip_fun;
-
-            for (int j = 0; j < to_save->perksCount; j++) {
-                sprintf(msg,
-                        "sell_all_equips(): Prepping Perk (%i) to save f->equipslot[%i]",
-                        j, i);
-                log_tag("debug_log.txt", "[DEBUG]", msg);
-                kls_log(kls, "DEBUG", msg);
-                Perk *save_pk =
-                    (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, HR_Perk, "Perk",
-                                              msg);
-                save_pk->class = to_save->perks[j]->class;
-                strcpy(save_pk->name, to_save->perks[j]->name);
-                strcpy(save_pk->desc, to_save->perks[j]->desc);
-                save_pk->innerValue = to_save->perks[j]->innerValue;
-                saved->perks[saved->perksCount] = save_pk;
-                saved->perksCount++;
-            }
-
-            for (int j = 0; j < 8; j++) {
-                strcpy(saved->sprite[j], to_save->sprite[j]);
-            }
-
-            saved_equips[saved_count] = saved;
-            saved_count++;
+            equipped[count++] = f->equipslots[i]->item;
         }
     }
 
-    int deleted_count = 0;
-    int pay = 0;
+    // Sell items in bag not currently equipped
+    for (int i = 0; i < old_slots; i++) {
+        Equip *e = f->equipsBag[i];
+        int keep = 0;
 
-    for (int i = 0; i < f->equipsBagOccupiedSlots; i++) {
-        Equip *toDel = f->equipsBag[i];
-        pay += toDel->cost / 2;
-        //int perksTot = toDel->perksCount;
-        /*
-           for (int j = 0; j < perksTot; j++) {
-           Perk* pk = toDel->perks[j];
-           free(pk);
-           }
-         */
-        //FIXME: are we deleting this correctly?
-        //free(toDel);
-        deleted_count++;
+        for (int j = 0; j < count; j++) {
+            if (e == equipped[j]) {
+                keep = 1;
+                break;
+            }
+        }
+
+        if (!keep)
+            pay += e->cost / 2;
     }
 
-    f->equipsBagOccupiedSlots -= deleted_count;
+    // Rebuild bag using equipped items, logging if not already in bag
+    for (int i = 0; i < count; i++) {
+        Equip *eq = equipped[i];
+        int found_in_bag = 0;
 
-    for (int i = 0; i < saved_count; i++) {
-        f->equipsBag[i] = saved_equips[i];
-        f->equipslots[i]->item = saved_equips[i];
-        saved_equips[i]->equipped = 1;
-        f->equipsBagOccupiedSlots++;
+        for (int j = 0; j < old_slots; j++) {
+            if (f->equipsBag[j] == eq) {
+                found_in_bag = 1;
+                break;
+            }
+        }
+
+        if (!found_in_bag) {
+            log_tag("debug_log.txt", "[WARNING]", "%s(): Equipped item %i '%s' was not in the bag. Adding it.\n", __func__, i, eq->name);
+        }
+
+        f->equipsBag[i] = eq;
+        eq->equipped = 1;
     }
-    f->earliestBagSlot = f->equipsBagOccupiedSlots;
 
+    // Clear old bag slots that are now beyond the occupied count
+    for (int i = count; i < old_slots; i++)
+        f->equipsBag[i] = NULL;
+
+    f->equipsBagOccupiedSlots = count;
+    f->earliestBagSlot = count;
     f->balance += pay;
-
 }
 
 /**

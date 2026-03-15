@@ -27,6 +27,7 @@
   - `EQUIPS_VIEW`
 - Fix crash on leaving `UNLOCK_SPECIAL_VIEW` in the case of last remaining enemy
 - Fix `CONSUMABLES_VIEW` off-by-one
+- Refactor `sell_all_equips()` to reuse old slots
 
 ## [1.4.14] - 2025-12-28
 
