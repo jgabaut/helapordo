@@ -21,23 +21,106 @@ callback_void_t callback_func_ptrs[SPECIALSMAX];
 callback_void_t callback_artifact_ptrs[ARTIFACTSMAX];
 callback_void_t callback_counter_ptrs[COUNTERSMAX];
 
-Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX] = {0};
-Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX] = {0};
-Gui_Button_Group shop_equip_buttons_group = {
-    .buttons = &(shop_equip_buttons[0]),
-    .len = EQUIP_SHOP_MAX
+Gui_Button gamepick_buttons[GUI_GAMEPICK_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_NEW_GAME] = {
+        .r = {.x = 100, .y = 100, .width = 150, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "New Game",
+        .label_len = ARRAY_SIZE("New Game")-1,
+        .box_color = GUI_GAMEPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_GAMEPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_LOAD_GAME] = {
+        .r = {.x = 300, .y = 100, .width = 150, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Load Game",
+        .label_len = ARRAY_SIZE("Load Game")-1,
+        .box_color = GUI_GAMEPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_GAMEPICK_GROUP_TEXT_COLOR,
+    }
 };
-Gui_Button_Group shop_consumable_buttons_group = {
-    .buttons = &(shop_consumable_buttons[0]),
-    .len = CONSUMABLE_SHOP_MAX
+Gui_Button_Group gamepick_buttons_group = {
+    .buttons = &(gamepick_buttons[0]),
+    .len = ARRAY_SIZE(gamepick_buttons),
 };
-Gui_Button_Group* shop_buttons_groups[GUI_SHOP_LAYOUT_GROUPS_MAX+1] = {
-    &shop_equip_buttons_group,
-    &shop_consumable_buttons_group
+
+Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_CLASS_KNIGHT] = {
+        .r = {.x = 50, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Knight",
+        .label_len = ARRAY_SIZE("Knight")-1,
+        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_CLASS_MAGE] = {
+        .r = {.x = 160, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Mage",
+        .label_len = ARRAY_SIZE("Mage")-1,
+        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_CLASS_ARCHER] = {
+        .r = {.x = 270, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Archer",
+        .label_len = ARRAY_SIZE("Archer")-1,
+        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_CLASS_ASSASSIN] = {
+        .r = {.x = 380, .y = 100, .width = 100, .height = 50},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Assassin",
+        .label_len = ARRAY_SIZE("Assassin")-1,
+        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
+    }
 };
-Gui_Button_Layout shop_buttons_layout = {
-    .groups = shop_buttons_groups,
-    .len = GUI_SHOP_LAYOUT_GROUPS_MAX+1
+Gui_Button_Group classpick_buttons_group = {
+    .buttons = &(classpick_buttons[0]),
+    .len = ARRAY_SIZE(classpick_buttons),
+};
+
+Gui_Button saveslotpick_buttons[GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_SAVESLOT_1] = {
+        .r = {.x = 100, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 1",
+        .label_len = ARRAY_SIZE("Slot 1")-1,
+        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_SAVESLOT_2] = {
+        .r = {.x = 210, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 2",
+        .label_len = ARRAY_SIZE("Slot 2")-1,
+        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_SAVESLOT_3] = {
+        .r = {.x = 320, .y = 100, .width = 100, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Slot 3",
+        .label_len = ARRAY_SIZE("Slot 3")-1,
+        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
+    }
+};
+Gui_Button_Group saveslotpick_buttons_group = {
+    .buttons = &(saveslotpick_buttons[0]),
+    .len = ARRAY_SIZE(saveslotpick_buttons),
 };
 
 Gui_Button fight_buttons[GUI_FIGHT_GROUP_BUTTONS_MAX+1] = {
@@ -150,6 +233,25 @@ Gui_Button_Group equips_buttons_group = {
     .len = ARRAY_SIZE(equips_buttons),
 };
 
+Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX] = {0};
+Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX] = {0};
+Gui_Button_Group shop_equip_buttons_group = {
+    .buttons = &(shop_equip_buttons[0]),
+    .len = EQUIP_SHOP_MAX
+};
+Gui_Button_Group shop_consumable_buttons_group = {
+    .buttons = &(shop_consumable_buttons[0]),
+    .len = CONSUMABLE_SHOP_MAX
+};
+Gui_Button_Group* shop_buttons_groups[GUI_SHOP_LAYOUT_GROUPS_MAX+1] = {
+    &shop_equip_buttons_group,
+    &shop_consumable_buttons_group
+};
+Gui_Button_Layout shop_buttons_layout = {
+    .groups = shop_buttons_groups,
+    .len = GUI_SHOP_LAYOUT_GROUPS_MAX+1
+};
+
 Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_TAKE_TREASURE] = {
         .r = {.x = 60, .y = 250, .width = 100, .height = 50},
@@ -173,108 +275,6 @@ Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1] = {
 Gui_Button_Group treasure_buttons_group = {
     .buttons = &(treasure_buttons[0]),
     .len = ARRAY_SIZE(treasure_buttons),
-};
-
-Gui_Button gamepick_buttons[GUI_GAMEPICK_GROUP_BUTTONS_MAX+1] = {
-    [BUTTON_NEW_GAME] = {
-        .r = {.x = 100, .y = 100, .width = 150, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "New Game",
-        .label_len = ARRAY_SIZE("New Game")-1,
-        .box_color = GUI_GAMEPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_GAMEPICK_GROUP_TEXT_COLOR,
-    },
-    [BUTTON_LOAD_GAME] = {
-        .r = {.x = 300, .y = 100, .width = 150, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Load Game",
-        .label_len = ARRAY_SIZE("Load Game")-1,
-        .box_color = GUI_GAMEPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_GAMEPICK_GROUP_TEXT_COLOR,
-    }
-};
-Gui_Button_Group gamepick_buttons_group = {
-    .buttons = &(gamepick_buttons[0]),
-    .len = ARRAY_SIZE(gamepick_buttons),
-};
-
-Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1] = {
-    [BUTTON_CLASS_KNIGHT] = {
-        .r = {.x = 50, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Knight",
-        .label_len = ARRAY_SIZE("Knight")-1,
-        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
-    },
-    [BUTTON_CLASS_MAGE] = {
-        .r = {.x = 160, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Mage",
-        .label_len = ARRAY_SIZE("Mage")-1,
-        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
-    },
-    [BUTTON_CLASS_ARCHER] = {
-        .r = {.x = 270, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Archer",
-        .label_len = ARRAY_SIZE("Archer")-1,
-        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
-    },
-    [BUTTON_CLASS_ASSASSIN] = {
-        .r = {.x = 380, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Assassin",
-        .label_len = ARRAY_SIZE("Assassin")-1,
-        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
-    }
-};
-Gui_Button_Group classpick_buttons_group = {
-    .buttons = &(classpick_buttons[0]),
-    .len = ARRAY_SIZE(classpick_buttons),
-};
-
-Gui_Button saveslotpick_buttons[GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX+1] = {
-    [BUTTON_SAVESLOT_1] = {
-        .r = {.x = 100, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 1",
-        .label_len = ARRAY_SIZE("Slot 1")-1,
-        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
-    },
-    [BUTTON_SAVESLOT_2] = {
-        .r = {.x = 210, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 2",
-        .label_len = ARRAY_SIZE("Slot 2")-1,
-        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
-    },
-    [BUTTON_SAVESLOT_3] = {
-        .r = {.x = 320, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 3",
-        .label_len = ARRAY_SIZE("Slot 3")-1,
-        .box_color = GUI_SAVESLOTPICK_GROUP_BOX_COLOR,
-        .text_color = GUI_SAVESLOTPICK_GROUP_TEXT_COLOR,
-    }
-};
-Gui_Button_Group saveslotpick_buttons_group = {
-    .buttons = &(saveslotpick_buttons[0]),
-    .len = ARRAY_SIZE(saveslotpick_buttons),
 };
 
 /**

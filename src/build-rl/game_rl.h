@@ -163,19 +163,21 @@ typedef struct Gui_State {
     Gui_Button_Group gamepick_buttons;
     Gui_Button_Group classpick_buttons;
     Gui_Button_Group saveslotpick_buttons;
-    Gui_Button_Layout shop_buttons;
     Gui_Button_Group fight_buttons;
     Gui_Button_Group special_buttons;
     Gui_Button_Group equips_buttons;
+    Gui_Button_Layout shop_buttons;
     Gui_Button_Group treasure_buttons;
 } Gui_State;
 
-extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
-extern Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX];
-extern Gui_Button_Group shop_equip_buttons_group;
-extern Gui_Button_Group shop_consumable_buttons_group;
-extern Gui_Button_Group* shop_buttons_groups[GUI_SHOP_LAYOUT_GROUPS_MAX+1];
-extern Gui_Button_Layout shop_buttons_layout;
+extern Gui_Button gamepick_buttons[GUI_GAMEPICK_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group gamepick_buttons_group;
+
+extern Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group classpick_buttons_group;
+
+extern Gui_Button saveslotpick_buttons[GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group saveslotpick_buttons_group;
 
 extern Gui_Button fight_buttons[GUI_FIGHT_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group fight_buttons_group;
@@ -186,17 +188,15 @@ extern Gui_Button_Group special_buttons_group;
 extern Gui_Button equips_buttons[GUI_EQUIPS_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group equips_buttons_group;
 
+extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
+extern Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX];
+extern Gui_Button_Group shop_equip_buttons_group;
+extern Gui_Button_Group shop_consumable_buttons_group;
+extern Gui_Button_Group* shop_buttons_groups[GUI_SHOP_LAYOUT_GROUPS_MAX+1];
+extern Gui_Button_Layout shop_buttons_layout;
+
 extern Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group treasure_buttons_group;
-
-extern Gui_Button gamepick_buttons[GUI_GAMEPICK_GROUP_BUTTONS_MAX+1];
-extern Gui_Button_Group gamepick_buttons_group;
-
-extern Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1];
-extern Gui_Button_Group classpick_buttons_group;
-
-extern Gui_Button saveslotpick_buttons[GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX+1];
-extern Gui_Button_Group saveslotpick_buttons_group;
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);
