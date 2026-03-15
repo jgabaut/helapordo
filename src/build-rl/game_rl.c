@@ -1932,8 +1932,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         } else if ((*current_room)->class == SHOP) {
             Shop* shop = (*current_room)->shop;
             Gui_Button_Group* equips_group = gui_state->shop_buttons.groups[SHOP_LAYOUT_EQUIPS_GROUP];
-            equips_group->cell_width = ((int)(gui_state->gameScreenWidth * 0.15f) / 12) * 12;
-            equips_group->cell_height = ((int)(gui_state->gameScreenHeight * 0.15f) / 8) * 8;
+            equips_group->cell_width = ((int)(gui_state->gameScreenWidth * 0.175f) / 12) * 12;
+            equips_group->cell_height = ((int)(gui_state->gameScreenHeight * 0.175f) / 8) * 8;
             equips_group->cell_w_spacing = 10;
             int equip_cells = shop->equipsCount;
             equips_group->len = equip_cells;
@@ -1948,7 +1948,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             int consumable_cells = shop->consumablesCount;
             consumables_group->len = consumable_cells;
             int consumables_r_width = (consumables_group->cell_width + consumables_group->cell_w_spacing) * consumable_cells;
-            int consumables_r_h_spacing = equips_group->cell_height;
+            int consumables_r_h_spacing = equips_group->cell_height*2;
             consumables_group->x = (gui_state->gameScreenWidth - consumables_r_width)/2;
             consumables_group->y = equips_group->y + equips_group->cell_height + consumables_r_h_spacing;
 
@@ -2964,17 +2964,71 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                             DrawRectangleRec(button.r, YELLOW);
                         }
                         DrawRectangleLines(button.r.x, button.r.y, button.r.width, button.r.height, BLACK);
+                            int details_r_width = button.r.width;
+                            int details_r_x = button.r.x + button.r.width/2 - details_r_width/2;
+                            int details_r_y = button.r.y + button.r.height;
+                            Rectangle details_r = {
+                                .x = details_r_x,
+                            .y = details_r_y,
+                            .width = details_r_width,
+                            .height = (i == SHOP_LAYOUT_EQUIPS_GROUP ? button.r.height*2 : button.r.height),
+                        };
+                        int txt_height = (((int)details_r.height * (i == SHOP_LAYOUT_EQUIPS_GROUP ? 0.1f : 0.2f)) / 20) * 20;
+                        Color txt_color = BLACK;
                         switch (i) {
                             case SHOP_LAYOUT_EQUIPS_GROUP: {
-                                if (j < shop->equipsCount) {
-                                    eq_res = DrawSpriteRect(equips_sprites_proper[shop->equips[j]->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                                if (j >= shop->equipsCount) {
+                                    continue;
                                 }
+                                Equip* equip = shop->equips[j];
+                                int y_pos = details_r.y + txt_height;
+                                DrawText(TextFormat("$ %i", shop->equipPrices[j]), details_r.x + details_r.width/2 - MeasureText(TextFormat("$ %i", shop->equipPrices[j]), txt_height)/2, y_pos, txt_height, txt_color);
+                                y_pos += txt_height;
+                                DrawText(TextFormat("%s Lv. %i", stringFromEquips(equip->class), equip->level), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s Lv. %i", stringFromEquips(equip->class), equip->level), txt_height)/2, y_pos, txt_height, txt_color);
+                                y_pos += txt_height;
+                                {
+                                    Color qual_txt_color = {0};
+                                    switch (equip->qual) {
+                                        case Bad: {
+                                            qual_txt_color = ColorFromS4CPalette(palette, S4C_RED);
+                                        }
+                                        break;
+                                        case Average: {
+                                            qual_txt_color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
+                                        }
+                                        break;
+                                        case Good: {
+                                            qual_txt_color = ColorFromS4CPalette(palette, S4C_CYAN);
+                                        }
+                                        break;
+                                    }
+                                    DrawText(TextFormat("Qual: %s", stringFromQuality(equip->qual)), details_r.x + details_r.width/2 - MeasureText(TextFormat("Qual: %s", stringFromQuality(equip->qual)), txt_height)/2, y_pos, txt_height, qual_txt_color);
+                                }
+                                y_pos += txt_height;
+                                DrawText(TextFormat("Atk: %i", equip->atk), details_r.x + details_r.width/2 - MeasureText(TextFormat("Atk: %i", equip->atk), txt_height)/2, y_pos, txt_height, txt_color);
+                                y_pos += txt_height;
+                                DrawText(TextFormat("Def: %i", equip->def), details_r.x + details_r.width/2 - MeasureText(TextFormat("Def: %i", equip->def), txt_height)/2, y_pos, txt_height, txt_color);
+                                y_pos += txt_height;
+                                DrawText(TextFormat("Vel: %i", equip->vel), details_r.x + details_r.width/2 - MeasureText(TextFormat("Vel: %i", equip->vel), txt_height)/2, y_pos, txt_height, txt_color);
+                                y_pos += txt_height;
+                                DrawText(TextFormat("Perks: %i", equip->perksCount), details_r.x + details_r.width/2 - MeasureText(TextFormat("Perks: %i", equip->perksCount), txt_height)/2, y_pos, txt_height, txt_color);
+                                for (int perk_idx = 0; perk_idx < equip->perksCount; perk_idx++) {
+                                    y_pos += txt_height;
+                                    DrawText(TextFormat("%s", nameStringFromPerk(equip->perks[perk_idx]->class)), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s", nameStringFromPerk(equip->perks[perk_idx]->class)), txt_height)/2, y_pos, txt_height, txt_color);
+                                }
+                                eq_res = DrawSpriteRect(equips_sprites_proper[equip->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                             }
                             break;
                             case SHOP_LAYOUT_CONSUMABLES_GROUP: {
-                                if (j < shop->consumablesCount) {
-                                    cs_res = DrawSpriteRect(consumables_sprites_proper[shop->consumables[j]->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                                if (j >= shop->consumablesCount) {
+                                    continue;
                                 }
+                                Consumable* consumable = shop->consumables[j];
+                                int y_pos = details_r.y + txt_height;
+                                DrawText(TextFormat("$ %i", shop->consumablePrices[j]), details_r.x + details_r.width/2 - MeasureText(TextFormat("$ %i", shop->consumablePrices[j]), txt_height)/2, y_pos, txt_height, txt_color);
+                                y_pos += txt_height;
+                                DrawText(TextFormat("%s", stringFromConsumables(consumable->class)), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s", stringFromConsumables(consumable->class)), txt_height)/2, y_pos, txt_height, txt_color);
+                                cs_res = DrawSpriteRect(consumables_sprites_proper[consumable->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                             }
                             break;
                             default: {
