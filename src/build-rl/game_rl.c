@@ -2212,7 +2212,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             gui_state->currentScreen = ROOM_VIEW;
             gui_state->selectedIndex = 0;
         }
-        if (gui_state->selectedIndex >= CONSUMABLESMAX) {
+        if (gui_state->selectedIndex >= CONSUMABLESMAX+1) {
             gui_state->selectedIndex = 0;
         }
         if (IsKeyPressed(KEY_DOWN)) {
@@ -3374,7 +3374,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
         //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
         int selected_index = gui_state.selectedIndex;
-        for (int i=0; i < CONSUMABLESMAX; i++) {
+        for (int i=0; i < CONSUMABLESMAX+1; i++) {
             Consumable* c = player->consumablesBag[i];
             Color color = gui_state.theme.txt_color;
             if (i == selected_index) color = RED;
