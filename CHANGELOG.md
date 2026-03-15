@@ -26,6 +26,7 @@
   - `PICK_SPECIAL_VIEW`
   - `UNLOCK_SPECIAL_VIEW`
   - `EQUIPS_VIEW`
+- Fix crash on leaving `UNLOCK_SPECIAL_VIEW` in the case of last remaining enemy
 
 ## [1.4.14] - 2025-12-28
 

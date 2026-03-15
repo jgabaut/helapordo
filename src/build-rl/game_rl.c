@@ -2073,7 +2073,11 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         selected->enabled = 1;
                     }
                     (*player)->stats->specialsunlocked += 1;
-                    gui_state->currentScreen = ROOM_VIEW;
+                    if (*current_room != NULL) {
+                        gui_state->currentScreen = ROOM_VIEW;
+                    } else {
+                        gui_state->currentScreen = FLOOR_VIEW;
+                    }
                 }
             }
         }
