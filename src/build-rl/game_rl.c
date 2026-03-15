@@ -1980,7 +1980,86 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     if (group->buttons[j].on) {
                         switch (i) {
                             case SHOP_LAYOUT_EQUIPS_GROUP: {
-                                fprintf(stderr, "{%s} price: %i\n", stringFromEquips(shop->equips[j]->class), shop->equipPrices[j]);
+                                if ((*player)->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {
+                                    // TODO: Handle full bag by asking player if we throw something away
+                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Player equip bag was full. Not buying.", __func__);
+                                    return;
+                                }
+                                Equip* equip = shop->equips[j];
+                                int price = shop->equipPrices[j];
+                                if ((*player)->balance >= price) {
+                                    int slotnum = (*player)->equipsBagOccupiedSlots;
+                                    //We create a deep copy of the equip so we can free the shop without worrying about the memory sharing with the bag.
+                                    log_tag("debug_log.txt", "[SHOP]",
+                                            "Buying Equip %s, deep copy stuff.",
+                                            stringFromEquips(equip->class));
+                                    //TODO
+                                    //Should use a function to avoid refactoring more points when changing Equip generation.
+                                    log_tag("debug_log.txt", "[SHOP]",
+                                            "Prepping Equip for purchase, push to raw default_kls.");
+                                    kls_log(default_kls, "DEBUG",
+                                            "Prepping Equip for purchase, push to raw default_kls.");
+                                    Equip *saved =
+                                        (Equip *) KLS_PUSH_TYPED(default_kls, Equip,
+                                                                 HR_Equip, "Equip",
+                                                                 "Equip");
+                                    Equip *to_save = equip;
+
+                                    saved->class = to_save->class;
+                                    saved->type = to_save->type;
+                                    strcpy(saved->name, to_save->name);
+                                    strcpy(saved->desc, to_save->desc);
+                                    saved->qty = to_save->qty;
+                                    saved->equipped = 0;
+                                    saved->level = to_save->level;
+                                    saved->atk = to_save->atk;
+                                    saved->def = to_save->def;
+                                    saved->vel = to_save->vel;
+                                    saved->enr = to_save->enr;
+                                    saved->bonus = to_save->bonus;
+                                    saved->perksCount = 0;	//Will be set during perks copy
+                                    saved->qual = to_save->qual;
+                                    saved->equip_fun = to_save->equip_fun;
+
+                                    for (int k = 0; k < to_save->perksCount; k++) {
+                                        log_tag("debug_log.txt", "[SHOP]",
+                                                "Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",
+                                                k, to_save->perksCount);
+                                        kls_log(default_kls, "DEBUG",
+                                                "Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",
+                                                k, to_save->perksCount);
+                                        Perk *save_pk =
+                                            (Perk *) KLS_PUSH_TYPED(default_kls, Perk,
+                                                                    HR_Perk, "Perk",
+                                                                    "Perk");
+                                        save_pk->class = to_save->perks[k]->class;
+                                        strcpy(save_pk->name, to_save->perks[k]->name);
+                                        strcpy(save_pk->desc, to_save->perks[k]->desc);
+                                        save_pk->innerValue =
+                                            to_save->perks[k]->innerValue;
+                                        saved->perks[saved->perksCount] = save_pk;
+                                        saved->perksCount++;
+                                    }
+
+                                    for (int k = 0; k < 8; k++) {
+                                        strcpy(saved->sprite[k], to_save->sprite[k]);
+                                    }
+
+                                    (*player)->equipsBag[slotnum] = saved;
+                                    (*player)->equipsBagOccupiedSlots++;
+                                    (*player)->earliestBagSlot = (*player)->equipsBagOccupiedSlots;
+                                    (*player)->balance -= price;
+                                    *current_room = NULL;
+                                    (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                    gui_state->currentScreen = FLOOR_VIEW;
+                                    return; // End of update step
+                                } else {
+                                    //TODO
+                                    //PRINT NOT ENOUGH MONEY
+                                    log_tag("debug_log.txt", "[SHOP]",
+                                            "Buying Equip %s, TODO: Print NOT ENOUGH MONEY.\n",
+                                            stringFromEquips(equip->class));
+                                }
                             }
                             break;
                             case SHOP_LAYOUT_CONSUMABLES_GROUP: {
@@ -1988,7 +2067,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                 int price =
                                     shop->consumablePrices[j];
                                 int qty = c->qty;
-                                fprintf(stderr, "{%s x%i} price: %i\n", stringFromConsumables(c->class), qty, price);
                                 if ((*player)->balance >= price * qty) {
                                     log_tag("debug_log.txt", "[SHOP]",
                                             "Buying x%i of Consumable %s.\n", qty,
