@@ -175,6 +175,31 @@ Gui_Button_Group treasure_buttons_group = {
     .len = ARRAY_SIZE(treasure_buttons),
 };
 
+Gui_Button gamepick_buttons[GUI_GAMEPICK_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_NEW_GAME] = {
+        .r = {.x = 100, .y = 100, .width = 150, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "New Game",
+        .label_len = ARRAY_SIZE("New Game")-1,
+        .box_color = GUI_GAMEPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_GAMEPICK_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_LOAD_GAME] = {
+        .r = {.x = 300, .y = 100, .width = 150, .height = 80},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Load Game",
+        .label_len = ARRAY_SIZE("Load Game")-1,
+        .box_color = GUI_GAMEPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_GAMEPICK_GROUP_TEXT_COLOR,
+    }
+};
+Gui_Button_Group gamepick_buttons_group = {
+    .buttons = &(gamepick_buttons[0]),
+    .len = ARRAY_SIZE(gamepick_buttons),
+};
+
 Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_CLASS_KNIGHT] = {
         .r = {.x = 50, .y = 100, .width = 100, .height = 50},
@@ -644,24 +669,26 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         switch(load_info->is_new_game) {
         case -1: { // User has to pick new (1) or load (0)
             *saveslot_index = -1; // Reset it in case we got here after a whole game
-            gui_state->buttons[BUTTON_NEW_GAME].on = false;
-            gui_state->buttons[BUTTON_LOAD_GAME].on = false;
+            Gui_Button_Group group = gui_state->gamepick_buttons;
+            for (Gui_GamePick_Group_Button_Index i = 0; i < group.len; i++) {
+                group.buttons[i].on = false;
+            }
             sprintf(current_save_path, "%s", ""); // Clear current save path
-            for (int i=BUTTON_NEW_GAME; i < BUTTON_LOAD_GAME+1; i++) {
+            for (Gui_GamePick_Group_Button_Index i = 0; i < group.len; i++) {
 
-                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                        group.buttons[i].state = BUTTON_PRESSED;
                     } else {
-                        gui_state->buttons[i].state = BUTTON_HOVER;
+                        group.buttons[i].state = BUTTON_HOVER;
                     }
                     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        gui_state->buttons[i].on = true;
+                        group.buttons[i].on = true;
                     }
                 } else {
-                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                    group.buttons[i].state = BUTTON_NORMAL;
                 }
-                if (gui_state->buttons[i].on) {
+                if (group.buttons[i].on) {
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     //TODO: may use i to se is_new_game for now but its weak to changes in the array
                     // load_info->is_new_game = i;
@@ -2273,9 +2300,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
             DrawText("PICK NEW/LOAD GAME SCREEN", 20, 20, 40, gui_state.theme.txt_color);
             DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-            for (int i=BUTTON_NEW_GAME; i < BUTTON_LOAD_GAME+1; i++) {
-                DrawRectangleRec(gui_state.buttons[i].r, gui_state.buttons[i].box_color);
-                DrawText(gui_state.buttons[i].label, gui_state.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), gui_state.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, gui_state.buttons[i].text_color);
+            Gui_Button_Group group = gui_state.gamepick_buttons;
+            for (Gui_GamePick_Group_Button_Index i = 0; i < group.len; i++) {
+                DrawRectangleRec(group.buttons[i].r, group.buttons[i].box_color);
+                DrawText(group.buttons[i].label, group.buttons[i].r.x + (gui_state.gameScreenWidth * 0.02f), group.buttons[i].r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, group.buttons[i].text_color);
             }
             //DrawText("PRESS N for new game, L to load a game.", 110, 220, 20, DARKGREEN);
         }

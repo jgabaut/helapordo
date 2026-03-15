@@ -403,26 +403,6 @@ void gameloop_rl(int argc, char** argv)
     Vector2 mouse = {0};
     Vector2 virtualMouse = {0};
 
-    Gui_Button bt_newgame = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 150, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "New Game",
-        .label_len = strlen("New Game"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_loadgame = {
-        .r = (Rectangle){.x = 300, .y = 100, .width = 150, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Load Game",
-        .label_len = strlen("Load Game"),
-        .box_color = ORANGE,
-        .text_color = DARKGRAY,
-    };
-
     Gui_Button bt_namefield = {
         .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
         .on = false,
@@ -484,8 +464,6 @@ void gameloop_rl(int argc, char** argv)
         .mouse = mouse,
         .virtualMouse = virtualMouse,
         .buttons = {
-            [BUTTON_NEW_GAME] = bt_newgame,
-            [BUTTON_LOAD_GAME] = bt_loadgame,
             [BUTTON_CLASS_TXTFIELD] = bt_classfield,
             [BUTTON_NAME_TXTFIELD] = bt_namefield,
             [BUTTON_FLOOR_DEBUG] = bt_floor_debug,
@@ -495,6 +473,7 @@ void gameloop_rl(int argc, char** argv)
             .txt_color = DARKGRAY,
         },
         .selectedIndex = 0,
+        .gamepick_buttons = gamepick_buttons_group,
         .classpick_buttons = classpick_buttons_group,
         .saveslotpick_buttons = saveslotpick_buttons_group,
         .shop_buttons = shop_buttons_layout,
