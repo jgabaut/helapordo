@@ -23,32 +23,32 @@ callback_void_t callback_counter_ptrs[COUNTERSMAX];
 
 Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX] = {0};
 Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX] = {0};
-Gui_Button_Row shop_equip_buttons_row = {
+Gui_Button_Group shop_equip_buttons_group = {
     .buttons = &(shop_equip_buttons[0]),
     .len = EQUIP_SHOP_MAX
 };
-Gui_Button_Row shop_consumable_buttons_row = {
+Gui_Button_Group shop_consumable_buttons_group = {
     .buttons = &(shop_consumable_buttons[0]),
     .len = CONSUMABLE_SHOP_MAX
 };
-Gui_Button_Row* shop_buttons_rows[GUI_SHOP_LAYOUT_ROWS_MAX+1] = {
-    &shop_equip_buttons_row,
-    &shop_consumable_buttons_row
+Gui_Button_Group* shop_buttons_groups[GUI_SHOP_LAYOUT_GROUPS_MAX+1] = {
+    &shop_equip_buttons_group,
+    &shop_consumable_buttons_group
 };
 Gui_Button_Layout shop_buttons_layout = {
-    .rows = shop_buttons_rows,
-    .len = GUI_SHOP_LAYOUT_ROWS_MAX+1
+    .groups = shop_buttons_groups,
+    .len = GUI_SHOP_LAYOUT_GROUPS_MAX+1
 };
 
-Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
+Gui_Button fight_buttons[GUI_FIGHT_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_FIGHT] = {
         .r = {.x = 60, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Fight",
         .label_len = ARRAY_SIZE("Fight")-1,
-        .box_color = GUI_FIGHT_LAYOUT_BOX_COLOR,
-        .text_color = GUI_FIGHT_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_FIGHT_GROUP_BOX_COLOR,
+        .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
     },
     [BUTTON_SPECIAL] = {
         .r = {.x = 170, .y = 250, .width = 100, .height = 50},
@@ -56,8 +56,8 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Special",
         .label_len = ARRAY_SIZE("Special")-1,
-        .box_color = GUI_FIGHT_LAYOUT_BOX_COLOR,
-        .text_color = GUI_FIGHT_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_FIGHT_GROUP_BOX_COLOR,
+        .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
     },
     [BUTTON_EQUIPS] = {
         .r = {.x = 280, .y = 250, .width = 100, .height = 50},
@@ -65,8 +65,8 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Equips",
         .label_len = ARRAY_SIZE("Equips")-1,
-        .box_color = GUI_FIGHT_LAYOUT_BOX_COLOR,
-        .text_color = GUI_FIGHT_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_FIGHT_GROUP_BOX_COLOR,
+        .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
     },
     [BUTTON_CONSUMABLES] = {
         .r = {.x = 390, .y = 250, .width = 100, .height = 50},
@@ -74,24 +74,24 @@ Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Consumables",
         .label_len = ARRAY_SIZE("Consumables")-1,
-        .box_color = GUI_FIGHT_LAYOUT_BOX_COLOR,
-        .text_color = GUI_FIGHT_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_FIGHT_GROUP_BOX_COLOR,
+        .text_color = GUI_FIGHT_GROUP_TEXT_COLOR,
     }
 };
-Gui_Button_Row fight_buttons_row = {
+Gui_Button_Group fight_buttons_group = {
     .buttons = &(fight_buttons[0]),
-    .len = GUI_FIGHT_LAYOUT_BUTTONS_MAX+1,
+    .len = GUI_FIGHT_GROUP_BUTTONS_MAX+1,
 };
 
-Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
+Gui_Button special_buttons[GUI_SPECIAL_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_SPECIAL_1] = {
         .r = {.x = 60, .y = 250, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "1",
         .label_len = ARRAY_SIZE("1")-1,
-        .box_color = GUI_SPECIAL_LAYOUT_BOX_COLOR,
-        .text_color = GUI_SPECIAL_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_SPECIAL_GROUP_BOX_COLOR,
+        .text_color = GUI_SPECIAL_GROUP_TEXT_COLOR,
     },
     [BUTTON_SPECIAL_2] = {
         .r = {.x = 170, .y = 250, .width = 100, .height = 50},
@@ -99,8 +99,8 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "2",
         .label_len = ARRAY_SIZE("2")-1,
-        .box_color = GUI_SPECIAL_LAYOUT_BOX_COLOR,
-        .text_color = GUI_SPECIAL_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_SPECIAL_GROUP_BOX_COLOR,
+        .text_color = GUI_SPECIAL_GROUP_TEXT_COLOR,
     },
     [BUTTON_SPECIAL_3] = {
         .r = {.x = 280, .y = 250, .width = 100, .height = 50},
@@ -108,8 +108,8 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "3",
         .label_len = ARRAY_SIZE("3")-1,
-        .box_color = GUI_SPECIAL_LAYOUT_BOX_COLOR,
-        .text_color = GUI_SPECIAL_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_SPECIAL_GROUP_BOX_COLOR,
+        .text_color = GUI_SPECIAL_GROUP_TEXT_COLOR,
     },
     [BUTTON_SPECIAL_4] = {
         .r = {.x = 390, .y = 250, .width = 100, .height = 50},
@@ -117,23 +117,23 @@ Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "4",
         .label_len = ARRAY_SIZE("4")-1,
-        .box_color = GUI_SPECIAL_LAYOUT_BOX_COLOR,
-        .text_color = GUI_SPECIAL_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_SPECIAL_GROUP_BOX_COLOR,
+        .text_color = GUI_SPECIAL_GROUP_TEXT_COLOR,
     }
 };
-Gui_Button_Row special_buttons_row = {
+Gui_Button_Group special_buttons_group = {
     .buttons = &(special_buttons[0]),
     .len = ARRAY_SIZE(special_buttons),
 };
-Gui_Button equips_buttons[GUI_EQUIPS_LAYOUT_BUTTONS_MAX+1] = {
+Gui_Button equips_buttons[GUI_EQUIPS_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_OPEN_BAG] = {
         .r = {.x = 60, .y = 125, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Open Bag",
         .label_len = ARRAY_SIZE("Open Bag")-1,
-        .box_color = GUI_EQUIPS_LAYOUT_BOX_COLOR,
-        .text_color = GUI_EQUIPS_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_EQUIPS_GROUP_BOX_COLOR,
+        .text_color = GUI_EQUIPS_GROUP_TEXT_COLOR,
     },
     [BUTTON_CHECK_LOADOUT] = {
         .r = {.x = 60, .y = 195, .width = 100, .height = 50},
@@ -141,24 +141,24 @@ Gui_Button equips_buttons[GUI_EQUIPS_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Loadout",
         .label_len = ARRAY_SIZE("Loadout")-1,
-        .box_color = GUI_EQUIPS_LAYOUT_BOX_COLOR,
-        .text_color = GUI_EQUIPS_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_EQUIPS_GROUP_BOX_COLOR,
+        .text_color = GUI_EQUIPS_GROUP_TEXT_COLOR,
     },
 };
-Gui_Button_Row equips_buttons_row = {
+Gui_Button_Group equips_buttons_group = {
     .buttons = &(equips_buttons[0]),
     .len = ARRAY_SIZE(equips_buttons),
 };
 
-Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
+Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_CLASS_KNIGHT] = {
         .r = {.x = 50, .y = 100, .width = 100, .height = 50},
         .on = false,
         .state = BUTTON_NORMAL,
         .label = "Knight",
         .label_len = ARRAY_SIZE("Knight")-1,
-        .box_color = GUI_CLASSPICK_LAYOUT_BOX_COLOR,
-        .text_color = GUI_CLASSPICK_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
     },
     [BUTTON_CLASS_MAGE] = {
         .r = {.x = 160, .y = 100, .width = 100, .height = 50},
@@ -166,8 +166,8 @@ Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Mage",
         .label_len = ARRAY_SIZE("Mage")-1,
-        .box_color = GUI_CLASSPICK_LAYOUT_BOX_COLOR,
-        .text_color = GUI_CLASSPICK_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
     },
     [BUTTON_CLASS_ARCHER] = {
         .r = {.x = 270, .y = 100, .width = 100, .height = 50},
@@ -175,8 +175,8 @@ Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Archer",
         .label_len = ARRAY_SIZE("Archer")-1,
-        .box_color = GUI_CLASSPICK_LAYOUT_BOX_COLOR,
-        .text_color = GUI_CLASSPICK_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
     },
     [BUTTON_CLASS_ASSASSIN] = {
         .r = {.x = 380, .y = 100, .width = 100, .height = 50},
@@ -184,11 +184,11 @@ Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Assassin",
         .label_len = ARRAY_SIZE("Assassin")-1,
-        .box_color = GUI_CLASSPICK_LAYOUT_BOX_COLOR,
-        .text_color = GUI_CLASSPICK_LAYOUT_TEXT_COLOR,
+        .box_color = GUI_CLASSPICK_GROUP_BOX_COLOR,
+        .text_color = GUI_CLASSPICK_GROUP_TEXT_COLOR,
     }
 };
-Gui_Button_Row classpick_buttons_row = {
+Gui_Button_Group classpick_buttons_group = {
     .buttons = &(classpick_buttons[0]),
     .len = ARRAY_SIZE(classpick_buttons),
 };
@@ -1043,25 +1043,25 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     }
     break;
     case CLASSPICK_VIEW: {
-        Gui_Button_Row row = gui_state->classpick_buttons;
-        for (Gui_ClassPick_Layout_Button_Index i = 0; i < row.len; i++) {
-            row.buttons[i].on = false;
+        Gui_Button_Group group = gui_state->classpick_buttons;
+        for (Gui_ClassPick_Group_Button_Index i = 0; i < group.len; i++) {
+            group.buttons[i].on = false;
         }
-        for (Gui_ClassPick_Layout_Button_Index i = 0; i < row.len; i++) {
+        for (Gui_ClassPick_Group_Button_Index i = 0; i < group.len; i++) {
 
-            if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
+            if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                 if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                    row.buttons[i].state = BUTTON_PRESSED;
+                    group.buttons[i].state = BUTTON_PRESSED;
                 } else {
-                    row.buttons[i].state = BUTTON_HOVER;
+                    group.buttons[i].state = BUTTON_HOVER;
                 }
                 if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                    row.buttons[i].on = true;
+                    group.buttons[i].on = true;
                 }
             } else {
-                row.buttons[i].state = BUTTON_NORMAL;
+                group.buttons[i].state = BUTTON_NORMAL;
             }
-            if (row.buttons[i].on) {
+            if (group.buttons[i].on) {
                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                 if (i == BUTTON_CLASS_KNIGHT) {
                     memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Knight", strlen("Knight")+1);
@@ -1365,30 +1365,29 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
 
         if ((*current_room)->class == ENEMIES) {
-            Gui_Button_Row row = gui_state->fight_buttons;
-            for (Gui_Fight_Layout_Button_Index i = 0; i < row.len; i++) {
-                row.buttons[i].on = false;
+            Gui_Button_Group group = gui_state->fight_buttons;
+            for (Gui_Fight_Group_Button_Index i = 0; i < group.len; i++) {
+                group.buttons[i].on = false;
             }
             if (!(*pause_animation)) {
                 *current_anim_frame = (gui_state->framesCounter)%60;
             }
 
-            for (Gui_Fight_Layout_Button_Index i = 0; i < row.len; i++) {
+            for (Gui_Fight_Group_Button_Index i = 0; i < group.len; i++) {
 
-                if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].state = BUTTON_PRESSED;
+                        group.buttons[i].state = BUTTON_PRESSED;
                     } else {
-                        row.buttons[i].state = BUTTON_HOVER;
+                        group.buttons[i].state = BUTTON_HOVER;
                     }
                     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].on = true;
+                        group.buttons[i].on = true;
                     }
                 } else {
-                    row.buttons[i].state = BUTTON_NORMAL;
+                    group.buttons[i].state = BUTTON_NORMAL;
                 }
-                if (row.buttons[i].on) {
-                    assert(i == 0); // The code below assumes there's only one row.
+                if (group.buttons[i].on) {
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     if (i == BUTTON_FIGHT) {
                         Boss *dummy_boss = NULL;
@@ -1521,30 +1520,29 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 }
             }
         } else if ((*current_room)->class == BOSS) {
-            Gui_Button_Row row = gui_state->fight_buttons;
-            for (Gui_Fight_Layout_Button_Index i = 0; i < row.len; i++) {
-                row.buttons[i].on = false;
+            Gui_Button_Group group = gui_state->fight_buttons;
+            for (Gui_Fight_Group_Button_Index i = 0; i < group.len; i++) {
+                group.buttons[i].on = false;
             }
             if (!(*pause_animation)) {
                 *current_anim_frame = (gui_state->framesCounter)%60;
             }
 
-            for (Gui_Fight_Layout_Button_Index i = 0; i < row.len; i++) {
+            for (Gui_Fight_Group_Button_Index i = 0; i < group.len; i++) {
 
-                if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].state = BUTTON_PRESSED;
+                        group.buttons[i].state = BUTTON_PRESSED;
                     } else {
-                        row.buttons[i].state = BUTTON_HOVER;
+                        group.buttons[i].state = BUTTON_HOVER;
                     }
                     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].on = true;
+                        group.buttons[i].on = true;
                     }
                 } else {
-                    row.buttons[i].state = BUTTON_NORMAL;
+                    group.buttons[i].state = BUTTON_NORMAL;
                 }
-                if (row.buttons[i].on) {
-                    assert(i == 0); // The code below assumes there's only one row.
+                if (group.buttons[i].on) {
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     //TODO: may use i to se is_new_game for now but its weak to changes in the array
                     // load_info->is_new_game = i;
@@ -1844,63 +1842,63 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             }
         } else if ((*current_room)->class == SHOP) {
             Shop* shop = (*current_room)->shop;
-            Gui_Button_Row* equips_row = gui_state->shop_buttons.rows[SHOP_LAYOUT_EQUIPS_ROW];
-            equips_row->cell_width = ((int)(gui_state->gameScreenWidth * 0.15f) / 12) * 12;
-            equips_row->cell_height = ((int)(gui_state->gameScreenHeight * 0.15f) / 8) * 8;
-            equips_row->cell_w_spacing = 10;
+            Gui_Button_Group* equips_group = gui_state->shop_buttons.groups[SHOP_LAYOUT_EQUIPS_GROUP];
+            equips_group->cell_width = ((int)(gui_state->gameScreenWidth * 0.15f) / 12) * 12;
+            equips_group->cell_height = ((int)(gui_state->gameScreenHeight * 0.15f) / 8) * 8;
+            equips_group->cell_w_spacing = 10;
             int equip_cells = shop->equipsCount;
-            equips_row->len = equip_cells;
-            int equips_r_width = (equips_row->cell_width + equips_row->cell_w_spacing) * equip_cells;
-            equips_row->x = (gui_state->gameScreenWidth - equips_r_width)/2;
-            equips_row->y = 50;
+            equips_group->len = equip_cells;
+            int equips_r_width = (equips_group->cell_width + equips_group->cell_w_spacing) * equip_cells;
+            equips_group->x = (gui_state->gameScreenWidth - equips_r_width)/2;
+            equips_group->y = 50;
 
-            Gui_Button_Row* consumables_row = gui_state->shop_buttons.rows[SHOP_LAYOUT_CONSUMABLES_ROW];
-            consumables_row->cell_width = equips_row->cell_width;
-            consumables_row->cell_height = equips_row->cell_height;
-            consumables_row->cell_w_spacing = equips_row->cell_w_spacing;
+            Gui_Button_Group* consumables_group = gui_state->shop_buttons.groups[SHOP_LAYOUT_CONSUMABLES_GROUP];
+            consumables_group->cell_width = equips_group->cell_width;
+            consumables_group->cell_height = equips_group->cell_height;
+            consumables_group->cell_w_spacing = equips_group->cell_w_spacing;
             int consumable_cells = shop->consumablesCount;
-            consumables_row->len = consumable_cells;
-            int consumables_r_width = (consumables_row->cell_width + consumables_row->cell_w_spacing) * consumable_cells;
-            int consumables_r_h_spacing = equips_row->cell_height;
-            consumables_row->x = (gui_state->gameScreenWidth - consumables_r_width)/2;
-            consumables_row->y = equips_row->y + equips_row->cell_height + consumables_r_h_spacing;
+            consumables_group->len = consumable_cells;
+            int consumables_r_width = (consumables_group->cell_width + consumables_group->cell_w_spacing) * consumable_cells;
+            int consumables_r_h_spacing = equips_group->cell_height;
+            consumables_group->x = (gui_state->gameScreenWidth - consumables_r_width)/2;
+            consumables_group->y = equips_group->y + equips_group->cell_height + consumables_r_h_spacing;
 
-            for (Gui_Shop_Layout_Row_Index i = 0; i < gui_state->shop_buttons.len; i++) {
-                Gui_Button_Row* row = gui_state->shop_buttons.rows[i];
-                for (int j = 0; j < row->len; j++) {
+            for (Gui_Shop_Layout_Group_Index i = 0; i < gui_state->shop_buttons.len; i++) {
+                Gui_Button_Group* group = gui_state->shop_buttons.groups[i];
+                for (int j = 0; j < group->len; j++) {
                     Rectangle cell = {
-                        .x = row->x + (j*row->cell_width) + (j*row->cell_w_spacing),
-                        .y = row->y,
-                        .width = row->cell_width,
-                        .height = row->cell_height,
+                        .x = group->x + (j*group->cell_width) + (j*group->cell_w_spacing),
+                        .y = group->y,
+                        .width = group->cell_width,
+                        .height = group->cell_height,
                     };
-                    row->buttons[j].r = cell;
+                    group->buttons[j].r = cell;
                     //TODO: Detect mouse in cells
                     if (CheckCollisionPointRec(gui_state->virtualMouse, cell)) {
                         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                            row->buttons[j].state = BUTTON_PRESSED;
+                            group->buttons[j].state = BUTTON_PRESSED;
                         } else {
-                            row->buttons[j].state = BUTTON_HOVER;
+                            group->buttons[j].state = BUTTON_HOVER;
                         }
                         if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                            row->buttons[j].on = true;
+                            group->buttons[j].on = true;
                         }
                     } else {
-                        row->buttons[j].state = BUTTON_NORMAL;
+                        group->buttons[j].state = BUTTON_NORMAL;
                     }
-                    if (row->buttons[j].on) {
+                    if (group->buttons[j].on) {
                         switch (i) {
-                            case SHOP_LAYOUT_EQUIPS_ROW: {
+                            case SHOP_LAYOUT_EQUIPS_GROUP: {
                                 fprintf(stderr, "{%s} price: %i\n", stringFromEquips(shop->equips[j]->class), shop->equipPrices[j]);
                             }
                             break;
-                            case SHOP_LAYOUT_CONSUMABLES_ROW: {
+                            case SHOP_LAYOUT_CONSUMABLES_GROUP: {
                                 Consumable* c = shop->consumables[j];
                                 fprintf(stderr, "{%s x%i} price: %i\n", stringFromConsumables(c->class), c->qty, shop->consumablePrices[j]);
                             }
                             break;
                         }
-                        row->buttons[j].on = false;
+                        group->buttons[j].on = false;
                     }
                 }
             }
@@ -1917,26 +1915,25 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case PICK_SPECIAL_VIEW: {
         // TODO: Update PICK_SPECIAL_VIEW screen variables here!
-        Gui_Button_Row row = gui_state->special_buttons;
-        for (Gui_Special_Layout_Button_Index i = 0; i < row.len; i++) {
-            row.buttons[i].on = false;
+        Gui_Button_Group group = gui_state->special_buttons;
+        for (Gui_Special_Group_Button_Index i = 0; i < group.len; i++) {
+            group.buttons[i].on = false;
         }
-        for (Gui_Special_Layout_Button_Index i = 0; i < row.len; i++) {
+        for (Gui_Special_Group_Button_Index i = 0; i < group.len; i++) {
             if (((*player)->specials[i]->enabled)) {
-                if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].state = BUTTON_PRESSED;
+                        group.buttons[i].state = BUTTON_PRESSED;
                     } else {
-                        row.buttons[i].state = BUTTON_HOVER;
+                        group.buttons[i].state = BUTTON_HOVER;
                     }
                     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].on = true;
+                        group.buttons[i].on = true;
                     }
                 } else {
-                    row.buttons[i].state = BUTTON_NORMAL;
+                    group.buttons[i].state = BUTTON_NORMAL;
                 }
-                if (row.buttons[i].on) {
-                    assert(i == 0); // Code below assumes there's only one row
+                if (group.buttons[i].on) {
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     Rectangle special_notice_r = CLITERAL(Rectangle) {
                         gui_state->gameScreenHeight *0.5f,
@@ -1959,26 +1956,25 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case UNLOCK_SPECIAL_VIEW: {
         // TODO: Update UNLOCK_SPECIAL_VIEW screen variables here!
-        Gui_Button_Row row = gui_state->special_buttons;
-        for (Gui_Special_Layout_Button_Index i = 0; i < row.len; i++) {
-            row.buttons[i].on = false;
+        Gui_Button_Group group = gui_state->special_buttons;
+        for (Gui_Special_Group_Button_Index i = 0; i < group.len; i++) {
+            group.buttons[i].on = false;
         }
-        for (Gui_Special_Layout_Button_Index i = 0; i < row.len; i++) {
+        for (Gui_Special_Group_Button_Index i = 0; i < group.len; i++) {
             if (!((*player)->specials[i]->enabled)) {
-                if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
+                if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].state = BUTTON_PRESSED;
+                        group.buttons[i].state = BUTTON_PRESSED;
                     } else {
-                        row.buttons[i].state = BUTTON_HOVER;
+                        group.buttons[i].state = BUTTON_HOVER;
                     }
                     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].on = true;
+                        group.buttons[i].on = true;
                     }
                 } else {
-                    row.buttons[i].state = BUTTON_NORMAL;
+                    group.buttons[i].state = BUTTON_NORMAL;
                 }
-                if (row.buttons[i].on) {
-                    assert(i == 0); // Code below assumes there's only one row
+                if (group.buttons[i].on) {
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     Specialslot *selected = (*player)->specials[i];
 
@@ -2000,24 +1996,24 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
         // TODO: Update EQUIPS_VIEW screen variables here!
 
-        Gui_Button_Row row = gui_state->equips_buttons;
-        for (Gui_Equips_Layout_Button_Index i = 0; i < row.len; i++) {
-            row.buttons[i].on = false;
+        Gui_Button_Group group = gui_state->equips_buttons;
+        for (Gui_Equips_Group_Button_Index i = 0; i < group.len; i++) {
+            group.buttons[i].on = false;
         }
-        for (Gui_Equips_Layout_Button_Index i = 0; i < row.len; i++) {
-            if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
+        for (Gui_Equips_Group_Button_Index i = 0; i < group.len; i++) {
+            if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
                 if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                    row.buttons[i].state = BUTTON_PRESSED;
+                    group.buttons[i].state = BUTTON_PRESSED;
                 } else {
-                    row.buttons[i].state = BUTTON_HOVER;
+                    group.buttons[i].state = BUTTON_HOVER;
                 }
                 if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                    row.buttons[i].on = true;
+                    group.buttons[i].on = true;
                 }
             } else {
-                row.buttons[i].state = BUTTON_NORMAL;
+                group.buttons[i].state = BUTTON_NORMAL;
             }
-            if (row.buttons[i].on) {
+            if (group.buttons[i].on) {
                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                 //Specialslot *selected = (*player)->specials[i - BUTTON_SPECIAL_UNLOCK_1];
 
@@ -2307,8 +2303,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("PICK CLASS SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        Gui_Button_Row row = gui_state.classpick_buttons;
-        for (Gui_ClassPick_Layout_Button_Index i = 0; i < row.len; i++) {
+        Gui_Button_Group row = gui_state.classpick_buttons;
+        for (Gui_ClassPick_Group_Button_Index i = 0; i < row.len; i++) {
             Gui_Button button = row.buttons[i];
             if (button.state == BUTTON_HOVER) {
                 DrawRectangleRec(button.r, RED);
@@ -2429,8 +2425,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             DrawText(TextFormat("Room Type: {%s}", stringFromRoom(current_room->class)), 20, 80, 20, gui_state.theme.txt_color);
             switch (current_room->class) {
             case ENEMIES: {
-                Gui_Button_Row row = gui_state.fight_buttons;
-                for (Gui_Fight_Layout_Button_Index i = 0; i < row.len; i++) {
+                Gui_Button_Group row = gui_state.fight_buttons;
+                for (Gui_Fight_Group_Button_Index i = 0; i < row.len; i++) {
                     Gui_Button button = row.buttons[i];
                     if (button.state == BUTTON_HOVER) {
                         DrawRectangleRec(button.r, RED);
@@ -2609,8 +2605,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             }
             break;
             case BOSS: {
-                Gui_Button_Row row = gui_state.fight_buttons;
-                for (Gui_Fight_Layout_Button_Index j = 0; j < row.len; j++) {
+                Gui_Button_Group row = gui_state.fight_buttons;
+                for (Gui_Fight_Group_Button_Index j = 0; j < row.len; j++) {
                     Gui_Button button = row.buttons[j];
                     if (button.state == BUTTON_HOVER) {
                         DrawRectangleRec(button.r, RED);
@@ -2864,10 +2860,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
 
                 int eq_res = -1;
                 int cs_res = -1;
-                for (Gui_Shop_Layout_Row_Index i=0; i < gui_state.shop_buttons.len; i++) {
-                    Gui_Button_Row* row = gui_state.shop_buttons.rows[i];
-                    for (int j=0; j < row->len; j++) {
-                        Gui_Button button = row->buttons[j];
+                for (Gui_Shop_Layout_Group_Index i=0; i < gui_state.shop_buttons.len; i++) {
+                    Gui_Button_Group* group = gui_state.shop_buttons.groups[i];
+                    for (int j=0; j < group->len; j++) {
+                        Gui_Button button = group->buttons[j];
 
                         if (button.state == BUTTON_HOVER) {
                             DrawRectangleRec(button.r, ColorFromS4CPalette(palette, S4C_CYAN));
@@ -2876,20 +2872,20 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                         }
                         DrawRectangleLines(button.r.x, button.r.y, button.r.width, button.r.height, BLACK);
                         switch (i) {
-                            case SHOP_LAYOUT_EQUIPS_ROW: {
+                            case SHOP_LAYOUT_EQUIPS_GROUP: {
                                 if (j < shop->equipsCount) {
                                     eq_res = DrawSpriteRect(equips_sprites_proper[shop->equips[j]->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                                 }
                             }
                             break;
-                            case SHOP_LAYOUT_CONSUMABLES_ROW: {
+                            case SHOP_LAYOUT_CONSUMABLES_GROUP: {
                                 if (j < shop->consumablesCount) {
                                     cs_res = DrawSpriteRect(consumables_sprites_proper[shop->consumables[j]->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                                 }
                             }
                             break;
                             default: {
-                                log_tag("debug_log.txt", "ERROR", "%s():    Unexpected row for shop_buttons: {%i}", __func__, i);
+                                log_tag("debug_log.txt", "ERROR", "%s():    Unexpected group for shop_buttons: {%i}", __func__, i);
                                 kls_free(default_kls);
                                 kls_free(temporary_kls);
                                 exit(EXIT_FAILURE);
@@ -2954,10 +2950,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("PICK SPECIAL SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        Gui_Button_Row row = gui_state.special_buttons;
-        for (Gui_Special_Layout_Button_Index i = 0; i < row.len; i++) {
+        Gui_Button_Group group = gui_state.special_buttons;
+        for (Gui_Special_Group_Button_Index i = 0; i < group.len; i++) {
             if ((player->specials[i]->enabled)) {
-                Gui_Button button = row.buttons[i];
+                Gui_Button button = group.buttons[i];
                 if (button.state == BUTTON_HOVER) {
                     DrawRectangleRec(button.r, RED);
                     DrawText(nameStringFromSpecial(player->class, i), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
@@ -2975,10 +2971,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("UNLOCK SPECIAL SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        Gui_Button_Row row = gui_state.special_buttons;
-        for (Gui_Special_Layout_Button_Index i = 0; i < row.len; i++) {
+        Gui_Button_Group group = gui_state.special_buttons;
+        for (Gui_Special_Group_Button_Index i = 0; i < group.len; i++) {
             if (!(player->specials[i]->enabled)) {
-                Gui_Button button = row.buttons[i];
+                Gui_Button button = group.buttons[i];
                 if (button.state == BUTTON_HOVER) {
                     DrawRectangleRec(button.r, RED);
                     DrawText(nameStringFromSpecial(player->class, i), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
@@ -2996,9 +2992,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("EQUIPS SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        Gui_Button_Row row = gui_state.equips_buttons;
-        for (Gui_Equips_Layout_Button_Index i = 0; i < row.len; i++) {
-            Gui_Button button = row.buttons[i];
+        Gui_Button_Group group = gui_state.equips_buttons;
+        for (Gui_Equips_Group_Button_Index i = 0; i < group.len; i++) {
+            Gui_Button button = group.buttons[i];
             if (button.state == BUTTON_HOVER) {
                 DrawRectangleRec(button.r, RED);
                 //DrawText(nameStringFromSpecial(player->class, i - BUTTON_SPECIAL_UNLOCK_1), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);

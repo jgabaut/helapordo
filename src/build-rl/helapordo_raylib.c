@@ -550,11 +550,11 @@ void gameloop_rl(int argc, char** argv)
             .txt_color = DARKGRAY,
         },
         .selectedIndex = 0,
-        .classpick_buttons = classpick_buttons_row,
+        .classpick_buttons = classpick_buttons_group,
         .shop_buttons = shop_buttons_layout,
-        .fight_buttons = fight_buttons_row,
-        .special_buttons = special_buttons_row,
-        .equips_buttons = equips_buttons_row,
+        .fight_buttons = fight_buttons_group,
+        .special_buttons = special_buttons_group,
+        .equips_buttons = equips_buttons_group
     };
 
     int roomsDone = 0;

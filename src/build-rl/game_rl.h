@@ -64,7 +64,7 @@ typedef struct Gui_Theme {
     Color txt_color;
 } Gui_Theme;
 
-typedef struct Gui_Button_Row {
+typedef struct Gui_Button_Group {
     Gui_Button* buttons;
     int len;
     int x;
@@ -72,61 +72,61 @@ typedef struct Gui_Button_Row {
     int cell_width;
     int cell_height;
     int cell_w_spacing;
-} Gui_Button_Row;
+} Gui_Button_Group;
 
 typedef struct Gui_Button_Layout {
-    Gui_Button_Row** rows;
+    Gui_Button_Group** groups;
     int len;
 } Gui_Button_Layout;
 
-typedef enum Gui_Shop_Layout_Row_Index {
-    SHOP_LAYOUT_EQUIPS_ROW,
-    SHOP_LAYOUT_CONSUMABLES_ROW
-} Gui_Shop_Layout_Row_Index;
+typedef enum Gui_Shop_Layout_Group_Index {
+    SHOP_LAYOUT_EQUIPS_GROUP,
+    SHOP_LAYOUT_CONSUMABLES_GROUP
+} Gui_Shop_Layout_Group_Index;
 
-#define GUI_SHOP_LAYOUT_ROWS_MAX SHOP_LAYOUT_CONSUMABLES_ROW
+#define GUI_SHOP_LAYOUT_GROUPS_MAX SHOP_LAYOUT_CONSUMABLES_GROUP
 
-typedef enum Gui_Fight_Layout_Button_Index {
+typedef enum Gui_Fight_Group_Button_Index {
     BUTTON_FIGHT,
     BUTTON_SPECIAL,
     BUTTON_EQUIPS,
     BUTTON_CONSUMABLES
-} Gui_Fight_Layout_Button_Index;
+} Gui_Fight_Group_Button_Index;
 
-#define GUI_FIGHT_LAYOUT_BUTTONS_MAX BUTTON_CONSUMABLES
-#define GUI_FIGHT_LAYOUT_BOX_COLOR { 0, 117, 44, 255 }
-#define GUI_FIGHT_LAYOUT_TEXT_COLOR { 80, 80, 80, 255 }
+#define GUI_FIGHT_GROUP_BUTTONS_MAX BUTTON_CONSUMABLES
+#define GUI_FIGHT_GROUP_BOX_COLOR { 0, 117, 44, 255 }
+#define GUI_FIGHT_GROUP_TEXT_COLOR { 80, 80, 80, 255 }
 
-typedef enum Gui_Special_Layout_Button_Index {
+typedef enum Gui_Special_Group_Button_Index {
     BUTTON_SPECIAL_1,
     BUTTON_SPECIAL_2,
     BUTTON_SPECIAL_3,
     BUTTON_SPECIAL_4
-} Gui_Special_Layout_Button_Index;
+} Gui_Special_Group_Button_Index;
 
-#define GUI_SPECIAL_LAYOUT_BUTTONS_MAX BUTTON_SPECIAL_4
-#define GUI_SPECIAL_LAYOUT_BOX_COLOR GUI_FIGHT_LAYOUT_BOX_COLOR
-#define GUI_SPECIAL_LAYOUT_TEXT_COLOR GUI_FIGHT_LAYOUT_TEXT_COLOR
+#define GUI_SPECIAL_GROUP_BUTTONS_MAX BUTTON_SPECIAL_4
+#define GUI_SPECIAL_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
+#define GUI_SPECIAL_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
-typedef enum Gui_Equips_Layout_Button_Index {
+typedef enum Gui_Equips_Group_Button_Index {
     BUTTON_OPEN_BAG,
     BUTTON_CHECK_LOADOUT,
-} Gui_Equips_Layout_Button_Index;
+} Gui_Equips_Group_Button_Index;
 
-#define GUI_EQUIPS_LAYOUT_BUTTONS_MAX BUTTON_CHECK_LOADOUT
-#define GUI_EQUIPS_LAYOUT_BOX_COLOR GUI_FIGHT_LAYOUT_BOX_COLOR
-#define GUI_EQUIPS_LAYOUT_TEXT_COLOR GUI_FIGHT_LAYOUT_TEXT_COLOR
+#define GUI_EQUIPS_GROUP_BUTTONS_MAX BUTTON_CHECK_LOADOUT
+#define GUI_EQUIPS_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
+#define GUI_EQUIPS_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
-typedef enum Gui_ClassPick_Layout_Button_Index {
+typedef enum Gui_ClassPick_Group_Button_Index {
     BUTTON_CLASS_KNIGHT,
     BUTTON_CLASS_MAGE,
     BUTTON_CLASS_ARCHER,
     BUTTON_CLASS_ASSASSIN
-} Gui_ClassPick_Layout_Button_Index;
+} Gui_ClassPick_Group_Button_Index;
 
-#define GUI_CLASSPICK_LAYOUT_BUTTONS_MAX BUTTON_CLASS_ASSASSIN
-#define GUI_CLASSPICK_LAYOUT_BOX_COLOR GUI_FIGHT_LAYOUT_BOX_COLOR
-#define GUI_CLASSPICK_LAYOUT_TEXT_COLOR GUI_FIGHT_LAYOUT_TEXT_COLOR
+#define GUI_CLASSPICK_GROUP_BUTTONS_MAX BUTTON_CLASS_ASSASSIN
+#define GUI_CLASSPICK_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
+#define GUI_CLASSPICK_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
 typedef struct Gui_State {
     float scale;
@@ -139,31 +139,31 @@ typedef struct Gui_State {
     Gui_Button buttons[GUI_BUTTONS_MAX+1];
     Gui_Theme theme;
     int selectedIndex;
-    Gui_Button_Row classpick_buttons;
+    Gui_Button_Group classpick_buttons;
     Gui_Button_Layout shop_buttons;
-    Gui_Button_Row fight_buttons;
-    Gui_Button_Row special_buttons;
-    Gui_Button_Row equips_buttons;
+    Gui_Button_Group fight_buttons;
+    Gui_Button_Group special_buttons;
+    Gui_Button_Group equips_buttons;
 } Gui_State;
 
 extern Gui_Button shop_equip_buttons[EQUIP_SHOP_MAX];
 extern Gui_Button shop_consumable_buttons[CONSUMABLE_SHOP_MAX];
-extern Gui_Button_Row shop_equip_buttons_row;
-extern Gui_Button_Row shop_consumable_buttons_row;
-extern Gui_Button_Row* shop_buttons_rows[GUI_SHOP_LAYOUT_ROWS_MAX+1];
+extern Gui_Button_Group shop_equip_buttons_group;
+extern Gui_Button_Group shop_consumable_buttons_group;
+extern Gui_Button_Group* shop_buttons_groups[GUI_SHOP_LAYOUT_GROUPS_MAX+1];
 extern Gui_Button_Layout shop_buttons_layout;
 
-extern Gui_Button fight_buttons[GUI_FIGHT_LAYOUT_BUTTONS_MAX+1];
-extern Gui_Button_Row fight_buttons_row;
+extern Gui_Button fight_buttons[GUI_FIGHT_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group fight_buttons_group;
 
-extern Gui_Button special_buttons[GUI_SPECIAL_LAYOUT_BUTTONS_MAX+1];
-extern Gui_Button_Row special_buttons_row;
+extern Gui_Button special_buttons[GUI_SPECIAL_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group special_buttons_group;
 
-extern Gui_Button equips_buttons[GUI_EQUIPS_LAYOUT_BUTTONS_MAX+1];
-extern Gui_Button_Row equips_buttons_row;
+extern Gui_Button equips_buttons[GUI_EQUIPS_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group equips_buttons_group;
 
-extern Gui_Button classpick_buttons[GUI_CLASSPICK_LAYOUT_BUTTONS_MAX+1];
-extern Gui_Button_Row classpick_buttons_row;
+extern Gui_Button classpick_buttons[GUI_CLASSPICK_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group classpick_buttons_group;
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);
