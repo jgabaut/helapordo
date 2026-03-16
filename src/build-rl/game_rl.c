@@ -825,9 +825,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
                                    *player, GAMEMODE);
 
-                    (*gamestate)->current_floor = *current_floor; // Should be NULL here
+                    *current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor", "Loady Floor");
+                    (*gamestate)->current_floor = *current_floor;
 
-                    *current_room = KLS_PUSH_TYPED(default_kls, Room, HR_Floor, "Room", "Loady Room");
+                    *current_room = KLS_PUSH_TYPED(default_kls, Room, HR_Room, "Room", "Loady Room");
                     (*current_room)->class = BASIC;
                     (*gamestate)->current_room = *current_room;
                     // TODO Prep loading room memory
@@ -938,10 +939,18 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             //FIXME: the structs related to loaded enemy are not loaded on default_kls
                             //Update loading_room_turn_args->enemy pointer
                             //loading_room_turn_args->enemy = load_info->loaded_enemy;
+                        } else {
+                            load_info->done_loading = 1;
+                            log_tag("debug_log.txt", "[WARN-TURNOP]",
+                                    "%s():    current room was not ENEMIES. Nullying current room.", __func__);
+                            *current_room = NULL;
+                            (*gamestate)->current_room = *current_room;
+                            load_info->done_loading = 1;
                         }
                     } else {
                         log_tag("debug_log.txt", "[WARN-TURNOP]",
                                 "%s():    gamestate->room was NULL. Not setting load_info's room info.", __func__);
+                        load_info->done_loading = 1;
                     }
                 }
                 gui_state->currentScreen = FLOOR_VIEW;
