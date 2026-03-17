@@ -160,6 +160,15 @@ typedef enum Gui_SaveSlotPick_Group_Button_Index {
 #define GUI_SAVESLOTPICK_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
 #define GUI_SAVESLOTPICK_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
+typedef enum Gui_Debug_Fighter_Layout_Group_Index {
+    DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP,
+    DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP,
+    DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP,
+    DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP
+} Gui_Debug_Fighter_Layout_Group_Index;
+
+#define GUI_DEBUG_FIGHTER_LAYOUT_GROUPS_MAX DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP
+
 typedef struct Gui_State {
     float scale;
     float gameScreenWidth;
@@ -179,6 +188,7 @@ typedef struct Gui_State {
     Gui_Button_Group equips_buttons;
     Gui_Button_Layout shop_buttons;
     Gui_Button_Group treasure_buttons;
+    Gui_Button_Layout debug_fighter_buttons;
 } Gui_State;
 
 extern Gui_Button gamepick_buttons[GUI_GAMEPICK_GROUP_BUTTONS_MAX+1];
@@ -210,6 +220,17 @@ extern Gui_Button_Layout shop_buttons_layout;
 
 extern Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group treasure_buttons_group;
+
+extern Gui_Button debug_fighter_equipslots_buttons[EQUIPZONES+1];
+extern Gui_Button debug_fighter_equipsbag_buttons[EQUIPSBAGSIZE+1];
+extern Gui_Button debug_fighter_consumablesbag_buttons[CONSUMABLESMAX+1];
+extern Gui_Button debug_fighter_artifactsbag_buttons[ARTIFACTSMAX+1];
+extern Gui_Button_Group debug_fighter_equipslots_group;
+extern Gui_Button_Group debug_fighter_equipsbag_group;
+extern Gui_Button_Group debug_fighter_consumablesbag_group;
+extern Gui_Button_Group debug_fighter_artifactsbag_group;
+extern Gui_Button_Group* debug_fighter_groups[GUI_DEBUG_FIGHTER_LAYOUT_GROUPS_MAX+1];
+extern Gui_Button_Layout debug_fighter_buttons_layout;
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);

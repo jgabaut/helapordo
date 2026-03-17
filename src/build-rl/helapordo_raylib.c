@@ -480,7 +480,8 @@ void gameloop_rl(int argc, char** argv)
         .fight_buttons = fight_buttons_group,
         .special_buttons = special_buttons_group,
         .equips_buttons = equips_buttons_group,
-        .treasure_buttons = treasure_buttons_group
+        .treasure_buttons = treasure_buttons_group,
+        .debug_fighter_buttons = debug_fighter_buttons_layout,
     };
 
     int roomsDone = 0;

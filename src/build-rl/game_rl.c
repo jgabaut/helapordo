@@ -305,6 +305,37 @@ Gui_Button_Group treasure_buttons_group = {
     .len = ARRAY_SIZE(treasure_buttons),
 };
 
+Gui_Button debug_fighter_equipslots_buttons[EQUIPZONES+1] = {0};
+Gui_Button debug_fighter_equipsbag_buttons[EQUIPSBAGSIZE+1] = {0};
+Gui_Button debug_fighter_consumablesbag_buttons[CONSUMABLESMAX+1] = {0};
+Gui_Button debug_fighter_artifactsbag_buttons[ARTIFACTSMAX+1] = {0};
+Gui_Button_Group debug_fighter_equipslots_group = {
+    .buttons = &(debug_fighter_equipslots_buttons[0]),
+    .len = ARRAY_SIZE(debug_fighter_equipslots_buttons),
+};
+Gui_Button_Group debug_fighter_equipsbag_group = {
+    .buttons = &(debug_fighter_equipsbag_buttons[0]),
+    .len = ARRAY_SIZE(debug_fighter_equipsbag_buttons),
+};
+Gui_Button_Group debug_fighter_consumablesbag_group = {
+    .buttons = &(debug_fighter_consumablesbag_buttons[0]),
+    .len = ARRAY_SIZE(debug_fighter_consumablesbag_buttons),
+};
+Gui_Button_Group debug_fighter_artifactsbag_group = {
+    .buttons = &(debug_fighter_artifactsbag_buttons[0]),
+    .len = ARRAY_SIZE(debug_fighter_artifactsbag_buttons),
+};
+Gui_Button_Group* debug_fighter_groups[GUI_DEBUG_FIGHTER_LAYOUT_GROUPS_MAX+1] = {
+    &debug_fighter_equipslots_group,
+    &debug_fighter_equipsbag_group,
+    &debug_fighter_consumablesbag_group,
+    &debug_fighter_artifactsbag_group
+};
+Gui_Button_Layout debug_fighter_buttons_layout = {
+    .groups = &(debug_fighter_groups[0]),
+    .len = ARRAY_SIZE(debug_fighter_groups),
+};
+
 /**
  * Shows tutorial info.
  * @see gameloop_rl()
@@ -2458,8 +2489,147 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case DEBUG_VIEW: {
         // Press Enter to change to FLOOR_VIEW screen
-        if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP)) {
+        if (IsKeyPressed(KEY_ENTER)) {
             gui_state->currentScreen = FLOOR_VIEW;
+        }
+        int fighter_r_w = gui_state->gameScreenWidth * 0.5f;
+        int fighter_r_h = gui_state->gameScreenHeight * 0.4f;
+        Rectangle fighter_r = {
+            .x = (gui_state->gameScreenWidth - fighter_r_w) /2,
+            .y = (gui_state->gameScreenHeight/4) - (fighter_r_h/2),
+            .width = fighter_r_w,
+            .height = fighter_r_h
+        };
+
+        int fighter_inner_r_h = fighter_r.height * 0.25f;
+        int inner_r_y = fighter_r.y;
+        for (Gui_Debug_Fighter_Layout_Group_Index i = 0; i < gui_state->debug_fighter_buttons.len; i++) {
+            Gui_Button_Group* group = gui_state->debug_fighter_buttons.groups[i];
+            int cells_limit = -1;
+            switch (i) {
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                    cells_limit = EQUIPZONES+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                    cells_limit = EQUIPSBAGSIZE+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                    cells_limit = CONSUMABLESMAX+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                    cells_limit = ARTIFACTSMAX+1;
+                }
+                break;
+            }
+            for (int j = 0; j < cells_limit; j++) {
+                Rectangle cell = {
+                    .x = fighter_r.x + (j * (fighter_r.width/(cells_limit))),
+                    .y = inner_r_y,
+                    .width = fighter_r.width/(cells_limit),
+                    .height = fighter_inner_r_h,
+                };
+                Color c = RED;
+                switch (i) {
+                    case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                        if ((*player)->equipslots[j] != NULL) c = GREEN;
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                        if ((*player)->equipsBag[j] != NULL) c = GREEN;
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                        if ((*player)->consumablesBag[j] != NULL) c = GREEN;
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                        if ((*player)->artifactsBag[j] != NULL) c = GREEN;
+                    }
+                    break;
+                }
+                group->buttons[j].r = cell;
+                group->buttons[j].box_color = c;
+                if (CheckCollisionPointRec(gui_state->virtualMouse, cell)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        group->buttons[j].state = BUTTON_PRESSED;
+                    } else {
+                        group->buttons[j].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        group->buttons[j].on = true;
+                    }
+                } else {
+                    group->buttons[j].state = BUTTON_NORMAL;
+                }
+                if (group->buttons[j].on) {
+                    group->buttons[j].on = false;
+                    switch (i) {
+                        case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                            if ((*player)->equipslots[j] != NULL) {
+                                fprintf(stderr, "%s(): Equipsslot[%i]: { active %i }\n", __func__, j, (*player)->equipslots[j]->active);
+                                Equip* eq = (*player)->equipslots[j]->item;
+                                if (eq != NULL) {
+                                    int class = eq->class;
+                                    if (class >= 0 && class < EQUIPSMAX+1) {
+                                        fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %s }\n", __func__, j, stringFromEquips(class));
+                                    } else {
+                                        fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %i }\n", __func__, j, class);
+                                    }
+                                } else {
+                                    fprintf(stderr, "%s(): Equipslot[%i].item: Equip { NULL }\n", __func__, j);
+                                }
+                            } else {
+                                fprintf(stderr, "%s(): Equipsslot[%i]: { NULL }\n", __func__, j);
+                            }
+                        }
+                        break;
+                        case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                            if ((*player)->equipsBag[j] != NULL) {
+                                int class = (*player)->equipsBag[j]->class;
+                                if (class >= 0 && class < EQUIPSMAX+1) {
+                                    fprintf(stderr, "%s(): Equipsbag[%i]: { class %s }\n", __func__, j, stringFromEquips(class));
+                                } else {
+                                    fprintf(stderr, "%s(): Equipsbag[%i]: { class %i }\n", __func__, j, class);
+                                }
+                                fprintf(stderr, "%s(): Perks [\n", __func__);
+                                for (int perk_idx = 0; perk_idx < EQUIPPERKSMAX; perk_idx++) {
+                                    Perk* perk = (*player)->equipsBag[j]->perks[perk_idx];
+                                    if (perk != NULL) {
+                                        int perk_class = perk->class;
+                                        if (perk_class >= 0 && perk_class < PERKSMAX+1) {
+                                            fprintf(stderr, " [%i] { class %s }\n", perk_idx, nameStringFromPerk(perk_class));
+                                        } else {
+                                            fprintf(stderr, " [%i] { class %i }\n", perk_idx, perk_class);
+                                        }
+                                    } else {
+                                        fprintf(stderr, " [%i] {NULL}\n", perk_idx);
+                                    }
+                                }
+                                fprintf(stderr, "]\n");
+                            } else {
+                                fprintf(stderr, "%s(): Equipsbag[%i]: { NULL }\n", __func__, j);
+                            }
+                        }
+                        break;
+                        case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                            if ((*player)->consumablesBag[j] != NULL) {
+                                fprintf(stderr, "%s(): TODO CONSUMABLESBAG INTERACTION\n", __func__);
+                            }
+                        }
+                        break;
+                        case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                            if ((*player)->artifactsBag[j] != NULL) {
+                                fprintf(stderr, "%s(): TODO ARTIFACTSBAG INTERACTION\n", __func__);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            inner_r_y += fighter_inner_r_h;
         }
     }
     break;
@@ -3703,14 +3873,24 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, gui_state.theme.txt_color);
         DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, gui_state.theme.txt_color);
-        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, 100, 20, gui_state.theme.txt_color);
+        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, gui_state.gameScreenHeight/2, 20, gui_state.theme.txt_color);
         if (game_path != NULL) {
-            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, 130, 20, gui_state.theme.txt_color);
+            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, gui_state.gameScreenHeight/2 + 20, 20, gui_state.theme.txt_color);
         }
         DrawText("DEBUG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 120, 220, 20, gui_state.theme.txt_color);
+        DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
 
+        for (Gui_Debug_Fighter_Layout_Group_Index i = 0; i < gui_state.debug_fighter_buttons.len; i++) {
+            Gui_Button_Group* group = gui_state.debug_fighter_buttons.groups[i];
+            for (int j = 0; j < group->len; j++) {
+                Gui_Button button = gui_state.debug_fighter_buttons.groups[i]->buttons[j];
+                Rectangle cell = button.r;
+                Color c = button.box_color;
+                DrawRectangleRec(cell, c);
+                DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
+            }
+        }
         int default_kls_r_w = gui_state.gameScreenWidth * 0.5f;
         int default_kls_r_h = gui_state.gameScreenHeight * 0.1f;
         Rectangle default_kls_r = {
