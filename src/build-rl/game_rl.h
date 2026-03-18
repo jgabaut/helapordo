@@ -161,6 +161,8 @@ typedef enum Gui_SaveSlotPick_Group_Button_Index {
 #define GUI_SAVESLOTPICK_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
 typedef enum Gui_Debug_Fighter_Layout_Group_Index {
+    DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP,
+    DEBUG_FIGHTER_LAYOUT_PERKS_GROUP,
     DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP,
     DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP,
     DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP,
@@ -221,10 +223,14 @@ extern Gui_Button_Layout shop_buttons_layout;
 extern Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group treasure_buttons_group;
 
+extern Gui_Button debug_fighter_counters_buttons[COUNTERSMAX+1];
+extern Gui_Button debug_fighter_perks_buttons[PERKSMAX+1];
 extern Gui_Button debug_fighter_equipslots_buttons[EQUIPZONES+1];
 extern Gui_Button debug_fighter_equipsbag_buttons[EQUIPSBAGSIZE+1];
 extern Gui_Button debug_fighter_consumablesbag_buttons[CONSUMABLESMAX+1];
 extern Gui_Button debug_fighter_artifactsbag_buttons[ARTIFACTSMAX+1];
+extern Gui_Button_Group debug_fighter_counters_group;
+extern Gui_Button_Group debug_fighter_perks_group;
 extern Gui_Button_Group debug_fighter_equipslots_group;
 extern Gui_Button_Group debug_fighter_equipsbag_group;
 extern Gui_Button_Group debug_fighter_consumablesbag_group;
