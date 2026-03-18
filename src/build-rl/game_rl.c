@@ -895,6 +895,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
                     log_tag("debug_log.txt", "[DEBUG]", "%s():    Setting is_seeded {%s} to gamestate->is_seeded {%s}", __func__, (is_seeded ? "true" : "false"), ((*gamestate)->is_seeded ? "true" : "false"));
                     is_seeded = (*gamestate)->is_seeded;
+                    update_Equipslots(*player);
 
                     //TODO: set the other load_info fields properly?
                     //
