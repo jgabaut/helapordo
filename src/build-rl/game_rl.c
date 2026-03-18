@@ -4022,7 +4022,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         }
         DrawText("DEBUG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER or TAP to RETURN to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
+        DrawText("PRESS ENTER to RETURN to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
 
         for (Gui_Debug_Fighter_Layout_Group_Index i = 0; i < gui_state.debug_fighter_buttons.len; i++) {
             Gui_Button_Group* group = gui_state.debug_fighter_buttons.groups[i];
