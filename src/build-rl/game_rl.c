@@ -1654,6 +1654,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                 *current_room = NULL;
                                 (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
                                 (*gamestate)->current_enemy_index = 0;
+                                (*roomsDone) += 1;
+                                (*player)->stats->roomscompleted += 1;
                                 gui_state->currentScreen = FLOOR_VIEW;
                                 if (special_unlock == 1) {
                                     gui_state->currentScreen = UNLOCK_SPECIAL_VIEW;
@@ -1817,6 +1819,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             *current_room = NULL;
                             (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
                             (*gamestate)->current_enemy_index = 0;
+                            (*roomsDone) += 1;
+                            (*player)->stats->roomscompleted += 1;
                             gui_state->currentScreen = FLOOR_VIEW;
                             (*current_floor)->
                             roomclass_layout[(*player)->floor_x][(*player)->floor_y] =
