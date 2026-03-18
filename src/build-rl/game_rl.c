@@ -1337,6 +1337,31 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
             (*gamestate)->current_floor = *current_floor;
             (*gamestate)->current_room = *current_room; // Could be NULL here
+            // Set player floor x/y coords
+            (*player)->floor_x = *current_x;
+            (*player)->floor_y = *current_y;
+
+            // Autosave
+            {
+                Enemy *dummy_enemy = NULL;
+                Boss *dummy_boss = NULL;
+                FILE *dummy_savefile = NULL;
+                Rectangle rect = {0};
+                RingaBuf *dummy_rb = NULL;
+                foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+                skillType dummy_skill_pick = -1;
+                //Declare turnOP_args
+                turnOP_args *args =
+                    init_turnOP_args(*gamestate, *player, *game_path, *current_room, load_info, dummy_enemy,
+                                     dummy_boss, dummy_savefile, &rect, *floor_kls,
+                                     dummy_foe_op, dummy_skill_pick, dummy_rb);
+
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
+                turnOP(turnOP_from_turnOption(SAVE), args, default_kls, *floor_kls);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Done autosave.", __func__);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, (*game_path)->seed);
+            }
         } // End if *current_floor is NULL
 
         gui_state->framesCounter += 1;    // Count frames
@@ -1439,6 +1464,31 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             (*current_floor)->explored_matrix[*current_x][*current_y] = 1;
             (*gamestate)->current_floor = *current_floor;
             (*gamestate)->current_room = *current_room; // Should be NULL here
+            // Set player floor x/y coords
+            (*player)->floor_x = *current_x;
+            (*player)->floor_y = *current_y;
+
+            // Autosave
+            {
+                Enemy *dummy_enemy = NULL;
+                Boss *dummy_boss = NULL;
+                FILE *dummy_savefile = NULL;
+                Rectangle rect = {0};
+                RingaBuf *dummy_rb = NULL;
+                foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+                skillType dummy_skill_pick = -1;
+                //Declare turnOP_args
+                turnOP_args *args =
+                    init_turnOP_args(*gamestate, *player, *game_path, *current_room, load_info, dummy_enemy,
+                                     dummy_boss, dummy_savefile, &rect, *floor_kls,
+                                     dummy_foe_op, dummy_skill_pick, dummy_rb);
+
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing autosave file path", __func__);
+                turnOP(turnOP_from_turnOption(SAVE), args, default_kls, *floor_kls);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Done autosave.", __func__);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+                log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, (*game_path)->seed);
+            }
         }
         if (IsKeyPressed(KEY_UP)) {
             step_floor(*current_floor, current_x,

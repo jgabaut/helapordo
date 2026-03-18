@@ -6,7 +6,7 @@
 - Add `Gui_Button_Group`, `Gui_Button_Layout`
 - Add `DEBUG_VIEW` for debug
 - Add `STATS_VIEW`
-- Add autosave on entering `Home` rooms
+- Add autosave on entering `Home` rooms, generating new `Floor`
 
 ### Changed
 
