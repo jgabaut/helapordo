@@ -897,6 +897,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     is_seeded = (*gamestate)->is_seeded;
                     update_Equipslots(*player);
 
+                    *current_x = (*player)->floor_x;
+                    *current_y = (*player)->floor_y;
+
                     //TODO: set the other load_info fields properly?
                     //
                     log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking save type", __func__);
