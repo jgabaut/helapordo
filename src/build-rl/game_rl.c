@@ -3844,14 +3844,26 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 }
                 DrawSpriteRect(equips_sprites_proper[e->class], slot_r, 8, 12, slot_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                 int text_start_y = slot_r.width/12*10;
-                DrawText(TextFormat("%s", stringFromEquips(e->class)), slot_r.x, slot_r.y + text_start_y, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Atk: %i", e->atk), slot_r.x, slot_r.y + text_start_y + 20, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Def: %i", e->def), slot_r.x, slot_r.y + text_start_y + 40, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Vel: %i", e->vel), slot_r.x, slot_r.y + text_start_y + 60, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Enr: %i", e->enr), slot_r.x, slot_r.y + text_start_y + 80, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Qual: %s", stringFromQuality(e->qual)), slot_r.x, slot_r.y + text_start_y + 100, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Lvl: %i", e->level), slot_r.x, slot_r.y + text_start_y + 120, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Perks: %i", e->perksCount), slot_r.x, slot_r.y + text_start_y + 140, 20, gui_state.theme.txt_color);
+                int txt_height = 20;
+                DrawText(TextFormat("%s", stringFromEquips(e->class)), slot_r.x, slot_r.y + text_start_y, txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Atk: %i", e->atk), slot_r.x, slot_r.y + text_start_y + txt_height, txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Def: %i", e->def), slot_r.x, slot_r.y + text_start_y + (2*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Vel: %i", e->vel), slot_r.x, slot_r.y + text_start_y + (3*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Enr: %i", e->enr), slot_r.x, slot_r.y + text_start_y + (4*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Qual: %s", stringFromQuality(e->qual)), slot_r.x, slot_r.y + text_start_y + (5*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Lvl: %i", e->level), slot_r.x, slot_r.y + text_start_y + (6*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Perks: %i", e->perksCount), slot_r.x, slot_r.y + text_start_y + (7*txt_height), txt_height, gui_state.theme.txt_color);
+                for (int perk_idx = 0; perk_idx < e->perksCount; perk_idx++) {
+                    Perk* perk = e->perks[perk_idx];
+                    if (perk) {
+                        int perk_txt_height = 10;
+                        DrawText(TextFormat("%s", nameStringFromPerk(perk->class)), slot_r.x, slot_r.y + text_start_y + (8*txt_height) + (2*perk_idx*txt_height), perk_txt_height, RED);
+                        DrawText(TextFormat("%s", descStringFromPerk(perk->class)), slot_r.x, slot_r.y + text_start_y + (9*txt_height) + (2*perk_idx*txt_height), perk_txt_height, gui_state.theme.txt_color);
+                    //} else {
+                        //DrawText("NULL", slot_r.x, slot_r.y + text_start_y + (8*txt_height) + (2*perk_idx*txt_height), txt_height, gui_state.theme.txt_color);
+                        //DrawText("NULL desc", slot_r.x, slot_r.y + text_start_y + (9*txt_height) + (2*perk_idx*txt_height), txt_height, gui_state.theme.txt_color);
+                    }
+                }
             }
         }
     }
