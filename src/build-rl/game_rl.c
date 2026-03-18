@@ -4076,6 +4076,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         if (game_path != NULL) {
             DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, gui_state.gameScreenHeight/2 + 20, 20, gui_state.theme.txt_color);
         }
+        DrawText(TextFormat("Current WinCon: {%s} [%i / %i]", stringFromWinconClass(game_path->win_condition->class), game_path->win_condition->current_val, game_path->win_condition->target_val), 110, gui_state.gameScreenHeight/2 + 40, 20, gui_state.theme.txt_color);
         DrawText("DEBUG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER to RETURN to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
