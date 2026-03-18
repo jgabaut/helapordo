@@ -15,11 +15,20 @@
 - Bump `koliseo` to `0.6.0`
 - Bump `invil` to `0.2.30`
 - Bump `amboso` to `2.1.2`
-- Ensure width of animations is divisible by pixel count
 - Update `configure.ac` to use `-lX11` for `raylib` build on `linux`, `macOS`
-- Avoid drawing control hints over notifications
-- Avoid breaking `win_condition`, `player` name and class on debug floor regen
-- Use `BLACK` for `rb_notifications` rect
+- Refactor `sell_all_equips()` to reuse old slots
+- Squash bugs and refine things in `raylib` build
+  - Ensure width of animations is divisible by pixel count
+  - Avoid drawing control hints over notifications
+  - Avoid breaking `win_condition`, `player` name and class on debug floor regen
+  - Use `BLACK` for `rb_notifications` rect
+  - Fix crash on leaving `UNLOCK_SPECIAL_VIEW` in the case of last remaining enemy
+  - Fix `CONSUMABLES_VIEW` off-by-one
+  - Update position for buttons in `Enemies` room
+- Improve game loading in `raylib` build
+  - Prep `Floor` on load, set `done_loading` in some cases
+  - Call `update_Equipslots()` after loading `Gamestate`
+  - Update `current_x/y` using stored `floor_x/y` from `player`
 - Refactor views to use `Gui_Button_Group`
   - `ROOM_VIEW` for `Enemies`
   - `CLASSPICK_VIEW`
@@ -27,10 +36,6 @@
   - `PICK_SPECIAL_VIEW`
   - `UNLOCK_SPECIAL_VIEW`
   - `EQUIPS_VIEW`
-- Fix crash on leaving `UNLOCK_SPECIAL_VIEW` in the case of last remaining enemy
-- Fix `CONSUMABLES_VIEW` off-by-one
-- Refactor `sell_all_equips()` to reuse old slots
-- Update position for buttons in `Enemies` room
 
 ## [1.4.14] - 2025-12-28
 
