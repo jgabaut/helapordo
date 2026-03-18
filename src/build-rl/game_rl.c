@@ -3626,16 +3626,16 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             }
             DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
         }
-        float equips_box_x = gui_state.gameScreenWidth/2 - (100 * gui_state.scale);
+        float equips_box_x = gui_state.gameScreenWidth*0.3f;
         float equips_box_y = 60;
-        float equips_box_width = gui_state.gameScreenWidth/2 + (100 * gui_state.scale);
-        float equips_box_height = gui_state.gameScreenHeight - 60 - (10 * gui_state.scale);
+        float equips_box_width = (gui_state.gameScreenWidth/2)*1.25f;
+        float equips_box_height = (gui_state.gameScreenHeight/2)*1.5f;
         //DrawRectangleLines(equips_box_x, equips_box_y, equips_box_width, equips_box_height, RED);
         Rectangle head_label_box = {
-            .x = equips_box_x + 0.05*equips_box_width,
-            .y = equips_box_y + 0.05*equips_box_height,
-            .width = equips_box_width * 0.25,
-            .height = equips_box_height * 0.3,
+            .x = equips_box_x,
+            .y = equips_box_y,
+            .width = (((int)equips_box_width * 0.3)/12)*12,
+            .height = (((int)equips_box_height * 0.25)/8)*8,
         };
         Rectangle torso_label_box = {
             .x = head_label_box.x + head_label_box.width + 0.05*equips_box_width,
@@ -3650,10 +3650,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             .height = torso_label_box.height
         };
         Rectangle head_box = {
-            .x = equips_box_x + 0.05*equips_box_width,
+            .x = equips_box_x,
             .y = head_label_box.y + head_label_box.height + 0.05*equips_box_height,
-            .width = equips_box_width * 0.25,
-            .height = equips_box_height * 0.3,
+            .width = head_label_box.width,
+            .height = head_label_box.height,
         };
         Rectangle torso_box = {
             .x = head_box.x + head_box.width + 0.05*equips_box_width,
@@ -3667,29 +3667,73 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             .width = torso_box.width,
             .height = torso_box.height
         };
+        Rectangle head_details_box = {
+            .x = equips_box_x,
+            .y = head_box.y + head_box.height + 0.05*equips_box_height,
+            .width = head_box.width,
+            .height = equips_box_y + equips_box_height - (head_box.y + head_box.height + 0.05*equips_box_height),
+        };
+        Rectangle torso_details_box = {
+            .x = head_details_box.x + head_details_box.width + 0.05*equips_box_width,
+            .y = head_details_box.y,
+            .width = head_details_box.width,
+            .height = head_details_box.height,
+        };
+        Rectangle legs_details_box = {
+            .x = torso_details_box.x + torso_details_box.width + 0.05*equips_box_width,
+            .y = torso_details_box.y,
+            .width = torso_details_box.width,
+            .height = torso_details_box.height
+        };
         //DrawRectangleLines(equips_box_x, equips_box_y, equips_box_width, equips_box_height, RED);
-        //DrawRectangleLines(head_label_box.x, head_label_box.y, head_label_box.width, head_label_box.height, RED);
+        //DrawRectangleLines(head_label_box.x, head_label_box.y, head_label_box.width, head_label_box.height, BLUE);
         //DrawRectangleLines(torso_label_box.x, torso_label_box.y, torso_label_box.width, torso_label_box.height, RED);
         //DrawRectangleLines(legs_label_box.x, legs_label_box.y, legs_label_box.width, legs_label_box.height, RED);
-        //DrawRectangleLines(head_box.x, head_box.y, head_box.width, head_box.height, RED);
-        //DrawRectangleLines(torso_box.x, torso_box.y, torso_box.width, torso_box.height, RED);
-        //DrawRectangleLines(legs_box.x, legs_box.y, legs_box.width, legs_box.height, RED);
+        //DrawRectangleLines(head_box.x, head_box.y, head_box.width, head_box.height, GREEN);
+        //DrawRectangleLines(torso_box.x, torso_box.y, torso_box.width, torso_box.height, GREEN);
+        //DrawRectangleLines(legs_box.x, legs_box.y, legs_box.width, legs_box.height, GREEN);
+        //DrawRectangleLines(head_details_box.x, head_details_box.y, head_details_box.width, head_details_box.height, ORANGE);
+        //DrawRectangleLines(torso_details_box.x, torso_details_box.y, torso_details_box.width, torso_details_box.height, ORANGE);
+        //DrawRectangleLines(legs_details_box.x, legs_details_box.y, legs_details_box.width, legs_details_box.height, ORANGE);
         DrawSpriteRect(equipzones_sprites_proper[HEAD], head_label_box, 8, 12, head_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
         DrawSpriteRect(equipzones_sprites_proper[TORSO], torso_label_box, 8, 12, torso_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
         DrawSpriteRect(equipzones_sprites_proper[LEGS], legs_label_box, 8, 12, legs_label_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
         for (Equipzone i=0; i<EQUIPZONES+1; i++) {
             if (player->equipslots[i]->active) {
+                int txt_height = 20;
                 switch (i) {
                 case HEAD: {
                     DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], head_box, 8, 12, head_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    const char* txt = TextFormat("%s", stringFromEquips(player->equipslots[i]->item->class), txt_height);
+                    DrawText(txt, head_details_box.x + (head_details_box.width - MeasureText(txt, txt_height))/2, head_details_box.y, txt_height, gui_state.theme.txt_color);
                 }
                 break;
                 case TORSO: {
                     DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], torso_box, 8, 12, torso_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    const char* txt = TextFormat("%s", stringFromEquips(player->equipslots[i]->item->class), txt_height);
+                    DrawText(txt, torso_details_box.x + (torso_details_box.width - MeasureText(txt, txt_height))/2, torso_details_box.y, txt_height, gui_state.theme.txt_color);
                 }
                 break;
                 case LEGS: {
                     DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], legs_box, 8, 12, legs_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                    const char* txt = TextFormat("%s", stringFromEquips(player->equipslots[i]->item->class), txt_height);
+                    DrawText(txt, legs_details_box.x + (legs_details_box.width - MeasureText(txt, txt_height))/2, legs_details_box.y, txt_height, gui_state.theme.txt_color);
+                }
+                break;
+                }
+            } else {
+                int txt_height = 20;
+                switch (i) {
+                case HEAD: {
+                    DrawText("Empty", head_box.x + (head_box.width - MeasureText("Empty", txt_height))/2, head_box.y + (head_box.height - txt_height)/2, txt_height, gui_state.theme.txt_color);
+                }
+                break;
+                case TORSO: {
+                    DrawText("Empty", torso_box.x + (torso_box.width - MeasureText("Empty", txt_height))/2, torso_box.y + (torso_box.height - txt_height)/2, txt_height, gui_state.theme.txt_color);
+                }
+                break;
+                case LEGS: {
+                    DrawText("Empty", legs_box.x + (legs_box.width - MeasureText("Empty", txt_height))/2, legs_box.y + (legs_box.height - txt_height)/2, txt_height, gui_state.theme.txt_color);
                 }
                 break;
                 }
@@ -3698,7 +3742,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
     }
     break;
     case OPEN_BAG_VIEW: {
-        // TODO: Draw EQUIPS_VIEW screen here!
+        // TODO: Draw OPEN_BAG_VIEW screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("BAG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
@@ -3745,7 +3789,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
     }
     break;
     case CHECK_LOADOUT_VIEW: {
-        // TODO: Draw EQUIPS_VIEW screen here!
+        // TODO: Draw CHECK_LOADOUT_VIEW screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("LOADOUT SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
