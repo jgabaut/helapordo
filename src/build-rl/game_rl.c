@@ -305,12 +305,22 @@ Gui_Button_Group treasure_buttons_group = {
     .len = ARRAY_SIZE(treasure_buttons),
 };
 
+Gui_Button debug_fighter_specialslots_buttons[SPECIALSMAX+1] = {0};
+Gui_Button debug_fighter_skillslots_buttons[FIGHTER_SKILL_SLOTS+1] = {0};
 Gui_Button debug_fighter_counters_buttons[COUNTERSMAX+1] = {0};
 Gui_Button debug_fighter_perks_buttons[PERKSMAX+1] = {0};
 Gui_Button debug_fighter_equipslots_buttons[EQUIPZONES+1] = {0};
 Gui_Button debug_fighter_equipsbag_buttons[EQUIPSBAGSIZE+1] = {0};
 Gui_Button debug_fighter_consumablesbag_buttons[CONSUMABLESMAX+1] = {0};
 Gui_Button debug_fighter_artifactsbag_buttons[ARTIFACTSMAX+1] = {0};
+Gui_Button_Group debug_fighter_specialslots_group = {
+    .buttons = &(debug_fighter_specialslots_buttons[0]),
+    .len = ARRAY_SIZE(debug_fighter_specialslots_buttons),
+};
+Gui_Button_Group debug_fighter_skillslots_group = {
+    .buttons = &(debug_fighter_skillslots_buttons[0]),
+    .len = ARRAY_SIZE(debug_fighter_skillslots_buttons),
+};
 Gui_Button_Group debug_fighter_counters_group = {
     .buttons = &(debug_fighter_counters_buttons[0]),
     .len = ARRAY_SIZE(debug_fighter_counters_buttons),
@@ -336,6 +346,8 @@ Gui_Button_Group debug_fighter_artifactsbag_group = {
     .len = ARRAY_SIZE(debug_fighter_artifactsbag_buttons),
 };
 Gui_Button_Group* debug_fighter_groups[GUI_DEBUG_FIGHTER_LAYOUT_GROUPS_MAX+1] = {
+    &debug_fighter_specialslots_group,
+    &debug_fighter_skillslots_group,
     &debug_fighter_counters_group,
     &debug_fighter_perks_group,
     &debug_fighter_equipslots_group,
@@ -2587,6 +2599,14 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             Gui_Button_Group* group = gui_state->debug_fighter_buttons.groups[i];
             int cells_limit = -1;
             switch (i) {
+                case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                    cells_limit = SPECIALSMAX+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                    cells_limit = FIGHTER_SKILL_SLOTS+1;
+                }
+                break;
                 case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
                     cells_limit = COUNTERSMAX+1;
                 }
@@ -2621,6 +2641,14 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 };
                 Color c = RED;
                 switch (i) {
+                    case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                        if ((*player)->specials[j] != NULL) c = GREEN;
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                        if ((*player)->skills[j] != NULL) c = GREEN;
+                    }
+                    break;
                     case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
                         if ((*player)->counters[j] != NULL) c = GREEN;
                     }
@@ -2663,6 +2691,24 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 if (group->buttons[j].on) {
                     group->buttons[j].on = false;
                     switch (i) {
+                        case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                            if ((*player)->specials[j] != NULL) {
+                                Specialslot* slot = (*player)->specials[j];
+                                fprintf(stderr, "%s(): Specialslot[%i]: { enabled %i move %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->move, slot->name, slot->desc, slot->cost);
+                            } else {
+                                fprintf(stderr, "%s(): Specialslot[%i]: { NULL }\n", __func__, j);
+                            }
+                        }
+                        break;
+                        case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                            if ((*player)->skills[j] != NULL) {
+                                Skillslot* slot = (*player)->skills[j];
+                                fprintf(stderr, "%s(): Skillslot[%i]: { enabled %i class %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->class, slot->name, slot->desc, slot->cost);
+                            } else {
+                                fprintf(stderr, "%s(): Skillslot[%i]: { NULL }\n", __func__, j);
+                            }
+                        }
+                        break;
                         case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
                             if ((*player)->counters[j] != NULL) {
                                 Turncounter* counter = (*player)->counters[j];
