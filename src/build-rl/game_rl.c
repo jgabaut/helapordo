@@ -3704,27 +3704,40 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         Rectangle textbox_bounds = (Rectangle) {
             .x = 20,
-            .y = 120,
-            .width = gui_state.gameScreenWidth/2,
+            .y = 80,
+            .width = gui_state.gameScreenWidth*0.3f,
             .height = gui_state.gameScreenHeight/2
         };
         Rectangle spritebox_bounds = (Rectangle) {
-            .x = textbox_bounds.x + textbox_bounds.width + 20,
-            .y = 120,
-            .width = gui_state.gameScreenWidth - textbox_bounds.width - textbox_bounds.x - 40,
-            .height = gui_state.gameScreenHeight/2
+            .x = gui_state.gameScreenWidth*0.5f,
+            .y = 80,
+            .width = gui_state.gameScreenWidth*0.3f,
+            .height = ((int)(gui_state.gameScreenHeight * 0.3f) /8) * 8,
         };
+        int details_x = spritebox_bounds.x;
+        int details_y = spritebox_bounds.y + spritebox_bounds.height;
+        int indicator_w = 15;
+        int indicator_h = 15;
         //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
         //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
         int selected_index = gui_state.selectedIndex;
         for (int i=0; i < player->equipsBagOccupiedSlots; i++) {
             Equip* e = player->equipsBag[i];
             if (e) {
-                //printf("%s\n", stringFromEquips(e->class));
                 DrawText(TextFormat("%s", stringFromEquips(e->class)), textbox_bounds.x + 20, textbox_bounds.y + 20*i, 20, gui_state.theme.txt_color);
             }
             if (i == selected_index) {
+                DrawRectangle(textbox_bounds.x, textbox_bounds.y + 20*i, indicator_w, indicator_h, gui_state.theme.txt_color);
                 DrawSpriteRect(equips_sprites_proper[e->class], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                int txt_height = 20;
+                DrawText(TextFormat("%s", stringFromEquips(e->class)), details_x, details_y, txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Atk: %i", e->atk), details_x, details_y + txt_height, txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Def: %i", e->def), details_x, details_y + (2*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Vel: %i", e->vel), details_x, details_y + (3*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Enr: %i", e->enr), details_x, details_y + (4*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Qual: %s", stringFromQuality(e->qual)), details_x, details_y + (5*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Lvl: %i", e->level), details_x, details_y + (6*txt_height), txt_height, gui_state.theme.txt_color);
+                DrawText(TextFormat("Perks: %i", e->perksCount), details_x, details_y + (7*txt_height), txt_height, gui_state.theme.txt_color);
             }
         }
     }
@@ -3790,7 +3803,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("Def: %i", e->def), slot_r.x, slot_r.y + text_start_y + 40, 20, gui_state.theme.txt_color);
                 DrawText(TextFormat("Vel: %i", e->vel), slot_r.x, slot_r.y + text_start_y + 60, 20, gui_state.theme.txt_color);
                 DrawText(TextFormat("Enr: %i", e->enr), slot_r.x, slot_r.y + text_start_y + 80, 20, gui_state.theme.txt_color);
-                DrawText(TextFormat("Qual: %i", e->qual), slot_r.x, slot_r.y + text_start_y + 100, 20, gui_state.theme.txt_color);
+                DrawText(TextFormat("Qual: %s", stringFromQuality(e->qual)), slot_r.x, slot_r.y + text_start_y + 100, 20, gui_state.theme.txt_color);
                 DrawText(TextFormat("Lvl: %i", e->level), slot_r.x, slot_r.y + text_start_y + 120, 20, gui_state.theme.txt_color);
                 DrawText(TextFormat("Perks: %i", e->perksCount), slot_r.x, slot_r.y + text_start_y + 140, 20, gui_state.theme.txt_color);
             }
