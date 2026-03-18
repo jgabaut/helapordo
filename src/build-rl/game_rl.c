@@ -3411,6 +3411,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             break;
             case SHOP: {
                 Shop* shop = current_room->shop;
+                DrawText(TextFormat("Balance: $ %i", player->balance), 20, 120, 20, gui_state.theme.txt_color);
 
                 int eq_res = -1;
                 int cs_res = -1;
