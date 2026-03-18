@@ -366,7 +366,7 @@ void handleTutorial(S4C_Color* palette)
     DrawText("Buying things from a Shop may be tricky: you have to select one, then choose Buy.\nTo select one, First go up/down to 'View Item', then press Enter,\nthen you can scroll them with left/right. Press Enter to confirm your selection,\nthen go back up to Buy.", 14, 6*fontSize, fontSize, tut_color);
     DrawText("You can change floors by killing a Boss.", 14, 12*fontSize, fontSize, tut_color);
     DrawText("When in floor map, you can open the menu with the \"m\" key.", 14, 15*fontSize, fontSize, tut_color);
-    DrawText("By default, the game autosaves when you get to an Home room,\nbut for now it's not fully baked for this build.", 14, 18*fontSize, fontSize, tut_color);
+    DrawText("By default, the game autosaves when you get to an Home room.", 14, 18*fontSize, fontSize, tut_color);
 
     DrawText("[ Press ENTER or TAP to quit ]", 14, 21*fontSize, fontSize, ColorFromS4CPalette(palette,S4C_RED));
 
