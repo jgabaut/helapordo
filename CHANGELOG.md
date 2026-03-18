@@ -27,6 +27,7 @@
   - Update position for buttons in `Enemies` room
   - Update `roomsDone` when needed
   - Improved `OPEN_BAG_VIEW`
+  - Proper centering of player in `draw_floor_view()`
 - Improve game loading in `raylib` build
   - Prep `Floor` on load, set `done_loading` in some cases
   - Call `update_Equipslots()` after loading `Gamestate`
