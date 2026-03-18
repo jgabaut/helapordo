@@ -3723,8 +3723,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         int selected_index = gui_state.selectedIndex;
         for (int i=0; i < player->equipsBagOccupiedSlots; i++) {
             Equip* e = player->equipsBag[i];
+            Color color = gui_state.theme.txt_color;
             if (e) {
-                DrawText(TextFormat("%s", stringFromEquips(e->class)), textbox_bounds.x + 20, textbox_bounds.y + 20*i, 20, gui_state.theme.txt_color);
+                if (i == selected_index) color = RED;
+                DrawText(TextFormat("%s", stringFromEquips(e->class)), textbox_bounds.x + 20, textbox_bounds.y + 20*i, 20, color);
             }
             if (i == selected_index) {
                 DrawRectangle(textbox_bounds.x, textbox_bounds.y + 20*i, indicator_w, indicator_h, gui_state.theme.txt_color);
@@ -3827,6 +3829,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             .width = gui_state.gameScreenWidth - textbox_bounds.width - textbox_bounds.x - 40,
             .height = gui_state.gameScreenHeight/2
         };
+        int indicator_w = 15;
+        int indicator_h = 15;
         //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
         //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
         int selected_index = gui_state.selectedIndex;
@@ -3836,6 +3840,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             if (i == selected_index) color = RED;
             DrawText(TextFormat("%s    x%i", stringFromConsumables(c->class), c->qty), textbox_bounds.x + 20, textbox_bounds.y + 20 * i, 20, color);
             if (i == selected_index) {
+                DrawRectangle(textbox_bounds.x, textbox_bounds.y + 20*i, indicator_w, indicator_h, gui_state.theme.txt_color);
                 DrawSpriteRect(consumables_sprites_proper[c->class], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
             }
         }
