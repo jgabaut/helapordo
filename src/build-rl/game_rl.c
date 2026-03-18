@@ -822,6 +822,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
                     *game_path = randomise_path(seed, default_kls, current_save_path);
                     (*game_path)->current_saveslot->index = *saveslot_index;
+                    (*game_path)->length = MAX_ROGUE_FLOORS;
                     Wincon *w =
                         (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
                                                   "Wincon", "Loady Wincon");
@@ -1061,6 +1062,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                             log_tag("debug_log.txt", "DEBUG", "%s():    Init for game_path", __func__);
                             *game_path = randomise_path(seed, default_kls, current_save_path);
                             (*game_path)->current_saveslot->index = *saveslot_index;
+                            (*game_path)->length = MAX_ROGUE_FLOORS;
                             Wincon *w =
                                 (Wincon *) KLS_PUSH_TYPED(default_kls, Wincon, HR_Wincon,
                                                           "Wincon", "Wincon");
@@ -1369,6 +1371,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
             Wincon* w = (*game_path)->win_condition;
+            int path_length = (*game_path)->length;
             const char* player_name = (*player)->name;
             const int player_name_len = strlen(player_name);
             fighterClass player_class = (*player)->class;
@@ -1384,6 +1387,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
             (*game_path)->current_saveslot->index = *saveslot_index;
             (*game_path)->win_condition = w;
+            (*game_path)->length = path_length;
 
             *player =
                 (Fighter *) KLS_PUSH_TYPED(temporary_kls, Fighter, HR_Fighter,
