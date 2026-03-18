@@ -2674,13 +2674,27 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         break;
                         case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
                             if ((*player)->consumablesBag[j] != NULL) {
-                                fprintf(stderr, "%s(): TODO CONSUMABLESBAG INTERACTION\n", __func__);
+                                int class = (*player)->consumablesBag[j]->class;
+                                if (class >= 0 && class < CONSUMABLESMAX+1) {
+                                    fprintf(stderr, "%s(): Consumablesbag[%i]: { class %s }\n", __func__, j, stringFromConsumables(class));
+                                } else {
+                                    fprintf(stderr, "%s(): Consumablesbag[%i]: { class %i }\n", __func__, j, class);
+                                }
+                            } else {
+                                fprintf(stderr, "%s(): Consumablesbag[%i]: { NULL }\n", __func__, j);
                             }
                         }
                         break;
                         case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
                             if ((*player)->artifactsBag[j] != NULL) {
-                                fprintf(stderr, "%s(): TODO ARTIFACTSBAG INTERACTION\n", __func__);
+                                int class = (*player)->artifactsBag[j]->class;
+                                if (class >= 0 && class < ARTIFACTSMAX+1) {
+                                    fprintf(stderr, "%s(): Artifactsbag[%i]: { class %s }\n", __func__, j, stringFromArtifacts(class));
+                                } else {
+                                    fprintf(stderr, "%s(): Artifactsbag[%i]: { class %i }\n", __func__, j, class);
+                                }
+                            } else {
+                                fprintf(stderr, "%s(): Artifactsbag[%i]: { NULL }\n", __func__, j);
                             }
                         }
                         break;
