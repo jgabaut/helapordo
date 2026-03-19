@@ -4035,15 +4035,20 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("STATS_VIEW SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS Q to go back", 120, 120, 20, gui_state.theme.txt_color);
+        DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.5f, gui_state.gameScreenHeight*0.8f, 20, gui_state.theme.txt_color);
         int txt_height = 20;
-        int y = 220;
+        int start_y = 80;
+        int y = start_y;
         const char* txt = NULL;
 
         int fighter_label_x = (gui_state.gameScreenWidth/2)*0.1f;
         int fighter_value_x = (gui_state.gameScreenWidth/2)*0.6f;
         DrawText("Level:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
         txt = TextFormat("%i", player->level);
+        DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Hp:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i/%i", player->hp, player->totalhp);
         DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
         y += txt_height;
         DrawText("Atk:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
@@ -4089,8 +4094,24 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Turnboost Enr:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
         txt = TextFormat("%i (%i turns)", player->counters[TURNBOOST_ENR]->innerValue, player->counters[TURNBOOST_ENR]->count);
         DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Permboost Atk:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->permboost_atk);
+        DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Permboost Def:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->permboost_def);
+        DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Permboost Vel:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->permboost_vel);
+        DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Permboost Enr:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%i", player->permboost_enr);
+        DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
 
-        y = 220;
+        y = start_y;
         int label_x = (gui_state.gameScreenWidth/2);
         int value_x = (gui_state.gameScreenWidth/2)*1.75f;
         DrawText("Enemies killed:", label_x, y, txt_height, gui_state.theme.txt_color);
