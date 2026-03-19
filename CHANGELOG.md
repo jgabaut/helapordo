@@ -1,3 +1,14 @@
+## [1.4.16] - Unreleased
+
+### Added
+
+- Add `game_won` to `Gui_State`
+
+### Changed
+
+- Fix crash on death
+- Fix: drop `s4c-animate` from `Makefile.am`
+
 ## [1.4.15] - 2026-03-19
 
 ### Added

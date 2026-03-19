@@ -1975,6 +1975,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                 if ((*game_path)->win_condition->current_val >= (*game_path)->win_condition->target_val) {
                                     log_tag("debug_log.txt", "[DEBUG]",
                                             "Game won: [%i/%i]", (*game_path)->win_condition->current_val, (*game_path)->win_condition->target_val);
+                                    gui_state->game_won = true;
                                     gui_state->currentScreen = ENDING;
                                     return;
                                 }
@@ -4242,7 +4243,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("ENDING SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to quit the game", 120, 220, 20, gui_state.theme.txt_color);
-        if (game_path->win_condition->current_val >= game_path->win_condition->target_val) {
+        if (gui_state.game_won) {
             DrawText("YOU WON!", 120, 240, 20, GREEN);
         } else {
             DrawText("YOU LOST.", 120, 240, 20, RED);
