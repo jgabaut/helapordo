@@ -3810,6 +3810,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("EQUIPS SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.1f, gui_state.gameScreenHeight*0.9f, 20, gui_state.theme.txt_color);
         Gui_Button_Group group = gui_state.equips_buttons;
         for (Gui_Equips_Group_Button_Index i = 0; i < group.len; i++) {
             Gui_Button button = group.buttons[i];
@@ -3942,6 +3943,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("BAG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.1f, gui_state.gameScreenHeight*0.9f, 20, gui_state.theme.txt_color);
         Rectangle textbox_bounds = (Rectangle) {
             .x = 20,
             .y = 80,
@@ -3989,6 +3991,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("LOADOUT SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.1f, gui_state.gameScreenHeight*0.9f, 20, gui_state.theme.txt_color);
         int x_spacing = 20;
         int y_spacing = 70;
         Rectangle spritebox_bounds = (Rectangle) {
@@ -4069,6 +4072,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("CONSUMABLES SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.1f, gui_state.gameScreenHeight*0.9f, 20, gui_state.theme.txt_color);
         Rectangle textbox_bounds = (Rectangle) {
             .x = 20,
             .y = 120,
