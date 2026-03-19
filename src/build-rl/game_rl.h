@@ -161,6 +161,7 @@ typedef enum Gui_Treasure_Group_Button_Index {
 #define GUI_TREASURE_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
 #define GUI_TREASURE_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
+#ifdef HELAPORDO_DEBUG_ACCESS
 typedef enum Gui_Debug_Group_Button_Index {
     BUTTON_DEBUG,
 } Gui_Debug_Group_Button_Index;
@@ -181,6 +182,7 @@ typedef enum Gui_Debug_Fighter_Layout_Group_Index {
 } Gui_Debug_Fighter_Layout_Group_Index;
 
 #define GUI_DEBUG_FIGHTER_LAYOUT_GROUPS_MAX DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP
+#endif // HELAPORDO_DEBUG_ACCESS
 
 typedef struct Gui_State {
     float scale;
@@ -201,8 +203,10 @@ typedef struct Gui_State {
     Gui_Button_Group equips_buttons;
     Gui_Button_Layout shop_buttons;
     Gui_Button_Group treasure_buttons;
+#ifdef HELAPORDO_DEBUG_ACCESS
     Gui_Button_Group debug_buttons;
     Gui_Button_Layout debug_fighter_buttons;
+#endif // HELAPORDO_DEBUG_ACCESS
 } Gui_State;
 
 extern Gui_Button txtfield_buttons[GUI_TXTFIELD_GROUP_BUTTONS_MAX+1];
@@ -238,6 +242,7 @@ extern Gui_Button_Layout shop_buttons_layout;
 extern Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group treasure_buttons_group;
 
+#ifdef HELAPORDO_DEBUG_ACCESS
 extern Gui_Button debug_buttons[GUI_DEBUG_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group debug_buttons_group;
 
@@ -259,6 +264,7 @@ extern Gui_Button_Group debug_fighter_consumablesbag_group;
 extern Gui_Button_Group debug_fighter_artifactsbag_group;
 extern Gui_Button_Group* debug_fighter_groups[GUI_DEBUG_FIGHTER_LAYOUT_GROUPS_MAX+1];
 extern Gui_Button_Layout debug_fighter_buttons_layout;
+#endif // HELAPORDO_DEBUG_ACCESS
 
 void handleTutorial(S4C_Color* palette);
 void setEnemySprite(Enemy * e);

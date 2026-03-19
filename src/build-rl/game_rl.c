@@ -330,6 +330,7 @@ Gui_Button_Group treasure_buttons_group = {
     .len = ARRAY_SIZE(treasure_buttons),
 };
 
+#ifdef HELAPORDO_DEBUG_ACCESS
 Gui_Button debug_buttons[GUI_DEBUG_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_DEBUG] = {
         .on = false,
@@ -399,6 +400,7 @@ Gui_Button_Layout debug_fighter_buttons_layout = {
     .groups = &(debug_fighter_groups[0]),
     .len = ARRAY_SIZE(debug_fighter_groups),
 };
+#endif // HELAPORDO_DEBUG_ACCESS
 
 /**
  * Shows tutorial info.
@@ -1313,47 +1315,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case FLOOR_VIEW: {
         // TODO: Update FLOOR_VIEW screen variables here!
-        if (G_DEBUG_ON == 1) {
-            for (Gui_Debug_Group_Button_Index i=0; i < gui_state->debug_buttons.len; i++) {
-                gui_state->debug_buttons.buttons[i].on = false;
-            }
-            int debug_button_w = gui_state->gameScreenWidth*0.2f;
-            int debug_button_h = gui_state->gameScreenHeight*0.1f;
-            int debug_button_x = gui_state->gameScreenWidth - debug_button_w;
-            int debug_button_y = (gui_state->gameScreenHeight - debug_button_h)/2;
-            Rectangle debug_button_r = {
-                .x = debug_button_x,
-                .y = debug_button_y,
-                .width = debug_button_w,
-                .height = debug_button_h,
-            };
-            Gui_Button_Group row = gui_state->debug_buttons;
-            for (Gui_Debug_Group_Button_Index i=0; i < row.len; i++) {
-                switch (i) {
-                    case BUTTON_DEBUG: {
-                        row.buttons[i].r = debug_button_r;
-                    }
-                    break;
-                }
-                if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
-                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].state = BUTTON_PRESSED;
-                    } else {
-                        row.buttons[i].state = BUTTON_HOVER;
-                    }
-                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        row.buttons[i].on = true;
-                    }
-                } else {
-                    row.buttons[i].state = BUTTON_NORMAL;
-                }
-                if (row.buttons[i].on) {
-                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
-                    gui_state->currentScreen = DEBUG_VIEW;
-                    break;
-                }
-            }
-        }
         if (*current_floor == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
             *current_floor = (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
@@ -1446,6 +1407,50 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, (*game_path)->seed);
             }
         } // End if *current_floor is NULL
+
+#ifdef HELAPORDO_DEBUG_ACCESS
+        if (G_DEBUG_ON == 1) {
+            for (Gui_Debug_Group_Button_Index i=0; i < gui_state->debug_buttons.len; i++) {
+                gui_state->debug_buttons.buttons[i].on = false;
+            }
+            int debug_button_w = gui_state->gameScreenWidth*0.2f;
+            int debug_button_h = gui_state->gameScreenHeight*0.1f;
+            int debug_button_x = gui_state->gameScreenWidth - debug_button_w;
+            int debug_button_y = (gui_state->gameScreenHeight - debug_button_h)/2;
+            Rectangle debug_button_r = {
+                .x = debug_button_x,
+                .y = debug_button_y,
+                .width = debug_button_w,
+                .height = debug_button_h,
+            };
+            Gui_Button_Group row = gui_state->debug_buttons;
+            for (Gui_Debug_Group_Button_Index i=0; i < row.len; i++) {
+                switch (i) {
+                    case BUTTON_DEBUG: {
+                        row.buttons[i].r = debug_button_r;
+                    }
+                    break;
+                }
+                if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
+                    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                        row.buttons[i].state = BUTTON_PRESSED;
+                    } else {
+                        row.buttons[i].state = BUTTON_HOVER;
+                    }
+                    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                        row.buttons[i].on = true;
+                    }
+                } else {
+                    row.buttons[i].state = BUTTON_NORMAL;
+                }
+                if (row.buttons[i].on) {
+                    fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                    gui_state->currentScreen = DEBUG_VIEW;
+                    break;
+                }
+            }
+        }
+#endif // HELAPORDO_DEBUG_ACCESS
 
         gui_state->framesCounter += 1;    // Count frames
 
@@ -2636,6 +2641,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         (*current_anim_frame)++;
     }
     break;
+#ifdef HELAPORDO_DEBUG_ACCESS
     case DEBUG_VIEW: {
         // Press Enter to change to FLOOR_VIEW screen
         if (IsKeyPressed(KEY_ENTER)) {
@@ -2890,6 +2896,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
     }
     break;
+#endif // HELAPORDO_DEBUG_ACCESS
     default: {
     }
     break;
@@ -3097,6 +3104,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Controls for FLOOR_VIEW screen", 110, 160, 20, gui_state.theme.txt_color);
         DrawText("Arrow keys to move", 110, 190, 20, gui_state.theme.txt_color);
         DrawText("PRESS R to regen floor", 110, 220, 20, gui_state.theme.txt_color);
+#ifdef HELAPORDO_DEBUG_ACCESS
         if (G_DEBUG_ON == 1) {
             Gui_Button_Group row = gui_state.debug_buttons;
             for (Gui_Debug_Group_Button_Index i=0; i < row.len; i++) {
@@ -3109,6 +3117,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
             }
         }
+#endif // HELAPORDO_DEBUG_ACCESS
 
         Rectangle floor_r = CLITERAL(Rectangle) {
             gui_state.gameScreenHeight *0.1f,
@@ -4287,6 +4296,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         }
     }
     break;
+#ifdef HELAPORDO_DEBUG_ACCESS
     case DEBUG_VIEW: {
         // TODO: Draw DEBUG_VIEW screen here!
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
@@ -4386,6 +4396,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText(txt, temporary_kls_r.x + temporary_kls_r.width/2 - (MeasureText(txt, 20) /2), temporary_kls_r.y + temporary_kls_r.height/2 - (20/2), 20, BLACK);
     }
     break;
+#endif // HELAPORDO_DEBUG_ACCESS
     default: {
         break;
     }
