@@ -403,42 +403,24 @@ void gameloop_rl(int argc, char** argv)
     Vector2 mouse = {0};
     Vector2 virtualMouse = {0};
 
-    Gui_Button bt_namefield = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "",
-        .label_len = 0,
-        .box_color = LIGHTGRAY,
-        .text_color = BLACK,
-    };
-
+    // Prepare txtfield_buttons[BUTTON_NAME_TXTFIELD]
     if (strlen(player_name) > 0) {
         player_name[20] = '\0';
-        memcpy(bt_namefield.label, player_name, 21);
-        bt_namefield.label[20] = '\0';
-        bt_namefield.label_len = strlen(bt_namefield.label);
+        memcpy(txtfield_buttons[BUTTON_NAME_TXTFIELD].label, player_name, 21);
+        txtfield_buttons[BUTTON_NAME_TXTFIELD].label[20] = '\0';
+        txtfield_buttons[BUTTON_NAME_TXTFIELD].label_len = strlen(txtfield_buttons[BUTTON_NAME_TXTFIELD].label);
     }
 
-    Gui_Button bt_classfield = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "",
-        .label_len = 0,
-        .box_color = LIGHTGRAY,
-        .text_color = BLACK,
-    };
-
+    // Prepare txtfield_buttons[BUTTON_CLASS_TXTFIELD]
     if (strlen(class_name) > 0) {
         if ((strcmp(class_name, "Knight") == 0) ||
             (strcmp(class_name, "Archer") == 0) ||
             (strcmp(class_name, "Mage") == 0) ||
             (strcmp(class_name, "Assassin") == 0)) {
             class_name[20] = '\0';
-            memcpy(bt_classfield.label, class_name, 21);
-            bt_classfield.label[20] = '\0';
-            bt_classfield.label_len = strlen(bt_classfield.label);
+            memcpy(txtfield_buttons[BUTTON_CLASS_TXTFIELD].label, class_name, 21);
+            txtfield_buttons[BUTTON_CLASS_TXTFIELD].label[20] = '\0';
+            txtfield_buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(txtfield_buttons[BUTTON_CLASS_TXTFIELD].label);
         } else {
             log_tag("debug_log.txt", "DEBUG", "%s():    Rejecting invalid class arg {%s}", __func__, class_name);
             fprintf(stderr, "[DEBUG] [%s()]    Rejecting invalid class arg {%s}\n", __func__, class_name);
@@ -453,15 +435,12 @@ void gameloop_rl(int argc, char** argv)
         .framesCounter = framesCounter,
         .mouse = mouse,
         .virtualMouse = virtualMouse,
-        .buttons = {
-            [BUTTON_CLASS_TXTFIELD] = bt_classfield,
-            [BUTTON_NAME_TXTFIELD] = bt_namefield,
-        },
         .theme = {
             .bg_color = GRAY,
             .txt_color = DARKGRAY,
         },
         .selectedIndex = 0,
+        .txtfield_buttons = txtfield_buttons_group,
         .gamepick_buttons = gamepick_buttons_group,
         .classpick_buttons = classpick_buttons_group,
         .saveslotpick_buttons = saveslotpick_buttons_group,

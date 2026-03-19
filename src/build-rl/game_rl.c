@@ -21,6 +21,31 @@ callback_void_t callback_func_ptrs[SPECIALSMAX];
 callback_void_t callback_artifact_ptrs[ARTIFACTSMAX];
 callback_void_t callback_counter_ptrs[COUNTERSMAX];
 
+Gui_Button txtfield_buttons[GUI_TXTFIELD_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_NAME_TXTFIELD] = {
+        .r = {.x = 100, .y = 100, .width = 200, .height = 100},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "",
+        .label_len = 0,
+        .box_color = GUI_TXTFIELD_GROUP_BOX_COLOR,
+        .text_color = GUI_TXTFIELD_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_CLASS_TXTFIELD] = {
+        .r = {.x = 100, .y = 100, .width = 200, .height = 100},
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "",
+        .label_len = 0,
+        .box_color = GUI_TXTFIELD_GROUP_BOX_COLOR,
+        .text_color = GUI_TXTFIELD_GROUP_TEXT_COLOR,
+    }
+};
+Gui_Button_Group txtfield_buttons_group = {
+    .buttons = &(txtfield_buttons[0]),
+    .len = ARRAY_SIZE(txtfield_buttons),
+};
+
 Gui_Button gamepick_buttons[GUI_GAMEPICK_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_NEW_GAME] = {
         .r = {.x = 100, .y = 100, .width = 150, .height = 80},
@@ -1034,10 +1059,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         break;
         case 1: {
             // New game, Press 1-3 to change to set the index, and then change to FLOOR_VIEW screen
-            if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len == 0) {
+            if (gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len == 0) {
                 gui_state->currentScreen = NAMEPICK_VIEW;
             } else {
-                if (gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len == 0) {
+                if (gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label_len == 0) {
                     gui_state->currentScreen = CLASSPICK_VIEW;
                 } else {
                     // Reference: https://www.raylib.com/examples/textures/loader.html?name=textures_sprite_button
@@ -1116,7 +1141,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                 (Fighter *) KLS_PUSH_TYPED(default_kls, Fighter, HR_Fighter,
                                                            "Fighter", "Fighter");
 
-                            Gui_Button namefield = gui_state->buttons[BUTTON_NAME_TXTFIELD];
+                            Gui_Button namefield = gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD];
                             if (namefield.label_len > 0) {
                                 log_tag("debug_log.txt", "DEBUG", "%s():    Using {%s} for player name", __func__, namefield.label);
                                 fprintf(stderr, "[DEBUG] [%s()]    Using {%s} for player name\n", __func__, namefield.label);
@@ -1125,7 +1150,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                 assert(false);
                                 strncpy((*player)->name, "Test", strlen("Test")+1);
                             }
-                            Gui_Button classfield = gui_state->buttons[BUTTON_CLASS_TXTFIELD];
+                            Gui_Button classfield = gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD];
                             if (classfield.label_len > 0) {
                                 log_tag("debug_log.txt", "DEBUG", "%s():    Using {%s} for player class", __func__, classfield.label);
                                 fprintf(stderr, "[DEBUG] [%s()]    Using {%s} for player class\n", __func__, classfield.label);
@@ -1197,23 +1222,23 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case NAMEPICK_VIEW: {
         // Reference: https://www.raylib.com/examples/text/loader.html?name=text_input_box
-        if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[BUTTON_NAME_TXTFIELD].r)) {
-            gui_state->buttons[BUTTON_NAME_TXTFIELD].on = true;
+        if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].r)) {
+            gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].on = true;
         } else {
-            gui_state->buttons[BUTTON_NAME_TXTFIELD].on = false;
+            gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].on = false;
         }
-        if (gui_state->buttons[BUTTON_NAME_TXTFIELD].on) {
+        if (gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].on) {
             SetMouseCursor(MOUSE_CURSOR_IBEAM);
 
             int key = GetCharPressed();
 
             while (key > 0) {
-                if ((key >= 32) && (key <= 125) && (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len < 20)) {
-                    size_t l = gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len;
-                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l] = (char) key;
-                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l+1] = '\0';
+                if ((key >= 32) && (key <= 125) && (gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len < 20)) {
+                    size_t l = gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len;
+                    gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label[l] = (char) key;
+                    gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label[l+1] = '\0';
 
-                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len += 1;
+                    gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len += 1;
 
                 }
 
@@ -1221,17 +1246,17 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             }
 
             if (IsKeyPressed(KEY_BACKSPACE)) {
-                gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len -= 1;
-                if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len < 0) {
-                    gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len = 0;
+                gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len -= 1;
+                if (gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len < 0) {
+                    gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len = 0;
                 }
-                size_t l = gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len;
-                gui_state->buttons[BUTTON_NAME_TXTFIELD].label[l] = '\0';
+                size_t l = gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len;
+                gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label[l] = '\0';
 
             }
 
             if (IsKeyPressed(KEY_ENTER)) {
-                if (gui_state->buttons[BUTTON_NAME_TXTFIELD].label_len > 0) {
+                if (gui_state->txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].label_len > 0) {
                     //TODO: Use the name
                     gui_state->currentScreen = SAVES_VIEW;
                 }
@@ -1265,20 +1290,20 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             if (group.buttons[i].on) {
                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                 if (i == BUTTON_CLASS_KNIGHT) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Knight", strlen("Knight")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                    memcpy(gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label, "Knight", strlen("Knight")+1);
+                    gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label);
                     gui_state->currentScreen = SAVES_VIEW;
                 } else if ( i == BUTTON_CLASS_ARCHER) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Archer", strlen("Archer")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                    memcpy(gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label, "Archer", strlen("Archer")+1);
+                    gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label);
                     gui_state->currentScreen = SAVES_VIEW;
                 } else if ( i == BUTTON_CLASS_MAGE) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Mage", strlen("Mage")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                    memcpy(gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label, "Mage", strlen("Mage")+1);
+                    gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label);
                     gui_state->currentScreen = SAVES_VIEW;
                 } else if ( i == BUTTON_CLASS_ASSASSIN) {
-                    memcpy(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label, "Assassin", strlen("Assassin")+1);
-                    gui_state->buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->buttons[BUTTON_CLASS_TXTFIELD].label);
+                    memcpy(gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label, "Assassin", strlen("Assassin")+1);
+                    gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(gui_state->txtfield_buttons.buttons[BUTTON_CLASS_TXTFIELD].label);
                     gui_state->currentScreen = SAVES_VIEW;
                 }
             }
@@ -2988,9 +3013,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("PICK NAME SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
 
-        DrawRectangleRec(gui_state.buttons[BUTTON_NAME_TXTFIELD].r, gui_state.buttons[BUTTON_NAME_TXTFIELD].box_color);
+        DrawRectangleRec(gui_state.txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].r, gui_state.txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD].box_color);
 
-        Gui_Button namefield = gui_state.buttons[BUTTON_NAME_TXTFIELD];
+        Gui_Button namefield = gui_state.txtfield_buttons.buttons[BUTTON_NAME_TXTFIELD];
 
         if (namefield.on) {
             DrawRectangleLines((int)namefield.r.x, (int)namefield.r.y, (int)namefield.r.width, (int)namefield.r.height, RED);

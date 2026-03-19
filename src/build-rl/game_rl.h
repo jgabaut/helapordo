@@ -44,13 +44,6 @@ typedef struct Gui_Button {
     Color text_color;
 } Gui_Button;
 
-typedef enum Gui_Button_Idx {
-    BUTTON_CLASS_TXTFIELD,
-    BUTTON_NAME_TXTFIELD,
-} Gui_Button_Idx;
-
-#define GUI_BUTTONS_MAX BUTTON_NAME_TXTFIELD
-
 typedef struct Gui_Theme {
     Color bg_color;
     Color txt_color;
@@ -70,6 +63,15 @@ typedef struct Gui_Button_Layout {
     Gui_Button_Group** groups;
     int len;
 } Gui_Button_Layout;
+
+typedef enum Gui_TxtField_Group_Button_Index {
+    BUTTON_CLASS_TXTFIELD,
+    BUTTON_NAME_TXTFIELD,
+} Gui_TxtField_Group_Button_Index;
+
+#define GUI_TXTFIELD_GROUP_BUTTONS_MAX BUTTON_NAME_TXTFIELD
+#define GUI_TXTFIELD_GROUP_BOX_COLOR { 200, 200, 200, 255 }
+#define GUI_TXTFIELD_GROUP_TEXT_COLOR { 0, 0, 0, 255 }
 
 typedef enum Gui_GamePick_Group_Button_Index {
     BUTTON_NEW_GAME,
@@ -188,9 +190,9 @@ typedef struct Gui_State {
     int framesCounter;
     Vector2 mouse;
     Vector2 virtualMouse;
-    Gui_Button buttons[GUI_BUTTONS_MAX+1];
     Gui_Theme theme;
     int selectedIndex;
+    Gui_Button_Group txtfield_buttons;
     Gui_Button_Group gamepick_buttons;
     Gui_Button_Group classpick_buttons;
     Gui_Button_Group saveslotpick_buttons;
@@ -202,6 +204,9 @@ typedef struct Gui_State {
     Gui_Button_Group debug_buttons;
     Gui_Button_Layout debug_fighter_buttons;
 } Gui_State;
+
+extern Gui_Button txtfield_buttons[GUI_TXTFIELD_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group txtfield_buttons_group;
 
 extern Gui_Button gamepick_buttons[GUI_GAMEPICK_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group gamepick_buttons_group;
