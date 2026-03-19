@@ -34,12 +34,7 @@
   - Call `update_Equipslots()` after loading `Gamestate`
   - Update `current_x/y` using stored `floor_x/y` from `player`
 - Refactor views to use `Gui_Button_Group`
-  - `ROOM_VIEW` for `Enemies`
-  - `CLASSPICK_VIEW`
-  - `SAVES_VIEW`
-  - `PICK_SPECIAL_VIEW`
-  - `UNLOCK_SPECIAL_VIEW`
-  - `EQUIPS_VIEW`
+- Drop `Gui_Button_Idx`
 
 ## [1.4.14] - 2025-12-28
 
