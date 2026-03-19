@@ -47,10 +47,9 @@ typedef struct Gui_Button {
 typedef enum Gui_Button_Idx {
     BUTTON_CLASS_TXTFIELD,
     BUTTON_NAME_TXTFIELD,
-    BUTTON_FLOOR_DEBUG,
 } Gui_Button_Idx;
 
-#define GUI_BUTTONS_MAX BUTTON_FLOOR_DEBUG
+#define GUI_BUTTONS_MAX BUTTON_NAME_TXTFIELD
 
 typedef struct Gui_Theme {
     Color bg_color;
@@ -71,6 +70,36 @@ typedef struct Gui_Button_Layout {
     Gui_Button_Group** groups;
     int len;
 } Gui_Button_Layout;
+
+typedef enum Gui_GamePick_Group_Button_Index {
+    BUTTON_NEW_GAME,
+    BUTTON_LOAD_GAME,
+} Gui_GamePick_Group_Button_Index;
+
+#define GUI_GAMEPICK_GROUP_BUTTONS_MAX BUTTON_LOAD_GAME
+#define GUI_GAMEPICK_GROUP_BOX_COLOR { 0, 117, 44, 255 }
+#define GUI_GAMEPICK_GROUP_TEXT_COLOR { 80, 80, 80, 255 }
+
+typedef enum Gui_ClassPick_Group_Button_Index {
+    BUTTON_CLASS_KNIGHT,
+    BUTTON_CLASS_MAGE,
+    BUTTON_CLASS_ARCHER,
+    BUTTON_CLASS_ASSASSIN
+} Gui_ClassPick_Group_Button_Index;
+
+#define GUI_CLASSPICK_GROUP_BUTTONS_MAX BUTTON_CLASS_ASSASSIN
+#define GUI_CLASSPICK_GROUP_BOX_COLOR GUI_GAMEPICK_GROUP_BOX_COLOR
+#define GUI_CLASSPICK_GROUP_TEXT_COLOR GUI_GAMEPICK_GROUP_TEXT_COLOR
+
+typedef enum Gui_SaveSlotPick_Group_Button_Index {
+    BUTTON_SAVESLOT_1,
+    BUTTON_SAVESLOT_2,
+    BUTTON_SAVESLOT_3
+} Gui_SaveSlotPick_Group_Button_Index;
+
+#define GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX BUTTON_SAVESLOT_3
+#define GUI_SAVESLOTPICK_GROUP_BOX_COLOR GUI_GAMEPICK_GROUP_BOX_COLOR
+#define GUI_SAVESLOTPICK_GROUP_TEXT_COLOR GUI_GAMEPICK_GROUP_TEXT_COLOR
 
 typedef enum Gui_Shop_Layout_Group_Index {
     SHOP_LAYOUT_EQUIPS_GROUP,
@@ -98,8 +127,8 @@ typedef enum Gui_Fight_Group_Button_Index {
 } Gui_Fight_Group_Button_Index;
 
 #define GUI_FIGHT_GROUP_BUTTONS_MAX BUTTON_STATS
-#define GUI_FIGHT_GROUP_BOX_COLOR { 0, 117, 44, 255 }
-#define GUI_FIGHT_GROUP_TEXT_COLOR { 80, 80, 80, 255 }
+#define GUI_FIGHT_GROUP_BOX_COLOR GUI_GAMEPICK_GROUP_BOX_COLOR
+#define GUI_FIGHT_GROUP_TEXT_COLOR GUI_GAMEPICK_GROUP_TEXT_COLOR
 
 typedef enum Gui_Special_Group_Button_Index {
     BUTTON_SPECIAL_1,
@@ -130,35 +159,13 @@ typedef enum Gui_Treasure_Group_Button_Index {
 #define GUI_TREASURE_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
 #define GUI_TREASURE_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
-typedef enum Gui_GamePick_Group_Button_Index {
-    BUTTON_NEW_GAME,
-    BUTTON_LOAD_GAME,
-} Gui_GamePick_Group_Button_Index;
+typedef enum Gui_Debug_Group_Button_Index {
+    BUTTON_DEBUG,
+} Gui_Debug_Group_Button_Index;
 
-#define GUI_GAMEPICK_GROUP_BUTTONS_MAX BUTTON_LOAD_GAME
-#define GUI_GAMEPICK_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
-#define GUI_GAMEPICK_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
-
-typedef enum Gui_ClassPick_Group_Button_Index {
-    BUTTON_CLASS_KNIGHT,
-    BUTTON_CLASS_MAGE,
-    BUTTON_CLASS_ARCHER,
-    BUTTON_CLASS_ASSASSIN
-} Gui_ClassPick_Group_Button_Index;
-
-#define GUI_CLASSPICK_GROUP_BUTTONS_MAX BUTTON_CLASS_ASSASSIN
-#define GUI_CLASSPICK_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
-#define GUI_CLASSPICK_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
-
-typedef enum Gui_SaveSlotPick_Group_Button_Index {
-    BUTTON_SAVESLOT_1,
-    BUTTON_SAVESLOT_2,
-    BUTTON_SAVESLOT_3
-} Gui_SaveSlotPick_Group_Button_Index;
-
-#define GUI_SAVESLOTPICK_GROUP_BUTTONS_MAX BUTTON_SAVESLOT_3
-#define GUI_SAVESLOTPICK_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
-#define GUI_SAVESLOTPICK_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
+#define GUI_DEBUG_GROUP_BUTTONS_MAX BUTTON_DEBUG
+#define GUI_DEBUG_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
+#define GUI_DEBUG_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
 
 typedef enum Gui_Debug_Fighter_Layout_Group_Index {
     DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP,
@@ -192,6 +199,7 @@ typedef struct Gui_State {
     Gui_Button_Group equips_buttons;
     Gui_Button_Layout shop_buttons;
     Gui_Button_Group treasure_buttons;
+    Gui_Button_Group debug_buttons;
     Gui_Button_Layout debug_fighter_buttons;
 } Gui_State;
 
@@ -224,6 +232,9 @@ extern Gui_Button_Layout shop_buttons_layout;
 
 extern Gui_Button treasure_buttons[GUI_TREASURE_GROUP_BUTTONS_MAX+1];
 extern Gui_Button_Group treasure_buttons_group;
+
+extern Gui_Button debug_buttons[GUI_DEBUG_GROUP_BUTTONS_MAX+1];
+extern Gui_Button_Group debug_buttons_group;
 
 extern Gui_Button debug_fighter_specialslots_buttons[SPECIALSMAX+1];
 extern Gui_Button debug_fighter_skillslots_buttons[FIGHTER_SKILL_SLOTS+1];

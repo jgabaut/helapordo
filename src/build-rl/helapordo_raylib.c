@@ -445,16 +445,6 @@ void gameloop_rl(int argc, char** argv)
         }
     }
 
-    Gui_Button bt_floor_debug = {
-        .r = (Rectangle){.x = 400, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Debug",
-        .label_len = strlen("Debug"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
         .gameScreenWidth = gameScreenWidth,
@@ -466,7 +456,6 @@ void gameloop_rl(int argc, char** argv)
         .buttons = {
             [BUTTON_CLASS_TXTFIELD] = bt_classfield,
             [BUTTON_NAME_TXTFIELD] = bt_namefield,
-            [BUTTON_FLOOR_DEBUG] = bt_floor_debug,
         },
         .theme = {
             .bg_color = GRAY,
@@ -481,6 +470,7 @@ void gameloop_rl(int argc, char** argv)
         .special_buttons = special_buttons_group,
         .equips_buttons = equips_buttons_group,
         .treasure_buttons = treasure_buttons_group,
+        .debug_buttons = debug_buttons_group,
         .debug_fighter_buttons = debug_fighter_buttons_layout,
     };
 

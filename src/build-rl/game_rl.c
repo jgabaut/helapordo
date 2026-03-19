@@ -305,6 +305,21 @@ Gui_Button_Group treasure_buttons_group = {
     .len = ARRAY_SIZE(treasure_buttons),
 };
 
+Gui_Button debug_buttons[GUI_DEBUG_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_DEBUG] = {
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Debug",
+        .label_len = ARRAY_SIZE("Debug")-1,
+        .box_color = GUI_DEBUG_GROUP_BOX_COLOR,
+        .text_color = GUI_DEBUG_GROUP_TEXT_COLOR,
+    },
+};
+Gui_Button_Group debug_buttons_group = {
+    .buttons = &(debug_buttons[0]),
+    .len = ARRAY_SIZE(debug_buttons),
+};
+
 Gui_Button debug_fighter_specialslots_buttons[SPECIALSMAX+1] = {0};
 Gui_Button debug_fighter_skillslots_buttons[FIGHTER_SKILL_SLOTS+1] = {0};
 Gui_Button debug_fighter_counters_buttons[COUNTERSMAX+1] = {0};
@@ -1274,23 +1289,40 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     case FLOOR_VIEW: {
         // TODO: Update FLOOR_VIEW screen variables here!
         if (G_DEBUG_ON == 1) {
-            for (int i=BUTTON_FLOOR_DEBUG; i < BUTTON_FLOOR_DEBUG +1; i++) {
-                gui_state->buttons[i].on = false;
+            for (Gui_Debug_Group_Button_Index i=0; i < gui_state->debug_buttons.len; i++) {
+                gui_state->debug_buttons.buttons[i].on = false;
             }
-            for (int i=BUTTON_FLOOR_DEBUG; i < BUTTON_FLOOR_DEBUG +1; i++) {
-                if (CheckCollisionPointRec(gui_state->virtualMouse, gui_state->buttons[i].r)) {
+            int debug_button_w = gui_state->gameScreenWidth*0.2f;
+            int debug_button_h = gui_state->gameScreenHeight*0.1f;
+            int debug_button_x = gui_state->gameScreenWidth - debug_button_w;
+            int debug_button_y = (gui_state->gameScreenHeight - debug_button_h)/2;
+            Rectangle debug_button_r = {
+                .x = debug_button_x,
+                .y = debug_button_y,
+                .width = debug_button_w,
+                .height = debug_button_h,
+            };
+            Gui_Button_Group row = gui_state->debug_buttons;
+            for (Gui_Debug_Group_Button_Index i=0; i < row.len; i++) {
+                switch (i) {
+                    case BUTTON_DEBUG: {
+                        row.buttons[i].r = debug_button_r;
+                    }
+                    break;
+                }
+                if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                        gui_state->buttons[i].state = BUTTON_PRESSED;
+                        row.buttons[i].state = BUTTON_PRESSED;
                     } else {
-                        gui_state->buttons[i].state = BUTTON_HOVER;
+                        row.buttons[i].state = BUTTON_HOVER;
                     }
                     if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                        gui_state->buttons[i].on = true;
+                        row.buttons[i].on = true;
                     }
                 } else {
-                    gui_state->buttons[i].state = BUTTON_NORMAL;
+                    row.buttons[i].state = BUTTON_NORMAL;
                 }
-                if (gui_state->buttons[i].on) {
+                if (row.buttons[i].on) {
                     fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                     gui_state->currentScreen = DEBUG_VIEW;
                     break;
@@ -3041,8 +3073,9 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Arrow keys to move", 110, 190, 20, gui_state.theme.txt_color);
         DrawText("PRESS R to regen floor", 110, 220, 20, gui_state.theme.txt_color);
         if (G_DEBUG_ON == 1) {
-            for (int i=BUTTON_FLOOR_DEBUG; i < BUTTON_FLOOR_DEBUG +1; i++) {
-                Gui_Button button = gui_state.buttons[i];
+            Gui_Button_Group row = gui_state.debug_buttons;
+            for (Gui_Debug_Group_Button_Index i=0; i < row.len; i++) {
+                Gui_Button button = row.buttons[i];
                 if (button.state == BUTTON_HOVER) {
                     DrawRectangleRec(button.r, RED);
                 } else {
