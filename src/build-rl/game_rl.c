@@ -4093,7 +4093,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText("STATS_VIEW SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.5f, gui_state.gameScreenHeight*0.8f, 20, gui_state.theme.txt_color);
+        DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.6f, gui_state.gameScreenHeight*0.8f, 20, gui_state.theme.txt_color);
         int txt_height = 20;
         int start_y = 80;
         int y = start_y;
@@ -4101,6 +4101,14 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
 
         int fighter_label_x = (gui_state.gameScreenWidth/2)*0.1f;
         int fighter_value_x = (gui_state.gameScreenWidth/2)*0.6f;
+        DrawText("Name:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%s", player->name);
+        DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
+        DrawText("Class:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
+        txt = TextFormat("%s", stringFromClass(player->class));
+        DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
+        y += txt_height;
         DrawText("Level:", fighter_label_x, y, txt_height, gui_state.theme.txt_color);
         txt = TextFormat("%i", player->level);
         DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
@@ -4170,7 +4178,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText(txt, fighter_value_x, y, txt_height, gui_state.theme.txt_color);
 
         y = start_y;
-        int label_x = (gui_state.gameScreenWidth/2);
+        int label_x = (gui_state.gameScreenWidth/2)*1.1f;
         int value_x = (gui_state.gameScreenWidth/2)*1.75f;
         DrawText("Enemies killed:", label_x, y, txt_height, gui_state.theme.txt_color);
         txt = TextFormat("%i", player->stats->enemieskilled);
