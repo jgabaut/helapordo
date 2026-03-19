@@ -449,6 +449,7 @@ void gameloop_rl(int argc, char** argv)
         .special_buttons = special_buttons_group,
         .equips_buttons = equips_buttons_group,
         .treasure_buttons = treasure_buttons_group,
+        .floor_buttons = floor_buttons_group,
 #ifdef HELAPORDO_DEBUG_ACCESS
         .debug_buttons = debug_buttons_group,
         .debug_fighter_buttons = debug_fighter_buttons_layout,

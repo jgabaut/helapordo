@@ -330,6 +330,21 @@ Gui_Button_Group treasure_buttons_group = {
     .len = ARRAY_SIZE(treasure_buttons),
 };
 
+Gui_Button floor_buttons[GUI_FLOOR_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_ARTIFACTS] = {
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Artifacts",
+        .label_len = ARRAY_SIZE("Artifacts")-1,
+        .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
+        .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
+    }
+};
+Gui_Button_Group floor_buttons_group = {
+    .buttons = &(floor_buttons[0]),
+    .len = ARRAY_SIZE(floor_buttons),
+};
+
 #ifdef HELAPORDO_DEBUG_ACCESS
 Gui_Button debug_buttons[GUI_DEBUG_GROUP_BUTTONS_MAX+1] = {
     [BUTTON_DEBUG] = {
@@ -1581,6 +1596,47 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         } // End of debug floor regen
 #endif // HELAPORDO_DEBUG_ACCESS
 
+        Gui_Button_Group group = gui_state->floor_buttons;
+        for (Gui_Floor_Group_Button_Index i = 0; i < group.len; i++) {
+            group.buttons[i].on = false;
+            switch (i) {
+                case BUTTON_ARTIFACTS: {
+                    int bt_w = gui_state->gameScreenWidth*0.2f;
+                    int bt_h = gui_state->gameScreenHeight*0.1f;
+                    group.buttons[i].r = (Rectangle) {
+                        .x = gui_state->gameScreenWidth - (bt_w*2),
+                        .y = (gui_state->gameScreenHeight - bt_h)*0.5f,
+                        .width = bt_w,
+                        .height = bt_h
+                    };
+                }
+                break;
+            }
+        }
+        for (Gui_Floor_Group_Button_Index i = 0; i < group.len; i++) {
+            if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
+                if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                    group.buttons[i].state = BUTTON_PRESSED;
+                } else {
+                    group.buttons[i].state = BUTTON_HOVER;
+                }
+                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                    group.buttons[i].on = true;
+                }
+            } else {
+                group.buttons[i].state = BUTTON_NORMAL;
+            }
+            if (group.buttons[i].on) {
+                fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                switch (i) {
+                    case BUTTON_ARTIFACTS: {
+                        gui_state->currentScreen = ARTIFACTS_VIEW;
+                    }
+                    break;
+                }
+            }
+        }
+
         if (IsKeyPressed(KEY_UP)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_UP);
@@ -2587,6 +2643,13 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
     }
     break;
+    case ARTIFACTS_VIEW: {
+        // TODO: Update ARTIFACTS_VIEW screen variables here!
+        if (IsKeyPressed(KEY_Q)) {
+            gui_state->currentScreen = (*current_room ? ROOM_VIEW : FLOOR_VIEW);
+        }
+    }
+    break;
     case ENDING: {
         // TODO: Update ENDING screen variables here!
 
@@ -2882,9 +2945,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         if ((*player)->artifactsBag[j] != NULL) {
                             int class = (*player)->artifactsBag[j]->class;
                             if (class >= 0 && class < ARTIFACTSMAX+1) {
-                                fprintf(stderr, "%s(): Artifactsbag[%i]: { class %s }\n", __func__, j, stringFromArtifacts(class));
+                                fprintf(stderr, "%s(): Artifactsbag[%i]: { class %s qty %i }\n", __func__, j, stringFromArtifacts(class), (*player)->artifactsBag[j]->qty);
                             } else {
-                                fprintf(stderr, "%s(): Artifactsbag[%i]: { class %i }\n", __func__, j, class);
+                                fprintf(stderr, "%s(): Artifactsbag[%i]: { class %i qty %i }\n", __func__, j, class, (*player)->artifactsBag[j]->qty);
                             }
                         } else {
                             fprintf(stderr, "%s(): Artifactsbag[%i]: { NULL }\n", __func__, j);
@@ -3120,6 +3183,17 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             }
         }
 #endif // HELAPORDO_DEBUG_ACCESS
+
+        Gui_Button_Group row = gui_state.floor_buttons;
+        for (Gui_Floor_Group_Button_Index i = 0; i < row.len; i++) {
+            Gui_Button button = row.buttons[i];
+            if (button.state == BUTTON_HOVER) {
+                DrawRectangleRec(button.r, RED);
+            } else {
+                DrawRectangleRec(button.r, button.box_color);
+            }
+            DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+        }
 
         Rectangle floor_r = CLITERAL(Rectangle) {
             gui_state.gameScreenHeight *0.1f,
@@ -3904,18 +3978,24 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                     DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], head_box, 8, 12, head_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                     const char* txt = TextFormat("%s", stringFromEquips(player->equipslots[i]->item->class), txt_height);
                     DrawText(txt, head_details_box.x + (head_details_box.width - MeasureText(txt, txt_height))/2, head_details_box.y, txt_height, gui_state.theme.txt_color);
+                    txt = TextFormat("%s", player->equipslots[i]->item->desc, txt_height);
+                    DrawText(txt, head_details_box.x + (head_details_box.width - MeasureText(txt, txt_height))/2, head_details_box.y + txt_height, txt_height, gui_state.theme.txt_color);
                 }
                 break;
                 case TORSO: {
                     DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], torso_box, 8, 12, torso_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                     const char* txt = TextFormat("%s", stringFromEquips(player->equipslots[i]->item->class), txt_height);
                     DrawText(txt, torso_details_box.x + (torso_details_box.width - MeasureText(txt, txt_height))/2, torso_details_box.y, txt_height, gui_state.theme.txt_color);
+                    txt = TextFormat("%s", player->equipslots[i]->item->desc, txt_height);
+                    DrawText(txt, torso_details_box.x + (torso_details_box.width - MeasureText(txt, txt_height))/2, torso_details_box.y + txt_height, txt_height, gui_state.theme.txt_color);
                 }
                 break;
                 case LEGS: {
                     DrawSpriteRect(equips_sprites_proper[player->equipslots[i]->item->class], legs_box, 8, 12, legs_box.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                     const char* txt = TextFormat("%s", stringFromEquips(player->equipslots[i]->item->class), txt_height);
                     DrawText(txt, legs_details_box.x + (legs_details_box.width - MeasureText(txt, txt_height))/2, legs_details_box.y, txt_height, gui_state.theme.txt_color);
+                    txt = TextFormat("%s", player->equipslots[i]->item->desc, txt_height);
+                    DrawText(txt, legs_details_box.x + (legs_details_box.width - MeasureText(txt, txt_height))/2, legs_details_box.y + txt_height, txt_height, gui_state.theme.txt_color);
                 }
                 break;
                 }
@@ -4080,6 +4160,12 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             .width = gui_state.gameScreenWidth/2,
             .height = gui_state.gameScreenHeight/2
         };
+        Rectangle descbox_bounds = (Rectangle) {
+            .x = textbox_bounds.x,
+            .y = textbox_bounds.y + textbox_bounds.height,
+            .width = textbox_bounds.width,
+            .height = gui_state.gameScreenHeight/4,
+        };
         Rectangle spritebox_bounds = (Rectangle) {
             .x = textbox_bounds.x + textbox_bounds.width + 20,
             .y = 120,
@@ -4089,6 +4175,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         int indicator_w = 15;
         int indicator_h = 15;
         //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        //DrawRectangleLines(descbox_bounds.x, descbox_bounds.y, descbox_bounds.width, descbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
         //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
         int selected_index = gui_state.selectedIndex;
         for (int i=0; i < CONSUMABLESMAX+1; i++) {
@@ -4099,6 +4186,12 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             if (i == selected_index) {
                 DrawRectangle(textbox_bounds.x, textbox_bounds.y + 20*i, indicator_w, indicator_h, gui_state.theme.txt_color);
                 DrawSpriteRect(consumables_sprites_proper[c->class], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                const char* txt = "???";
+                if (c->qty > 0) {
+                    txt = c->desc;
+                }
+                int txt_height = 20;
+                DrawText(txt, descbox_bounds.x, descbox_bounds.y, txt_height, gui_state.theme.txt_color);
             }
         }
     }
@@ -4235,6 +4328,52 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         txt = TextFormat("%i", player->stats->floorscompleted);
         DrawText(txt, value_x, y, txt_height, gui_state.theme.txt_color);
         y += txt_height;
+    }
+    break;
+    case ARTIFACTS_VIEW: {
+        // TODO: Draw ARTIFACTS_VIEW screen here!
+        DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
+        DrawText("ARTIFACTS_VIEW SCREEN", 20, 20, 40, gui_state.theme.txt_color);
+        DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
+        DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.6f, gui_state.gameScreenHeight*0.8f, 20, gui_state.theme.txt_color);
+
+        int cell_w = gui_state.gameScreenWidth*0.125f;
+        int cell_h = gui_state.gameScreenHeight*0.2f;
+        int cells_per_row = 3;
+        int fullbox_w = ((ARTIFACTSMAX+1)%(cells_per_row+1))*cell_w;
+        int fullbox_h = cell_h*((ARTIFACTSMAX+1)/cells_per_row);
+        Rectangle fullbox_r = {
+            .x = (gui_state.gameScreenWidth - fullbox_w)*0.5f,
+            .y = (gui_state.gameScreenHeight - cell_h*2)*0.5f,
+            .width = fullbox_w,
+            .height = fullbox_h
+        };
+        //DrawRectangleRec(fullbox_r, BLUE);
+        int details_start_x = gui_state.gameScreenWidth*0.1f;
+        int details_start_y = gui_state.gameScreenHeight*0.2f;
+        for (int i = 0; i < ARTIFACTSMAX+1; i++) {
+            Rectangle cell = {
+                .x = fullbox_r.x + ((i%3)*cell_w),
+                .y = fullbox_r.y + ((i/3)*cell_h),
+                .width = cell_w,
+                .height = cell_h
+            };
+            //DrawRectangleRec(cell, BLACK);
+            //DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, RED);
+            if (player->artifactsBag[i]->qty > 0) {
+                DrawSpriteRect(artifacts_sprites_proper[i], cell, 8, 12, cell.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                if (CheckCollisionPointRec(gui_state.virtualMouse, cell)) {
+                    int txt_height = 20;
+                    const char* txt = TextFormat("%s", stringFromArtifacts(player->artifactsBag[i]->class));
+                    DrawText(txt, details_start_x, details_start_y, txt_height, gui_state.theme.txt_color);
+                    txt = TextFormat("%s", player->artifactsBag[i]->desc);
+                    DrawText(txt, details_start_x, details_start_y + txt_height, txt_height, gui_state.theme.txt_color);
+                }
+            } else {
+                int txt_height = 20;
+                DrawText("???", cell.x + (cell.width - MeasureText("???", txt_height))*0.5f, cell.y + (cell.height - txt_height)*0.5f, txt_height, gui_state.theme.txt_color);
+            }
+        }
     }
     break;
     case ENDING: {
