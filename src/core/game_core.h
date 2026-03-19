@@ -69,9 +69,9 @@ typedef struct GameScreen {
  */
 typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_VIEW, FLOOR_VIEW, ROOM_VIEW, UNLOCK_SPECIAL_VIEW, PICK_SPECIAL_VIEW, EQUIPS_VIEW, OPEN_BAG_VIEW, CHECK_LOADOUT_VIEW, CONSUMABLES_VIEW, STATS_VIEW, ENDING, DOOR_ANIM, CHEST_ANIM,
 #ifdef HELAPORDO_DEBUG_ACCESS
-    DEBUG_VIEW
+                          DEBUG_VIEW
 #endif // HELAPORDO_DEBUG_ACCESS
-} GameScreen;
+                        } GameScreen;
 // Add more includes for rl-build here
 #ifdef _WIN32
 /**
@@ -376,12 +376,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 15
+#define HELAPORDO_PATCH_VERSION 16
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.15"
+#define VERSION "1.4.16"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
 

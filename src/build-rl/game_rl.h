@@ -194,6 +194,7 @@ typedef struct Gui_State {
     Vector2 virtualMouse;
     Gui_Theme theme;
     int selectedIndex;
+    bool game_won;
     Gui_Button_Group txtfield_buttons;
     Gui_Button_Group gamepick_buttons;
     Gui_Button_Group classpick_buttons;

@@ -1428,10 +1428,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             Gui_Button_Group row = gui_state->debug_buttons;
             for (Gui_Debug_Group_Button_Index i=0; i < row.len; i++) {
                 switch (i) {
-                    case BUTTON_DEBUG: {
-                        row.buttons[i].r = debug_button_r;
-                    }
-                    break;
+                case BUTTON_DEBUG: {
+                    row.buttons[i].r = debug_button_r;
+                }
+                break;
                 }
                 if (CheckCollisionPointRec(gui_state->virtualMouse, row.buttons[i].r)) {
                     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
@@ -1975,6 +1975,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                                 if ((*game_path)->win_condition->current_val >= (*game_path)->win_condition->target_val) {
                                     log_tag("debug_log.txt", "[DEBUG]",
                                             "Game won: [%i/%i]", (*game_path)->win_condition->current_val, (*game_path)->win_condition->target_val);
+                                    gui_state->game_won = true;
                                     gui_state->currentScreen = ENDING;
                                     return;
                                 }
@@ -2104,56 +2105,56 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         gui_state->currentScreen = FLOOR_VIEW;
                     } else if (i == BUTTON_TAKE_TREASURE) {
                         switch ((*current_room)->treasure->class) {
-                            case TREASURE_CHEST: {
-                                if ((*player)->keys_balance > 0) {
-                                    log_tag("debug_log.txt", "[TREASURE]",
-                                            "Opened chest in Treasure room, index %i.\n",
-                                            (*current_room)->index);
-                                    (*player)->keys_balance--;
-                                    open_chest(rb_notifications, (*current_room)->treasure->chest, *player, default_kls, *floor_kls);
-                                    *current_room = NULL;
-                                    (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
-                                    gui_state->currentScreen = CHEST_ANIM;
-                                    *current_anim_frame = 0;
-                                } else {
-                                    //TODO: display this in some way
-                                    //mvwprintw(win, 18, 5, "You don't have any key.");
-                                    log_tag("debug_log.txt", "[TREASURE]",
-                                            "Tried Opening a chest in Treasure room with no keys, index %i.\n",
-                                            (*current_room)->index);
-                                }
-                            }
-                            break;
-                            case TREASURE_CONSUMABLE: {
-                                Consumable *bagged =
-                                    (Consumable *) (*player)->consumablesBag[(*current_room)->treasure->
-                                                                     consumable->class];
-                                bagged->qty += (*current_room)->treasure->consumable->qty;
-                                (*player)->stats->consumablesfound++;
-                                char msg[100];
-                                sprintf(msg, "You found a %s!", stringFromConsumables(bagged->class));
-                                enqueue_notification(msg, 500, S4C_BRIGHT_GREEN, rb_notifications);
-                                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                        case TREASURE_CHEST: {
+                            if ((*player)->keys_balance > 0) {
+                                log_tag("debug_log.txt", "[TREASURE]",
+                                        "Opened chest in Treasure room, index %i.\n",
+                                        (*current_room)->index);
+                                (*player)->keys_balance--;
+                                open_chest(rb_notifications, (*current_room)->treasure->chest, *player, default_kls, *floor_kls);
                                 *current_room = NULL;
                                 (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
-                                gui_state->currentScreen = FLOOR_VIEW;
+                                gui_state->currentScreen = CHEST_ANIM;
+                                *current_anim_frame = 0;
+                            } else {
+                                //TODO: display this in some way
+                                //mvwprintw(win, 18, 5, "You don't have any key.");
+                                log_tag("debug_log.txt", "[TREASURE]",
+                                        "Tried Opening a chest in Treasure room with no keys, index %i.\n",
+                                        (*current_room)->index);
                             }
-                            break;
-                            case TREASURE_ARTIFACT: {
-                                Artifact *bagged =
-                                    (Artifact *) (*player)->artifactsBag[(*current_room)->treasure->artifact->
-                                                                 class];
-                                bagged->qty += 1;
-                                (*player)->stats->artifactsfound++;
-                                char msg[100];
-                                sprintf(msg, "You found a %s!", stringFromArtifacts(bagged->class));
-                                enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
-                                log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
-                                *current_room = NULL;
-                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
-                                gui_state->currentScreen = FLOOR_VIEW;
-                            }
-                            break;
+                        }
+                        break;
+                        case TREASURE_CONSUMABLE: {
+                            Consumable *bagged =
+                                (Consumable *) (*player)->consumablesBag[(*current_room)->treasure->
+                                    consumable->class];
+                            bagged->qty += (*current_room)->treasure->consumable->qty;
+                            (*player)->stats->consumablesfound++;
+                            char msg[100];
+                            sprintf(msg, "You found a %s!", stringFromConsumables(bagged->class));
+                            enqueue_notification(msg, 500, S4C_BRIGHT_GREEN, rb_notifications);
+                            log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                            *current_room = NULL;
+                            (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                            gui_state->currentScreen = FLOOR_VIEW;
+                        }
+                        break;
+                        case TREASURE_ARTIFACT: {
+                            Artifact *bagged =
+                                (Artifact *) (*player)->artifactsBag[(*current_room)->treasure->artifact->
+                                    class];
+                            bagged->qty += 1;
+                            (*player)->stats->artifactsfound++;
+                            char msg[100];
+                            sprintf(msg, "You found a %s!", stringFromArtifacts(bagged->class));
+                            enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
+                            log_tag("debug_log.txt", "DEBUG", "%s():    setting current_room to NULL", __func__);
+                            *current_room = NULL;
+                            (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                            gui_state->currentScreen = FLOOR_VIEW;
+                        }
+                        break;
                         }
                     }
                 }
@@ -2213,145 +2214,145 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     }
                     if (group->buttons[j].on) {
                         switch (i) {
-                            case SHOP_LAYOUT_EQUIPS_GROUP: {
-                                if ((*player)->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {
-                                    // TODO: Handle full bag by asking player if we throw something away
-                                    log_tag("debug_log.txt", "[DEBUG]", "%s():    Player equip bag was full. Not buying.", __func__);
-                                    return;
-                                }
-                                Equip* equip = shop->equips[j];
-                                int price = shop->equipPrices[j];
-                                if ((*player)->balance >= price) {
-                                    int slotnum = (*player)->equipsBagOccupiedSlots;
-                                    //We create a deep copy of the equip so we can free the shop without worrying about the memory sharing with the bag.
+                        case SHOP_LAYOUT_EQUIPS_GROUP: {
+                            if ((*player)->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {
+                                // TODO: Handle full bag by asking player if we throw something away
+                                log_tag("debug_log.txt", "[DEBUG]", "%s():    Player equip bag was full. Not buying.", __func__);
+                                return;
+                            }
+                            Equip* equip = shop->equips[j];
+                            int price = shop->equipPrices[j];
+                            if ((*player)->balance >= price) {
+                                int slotnum = (*player)->equipsBagOccupiedSlots;
+                                //We create a deep copy of the equip so we can free the shop without worrying about the memory sharing with the bag.
+                                log_tag("debug_log.txt", "[SHOP]",
+                                        "Buying Equip %s, deep copy stuff.",
+                                        stringFromEquips(equip->class));
+                                //TODO
+                                //Should use a function to avoid refactoring more points when changing Equip generation.
+                                log_tag("debug_log.txt", "[SHOP]",
+                                        "Prepping Equip for purchase, push to raw default_kls.");
+                                kls_log(default_kls, "DEBUG",
+                                        "Prepping Equip for purchase, push to raw default_kls.");
+                                Equip *saved =
+                                    (Equip *) KLS_PUSH_TYPED(default_kls, Equip,
+                                                             HR_Equip, "Equip",
+                                                             "Equip");
+                                Equip *to_save = equip;
+
+                                saved->class = to_save->class;
+                                saved->type = to_save->type;
+                                strcpy(saved->name, to_save->name);
+                                strcpy(saved->desc, to_save->desc);
+                                saved->qty = to_save->qty;
+                                saved->equipped = 0;
+                                saved->level = to_save->level;
+                                saved->atk = to_save->atk;
+                                saved->def = to_save->def;
+                                saved->vel = to_save->vel;
+                                saved->enr = to_save->enr;
+                                saved->bonus = to_save->bonus;
+                                saved->perksCount = 0;	//Will be set during perks copy
+                                saved->qual = to_save->qual;
+                                saved->equip_fun = to_save->equip_fun;
+
+                                for (int k = 0; k < to_save->perksCount; k++) {
                                     log_tag("debug_log.txt", "[SHOP]",
-                                            "Buying Equip %s, deep copy stuff.",
-                                            stringFromEquips(equip->class));
-                                    //TODO
-                                    //Should use a function to avoid refactoring more points when changing Equip generation.
-                                    log_tag("debug_log.txt", "[SHOP]",
-                                            "Prepping Equip for purchase, push to raw default_kls.");
+                                            "Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",
+                                            k, to_save->perksCount);
                                     kls_log(default_kls, "DEBUG",
-                                            "Prepping Equip for purchase, push to raw default_kls.");
-                                    Equip *saved =
-                                        (Equip *) KLS_PUSH_TYPED(default_kls, Equip,
-                                                                 HR_Equip, "Equip",
-                                                                 "Equip");
-                                    Equip *to_save = equip;
-
-                                    saved->class = to_save->class;
-                                    saved->type = to_save->type;
-                                    strcpy(saved->name, to_save->name);
-                                    strcpy(saved->desc, to_save->desc);
-                                    saved->qty = to_save->qty;
-                                    saved->equipped = 0;
-                                    saved->level = to_save->level;
-                                    saved->atk = to_save->atk;
-                                    saved->def = to_save->def;
-                                    saved->vel = to_save->vel;
-                                    saved->enr = to_save->enr;
-                                    saved->bonus = to_save->bonus;
-                                    saved->perksCount = 0;	//Will be set during perks copy
-                                    saved->qual = to_save->qual;
-                                    saved->equip_fun = to_save->equip_fun;
-
-                                    for (int k = 0; k < to_save->perksCount; k++) {
-                                        log_tag("debug_log.txt", "[SHOP]",
-                                                "Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",
-                                                k, to_save->perksCount);
-                                        kls_log(default_kls, "DEBUG",
-                                                "Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",
-                                                k, to_save->perksCount);
-                                        Perk *save_pk =
-                                            (Perk *) KLS_PUSH_TYPED(default_kls, Perk,
-                                                                    HR_Perk, "Perk",
-                                                                    "Perk");
-                                        save_pk->class = to_save->perks[k]->class;
-                                        strcpy(save_pk->name, to_save->perks[k]->name);
-                                        strcpy(save_pk->desc, to_save->perks[k]->desc);
-                                        save_pk->innerValue =
-                                            to_save->perks[k]->innerValue;
-                                        saved->perks[saved->perksCount] = save_pk;
-                                        saved->perksCount++;
-                                    }
-
-                                    for (int k = 0; k < 8; k++) {
-                                        strcpy(saved->sprite[k], to_save->sprite[k]);
-                                    }
-
-                                    (*player)->equipsBag[slotnum] = saved;
-                                    (*player)->equipsBagOccupiedSlots++;
-                                    (*player)->earliestBagSlot = (*player)->equipsBagOccupiedSlots;
-                                    (*player)->balance -= price;
-                                    *current_room = NULL;
-                                    (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
-                                    gui_state->currentScreen = FLOOR_VIEW;
-                                    return; // End of update step
-                                } else {
-                                    //TODO
-                                    //PRINT NOT ENOUGH MONEY
-                                    log_tag("debug_log.txt", "[SHOP]",
-                                            "Buying Equip %s, TODO: Print NOT ENOUGH MONEY.\n",
-                                            stringFromEquips(equip->class));
+                                            "Prepping Perk (%i/%i) for Equip purchase, push to raw default_kls.",
+                                            k, to_save->perksCount);
+                                    Perk *save_pk =
+                                        (Perk *) KLS_PUSH_TYPED(default_kls, Perk,
+                                                                HR_Perk, "Perk",
+                                                                "Perk");
+                                    save_pk->class = to_save->perks[k]->class;
+                                    strcpy(save_pk->name, to_save->perks[k]->name);
+                                    strcpy(save_pk->desc, to_save->perks[k]->desc);
+                                    save_pk->innerValue =
+                                        to_save->perks[k]->innerValue;
+                                    saved->perks[saved->perksCount] = save_pk;
+                                    saved->perksCount++;
                                 }
+
+                                for (int k = 0; k < 8; k++) {
+                                    strcpy(saved->sprite[k], to_save->sprite[k]);
+                                }
+
+                                (*player)->equipsBag[slotnum] = saved;
+                                (*player)->equipsBagOccupiedSlots++;
+                                (*player)->earliestBagSlot = (*player)->equipsBagOccupiedSlots;
+                                (*player)->balance -= price;
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                                return; // End of update step
+                            } else {
+                                //TODO
+                                //PRINT NOT ENOUGH MONEY
+                                log_tag("debug_log.txt", "[SHOP]",
+                                        "Buying Equip %s, TODO: Print NOT ENOUGH MONEY.\n",
+                                        stringFromEquips(equip->class));
+                            }
+                        }
+                        break;
+                        case SHOP_LAYOUT_CONSUMABLES_GROUP: {
+                            Consumable* c = shop->consumables[j];
+                            int price =
+                                shop->consumablePrices[j];
+                            int qty = c->qty;
+                            if ((*player)->balance >= price * qty) {
+                                log_tag("debug_log.txt", "[SHOP]",
+                                        "Buying x%i of Consumable %s.\n", qty,
+                                        stringFromConsumables(c->
+                                                              class));
+                                Consumable *bagged =
+                                    (Consumable *) (*player)->
+                                    consumablesBag[c->class];
+                                bagged->qty += qty;
+                                (*player)->balance -= (qty * price);
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                                return; // End of update step
+                            } else {
+                                //TODO
+                                //PRINT NOT ENOUGH MONEY
+                                log_tag("debug_log.txt", "[SHOP]",
+                                        "Buying Consumable %s, TODO: Print NOT ENOUGH MONEY.\n",
+                                        stringFromConsumables(c->
+                                                              class));
+                            }
+                        }
+                        break;
+                        case SHOP_LAYOUT_OTHERS_GROUP: {
+                            switch (j) {
+                            case BUTTON_LEAVE_SHOP: {
+                                log_tag("debug_log.txt", "[SHOP]",
+                                        "Leaving shop");
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                                return; // End of update step
                             }
                             break;
-                            case SHOP_LAYOUT_CONSUMABLES_GROUP: {
-                                Consumable* c = shop->consumables[j];
-                                int price =
-                                    shop->consumablePrices[j];
-                                int qty = c->qty;
-                                if ((*player)->balance >= price * qty) {
-                                    log_tag("debug_log.txt", "[SHOP]",
-                                            "Buying x%i of Consumable %s.\n", qty,
-                                            stringFromConsumables(c->
-                                                                  class));
-                                    Consumable *bagged =
-                                        (Consumable *) (*player)->
-                                        consumablesBag[c->class];
-                                    bagged->qty += qty;
-                                    (*player)->balance -= (qty * price);
-                                    *current_room = NULL;
-                                    (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
-                                    gui_state->currentScreen = FLOOR_VIEW;
-                                    return; // End of update step
-                                } else {
-                                    //TODO
-                                    //PRINT NOT ENOUGH MONEY
-                                    log_tag("debug_log.txt", "[SHOP]",
-                                            "Buying Consumable %s, TODO: Print NOT ENOUGH MONEY.\n",
-                                            stringFromConsumables(c->
-                                                                  class));
-                                }
+                            case BUTTON_SELL_ALL: {
+                                log_tag("debug_log.txt", "[SHOP]",
+                                        "Selling all Equips");
+                                sell_all_equips(*player);
+                                *current_room = NULL;
+                                (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
+                                gui_state->currentScreen = FLOOR_VIEW;
+                                return; // End of update step
                             }
                             break;
-                            case SHOP_LAYOUT_OTHERS_GROUP: {
-                                switch (j) {
-                                    case BUTTON_LEAVE_SHOP: {
-                                        log_tag("debug_log.txt", "[SHOP]",
-                                                "Leaving shop");
-                                        *current_room = NULL;
-                                        (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
-                                        gui_state->currentScreen = FLOOR_VIEW;
-                                        return; // End of update step
-                                    }
-                                    break;
-                                    case BUTTON_SELL_ALL: {
-                                        log_tag("debug_log.txt", "[SHOP]",
-                                                "Selling all Equips");
-                                        sell_all_equips(*player);
-                                        *current_room = NULL;
-                                        (*current_floor)->roomclass_layout[*current_x][*current_y] = BASIC;
-                                        gui_state->currentScreen = FLOOR_VIEW;
-                                        return; // End of update step
-                                    }
-                                    break;
-                                    default: {
-                                    }
-                                    break;
-                                }
+                            default: {
                             }
                             break;
+                            }
+                        }
+                        break;
                         }
                         group->buttons[j].on = false;
                     }
@@ -2663,38 +2664,38 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             Gui_Button_Group* group = gui_state->debug_fighter_buttons.groups[i];
             int cells_limit = -1;
             switch (i) {
-                case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
-                    cells_limit = SPECIALSMAX+1;
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
-                    cells_limit = FIGHTER_SKILL_SLOTS+1;
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
-                    cells_limit = COUNTERSMAX+1;
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
-                    cells_limit = PERKSMAX+1;
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
-                    cells_limit = EQUIPZONES+1;
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
-                    cells_limit = EQUIPSBAGSIZE+1;
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
-                    cells_limit = CONSUMABLESMAX+1;
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
-                    cells_limit = ARTIFACTSMAX+1;
-                }
-                break;
+            case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                cells_limit = SPECIALSMAX+1;
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                cells_limit = FIGHTER_SKILL_SLOTS+1;
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
+                cells_limit = COUNTERSMAX+1;
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
+                cells_limit = PERKSMAX+1;
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                cells_limit = EQUIPZONES+1;
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                cells_limit = EQUIPSBAGSIZE+1;
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                cells_limit = CONSUMABLESMAX+1;
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                cells_limit = ARTIFACTSMAX+1;
+            }
+            break;
             }
             for (int j = 0; j < cells_limit; j++) {
                 Rectangle cell = {
@@ -2705,38 +2706,38 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 };
                 Color c = RED;
                 switch (i) {
-                    case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
-                        if ((*player)->specials[j] != NULL) c = GREEN;
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
-                        if ((*player)->skills[j] != NULL) c = GREEN;
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
-                        if ((*player)->counters[j] != NULL) c = GREEN;
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
-                        if ((*player)->perks[j] != NULL) c = GREEN;
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
-                        if ((*player)->equipslots[j] != NULL) c = GREEN;
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
-                        if ((*player)->equipsBag[j] != NULL) c = GREEN;
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
-                        if ((*player)->consumablesBag[j] != NULL) c = GREEN;
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
-                        if ((*player)->artifactsBag[j] != NULL) c = GREEN;
-                    }
-                    break;
+                case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                    if ((*player)->specials[j] != NULL) c = GREEN;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                    if ((*player)->skills[j] != NULL) c = GREEN;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
+                    if ((*player)->counters[j] != NULL) c = GREEN;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
+                    if ((*player)->perks[j] != NULL) c = GREEN;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                    if ((*player)->equipslots[j] != NULL) c = GREEN;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                    if ((*player)->equipsBag[j] != NULL) c = GREEN;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                    if ((*player)->consumablesBag[j] != NULL) c = GREEN;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                    if ((*player)->artifactsBag[j] != NULL) c = GREEN;
+                }
+                break;
                 }
                 group->buttons[j].r = cell;
                 group->buttons[j].box_color = c;
@@ -2755,141 +2756,141 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 if (group->buttons[j].on) {
                     group->buttons[j].on = false;
                     switch (i) {
-                        case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
-                            if ((*player)->specials[j] != NULL) {
-                                Specialslot* slot = (*player)->specials[j];
-                                fprintf(stderr, "%s(): Specialslot[%i]: { enabled %i move %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->move, slot->name, slot->desc, slot->cost);
-                            } else {
-                                fprintf(stderr, "%s(): Specialslot[%i]: { NULL }\n", __func__, j);
-                            }
+                    case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                        if ((*player)->specials[j] != NULL) {
+                            Specialslot* slot = (*player)->specials[j];
+                            fprintf(stderr, "%s(): Specialslot[%i]: { enabled %i move %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->move, slot->name, slot->desc, slot->cost);
+                        } else {
+                            fprintf(stderr, "%s(): Specialslot[%i]: { NULL }\n", __func__, j);
                         }
-                        break;
-                        case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
-                            if ((*player)->skills[j] != NULL) {
-                                Skillslot* slot = (*player)->skills[j];
-                                fprintf(stderr, "%s(): Skillslot[%i]: { enabled %i class %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->class, slot->name, slot->desc, slot->cost);
-                            } else {
-                                fprintf(stderr, "%s(): Skillslot[%i]: { NULL }\n", __func__, j);
-                            }
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                        if ((*player)->skills[j] != NULL) {
+                            Skillslot* slot = (*player)->skills[j];
+                            fprintf(stderr, "%s(): Skillslot[%i]: { enabled %i class %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->class, slot->name, slot->desc, slot->cost);
+                        } else {
+                            fprintf(stderr, "%s(): Skillslot[%i]: { NULL }\n", __func__, j);
                         }
-                        break;
-                        case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
-                            if ((*player)->counters[j] != NULL) {
-                                Turncounter* counter = (*player)->counters[j];
-                                if (counter->desc != NULL) {
-                                    fprintf(stderr, "%s(): Turncounters[%i]: { desc %s }\n", __func__, j, counter->desc);
-                                } else {
-                                    fprintf(stderr, "%s(): Turncounters[%i]: { desc NULL }\n", __func__, j);
-                                }
-                                fprintf(stderr, "%s(): Turncounters[%i]: { type %i count %i value %i }\n", __func__, j, counter->type, counter->count, counter->innerValue);
-                                fprintf(stderr,
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
+                        if ((*player)->counters[j] != NULL) {
+                            Turncounter* counter = (*player)->counters[j];
+                            if (counter->desc != NULL) {
+                                fprintf(stderr, "%s(): Turncounters[%i]: { desc %s }\n", __func__, j, counter->desc);
+                            } else {
+                                fprintf(stderr, "%s(): Turncounters[%i]: { desc NULL }\n", __func__, j);
+                            }
+                            fprintf(stderr, "%s(): Turncounters[%i]: { type %i count %i value %i }\n", __func__, j, counter->type, counter->count, counter->innerValue);
+                            fprintf(stderr,
                                     "%s(): Turncounters[%i]: { effect_fun 0x%" PRIxPTR " effect_e_fun 0x%" PRIxPTR " effect_b_fun 0x%" PRIxPTR " effect_fp_fun 0x%" PRIxPTR " }\n",
                                     __func__, j,
                                     (uintptr_t)counter->effect_fun,
                                     (uintptr_t)counter->effect_e_fun,
                                     (uintptr_t)counter->effect_b_fun,
                                     (uintptr_t)counter->effect_fp_fun
-                                );
-                                fprintf(stderr,
+                                   );
+                            fprintf(stderr,
                                     "%s(): Turncounters[%i]: { boost_fun 0x%" PRIxPTR " boost_e_fun 0x%" PRIxPTR " boost_b_fun 0x%" PRIxPTR " boost_fp_fun 0x%" PRIxPTR " }\n",
                                     __func__, j,
                                     (uintptr_t)counter->boost_fun,
                                     (uintptr_t)counter->boost_e_fun,
                                     (uintptr_t)counter->boost_b_fun,
                                     (uintptr_t)counter->boost_fp_fun
-                                );
-                            } else {
-                                fprintf(stderr, "%s(): Turncounters[%i]: { NULL }\n", __func__, j);
-                            }
+                                   );
+                        } else {
+                            fprintf(stderr, "%s(): Turncounters[%i]: { NULL }\n", __func__, j);
                         }
-                        break;
-                        case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
-                            if ((*player)->perks[j] != NULL) {
-                                int class = (*player)->perks[j]->class;
-                                if (class >= 0 && class < PERKSMAX+1) {
-                                    fprintf(stderr, "%s(): Perks[%i]: { class %s }\n", __func__, j, nameStringFromPerk(class));
-                                } else {
-                                    fprintf(stderr, "%s(): Perks[%i]: { class %i }\n", __func__, j, class);
-                                }
-                                fprintf(stderr, "%s(): Perks[%i]: { name %s desc %s}\n", __func__, j, (*player)->perks[j]->name, (*player)->perks[j]->desc);
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
+                        if ((*player)->perks[j] != NULL) {
+                            int class = (*player)->perks[j]->class;
+                            if (class >= 0 && class < PERKSMAX+1) {
+                                fprintf(stderr, "%s(): Perks[%i]: { class %s }\n", __func__, j, nameStringFromPerk(class));
                             } else {
-                                fprintf(stderr, "%s(): Perks[%i]: { NULL }\n", __func__, j);
+                                fprintf(stderr, "%s(): Perks[%i]: { class %i }\n", __func__, j, class);
                             }
+                            fprintf(stderr, "%s(): Perks[%i]: { name %s desc %s}\n", __func__, j, (*player)->perks[j]->name, (*player)->perks[j]->desc);
+                        } else {
+                            fprintf(stderr, "%s(): Perks[%i]: { NULL }\n", __func__, j);
                         }
-                        break;
-                        case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
-                            if ((*player)->equipslots[j] != NULL) {
-                                fprintf(stderr, "%s(): Equipsslot[%i]: { active %i }\n", __func__, j, (*player)->equipslots[j]->active);
-                                Equip* eq = (*player)->equipslots[j]->item;
-                                if (eq != NULL) {
-                                    int class = eq->class;
-                                    if (class >= 0 && class < EQUIPSMAX+1) {
-                                        fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %s }\n", __func__, j, stringFromEquips(class));
-                                    } else {
-                                        fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %i }\n", __func__, j, class);
-                                    }
-                                } else {
-                                    fprintf(stderr, "%s(): Equipslot[%i].item: Equip { NULL }\n", __func__, j);
-                                }
-                            } else {
-                                fprintf(stderr, "%s(): Equipsslot[%i]: { NULL }\n", __func__, j);
-                            }
-                        }
-                        break;
-                        case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
-                            if ((*player)->equipsBag[j] != NULL) {
-                                int class = (*player)->equipsBag[j]->class;
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                        if ((*player)->equipslots[j] != NULL) {
+                            fprintf(stderr, "%s(): Equipsslot[%i]: { active %i }\n", __func__, j, (*player)->equipslots[j]->active);
+                            Equip* eq = (*player)->equipslots[j]->item;
+                            if (eq != NULL) {
+                                int class = eq->class;
                                 if (class >= 0 && class < EQUIPSMAX+1) {
-                                    fprintf(stderr, "%s(): Equipsbag[%i]: { class %s }\n", __func__, j, stringFromEquips(class));
+                                    fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %s }\n", __func__, j, stringFromEquips(class));
                                 } else {
-                                    fprintf(stderr, "%s(): Equipsbag[%i]: { class %i }\n", __func__, j, class);
+                                    fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %i }\n", __func__, j, class);
                                 }
-                                fprintf(stderr, "%s(): Perks [\n", __func__);
-                                for (int perk_idx = 0; perk_idx < EQUIPPERKSMAX; perk_idx++) {
-                                    Perk* perk = (*player)->equipsBag[j]->perks[perk_idx];
-                                    if (perk != NULL) {
-                                        int perk_class = perk->class;
-                                        if (perk_class >= 0 && perk_class < PERKSMAX+1) {
-                                            fprintf(stderr, " [%i] { class %s }\n", perk_idx, nameStringFromPerk(perk_class));
-                                        } else {
-                                            fprintf(stderr, " [%i] { class %i }\n", perk_idx, perk_class);
-                                        }
+                            } else {
+                                fprintf(stderr, "%s(): Equipslot[%i].item: Equip { NULL }\n", __func__, j);
+                            }
+                        } else {
+                            fprintf(stderr, "%s(): Equipsslot[%i]: { NULL }\n", __func__, j);
+                        }
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                        if ((*player)->equipsBag[j] != NULL) {
+                            int class = (*player)->equipsBag[j]->class;
+                            if (class >= 0 && class < EQUIPSMAX+1) {
+                                fprintf(stderr, "%s(): Equipsbag[%i]: { class %s }\n", __func__, j, stringFromEquips(class));
+                            } else {
+                                fprintf(stderr, "%s(): Equipsbag[%i]: { class %i }\n", __func__, j, class);
+                            }
+                            fprintf(stderr, "%s(): Perks [\n", __func__);
+                            for (int perk_idx = 0; perk_idx < EQUIPPERKSMAX; perk_idx++) {
+                                Perk* perk = (*player)->equipsBag[j]->perks[perk_idx];
+                                if (perk != NULL) {
+                                    int perk_class = perk->class;
+                                    if (perk_class >= 0 && perk_class < PERKSMAX+1) {
+                                        fprintf(stderr, " [%i] { class %s }\n", perk_idx, nameStringFromPerk(perk_class));
                                     } else {
-                                        fprintf(stderr, " [%i] {NULL}\n", perk_idx);
+                                        fprintf(stderr, " [%i] { class %i }\n", perk_idx, perk_class);
                                     }
-                                }
-                                fprintf(stderr, "]\n");
-                            } else {
-                                fprintf(stderr, "%s(): Equipsbag[%i]: { NULL }\n", __func__, j);
-                            }
-                        }
-                        break;
-                        case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
-                            if ((*player)->consumablesBag[j] != NULL) {
-                                int class = (*player)->consumablesBag[j]->class;
-                                if (class >= 0 && class < CONSUMABLESMAX+1) {
-                                    fprintf(stderr, "%s(): Consumablesbag[%i]: { class %s }\n", __func__, j, stringFromConsumables(class));
                                 } else {
-                                    fprintf(stderr, "%s(): Consumablesbag[%i]: { class %i }\n", __func__, j, class);
+                                    fprintf(stderr, " [%i] {NULL}\n", perk_idx);
                                 }
-                            } else {
-                                fprintf(stderr, "%s(): Consumablesbag[%i]: { NULL }\n", __func__, j);
                             }
+                            fprintf(stderr, "]\n");
+                        } else {
+                            fprintf(stderr, "%s(): Equipsbag[%i]: { NULL }\n", __func__, j);
                         }
-                        break;
-                        case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
-                            if ((*player)->artifactsBag[j] != NULL) {
-                                int class = (*player)->artifactsBag[j]->class;
-                                if (class >= 0 && class < ARTIFACTSMAX+1) {
-                                    fprintf(stderr, "%s(): Artifactsbag[%i]: { class %s }\n", __func__, j, stringFromArtifacts(class));
-                                } else {
-                                    fprintf(stderr, "%s(): Artifactsbag[%i]: { class %i }\n", __func__, j, class);
-                                }
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                        if ((*player)->consumablesBag[j] != NULL) {
+                            int class = (*player)->consumablesBag[j]->class;
+                            if (class >= 0 && class < CONSUMABLESMAX+1) {
+                                fprintf(stderr, "%s(): Consumablesbag[%i]: { class %s }\n", __func__, j, stringFromConsumables(class));
                             } else {
-                                fprintf(stderr, "%s(): Artifactsbag[%i]: { NULL }\n", __func__, j);
+                                fprintf(stderr, "%s(): Consumablesbag[%i]: { class %i }\n", __func__, j, class);
                             }
+                        } else {
+                            fprintf(stderr, "%s(): Consumablesbag[%i]: { NULL }\n", __func__, j);
                         }
-                        break;
+                    }
+                    break;
+                    case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                        if ((*player)->artifactsBag[j] != NULL) {
+                            int class = (*player)->artifactsBag[j]->class;
+                            if (class >= 0 && class < ARTIFACTSMAX+1) {
+                                fprintf(stderr, "%s(): Artifactsbag[%i]: { class %s }\n", __func__, j, stringFromArtifacts(class));
+                            } else {
+                                fprintf(stderr, "%s(): Artifactsbag[%i]: { class %i }\n", __func__, j, class);
+                            }
+                        } else {
+                            fprintf(stderr, "%s(): Artifactsbag[%i]: { NULL }\n", __func__, j);
+                        }
+                    }
+                    break;
                     }
                 }
             }
@@ -3504,30 +3505,30 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 break;
                 case Doppelganger: {
                     switch (player_class) {
-                        case Knight: {
-                            bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Archer: {
-                            bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Mage: {
-                            bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        case Assassin: {
-                            bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
-                        }
-                        break;
-                        default: {
-                            log_tag("debug_log.txt", "ERROR", "%s():    Unexpected player_class: {%i}", __func__, player_class);
-                            fprintf(stderr, "[ERROR] [%s()]    Unexpected player_class: {%i}\n", __func__, player_class);
-                            kls_free(default_kls);
-                            kls_free(temporary_kls);
-                            exit(EXIT_FAILURE);
-                        }
-                        break;
+                    case Knight: {
+                        bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case Archer: {
+                        bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case Mage: {
+                        bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    case Assassin: {
+                        bs_res = DrawSpriteRect(knight_tapis[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                    }
+                    break;
+                    default: {
+                        log_tag("debug_log.txt", "ERROR", "%s():    Unexpected player_class: {%i}", __func__, player_class);
+                        fprintf(stderr, "[ERROR] [%s()]    Unexpected player_class: {%i}\n", __func__, player_class);
+                        kls_free(default_kls);
+                        kls_free(temporary_kls);
+                        exit(EXIT_FAILURE);
+                    }
+                    break;
                     }
                 }
                 break;
@@ -3562,17 +3563,17 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int tr_r_w = -1;
                 int tr_r_h = -1;
                 switch (current_room->treasure->class) {
-                    case TREASURE_CHEST: {
-                        tr_r_w = ((int)(gui_state.gameScreenWidth * 0.3f)/ (CHEST_COLS-1)) * (CHEST_COLS-1);
-                        tr_r_h = tr_r_w;
-                    }
-                    break;
-                    case TREASURE_CONSUMABLE:
-                    case TREASURE_ARTIFACT: {
-                        tr_r_w = ((int)(gui_state.gameScreenWidth * 0.3f) / 12) * 12;
-                        tr_r_h = ((int)(gui_state.gameScreenHeight * 0.3f) / 8) * 8;
-                    }
-                    break;
+                case TREASURE_CHEST: {
+                    tr_r_w = ((int)(gui_state.gameScreenWidth * 0.3f)/ (CHEST_COLS-1)) * (CHEST_COLS-1);
+                    tr_r_h = tr_r_w;
+                }
+                break;
+                case TREASURE_CONSUMABLE:
+                case TREASURE_ARTIFACT: {
+                    tr_r_w = ((int)(gui_state.gameScreenWidth * 0.3f) / 12) * 12;
+                    tr_r_h = ((int)(gui_state.gameScreenHeight * 0.3f) / 8) * 8;
+                }
+                break;
                 }
                 Rectangle tr_r = {
                     .x = ((gui_state.gameScreenWidth/4)*3 - tr_r_w/2),
@@ -3582,21 +3583,21 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 };
                 int tr_res = -1;
                 switch (current_room->treasure->class) {
-                    case TREASURE_CHEST: {
-                        int frame_height = CHEST_ROWS-1;
-                        int frame_width = CHEST_COLS-1;
+                case TREASURE_CHEST: {
+                    int frame_height = CHEST_ROWS-1;
+                    int frame_width = CHEST_COLS-1;
 
-                        tr_res = DrawSpriteRect(alt_chest_opening[0], tr_r, frame_height, frame_width, tr_r.width/frame_width, palette, PALETTE_S4C_H_TOTCOLORS);
-                    }
-                    break;
-                    case TREASURE_CONSUMABLE: {
-                        tr_res = DrawSpriteRect(consumables_sprites_proper[current_room->treasure->consumable->class], tr_r, 8, 12, tr_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
-                    }
-                    break;
-                    case TREASURE_ARTIFACT: {
-                        tr_res = DrawSpriteRect(artifacts_sprites_proper[current_room->treasure->artifact->class], tr_r, 8, 12, tr_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
-                    }
-                    break;
+                    tr_res = DrawSpriteRect(alt_chest_opening[0], tr_r, frame_height, frame_width, tr_r.width/frame_width, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case TREASURE_CONSUMABLE: {
+                    tr_res = DrawSpriteRect(consumables_sprites_proper[current_room->treasure->consumable->class], tr_r, 8, 12, tr_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
+                case TREASURE_ARTIFACT: {
+                    tr_res = DrawSpriteRect(artifacts_sprites_proper[current_room->treasure->artifact->class], tr_r, 8, 12, tr_r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
                 }
                 if (tr_res != 0) {
                     DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, ColorFromS4CPalette(palette, S4C_RED));
@@ -3634,73 +3635,73 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                         int txt_height = (((int)details_r.height * (i == SHOP_LAYOUT_EQUIPS_GROUP ? 0.1f : 0.2f)) / 20) * 20;
                         Color txt_color = BLACK;
                         switch (i) {
-                            case SHOP_LAYOUT_EQUIPS_GROUP: {
-                                if (j >= shop->equipsCount) {
-                                    continue;
-                                }
-                                Equip* equip = shop->equips[j];
-                                int y_pos = details_r.y + txt_height;
-                                DrawText(TextFormat("$ %i", shop->equipPrices[j]), details_r.x + details_r.width/2 - MeasureText(TextFormat("$ %i", shop->equipPrices[j]), txt_height)/2, y_pos, txt_height, txt_color);
-                                y_pos += txt_height;
-                                DrawText(TextFormat("%s Lv. %i", stringFromEquips(equip->class), equip->level), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s Lv. %i", stringFromEquips(equip->class), equip->level), txt_height)/2, y_pos, txt_height, txt_color);
-                                y_pos += txt_height;
-                                {
-                                    Color qual_txt_color = {0};
-                                    switch (equip->qual) {
-                                        case Bad: {
-                                            qual_txt_color = ColorFromS4CPalette(palette, S4C_RED);
-                                        }
-                                        break;
-                                        case Average: {
-                                            qual_txt_color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
-                                        }
-                                        break;
-                                        case Good: {
-                                            qual_txt_color = ColorFromS4CPalette(palette, S4C_CYAN);
-                                        }
-                                        break;
-                                    }
-                                    DrawText(TextFormat("Qual: %s", stringFromQuality(equip->qual)), details_r.x + details_r.width/2 - MeasureText(TextFormat("Qual: %s", stringFromQuality(equip->qual)), txt_height)/2, y_pos, txt_height, qual_txt_color);
-                                }
-                                y_pos += txt_height;
-                                DrawText(TextFormat("Atk: %i", equip->atk), details_r.x + details_r.width/2 - MeasureText(TextFormat("Atk: %i", equip->atk), txt_height)/2, y_pos, txt_height, txt_color);
-                                y_pos += txt_height;
-                                DrawText(TextFormat("Def: %i", equip->def), details_r.x + details_r.width/2 - MeasureText(TextFormat("Def: %i", equip->def), txt_height)/2, y_pos, txt_height, txt_color);
-                                y_pos += txt_height;
-                                DrawText(TextFormat("Vel: %i", equip->vel), details_r.x + details_r.width/2 - MeasureText(TextFormat("Vel: %i", equip->vel), txt_height)/2, y_pos, txt_height, txt_color);
-                                y_pos += txt_height;
-                                DrawText(TextFormat("Perks: %i", equip->perksCount), details_r.x + details_r.width/2 - MeasureText(TextFormat("Perks: %i", equip->perksCount), txt_height)/2, y_pos, txt_height, txt_color);
-                                for (int perk_idx = 0; perk_idx < equip->perksCount; perk_idx++) {
-                                    y_pos += txt_height;
-                                    DrawText(TextFormat("%s", nameStringFromPerk(equip->perks[perk_idx]->class)), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s", nameStringFromPerk(equip->perks[perk_idx]->class)), txt_height)/2, y_pos, txt_height, txt_color);
-                                }
-                                eq_res = DrawSpriteRect(equips_sprites_proper[equip->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                        case SHOP_LAYOUT_EQUIPS_GROUP: {
+                            if (j >= shop->equipsCount) {
+                                continue;
                             }
-                            break;
-                            case SHOP_LAYOUT_CONSUMABLES_GROUP: {
-                                if (j >= shop->consumablesCount) {
-                                    continue;
+                            Equip* equip = shop->equips[j];
+                            int y_pos = details_r.y + txt_height;
+                            DrawText(TextFormat("$ %i", shop->equipPrices[j]), details_r.x + details_r.width/2 - MeasureText(TextFormat("$ %i", shop->equipPrices[j]), txt_height)/2, y_pos, txt_height, txt_color);
+                            y_pos += txt_height;
+                            DrawText(TextFormat("%s Lv. %i", stringFromEquips(equip->class), equip->level), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s Lv. %i", stringFromEquips(equip->class), equip->level), txt_height)/2, y_pos, txt_height, txt_color);
+                            y_pos += txt_height;
+                            {
+                                Color qual_txt_color = {0};
+                                switch (equip->qual) {
+                                case Bad: {
+                                    qual_txt_color = ColorFromS4CPalette(palette, S4C_RED);
                                 }
-                                Consumable* consumable = shop->consumables[j];
-                                int y_pos = details_r.y + txt_height;
-                                DrawText(TextFormat("$ %i", shop->consumablePrices[j]), details_r.x + details_r.width/2 - MeasureText(TextFormat("$ %i", shop->consumablePrices[j]), txt_height)/2, y_pos, txt_height, txt_color);
+                                break;
+                                case Average: {
+                                    qual_txt_color = ColorFromS4CPalette(palette, S4C_BRIGHT_YELLOW);
+                                }
+                                break;
+                                case Good: {
+                                    qual_txt_color = ColorFromS4CPalette(palette, S4C_CYAN);
+                                }
+                                break;
+                                }
+                                DrawText(TextFormat("Qual: %s", stringFromQuality(equip->qual)), details_r.x + details_r.width/2 - MeasureText(TextFormat("Qual: %s", stringFromQuality(equip->qual)), txt_height)/2, y_pos, txt_height, qual_txt_color);
+                            }
+                            y_pos += txt_height;
+                            DrawText(TextFormat("Atk: %i", equip->atk), details_r.x + details_r.width/2 - MeasureText(TextFormat("Atk: %i", equip->atk), txt_height)/2, y_pos, txt_height, txt_color);
+                            y_pos += txt_height;
+                            DrawText(TextFormat("Def: %i", equip->def), details_r.x + details_r.width/2 - MeasureText(TextFormat("Def: %i", equip->def), txt_height)/2, y_pos, txt_height, txt_color);
+                            y_pos += txt_height;
+                            DrawText(TextFormat("Vel: %i", equip->vel), details_r.x + details_r.width/2 - MeasureText(TextFormat("Vel: %i", equip->vel), txt_height)/2, y_pos, txt_height, txt_color);
+                            y_pos += txt_height;
+                            DrawText(TextFormat("Perks: %i", equip->perksCount), details_r.x + details_r.width/2 - MeasureText(TextFormat("Perks: %i", equip->perksCount), txt_height)/2, y_pos, txt_height, txt_color);
+                            for (int perk_idx = 0; perk_idx < equip->perksCount; perk_idx++) {
                                 y_pos += txt_height;
-                                DrawText(TextFormat("%s", stringFromConsumables(consumable->class)), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s", stringFromConsumables(consumable->class)), txt_height)/2, y_pos, txt_height, txt_color);
-                                y_pos += txt_height;
-                                DrawText(TextFormat("x%i", consumable->qty), details_r.x + details_r.width/2 - MeasureText(TextFormat("x%i", consumable->qty), txt_height)/2, y_pos, txt_height, txt_color);
-                                cs_res = DrawSpriteRect(consumables_sprites_proper[consumable->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                                DrawText(TextFormat("%s", nameStringFromPerk(equip->perks[perk_idx]->class)), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s", nameStringFromPerk(equip->perks[perk_idx]->class)), txt_height)/2, y_pos, txt_height, txt_color);
                             }
-                            break;
-                            case SHOP_LAYOUT_OTHERS_GROUP: {
-                                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+                            eq_res = DrawSpriteRect(equips_sprites_proper[equip->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case SHOP_LAYOUT_CONSUMABLES_GROUP: {
+                            if (j >= shop->consumablesCount) {
+                                continue;
                             }
-                            break;
-                            default: {
-                                log_tag("debug_log.txt", "ERROR", "%s():    Unexpected group for shop_buttons: {%i}", __func__, i);
-                                kls_free(default_kls);
-                                kls_free(temporary_kls);
-                                exit(EXIT_FAILURE);
-                            }
+                            Consumable* consumable = shop->consumables[j];
+                            int y_pos = details_r.y + txt_height;
+                            DrawText(TextFormat("$ %i", shop->consumablePrices[j]), details_r.x + details_r.width/2 - MeasureText(TextFormat("$ %i", shop->consumablePrices[j]), txt_height)/2, y_pos, txt_height, txt_color);
+                            y_pos += txt_height;
+                            DrawText(TextFormat("%s", stringFromConsumables(consumable->class)), details_r.x + details_r.width/2 - MeasureText(TextFormat("%s", stringFromConsumables(consumable->class)), txt_height)/2, y_pos, txt_height, txt_color);
+                            y_pos += txt_height;
+                            DrawText(TextFormat("x%i", consumable->qty), details_r.x + details_r.width/2 - MeasureText(TextFormat("x%i", consumable->qty), txt_height)/2, y_pos, txt_height, txt_color);
+                            cs_res = DrawSpriteRect(consumables_sprites_proper[consumable->class], button.r, 8, 12, button.r.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
+                        }
+                        break;
+                        case SHOP_LAYOUT_OTHERS_GROUP: {
+                            DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
+                        }
+                        break;
+                        default: {
+                            log_tag("debug_log.txt", "ERROR", "%s():    Unexpected group for shop_buttons: {%i}", __func__, i);
+                            kls_free(default_kls);
+                            kls_free(temporary_kls);
+                            exit(EXIT_FAILURE);
+                        }
                         }
                     }
                 }
@@ -4058,7 +4059,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                         int perk_txt_height = 10;
                         DrawText(TextFormat("%s", nameStringFromPerk(perk->class)), slot_r.x, slot_r.y + text_start_y + (8*txt_height) + (2*perk_idx*txt_height), perk_txt_height, RED);
                         DrawText(TextFormat("%s", descStringFromPerk(perk->class)), slot_r.x, slot_r.y + text_start_y + (9*txt_height) + (2*perk_idx*txt_height), perk_txt_height, gui_state.theme.txt_color);
-                    //} else {
+                        //} else {
                         //DrawText("NULL", slot_r.x, slot_r.y + text_start_y + (8*txt_height) + (2*perk_idx*txt_height), txt_height, gui_state.theme.txt_color);
                         //DrawText("NULL desc", slot_r.x, slot_r.y + text_start_y + (9*txt_height) + (2*perk_idx*txt_height), txt_height, gui_state.theme.txt_color);
                     }
@@ -4242,7 +4243,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("ENDING SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS ENTER or TAP to quit the game", 120, 220, 20, gui_state.theme.txt_color);
-        if (game_path->win_condition->current_val >= game_path->win_condition->target_val) {
+        if (gui_state.game_won) {
             DrawText("YOU WON!", 120, 240, 20, GREEN);
         } else {
             DrawText("YOU LOST.", 120, 240, 20, RED);
@@ -4322,38 +4323,38 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             int txt_height = 10;
             const char* txt = NULL;
             switch (i) {
-                case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
-                    txt = TextFormat("SPECIALSLOTS");
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
-                    txt = TextFormat("SKILLSLOTS");
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
-                    txt = TextFormat("TURNCOUNTERS");
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
-                    txt = TextFormat("PERKS");
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
-                    txt = TextFormat("EQUIPSLOTS");
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
-                    txt = TextFormat("EQUIPSBAG");
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
-                    txt = TextFormat("CONSUMABLESBAG");
-                }
-                break;
-                case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
-                    txt = TextFormat("ARTIFACTSBAG");
-                }
-                break;
+            case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                txt = TextFormat("SPECIALSLOTS");
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                txt = TextFormat("SKILLSLOTS");
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
+                txt = TextFormat("TURNCOUNTERS");
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
+                txt = TextFormat("PERKS");
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                txt = TextFormat("EQUIPSLOTS");
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                txt = TextFormat("EQUIPSBAG");
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                txt = TextFormat("CONSUMABLESBAG");
+            }
+            break;
+            case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                txt = TextFormat("ARTIFACTSBAG");
+            }
+            break;
             }
             DrawText(txt, (group->buttons[0].r.x - MeasureText(txt, txt_height))/2, group->buttons[0].r.y + (txt_height/2), txt_height, gui_state.theme.txt_color);
             for (int j = 0; j < group->len; j++) {

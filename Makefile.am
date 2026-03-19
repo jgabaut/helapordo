@@ -220,7 +220,7 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/scripts ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/scripts
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/scripts/save2l ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/scripts/save2l
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/sprites4curses ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/sprites4curses
-	[[ -d ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/s4c-animate ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/s4c-animate
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/src
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/amboso ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/amboso
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo/src
@@ -239,7 +239,7 @@ pack: versioncheck
 	install ./configure.ac ~/helapordo-local/share/$(PACK_NAME)
 	install ./static/palette.gpl ~/helapordo-local/share/$(PACK_NAME)/static/
 	install ./scripts/save2l/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/scripts/save2l/
-	install ./sprites4curses/s4c-animate/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/s4c-animate/
+	install ./sprites4curses/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/src/
 	install ./sprites4curses/LICENSE ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/
 	install ./sprites4curses/README.md ~/helapordo-local/share/$(PACK_NAME)/sprites4curses/
 	install ./amboso/amboso ~/helapordo-local/share/$(PACK_NAME)/amboso/
@@ -294,7 +294,6 @@ uninstall:
 clean:
 	@echo -en "Cleaning build artifacts:  "
 	-rm $(TARGET)
-	-rm sprites4curses/s4c-animate/*.o
 	-rm sprites4curses/src/*.o
 	-rm src/*.o
 	-rm src/build-*/*.o
@@ -315,7 +314,6 @@ clean:
 
 cleanob:
 	@echo -en "Cleaning object build artifacts:  "
-	-rm sprites4curses/s4c-animate/*.o
 	-rm sprites4curses/src/*.o
 	-rm koliseo/src/*.o
 	-rm src/*.o
