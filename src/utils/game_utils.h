@@ -20,7 +20,9 @@
 #define GAME_UTILS_H
 
 #ifndef _WIN32
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 200809L // Needed for getopt
+#endif // _POSIX_C_SOURCE
 #endif // _WIN32
 
 #ifdef HELAPORDO_CURSES_BUILD

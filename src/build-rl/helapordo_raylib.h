@@ -19,7 +19,9 @@
 #define HELAPORDO_H
 
 #ifndef _WIN32
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 200809L
+#endif // _POSIX_C_SOURCE
 #endif
 
 #include "game_rl.h"
