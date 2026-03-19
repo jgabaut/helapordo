@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 */
 #include "ghost_spell.h"
 
-char ghost_spell[61][MAXROWS][MAXCOLS] = {
+char ghost_spell[61][S4C_MAXROWS][S4C_MAXCOLS] = {
 
 	//Frame 1
 	{

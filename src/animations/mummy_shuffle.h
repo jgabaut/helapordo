@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 */
 #ifndef MUMMY_SHUFFLE_S4C_H_
 #define MUMMY_SHUFFLE_S4C_H_
-#define MUMMY_SHUFFLE_S4C_H_VERSION "0.2.2"
+#define MUMMY_SHUFFLE_S4C_H_VERSION "0.2.3"
 #include "../../sprites4curses/src/s4c.h"
 
 /**
  * Declares animation matrix vector for mummy_shuffle.
  */
-extern char mummy_shuffle[61][MAXROWS][MAXCOLS];
+extern char mummy_shuffle[61][S4C_MAXROWS][S4C_MAXCOLS];
 
 #endif

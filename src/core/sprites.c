@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -145,7 +145,7 @@ char consumables_sprites[CONSUMABLESMAX + 1][9][14] = {
     }
 };
 
-char consumables_sprites_proper[CONSUMABLESMAX + 1][9][MAXCOLS] = {
+char consumables_sprites_proper[CONSUMABLESMAX + 1][9][S4C_MAXCOLS] = {
     {
         //Potion
         "111188881111",
@@ -284,7 +284,7 @@ char equips_sprites[EQUIPSMAX + 1][9][15] = {
     }
 };
 
-char equips_sprites_proper[EQUIPSMAX + 1][9][MAXCOLS] = {
+char equips_sprites_proper[EQUIPSMAX + 1][9][S4C_MAXCOLS] = {
 
     {
         //Vest
@@ -390,7 +390,7 @@ char equipzones_sprites[EQUIPZONES + 1][9][15] = {
     },
 };
 
-char equipzones_sprites_proper[EQUIPZONES + 1][9][MAXCOLS] = {
+char equipzones_sprites_proper[EQUIPZONES + 1][9][S4C_MAXCOLS] = {
     {
         //HEAD
         "111111111111",
@@ -505,6 +505,86 @@ char artifacts_sprites[ARTIFACTSMAX + 1][9][15] = {
         "I yyy      I",
     },
 
+};
+
+char artifacts_sprites_proper[ARTIFACTSMAX + 1][9][S4C_MAXCOLS] = {
+    {
+        //THKSKULL
+        "111188881111",
+        "111818188111",
+        "111818188111",
+        "111888888811",
+        "111818181811",
+        "111111118111",
+        "118181818111",
+        "111888881111",
+    },
+    {
+        //TWINKIE
+        "111111111111",
+        "111111144111",
+        "111111444411",
+        "111114444411",
+        "11114444411I",
+        "111448441111",
+        "111144411111",
+        "111111111111",
+    },
+    {
+        //WRISTBAND
+        "111111111111",
+        "111114241111",
+        "111141114111",
+        "111411111411",
+        "111411111411",
+        "111141114111",
+        "111114441111",
+        "111111111111",
+    },
+    {
+        //BOARTAIL
+        "111111111111",
+        "111111122211",
+        "111111221121",
+        "111122211121",
+        "111222111211",
+        "111322111211",
+        "131123111111",
+        "113111111111",
+    },
+    {
+        //CHAOSORB
+        "111111111111",
+        "111155551111",
+        "111555255111",
+        "111555525111",
+        "111511555111",
+        "111551155111",
+        "111155551111",
+        "111111111111",
+    },
+    {
+        //POWERSYPHON
+        "111444444111",
+        "111144441111",
+        "111114411111",
+        "188888888881",
+        "188888888881",
+        "188333322881",
+        "188888888881",
+        "181818888881",
+    },
+    {
+        //GIANTFOSSILE
+        "111114411111",
+        "111114411111",
+        "111111114111",
+        "111144411411",
+        "111144441111",
+        "111444441411",
+        "114444111111",
+        "114441111111",
+    },
 };
 
 char enemies_sprites[ENEMYCLASSESMAX + 1][9][15] = {

@@ -1,3 +1,42 @@
+## [1.4.15] - 2026-03-19
+
+### Added
+
+- Functionality for `Boss`, `Treasure`, `Shop` rooms
+- Add `Gui_Button_Group`, `Gui_Button_Layout`
+- Add `DEBUG_VIEW` for debug
+- Add `STATS_VIEW`
+- Add autosave on entering `Home` rooms, generating new `Floor`
+
+### Changed
+
+- Bump `s4c` to `0.5.0`
+- Fix `make pack`
+- Bump `koliseo` to `0.6.1`
+- Bump `invil` to `0.2.30`
+- Bump `amboso` to `2.1.2`
+- Update `configure.ac` to use `-lX11` for `raylib` build on `linux`, `macOS`
+- Refactor `sell_all_equips()` to reuse old slots
+- Squash bugs and refine things in `raylib` build
+  - Ensure width of animations is divisible by pixel count
+  - Avoid drawing control hints over notifications
+  - Avoid breaking `win_condition`, `player` name and class on debug floor regen
+  - Use `BLACK` for `rb_notifications` rect
+  - Fix crash on leaving `UNLOCK_SPECIAL_VIEW` in the case of last remaining enemy
+  - Fix `CONSUMABLES_VIEW` off-by-one
+  - Update position for buttons in `Enemies` room
+  - Update `roomsDone` when needed
+  - Improved `OPEN_BAG_VIEW`, `EQUIPS_VIEW`
+  - Proper centering of player in `draw_floor_view()`
+  - Ensure `path->length` is initialised properly
+  - Guard debug floor regen with `HELAPORDO_DEBUG_ACCESS`
+- Improve game loading in `raylib` build
+  - Prep `Floor` on load, set `done_loading` in some cases
+  - Call `update_Equipslots()` after loading `Gamestate`
+  - Update `current_x/y` using stored `floor_x/y` from `player`
+- Refactor views to use `Gui_Button_Group`
+- Drop `Gui_Button_Idx`
+
 ## [1.4.14] - 2025-12-28
 
 ### Added

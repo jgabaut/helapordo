@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,9 @@
 #define GAME_UTILS_H
 
 #ifndef _WIN32
+#ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 200809L // Needed for getopt
+#endif // _POSIX_C_SOURCE
 #endif // _WIN32
 
 #ifdef HELAPORDO_CURSES_BUILD
@@ -306,12 +308,12 @@ void updateCounters_Boss(Turncounter * counters[], int isBoss, Fighter * f,
 
 int checkremainder(Fighter * player, int xp);
 int giveXp(Fighter * player, Enemy * e);
-void giveXp_Boss(Fighter * player, Boss * b);
+int giveXp_Boss(Fighter * player, Boss * b);
 int getEnemyXpGain(Enemy * e);
 int getBossXpGain(Boss * b);
 int onLevelUp(Fighter * player);
 int getBoost(int lvl, int luck);
-void sell_all_equips(Fighter * f, Koliseo_Temp * t_kls);
+void sell_all_equips(Fighter * f);
 
 turnOption getTurnChoice(char *ch);
 foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);

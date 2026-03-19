@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -67,7 +67,11 @@ typedef struct GameScreen {
 /**
  * Defines GameScreen type, as an enum.
  */
-typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_VIEW, FLOOR_VIEW, ROOM_VIEW, UNLOCK_SPECIAL_VIEW, PICK_SPECIAL_VIEW, EQUIPS_VIEW, OPEN_BAG_VIEW, CHECK_LOADOUT_VIEW, CONSUMABLES_VIEW, ENDING, DOOR_ANIM } GameScreen;
+typedef enum GameScreen { LOGO = 0, TITLE, SAVES_VIEW, NAMEPICK_VIEW, CLASSPICK_VIEW, FLOOR_VIEW, ROOM_VIEW, UNLOCK_SPECIAL_VIEW, PICK_SPECIAL_VIEW, EQUIPS_VIEW, OPEN_BAG_VIEW, CHECK_LOADOUT_VIEW, CONSUMABLES_VIEW, STATS_VIEW, ENDING, DOOR_ANIM, CHEST_ANIM,
+#ifdef HELAPORDO_DEBUG_ACCESS
+    DEBUG_VIEW
+#endif // HELAPORDO_DEBUG_ACCESS
+} GameScreen;
 // Add more includes for rl-build here
 #ifdef _WIN32
 /**
@@ -372,12 +376,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 14
+#define HELAPORDO_PATCH_VERSION 15
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.14"
+#define VERSION "1.4.15"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
 

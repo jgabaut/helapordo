@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.4.14], [jgabaut@github.com])
+AC_INIT([helapordo], [1.4.15], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -105,7 +105,7 @@ case "${host_os}" in
             build_raylib=yes
             build_curses=no
             AC_SUBST([HELAPORDO_CFLAGS], ["-I/opt/homebrew/opt/raylib/include -DS4C_HAS_ANIMATE -DS4C_RAYLIB_EXTENSION"])
-            AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/raylib/lib -lraylib"])
+            AC_SUBST([HELAPORDO_LDFLAGS], ["-L/opt/homebrew/opt/raylib/lib -lraylib -lX11"])
             AC_SUBST([OS], ["darwin"])
             AC_SUBST([TARGET], ["helapordo"])
             if test "$enable_anvilpick" = "yes"; then
@@ -143,7 +143,7 @@ case "${host_os}" in
             build_raylib=yes
             build_curses=no
             AC_SUBST([HELAPORDO_CFLAGS], ["-DS4C_HAS_ANIMATE -DS4C_RAYLIB_EXTENSION"])
-            AC_SUBST([HELAPORDO_LDFLAGS], ["-lraylib"])
+            AC_SUBST([HELAPORDO_LDFLAGS], ["-lraylib -lX11"])
             AC_SUBST([OS], ["Linux"])
             AC_SUBST([CCOMP], ["gcc"]) #Yes
             AC_SUBST([TARGET], ["helapordo"])
@@ -193,7 +193,7 @@ AM_CONDITIONAL([USE_DEFAULT_BACKGROUND], [test "$enable_default_background" = "y
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.4.14"
+  VERSION="1.4.15"
 fi
 
 # Output variables to the config.h header

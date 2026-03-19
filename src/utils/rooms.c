@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
 int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
                     Fighter *player, loadInfo *load_info,
                     char fighter_sprites[CLASSESMAX +
-                            1][MAXFRAMES][MAXROWS][MAXCOLS],
+                            1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     Koliseo *kls, Koliseo_Temp *t_kls)
 {
     Enemy *dummy_enemy = NULL;
@@ -357,9 +357,9 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
 int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                        Fighter *player, loadInfo *load_info,
                        char enemy_sprites[ENEMYCLASSESMAX +
-                               1][MAXFRAMES][MAXROWS][MAXCOLS],
+                               1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                        char fighter_sprites[CLASSESMAX +
-                               1][MAXFRAMES][MAXROWS][MAXCOLS],
+                               1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                        Koliseo *kls, Koliseo_Temp *t_kls, RingaBuf* rb_notifications)
 {
 
@@ -1343,9 +1343,9 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                     Fighter *player, loadInfo *load_info,
                     char boss_sprites[BOSSCLASSESMAX +
-                                      1][MAXFRAMES][MAXROWS][MAXCOLS],
+                                      1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     char fighter_sprites[CLASSESMAX +
-                            1][MAXFRAMES][MAXROWS][MAXCOLS],
+                            1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     Koliseo *kls, Koliseo_Temp *t_kls, RingaBuf* rb_notifications)
 {
 
@@ -2231,7 +2231,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
                 end_shop = 1;
             } else if ((check = strcmp("Sell Equips", item_name(cur))) == 0) {
                 end_shop = 1;
-                sell_all_equips(f, t_kls);
+                sell_all_equips(f);
             } else if ((check = strcmp("View Equips", item_name(cur))) == 0) {
                 equips_index = 0;
                 while (!end_scrolling && (ec = wgetch(wins[1])) != 'q') {
@@ -2681,7 +2681,7 @@ void open_chest(WINDOW *w, Chest *c, Fighter *f, Koliseo *kls,
     int frame_width = CHEST_COLS;
 
     // Prepare the frames
-    char sprites[MAXFRAMES][MAXROWS][MAXCOLS];
+    char sprites[S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS];
 
     s4c_copy_animation(alt_chest_opening, sprites, num_frames, frame_height,
                        frame_width);
@@ -3119,6 +3119,83 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
     return FIGHTRES_NO_DMG;
 }
 
+#else
+void open_chest(RingaBuf* rb_notifications, Chest *c, Fighter *f, Koliseo *kls,
+                Koliseo_Temp *t_kls)
+{
+    if (c->equipsCount > 0) {
+        for (int i = 0; i < c->equipsCount; i++) {
+            int slotnum = f->equipsBagOccupiedSlots;
+            //We create a deep copy of the equip so we can free the chest without worrying about the memory sharing with the bag.
+            //TODO
+            //Should use a function to avoid refactoring more points when changing Equip generation.
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "Prepping Equip for Chest, push to raw default_kls");
+            kls_log(kls, "DEBUG",
+                    "Prepping Equip for Chest, push to raw default_kls");
+            Equip *saved =
+                (Equip *) KLS_PUSH_TYPED(kls, Equip, HR_Equip, "Equip",
+                                         "Equip");
+            Equip *to_save = c->equips[i];
+
+            saved->class = to_save->class;
+            saved->type = to_save->type;
+            strcpy(saved->name, to_save->name);
+            strcpy(saved->desc, to_save->desc);
+            saved->qty = to_save->qty;
+            saved->equipped = 0;
+            saved->level = to_save->level;
+            saved->atk = to_save->atk;
+            saved->def = to_save->def;
+            saved->vel = to_save->vel;
+            saved->enr = to_save->enr;
+            saved->bonus = to_save->bonus;
+            saved->perksCount = 0;	//Will be set during perks copy
+            saved->qual = to_save->qual;
+            saved->equip_fun = to_save->equip_fun;
+
+            for (int j = 0; j < to_save->perksCount; j++) {
+                log_tag("debug_log.txt", "[SHOP]",
+                        "Prepping Perk (%i/%i) for Equip for Chest.", j,
+                        to_save->perksCount);
+                kls_log(t_kls->kls, "DEBUG",
+                        "Prepping Perk (%i/%i) for Equip for Chest.", j,
+                        to_save->perksCount);
+                Perk *save_pk =
+                    (Perk *) KLS_PUSH_T_TYPED(t_kls, Perk, HR_Perk, "Perk",
+                                              "Perk");
+                save_pk->class = to_save->perks[j]->class;
+                strcpy(save_pk->name, to_save->perks[j]->name);
+                strcpy(save_pk->desc, to_save->perks[j]->desc);
+                save_pk->innerValue = to_save->perks[j]->innerValue;
+                saved->perks[saved->perksCount] = save_pk;
+                saved->perksCount++;
+            }
+
+            for (int j = 0; j < 8; j++) {
+                strcpy(saved->sprite[j], to_save->sprite[j]);
+            }
+
+            f->equipsBag[slotnum] = saved;
+            f->equipsBagOccupiedSlots++;
+            f->earliestBagSlot = f->equipsBagOccupiedSlots;
+            char msg[100];
+            sprintf(msg, "You found a %s!", saved->name);
+            enqueue_notification(msg, 500, S4C_MAGENTA, rb_notifications);
+        }			//End for all equips
+    }				//End if equipsCount > 0
+    if (c->consumablesCount > 0) {
+        for (int i = 0; i < c->consumablesCount; i++) {
+            int num = c->consumables[i]->class;
+            Consumable *consum = (Consumable *) f->consumablesBag[num];
+            consum->qty += c->consumables[i]->qty;
+            f->stats->consumablesfound++;
+            char msg[100];
+            sprintf(msg, "You found a %s!", stringFromConsumables(consum->class));
+            enqueue_notification(msg, 500, S4C_BRIGHT_GREEN, rb_notifications);
+        }			//End for all consumables
+    }
+}
 #endif // HELAPORDO_CURSES_BUILD
 
 /**

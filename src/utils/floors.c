@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1398,17 +1398,17 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, Rectangle *win,
             }
         }
         if (recurse > 0 && cell_x < FLOOR_MAX_COLS - 1)
-            draw_cell(floor, cell_x + 1, cell_y, win, drawcorner_x + 3,
+            draw_cell(floor, cell_x + 1, cell_y, win, drawcorner_x + x_size,
                       drawcorner_y, x_size, y_size, pixelSize, recurse - 1);
         if (recurse > 0 && cell_x > 0)
-            draw_cell(floor, cell_x - 1, cell_y, win, drawcorner_x - 3,
+            draw_cell(floor, cell_x - 1, cell_y, win, drawcorner_x - x_size,
                       drawcorner_y, x_size, y_size, pixelSize, recurse - 1);
         if (recurse > 0 && cell_y < FLOOR_MAX_ROWS - 1)
             draw_cell(floor, cell_x, cell_y + 1, win, drawcorner_x,
-                      drawcorner_y + 3, x_size, y_size, pixelSize, recurse - 1);
+                      drawcorner_y + y_size, x_size, y_size, pixelSize, recurse - 1);
         if (recurse > 0 && cell_y > 0)
             draw_cell(floor, cell_x, cell_y - 1, win, drawcorner_x,
-                      drawcorner_y - 3, x_size, y_size, pixelSize, recurse - 1);
+                      drawcorner_y - y_size, x_size, y_size, pixelSize, recurse - 1);
     } else {
         log_tag("debug_log.txt", "[ERROR]",
                 "draw_cell(): floor->floor_layout[%i][%i] was (%i).", cell_x,
@@ -1434,12 +1434,14 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
     }
     int xSize = 3;
     int ySize = 3;
+    int drawcorner_x = 10;
+    int drawcorner_y = 10;
 
     //Center
-    draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, pixelSize, 3);
+    draw_cell(floor, current_x, current_y, win, drawcorner_x, drawcorner_y, xSize, ySize, pixelSize, 3);
 
     //Draw player char
-    DrawRectangle(win->x + ((FLOOR_MAX_COLS/2 -1)*pixelSize) - pixelSize/2, win->y + ((FLOOR_MAX_ROWS / 2 -1) *pixelSize) - pixelSize/2, pixelSize, pixelSize, ColorFromS4CPalette(palette, S4C_BLUE));
+    DrawRectangle(win->x + (((int)(xSize/2) + drawcorner_x) * (int)pixelSize), win->y + (((int)(ySize/2) + drawcorner_y) * (int)pixelSize), pixelSize, pixelSize, ColorFromS4CPalette(palette, S4C_BLUE));
 }
 
 /**

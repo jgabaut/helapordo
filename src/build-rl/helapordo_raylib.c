@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -381,7 +381,7 @@ void gameloop_rl(int argc, char** argv)
     rb_notifications = rb_new_arr(rb_notifications, notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
     size_t capacity = rb_get_capacity(rb_notifications);
 
-    enqueue_notification("HI", 500, S4C_RED, &rb_notifications);
+    //enqueue_notification("HI", 500, S4C_RED, &rb_notifications);
 
 #ifndef _WIN32
     log_tag("debug_log.txt", "[DEBUG]", "%s():    Prepared notifications ring buffer. Capacity: {%li}", __func__, capacity);
@@ -403,277 +403,29 @@ void gameloop_rl(int argc, char** argv)
     Vector2 mouse = {0};
     Vector2 virtualMouse = {0};
 
-    Gui_Button bt_newgame = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 150, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "New Game",
-        .label_len = strlen("New Game"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_loadgame = {
-        .r = (Rectangle){.x = 300, .y = 100, .width = 150, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Load Game",
-        .label_len = strlen("Load Game"),
-        .box_color = ORANGE,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_namefield = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "",
-        .label_len = 0,
-        .box_color = LIGHTGRAY,
-        .text_color = BLACK,
-    };
-
+    // Prepare txtfield_buttons[BUTTON_NAME_TXTFIELD]
     if (strlen(player_name) > 0) {
         player_name[20] = '\0';
-        memcpy(bt_namefield.label, player_name, 21);
-        bt_namefield.label[20] = '\0';
-        bt_namefield.label_len = strlen(bt_namefield.label);
+        memcpy(txtfield_buttons[BUTTON_NAME_TXTFIELD].label, player_name, 21);
+        txtfield_buttons[BUTTON_NAME_TXTFIELD].label[20] = '\0';
+        txtfield_buttons[BUTTON_NAME_TXTFIELD].label_len = strlen(txtfield_buttons[BUTTON_NAME_TXTFIELD].label);
     }
 
-    Gui_Button bt_slot1 = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 1",
-        .label_len = strlen("Slot 1"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_slot2 = {
-        .r = (Rectangle){.x = 210, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 2",
-        .label_len = strlen("Slot 2"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_slot3 = {
-        .r = (Rectangle){.x = 320, .y = 100, .width = 100, .height = 80},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Slot 3",
-        .label_len = strlen("Slot 3"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_classfield = {
-        .r = (Rectangle){.x = 100, .y = 100, .width = 200, .height = 100},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "",
-        .label_len = 0,
-        .box_color = LIGHTGRAY,
-        .text_color = BLACK,
-    };
-
+    // Prepare txtfield_buttons[BUTTON_CLASS_TXTFIELD]
     if (strlen(class_name) > 0) {
         if ((strcmp(class_name, "Knight") == 0) ||
             (strcmp(class_name, "Archer") == 0) ||
             (strcmp(class_name, "Mage") == 0) ||
             (strcmp(class_name, "Assassin") == 0)) {
             class_name[20] = '\0';
-            memcpy(bt_classfield.label, class_name, 21);
-            bt_classfield.label[20] = '\0';
-            bt_classfield.label_len = strlen(bt_classfield.label);
+            memcpy(txtfield_buttons[BUTTON_CLASS_TXTFIELD].label, class_name, 21);
+            txtfield_buttons[BUTTON_CLASS_TXTFIELD].label[20] = '\0';
+            txtfield_buttons[BUTTON_CLASS_TXTFIELD].label_len = strlen(txtfield_buttons[BUTTON_CLASS_TXTFIELD].label);
         } else {
             log_tag("debug_log.txt", "DEBUG", "%s():    Rejecting invalid class arg {%s}", __func__, class_name);
             fprintf(stderr, "[DEBUG] [%s()]    Rejecting invalid class arg {%s}\n", __func__, class_name);
         }
     }
-
-    Gui_Button bt_class_knight = {
-        .r = (Rectangle){.x = 50, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Knight",
-        .label_len = strlen("Knight"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_class_archer = {
-        .r = (Rectangle){.x = 160, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Archer",
-        .label_len = strlen("Archer"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_class_mage = {
-        .r = (Rectangle){.x = 270, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Mage",
-        .label_len = strlen("Mage"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_class_assassin = {
-        .r = (Rectangle){.x = 380, .y = 100, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Assassin",
-        .label_len = strlen("Assassin"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_fight = {
-        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Fight",
-        .label_len = strlen("Fight"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special = {
-        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Special",
-        .label_len = strlen("Special"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special_unlock_1 = {
-        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "1",
-        .label_len = strlen("1"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special_unlock_2 = {
-        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "2",
-        .label_len = strlen("2"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special_unlock_3 = {
-        .r = (Rectangle){.x = 280, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "3",
-        .label_len = strlen("3"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special_unlock_4 = {
-        .r = (Rectangle){.x = 390, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "4",
-        .label_len = strlen("4"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special_1 = {
-        .r = (Rectangle){.x = 60, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "1",
-        .label_len = strlen("1"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special_2 = {
-        .r = (Rectangle){.x = 170, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "2",
-        .label_len = strlen("2"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special_3 = {
-        .r = (Rectangle){.x = 280, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "3",
-        .label_len = strlen("3"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_special_4 = {
-        .r = (Rectangle){.x = 390, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "4",
-        .label_len = strlen("4"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_equips = {
-        .r = (Rectangle){.x = 280, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Equips",
-        .label_len = strlen("Equips"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_open_bag = {
-        .r = (Rectangle){.x = 60, .y = 125, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Open Bag",
-        .label_len = strlen("Open Bag"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_check_loadout = {
-        .r = (Rectangle){.x = 60, .y = 195, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Loadout",
-        .label_len = strlen("Loadout"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
-
-    Gui_Button bt_consumables = {
-        .r = (Rectangle){.x = 390, .y = 250, .width = 100, .height = 50},
-        .on = false,
-        .state = BUTTON_NORMAL,
-        .label = "Consumables",
-        .label_len = strlen("Consumables"),
-        .box_color = DARKGREEN,
-        .text_color = DARKGRAY,
-    };
 
     Gui_State gui_state = (Gui_State) {
         .scale = scale,
@@ -683,38 +435,24 @@ void gameloop_rl(int argc, char** argv)
         .framesCounter = framesCounter,
         .mouse = mouse,
         .virtualMouse = virtualMouse,
-        .buttons = {
-            [BUTTON_NEW_GAME] = bt_newgame,
-            [BUTTON_LOAD_GAME] = bt_loadgame,
-            [BUTTON_CLASS_TXTFIELD] = bt_classfield,
-            [BUTTON_CLASS_KNIGHT] = bt_class_knight,
-            [BUTTON_CLASS_ARCHER] = bt_class_archer,
-            [BUTTON_CLASS_MAGE] = bt_class_mage,
-            [BUTTON_CLASS_ASSASSIN] = bt_class_assassin,
-            [BUTTON_NAME_TXTFIELD] = bt_namefield,
-            [BUTTON_SAVESLOT_1] = bt_slot1,
-            [BUTTON_SAVESLOT_2] = bt_slot2,
-            [BUTTON_SAVESLOT_3] = bt_slot3,
-            [BUTTON_FIGHT] = bt_fight,
-            [BUTTON_SPECIAL] = bt_special,
-            [BUTTON_EQUIPS] = bt_equips,
-            [BUTTON_CONSUMABLES] = bt_consumables,
-            [BUTTON_OPEN_BAG] = bt_open_bag,
-            [BUTTON_CHECK_LOADOUT] = bt_check_loadout,
-            [BUTTON_SPECIAL_UNLOCK_1] = bt_special_unlock_1,
-            [BUTTON_SPECIAL_UNLOCK_2] = bt_special_unlock_2,
-            [BUTTON_SPECIAL_UNLOCK_3] = bt_special_unlock_3,
-            [BUTTON_SPECIAL_UNLOCK_4] = bt_special_unlock_4,
-            [BUTTON_SPECIAL_1] = bt_special_1,
-            [BUTTON_SPECIAL_2] = bt_special_2,
-            [BUTTON_SPECIAL_3] = bt_special_3,
-            [BUTTON_SPECIAL_4] = bt_special_4,
-        },
         .theme = {
             .bg_color = GRAY,
             .txt_color = DARKGRAY,
         },
         .selectedIndex = 0,
+        .txtfield_buttons = txtfield_buttons_group,
+        .gamepick_buttons = gamepick_buttons_group,
+        .classpick_buttons = classpick_buttons_group,
+        .saveslotpick_buttons = saveslotpick_buttons_group,
+        .shop_buttons = shop_buttons_layout,
+        .fight_buttons = fight_buttons_group,
+        .special_buttons = special_buttons_group,
+        .equips_buttons = equips_buttons_group,
+        .treasure_buttons = treasure_buttons_group,
+#ifdef HELAPORDO_DEBUG_ACCESS
+        .debug_buttons = debug_buttons_group,
+        .debug_fighter_buttons = debug_fighter_buttons_layout,
+#endif // HELAPORDO_DEBUG_ACCESS
     };
 
     int roomsDone = 0;

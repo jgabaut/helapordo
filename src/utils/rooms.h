@@ -1,7 +1,7 @@
 // jgabaut @ github.com/jgabaut
 // SPDX-License-Identifier: GPL-3.0-only
 /*
-    Copyright (C) 2022-2024 jgabaut
+    Copyright (C) 2022-2026 jgabaut
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -38,21 +38,21 @@ void initRoom_Roadfork(Room * r, int roomIndex, Fighter * f,
 int handleRoom_Home(Gamestate * gamestate, Room * room, int index, Path * p,
                     Fighter * player, loadInfo * load_info,
                     char fighter_sprites[CLASSESMAX +
-                            1][MAXFRAMES][MAXROWS][MAXCOLS],
+                            1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     Koliseo * kls, Koliseo_Temp * t_kls);
 int handleRoom_Enemies(Gamestate * gamestate, Room * room, int index, Path * p,
                        Fighter * player, loadInfo * load_info,
                        char enemy_sprites[ENEMYCLASSESMAX +
-                               1][MAXFRAMES][MAXROWS][MAXCOLS],
+                               1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                        char fighter_sprites[CLASSESMAX +
-                               1][MAXFRAMES][MAXROWS][MAXCOLS],
+                               1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                        Koliseo * kls, Koliseo_Temp * t_kls, RingaBuf* rb_notifications);
 int handleRoom_Boss(Gamestate * gamestate, Room * room, int index, Path * p,
                     Fighter * player, loadInfo * load_info,
                     char boss_sprites[BOSSCLASSESMAX +
-                                      1][MAXFRAMES][MAXROWS][MAXCOLS],
+                                      1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     char fighter_sprites[CLASSESMAX +
-                            1][MAXFRAMES][MAXROWS][MAXCOLS],
+                            1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS],
                     Koliseo * kls, Koliseo_Temp * t_kls, RingaBuf* rb_notifications);
 int handleRoom_Shop(Room * room, int roomsDone, Path * path, Fighter * f,
                     Koliseo * kls, Koliseo_Temp * t_kls);
@@ -67,7 +67,7 @@ void open_chest(WINDOW * w, Chest * c, Fighter * f, Koliseo * kls,
 #ifndef HELAPORDO_RAYLIB_BUILD
 #error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
 #else
-void open_chest(Rectangle * notification_area, Chest * c, Fighter * f, Koliseo * kls,
+void open_chest(RingaBuf* rb_notifications, Chest * c, Fighter * f, Koliseo * kls,
                 Koliseo_Temp * t_kls);
 #endif // HELAPORDO_RAYLIB_BUILD
 #endif // HELAPORDO_CURSES_BUILD
