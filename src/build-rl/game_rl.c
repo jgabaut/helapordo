@@ -4205,17 +4205,55 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawRectangle(0, 0, gui_state.gameScreenWidth, gui_state.gameScreenHeight, gui_state.theme.bg_color);
         DrawText(TextFormat("Default Mouse: [%i, %i]", (int)gui_state.mouse.x, (int)gui_state.mouse.y), 350, 25, 20, gui_state.theme.txt_color);
         DrawText(TextFormat("Virtual Mouse: [%i, %i]", (int)gui_state.virtualMouse.x, (int)gui_state.virtualMouse.y), 350, 55, 20, gui_state.theme.txt_color);
-        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, gui_state.gameScreenHeight/2, 20, gui_state.theme.txt_color);
+        DrawText(TextFormat("Current save path: {%s}", current_save_path), 110, gui_state.gameScreenHeight/2 + 40, 20, gui_state.theme.txt_color);
         if (game_path != NULL) {
-            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, gui_state.gameScreenHeight/2 + 20, 20, gui_state.theme.txt_color);
+            DrawText(TextFormat("Current seed: {%s}", game_path->seed), 110, gui_state.gameScreenHeight/2 + 60, 20, gui_state.theme.txt_color);
         }
-        DrawText(TextFormat("Current WinCon: {%s} [%i / %i]", stringFromWinconClass(game_path->win_condition->class), game_path->win_condition->current_val, game_path->win_condition->target_val), 110, gui_state.gameScreenHeight/2 + 40, 20, gui_state.theme.txt_color);
+        DrawText(TextFormat("Current WinCon: {%s} [%i / %i]", stringFromWinconClass(game_path->win_condition->class), game_path->win_condition->current_val, game_path->win_condition->target_val), 110, gui_state.gameScreenHeight/2 + 80, 20, gui_state.theme.txt_color);
         DrawText("DEBUG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER to RETURN to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
+        DrawText("PRESS ENTER to RETURN to FLOOR_VIEW SCREEN", 110, 260, 20, gui_state.theme.txt_color);
 
         for (Gui_Debug_Fighter_Layout_Group_Index i = 0; i < gui_state.debug_fighter_buttons.len; i++) {
             Gui_Button_Group* group = gui_state.debug_fighter_buttons.groups[i];
+            assert(group->len > 0);
+            int txt_height = 10;
+            const char* txt = NULL;
+            switch (i) {
+                case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                    txt = TextFormat("SPECIALSLOTS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                    txt = TextFormat("SKILLSLOTS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
+                    txt = TextFormat("TURNCOUNTERS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
+                    txt = TextFormat("PERKS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                    txt = TextFormat("EQUIPSLOTS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                    txt = TextFormat("EQUIPSBAG");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                    txt = TextFormat("CONSUMABLESBAG");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                    txt = TextFormat("ARTIFACTSBAG");
+                }
+                break;
+            }
+            DrawText(txt, (group->buttons[0].r.x - MeasureText(txt, txt_height))/2, group->buttons[0].r.y + (txt_height/2), txt_height, gui_state.theme.txt_color);
             for (int j = 0; j < group->len; j++) {
                 Gui_Button button = gui_state.debug_fighter_buttons.groups[i]->buttons[j];
                 Rectangle cell = button.r;
@@ -4225,7 +4263,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             }
         }
         int default_kls_r_w = gui_state.gameScreenWidth * 0.5f;
-        int default_kls_r_h = gui_state.gameScreenHeight * 0.1f;
+        int default_kls_r_h = gui_state.gameScreenHeight * 0.05f;
         Rectangle default_kls_r = {
             .x = (gui_state.gameScreenWidth - default_kls_r_w) /2,
             .y = ((gui_state.gameScreenHeight/4) *3) - (default_kls_r_h/2),
