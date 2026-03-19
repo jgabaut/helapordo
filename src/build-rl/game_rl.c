@@ -1408,6 +1408,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             }
         } // End if *current_floor is NULL
 
+        gui_state->framesCounter += 1;    // Count frames
+
 #ifdef HELAPORDO_DEBUG_ACCESS
         if (G_DEBUG_ON == 1) {
             for (Gui_Debug_Group_Button_Index i=0; i < gui_state->debug_buttons.len; i++) {
@@ -1450,9 +1452,6 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 }
             }
         }
-#endif // HELAPORDO_DEBUG_ACCESS
-
-        gui_state->framesCounter += 1;    // Count frames
 
         if (IsKeyPressed(KEY_R)) {
             fprintf(stderr,"%s\n", "Regenerating current floor");
@@ -1579,7 +1578,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, (*game_path)->seed);
             }
-        }
+        } // End of debug floor regen
+#endif // HELAPORDO_DEBUG_ACCESS
+
         if (IsKeyPressed(KEY_UP)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_UP);
