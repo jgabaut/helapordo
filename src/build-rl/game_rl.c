@@ -2619,7 +2619,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             gui_state->selectedIndex = 0;
         }
         if (IsKeyPressed(KEY_DOWN)) {
-            gui_state->selectedIndex += 1;
+            gui_state->selectedIndex = (gui_state->selectedIndex + 1) % (CONSUMABLESMAX+1);
         }
         if (IsKeyPressed(KEY_UP)) {
             if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
@@ -2647,6 +2647,16 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         // TODO: Update ARTIFACTS_VIEW screen variables here!
         if (IsKeyPressed(KEY_Q)) {
             gui_state->currentScreen = (*current_room ? ROOM_VIEW : FLOOR_VIEW);
+            gui_state->selectedIndex = 0;
+        }
+        if (gui_state->selectedIndex >= ARTIFACTSMAX+1) {
+            gui_state->selectedIndex = 0;
+        }
+        if (IsKeyPressed(KEY_DOWN)) {
+            gui_state->selectedIndex = (gui_state->selectedIndex + 1) % (ARTIFACTSMAX+1);
+        }
+        if (IsKeyPressed(KEY_UP)) {
+            if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
         }
     }
     break;
@@ -4372,42 +4382,48 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("ARTIFACTS_VIEW SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
         DrawText("PRESS Q to go back", gui_state.gameScreenWidth*0.6f, gui_state.gameScreenHeight*0.8f, 20, gui_state.theme.txt_color);
-
-        int cell_w = gui_state.gameScreenWidth*0.125f;
-        int cell_h = gui_state.gameScreenHeight*0.2f;
-        int cells_per_row = 3;
-        int fullbox_w = ((ARTIFACTSMAX+1)%(cells_per_row+1))*cell_w;
-        int fullbox_h = cell_h*((ARTIFACTSMAX+1)/cells_per_row);
-        Rectangle fullbox_r = {
-            .x = (gui_state.gameScreenWidth - fullbox_w)*0.5f,
-            .y = (gui_state.gameScreenHeight - cell_h*2)*0.5f,
-            .width = fullbox_w,
-            .height = fullbox_h
+        Rectangle textbox_bounds = (Rectangle) {
+            .x = 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth/2,
+            .height = gui_state.gameScreenHeight/2
         };
-        //DrawRectangleRec(fullbox_r, BLUE);
-        int details_start_x = gui_state.gameScreenWidth*0.1f;
-        int details_start_y = gui_state.gameScreenHeight*0.2f;
-        for (int i = 0; i < ARTIFACTSMAX+1; i++) {
-            Rectangle cell = {
-                .x = fullbox_r.x + ((i%3)*cell_w),
-                .y = fullbox_r.y + ((i/3)*cell_h),
-                .width = cell_w,
-                .height = cell_h
-            };
-            //DrawRectangleRec(cell, BLACK);
-            //DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, RED);
-            if (player->artifactsBag[i]->qty > 0) {
-                DrawSpriteRect(artifacts_sprites_proper[i], cell, 8, 12, cell.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
-                if (CheckCollisionPointRec(gui_state.virtualMouse, cell)) {
-                    int txt_height = 20;
-                    const char* txt = TextFormat("%s", stringFromArtifacts(player->artifactsBag[i]->class));
-                    DrawText(txt, details_start_x, details_start_y, txt_height, gui_state.theme.txt_color);
-                    txt = TextFormat("%s", player->artifactsBag[i]->desc);
-                    DrawText(txt, details_start_x, details_start_y + txt_height, txt_height, gui_state.theme.txt_color);
+        Rectangle descbox_bounds = (Rectangle) {
+            .x = textbox_bounds.x,
+            .y = textbox_bounds.y + textbox_bounds.height,
+            .width = textbox_bounds.width,
+            .height = gui_state.gameScreenHeight/4,
+        };
+        Rectangle spritebox_bounds = (Rectangle) {
+            .x = textbox_bounds.x + textbox_bounds.width + 20,
+            .y = 120,
+            .width = gui_state.gameScreenWidth - textbox_bounds.width - textbox_bounds.x - 40,
+            .height = gui_state.gameScreenHeight/2
+        };
+        int indicator_w = 15;
+        int indicator_h = 15;
+        //DrawRectangleLines(textbox_bounds.x, textbox_bounds.y, textbox_bounds.width, textbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        //DrawRectangleLines(descbox_bounds.x, descbox_bounds.y, descbox_bounds.width, descbox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        //DrawRectangleLines(spritebox_bounds.x, spritebox_bounds.y, spritebox_bounds.width, spritebox_bounds.height, ColorFromS4CPalette(palette, S4C_LIGHT_YELLOW));
+        int selected_index = gui_state.selectedIndex;
+        for (int i=0; i < ARTIFACTSMAX+1; i++) {
+            Artifact* a = player->artifactsBag[i];
+            Color color = gui_state.theme.txt_color;
+            if (i == selected_index) color = RED;
+            const char* txt = "???";
+            if (a->qty > 0) {
+                txt = TextFormat("%s    x%i", stringFromArtifacts(a->class), a->qty);
+            }
+            DrawText(txt, textbox_bounds.x + 20, textbox_bounds.y + 20 * i, 20, color);
+            if (i == selected_index) {
+                DrawRectangle(textbox_bounds.x, textbox_bounds.y + 20*i, indicator_w, indicator_h, gui_state.theme.txt_color);
+                txt = "???";
+                if (a->qty > 0) {
+                    txt = a->desc;
+                    DrawSpriteRect(artifacts_sprites_proper[i], spritebox_bounds, 8, 12, spritebox_bounds.width/12, palette, PALETTE_S4C_H_TOTCOLORS);
                 }
-            } else {
                 int txt_height = 20;
-                DrawText("???", cell.x + (cell.width - MeasureText("???", txt_height))*0.5f, cell.y + (cell.height - txt_height)*0.5f, txt_height, gui_state.theme.txt_color);
+                DrawText(txt, descbox_bounds.x, descbox_bounds.y, txt_height, gui_state.theme.txt_color);
             }
         }
     }
