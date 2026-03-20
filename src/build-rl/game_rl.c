@@ -4557,6 +4557,105 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         break;
         case GUI_DEBUG_FLOOR: {
             DrawText("DEBUG FLOOR", 20, 60, 20, gui_state.theme.txt_color);
+
+            int map_r_w = (((int)gui_state.gameScreenWidth * 0.25f) / FLOOR_MAX_COLS) * FLOOR_MAX_COLS;
+            //int map_r_h = map_r_w;
+            int map_r_h = (((int)gui_state.gameScreenHeight * 0.3f) / FLOOR_MAX_ROWS) * FLOOR_MAX_ROWS;
+            //int group_r_w = (4 * map_r_w); // + (3 * map_x_spacing);
+            //int group_r_h = map_r_h;
+            int group_r_x = 0;
+            int group_r_y = gui_state.gameScreenHeight * 0.15f;
+            //DrawRectangle(group_r_x, group_r_y, group_r_w, group_r_h, RED);
+
+            int cell_w = map_r_w / FLOOR_MAX_COLS;
+            int cell_h = map_r_h / FLOOR_MAX_ROWS;
+            for (int i = 0; i < 4; i++) {
+                Rectangle map_r = {
+                    .x = group_r_x + (i * map_r_w),
+                    .y = group_r_y,
+                    .width = map_r_w,
+                    .height = map_r_h
+                };
+                //DrawRectangleLines(map_r.x, map_r.y, map_r.width, map_r.height, BLUE);
+
+                for (int row_idx = 0; row_idx < FLOOR_MAX_ROWS; row_idx++) {
+                    for (int col_idx = 0; col_idx < FLOOR_MAX_COLS; col_idx++) {
+                        Rectangle cell_r = {
+                            .x = map_r.x + (col_idx * cell_w),
+                            .y = map_r.y + (row_idx * cell_h),
+                            .width = cell_w,
+                            .height = cell_h
+                        };
+                        //DrawRectangleLines(cell_r.x, cell_r.y, cell_r.width, cell_r.height, BLACK);
+                        Color cell_color = BLACK;
+                        switch (i) {
+                        case 0: {
+                            if (current_floor->floor_layout[col_idx][row_idx]) {
+                                cell_color = WHITE;
+                            }
+                        }
+                        break;
+                        case 1: {
+                            if (current_floor->rooms_matrix[col_idx][row_idx] != NULL) {
+                                cell_color = GREEN;
+                            } else {
+                                cell_color = DARKGRAY;
+                            }
+                        }
+                        break;
+                        case 2: {
+                            switch (current_floor->roomclass_layout[col_idx][row_idx]) {
+                            case BASIC: {
+                                cell_color = DARKGRAY;
+                            }
+                            break;
+                            case HOME: {
+                                cell_color = GREEN;
+                            }
+                            break;
+                            case ENEMIES: {
+                                cell_color = ColorFromS4CPalette(palette, S4C_CYAN);
+                            }
+                            break;
+                            case BOSS: {
+                                cell_color = RED;
+                            }
+                            break;
+                            case SHOP: {
+                                cell_color = MAGENTA;
+                            }
+                            break;
+                            case TREASURE: {
+                                cell_color = ORANGE;
+                            }
+                            break;
+                            case ROADFORK: {
+                                cell_color = BLUE;
+                            }
+                            break;
+                            case WALL: {
+                                cell_color = DARKPURPLE;
+                            }
+                            break;
+                            }
+                        }
+                        break;
+                        case 3: {
+                            if (current_floor->explored_matrix[col_idx][row_idx] == 1) {
+                                if (current_floor->roomclass_layout[col_idx][row_idx] != WALL) {
+                                    cell_color = WHITE;
+                                } else {
+
+                                    cell_color = RED;
+                                }
+                            }
+                        }
+                        break;
+                        }
+                        DrawRectangle(cell_r.x, cell_r.y, cell_r.width, cell_r.height, cell_color);
+                    }
+                }
+            }
         }
         break;
         }

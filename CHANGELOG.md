@@ -4,6 +4,8 @@
 
 - Show description in `CONSUMABLES_VIEW`, `EQUIPS_VIEW`
 - Add `ARTIFACTS_VIEW`
+- Add `BUTTON_CYCLE_DEBUG_LAYOUT`, `Gui_Debug_Selection_Index`
+- Add info on `current_floor` to `DEBUG_VIEW`
 
 ## [1.4.16] - 2026-03-19
 
