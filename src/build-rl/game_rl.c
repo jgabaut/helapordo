@@ -1600,17 +1600,17 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         for (Gui_Floor_Group_Button_Index i = 0; i < group.len; i++) {
             group.buttons[i].on = false;
             switch (i) {
-                case BUTTON_ARTIFACTS: {
-                    int bt_w = gui_state->gameScreenWidth*0.2f;
-                    int bt_h = gui_state->gameScreenHeight*0.1f;
-                    group.buttons[i].r = (Rectangle) {
-                        .x = gui_state->gameScreenWidth - (bt_w*2),
-                        .y = (gui_state->gameScreenHeight - bt_h)*0.5f,
-                        .width = bt_w,
-                        .height = bt_h
-                    };
-                }
-                break;
+            case BUTTON_ARTIFACTS: {
+                int bt_w = gui_state->gameScreenWidth*0.2f;
+                int bt_h = gui_state->gameScreenHeight*0.1f;
+                group.buttons[i].r = (Rectangle) {
+                    .x = gui_state->gameScreenWidth - (bt_w*2),
+                    .y = (gui_state->gameScreenHeight - bt_h)*0.5f,
+                    .width = bt_w,
+                    .height = bt_h
+                };
+            }
+            break;
             }
         }
         for (Gui_Floor_Group_Button_Index i = 0; i < group.len; i++) {
@@ -1629,10 +1629,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             if (group.buttons[i].on) {
                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                 switch (i) {
-                    case BUTTON_ARTIFACTS: {
-                        gui_state->currentScreen = ARTIFACTS_VIEW;
-                    }
-                    break;
+                case BUTTON_ARTIFACTS: {
+                    gui_state->currentScreen = ARTIFACTS_VIEW;
+                }
+                break;
                 }
             }
         }
@@ -2744,259 +2744,259 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         }
 
         switch (gui_state->debug_selection) {
-            case GUI_DEBUG_FIGHTER: {
-                int fighter_r_w = gui_state->gameScreenWidth * 0.5f;
-                int fighter_r_h = gui_state->gameScreenHeight * 0.2f;
-                Rectangle fighter_r = {
-                    .x = (gui_state->gameScreenWidth - fighter_r_w) /2,
-                    .y = (gui_state->gameScreenHeight/4) - (fighter_r_h/2),
-                    .width = fighter_r_w,
-                    .height = fighter_r_h
-                };
+        case GUI_DEBUG_FIGHTER: {
+            int fighter_r_w = gui_state->gameScreenWidth * 0.5f;
+            int fighter_r_h = gui_state->gameScreenHeight * 0.2f;
+            Rectangle fighter_r = {
+                .x = (gui_state->gameScreenWidth - fighter_r_w) /2,
+                .y = (gui_state->gameScreenHeight/4) - (fighter_r_h/2),
+                .width = fighter_r_w,
+                .height = fighter_r_h
+            };
 
-                int fighter_inner_r_h = fighter_r.height * 0.25f;
-                int inner_r_y = fighter_r.y;
-                for (Gui_Debug_Fighter_Layout_Group_Index i = 0; i < gui_state->debug_fighter_buttons.len; i++) {
-                    Gui_Button_Group* group = gui_state->debug_fighter_buttons.groups[i];
-                    int cells_limit = -1;
+            int fighter_inner_r_h = fighter_r.height * 0.25f;
+            int inner_r_y = fighter_r.y;
+            for (Gui_Debug_Fighter_Layout_Group_Index i = 0; i < gui_state->debug_fighter_buttons.len; i++) {
+                Gui_Button_Group* group = gui_state->debug_fighter_buttons.groups[i];
+                int cells_limit = -1;
+                switch (i) {
+                case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                    cells_limit = SPECIALSMAX+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                    cells_limit = FIGHTER_SKILL_SLOTS+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
+                    cells_limit = COUNTERSMAX+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
+                    cells_limit = PERKSMAX+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                    cells_limit = EQUIPZONES+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                    cells_limit = EQUIPSBAGSIZE+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                    cells_limit = CONSUMABLESMAX+1;
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                    cells_limit = ARTIFACTSMAX+1;
+                }
+                break;
+                }
+                for (int j = 0; j < cells_limit; j++) {
+                    Rectangle cell = {
+                        .x = fighter_r.x + (j * (fighter_r.width/(cells_limit))),
+                        .y = inner_r_y,
+                        .width = fighter_r.width/(cells_limit),
+                        .height = fighter_inner_r_h,
+                    };
+                    Color c = RED;
                     switch (i) {
                     case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
-                        cells_limit = SPECIALSMAX+1;
+                        if ((*player)->specials[j] != NULL) c = GREEN;
                     }
                     break;
                     case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
-                        cells_limit = FIGHTER_SKILL_SLOTS+1;
+                        if ((*player)->skills[j] != NULL) c = GREEN;
                     }
                     break;
                     case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
-                        cells_limit = COUNTERSMAX+1;
+                        if ((*player)->counters[j] != NULL) c = GREEN;
                     }
                     break;
                     case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
-                        cells_limit = PERKSMAX+1;
+                        if ((*player)->perks[j] != NULL) c = GREEN;
                     }
                     break;
                     case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
-                        cells_limit = EQUIPZONES+1;
+                        if ((*player)->equipslots[j] != NULL) c = GREEN;
                     }
                     break;
                     case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
-                        cells_limit = EQUIPSBAGSIZE+1;
+                        if ((*player)->equipsBag[j] != NULL) c = GREEN;
                     }
                     break;
                     case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
-                        cells_limit = CONSUMABLESMAX+1;
+                        if ((*player)->consumablesBag[j] != NULL) c = GREEN;
                     }
                     break;
                     case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
-                        cells_limit = ARTIFACTSMAX+1;
+                        if ((*player)->artifactsBag[j] != NULL) c = GREEN;
                     }
                     break;
                     }
-                    for (int j = 0; j < cells_limit; j++) {
-                        Rectangle cell = {
-                            .x = fighter_r.x + (j * (fighter_r.width/(cells_limit))),
-                            .y = inner_r_y,
-                            .width = fighter_r.width/(cells_limit),
-                            .height = fighter_inner_r_h,
-                        };
-                        Color c = RED;
+                    group->buttons[j].r = cell;
+                    group->buttons[j].box_color = c;
+                    if (CheckCollisionPointRec(gui_state->virtualMouse, cell)) {
+                        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                            group->buttons[j].state = BUTTON_PRESSED;
+                        } else {
+                            group->buttons[j].state = BUTTON_HOVER;
+                        }
+                        if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                            group->buttons[j].on = true;
+                        }
+                    } else {
+                        group->buttons[j].state = BUTTON_NORMAL;
+                    }
+                    if (group->buttons[j].on) {
+                        group->buttons[j].on = false;
                         switch (i) {
                         case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
-                            if ((*player)->specials[j] != NULL) c = GREEN;
+                            if ((*player)->specials[j] != NULL) {
+                                Specialslot* slot = (*player)->specials[j];
+                                fprintf(stderr, "%s(): Specialslot[%i]: { enabled %i move %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->move, slot->name, slot->desc, slot->cost);
+                            } else {
+                                fprintf(stderr, "%s(): Specialslot[%i]: { NULL }\n", __func__, j);
+                            }
                         }
                         break;
                         case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
-                            if ((*player)->skills[j] != NULL) c = GREEN;
+                            if ((*player)->skills[j] != NULL) {
+                                Skillslot* slot = (*player)->skills[j];
+                                fprintf(stderr, "%s(): Skillslot[%i]: { enabled %i class %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->class, slot->name, slot->desc, slot->cost);
+                            } else {
+                                fprintf(stderr, "%s(): Skillslot[%i]: { NULL }\n", __func__, j);
+                            }
                         }
                         break;
                         case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
-                            if ((*player)->counters[j] != NULL) c = GREEN;
+                            if ((*player)->counters[j] != NULL) {
+                                Turncounter* counter = (*player)->counters[j];
+                                if (counter->desc != NULL) {
+                                    fprintf(stderr, "%s(): Turncounters[%i]: { desc %s }\n", __func__, j, counter->desc);
+                                } else {
+                                    fprintf(stderr, "%s(): Turncounters[%i]: { desc NULL }\n", __func__, j);
+                                }
+                                fprintf(stderr, "%s(): Turncounters[%i]: { type %i count %i value %i }\n", __func__, j, counter->type, counter->count, counter->innerValue);
+                                fprintf(stderr,
+                                        "%s(): Turncounters[%i]: { effect_fun 0x%" PRIxPTR " effect_e_fun 0x%" PRIxPTR " effect_b_fun 0x%" PRIxPTR " effect_fp_fun 0x%" PRIxPTR " }\n",
+                                        __func__, j,
+                                        (uintptr_t)counter->effect_fun,
+                                        (uintptr_t)counter->effect_e_fun,
+                                        (uintptr_t)counter->effect_b_fun,
+                                        (uintptr_t)counter->effect_fp_fun
+                                       );
+                                fprintf(stderr,
+                                        "%s(): Turncounters[%i]: { boost_fun 0x%" PRIxPTR " boost_e_fun 0x%" PRIxPTR " boost_b_fun 0x%" PRIxPTR " boost_fp_fun 0x%" PRIxPTR " }\n",
+                                        __func__, j,
+                                        (uintptr_t)counter->boost_fun,
+                                        (uintptr_t)counter->boost_e_fun,
+                                        (uintptr_t)counter->boost_b_fun,
+                                        (uintptr_t)counter->boost_fp_fun
+                                       );
+                            } else {
+                                fprintf(stderr, "%s(): Turncounters[%i]: { NULL }\n", __func__, j);
+                            }
                         }
                         break;
                         case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
-                            if ((*player)->perks[j] != NULL) c = GREEN;
+                            if ((*player)->perks[j] != NULL) {
+                                int class = (*player)->perks[j]->class;
+                                if (class >= 0 && class < PERKSMAX+1) {
+                                    fprintf(stderr, "%s(): Perks[%i]: { class %s }\n", __func__, j, nameStringFromPerk(class));
+                                } else {
+                                    fprintf(stderr, "%s(): Perks[%i]: { class %i }\n", __func__, j, class);
+                                }
+                                fprintf(stderr, "%s(): Perks[%i]: { name %s desc %s}\n", __func__, j, (*player)->perks[j]->name, (*player)->perks[j]->desc);
+                            } else {
+                                fprintf(stderr, "%s(): Perks[%i]: { NULL }\n", __func__, j);
+                            }
                         }
                         break;
                         case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
-                            if ((*player)->equipslots[j] != NULL) c = GREEN;
+                            if ((*player)->equipslots[j] != NULL) {
+                                fprintf(stderr, "%s(): Equipsslot[%i]: { active %i }\n", __func__, j, (*player)->equipslots[j]->active);
+                                Equip* eq = (*player)->equipslots[j]->item;
+                                if (eq != NULL) {
+                                    int class = eq->class;
+                                    if (class >= 0 && class < EQUIPSMAX+1) {
+                                        fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %s }\n", __func__, j, stringFromEquips(class));
+                                    } else {
+                                        fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %i }\n", __func__, j, class);
+                                    }
+                                } else {
+                                    fprintf(stderr, "%s(): Equipslot[%i].item: Equip { NULL }\n", __func__, j);
+                                }
+                            } else {
+                                fprintf(stderr, "%s(): Equipsslot[%i]: { NULL }\n", __func__, j);
+                            }
                         }
                         break;
                         case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
-                            if ((*player)->equipsBag[j] != NULL) c = GREEN;
+                            if ((*player)->equipsBag[j] != NULL) {
+                                int class = (*player)->equipsBag[j]->class;
+                                if (class >= 0 && class < EQUIPSMAX+1) {
+                                    fprintf(stderr, "%s(): Equipsbag[%i]: { class %s }\n", __func__, j, stringFromEquips(class));
+                                } else {
+                                    fprintf(stderr, "%s(): Equipsbag[%i]: { class %i }\n", __func__, j, class);
+                                }
+                                fprintf(stderr, "%s(): Perks [\n", __func__);
+                                for (int perk_idx = 0; perk_idx < EQUIPPERKSMAX; perk_idx++) {
+                                    Perk* perk = (*player)->equipsBag[j]->perks[perk_idx];
+                                    if (perk != NULL) {
+                                        int perk_class = perk->class;
+                                        if (perk_class >= 0 && perk_class < PERKSMAX+1) {
+                                            fprintf(stderr, " [%i] { class %s }\n", perk_idx, nameStringFromPerk(perk_class));
+                                        } else {
+                                            fprintf(stderr, " [%i] { class %i }\n", perk_idx, perk_class);
+                                        }
+                                    } else {
+                                        fprintf(stderr, " [%i] {NULL}\n", perk_idx);
+                                    }
+                                }
+                                fprintf(stderr, "]\n");
+                            } else {
+                                fprintf(stderr, "%s(): Equipsbag[%i]: { NULL }\n", __func__, j);
+                            }
                         }
                         break;
                         case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
-                            if ((*player)->consumablesBag[j] != NULL) c = GREEN;
+                            if ((*player)->consumablesBag[j] != NULL) {
+                                int class = (*player)->consumablesBag[j]->class;
+                                if (class >= 0 && class < CONSUMABLESMAX+1) {
+                                    fprintf(stderr, "%s(): Consumablesbag[%i]: { class %s }\n", __func__, j, stringFromConsumables(class));
+                                } else {
+                                    fprintf(stderr, "%s(): Consumablesbag[%i]: { class %i }\n", __func__, j, class);
+                                }
+                            } else {
+                                fprintf(stderr, "%s(): Consumablesbag[%i]: { NULL }\n", __func__, j);
+                            }
                         }
                         break;
                         case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
-                            if ((*player)->artifactsBag[j] != NULL) c = GREEN;
+                            if ((*player)->artifactsBag[j] != NULL) {
+                                int class = (*player)->artifactsBag[j]->class;
+                                if (class >= 0 && class < ARTIFACTSMAX+1) {
+                                    fprintf(stderr, "%s(): Artifactsbag[%i]: { class %s qty %i }\n", __func__, j, stringFromArtifacts(class), (*player)->artifactsBag[j]->qty);
+                                } else {
+                                    fprintf(stderr, "%s(): Artifactsbag[%i]: { class %i qty %i }\n", __func__, j, class, (*player)->artifactsBag[j]->qty);
+                                }
+                            } else {
+                                fprintf(stderr, "%s(): Artifactsbag[%i]: { NULL }\n", __func__, j);
+                            }
                         }
                         break;
                         }
-                        group->buttons[j].r = cell;
-                        group->buttons[j].box_color = c;
-                        if (CheckCollisionPointRec(gui_state->virtualMouse, cell)) {
-                            if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
-                                group->buttons[j].state = BUTTON_PRESSED;
-                            } else {
-                                group->buttons[j].state = BUTTON_HOVER;
-                            }
-                            if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
-                                group->buttons[j].on = true;
-                            }
-                        } else {
-                            group->buttons[j].state = BUTTON_NORMAL;
-                        }
-                        if (group->buttons[j].on) {
-                            group->buttons[j].on = false;
-                            switch (i) {
-                            case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
-                                if ((*player)->specials[j] != NULL) {
-                                    Specialslot* slot = (*player)->specials[j];
-                                    fprintf(stderr, "%s(): Specialslot[%i]: { enabled %i move %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->move, slot->name, slot->desc, slot->cost);
-                                } else {
-                                    fprintf(stderr, "%s(): Specialslot[%i]: { NULL }\n", __func__, j);
-                                }
-                            }
-                            break;
-                            case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
-                                if ((*player)->skills[j] != NULL) {
-                                    Skillslot* slot = (*player)->skills[j];
-                                    fprintf(stderr, "%s(): Skillslot[%i]: { enabled %i class %i name %s desc %s cost %i }\n", __func__, j, slot->enabled, slot->class, slot->name, slot->desc, slot->cost);
-                                } else {
-                                    fprintf(stderr, "%s(): Skillslot[%i]: { NULL }\n", __func__, j);
-                                }
-                            }
-                            break;
-                            case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
-                                if ((*player)->counters[j] != NULL) {
-                                    Turncounter* counter = (*player)->counters[j];
-                                    if (counter->desc != NULL) {
-                                        fprintf(stderr, "%s(): Turncounters[%i]: { desc %s }\n", __func__, j, counter->desc);
-                                    } else {
-                                        fprintf(stderr, "%s(): Turncounters[%i]: { desc NULL }\n", __func__, j);
-                                    }
-                                    fprintf(stderr, "%s(): Turncounters[%i]: { type %i count %i value %i }\n", __func__, j, counter->type, counter->count, counter->innerValue);
-                                    fprintf(stderr,
-                                            "%s(): Turncounters[%i]: { effect_fun 0x%" PRIxPTR " effect_e_fun 0x%" PRIxPTR " effect_b_fun 0x%" PRIxPTR " effect_fp_fun 0x%" PRIxPTR " }\n",
-                                            __func__, j,
-                                            (uintptr_t)counter->effect_fun,
-                                            (uintptr_t)counter->effect_e_fun,
-                                            (uintptr_t)counter->effect_b_fun,
-                                            (uintptr_t)counter->effect_fp_fun
-                                           );
-                                    fprintf(stderr,
-                                            "%s(): Turncounters[%i]: { boost_fun 0x%" PRIxPTR " boost_e_fun 0x%" PRIxPTR " boost_b_fun 0x%" PRIxPTR " boost_fp_fun 0x%" PRIxPTR " }\n",
-                                            __func__, j,
-                                            (uintptr_t)counter->boost_fun,
-                                            (uintptr_t)counter->boost_e_fun,
-                                            (uintptr_t)counter->boost_b_fun,
-                                            (uintptr_t)counter->boost_fp_fun
-                                           );
-                                } else {
-                                    fprintf(stderr, "%s(): Turncounters[%i]: { NULL }\n", __func__, j);
-                                }
-                            }
-                            break;
-                            case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
-                                if ((*player)->perks[j] != NULL) {
-                                    int class = (*player)->perks[j]->class;
-                                    if (class >= 0 && class < PERKSMAX+1) {
-                                        fprintf(stderr, "%s(): Perks[%i]: { class %s }\n", __func__, j, nameStringFromPerk(class));
-                                    } else {
-                                        fprintf(stderr, "%s(): Perks[%i]: { class %i }\n", __func__, j, class);
-                                    }
-                                    fprintf(stderr, "%s(): Perks[%i]: { name %s desc %s}\n", __func__, j, (*player)->perks[j]->name, (*player)->perks[j]->desc);
-                                } else {
-                                    fprintf(stderr, "%s(): Perks[%i]: { NULL }\n", __func__, j);
-                                }
-                            }
-                            break;
-                            case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
-                                if ((*player)->equipslots[j] != NULL) {
-                                    fprintf(stderr, "%s(): Equipsslot[%i]: { active %i }\n", __func__, j, (*player)->equipslots[j]->active);
-                                    Equip* eq = (*player)->equipslots[j]->item;
-                                    if (eq != NULL) {
-                                        int class = eq->class;
-                                        if (class >= 0 && class < EQUIPSMAX+1) {
-                                            fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %s }\n", __func__, j, stringFromEquips(class));
-                                        } else {
-                                            fprintf(stderr, "%s(): Equipslot[%i].item: Equip { class %i }\n", __func__, j, class);
-                                        }
-                                    } else {
-                                        fprintf(stderr, "%s(): Equipslot[%i].item: Equip { NULL }\n", __func__, j);
-                                    }
-                                } else {
-                                    fprintf(stderr, "%s(): Equipsslot[%i]: { NULL }\n", __func__, j);
-                                }
-                            }
-                            break;
-                            case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
-                                if ((*player)->equipsBag[j] != NULL) {
-                                    int class = (*player)->equipsBag[j]->class;
-                                    if (class >= 0 && class < EQUIPSMAX+1) {
-                                        fprintf(stderr, "%s(): Equipsbag[%i]: { class %s }\n", __func__, j, stringFromEquips(class));
-                                    } else {
-                                        fprintf(stderr, "%s(): Equipsbag[%i]: { class %i }\n", __func__, j, class);
-                                    }
-                                    fprintf(stderr, "%s(): Perks [\n", __func__);
-                                    for (int perk_idx = 0; perk_idx < EQUIPPERKSMAX; perk_idx++) {
-                                        Perk* perk = (*player)->equipsBag[j]->perks[perk_idx];
-                                        if (perk != NULL) {
-                                            int perk_class = perk->class;
-                                            if (perk_class >= 0 && perk_class < PERKSMAX+1) {
-                                                fprintf(stderr, " [%i] { class %s }\n", perk_idx, nameStringFromPerk(perk_class));
-                                            } else {
-                                                fprintf(stderr, " [%i] { class %i }\n", perk_idx, perk_class);
-                                            }
-                                        } else {
-                                            fprintf(stderr, " [%i] {NULL}\n", perk_idx);
-                                        }
-                                    }
-                                    fprintf(stderr, "]\n");
-                                } else {
-                                    fprintf(stderr, "%s(): Equipsbag[%i]: { NULL }\n", __func__, j);
-                                }
-                            }
-                            break;
-                            case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
-                                if ((*player)->consumablesBag[j] != NULL) {
-                                    int class = (*player)->consumablesBag[j]->class;
-                                    if (class >= 0 && class < CONSUMABLESMAX+1) {
-                                        fprintf(stderr, "%s(): Consumablesbag[%i]: { class %s }\n", __func__, j, stringFromConsumables(class));
-                                    } else {
-                                        fprintf(stderr, "%s(): Consumablesbag[%i]: { class %i }\n", __func__, j, class);
-                                    }
-                                } else {
-                                    fprintf(stderr, "%s(): Consumablesbag[%i]: { NULL }\n", __func__, j);
-                                }
-                            }
-                            break;
-                            case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
-                                if ((*player)->artifactsBag[j] != NULL) {
-                                    int class = (*player)->artifactsBag[j]->class;
-                                    if (class >= 0 && class < ARTIFACTSMAX+1) {
-                                        fprintf(stderr, "%s(): Artifactsbag[%i]: { class %s qty %i }\n", __func__, j, stringFromArtifacts(class), (*player)->artifactsBag[j]->qty);
-                                    } else {
-                                        fprintf(stderr, "%s(): Artifactsbag[%i]: { class %i qty %i }\n", __func__, j, class, (*player)->artifactsBag[j]->qty);
-                                    }
-                                } else {
-                                    fprintf(stderr, "%s(): Artifactsbag[%i]: { NULL }\n", __func__, j);
-                                }
-                            }
-                            break;
-                            }
-                        }
                     }
-                    inner_r_y += fighter_inner_r_h;
                 }
+                inner_r_y += fighter_inner_r_h;
             }
-            break;
-            case GUI_DEBUG_FLOOR: {
-            }
-            break;
+        }
+        break;
+        case GUI_DEBUG_FLOOR: {
+        }
+        break;
         }
     }
     break;
@@ -4503,62 +4503,62 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText(cycle_layout_button.label, cycle_layout_button.r.x + (gui_state.gameScreenWidth * 0.02f), cycle_layout_button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, cycle_layout_button.text_color);
 
         switch (gui_state.debug_selection) {
-            case GUI_DEBUG_FIGHTER: {
-                DrawText("DEBUG FIGHTER", 20, 60, 20, gui_state.theme.txt_color);
-                for (Gui_Debug_Fighter_Layout_Group_Index i = 0; i < gui_state.debug_fighter_buttons.len; i++) {
-                    Gui_Button_Group* group = gui_state.debug_fighter_buttons.groups[i];
-                    assert(group->len > 0);
-                    int txt_height = 10;
-                    const char* txt = NULL;
-                    switch (i) {
-                    case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
-                        txt = TextFormat("SPECIALSLOTS");
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
-                        txt = TextFormat("SKILLSLOTS");
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
-                        txt = TextFormat("TURNCOUNTERS");
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
-                        txt = TextFormat("PERKS");
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
-                        txt = TextFormat("EQUIPSLOTS");
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
-                        txt = TextFormat("EQUIPSBAG");
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
-                        txt = TextFormat("CONSUMABLESBAG");
-                    }
-                    break;
-                    case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
-                        txt = TextFormat("ARTIFACTSBAG");
-                    }
-                    break;
-                    }
-                    DrawText(txt, (group->buttons[0].r.x - MeasureText(txt, txt_height))/2, group->buttons[0].r.y + (txt_height/2), txt_height, gui_state.theme.txt_color);
-                    for (int j = 0; j < group->len; j++) {
-                        Gui_Button button = gui_state.debug_fighter_buttons.groups[i]->buttons[j];
-                        Rectangle cell = button.r;
-                        Color c = button.box_color;
-                        DrawRectangleRec(cell, c);
-                        DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
-                    }
+        case GUI_DEBUG_FIGHTER: {
+            DrawText("DEBUG FIGHTER", 20, 60, 20, gui_state.theme.txt_color);
+            for (Gui_Debug_Fighter_Layout_Group_Index i = 0; i < gui_state.debug_fighter_buttons.len; i++) {
+                Gui_Button_Group* group = gui_state.debug_fighter_buttons.groups[i];
+                assert(group->len > 0);
+                int txt_height = 10;
+                const char* txt = NULL;
+                switch (i) {
+                case DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP: {
+                    txt = TextFormat("SPECIALSLOTS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_SKILLSLOTS_GROUP: {
+                    txt = TextFormat("SKILLSLOTS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_TURNCOUNTERS_GROUP: {
+                    txt = TextFormat("TURNCOUNTERS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_PERKS_GROUP: {
+                    txt = TextFormat("PERKS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSLOTS_GROUP: {
+                    txt = TextFormat("EQUIPSLOTS");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_EQUIPSBAG_GROUP: {
+                    txt = TextFormat("EQUIPSBAG");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_CONSUMABLESBAG_GROUP: {
+                    txt = TextFormat("CONSUMABLESBAG");
+                }
+                break;
+                case DEBUG_FIGHTER_LAYOUT_ARTIFACTSBAG_GROUP: {
+                    txt = TextFormat("ARTIFACTSBAG");
+                }
+                break;
+                }
+                DrawText(txt, (group->buttons[0].r.x - MeasureText(txt, txt_height))/2, group->buttons[0].r.y + (txt_height/2), txt_height, gui_state.theme.txt_color);
+                for (int j = 0; j < group->len; j++) {
+                    Gui_Button button = gui_state.debug_fighter_buttons.groups[i]->buttons[j];
+                    Rectangle cell = button.r;
+                    Color c = button.box_color;
+                    DrawRectangleRec(cell, c);
+                    DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
                 }
             }
-            break;
-            case GUI_DEBUG_FLOOR: {
-                DrawText("DEBUG FLOOR", 20, 60, 20, gui_state.theme.txt_color);
-            }
-            break;
+        }
+        break;
+        case GUI_DEBUG_FLOOR: {
+            DrawText("DEBUG FLOOR", 20, 60, 20, gui_state.theme.txt_color);
+        }
+        break;
         }
 
         int default_kls_r_w = gui_state.gameScreenWidth * 0.5f;
