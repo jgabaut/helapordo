@@ -172,11 +172,19 @@ typedef enum Gui_Floor_Group_Button_Index {
 #ifdef HELAPORDO_DEBUG_ACCESS
 typedef enum Gui_Debug_Group_Button_Index {
     BUTTON_DEBUG,
+    BUTTON_CYCLE_DEBUG_LAYOUT,
 } Gui_Debug_Group_Button_Index;
 
-#define GUI_DEBUG_GROUP_BUTTONS_MAX BUTTON_DEBUG
+#define GUI_DEBUG_GROUP_BUTTONS_MAX BUTTON_CYCLE_DEBUG_LAYOUT
 #define GUI_DEBUG_GROUP_BOX_COLOR GUI_FIGHT_GROUP_BOX_COLOR
 #define GUI_DEBUG_GROUP_TEXT_COLOR GUI_FIGHT_GROUP_TEXT_COLOR
+
+typedef enum Gui_Debug_Selection_Index {
+    GUI_DEBUG_FIGHTER,
+    GUI_DEBUG_FLOOR
+} Gui_Debug_Selection_Index;
+
+#define GUI_DEBUG_SELECTION_MAX GUI_DEBUG_FLOOR
 
 typedef enum Gui_Debug_Fighter_Layout_Group_Index {
     DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP,
@@ -214,6 +222,7 @@ typedef struct Gui_State {
     Gui_Button_Group treasure_buttons;
     Gui_Button_Group floor_buttons;
 #ifdef HELAPORDO_DEBUG_ACCESS
+    Gui_Debug_Selection_Index debug_selection;
     Gui_Button_Group debug_buttons;
     Gui_Button_Layout debug_fighter_buttons;
 #endif // HELAPORDO_DEBUG_ACCESS
