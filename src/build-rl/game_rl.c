@@ -338,6 +338,14 @@ Gui_Button floor_buttons[GUI_FLOOR_GROUP_BUTTONS_MAX+1] = {
         .label_len = ARRAY_SIZE("Artifacts")-1,
         .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
         .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_FLOOR_SAVE] = {
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Save",
+        .label_len = ARRAY_SIZE("Save")-1,
+        .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
+        .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
     }
 };
 Gui_Button_Group floor_buttons_group = {
@@ -1599,19 +1607,14 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         Gui_Button_Group group = gui_state->floor_buttons;
         for (Gui_Floor_Group_Button_Index i = 0; i < group.len; i++) {
             group.buttons[i].on = false;
-            switch (i) {
-            case BUTTON_ARTIFACTS: {
-                int bt_w = gui_state->gameScreenWidth*0.2f;
-                int bt_h = gui_state->gameScreenHeight*0.1f;
-                group.buttons[i].r = (Rectangle) {
-                    .x = gui_state->gameScreenWidth - (bt_w*2),
-                    .y = (gui_state->gameScreenHeight - bt_h)*0.5f,
-                    .width = bt_w,
-                    .height = bt_h
-                };
-            }
-            break;
-            }
+            int bt_w = gui_state->gameScreenWidth*0.2f;
+            int bt_h = gui_state->gameScreenHeight*0.1f;
+            group.buttons[i].r = (Rectangle) {
+                .x = gui_state->gameScreenWidth - (bt_w*2),
+                .y = (gui_state->gameScreenHeight - bt_h)*0.5f + (i * bt_h),
+                .width = bt_w,
+                .height = bt_h
+            };
         }
         for (Gui_Floor_Group_Button_Index i = 0; i < group.len; i++) {
             if (CheckCollisionPointRec(gui_state->virtualMouse, group.buttons[i].r)) {
@@ -1631,6 +1634,30 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 switch (i) {
                 case BUTTON_ARTIFACTS: {
                     gui_state->currentScreen = ARTIFACTS_VIEW;
+                }
+                break;
+                case BUTTON_FLOOR_SAVE: {
+                    // Save
+                    {
+                        Enemy *dummy_enemy = NULL;
+                        Boss *dummy_boss = NULL;
+                        FILE *dummy_savefile = NULL;
+                        Rectangle rect = {0};
+                        RingaBuf *dummy_rb = NULL;
+                        foeTurnOption_OP dummy_foe_op = FOE_OP_INVALID;
+                        skillType dummy_skill_pick = -1;
+                        //Declare turnOP_args
+                        turnOP_args *args =
+                            init_turnOP_args(*gamestate, *player, *game_path, *current_room, load_info, dummy_enemy,
+                                             dummy_boss, dummy_savefile, &rect, *floor_kls,
+                                             dummy_foe_op, dummy_skill_pick, dummy_rb);
+
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Skipping preparing save file path", __func__);
+                        turnOP(turnOP_from_turnOption(SAVE), args, default_kls, *floor_kls);
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Done save.", __func__);
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    G_RNG_ADVANCEMENTS == {%" PRId64 "}", __func__, G_RNG_ADVANCEMENTS);
+                        log_tag("debug_log.txt", "[DEBUG]", "%s():    Seed: {%s}", __func__, (*game_path)->seed);
+                    }
                 }
                 break;
                 }

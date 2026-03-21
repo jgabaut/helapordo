@@ -3,6 +3,7 @@
 ### Added
 
 - Support `WASD`
+- Add `Save` button to `FLOOR_VIEW`
 
 ### Changed
 
