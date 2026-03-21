@@ -1,3 +1,9 @@
+## [1.4.19] - Unreleased
+
+### Changed
+
+- Show status in `Enemies`, `Boss` rooms
+
 ## [1.4.18] - 2026-03-21
 
 ### Added

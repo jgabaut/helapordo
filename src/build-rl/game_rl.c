@@ -3343,7 +3343,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int en_frame_W = pl_frame_W;
                 int en_frame_H = pl_frame_H;
                 float stats_label_W = gui_state.gameScreenWidth * 0.18f;
-                float stats_label_H = stats_label_W;
+                float stats_label_H = stats_label_W *1.4f;
                 Rectangle stats_label_r = CLITERAL(Rectangle) {
                     gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
                                               en_rect_Y,
@@ -3400,7 +3400,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
                 Enemy* enemy = current_room->enemies[gamestate->current_enemy_index];
                 assert(enemy != NULL);
-                int stats_height = stats_label_r.height * 0.135f;
+                int stats_height = stats_label_r.height * 0.117f;
                 Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
                 DrawText(TextFormat("%i  Hp  %i", enemy->hp, player->hp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Hp  %i", enemy->hp, player->hp), stats_height)/2)), (int)stats_label_r.y + stats_height /2, stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + (stats_height*3/2), stats_height, stats_txt_color);
@@ -3409,6 +3409,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + (stats_height*9/2), stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + (stats_height*11/2), stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + (stats_height*13/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%s %s", stringFromStatus(enemy->status), stringFromStatus(player->status)), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%s %s", stringFromStatus(enemy->status), stringFromStatus(player->status)), stats_height)/2)), (int)stats_label_r.y + (stats_height*15/2), stats_height, stats_txt_color);
 
                 DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
                 int name_height = pr_name_r.height * 0.6f;
@@ -3523,7 +3524,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int bs_frame_W = pl_frame_W;
                 int bs_frame_H = pl_frame_H;
                 float stats_label_W = gui_state.gameScreenWidth * 0.18f;
-                float stats_label_H = stats_label_W;
+                float stats_label_H = stats_label_W * 1.4f;
                 Rectangle stats_label_r = CLITERAL(Rectangle) {
                     gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
                                               bs_rect_Y,
@@ -3580,7 +3581,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
                 Boss* boss = current_room->boss;
                 assert(boss != NULL);
-                int stats_height = stats_label_r.height * 0.135f;
+                int stats_height = stats_label_r.height * 0.117f;
                 Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
                 DrawText(TextFormat("%i  Hp  %i", boss->hp, player->hp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Hp  %i", boss->hp, player->hp), stats_height)/2)), (int)stats_label_r.y + stats_height /2, stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Atk  %i", boss->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", boss->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + (stats_height*3/2), stats_height, stats_txt_color);
@@ -3589,6 +3590,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("%i/%i Enr %i/%i", boss->energy, boss->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", boss->energy, boss->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + (stats_height*9/2), stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Lvl  %i", boss->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", boss->level, player->level), stats_height)/2)), (int)stats_label_r.y + (stats_height*11/2), stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Xp  %i/%i", boss->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", boss->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + (stats_height*13/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%s %s", stringFromStatus(boss->status), stringFromStatus(player->status)), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%s %s", stringFromStatus(boss->status), stringFromStatus(player->status)), stats_height)/2)), (int)stats_label_r.y + (stats_height*15/2), stats_height, stats_txt_color);
 
                 DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
                 int name_height = pr_name_r.height * 0.6f;
