@@ -2746,8 +2746,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
 #ifdef HELAPORDO_DEBUG_ACCESS
     case DEBUG_VIEW: {
-        // Press Enter to change to FLOOR_VIEW screen
-        if (IsKeyPressed(KEY_ENTER)) {
+        // Press Enter or Q to change to FLOOR_VIEW screen
+        if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_Q)) {
             gui_state->currentScreen = FLOOR_VIEW;
         }
         int cycle_button_w = gui_state->gameScreenWidth * 0.2f;
@@ -4536,7 +4536,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText(TextFormat("Current WinCon: {%s} [%i / %i]", stringFromWinconClass(game_path->win_condition->class), game_path->win_condition->current_val, game_path->win_condition->target_val), 110, gui_state.gameScreenHeight/2 + 80, 20, gui_state.theme.txt_color);
         DrawText("DEBUG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER to RETURN to FLOOR_VIEW SCREEN", 110, 260, 20, gui_state.theme.txt_color);
+        DrawText("PRESS Q or ENTER to RETURN to FLOOR_VIEW screen", 110, 260, 20, gui_state.theme.txt_color);
 
         Gui_Button cycle_layout_button = gui_state.debug_buttons.buttons[BUTTON_CYCLE_DEBUG_LAYOUT];
         Rectangle cycle_cell = cycle_layout_button.r;

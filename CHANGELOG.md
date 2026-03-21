@@ -3,6 +3,7 @@
 ### Changed
 
 - Show status in `Enemies`, `Boss` rooms
+- Accept `KEY_Q` to quit `DEBUG_VIEW`
 
 ## [1.4.18] - 2026-03-21
 
