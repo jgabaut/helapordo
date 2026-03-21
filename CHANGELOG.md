@@ -1,3 +1,15 @@
+## [1.4.18] - 2026-03-21
+
+### Added
+
+- Support `WASD`
+- Add `Save` button to `FLOOR_VIEW`
+
+### Changed
+
+- Fix shop buttons being stuck
+- Set `KEY_F7` for quitting instead of `KEY_ESC`
+
 ## [1.4.17] - 2026-03-21
 
 ### Added
