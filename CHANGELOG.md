@@ -8,6 +8,7 @@
 ### Changed
 
 - Fix shop buttons being stuck
+- Set `KEY_F7` for quitting instead of `KEY_ESC`
 
 ## [1.4.17] - 2026-03-21
 

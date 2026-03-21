@@ -353,7 +353,8 @@ void gameloop_rl(int argc, char** argv)
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
 
-    InitWindow(windowWidth, windowHeight, "helapordo raylib test");
+    InitWindow(windowWidth, windowHeight, "helapordo - raylib build");
+    SetExitKey(KEY_F7);
     SetWindowMinSize(320, 240);
 
     int gameScreenWidth = 640;
