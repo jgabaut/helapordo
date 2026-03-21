@@ -1,3 +1,13 @@
+## [1.4.18] - 2026-03-21
+
+### Added
+
+- Support `WASD`
+
+### Changed
+
+- Fix shop buttons being stuck
+
 ## [1.4.17] - 2026-03-21
 
 ### Added

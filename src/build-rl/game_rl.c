@@ -1637,7 +1637,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             }
         }
 
-        if (IsKeyPressed(KEY_UP)) {
+        if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_UP);
             (*player)->floor_x = *current_x;
@@ -1648,7 +1648,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 break;
             }
         }
-        if (IsKeyPressed(KEY_DOWN)) {
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_DOWN);
             (*player)->floor_x = *current_x;
@@ -1659,7 +1659,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 break;
             }
         }
-        if (IsKeyPressed(KEY_LEFT)) {
+        if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_LEFT);
             (*player)->floor_x = *current_x;
@@ -1670,7 +1670,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                 break;
             }
         }
-        if (IsKeyPressed(KEY_RIGHT)) {
+        if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) {
             step_floor(*current_floor, current_x,
                        current_y, KEY_RIGHT);
             (*player)->floor_x = *current_x;
@@ -2269,6 +2269,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         group->buttons[j].state = BUTTON_NORMAL;
                     }
                     if (group->buttons[j].on) {
+                        group->buttons[j].on = false;
                         switch (i) {
                         case SHOP_LAYOUT_EQUIPS_GROUP: {
                             if ((*player)->equipsBagOccupiedSlots >= EQUIPSBAGSIZE) {
@@ -2564,10 +2565,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (gui_state->selectedIndex >= (*player)->equipsBagOccupiedSlots) {
             gui_state->selectedIndex = 0;
         }
-        if (IsKeyPressed(KEY_DOWN)) {
+        if (IsKeyPressed(KEY_DOWN || IsKeyPressed(KEY_S))) {
             gui_state->selectedIndex += 1;
         }
-        if (IsKeyPressed(KEY_UP)) {
+        if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
             if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
         }
         if (IsKeyPressed(KEY_ENTER)) {
@@ -2618,10 +2619,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (gui_state->selectedIndex >= CONSUMABLESMAX+1) {
             gui_state->selectedIndex = 0;
         }
-        if (IsKeyPressed(KEY_DOWN)) {
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
             gui_state->selectedIndex = (gui_state->selectedIndex + 1) % (CONSUMABLESMAX+1);
         }
-        if (IsKeyPressed(KEY_UP)) {
+        if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
             if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
         }
         if (IsKeyPressed(KEY_ENTER)) {
@@ -2652,10 +2653,10 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (gui_state->selectedIndex >= ARTIFACTSMAX+1) {
             gui_state->selectedIndex = 0;
         }
-        if (IsKeyPressed(KEY_DOWN)) {
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
             gui_state->selectedIndex = (gui_state->selectedIndex + 1) % (ARTIFACTSMAX+1);
         }
-        if (IsKeyPressed(KEY_UP)) {
+        if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
             if (gui_state->selectedIndex > 0) gui_state->selectedIndex -= 1;
         }
     }

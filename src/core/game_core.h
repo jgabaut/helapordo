@@ -376,12 +376,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 16
+#define HELAPORDO_PATCH_VERSION 18
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.17"
+#define VERSION "1.4.18"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
 
