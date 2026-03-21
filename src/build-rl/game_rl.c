@@ -331,6 +331,14 @@ Gui_Button_Group treasure_buttons_group = {
 };
 
 Gui_Button floor_buttons[GUI_FLOOR_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_FLOOR_EQUIPS] = {
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Equips",
+        .label_len = ARRAY_SIZE("Equips")-1,
+        .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
+        .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
+    },
     [BUTTON_ARTIFACTS] = {
         .on = false,
         .state = BUTTON_NORMAL,
@@ -344,6 +352,14 @@ Gui_Button floor_buttons[GUI_FLOOR_GROUP_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Save",
         .label_len = ARRAY_SIZE("Save")-1,
+        .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
+        .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_FLOOR_STATS] = {
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Stats",
+        .label_len = ARRAY_SIZE("Stats")-1,
         .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
         .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
     }
@@ -1605,13 +1621,15 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 #endif // HELAPORDO_DEBUG_ACCESS
 
         Gui_Button_Group group = gui_state->floor_buttons;
+        int bt_w = gui_state->gameScreenWidth*0.2f;
+        int bt_h = gui_state->gameScreenHeight*0.1f;
+        int bt_start_y = gui_state->gameScreenHeight*0.125f;
+        int bt_y_spacing = bt_h * 0.25f;
         for (Gui_Floor_Group_Button_Index i = 0; i < group.len; i++) {
             group.buttons[i].on = false;
-            int bt_w = gui_state->gameScreenWidth*0.2f;
-            int bt_h = gui_state->gameScreenHeight*0.1f;
             group.buttons[i].r = (Rectangle) {
                 .x = gui_state->gameScreenWidth - (bt_w*2),
-                .y = (gui_state->gameScreenHeight - bt_h)*0.5f + (i * bt_h),
+                .y = bt_start_y + (i * (bt_h + bt_y_spacing)),
                 .width = bt_w,
                 .height = bt_h
             };
@@ -1632,8 +1650,16 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             if (group.buttons[i].on) {
                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                 switch (i) {
+                case BUTTON_FLOOR_EQUIPS: {
+                    gui_state->currentScreen = EQUIPS_VIEW;
+                }
+                break;
                 case BUTTON_ARTIFACTS: {
                     gui_state->currentScreen = ARTIFACTS_VIEW;
+                }
+                break;
+                case BUTTON_FLOOR_STATS: {
+                    gui_state->currentScreen = STATS_VIEW;
                 }
                 break;
                 case BUTTON_FLOOR_SAVE: {
@@ -2543,7 +2569,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case EQUIPS_VIEW: {
         if (IsKeyPressed(KEY_Q)) {
-            gui_state->currentScreen = ROOM_VIEW;
+            gui_state->currentScreen = (*current_room ? ROOM_VIEW : FLOOR_VIEW);
         }
         // TODO: Update EQUIPS_VIEW screen variables here!
 
@@ -3270,8 +3296,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         }
 
         Rectangle floor_r = CLITERAL(Rectangle) {
-            gui_state.gameScreenHeight *0.1f,
-                                       gui_state.gameScreenWidth *0.1f,
+            gui_state.gameScreenWidth *0.1f,
+                                       gui_state.gameScreenHeight *0.125f,
                                        (FLOOR_MAX_COLS-1) * (gui_state.gameScreenWidth*0.02f),
                                        (FLOOR_MAX_ROWS-1) * (gui_state.gameScreenWidth*0.02f),
         };

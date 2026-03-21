@@ -1,5 +1,9 @@
 ## [1.4.19] - Unreleased
 
+### Added
+
+- Add `Equips`, `Stats` button to `FLOOR_VIEW`
+
 ### Changed
 
 - Show status in `Enemies`, `Boss` rooms
