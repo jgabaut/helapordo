@@ -219,8 +219,6 @@ int onLevelUp(Fighter * player);
 void sell_all_equips(Fighter * f);
 
 turnOption getTurnChoice(char *ch);
-foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
-foeTurnOption bossTurnPick(Boss * b, Fighter * f);
 void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 

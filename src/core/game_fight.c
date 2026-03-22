@@ -2233,6 +2233,102 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
     return res;
 }
 
+/**
+ * Returns a randomised pick as foeTurnOption.
+ * @param e Pointer to the enemy to pick for.
+ * @param f Pointer to the target fighter.
+ * @return The chosen foeturnOption value representing turn action.
+ */
+foeTurnOption enemyTurnPick(Enemy *e, Fighter *f)
+{
+    if (e == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "enemyTurnPick():  Enemy was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    if (f == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "enemyTurnPick():  Fighter was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    foeTurnOption pick = FOE_INVALID;
+
+    while (pick == FOE_INVALID) {
+        int rn = hlpd_rand() % 101;
+        /*
+           if (rn > 80) {
+           //TODO
+           //pick = FOE_SPECIAL;
+           pick = FOE_IDLE;
+
+           } else
+         */
+        if (rn > 40) {
+            pick = FOE_FIGHT;
+        } else {
+            pick = FOE_IDLE;
+        }
+    }
+
+    log_tag("debug_log.txt", "[FOETURNOPTION]", "Pick was: ( %i ) [ %s ]", pick,
+            stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
+
+    if (pick == FOE_INVALID) {
+        fprintf(stderr, "Error: unexpected turn choice value");
+        log_tag("debug_log.txt", "[ERROR]",
+                "Unexpected turn choice in enemyTurnPick(), quitting");
+        exit(EXIT_FAILURE);
+    }
+    return pick;
+}
+
+/**
+ * Returns a randomised pick as foeTurnOption.
+ * @param b Pointer to the boss to pick for.
+ * @param f Pointer to the target fighter.
+ * @return The chosen foeturnOption value representing turn action.
+ */
+foeTurnOption bossTurnPick(Boss *b, Fighter *f)
+{
+    if (b == NULL) {
+        log_tag("debug_log.txt", "[ERROR]", "bossTurnPick():  Boss was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    if (f == NULL) {
+        log_tag("debug_log.txt", "[ERROR]",
+                "bossTurnPick():  Fighter was NULL.");
+        exit(EXIT_FAILURE);
+    }
+    foeTurnOption pick = FOE_INVALID;
+
+    while (pick == FOE_INVALID) {
+        int rn = hlpd_rand() % 101;
+        /*
+           if (rn > 80) {
+           //TODO
+           //pick = FOE_SPECIAL;
+           pick = FOE_IDLE;
+           } else
+         */
+        if (rn > 40) {
+            pick = FOE_FIGHT;
+        } else {
+            pick = FOE_IDLE;
+        }
+    }
+
+    log_tag("debug_log.txt", "[FOETURNOPTION]", "Pick was: ( %i ) [ %s ]", pick,
+            stringFromFoeTurnOP(foeTurnOP_from_foeTurnOption(pick)));
+
+    if (pick == FOE_INVALID) {
+        fprintf(stderr, "Error: unexpected turn choice value");
+        log_tag("debug_log.txt", "[ERROR]",
+                "Unexpected turn choice in enemyTurnPick(), quitting");
+        exit(EXIT_FAILURE);
+    }
+    return pick;
+}
+
 fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, Koliseo * kls)
 {
 

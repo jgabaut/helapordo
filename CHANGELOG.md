@@ -9,7 +9,7 @@
 - Move `utils/game_init` to `core/game_init`
 - Move `utils/specials` to `core/specials`
 - Move `setSprite` functions `core/sprites`
-- Move `applyStatus`, `getBoost`, `statReset` functions `core/game_fight`
+- Move `applyStatus`, `getBoost`, `statReset`, `foeTurnPick` functions `core/game_fight`
 - Move `G_USE_CURRENTDIR` to `core/game_core`
 - Move `G_GODMODE_ON` to `core/game_fight`
 - Move `G_RNG_ADVANCEMENTS` to `core/game_rng`

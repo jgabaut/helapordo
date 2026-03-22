@@ -59,6 +59,8 @@ int boss_fight(Fighter * player, Boss * b, Path * p,
 
 int boss_attack(Boss * b, Fighter * target, Path * p,
                 Koliseo * kls, RingaBuf* rb_notifications);
+foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
+foeTurnOption bossTurnPick(Boss * b, Fighter * f);
 fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, Koliseo * kls);
 fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, Koliseo * kls);
 
