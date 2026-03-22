@@ -6,6 +6,7 @@
 - Build `helapordo_core.o` separately from `core`
 - Move `core/game_animations` to `animations/game_animations`
 - Move `setSprite` functions `core/sprites`
+- Move `G_USE_CURRENTDIR` to `core/game_core`
 
 ## [1.4.19] - 2026-03-22
 

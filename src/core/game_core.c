@@ -18,6 +18,8 @@
 #define RINGABUF_IMPLEMENTATION
 #include "game_core.h"
 
+int G_USE_CURRENTDIR = 0;
+
 const char* helapordo_title_string = "     __  __  ____  __     ______  _____   ______  ____    _____    ______\n\
     / / / / / __/ / /    / __  / / __  / / __  / / __ \\  / __  \\  / __  /\n\
    / /_/ / / /_  / /    / / / / / /_/ / / / / / / /_/ / / / /  / / / / /\n\
