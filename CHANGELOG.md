@@ -3,6 +3,7 @@
 ### Changed
 
 - Extract `core/game_log` and `core/game_strings` from `utils/game_utils`
+- Build `helapordo_core.o` separately from `core`
 
 ## [1.4.19] - 2026-03-22
 

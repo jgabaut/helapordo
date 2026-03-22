@@ -54,13 +54,15 @@ endif
 # Compiler flags
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11 -DHELAPORDO_BUILD_STR=\"$(HL_BUILD_STR)\" -DHELAPORDO_OS=\"$(OS)\" -DHELAPORDO_MACHINE=\"$(MACHINE)\"
 
+helapordo_core_SOURCES = src/core/game_core.c src/core/game_strings.c src/core/game_log.c src/core/game_animations.c src/core/equips.c src/core/sprites.c src/core/game_lore.c src/core/game_lore_alt.c
+
 if USE_ANVIL_BUILD
 helapordo_SOURCES = src/anvil__helapordo.c
 else
 helapordo_SOURCES =
 endif
 
-helapordo_SOURCES += src/core/game_core.c src/core/game_strings.c src/core/game_log.c src/utils/game_utils.c src/core/game_animations.c src/utils/game_init.c src/utils/game_fight.c src/utils/game_debug.c src/core/equips.c src/ser/ser_core.c src/utils/saves.c src/utils/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/utils/specials.c src/main.c src/core/sprites.c src/utils/floors.c sprites4curses/src/s4c.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/core/game_lore.c src/core/game_lore_alt.c src/palette.c src/bsp/bsp.c src/release_data/release_data.c
+helapordo_SOURCES += src/utils/game_utils.c src/utils/game_init.c src/utils/game_fight.c src/utils/game_debug.c src/ser/ser_core.c src/utils/saves.c src/utils/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/utils/specials.c src/main.c src/utils/floors.c sprites4curses/src/s4c.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/palette.c src/bsp/bsp.c src/release_data/release_data.c
 
 if DEBUG_BUILD
 helapordo_SOURCES += koliseo/src/kls_region.c
@@ -93,7 +95,7 @@ else
 hlpd_save2l_SOURCES =
 endif
 
-hlpd_save2l_SOURCES += src/core/game_core.c src/core/game_strings.c src/core/game_log.c src/core/sprites.c src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c sprites4curses/src/s4c.c src/palette.c src/core/equips.c
+hlpd_save2l_SOURCES += src/utils/game_utils.c scripts/save2l/save2l.c src/ser/ser_core.c sprites4curses/src/s4c.c src/palette.c
 
 if DEBUG_BUILD
 hlpd_save2l_SOURCES += koliseo/src/kls_region.c
@@ -134,6 +136,11 @@ endif
 	python3 -m sprites4curses.s4c-scripts.s4c.core.palette C-header $(PALETTE_PATH) .. > ./src/palette.h
 	@echo -e "\033[1;33mDone.\e[0m"
 
+helapordo_core.o: $(helapordo_core_SOURCES:.c=.o)
+	@echo -e "\033[1;35m[Makefile]\e[0m    Linking \"$@\":"
+	$(CCOMP) -r -o $@ $^
+	@echo -e "\033[1;33mDone.\e[0m"
+
 # Build rule for object files
 %.o: %.c
 	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
@@ -142,17 +149,17 @@ endif
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Build rule for the final binary
-$(TARGET): $(helapordo_SOURCES:.c=.o)
+$(TARGET): helapordo_core.o $(helapordo_SOURCES:.c=.o)
 	@echo -e "    \033[1;35mAM_CFLAGS\e[0m: [ \"\033[1;34m$(AM_CFLAGS)\e[0m\" ]"
 	@echo -e "    \033[1;35mAM_LDFLAGS\e[0m: [ \"\033[1;34m$(AM_LDFLAGS)\e[0m\" ]"
 	@echo -e "    \033[1;35mLDADD\e[0m: [ \"\033[1;34m$(LDADD)\e[0m\" ]"
 	@echo -en "\033[1;34m[Makefile]    Building [\033[1;35m $@ \033[1;34m]:\e[0m  "
-	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) $(helapordo_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
+	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) helapordo_core.o $(helapordo_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
 
-./hlpd-save2l: $(hlpd_save2l_SOURCES:.c=.o)
+./hlpd-save2l: helapordo_core.o $(hlpd_save2l_SOURCES:.c=.o)
 	@echo -en "\033[1;34m[Makefile]    Building [\033[1;35m $@ \033[1;34m]:\e[0m  "
-	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) $(hlpd_save2l_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
+	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) helapordo_core.o $(hlpd_save2l_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Targets for additional rules
