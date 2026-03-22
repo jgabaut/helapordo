@@ -1,3 +1,9 @@
+## [1.4.20] - Unreleased
+
+### Changed
+
+- Extract `core/game_log` and `core/game_strings` from `utils/game_utils`
+
 ## [1.4.19] - 2026-03-22
 
 ### Added

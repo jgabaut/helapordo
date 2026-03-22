@@ -55,11 +55,12 @@
 #endif
 
 #include <string.h>
-#include <sys/stat.h>
 #include <time.h>
 #include <inttypes.h>
 #include <signal.h>
 #include "../core/game_core.h"
+#include "../core/game_log.h"
+#include "../core/game_strings.h"
 #ifdef HELAPORDO_CURSES_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 #ifdef ANVIL_BUILD
@@ -76,7 +77,6 @@ void printGlobVars(void);
 
 #ifdef _WIN32
 void printWin_EnvVars(void);
-void log_Win_EnvVars(void);
 #endif
 
 void red(void);
@@ -95,7 +95,6 @@ void cyan(void);
 void lightCyan(void);
 
 void init_game_color_pairs(void);
-void resolve_staticPath(char static_path[500]);
 
 void dbg_print_floor_layout(Floor * floor);
 void dbg_print_explored_layout(Floor * floor);
@@ -128,48 +127,11 @@ void printFormattedVersion(const char *progname);
 void hlpd_dbg_features(void);
 
 void usage(const char *progname);
-void log_tag(char *filename, char *header, const char *format, ...);
-void log_OP(turnOption_OP op);
 
 saveType saveTypeFrom_string(char *s);
-const char *stringFrom_HLPD_DirectionalKeys_Schema(int dks);
-char *stringFrom_HLPD_KeyClass(HLPD_KeyClass k);
-char *stringFrom_HLP_Region_Type(HLP_Region_Type t);
-char *stringFrom_OP_res(OP_res r);
-char *stringFrom_saveType(saveType s);
-char *stringFrom_fightResult(fightResult fr);
-char *stringFromTurnOP(turnOption_OP t);
-char *stringFromFoeTurnOP(foeTurnOption_OP ft);
-char *stringFromStatus(fighterStatus s);
-char *stringFromClass(fighterClass f);
-char *stringFromEClass(enemyClass e);
-char *stringFromBossClass(bossClass b);
-char *stringFromConsumables(int c);
-char *stringFromEquips(int e);
-char *stringFromEquipzones(int z);
-char *stringFromQuality(int q);
-char *stringFromArtifacts(int a);
-char *stringFromFloorclass(floorClass fc);
-
-char *descStringFromSpecial(fighterClass class, specialMove move);
-char *nameStringFromSpecial(fighterClass class, specialMove move);
 int costFromSpecial(fighterClass class, specialMove move);
 
-char *descStringFromSkill(skillType class);
-char *nameStringFromSkill(skillType class);
 int costFromSkill(skillType class);
-
-char *nameStringFromPerk(int p);
-char *descStringFromPerk(int p);
-
-char *descStringFromTreasure(int t);
-char *descStringFromChest(int c);
-
-char *stringFromWinconClass(winconClass w);
-
-char *stringFromFoePartyClass(foePartyClass fp);
-char *stringFromRoom(roomClass r);
-char *stringFromGamemode(Gamemode g);
 
 void scanName(Fighter * player);
 
@@ -329,7 +291,6 @@ void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1]);
 bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
 
 #define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )
-void hlpd_reset_logfile(void);
 void hlpd_use_forced_flags(const char* whoami);
 int display_colorpairs(void);
 int hlpd_getopt(size_t argc, char** argv, const char* whoami);

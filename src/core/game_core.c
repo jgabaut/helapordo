@@ -624,3 +624,70 @@ const GameOptions default_GameOptions = {
     .do_autosave = true,
     .directional_keys_schema = HLPD_ARROW_KEYS,
 };
+
+/**
+ * Sets the passed char array to the expected path for /static/ folder.
+ * @param static_path The array that will hold path to static folder.
+ */
+void resolve_staticPath(char static_path[500])
+{
+    char homedir_path[200];
+#ifndef _WIN32
+    sprintf(homedir_path, "%s", getenv("HOME"));
+#else
+    sprintf(homedir_path, "%s", getenv("UserProfile"));
+#endif
+
+#ifndef _WIN32
+    const char *static_folder_path_wd = "./";
+#else
+    const char *static_folder_path_wd = ".\\";
+#endif
+
+#ifndef _WIN32
+    const char *local_install_static_folder_path = "/helapordo-local/";
+#else
+    const char *local_install_static_folder_path = "\\helapordo-local\\";
+#endif
+    char static_folder_path_global[500];
+    sprintf(static_folder_path_global, "%s", homedir_path);
+    strncat(static_folder_path_global, local_install_static_folder_path, 50);
+    struct stat sb;
+
+    if (G_USE_CURRENTDIR == 1 ) {
+        if (stat(static_folder_path_wd, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+            //sprintf(msg, "[DEBUG]    resolve_staticPath(): Found \"/static/\" dir in working directory (%s).\n",static_folder_path_wd);
+            strcpy(static_path, static_folder_path_wd);
+        } else {
+            fprintf(stderr, "\n[ERROR]    Can't find static dir. Quitting.\n");
+            fprintf(stderr, "\nWorking static dir at: (%s).\n",
+                    static_folder_path_wd);
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        //sprintf(msg, "[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in working directory (%s). Will try \"%s/helapordo-local/static/\".\n", static_folder_path_wd, homedir_path);
+        if (stat(static_folder_path_global, &sb) == 0 && S_ISDIR(sb.st_mode)) {
+            //sprintf(msg, "[DEBUG]    resolve_staticPath(): Found \"/static/\" dir in global directory: \"%s/helapordo-local/static/\".\n", homedir_path);
+            strcpy(static_path, static_folder_path_global);
+        } else {
+#ifndef _WIN32
+            int mkdir_global_res = mkdir(static_folder_path_global, 0777);
+#else
+            int mkdir_global_res = mkdir(static_folder_path_global);
+#endif
+            if (mkdir_global_res != 0) {
+                //sprintf(msg,"[DEBUG]    resolve_staticPath(): Can't find \"/static/\" dir in \"%s/helapordo-local/static/\". Quitting.\n", homedir_path);
+                fprintf(stderr, "\n[ERROR]    Can't find static dir. Quitting.\n");
+                fprintf(stderr, "\nHome dir at: (%s).\n", homedir_path);
+                fprintf(stderr, "\nGlobal static dir at: (%s).\n",
+                        static_folder_path_global);
+                fprintf(stderr, "\nWorking static dir at: (%s).\n",
+                        static_folder_path_wd);
+                exit(EXIT_FAILURE);
+            } else {
+                fprintf(stderr, "%s():    Could not find {%s} at first, so it was created.\n", __func__, static_folder_path_global);
+                strcpy(static_path, static_folder_path_global);
+            }
+        }
+    }
+}

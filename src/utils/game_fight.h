@@ -19,6 +19,7 @@
 #ifndef GAME_FIGHT_H_
 #define GAME_FIGHT_H_
 
+#include "../core/game_log.h"
 #include "game_utils.h"
 
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,

@@ -39,7 +39,8 @@
 #include "../animations/enter_door.h"
 #include "../animations/alt_chest_opening.h"
 
-#include "../utils/game_utils.h"
+#include "../core/game_log.h"
+#include "../core/game_strings.h"
 
 void hlpd_load_fighter_animations(char fighter_sprites[CLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS]);
 void hlpd_load_enemy_animations(char enemy_sprites[ENEMYCLASSESMAX+1][S4C_MAXFRAMES][S4C_MAXROWS][S4C_MAXCOLS]);

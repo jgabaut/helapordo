@@ -29,6 +29,8 @@
 
 #include "../../ringabuf/src/ringabuf.h"
 
+#include <sys/stat.h>
+
 #ifdef HELAPORDO_CURSES_BUILD
 #ifdef _WIN32
 #include <ncursesw/panel.h>
@@ -376,12 +378,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 19
+#define HELAPORDO_PATCH_VERSION 20
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.19"
+#define VERSION "1.4.20"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
 
@@ -2229,4 +2231,5 @@ typedef struct Notification {
 
 #define NOTIFICATIONS_RINGBUFFER_SIZE 7 /**< Defines the size for notifications ringbuffer. */
 
+void resolve_staticPath(char static_path[500]);
 #endif // GAME_CORE_H
