@@ -61,6 +61,7 @@
 #include "../core/game_core.h"
 #include "../core/game_log.h"
 #include "../core/game_strings.h"
+#include "../core/game_rng.h"
 #ifdef HELAPORDO_CURSES_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 #ifdef ANVIL_BUILD
@@ -280,12 +281,6 @@ foeTurnOption bossTurnPick(Boss * b, Fighter * f);
 void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 void setCounter(Turncounter * c, int turns);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
-
-int hlpd_rand_docount(bool count);
-int hlpd_rand(void);
-unsigned long hlpd_hash(unsigned char *str);
-void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1]);
-bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
 
 #define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )
 void hlpd_use_forced_flags(const char* whoami);

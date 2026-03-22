@@ -54,7 +54,7 @@ endif
 # Compiler flags
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11 -DHELAPORDO_BUILD_STR=\"$(HL_BUILD_STR)\" -DHELAPORDO_OS=\"$(OS)\" -DHELAPORDO_MACHINE=\"$(MACHINE)\"
 
-helapordo_core_SOURCES = src/core/game_core.c src/core/game_strings.c src/core/game_log.c src/core/equips.c src/core/sprites.c src/core/game_lore.c src/core/game_lore_alt.c
+helapordo_core_SOURCES = src/core/game_core.c src/core/game_strings.c src/core/game_log.c src/core/game_rng.c src/core/equips.c src/core/sprites.c src/core/game_lore.c src/core/game_lore_alt.c
 
 if USE_ANVIL_BUILD
 helapordo_SOURCES = src/anvil__helapordo.c
