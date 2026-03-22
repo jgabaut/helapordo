@@ -2618,7 +2618,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (gui_state->selectedIndex >= (*player)->equipsBagOccupiedSlots) {
             gui_state->selectedIndex = 0;
         }
-        if (IsKeyPressed(KEY_DOWN || IsKeyPressed(KEY_S))) {
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
             gui_state->selectedIndex += 1;
         }
         if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {

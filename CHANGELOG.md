@@ -9,6 +9,7 @@
 - Show status in `Enemies`, `Boss` rooms
 - Accept `KEY_Q` to quit `DEBUG_VIEW`
 - Fix `Twinkie` sprite
+- Fix `OPEN_BAG_VIEW` stuck keys
 
 ## [1.4.18] - 2026-03-21
 
