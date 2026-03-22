@@ -17,18 +17,458 @@
 */
 #include "game_fight.h"
 
+int G_GODMODE_ON = 0;
+
+/**
+ * Takes a Turncounter pointer and an integer.
+ * If the count value at the pointer is 0 (counter is inactive), the turns valueis assigned.
+ * @see Turncounter
+ * @param c The Turncounter whose count value will be set.
+ * @param turns The value to be assigned.
+ */
+void setCounter(Turncounter *c, int turns)
+{
+
+    if (c->count == 0) {	// Counter is NOT already active
+        c->count = turns;
+    } else {
+        //Handle counters already activ
+    }
+}
+
+/**
+ * Takes two integers for level to calc against and luck, and returns the boost relative to the level with luck variations, as an integer.
+ * At level 1, returns 0.
+ * @param lvl The level to check the boost against.
+ * @param luck The luck value to influence calcs.
+ * @return int The boost for any given stat, at the level passed as argument.
+ */
+int getBoost(int lvl, int luck)
+{
+
+    float boost = (lvl * 1.25F) + ((luck % 2) * 2);
+
+    if (lvl < 2) {
+        boost = 1.0;		// Evitare conflitti
+    }
+
+    return (int)boost;
+}
+
+/**
+ * Takes one integer and a bossClass and returns the boost relative to the level delta with base boss stats, as an integer.
+ * The EnemyBossStats pointer for the boss's bossClass is loaded.
+ * If the boost is negative, returns 0.
+ * @see Boss
+ * @see bossClass
+ * @see BossBaseStats
+ * @param lvl The level to check the boost against.
+ * @param bclass The bossClass used to determine base level.
+ * @return int The boost for any given stat, at the level passed as argument.
+ */
+int getBossBoost(int lvl, bossClass bclass)
+{
+
+    BossBaseStats *base = &basebossstats[bclass];
+
+    float boost = ((lvl - base->level) * 1.25);
+    if (boost <= 0) {
+        boost = 0;
+    }
+
+    return (int)boost;
+}
+
+/**
+ * Takes one integer and an enemyClass and returns the boost relative to the level delta with base enemy stats, as an integer.
+ * The EnemyBaseStats pointer for the enemy's enemyClass is loaded.
+ * If the boost is negative, returns 0.
+ * @see Enemy
+ * @see enemyClass
+ * @see EnemyBaseStats
+ * @param lvl The level to check the boost against.
+ * @param eclass The enemyClass used to determine base level.
+ * @return int The boost for any given stat, at the level passed as argument.
+ */
+int getEnemyBoost(int lvl, enemyClass eclass)
+{
+
+    EnemyBaseStats *base = &baseenemystats[eclass];
+
+    float boost = ((lvl - base->level) * 1.25);
+    if (boost <= 0) {
+        boost = 0;
+    }
+
+    return (int)boost;
+}
+
+/**
+ * Takes a Fighter pointer and an integer used to force execution.
+ * If the force parameter is true, all checks are ignored.
+ * If enemy's hp value is at least 50% of total, and none of atk, def or vel is 0 or less, nothing happens with an early return.
+ * Otherwise, getBoost() is called to calc the level stat boost for each stat.
+ * The BaseStats pointer for the fighter's fighterClass is loaded and each one of atk, def and vel is checked accounting for level boost.
+ * If none of them is below the respective treshold of 35, 18 and 30 % of total, nothing happens.
+ * Otherwise, all of them are reset to full amount accounting for permboosts and level boost.
+ * @see Fighter
+ * @see fighterClass
+ * @see getBoost()
+ * @param player The Fighter pointer to check the stats for.
+ * @param force The integer to bypass all checks if true.
+ */
+void statReset(Fighter *player, int force)
+{
+    log_tag("debug_log.txt", "[DEBUG]",
+            "Call to statReset() with ($force) == (%i)", force);
+    if (!force && (player->hp >= 0.5 * player->totalhp)
+        && !(player->atk <= 0 || player->def <= 0 || player->vel <= 0)) {
+        return;
+    }
+
+    int boost = getBoost(player->level, player->luck);
+
+    BaseStats *base = &basestats[player->class];
+    if (force || player->vel <= 0.3 * (base->vel + boost)
+        || player->atk <= 0.35 * (base->atk + boost)
+        || player->def <= 0.18 * (base->def + boost)) {
+        player->vel = base->vel + boost + player->permboost_vel;
+        player->atk = base->atk + boost + player->permboost_atk;
+        player->def = base->def + boost + player->permboost_def;
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",player->name);
+            //white();
+        }
+    }
+}
+
+/**
+ * Takes a Boss pointer and an integer used to force execution.
+ * If the force parameter is true, all checks are ignored.
+ * If boss's hp value is at least 40% of total, and none of atk, def or vel is 0 or less, nothing happens with an early return.
+ * Otherwise, getBossBoost() is called to calc the level stat boost for each stat.
+ * The BossBaseStats pointer for the boss's bossClass is loaded and each one of atk, def and vel is checked accounting for level boost.
+ * If none of them is below the respective treshold of 30, 30 and 20 % of total, nothing happens.
+ * Otherwise, all of them are reset to full amount accounting for beast boost and level boost.
+ * @see Boss
+ * @see bossClass
+ * @see getBossBoost()
+ * @see BSTFACTOR
+ * @see BossBaseStats
+ * @param b The Boss pointer to check the stats for.
+ * @param force The integer to bypass all checks if true.
+ */
+void statResetBoss(Boss *b, int force)
+{
+    if (!force && (b->hp >= 0.4 * b->totalhp)
+        && !(b->atk <= 0 || b->def <= 0 || b->vel <= 0)) {
+        return;
+    }
+    int boost = getBossBoost(b->level, b->class);
+
+    float beastf = 1;
+
+    if (b->beast) {
+        beastf = BSTFACTOR;
+    }
+    BossBaseStats *base = &basebossstats[b->class];
+
+    if (force) {		//We also update hp values
+        int hpBoost =
+            boost + round(base->level * 0.75) + (base->hp / 10) +
+            ((base->def / 4) % 10);
+        b->hp = round(beastf * (base->hp + hpBoost));
+        b->totalhp = b->hp;
+    }
+
+    if (force || b->vel <= (0.3 * (base->vel + boost))
+        || (b->atk <= (0.3 * (base->atk + boost)))
+        || b->def <= (0.2 * (base->def + boost))) {
+        b->vel = round(beastf * (base->vel + boost));
+        b->atk = round(beastf * (base->atk + boost));
+        b->def = round(beastf * (base->def + boost));
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",stringFromEClass(e->class));
+            //white();
+        }
+    }
+}
+
+/**
+ * Takes an Enemy pointer and an integer used to force execution.
+ * If the force parameter is true, all checks are ignored.
+ * If enemy's hp value is at least 40% of total, and none of atk, def or vel is 0 or less, nothing happens with an early return.
+ * Otherwise, getEnemyBoost() is called to calc the level stat boost for each stat.
+ * The EnemyBaseStats pointer for the enemy's enemyClass is loaded and each one of atk, def and vel is checked accounting for level boost.
+ * If none of them is below the respective treshold of 30, 30 and 20 % of total, nothing happens.
+ * Otherwise, all of them are reset to full amount accounting for beast boost and level boost.
+ * @see Enemy
+ * @see enemyClass
+ * @see getEnemyBoost()
+ * @see BSTFACTOR
+ * @see EnemyBaseStats
+ * @param e The Enemy pointer to check the stats for.
+ * @param force The integer to bypass all checks if true.
+ */
+void statResetEnemy(Enemy *e, int force)
+{
+    log_tag("debug_log.txt", "[DEBUG]",
+            "Call to statResetEnemy() with ($force) == (%i)", force);
+    if (!force && (e->hp >= 0.4 * e->totalhp)
+        && !(e->atk <= 0 || e->def <= 0 || e->vel <= 0)) {
+        return;
+    }
+    int boost = getEnemyBoost(e->level, e->class);
+
+    float beastf = 1;
+
+    if (e->beast) {
+        beastf = BSTFACTOR;
+    }
+    EnemyBaseStats *base = &baseenemystats[e->class];
+
+    if (force) {		//We also update hp values
+        int hpBoost =
+            floor(0.5 * boost + round(base->level * 0.75) + (base->hp / 10) +
+                  ((base->def / 4) % 10));
+        e->hp = round(beastf * (base->hp + hpBoost));
+        e->totalhp = e->hp;
+    }
+
+    if (force || e->vel <= (0.3 * (base->vel + boost))
+        || (e->atk <= (0.3 * (base->atk + boost)))
+        || e->def <= (0.2 * (base->def + boost))) {
+        e->vel = round(beastf * (base->vel + boost));
+        e->atk = round(beastf * (base->atk + boost));
+        e->def = round(beastf * (base->def + boost));
+        //Reset stats
+        if (!force) {
+            //yellow();
+            //printf("\n\n\t%s's stats reset.\n",stringFromEClass(e->class));
+            //white();
+        }
+    }
+}
+
+/**
+ * Takes a RingaBuf pointer to queue notifications to, a Fighter pointer value and applies the effect pertaining to its status value.
+ * @see Fighter
+ * @see fighterStatus
+ * @see printStatusText()
+ * @param f The Fighter pointer at hand.
+ * @param rb_notifications The RingaBuf pointer used for notifications.
+ */
+void applyStatus(Fighter *f, RingaBuf* rb_notifications)
+{
+
+    switch (f->status) {
+    case Normal: {
+        break;
+    }
+    break;
+    case Poison: {
+
+        //Account for penicillin perk
+        //ATM multiples don't stack
+        int penicillin = f->perks[PENICILLIN]->innerValue;
+        if (penicillin > 0) {
+            return;
+        }
+
+        if (f->hp >= 4) {
+            f->hp -= 3;
+        } else {
+            f->hp = 1;	//Will this be a problem?
+        }
+        printStatusText(Poison, f->name, S4C_RED, rb_notifications);
+    }
+    break;
+    case Burned: {
+        printStatusText(Burned, f->name, S4C_RED, rb_notifications);
+    }
+    break;
+    case Frozen: {
+        printStatusText(Frozen, f->name, S4C_RED, rb_notifications);
+    }
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
+}
+
+/**
+ * Takes a RingaBuf pointer to queue notifications to, a Enemy pointer value and applies the effect pertaining to its status value.
+ * @see Enemy
+ * @see fighterStatus
+ * @see printStatusText()
+ * @see stringFromEClass()
+ * @param e The Enemy pointer at hand.
+ * @param rb_notifications The RingaBuf used for notifications.
+ * @see enqueue_notification()
+ */
+void applyEStatus(Enemy *e, RingaBuf* rb_notifications)
+{
+    switch (e->status) {
+    case Normal: {
+        break;
+    }
+    break;
+    case Poison: {
+        if (e->hp >= 4) {
+            e->hp -= 3;
+        } else {
+            e->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(Poison, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+    break;
+    case Burned: {
+        if (e->hp >= 5) {
+            e->hp -= 4;
+        } else {
+            e->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+
+        if (e->atk >= 3) {
+            e->atk -= 3;
+        } else {
+            e->atk = 1;
+        }
+        printStatusText(Burned, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+    break;
+    case Frozen: {
+        if (e->vel >= 3) {
+            e->vel -= 1;
+        } else {
+            e->vel = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(Frozen, stringFromEClass(e->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
+}
+
+/**
+ * Takes a RingaBuf pointer to queue notifications to, a Boss pointer value and applies the effect pertaining to its status value.
+ * @see Boss
+ * @see fighterStatus
+ * @see printStatusText()
+ * @see stringFromBossClass()
+ * @param b The Boss pointer at hand.
+ * @param rb_notifications The RingaBuf used for notifications.
+ */
+void applyBStatus(Boss *b, RingaBuf* rb_notifications)
+{
+    switch (b->status) {
+    case Normal: {
+        break;
+    }
+    break;
+    case Poison: {
+        if (b->hp >= 4) {
+            b->hp -= 3;
+        } else {
+            b->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(Poison, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+    break;
+    case Burned: {
+        if (b->hp >= 5) {
+            b->hp -= 4;
+        } else {
+            b->hp = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+
+        if (b->atk >= 3) {
+            b->atk -= 3;
+        } else {
+            b->atk = 1;
+        }
+        printStatusText(Burned, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+    break;
+    case Frozen: {
+        if (b->vel >= 3) {
+            b->vel -= 1;
+        } else {
+            b->vel = 1;	//Will this be a problem for kills in the enemy loop?
+        }
+        printStatusText(Frozen, stringFromBossClass(b->class), S4C_BRIGHT_GREEN, rb_notifications);
+    }
+
+    break;
+    case Weak:
+
+        break;
+    case Strong:
+
+        break;
+    }
+}
+
+/**
+ * Takes a RingaBuf pointer to queue notifications to, a fighterStatus value and a string of who's the entity to print the respective status message.
+ * @see fighterStatus
+ * @param status The fighterStatus at hand.
+ * @param subject A string with name of entity owning the fighterStatus.
+ * @param color The color to use for the notification.
+ * @param rb_notifications The RingaBuf used for notifications.
+ */
+void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications)
+{
+    char msg[500];
+    switch (status) {
+    case Normal: {
+        return;
+    };
+    break;
+    case Poison:
+    case Burned: {
+        sprintf(msg, "%s is hurt by its %s.", subject,
+                stringFromStatus(status));
+        enqueue_notification(msg, 500, color, rb_notifications);
+    }
+    break;
+    case Weak:
+    case Strong: {
+        sprintf(msg, "%s is feeling %s.", subject,
+                stringFromStatus(status));
+        enqueue_notification(msg, 500, color, rb_notifications);
+    }
+    break;
+    case Frozen: {
+        sprintf(msg, "%s is frozen cold.", subject);
+        enqueue_notification(msg, 500, color, rb_notifications);
+    }
+    break;
+    }
+}
+
 /**
  * Takes a Fighter and a Enemy pointers and compares their stats to determine who gets damaged and returns the fightStatus value.
  * Queues notifications to the passed RingaBuf pointer.
- * On enemy death, there's a chance to call dropConsumable, dropEquip or dropArtifact (guaranteed for beast enemies).
  * @see Fighter
  * @see Enemy
  * @see statReset()
  * @see statResetEnemy()
  * @see stringFromEClass()
- * @see dropConsumable()
- * @see dropEquip()
- * @see dropArtifact()
  * @param player The Fighter pointer at hand.
  * @param e The Enemy pointer at hand.
  * @param kls The Koliseo used for allocations.
@@ -275,44 +715,12 @@ int fight(Fighter *player, Enemy *e, Koliseo *kls, RingaBuf* rb_notifications)
         }
     }
 
-    //Consumable drop, guaranteed on killing a beast
-    if (res == FIGHTRES_KILL_DONE
-        && (e->beast || ((hlpd_rand() % 9) - (player->luck / 10) <= 0))) {
-        int drop = dropConsumable(player);
-        sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-        enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
-        log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
-                stringFromConsumables(drop));
-    }
-
-    //Artifact drop (if we don't have all of them), guaranteed on killing a beast
-    if ((player->stats->artifactsfound != ARTIFACTSMAX + 1)
-        && res == FIGHTRES_KILL_DONE && (e->beast
-                                         ||
-                                         ((hlpd_rand() % ENEMY_ARTIFACTDROP_CHANCE) -
-                                          (player->luck / 10) <= 0))) {
-        int artifact_drop = dropArtifact(player);
-        sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-        enqueue_notification(msg, 500, S4C_MAGENTA, rb_notifications);
-        log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
-                stringFromArtifacts(artifact_drop));
-        if (!e->beast)
-            log_tag("debug_log.txt", "[.1%% CHANCE]",
-                    "\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
-    }
-
-    //Equip drop, guaranteed on killing a beast
-    if (res == FIGHTRES_KILL_DONE
-        && (e->beast || ((hlpd_rand() % 15) - (player->luck / 10) <= 0))) {
-        dropEquip(player, e->beast, kls, rb_notifications);
-    }
     return res;
 }
 
 /**
  * Takes an Enemy and a Fighter pointer and compares their stats to determine who gets damaged and returns the fightStatus value.
  * Queues notifications to the passed RingaBuf pointer.
- * On enemy death, there's a chance to call dropConsumable, dropEquip or dropArtifact (guaranteed for beast enemies).
  * NOTE:  that the return values are always from the POV of the Fighter: FIGHTRES_DMG_DEALT means the Enemy was damaged!
  * @see defer_fight_enemy()
  * @see Fighter
@@ -320,9 +728,6 @@ int fight(Fighter *player, Enemy *e, Koliseo *kls, RingaBuf* rb_notifications)
  * @see statReset()
  * @see statResetEnemy()
  * @see stringFromEClass()
- * @see dropConsumable()
- * @see dropEquip()
- * @see dropArtifact()
  * @param target The Fighter pointer at hand.
  * @param e The Enemy pointer at hand.
  * @param kls The Koliseo used for allocations.
@@ -590,37 +995,6 @@ int enemy_attack(Enemy *e, Fighter *target, Koliseo *kls, RingaBuf* rb_notificat
         }
     }
 
-    //Consumable drop, guaranteed on killing a beast
-    if (res == FIGHTRES_KILL_DONE
-        && (e->beast || ((hlpd_rand() % 9) - (target->luck / 10) <= 0))) {
-        int drop = dropConsumable(target);
-        sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-        enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
-        log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
-                stringFromConsumables(drop));
-    }
-
-    //Artifact drop (if we don't have all of them), guaranteed on killing a beast
-    if ((target->stats->artifactsfound != ARTIFACTSMAX + 1)
-        && res == FIGHTRES_KILL_DONE && (e->beast
-                                         ||
-                                         ((hlpd_rand() % ENEMY_ARTIFACTDROP_CHANCE) -
-                                          (target->luck / 10) <= 0))) {
-        int artifact_drop = dropArtifact(target);
-        sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-        enqueue_notification(msg, 500, S4C_MAGENTA, rb_notifications);
-        log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
-                stringFromArtifacts(artifact_drop));
-        if (!e->beast)
-            log_tag("debug_log.txt", "[.1%% CHANCE]",
-                    "\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
-    }
-
-    //Equip drop, guaranteed on killing a beast
-    if (res == FIGHTRES_KILL_DONE
-        && (e->beast || ((hlpd_rand() % 15) - (target->luck / 10) <= 0))) {
-        dropEquip(target, e->beast, kls, rb_notifications);
-    }
     return res;
 }
 
@@ -665,9 +1039,8 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
                 log_tag("debug_log.txt", "[ERROR]",
                         "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
                         foe_op);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                assert(false);
+                return -1;
             }
             break;
             case FOE_OP_IDLE: {
@@ -702,9 +1075,8 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
                 log_tag("debug_log.txt", "[ERROR]",
                         "Unexpected foeTurnOption_OP in [%s()]: [%i]",
                         __func__, foe_op);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                assert(false);
+                return -1;
             }
             break;
             }			// End foe_op switch
@@ -737,9 +1109,8 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
             log_tag("debug_log.txt", "[ERROR]",
                     "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
                     foe_op);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            assert(false);
+            return -1;
         }
         break;
         case FOE_OP_IDLE: {
@@ -771,9 +1142,8 @@ int defer_fight_enemy(Fighter *player, Enemy *e, foeTurnOption_OP foe_op,
             log_tag("debug_log.txt", "[ERROR]",
                     "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
                     foe_op);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            assert(false);
+            return -1;
         }
         break;
         }			// End foe_op switch
@@ -854,9 +1224,8 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
                 log_tag("debug_log.txt", "[ERROR]",
                         "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
                         foe_op);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                assert(false);
+                return -1;
             }
             break;
             case FOE_OP_IDLE: {
@@ -891,9 +1260,8 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
                 log_tag("debug_log.txt", "[ERROR]",
                         "Unexpected foeTurnOption_OP in [%s()]: [%i]",
                         __func__, foe_op);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                assert(false);
+                return -1;
             }
             break;
             }			// End foe_op switch
@@ -926,9 +1294,8 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
             log_tag("debug_log.txt", "[ERROR]",
                     "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
                     foe_op);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            assert(false);
+            return -1;
         }
         break;
         case FOE_OP_IDLE: {
@@ -960,9 +1327,8 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
             log_tag("debug_log.txt", "[ERROR]",
                     "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
                     foe_op);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            assert(false);
+            return -1;
         }
         break;
         }			// End foe_op switch
@@ -1004,15 +1370,11 @@ int defer_skill_enemy(Fighter *player, Enemy *e, skillType picked_skill, foeTurn
 /**
  * Takes a Fighter, a Boss and a Path pointers and compares fighters stats to determine who gets damaged and returns the fightStatus value.
  * Queues notifications to the passed RingaBuf pointer.
- * On boss death, we call dropConsumable, dropEquip and dropArtifact.
  * @see Fighter
  * @see Boss
  * @see statReset()
  * @see statResetBoss()
  * @see stringFromBossClass()
- * @see dropConsumable()
- * @see dropEquip()
- * @see dropArtifact()
  * @param player The Fighter pointer at hand.
  * @param b The Enemy pointer at hand.
  * @param p The Path pointer for the game.
@@ -1275,31 +1637,6 @@ int boss_fight(Fighter *player, Boss *b, Path *p,
         if (player->status != Normal) {
             applyStatus(player, rb_notifications);
         }
-    }
-
-    //Consumable drop, guaranteed on killing a beast
-    if (res == FIGHTRES_KILL_DONE) {
-        int drop = dropConsumable(player);
-        sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-        enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
-        sprintf(msg, "Found Consumable:    %s.", stringFromConsumables(drop));
-        log_tag("debug_log.txt", "[DROPS]", msg);
-    }
-
-    //Artifact drop (if we don't have all of them)
-    if (res == FIGHTRES_KILL_DONE
-        && (player->stats->artifactsfound != ARTIFACTSMAX + 1)) {
-        int artifact_drop = dropArtifact(player);
-        sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-        enqueue_notification(msg, 500, S4C_MAGENTA, rb_notifications);
-        sprintf(msg, "Found Artifact:    %s.",
-                stringFromArtifacts(artifact_drop));
-        log_tag("debug_log.txt", "[DROPS]", msg);
-    }
-    //Equip drop
-    if (res == FIGHTRES_KILL_DONE) {
-        //We give 1 to obtain the better equip generation used for beasts
-        dropEquip(player, 1, kls, rb_notifications);
     }
 
     return res;
@@ -1568,30 +1905,6 @@ int boss_attack(Boss *b, Fighter *target, Path *p,
         }
     }
 
-    //Consumable drop, guaranteed on killing a beast
-    if (res == FIGHTRES_KILL_DONE) {
-        int drop = dropConsumable(target);
-        sprintf(msg, "You found a %s!", stringFromConsumables(drop));
-        enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
-        log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
-                stringFromConsumables(drop));
-    }
-
-    //Artifact drop (if we don't have all of them)
-    if (res == FIGHTRES_KILL_DONE
-        && (target->stats->artifactsfound != ARTIFACTSMAX + 1)) {
-        int artifact_drop = dropArtifact(target);
-        sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
-        enqueue_notification(msg, 500, S4C_MAGENTA, rb_notifications);
-        log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
-                stringFromArtifacts(artifact_drop));
-    }
-    //Equip drop
-    if (res == FIGHTRES_KILL_DONE) {
-        //We give 1 to obtain the better equip generation used for beasts
-        dropEquip(target, 1, kls, rb_notifications);
-    }
-
     return res;
 }
 
@@ -1631,9 +1944,8 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                 log_tag("debug_log.txt", "[ERROR]",
                         "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
                         foe_op);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                assert(false);
+                return -1;
             }
             break;
             case FOE_OP_IDLE: {
@@ -1667,9 +1979,8 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
                 log_tag("debug_log.txt", "[ERROR]",
                         "Unexpected foeTurnOption_OP in [%s()]: [%i]",
                         __func__, foe_op);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                assert(false);
+                return -1;
             }
             break;
             }			// End foe_op switch
@@ -1693,9 +2004,8 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
             log_tag("debug_log.txt", "[ERROR]",
                     "foe_op was FOE_OP_INVALID in [%s()]: [%i]", __func__,
                     foe_op);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            assert(false);
+            return -1;
         }
         break;
         case FOE_OP_IDLE: {
@@ -1729,9 +2039,8 @@ int defer_fight_boss(Fighter *player, Boss *b, Path *p, foeTurnOption_OP foe_op,
             log_tag("debug_log.txt", "[ERROR]",
                     "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
                     foe_op);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            assert(false);
+            return -1;
         }
         break;
         }			// End foe_op switch
@@ -1798,9 +2107,8 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
                 log_tag("debug_log.txt", "[ERROR]",
                         "foe_op was FOE_OP_INVALID in [%s]: [%i]", __func__,
                         foe_op);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                assert(false);
+                return -1;
             }
             break;
             case FOE_OP_IDLE: {
@@ -1834,9 +2142,8 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
                 log_tag("debug_log.txt", "[ERROR]",
                         "Unexpected foeTurnOption_OP in [%s()]: [%i]",
                         __func__, foe_op);
-                kls_free(default_kls);
-                kls_free(temporary_kls);
-                exit(EXIT_FAILURE);
+                assert(false);
+                return -1;
             }
             break;
             }			// End foe_op switch
@@ -1860,9 +2167,8 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
             log_tag("debug_log.txt", "[ERROR]",
                     "foe_op was FOE_OP_INVALID in [%s()]: [%i]", __func__,
                     foe_op);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            assert(false);
+            return -1;
         }
         break;
         case FOE_OP_IDLE: {
@@ -1896,9 +2202,8 @@ int defer_skill_boss(Fighter *player, Boss *b, skillType picked_skill, Path *p, 
             log_tag("debug_log.txt", "[ERROR]",
                     "Unexpected foeTurnOption_OP in [%s()]: [%i]", __func__,
                     foe_op);
-            kls_free(default_kls);
-            kls_free(temporary_kls);
-            exit(EXIT_FAILURE);
+            assert(false);
+            return -1;
         }
         break;
         }			// End foe_op switch

@@ -2,11 +2,15 @@
 
 ### Changed
 
-- Extract `core/game_log`, `core/game_strings`, `core/game_rng` from `utils/game_utils`
+- Extract `core/game_log`, `core/game_strings`, `core/game_rng`, `notifications/game_notifications` from `utils/game_utils`
 - Build `helapordo_core.o` separately from `core`
 - Move `core/game_animations` to `animations/game_animations`
+- Move `utils/game_fight` to `core/game_fight`
 - Move `setSprite` functions `core/sprites`
+- Move `applyStatus`, `getBoost`, `statReset` functions `core/game_fight`
 - Move `G_USE_CURRENTDIR` to `core/game_core`
+- Move `G_GODMODE_ON` to `core/game_fight`
+- Move `G_RNG_ADVANCEMENTS` to `core/game_rng`
 
 ## [1.4.19] - 2026-03-22
 

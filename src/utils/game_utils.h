@@ -62,6 +62,7 @@
 #include "../core/game_log.h"
 #include "../core/game_strings.h"
 #include "../core/game_rng.h"
+#include "../core/game_fight.h"
 #ifdef HELAPORDO_CURSES_BUILD
 #endif // HELAPORDO_CURSES_BUILD
 #ifdef ANVIL_BUILD
@@ -191,12 +192,6 @@ void setEquipPrices(int size, int *equipPrices, Equip * equips[]);
 void setConsumablePrices(int size, int *consumablePrices,
                          Consumable ** consumables);
 
-void statReset(Fighter * player, int force);
-void statResetBoss(Boss * b, int force);
-void statResetEnemy(Enemy * e, int force);
-int getBossBoost(int lvl, bossClass bclass);
-int getEnemyBoost(int lvl, enemyClass eclass);
-
 void resetPermboosts(Fighter * f);
 void applyPermboosts(Fighter * f);
 
@@ -215,11 +210,6 @@ void printStats(Fighter * f);
 void printEStats(Enemy * e);
 void printConsumablesStats(Consumable * c);
 void printArtifactStats(Artifact * a);
-void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifications);
-void applyStatus(Fighter * f, RingaBuf* rb_notifications);
-void applyEStatus(Enemy * e, RingaBuf* rb_notifications);
-void applyBStatus(Boss * b, RingaBuf* rb_notifications);
-void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications);
 void dropEquip(Fighter * player, int beast, Koliseo * kls, RingaBuf* rb_notifications);
 
 #ifdef HELAPORDO_CURSES_BUILD
@@ -272,14 +262,12 @@ int giveXp_Boss(Fighter * player, Boss * b);
 int getEnemyXpGain(Enemy * e);
 int getBossXpGain(Boss * b);
 int onLevelUp(Fighter * player);
-int getBoost(int lvl, int luck);
 void sell_all_equips(Fighter * f);
 
 turnOption getTurnChoice(char *ch);
 foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
 foeTurnOption bossTurnPick(Boss * b, Fighter * f);
 void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
-void setCounter(Turncounter * c, int turns);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
 #define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )

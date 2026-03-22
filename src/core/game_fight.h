@@ -20,7 +20,22 @@
 #define GAME_FIGHT_H_
 
 #include "../core/game_log.h"
-#include "game_utils.h"
+#include "../core/game_rng.h"
+#include "../notifications/game_notifications.h"
+//#include "game_utils.h"
+
+void setCounter(Turncounter * c, int turns);
+int getBoost(int lvl, int luck);
+int getBossBoost(int lvl, bossClass bclass);
+int getEnemyBoost(int lvl, enemyClass eclass);
+void statReset(Fighter * player, int force);
+void statResetBoss(Boss * b, int force);
+void statResetEnemy(Enemy * e, int force);
+
+void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications);
+void applyStatus(Fighter * f, RingaBuf* rb_notifications);
+void applyEStatus(Enemy * e, RingaBuf* rb_notifications);
+void applyBStatus(Boss * b, RingaBuf* rb_notifications);
 
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
                       Koliseo * kls, RingaBuf* rb_notifications);

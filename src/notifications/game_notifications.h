@@ -16,14 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef TURNOP_H_
-#define TURNOP_H_
-
-#include "game_debug.h"
-#include "../core/game_fight.h"
-#include "saves.h"
-#include "../ser/ser_core.h"
-
-OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,
-              Koliseo_Temp * t_kls);
-#endif // TURNOP_H_
+#ifndef GAME_NOTIFICATIONS_H_
+#define GAME_NOTIFICATIONS_H_
+#include "../core/game_core.h"
+#include "../core/game_log.h"
+void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifications);
+#endif // GAME_NOTIFICATIONS_H_

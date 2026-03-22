@@ -177,6 +177,40 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                 OP_res_from_fightResult(defer_fight_enemy
                                         (actor, enemy, foe_op,
                                          kls, rb_notifications));
+            {
+                char msg[200];
+                //Consumable drop, guaranteed on killing a beast
+                if (res == OP_RES_KILL_DONE
+                    && (enemy->beast || ((hlpd_rand() % 9) - (actor->luck / 10) <= 0))) {
+                    int drop = dropConsumable(actor);
+                    sprintf(msg, "You found a %s!", stringFromConsumables(drop));
+                    enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
+                    log_tag("debug_log.txt", "[DROPS]", "Found Consumable:    %s.",
+                            stringFromConsumables(drop));
+                }
+
+                //Artifact drop (if we don't have all of them), guaranteed on killing a beast
+                if ((actor->stats->artifactsfound != ARTIFACTSMAX + 1)
+                    && res == OP_RES_KILL_DONE && (enemy->beast
+                                                     ||
+                                                     ((hlpd_rand() % ENEMY_ARTIFACTDROP_CHANCE) -
+                                                      (actor->luck / 10) <= 0))) {
+                    int artifact_drop = dropArtifact(actor);
+                    sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
+                    enqueue_notification(msg, 500, S4C_MAGENTA, rb_notifications);
+                    log_tag("debug_log.txt", "[DROPS]", "Found Artifact:    %s.",
+                            stringFromArtifacts(artifact_drop));
+                    if (!enemy->beast)
+                        log_tag("debug_log.txt", "[.1%% CHANCE]",
+                                "\nNORMAL ENEMY DROPPED ARTIFACT! 0.1%% chance??\n");
+                }
+
+                //Equip drop, guaranteed on killing a beast
+                if (res == OP_RES_KILL_DONE
+                    && (enemy->beast || ((hlpd_rand() % 15) - (actor->luck / 10) <= 0))) {
+                    dropEquip(actor, enemy->beast, kls, rb_notifications);
+                }
+            }
         }
         break;
         case BOSS: {
@@ -188,6 +222,33 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                 OP_res_from_fightResult(defer_fight_boss
                                         (actor, boss, path, foe_op,
                                          kls, rb_notifications));
+            {
+                char msg[200];
+                //Consumable drop, guaranteed on killing a beast
+                if (res == OP_RES_KILL_DONE) {
+                    int drop = dropConsumable(actor);
+                    sprintf(msg, "You found a %s!", stringFromConsumables(drop));
+                    enqueue_notification(msg, 500, S4C_CYAN, rb_notifications);
+                    sprintf(msg, "Found Consumable:    %s.", stringFromConsumables(drop));
+                    log_tag("debug_log.txt", "[DROPS]", msg);
+                }
+
+                //Artifact drop (if we don't have all of them)
+                if (res == OP_RES_KILL_DONE
+                    && (actor->stats->artifactsfound != ARTIFACTSMAX + 1)) {
+                    int artifact_drop = dropArtifact(actor);
+                    sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
+                    enqueue_notification(msg, 500, S4C_MAGENTA, rb_notifications);
+                    sprintf(msg, "Found Artifact:    %s.",
+                            stringFromArtifacts(artifact_drop));
+                    log_tag("debug_log.txt", "[DROPS]", msg);
+                }
+                //Equip drop
+                if (res == OP_RES_KILL_DONE) {
+                    //We give 1 to obtain the better equip generation used for beasts
+                    dropEquip(actor, 1, kls, rb_notifications);
+                }
+            }
         }
         break;
         default: {
