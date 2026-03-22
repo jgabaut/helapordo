@@ -1,3 +1,16 @@
+## [1.4.19] - 2026-03-22
+
+### Added
+
+- Add `Equips`, `Stats` button to `FLOOR_VIEW`
+
+### Changed
+
+- Show status in `Enemies`, `Boss` rooms
+- Accept `KEY_Q` to quit `DEBUG_VIEW`
+- Fix `Twinkie` sprite
+- Fix `OPEN_BAG_VIEW` stuck keys
+
 ## [1.4.18] - 2026-03-21
 
 ### Added

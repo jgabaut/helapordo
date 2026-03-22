@@ -331,6 +331,14 @@ Gui_Button_Group treasure_buttons_group = {
 };
 
 Gui_Button floor_buttons[GUI_FLOOR_GROUP_BUTTONS_MAX+1] = {
+    [BUTTON_FLOOR_EQUIPS] = {
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Equips",
+        .label_len = ARRAY_SIZE("Equips")-1,
+        .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
+        .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
+    },
     [BUTTON_ARTIFACTS] = {
         .on = false,
         .state = BUTTON_NORMAL,
@@ -344,6 +352,14 @@ Gui_Button floor_buttons[GUI_FLOOR_GROUP_BUTTONS_MAX+1] = {
         .state = BUTTON_NORMAL,
         .label = "Save",
         .label_len = ARRAY_SIZE("Save")-1,
+        .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
+        .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
+    },
+    [BUTTON_FLOOR_STATS] = {
+        .on = false,
+        .state = BUTTON_NORMAL,
+        .label = "Stats",
+        .label_len = ARRAY_SIZE("Stats")-1,
         .box_color = GUI_FLOOR_GROUP_BOX_COLOR,
         .text_color = GUI_FLOOR_GROUP_TEXT_COLOR,
     }
@@ -1605,13 +1621,15 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 #endif // HELAPORDO_DEBUG_ACCESS
 
         Gui_Button_Group group = gui_state->floor_buttons;
+        int bt_w = gui_state->gameScreenWidth*0.2f;
+        int bt_h = gui_state->gameScreenHeight*0.1f;
+        int bt_start_y = gui_state->gameScreenHeight*0.125f;
+        int bt_y_spacing = bt_h * 0.25f;
         for (Gui_Floor_Group_Button_Index i = 0; i < group.len; i++) {
             group.buttons[i].on = false;
-            int bt_w = gui_state->gameScreenWidth*0.2f;
-            int bt_h = gui_state->gameScreenHeight*0.1f;
             group.buttons[i].r = (Rectangle) {
                 .x = gui_state->gameScreenWidth - (bt_w*2),
-                .y = (gui_state->gameScreenHeight - bt_h)*0.5f + (i * bt_h),
+                .y = bt_start_y + (i * (bt_h + bt_y_spacing)),
                 .width = bt_w,
                 .height = bt_h
             };
@@ -1632,8 +1650,16 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
             if (group.buttons[i].on) {
                 fprintf(stderr, "%s():    [EFFECT]\n", __func__);
                 switch (i) {
+                case BUTTON_FLOOR_EQUIPS: {
+                    gui_state->currentScreen = EQUIPS_VIEW;
+                }
+                break;
                 case BUTTON_ARTIFACTS: {
                     gui_state->currentScreen = ARTIFACTS_VIEW;
+                }
+                break;
+                case BUTTON_FLOOR_STATS: {
+                    gui_state->currentScreen = STATS_VIEW;
                 }
                 break;
                 case BUTTON_FLOOR_SAVE: {
@@ -2543,7 +2569,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
     case EQUIPS_VIEW: {
         if (IsKeyPressed(KEY_Q)) {
-            gui_state->currentScreen = ROOM_VIEW;
+            gui_state->currentScreen = (*current_room ? ROOM_VIEW : FLOOR_VIEW);
         }
         // TODO: Update EQUIPS_VIEW screen variables here!
 
@@ -2592,7 +2618,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (gui_state->selectedIndex >= (*player)->equipsBagOccupiedSlots) {
             gui_state->selectedIndex = 0;
         }
-        if (IsKeyPressed(KEY_DOWN || IsKeyPressed(KEY_S))) {
+        if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) {
             gui_state->selectedIndex += 1;
         }
         if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) {
@@ -2746,8 +2772,8 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     break;
 #ifdef HELAPORDO_DEBUG_ACCESS
     case DEBUG_VIEW: {
-        // Press Enter to change to FLOOR_VIEW screen
-        if (IsKeyPressed(KEY_ENTER)) {
+        // Press Enter or Q to change to FLOOR_VIEW screen
+        if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_Q)) {
             gui_state->currentScreen = FLOOR_VIEW;
         }
         int cycle_button_w = gui_state->gameScreenWidth * 0.2f;
@@ -3270,8 +3296,8 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         }
 
         Rectangle floor_r = CLITERAL(Rectangle) {
-            gui_state.gameScreenHeight *0.1f,
-                                       gui_state.gameScreenWidth *0.1f,
+            gui_state.gameScreenWidth *0.1f,
+                                       gui_state.gameScreenHeight *0.125f,
                                        (FLOOR_MAX_COLS-1) * (gui_state.gameScreenWidth*0.02f),
                                        (FLOOR_MAX_ROWS-1) * (gui_state.gameScreenWidth*0.02f),
         };
@@ -3343,7 +3369,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int en_frame_W = pl_frame_W;
                 int en_frame_H = pl_frame_H;
                 float stats_label_W = gui_state.gameScreenWidth * 0.18f;
-                float stats_label_H = stats_label_W;
+                float stats_label_H = stats_label_W *1.4f;
                 Rectangle stats_label_r = CLITERAL(Rectangle) {
                     gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
                                               en_rect_Y,
@@ -3400,7 +3426,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
                 Enemy* enemy = current_room->enemies[gamestate->current_enemy_index];
                 assert(enemy != NULL);
-                int stats_height = stats_label_r.height * 0.135f;
+                int stats_height = stats_label_r.height * 0.117f;
                 Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
                 DrawText(TextFormat("%i  Hp  %i", enemy->hp, player->hp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Hp  %i", enemy->hp, player->hp), stats_height)/2)), (int)stats_label_r.y + stats_height /2, stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", enemy->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + (stats_height*3/2), stats_height, stats_txt_color);
@@ -3409,6 +3435,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", enemy->energy, enemy->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + (stats_height*9/2), stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Lvl  %i", enemy->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", enemy->level, player->level), stats_height)/2)), (int)stats_label_r.y + (stats_height*11/2), stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", enemy->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + (stats_height*13/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%s %s", stringFromStatus(enemy->status), stringFromStatus(player->status)), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%s %s", stringFromStatus(enemy->status), stringFromStatus(player->status)), stats_height)/2)), (int)stats_label_r.y + (stats_height*15/2), stats_height, stats_txt_color);
 
                 DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
                 int name_height = pr_name_r.height * 0.6f;
@@ -3523,7 +3550,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 int bs_frame_W = pl_frame_W;
                 int bs_frame_H = pl_frame_H;
                 float stats_label_W = gui_state.gameScreenWidth * 0.18f;
-                float stats_label_H = stats_label_W;
+                float stats_label_H = stats_label_W * 1.4f;
                 Rectangle stats_label_r = CLITERAL(Rectangle) {
                     gui_state.gameScreenWidth*0.5f - (stats_label_W/2),
                                               bs_rect_Y,
@@ -3580,7 +3607,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawRectangleRec(stats_label_r, ColorFromS4CPalette(palette, S4C_GREY));
                 Boss* boss = current_room->boss;
                 assert(boss != NULL);
-                int stats_height = stats_label_r.height * 0.135f;
+                int stats_height = stats_label_r.height * 0.117f;
                 Color stats_txt_color = ColorFromS4CPalette(palette, S4C_BLACK);
                 DrawText(TextFormat("%i  Hp  %i", boss->hp, player->hp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Hp  %i", boss->hp, player->hp), stats_height)/2)), (int)stats_label_r.y + stats_height /2, stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Atk  %i", boss->atk, player->atk), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Atk  %i", boss->atk, player->atk), stats_height)/2)), (int)stats_label_r.y + (stats_height*3/2), stats_height, stats_txt_color);
@@ -3589,6 +3616,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 DrawText(TextFormat("%i/%i Enr %i/%i", boss->energy, boss->totalenergy, player->energy, player->totalenergy), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i/%i Enr %i/%i", boss->energy, boss->totalenergy, player->energy, player->totalenergy), stats_height)/2)), (int)stats_label_r.y + (stats_height*9/2), stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Lvl  %i", boss->level, player->level), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Lvl  %i", boss->level, player->level), stats_height)/2)), (int)stats_label_r.y + (stats_height*11/2), stats_height, stats_txt_color);
                 DrawText(TextFormat("%i  Xp  %i/%i", boss->xp, player->currentlevelxp, player->totallevelxp), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%i  Xp  %i/%i", boss->xp, player->currentlevelxp, player->totallevelxp), stats_height)/2)), (int)stats_label_r.y + (stats_height*13/2), stats_height, stats_txt_color);
+                DrawText(TextFormat("%s %s", stringFromStatus(boss->status), stringFromStatus(player->status)), (int)(stats_label_r.x + (stats_label_r.width/2) - (MeasureText(TextFormat("%s %s", stringFromStatus(boss->status), stringFromStatus(player->status)), stats_height)/2)), (int)stats_label_r.y + (stats_height*15/2), stats_height, stats_txt_color);
 
                 DrawRectangleRec(pr_name_r, ColorFromS4CPalette(palette, S4C_BLACK));
                 int name_height = pr_name_r.height * 0.6f;
@@ -4534,7 +4562,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText(TextFormat("Current WinCon: {%s} [%i / %i]", stringFromWinconClass(game_path->win_condition->class), game_path->win_condition->current_val, game_path->win_condition->target_val), 110, gui_state.gameScreenHeight/2 + 80, 20, gui_state.theme.txt_color);
         DrawText("DEBUG SCREEN", 20, 20, 40, gui_state.theme.txt_color);
         DrawText("WIP", 20, gui_state.gameScreenHeight - (10 * gui_state.scale), 40, ColorFromS4CPalette(palette, S4C_SALMON));
-        DrawText("PRESS ENTER to RETURN to FLOOR_VIEW SCREEN", 110, 260, 20, gui_state.theme.txt_color);
+        DrawText("PRESS Q or ENTER to RETURN to FLOOR_VIEW screen", 110, 260, 20, gui_state.theme.txt_color);
 
         Gui_Button cycle_layout_button = gui_state.debug_buttons.buttons[BUTTON_CYCLE_DEBUG_LAYOUT];
         Rectangle cycle_cell = cycle_layout_button.r;
