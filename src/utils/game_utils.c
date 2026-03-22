@@ -3363,66 +3363,6 @@ void print_label(WINDOW *win, int starty, int startx, int width, char *string,
 }
 
 /**
- * Takes a Equip pointer and prepares its sprite field by copying it line by line from equips_sprites, defined in sprites.h header.
- * @see Equip
- * @see dropEquip
- * @see equips_sprites
- * @param e The Equip pointer whose sprite field will be initialised.
- */
-void setEquipSprite(Equip *e)
-{
-    if (e->class < EQUIPSMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(e->sprite[i], equips_sprites[e->class][i]);
-        }
-    } else {
-        log_tag("debug_log.txt", "[WARN]",
-                "%s():    Unexpected equipClass {%i}.", __func__, e->class);
-        return;
-    }
-}
-
-/**
- * Takes a Consumable pointer and prepares its sprite field by copying it line by line from consumables_sprites, defined in sprites.h header.
- * @see Consumable
- * @see initPlayerStats
- * @see consumables_sprites
- * @param c The Consumable pointer whose sprite field will be initialised.
- */
-void setConsumableSprite(Consumable *c)
-{
-    if (c->class < CONSUMABLESMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(c->sprite[i], consumables_sprites[c->class][i]);
-        }
-    } else {
-        fprintf(stderr,
-                "[ERROR]    Unexpected consumableClass in setConsumableSprite().\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
- * Takes a Artifact pointer and prepares its sprite field by copying it line by line from artifacts_sprites, defined in sprites.h header.
- * @see Artifact
- * @see gameloop()
- * @see artifacts_sprites
- * @param a The Artifact pointer whose sprite field will be initialised.
- */
-void setArtifactSprite(Artifact *a)
-{
-    if (a->class < ARTIFACTSMAX + 1) {
-        for (int i = 0; i < 8; i++) {
-            strcpy(a->sprite[i], artifacts_sprites[a->class][i]);
-        }
-    } else {
-        fprintf(stderr,
-                "[ERROR]    Unexpected artifactClass in setArtifactSprite().\n");
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
  * Takes a quality value and calls the respective color function without actually printing text.
  * @see quality
  * @param q The quality value we want to set text color for.

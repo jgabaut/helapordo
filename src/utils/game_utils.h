@@ -232,9 +232,6 @@ turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               foeTurnOption_OP foe_op, skillType picked_skill, RingaBuf* rb_notifications);
 void print_label(WINDOW * win, int starty, int startx, int width, char *string,
                  chtype color);
-void setEquipSprite(Equip * e);
-void setConsumableSprite(Consumable * c);
-void setArtifactSprite(Artifact * a);
 void printEquipStats(Equip * e);
 void printQualityColor(quality q);
 void unlockSpecial(Fighter * f);

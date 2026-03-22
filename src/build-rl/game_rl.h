@@ -22,7 +22,7 @@
 #include "../utils/game_utils.h"
 #include "../core/sprites.h"
 #include "../utils/turn_op.h"
-#include "../core/game_animations.h"
+#include "../animations/game_animations.h"
 #include "../utils/rooms.h"
 #include <raymath.h> // Needed for: Vector2Clamp()
 
@@ -292,14 +292,6 @@ extern Gui_Button_Layout debug_fighter_buttons_layout;
 #endif // HELAPORDO_DEBUG_ACCESS
 
 void handleTutorial(S4C_Color* palette);
-void setEnemySprite(Enemy * e);
-void setEquipSprite(Equip * e);
-void setEquipslotSprite(Equipslot * s);
-void setConsumableSprite(Consumable * c);
-void setArtifactSprite(Artifact* a);
-void setBossSprite(Boss * b);
-void setFighterSprite(Fighter * f);
-void setChestSprite(Chest * c);
 void ToggleFullScreenWindow(int w_W, int w_H);
 void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications_rect);
 void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, Gamestate** gamestate, RingaBuf* rb_notifications, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], bool is_seeded, int* roomsDone, int* enemyTotal);

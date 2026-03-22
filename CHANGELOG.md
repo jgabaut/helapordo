@@ -4,6 +4,8 @@
 
 - Extract `core/game_log` and `core/game_strings` from `utils/game_utils`
 - Build `helapordo_core.o` separately from `core`
+- Move `core/game_animations` to `animations/game_animations`
+- Move `setSprite` functions `core/sprites`
 
 ## [1.4.19] - 2026-03-22
 

@@ -20,6 +20,7 @@
 #define SPRITES_H
 
 #include "game_core.h"
+#include "game_log.h"
 
 extern char bosses_sprites[BOSSCLASSESMAX + 1][9][15];
 extern char consumables_sprites[CONSUMABLESMAX + 1][9][14];
@@ -34,5 +35,14 @@ extern char enemies_sprites[ENEMYCLASSESMAX + 1][9][15];
 
 #define MISC_SPRITES_MAX 1
 extern char misc_sprites[MISC_SPRITES_MAX + 1][9][15];
+
+void setEquipSprite(Equip * e);
+void setConsumableSprite(Consumable * c);
+void setArtifactSprite(Artifact * a);
+void setEquipslotSprite(Equipslot * s);
+void setEnemySprite(Enemy * e);
+void setBossSprite(Boss * b);
+void setFighterSprite(Fighter * f);
+void setChestSprite(Chest * c);
 
 #endif
