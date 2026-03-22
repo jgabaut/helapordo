@@ -20,7 +20,7 @@
 #define SAVES_H_
 
 #include "../core/equips.h"
-#include "game_init.h"
+#include "../core/game_init.h"
 
 #ifdef HELAPORDO_CURSES_BUILD
 #include "../build-nc/game_curses.h"

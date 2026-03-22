@@ -19,18 +19,10 @@
 #ifndef GAME_INIT_H_
 #define GAME_INIT_H_
 
-#include "game_utils.h"
+#include "sprites.h"
 #include "specials.h"
-
-#ifdef HELAPORDO_CURSES_BUILD
-#include "../build-nc/game_curses.h"
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-#include "../build-rl/game_rl.h"
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
+#include "game_rng.h"
+#include "game_fight.h"
 
 void initPerks(Fighter * f, Koliseo * kls);
 void initConsumableBag(Fighter * f, Koliseo * kls);
@@ -56,6 +48,8 @@ void initEquipsBag(Fighter * f, Koliseo * kls);
 void initPlayerStats(Fighter * player, Path * path, Koliseo * kls);
 
 void initEnemyStats(Enemy * e, Koliseo_Temp * t_kls);
+void setEquipPrices(int size, int *equipPrices, Equip * equips[]);
+void setConsumablePrices(int size, int *consumablePrices, Consumable ** consumables);
 void setSkills(Fighter *f, Koliseo *kls);
 void initChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
 void initShop(Shop * s, int indexWeight, Fighter * player,
@@ -70,4 +64,45 @@ void prepareTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
 void prepareRoadfork(Roadfork * r);
 void setEnemySkills(Enemy *e, Koliseo_Temp *t_kls);
 void setBossSkills(Boss *b, Koliseo_Temp *t_kls);
+
+effect_fun getStatusCounterFun(fighterStatus status);
+
+effect_e_fun getStatusCounterEnemyFun(fighterStatus status);
+
+effect_b_fun getStatusCounterBossFun(fighterStatus status);
+
+effect_fp_fun get_StatusCounter_FoeParty_Fun(fighterStatus status);
+
+boost_fun getStatBoostCounterFun(Stat s);
+boost_e_fun getStatBoostCounterEnemyFun(Stat s);
+boost_b_fun getStatBoostCounterBossFun(Stat s);
+boost_fp_fun get_StatBoostCounter_FoeParty_Fun(Stat s);
+
+void set_turnboost_atk(Fighter * f, int boost);
+void set_turnboost_def(Fighter * f, int boost);
+void set_turnboost_vel(Fighter * f, int boost);
+void set_turnboost_enr(Fighter * f, int boost);
+
+void set_enemy_turnboost_atk(Enemy * e, int boost);
+void set_enemy_turnboost_def(Enemy * e, int boost);
+void set_enemy_turnboost_vel(Enemy * e, int boost);
+void set_enemy_turnboost_enr(Enemy * e, int boost);
+
+void set_boss_turnboost_atk(Boss * b, int boost);
+void set_boss_turnboost_def(Boss * b, int boost);
+void set_boss_turnboost_vel(Boss * b, int boost);
+void set_boss_turnboost_enr(Boss * b, int boost);
+
+void set_foeparty_turnboost_atk(FoeParty * fp, int boost);
+void set_foeparty_turnboost_def(FoeParty * fp, int boost);
+void set_foeparty_turnboost_vel(FoeParty * fp, int boost);
+void set_foeparty_turnboost_enr(FoeParty * fp, int boost);
+
+void resetFighterStatus(Fighter * f);
+void resetEnemyStatus(Enemy * e);
+void resetBossStatus(Boss * b);
+
+int costFromSpecial(fighterClass class, specialMove move);
+int costFromSkill(skillType class);
+
 #endif // GAME_INIT_H_

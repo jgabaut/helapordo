@@ -54,7 +54,7 @@ endif
 # Compiler flags
 AM_CFLAGS = $(HELAPORDO_CFLAGS) -Werror -Wpedantic -Wall -std=c11 -DHELAPORDO_BUILD_STR=\"$(HL_BUILD_STR)\" -DHELAPORDO_OS=\"$(OS)\" -DHELAPORDO_MACHINE=\"$(MACHINE)\"
 
-helapordo_core_SOURCES = src/core/game_core.c src/core/game_strings.c src/core/game_log.c src/core/game_rng.c src/core/game_fight.c src/core/equips.c src/core/sprites.c src/core/game_lore.c src/core/game_lore_alt.c
+helapordo_core_SOURCES = src/core/game_core.c src/core/game_strings.c src/core/game_log.c src/core/game_rng.c src/core/game_init.c src/core/game_fight.c src/core/specials.c src/core/equips.c src/core/sprites.c src/core/game_lore.c src/core/game_lore_alt.c
 
 if USE_ANVIL_BUILD
 helapordo_SOURCES = src/anvil__helapordo.c
@@ -62,7 +62,7 @@ else
 helapordo_SOURCES =
 endif
 
-helapordo_SOURCES += src/utils/game_utils.c src/notifications/game_notifications.c src/animations/game_animations.c src/utils/game_init.c src/utils/game_debug.c src/ser/ser_core.c src/utils/saves.c src/utils/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/utils/specials.c src/main.c src/utils/floors.c sprites4curses/src/s4c.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/palette.c src/bsp/bsp.c src/release_data/release_data.c
+helapordo_SOURCES += src/utils/game_utils.c src/notifications/game_notifications.c src/animations/game_animations.c src/utils/game_debug.c src/ser/ser_core.c src/utils/saves.c src/utils/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/main.c src/utils/floors.c sprites4curses/src/s4c.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/palette.c src/bsp/bsp.c src/release_data/release_data.c
 
 if DEBUG_BUILD
 helapordo_SOURCES += koliseo/src/kls_region.c
@@ -105,7 +105,7 @@ endif
 
 
 if HL_RAYLIB_BUILD
-hlpd_save2l_SOURCES += src/utils/floors.c src/utils/game_init.c src/utils/specials.c src/utils/rooms.c src/bsp/bsp.c src/utils/turn_op.c
+hlpd_save2l_SOURCES += src/utils/floors.c src/utils/rooms.c src/bsp/bsp.c src/utils/turn_op.c
 endif
 
 ./anvil:

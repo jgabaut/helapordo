@@ -19,6 +19,16 @@
 #include "game_core.h"
 
 int G_USE_CURRENTDIR = 0;
+Gamemode GAMEMODE = Rogue;
+int G_DEBUG_ON = 0;
+int G_DEBUG_ROOMTYPE = ENEMIES;
+int G_DEBUG_ROOMTYPE_ON = 0;
+char *G_DEBUG_ROOMTYPE_ARG = NULL;
+int G_DEBUG_ENEMYTYPE = Zombie;
+int G_DEBUG_ENEMYTYPE_ON = 0;
+char *G_DEBUG_ENEMYTYPE_ARG = NULL;
+Koliseo *default_kls = NULL;
+Koliseo *temporary_kls = NULL;
 
 const char* helapordo_title_string = "     __  __  ____  __     ______  _____   ______  ____    _____    ______\n\
     / / / / / __/ / /    / __  / / __  / / __  / / __ \\  / __  \\  / __  /\n\

@@ -6,6 +6,8 @@
 - Build `helapordo_core.o` separately from `core`
 - Move `core/game_animations` to `animations/game_animations`
 - Move `utils/game_fight` to `core/game_fight`
+- Move `utils/game_init` to `core/game_init`
+- Move `utils/specials` to `core/specials`
 - Move `setSprite` functions `core/sprites`
 - Move `applyStatus`, `getBoost`, `statReset` functions `core/game_fight`
 - Move `G_USE_CURRENTDIR` to `core/game_core`

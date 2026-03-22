@@ -4,16 +4,9 @@
 Gamestate* G_GAMESTATE = NULL;
 #endif
 int G_PRELOAD_ANIMATIONS_ON = 0;
-int G_DEBUG_ON = 0;
 int G_LOG_ON = 0;
 int G_EXPERIMENTAL_ON = 0;
 int G_FASTQUIT_ON = 0;
-int G_DEBUG_ROOMTYPE = ENEMIES;
-int G_DEBUG_ROOMTYPE_ON = 0;
-char *G_DEBUG_ROOMTYPE_ARG = NULL;
-int G_DEBUG_ENEMYTYPE = Zombie;
-int G_DEBUG_ENEMYTYPE_ON = 0;
-char *G_DEBUG_ENEMYTYPE_ARG = NULL;
 
 int G_DOTUTORIAL_ON = 0;
 
@@ -24,9 +17,6 @@ int G_USE_VIM_DIRECTIONAL_KEYS = 0;
 int G_USE_WASD_DIRECTIONAL_KEYS = 0;
 int G_SEEDED_RUN_ON = 0;
 char *G_SEEDED_RUN_ARG = NULL;
-Gamemode GAMEMODE = Rogue;
-Koliseo* default_kls = NULL;
-Koliseo* temporary_kls = NULL;
 Koliseo* support_kls = NULL;
 
 void saverdr_usage(const char* progname)
