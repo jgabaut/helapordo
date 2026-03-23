@@ -113,15 +113,15 @@ void initCounters(Fighter *f, Koliseo *kls)
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_ARR_TYPED(kls, char *, strlen(stringFromStatus(i))+1,
+                KLS_PUSH_ARR_TYPED(kls, char, strlen(stringFromStatus(i))+1,
                                            HR_Turncounter_desc, "Turncounter desc",
                                            "Turncounter desc");
             strcpy(c->desc, stringFromStatus(i));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Allocated size %lu for status counter: (%s)",
-                    sizeof(stringFromStatus(i)), c->desc);
+                    strlen(stringFromStatus(i))+1, c->desc);
             kls_log(kls, "DEBUG", "Allocated size %lu for status counter: (%s)",
-                    sizeof(stringFromStatus(i)), c->desc);
+                    strlen(stringFromStatus(i))+1, c->desc);
 
             c->effect_fun = getStatusCounterFun(i);
             //sprintf(msg,"Status function pointer is: (%i)", (int) *(c->effect_fun));
@@ -141,17 +141,17 @@ void initCounters(Fighter *f, Koliseo *kls)
             switch (i) {
             case TURNBOOST_ATK: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof("ATK boost"),
+                    KLS_PUSH_ARR_TYPED(kls, char, strlen("ATK boost")+1,
                                                HR_Turncounter_desc,
                                                "Turncounter desc",
                                                "Turncounter desc");
                 strcpy(c->desc, "ATK boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ATK boost"), c->desc);
+                        strlen("ATK boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ATK boost"), c->desc);
+                        strlen("ATK boost")+1, c->desc);
 
                 c->boost_fun = getStatBoostCounterFun(ATK);
                 c->type = CNT_ATKBOOST;
@@ -161,17 +161,17 @@ void initCounters(Fighter *f, Koliseo *kls)
             break;
             case TURNBOOST_DEF: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof("DEF boost"),
+                    KLS_PUSH_ARR_TYPED(kls, char, strlen("DEF boost")+1,
                                                HR_Turncounter_desc,
                                                "Turncounter desc",
                                                "Turncounter desc");
                 strcpy(c->desc, "DEF boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("DEF boost"), c->desc);
+                        strlen("DEF boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("DEF boost"), c->desc);
+                        strlen("DEF boost")+1, c->desc);
 
                 c->boost_fun = getStatBoostCounterFun(DEF);
                 c->type = CNT_DEFBOOST;
@@ -181,17 +181,17 @@ void initCounters(Fighter *f, Koliseo *kls)
             break;
             case TURNBOOST_VEL: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof("VEL boost"),
+                    KLS_PUSH_ARR_TYPED(kls, char, strlen("VEL boost")+1,
                                                HR_Turncounter_desc,
                                                "Turncounter desc",
                                                "Turncounter desc");
                 strcpy(c->desc, "VEL boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("VEL boost"), c->desc);
+                        strlen("VEL boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("VEL boost"), c->desc);
+                        strlen("VEL boost")+1, c->desc);
 
                 c->boost_fun = getStatBoostCounterFun(VEL);
                 c->type = CNT_VELBOOST;
@@ -201,17 +201,17 @@ void initCounters(Fighter *f, Koliseo *kls)
             break;
             case TURNBOOST_ENR: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_TYPED(kls, char *, sizeof("ENR boost"),
+                    KLS_PUSH_ARR_TYPED(kls, char, strlen("ENR boost")+1,
                                                HR_Turncounter_desc,
                                                "Turncounter desc",
                                                "Turncounter desc");
                 strcpy(c->desc, "ENR boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ENR boost"), c->desc);
+                        strlen("ENR boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ENR boost"), c->desc);
+                        strlen("ENR boost")+1, c->desc);
 
                 c->boost_fun = getStatBoostCounterFun(ENR);
                 c->type = CNT_ENRBOOST;
@@ -264,7 +264,7 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                KLS_PUSH_ARR_T_TYPED(t_kls, char,
                                              strlen(stringFromStatus(i)) +1,
                                              HR_Turncounter_desc,
                                              "Turncounter desc",
@@ -272,10 +272,10 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             strcpy(c->desc, stringFromStatus(i));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Allocated size %lu for enemy status counter: (%s)",
-                    sizeof(stringFromStatus(i)), c->desc);
+                    strlen(stringFromStatus(i))+1, c->desc);
             kls_log(kls, "DEBUG",
                     "Allocated size %lu for enemy status counter: (%s)",
-                    sizeof(stringFromStatus(i)), c->desc);
+                    strlen(stringFromStatus(i))+1, c->desc);
 
             c->effect_e_fun = getStatusCounterEnemyFun(i);
             //sprintf(msg,"[DEBUG]    Enemy status function pointer is: (%i)", *(c->effect_e_fun));
@@ -287,18 +287,18 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             switch (i) {
             case TURNBOOST_ATK: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("ATK boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("ATK boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "ATK boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ATK boost"), c->desc);
+                        strlen("ATK boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ATK boost"), c->desc);
+                        strlen("ATK boost")+1, c->desc);
 
                 c->boost_e_fun = getStatBoostCounterEnemyFun(ATK);
                 c->type = CNT_ATKBOOST;
@@ -308,18 +308,18 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_DEF: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("DEF boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("DEF boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "DEF boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("DEF boost"), c->desc);
+                        strlen("DEF boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("DEF boost"), c->desc);
+                        strlen("DEF boost")+1, c->desc);
 
                 c->boost_e_fun = getStatBoostCounterEnemyFun(DEF);
                 c->type = CNT_DEFBOOST;
@@ -329,18 +329,18 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_VEL: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("VEL boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("VEL boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "VEL boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("VEL boost"), c->desc);
+                        strlen("VEL boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("VEL boost"), c->desc);
+                        strlen("VEL boost")+1, c->desc);
 
                 c->boost_e_fun = getStatBoostCounterEnemyFun(VEL);
                 c->type = CNT_VELBOOST;
@@ -350,18 +350,18 @@ void initECounters(Enemy *e, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_ENR: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("ENR boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("ENR boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "ENR boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ENR boost"), c->desc);
+                        strlen("ENR boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ENR boost"), c->desc);
+                        strlen("ENR boost")+1, c->desc);
 
                 c->boost_e_fun = getStatBoostCounterEnemyFun(ENR);
                 c->type = CNT_ENRBOOST;
@@ -412,7 +412,7 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                KLS_PUSH_ARR_T_TYPED(t_kls, char,
                                              strlen(stringFromStatus(i))+1,
                                              HR_Turncounter_desc,
                                              "Turncounter desc",
@@ -420,10 +420,10 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             strcpy(c->desc, stringFromStatus(i));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Allocated size %lu for boss status counter: (%s)",
-                    sizeof(stringFromStatus(i)), c->desc);
+                    strlen(stringFromStatus(i))+1, c->desc);
             kls_log(kls, "DEBUG",
                     "Allocated size %lu for boss status counter: (%s)",
-                    sizeof(stringFromStatus(i)), c->desc);
+                    strlen(stringFromStatus(i))+1, c->desc);
 
             c->effect_b_fun = getStatusCounterBossFun(i);
             //sprintf(msg,"Boss status function pointer is: (%i)", *(c->effect_b_fun));
@@ -435,18 +435,18 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             switch (i) {
             case TURNBOOST_ATK: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("ATK boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("ATK boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "ATK boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for boss stat counter: (%s)",
-                        sizeof("ATK boost"), c->desc);
+                        strlen("ATK boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for boss stat counter: (%s)",
-                        sizeof("ATK boost"), c->desc);
+                        strlen("ATK boost")+1, c->desc);
 
                 c->boost_b_fun = getStatBoostCounterBossFun(ATK);
                 c->type = CNT_ATKBOOST;
@@ -456,18 +456,18 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_DEF: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("DEF boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("DEF boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "DEF boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for boss stat counter: (%s)",
-                        sizeof("DEF boost"), c->desc);
+                        strlen("DEF boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for boss stat counter: (%s)",
-                        sizeof("DEF boost"), c->desc);
+                        strlen("DEF boost")+1, c->desc);
 
                 c->boost_b_fun = getStatBoostCounterBossFun(DEF);
                 c->type = CNT_DEFBOOST;
@@ -477,18 +477,18 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_VEL: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("VEL boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("VEL boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "VEL boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for boss stat counter: (%s)",
-                        sizeof("VEL boost"), c->desc);
+                        strlen("VEL boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for boss stat counter: (%s)",
-                        sizeof("VEL boost"), c->desc);
+                        strlen("VEL boost")+1, c->desc);
 
                 c->boost_b_fun = getStatBoostCounterBossFun(VEL);
                 c->type = CNT_VELBOOST;
@@ -498,18 +498,18 @@ void initBCounters(Boss *b, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_ENR: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("ENR boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("ENR boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "ENR boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for boss stat counter: (%s)",
-                        sizeof("ENR boost"), c->desc);
+                        strlen("ENR boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for boss stat counter: (%s)",
-                        sizeof("ENR boost"), c->desc);
+                        strlen("ENR boost")+1, c->desc);
 
                 c->boost_b_fun = getStatBoostCounterBossFun(ENR);
                 c->type = CNT_ENRBOOST;
@@ -560,7 +560,7 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
         //First, prepare counters for statuses
         if (i < STATUSMAX + 1) {
             c->desc =
-                (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
+                KLS_PUSH_ARR_T_TYPED(t_kls, char,
                                              strlen(stringFromStatus(i))+1,
                                              HR_Turncounter_desc,
                                              "Turncounter desc",
@@ -568,10 +568,10 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             strcpy(c->desc, stringFromStatus(i));
             log_tag("debug_log.txt", "[DEBUG]",
                     "Allocated size %lu for foeparty status counter: (%s)",
-                    sizeof(stringFromStatus(i)), c->desc);
+                    strlen(stringFromStatus(i))+1, c->desc);
             kls_log(kls, "DEBUG",
                     "Allocated size %lu for foeparty status counter: (%s)",
-                    sizeof(stringFromStatus(i)), c->desc);
+                    strlen(stringFromStatus(i))+1, c->desc);
 
             //c->effect_fp_fun = get_StatusCounter_FoeParty_Fun(i);
             //sprintf(msg,"Foeparty status function pointer is: (%i)", *(c->effect_b_fun));
@@ -583,18 +583,18 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             switch (i) {
             case TURNBOOST_ATK: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("ATK boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("ATK boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "ATK boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ATK boost"), c->desc);
+                        strlen("ATK boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ATK boost"), c->desc);
+                        strlen("ATK boost")+1, c->desc);
 
                 c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ATK);
                 c->type = CNT_ATKBOOST;
@@ -604,18 +604,18 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_DEF: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("DEF boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("DEF boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "DEF boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("DEF boost"), c->desc);
+                        strlen("DEF boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("DEF boost"), c->desc);
+                        strlen("DEF boost")+1, c->desc);
 
                 c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(DEF);
                 c->type = CNT_DEFBOOST;
@@ -625,18 +625,18 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_VEL: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("VEL boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("VEL boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "VEL boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("VEL boost"), c->desc);
+                        strlen("VEL boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("VEL boost"), c->desc);
+                        strlen("VEL boost")+1, c->desc);
 
                 c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(VEL);
                 c->type = CNT_VELBOOST;
@@ -646,18 +646,18 @@ void initFoePartyCounters(FoeParty *fp, Koliseo_Temp *t_kls)
             break;
             case TURNBOOST_ENR: {
                 c->desc =
-                    (char *)KLS_PUSH_ARR_T_TYPED(t_kls, char *,
-                                                 sizeof("ENR boost"),
+                    KLS_PUSH_ARR_T_TYPED(t_kls, char,
+                                                 strlen("ENR boost")+1,
                                                  HR_Turncounter_desc,
                                                  "Turncounter desc",
                                                  "Turncounter desc");
                 strcpy(c->desc, "ENR boost");
                 log_tag("debug_log.txt", "[DEBUG]",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ENR boost"), c->desc);
+                        strlen("ENR boost")+1, c->desc);
                 kls_log(kls, "DEBUG",
                         "Allocated size %lu for status counter: (%s)",
-                        sizeof("ENR boost"), c->desc);
+                        strlen("ENR boost")+1, c->desc);
 
                 c->boost_fp_fun = get_StatBoostCounter_FoeParty_Fun(ENR);
                 c->type = CNT_ENRBOOST;
