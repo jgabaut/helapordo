@@ -1,5 +1,9 @@
 ## [1.4.20] - Unreleased
 
+### Added
+
+- Add `scripts/sim` to simulate fights
+
 ### Changed
 
 - Extract `core/game_log`, `core/game_strings`, `core/game_rng`, `notifications/game_notifications` from `utils/game_utils`

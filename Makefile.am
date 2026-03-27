@@ -162,6 +162,11 @@ $(TARGET): helapordo_core.o $(helapordo_SOURCES:.c=.o)
 	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) helapordo_core.o $(hlpd_save2l_SOURCES:.c=.o) -o $@ $(LDADD) $(AM_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
 
+./hlpd-sim: helapordo_core.o scripts/sim/sim.c
+	@echo -en "\033[1;34m[Makefile]    Building [\033[1;35m $@ \033[1;34m]:\e[0m  "
+	$(CCOMP) helapordo_core.o scripts/sim/sim.c -o $@ -lm -l:libraylib.a -lX11 -lkoliseo
+	@echo -e "\033[1;33mDone.\e[0m"
+
 # Targets for additional rules
 versioncheck:
 	@echo -en "Checking helapordo local version.\n\n    Expected ($(VERSION)),  got: ($(RUN_VERSION)).\n"
@@ -316,7 +321,9 @@ clean:
 	-rm src/anvil__helapordo.*
 	-rm ./anvil
 	-rm ./hlpd-save2l
+	-rm ./hlpd-sim
 	-rm ./scripts/save2l/*.o
+	-rm ./scripts/sim/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 cleanob:
@@ -331,6 +338,7 @@ cleanob:
 	-rm src/bsp/*.o
 	-rm src/release_data/*.o
 	-rm ./scripts/save2l/*.o
+	-rm ./scripts/sim/*.o
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Default target (builds everything)

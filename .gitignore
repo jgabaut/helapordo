@@ -44,6 +44,10 @@ helapordo_debug
 hlpd-save2l
 hlpd-save2l.exe
 
+# ignore hlpd-sim exectuable
+hlpd-sim
+hlpd-sim.exe
+
 # ignore debug log file
 debug_log.txt
 # ignore ops log file
