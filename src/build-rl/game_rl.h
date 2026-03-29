@@ -184,10 +184,11 @@ typedef enum Gui_Debug_Group_Button_Index {
 
 typedef enum Gui_Debug_Selection_Index {
     GUI_DEBUG_FIGHTER,
-    GUI_DEBUG_FLOOR
+    GUI_DEBUG_FLOOR,
+    GUI_DEBUG_ROOM
 } Gui_Debug_Selection_Index;
 
-#define GUI_DEBUG_SELECTION_MAX GUI_DEBUG_FLOOR
+#define GUI_DEBUG_SELECTION_MAX GUI_DEBUG_ROOM
 
 typedef enum Gui_Debug_Fighter_Layout_Group_Index {
     DEBUG_FIGHTER_LAYOUT_SPECIALSLOTS_GROUP,

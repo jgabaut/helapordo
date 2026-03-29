@@ -2904,6 +2904,9 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         case GUI_DEBUG_FLOOR: {
         }
         break;
+        case GUI_DEBUG_ROOM: {
+        }
+        break;
         }
     }
     break;
@@ -4580,6 +4583,184 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                         }
                         DrawRectangle(cell_r.x, cell_r.y, cell_r.width, cell_r.height, cell_color);
                     }
+                }
+            }
+        }
+        break;
+        case GUI_DEBUG_ROOM: {
+            DrawText("DEBUG ROOM", 20, 60, 20, gui_state.theme.txt_color);
+            if (!current_room) {
+                DrawText("current_room is NULL", 20, 90, 20, gui_state.theme.txt_color);
+            } else {
+                roomClass current_room_class = current_room->class;
+                if (current_room_class >= 0 && current_room_class < ROOM_CLASS_MAX+1) {
+                    DrawText(TextFormat("current_room->class is {%s}", stringFromRoom(current_room_class)), 20, 90, 20, gui_state.theme.txt_color);
+                    switch (current_room_class) {
+                        case WALL: {
+                            DrawText(TextFormat("How did you get here? x %i y %i", current_x, current_y), 20, 120, 20, gui_state.theme.txt_color);
+                        }
+                        break;
+                        case BASIC:
+                        case HOME: {
+                            DrawText("Not much to do here", 20, 120, 20, gui_state.theme.txt_color);
+                        }
+                        break;
+                        case ENEMIES: {
+                            DrawText(TextFormat("gmst->currEnemyIdx {%i} current_room->enemyTotal {%i}", gamestate->current_enemy_index, current_room->enemyTotal), 20, 120, 20, gui_state.theme.txt_color);
+                            int enemy_r_w = gui_state.gameScreenWidth * 0.125f;
+                            int enemy_r_h = gui_state.gameScreenHeight * 0.1f;
+                            int enemies_r_w = enemy_r_w * ROOM_ENEMIES_MAX;
+                            int enemies_r_h = enemy_r_h;
+                            int enemies_r_x = (gui_state.gameScreenWidth - enemies_r_w) * 0.5f;
+                            int enemies_r_y = gui_state.gameScreenHeight * 0.3f;
+                            Rectangle enemiesinfo_r = {
+                                .x = enemies_r_x,
+                                .y = enemies_r_y,
+                                .width = enemies_r_w,
+                                .height = enemies_r_h
+                            };
+                            DrawRectangleLines(enemiesinfo_r.x, enemiesinfo_r.y, enemiesinfo_r.width, enemiesinfo_r.height, BLACK);
+                            for (int i = 0; i < ROOM_ENEMIES_MAX; i++) {
+                                Rectangle cell = {
+                                    .x = enemies_r_x + (i* enemy_r_w),
+                                    .y = enemies_r_y,
+                                    .width = enemy_r_w,
+                                    .height = enemy_r_h
+                                };
+                                if (i < current_room->enemyTotal) {
+                                    Color enemyinfo_r_color = GREEN;
+                                    if (!current_room->enemies[i]) {
+                                        enemyinfo_r_color = RED;
+                                    }
+                                    DrawRectangleRec(cell, enemyinfo_r_color);
+                                    Enemy* cell_enemy = current_room->enemies[i];
+                                    if (cell_enemy) {
+                                        enemyClass cell_enemy_class = cell_enemy->class;
+                                        int cell_enemy_txt_height = 20;
+                                        const char* txt = NULL;
+                                        if (cell_enemy_class >= 0 && cell_enemy_class < ENEMYCLASSESMAX+1) {
+                                            txt = TextFormat("%s", stringFromEClass(cell_enemy_class));
+                                        } else {
+                                            txt = TextFormat("Class %i", cell_enemy_class);
+                                        }
+                                        DrawText(txt, cell.x + (cell.width - MeasureText(txt, cell_enemy_txt_height)) * 0.5f, cell.y + (cell_enemy_txt_height * 0.5f), cell_enemy_txt_height, BLACK);
+                                    }
+                                }
+                                DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
+                            }
+                            int foe_r_w = enemy_r_w;
+                            int foe_r_h = enemy_r_h;
+                            int foes_r_w = enemies_r_w;
+                            int foes_r_h = foe_r_h;
+                            int foes_r_x = (gui_state.gameScreenWidth - foes_r_w) * 0.5f;
+                            int foes_r_y = enemiesinfo_r.y + enemiesinfo_r.height;
+                            Rectangle foesinfo_r = {
+                                .x = foes_r_x,
+                                .y = foes_r_y,
+                                .width = foes_r_w,
+                                .height = foes_r_h
+                            };
+                            DrawRectangleLines(foesinfo_r.x, foesinfo_r.y, foesinfo_r.width, foesinfo_r.height, BLACK);
+                            if (!current_room->foes) {
+
+                            } else if (current_room->foes->class != Enemies) {
+                                DrawRectangleRec(foesinfo_r, RED);
+                            } else {
+                                for (int i = 0; i < ROOM_ENEMIES_MAX; i++) {
+                                    Rectangle cell = {
+                                        .x = foes_r_x + (i* foe_r_w),
+                                        .y = foes_r_y,
+                                        .width = foe_r_w,
+                                        .height = foe_r_h
+                                    };
+                                    if (i < current_room->foes->size) {
+                                        Color foeinfo_r_color = GREEN;
+                                        if (!current_room->foes->enemy_foes[i]) {
+                                            foeinfo_r_color = RED;
+                                        }
+                                        DrawRectangleRec(cell, foeinfo_r_color);
+                                        Enemy* cell_enemy = current_room->foes->enemy_foes[i];
+                                        if (cell_enemy) {
+                                            enemyClass cell_enemy_class = cell_enemy->class;
+                                            int cell_enemy_txt_height = 20;
+                                            const char* txt = NULL;
+                                            if (cell_enemy_class >= 0 && cell_enemy_class < ENEMYCLASSESMAX+1) {
+                                                txt = TextFormat("%s", stringFromEClass(cell_enemy_class));
+                                            } else {
+                                                txt = TextFormat("Class %i", cell_enemy_class);
+                                            }
+                                            DrawText(txt, cell.x + (cell.width - MeasureText(txt, cell_enemy_txt_height)) * 0.5f, cell.y + (cell_enemy_txt_height * 0.5f), cell_enemy_txt_height, BLACK);
+                                        }
+                                    }
+                                    DrawRectangleLines(cell.x, cell.y, cell.width, cell.height, BLACK);
+                                }
+                            }
+                        }
+                        break;
+                        case BOSS: {
+                            int bossinfo_r_w = gui_state.gameScreenWidth * 0.3f;
+                            int bossinfo_r_h = gui_state.gameScreenHeight * 0.2f;
+                            int bossinfo_r_x = (gui_state.gameScreenWidth - bossinfo_r_w) * 0.5f;
+                            int bossinfo_r_y = gui_state.gameScreenHeight * 0.3f;
+                            Rectangle bossinfo_r = {
+                                .x = bossinfo_r_x,
+                                .y = bossinfo_r_y,
+                                .width = bossinfo_r_w,
+                                .height = bossinfo_r_h
+                            };
+                            DrawRectangleLines(bossinfo_r.x, bossinfo_r.y, bossinfo_r.width, bossinfo_r.height, BLACK);
+                            Color bossinfo_r_color = GREEN;
+                            if (!current_room->boss) {
+                                bossinfo_r_color = RED;
+                            }
+                            DrawRectangleRec(bossinfo_r, bossinfo_r_color);
+                        }
+                        break;
+                        case SHOP: {
+                            int shopinfo_r_w = gui_state.gameScreenWidth * 0.3f;
+                            int shopinfo_r_h = gui_state.gameScreenHeight * 0.2f;
+                            int shopinfo_r_x = (gui_state.gameScreenWidth - shopinfo_r_w) * 0.5f;
+                            int shopinfo_r_y = gui_state.gameScreenHeight * 0.3f;
+                            Rectangle shopinfo_r = {
+                                .x = shopinfo_r_x,
+                                .y = shopinfo_r_y,
+                                .width = shopinfo_r_w,
+                                .height = shopinfo_r_h
+                            };
+                            DrawRectangleLines(shopinfo_r.x, shopinfo_r.y, shopinfo_r.width, shopinfo_r.height, BLACK);
+                            Color shopinfo_r_color = GREEN;
+                            if (!current_room->shop) {
+                                shopinfo_r_color = RED;
+                            }
+                            DrawRectangleRec(shopinfo_r, shopinfo_r_color);
+                        }
+                        break;
+                        case TREASURE: {
+                            int treasureinfo_r_w = gui_state.gameScreenWidth * 0.3f;
+                            int treasureinfo_r_h = gui_state.gameScreenHeight * 0.2f;
+                            int treasureinfo_r_x = (gui_state.gameScreenWidth - treasureinfo_r_w) * 0.5f;
+                            int treasureinfo_r_y = gui_state.gameScreenHeight * 0.3f;
+                            Rectangle treasureinfo_r = {
+                                .x = treasureinfo_r_x,
+                                .y = treasureinfo_r_y,
+                                .width = treasureinfo_r_w,
+                                .height = treasureinfo_r_h
+                            };
+                            DrawRectangleLines(treasureinfo_r.x, treasureinfo_r.y, treasureinfo_r.width, treasureinfo_r.height, BLACK);
+                            Color treasureinfo_r_color = GREEN;
+                            if (!current_room->treasure) {
+                                treasureinfo_r_color = RED;
+                            }
+                            DrawRectangleRec(treasureinfo_r, treasureinfo_r_color);
+                        }
+                        break;
+                        case ROADFORK: {
+                            DrawText(TextFormat("How did you get here? x %i y %i", current_x, current_y), 20, 120, 20, gui_state.theme.txt_color);
+                        }
+                        break;
+                    }
+                } else {
+                    DrawText(TextFormat("current_room->class is {%i}", current_room_class), 20, 90, 20, gui_state.theme.txt_color);
                 }
             }
         }
