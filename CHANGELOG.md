@@ -3,6 +3,7 @@
 ### Added
 
 - Add `scripts/sim` to simulate fights
+- Add `BUTTON_DEBUG` to `ROOM_VIEW`
 
 ### Changed
 

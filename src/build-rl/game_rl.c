@@ -1573,6 +1573,42 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 
         gui_state->framesCounter += 1;    // Count frames
 
+#ifdef HELAPORDO_DEBUG_ACCESS
+        if (G_DEBUG_ON == 1) {
+            gui_state->debug_buttons.buttons[BUTTON_DEBUG].on = false;
+
+            int debug_button_w = gui_state->gameScreenWidth*0.2f;
+            int debug_button_h = gui_state->gameScreenHeight*0.1f;
+            int debug_button_x = gui_state->gameScreenWidth - debug_button_w;
+            int debug_button_y = 0;
+            Rectangle debug_button_r = {
+                .x = debug_button_x,
+                .y = debug_button_y,
+                .width = debug_button_w,
+                .height = debug_button_h,
+            };
+            Gui_Button* button = &(gui_state->debug_buttons.buttons[BUTTON_DEBUG]);
+            button->r = debug_button_r;
+            if (CheckCollisionPointRec(gui_state->virtualMouse, button->r)) {
+                if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+                    button->state = BUTTON_PRESSED;
+                } else {
+                    button->state = BUTTON_HOVER;
+                }
+                if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT)) {
+                    button->on = true;
+                }
+            } else {
+                button->state = BUTTON_NORMAL;
+            }
+            if (button->on) {
+                fprintf(stderr, "%s():    [EFFECT]\n", __func__);
+                gui_state->currentScreen = DEBUG_VIEW;
+                break;
+            }
+        }
+#endif // HELAPORDO_DEBUG_ACCESS
+
         if (IsKeyPressed(KEY_P)) {
             *pause_animation = !(*pause_animation);
         }
@@ -2581,7 +2617,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
     case DEBUG_VIEW: {
         // Press Enter or Q to change to FLOOR_VIEW screen
         if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_Q)) {
-            gui_state->currentScreen = FLOOR_VIEW;
+            gui_state->currentScreen = (*current_room ? ROOM_VIEW : FLOOR_VIEW);
         }
         int cycle_button_w = gui_state->gameScreenWidth * 0.2f;
         int cycle_button_h = gui_state->gameScreenWidth * 0.05f;
@@ -3718,7 +3754,18 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                 */
             }
             break;
+            } // End roomClass switch
+#ifdef HELAPORDO_DEBUG_ACCESS
+            if (G_DEBUG_ON == 1) {
+                Gui_Button button = gui_state.debug_buttons.buttons[BUTTON_DEBUG];
+                if (button.state == BUTTON_HOVER) {
+                    DrawRectangleRec(button.r, RED);
+                } else {
+                    DrawRectangleRec(button.r, button.box_color);
+                }
+                DrawText(button.label, button.r.x + (gui_state.gameScreenWidth * 0.02f), button.r.y + (gui_state.gameScreenHeight * 0.02f), gui_state.gameScreenHeight * 0.04f, button.text_color);
             }
+#endif // HELAPORDO_DEBUG_ACCESS
         }
         DrawText("WIP", 20, gui_state.gameScreenHeight*0.5f, 40, ColorFromS4CPalette(palette, S4C_SALMON));
         //DrawText("PRESS ENTER or TAP to go to FLOOR_VIEW SCREEN", 110, 220, 20, gui_state.theme.txt_color);
