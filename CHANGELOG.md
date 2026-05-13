@@ -19,6 +19,7 @@
 - Move `G_USE_CURRENTDIR` to `core/game_core`
 - Move `G_GODMODE_ON` to `core/game_fight`
 - Move `G_RNG_ADVANCEMENTS` to `core/game_rng`
+- Bump `s4c` to `0.5.1`
 
 ## [1.4.19] - 2026-03-22
 
