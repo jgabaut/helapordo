@@ -192,9 +192,9 @@ OP_res turnOP(turnOption_OP op, turnOP_args *args, Koliseo *kls,
                 //Artifact drop (if we don't have all of them), guaranteed on killing a beast
                 if ((actor->stats->artifactsfound != ARTIFACTSMAX + 1)
                     && res == OP_RES_KILL_DONE && (enemy->beast
-                                                     ||
-                                                     ((hlpd_rand() % ENEMY_ARTIFACTDROP_CHANCE) -
-                                                      (actor->luck / 10) <= 0))) {
+                                                   ||
+                                                   ((hlpd_rand() % ENEMY_ARTIFACTDROP_CHANCE) -
+                                                    (actor->luck / 10) <= 0))) {
                     int artifact_drop = dropArtifact(actor);
                     sprintf(msg, "You found a %s!", stringFromArtifacts(artifact_drop));
                     enqueue_notification(msg, 500, S4C_MAGENTA, rb_notifications);
