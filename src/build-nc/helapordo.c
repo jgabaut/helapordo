@@ -103,7 +103,7 @@ void gameloop(int argc, char **argv)
 
 
         char *kls_progname =
-            (char *)KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami),
+            KLS_PUSH_ARR_TYPED(default_kls, char, strlen(whoami)+1,
                                        KLS_None, "progname", whoami);
         strcpy(kls_progname, whoami);
 
