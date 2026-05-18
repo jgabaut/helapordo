@@ -228,6 +228,7 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/animations ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/animations
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/ser ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/ser
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/bsp ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/bsp
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/notifications ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/notifications
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/static ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/static
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/scripts ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/scripts
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/scripts/save2l ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/scripts/save2l
@@ -271,6 +272,7 @@ pack: versioncheck
 	install ./src/animations/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/animations/
 	install ./src/ser/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/ser/
 	install ./src/bsp/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/bsp/
+	install ./src/notifications/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/notifications/
 	install ./src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/
 
 	@echo -e "\033[1;35m[PACK] Done.\e[0m"
@@ -315,6 +317,7 @@ clean:
 	-rm src/palette.*
 	-rm src/ser/*.o
 	-rm src/bsp/*.o
+	-rm src/notifications/*.o
 	-rm src/release_data/*.o
 	-rm koliseo/src/*.o
 	-rm ./*.o
@@ -330,12 +333,14 @@ cleanob:
 	@echo -en "Cleaning object build artifacts:  "
 	-rm sprites4curses/src/*.o
 	-rm koliseo/src/*.o
+	-rm ./*.o
 	-rm src/*.o
 	-rm src/build-*/*.o
 	-rm src/core/*.o
 	-rm src/utils/*.o
 	-rm src/ser/*.o
 	-rm src/bsp/*.o
+	-rm src/notifications/*.o
 	-rm src/release_data/*.o
 	-rm ./scripts/save2l/*.o
 	-rm ./scripts/sim/*.o
