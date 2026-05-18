@@ -3806,10 +3806,11 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         for (Gui_Special_Group_Button_Index i = 0; i < group.len; i++) {
             if ((player->specials[i]->enabled)) {
                 Gui_Button button = group.buttons[i];
+                specialMove move_idx = (specialMove) i;
                 if (button.state == BUTTON_HOVER) {
                     DrawRectangleRec(button.r, RED);
-                    DrawText(nameStringFromSpecial(player->class, i), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
-                    DrawText(descStringFromSpecial(player->class, i), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
+                    DrawText(nameStringFromSpecial(player->class, move_idx), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
+                    DrawText(descStringFromSpecial(player->class, move_idx), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
                 } else {
                     DrawRectangleRec(button.r, button.box_color);
                 }
@@ -3827,10 +3828,11 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         for (Gui_Special_Group_Button_Index i = 0; i < group.len; i++) {
             if (!(player->specials[i]->enabled)) {
                 Gui_Button button = group.buttons[i];
+                specialMove move_idx = (specialMove) i;
                 if (button.state == BUTTON_HOVER) {
                     DrawRectangleRec(button.r, RED);
-                    DrawText(nameStringFromSpecial(player->class, i), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
-                    DrawText(descStringFromSpecial(player->class, i), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
+                    DrawText(nameStringFromSpecial(player->class, move_idx), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.3f, gui_state.gameScreenHeight * 0.04f, RED);
+                    DrawText(descStringFromSpecial(player->class, move_idx), gui_state.gameScreenWidth * 0.5f, gui_state.gameScreenHeight * 0.4f, gui_state.gameScreenHeight * 0.04f, RED);
                 } else {
                     DrawRectangleRec(button.r, button.box_color);
                 }
