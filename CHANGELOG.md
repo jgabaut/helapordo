@@ -8,6 +8,7 @@
 
 ### Changed
 
+- Fix init functions for `Turncounter`
 - Extract `core/game_log`, `core/game_strings`, `core/game_rng`, `notifications/game_notifications` from `utils/game_utils`
 - Build `helapordo_core.o` separately from `core`
 - Move `core/game_animations` to `animations/game_animations`
