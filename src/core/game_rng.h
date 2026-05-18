@@ -16,20 +16,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SAVES_H_
-#define SAVES_H_
+#ifndef GAME_RNG_H
+#define GAME_RNG_H
+#include <stdbool.h>
+#include "game_core.h"
+#include "game_log.h"
 
-#include "../core/equips.h"
-#include "../core/game_init.h"
-
-#ifdef HELAPORDO_CURSES_BUILD
-#include "../build-nc/game_curses.h"
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-#include "../build-rl/game_rl.h"
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-bool set_Saveslot_name(Saveslot * sv);
-#endif // SAVES_H_
+int hlpd_rand_docount(bool count);
+int hlpd_rand(void);
+unsigned long hlpd_hash(unsigned char *str);
+void gen_random_seed(char buffer[PATH_SEED_BUFSIZE+1]);
+bool check_seed(char buffer[PATH_SEED_BUFSIZE]);
+#endif // GAME_RNG_H

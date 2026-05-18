@@ -19,6 +19,7 @@
 #ifndef FLOORS_H
 #define FLOORS_H
 #include <math.h>
+#include "../core/game_log.h"
 #include "game_utils.h"
 
 void init_floor_layout(Floor * floor);

@@ -1,3 +1,28 @@
+## [1.4.20] - 2026-05-18
+
+### Added
+
+- Add `scripts/sim` to simulate fights
+- Add `BUTTON_DEBUG` to `ROOM_VIEW`
+- Add info on `current_room` to `DEBUG_VIEW`
+
+### Changed
+
+- Fix init functions for `Turncounter`
+- Fix progname name string not accounting for NULL terminator
+- Extract `core/game_log`, `core/game_strings`, `core/game_rng`, `notifications/game_notifications` from `utils/game_utils`
+- Build `helapordo_core.o` separately from `core`
+- Move `core/game_animations` to `animations/game_animations`
+- Move `utils/game_fight` to `core/game_fight`
+- Move `utils/game_init` to `core/game_init`
+- Move `utils/specials` to `core/specials`
+- Move `setSprite` functions `core/sprites`
+- Move `applyStatus`, `getBoost`, `statReset`, `foeTurnPick` functions to `core/game_fight`
+- Move `G_USE_CURRENTDIR` to `core/game_core`
+- Move `G_GODMODE_ON` to `core/game_fight`
+- Move `G_RNG_ADVANCEMENTS` to `core/game_rng`
+- Bump `s4c` to `0.5.1`
+
 ## [1.4.19] - 2026-03-22
 
 ### Added

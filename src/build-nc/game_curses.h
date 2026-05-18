@@ -35,7 +35,7 @@
 #include <locale.h>
 
 #include "../utils/turn_op.h"
-#include "../core/game_animations.h"
+#include "../animations/game_animations.h"
 
 void plot_line_in_ncurses(int x1, int y1, int x2, int y2);
 void print_encoded_char(WINDOW * w, int y, int x, char c);
@@ -55,12 +55,6 @@ void init_boss_wins(WINDOW ** wins, Boss * b, Fighter * f);
 void boss_win_show(WINDOW * win, Boss * b, Fighter * f, int isBoss, int border);
 void boss_print_in_panel(WINDOW * win, int starty, int startx, int width,
                          Boss * b, Fighter * f, int isBoss);
-
-void setEquipslotSprite(Equipslot * s);
-void setEnemySprite(Enemy * e);
-void setBossSprite(Boss * b);
-void setFighterSprite(Fighter * f);
-void setChestSprite(Chest * c);
 
 void updateSelectedConsumableW(WINDOW * w, MENU * my_menu, Fighter * f);
 

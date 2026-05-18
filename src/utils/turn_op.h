@@ -20,7 +20,7 @@
 #define TURNOP_H_
 
 #include "game_debug.h"
-#include "game_fight.h"
+#include "../core/game_fight.h"
 #include "saves.h"
 #include "../ser/ser_core.h"
 

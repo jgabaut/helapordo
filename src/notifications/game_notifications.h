@@ -16,20 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SAVES_H_
-#define SAVES_H_
-
-#include "../core/equips.h"
-#include "../core/game_init.h"
-
-#ifdef HELAPORDO_CURSES_BUILD
-#include "../build-nc/game_curses.h"
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-#include "../build-rl/game_rl.h"
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-bool set_Saveslot_name(Saveslot * sv);
-#endif // SAVES_H_
+#ifndef GAME_NOTIFICATIONS_H_
+#define GAME_NOTIFICATIONS_H_
+#include "../core/game_core.h"
+#include "../core/game_log.h"
+void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifications);
+#endif // GAME_NOTIFICATIONS_H_

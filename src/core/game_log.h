@@ -16,20 +16,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef SAVES_H_
-#define SAVES_H_
-
-#include "../core/equips.h"
-#include "../core/game_init.h"
-
-#ifdef HELAPORDO_CURSES_BUILD
-#include "../build-nc/game_curses.h"
-#else
-#ifndef HELAPORDO_RAYLIB_BUILD
-#error "HELAPORDO_CURSES_BUILD and HELAPORDO_RAYLIB_BUILD are both undefined.\n"
-#else
-#include "../build-rl/game_rl.h"
-#endif // HELAPORDO_RAYLIB_BUILD
-#endif // HELAPORDO_CURSES_BUILD
-bool set_Saveslot_name(Saveslot * sv);
-#endif // SAVES_H_
+#ifndef GAME_LOG_H
+#define GAME_LOG_H
+#include "game_core.h"
+#include "game_strings.h"
+//#include "game_strings.h"
+#ifdef _WIN32
+void log_Win_EnvVars(void);
+#endif // _WIN32
+void log_tag(char *filename, char *header, const char *format, ...);
+void log_OP(turnOption_OP op);
+void hlpd_reset_logfile(void);
+#endif // GAME_LOG_H

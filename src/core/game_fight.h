@@ -19,7 +19,23 @@
 #ifndef GAME_FIGHT_H_
 #define GAME_FIGHT_H_
 
-#include "game_utils.h"
+#include "../core/game_log.h"
+#include "../core/game_rng.h"
+#include "../notifications/game_notifications.h"
+//#include "game_utils.h"
+
+void setCounter(Turncounter * c, int turns);
+int getBoost(int lvl, int luck);
+int getBossBoost(int lvl, bossClass bclass);
+int getEnemyBoost(int lvl, enemyClass eclass);
+void statReset(Fighter * player, int force);
+void statResetBoss(Boss * b, int force);
+void statResetEnemy(Enemy * e, int force);
+
+void printStatusText(fighterStatus status, char *subject, int color, RingaBuf* rb_notifications);
+void applyStatus(Fighter * f, RingaBuf* rb_notifications);
+void applyEStatus(Enemy * e, RingaBuf* rb_notifications);
+void applyBStatus(Boss * b, RingaBuf* rb_notifications);
 
 int defer_fight_enemy(Fighter * player, Enemy * e, foeTurnOption_OP foe_op,
                       Koliseo * kls, RingaBuf* rb_notifications);
@@ -43,6 +59,8 @@ int boss_fight(Fighter * player, Boss * b, Path * p,
 
 int boss_attack(Boss * b, Fighter * target, Path * p,
                 Koliseo * kls, RingaBuf* rb_notifications);
+foeTurnOption enemyTurnPick(Enemy * e, Fighter * f);
+foeTurnOption bossTurnPick(Boss * b, Fighter * f);
 fightResult do_Skill(Fighter * player, Enemy * e, skillType picked_skill, Koliseo * kls);
 fightResult do_Skill_boss(Fighter * player, Boss * b, skillType picked_skill, Path * path, Koliseo * kls);
 
