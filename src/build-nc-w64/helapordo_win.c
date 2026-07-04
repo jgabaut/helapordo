@@ -319,7 +319,6 @@ void gameloop_Win(int argc, char **argv)
         printf("\n\nThe Windows build of \"helapordo\" is very much WIP.\n\n");
         printf("\n  Press Enter to proceed.\n");
         scanf("%*c");
-        system("cls");
 
         if (G_EXPERIMENTAL_ON == 1) {
             bool did_init = false;

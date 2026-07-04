@@ -163,10 +163,7 @@ void gameloop(int argc, char **argv)
         int hashed_seed = hlpd_hash((unsigned char*)seed);
         srand(hashed_seed);
 
-        // Clear screen and print title, wait for user to press enter
-        int clearres = system("clear");
-        log_tag("debug_log.txt", "[DEBUG]",
-                "gameloop() system(\"clear\") res was (%i)", clearres);
+        // Print title, wait for user to press enter
         printTitle();
         char c;
         yellow();
@@ -999,12 +996,6 @@ void gameloop(int argc, char **argv)
                         //freeRoom(current_room);
                         break;
                     } else {
-                        //Flush the terminal
-                        int clrres = system("clear");
-                        log_tag("debug_log.txt", "[DEBUG]",
-                                "gameloop() system(\"clear\") res was (%i)",
-                                clrres);
-
                         if (roadFork_value > 0) {
                             //lightYellow();
                             //TODO
@@ -1187,12 +1178,6 @@ void gameloop(int argc, char **argv)
 
             //Got out of the loop with res not being DEATH; so i won
             if (res != OP_RES_DEATH) {	//I guess player and enemy were freed already?
-                int clrres = system("clear");
-                //TODO
-                //What is this?
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "gameloop() 2 system(\"clear\") res was (%i)",
-                        clrres);
                 handleStats(player);
                 printf("\n\n\tYOU WON!\n\n");
                 log_tag("debug_log.txt", "[DEBUG]", "Game won.");
@@ -1208,12 +1193,6 @@ void gameloop(int argc, char **argv)
                 log_tag("debug_log.txt", "[DEBUG-KLS]",
                         "Freed temporary KLS");
             } else {
-                //TODO
-                //What is this?
-                int clrres = system("clear");
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "gameloop() 3 system(\"clear\") res was (%i)",
-                        clrres);
                 printf("\n\n\tYOU DIED.\n\n");
                 if (is_seeded) {
                     printf("\n\nSeeded run\n\n");

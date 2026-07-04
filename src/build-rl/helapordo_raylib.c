@@ -261,17 +261,7 @@ void gameloop_rl(int argc, char** argv)
     int hashed_seed = hlpd_hash((unsigned char*)seed);
     srand(hashed_seed);
 
-    // Clear screen and print title, wait for user to press enter
-#ifndef _WIN32
-    int clearres = system("clear");
-    log_tag("debug_log.txt", "[DEBUG]",
-            "gameloop() system(\"clear\") res was (%i)", clearres);
-#else
-    int clearres = system("cls");
-    log_tag("debug_log.txt", "[DEBUG]",
-            "gameloop() system(\"cls\") res was (%i)", clearres);
-#endif
-
+    // Print title, wait for user to press enter
     if (G_DEBUG_ON > 0) {
         fprintf(stderr, "%s():    Seed: {%s}\n", __func__, seed);
     }
