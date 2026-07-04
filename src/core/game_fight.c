@@ -1466,20 +1466,26 @@ int boss_fight(Fighter *player, Boss *b, Path *p,
             log_tag("debug_log.txt", "[FIGHT]",
                     "Fight result A WIN (faster, great atk).\n");
         } else if (atkOnEnemy >= 0) {
-            damageDealt = abs(atkOnEnemy - atkdelta);
+            if (atkdelta > atkOnEnemy) {
+                damageDealt = atkOnEnemy * 0.5f;
+            } else {
+                damageDealt = atkOnEnemy * 0.75f;
+            }
             b->hp -= damageDealt > 0 ? damageDealt : 1;
             res = FIGHTRES_DMG_DEALT;
             log_tag("debug_log.txt", "[FIGHT]",
                     "Fight result B WIN (faster, ok atk).\n");
         } else {
             if (atkOnEnemy < -3) {
-                damageDealt =
-                    fabsf(atkOnPlayer -
-                          0.75F * (player->vel + player->equipboost_vel));
+                if ((0.75f * (player->vel + player->equipboost_vel)) > atkOnPlayer) {
+                    damageDealt = atkOnPlayer * 0.5f;
+                } else {
+                    damageDealt = atkOnPlayer - 0.75F * (player->vel + player->equipboost_vel);
+                }
                 log_tag("debug_log.txt", "[FIGHT]",
                         "Fight result C1 LOST (faster, atk < -3).\n");
             } else {
-                damageDealt = abs(atkOnPlayer - 1);
+                damageDealt = atkOnPlayer * 0.5f;
                 log_tag("debug_log.txt", "[FIGHT]",
                         "Fight result C2 LOST (faster, atk > -3).\n");
             }
@@ -1495,18 +1501,28 @@ int boss_fight(Fighter *player, Boss *b, Path *p,
             log_tag("debug_log.txt", "[FIGHT]",
                     "Fight result D LOST (slower, great enemy atk.\n");
         } else if (atkOnPlayer >= 0) {
-            damageDealt = abs(atkOnPlayer - atkdelta);
+            if (atkdelta > atkOnPlayer) {
+                damageDealt = atkOnPlayer * 0.5f;
+            } else {
+                damageDealt = atkOnPlayer * 0.75f;
+            }
             player->hp -= damageDealt > 0 ? damageDealt : 1;
             res = FIGHTRES_DMG_TAKEN;
             log_tag("debug_log.txt", "[FIGHT]",
                     "Fight result E LOST (slower, ok enemy atk.\n");
         } else {
             if (atkOnPlayer < -3) {
-                damageDealt = fabsf(atkOnEnemy - 0.75F * b->vel);
+                if ((0.75f * b->vel) > atkOnEnemy) {
+                    damageDealt = atkOnEnemy * 0.5f;
+                } else {
+                    damageDealt = atkOnEnemy - 0.75F * b->vel;
+                }
                 log_tag("debug_log.txt", "[FIGHT]",
                         "Fight result F1 WIN (slower, enemy atk < -3.\n");
             } else {
-                damageDealt = abs(atkOnEnemy - 1);
+                int raw = atkOnEnemy - 1;
+                if (raw <= 0) raw = 1;
+                damageDealt = raw;
                 log_tag("debug_log.txt", "[FIGHT]",
                         "Fight result F2 WIN (slower, enemy atk > -3.\n");
             }
@@ -1734,18 +1750,28 @@ int boss_attack(Boss *b, Fighter *target, Path *p,
             log_tag("debug_log.txt", "[FIGHT]",
                     "Fight result D LOST (slower, great enemy atk.");
         } else if (atkOnPlayer >= 0) {
-            damageDealt = abs(atkOnPlayer - atkdelta);
+            if (atkdelta > atkOnPlayer) {
+                damageDealt = atkOnPlayer * 0.5f;
+            } else {
+                damageDealt = atkOnPlayer * 0.75f;
+            }
             target->hp -= damageDealt > 0 ? damageDealt : 1;
             res = FIGHTRES_DMG_TAKEN;
             log_tag("debug_log.txt", "[FIGHT]",
                     "Fight result E LOST (slower, ok enemy atk.");
         } else {
             if (atkOnPlayer < -3) {
-                damageDealt = fabsf(atkOnEnemy - 0.75F * b->vel);
+                if ((0.75f * b->vel) > atkOnEnemy) {
+                    damageDealt = atkOnEnemy * 0.5f;
+                } else {
+                    damageDealt = atkOnEnemy - 0.75F * b->vel;
+                }
                 log_tag("debug_log.txt", "[FIGHT]",
                         "Fight result F1 WIN (slower, enemy atk < -3.");
             } else {
-                damageDealt = abs(atkOnEnemy - 1);
+                int raw = atkOnEnemy - 1;
+                if (raw <= 0) raw = 1;
+                damageDealt = raw;
                 log_tag("debug_log.txt", "[FIGHT]",
                         "Fight result F2 WIN (slower, enemy atk > -3.");
             }
@@ -1761,20 +1787,26 @@ int boss_attack(Boss *b, Fighter *target, Path *p,
             log_tag("debug_log.txt", "[FIGHT]",
                     "Fight result A WIN (faster, great atk).");
         } else if (atkOnEnemy >= 0) {
-            damageDealt = abs(atkOnEnemy - atkdelta);
+            if (atkdelta > atkOnEnemy) {
+                damageDealt = atkOnEnemy * 0.5f;
+            } else {
+                damageDealt = atkOnEnemy * 0.75f;
+            }
             b->hp -= damageDealt > 0 ? damageDealt : 1;
             res = FIGHTRES_DMG_DEALT;
             log_tag("debug_log.txt", "[FIGHT]",
                     "Fight result B WIN (faster, ok atk).");
         } else {
             if (atkOnEnemy < -3) {
-                damageDealt =
-                    fabsf(atkOnPlayer -
-                          0.75F * (target->vel + target->equipboost_vel));
+                if ((0.75f * (target->vel + target->equipboost_vel)) > atkOnPlayer) {
+                    damageDealt = atkOnPlayer * 0.5f;
+                } else {
+                    damageDealt = atkOnPlayer - 0.75f * (target->vel + target->equipboost_vel);
+                }
                 log_tag("debug_log.txt", "[FIGHT]",
                         "Fight result C1 LOST (faster, atk < -3).");
             } else {
-                damageDealt = abs(atkOnPlayer - 1);
+                damageDealt = atkOnPlayer * 0.5f;
                 log_tag("debug_log.txt", "[FIGHT]",
                         "Fight result C2 LOST (faster, atk > -3).");
             }
