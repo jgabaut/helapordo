@@ -164,7 +164,7 @@ $(TARGET): helapordo_core.o $(helapordo_SOURCES:.c=.o)
 
 ./hlpd-sim: helapordo_core.o scripts/sim/sim.c
 	@echo -en "\033[1;34m[Makefile]    Building [\033[1;35m $@ \033[1;34m]:\e[0m  "
-	$(CCOMP) helapordo_core.o scripts/sim/sim.c -o $@ -lm -l:libraylib.a -lX11 -lkoliseo
+	$(CCOMP) $(CFLAGS) $(AM_CFLAGS) helapordo_core.o scripts/sim/sim.c koliseo/src/koliseo.c -o $@ $(LDADD) $(AM_LDFLAGS)
 	@echo -e "\033[1;33mDone.\e[0m"
 
 # Targets for additional rules

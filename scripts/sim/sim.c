@@ -1,12 +1,4 @@
 #include <stdio.h>
-#define HELAPORDO_RAYLIB_BUILD
-typedef struct Rectangle {
-    int x;
-    int y;
-    int width;
-    int height;
-} Rectangle;
-
 #include "../../src/core/game_core.h"
 #include "../../src/core/game_init.h"
 
@@ -99,6 +91,7 @@ int main(int argc, char** argv)
                 statReset(&player, 1);
                 print_csv_row(&player, &enemy, wins, fights_per_enclass);
             }
+            (void) total_wins;
             //printf("%s (lv %i) Total Wins: %i\n", stringFromClass(player.class), player.level, total_wins);
         }
     }
