@@ -34,7 +34,9 @@
 #include "floor_tester.h"
 
 #include "../utils/rooms.h"
+#ifdef ANVIL_BUILD
 #include "../anvil__helapordo.h"
+#endif // ANVIL_BUILD
 #include "../core/game_lore.h"
 
 void gameloop_Win(int argc, char **argv);
