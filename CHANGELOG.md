@@ -2,7 +2,7 @@
 
 ### Changed
 
-- Bump `koliseo` to `0.6.3`
+- Bump `koliseo` to `0.6.4`
 - Bump `invil` to `0.2.31`
 - Bump `amboso` to `2.1.3`
 
