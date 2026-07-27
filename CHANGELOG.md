@@ -11,6 +11,7 @@
 - Make `hlpd-sim` buildable for both `ncurses` and `raylib` configs
 - Fix `nc-w64` build
 - Bump `koliseo` to `0.6.4`
+- Bump `s4c` to `0.5.3`
 - Bump `invil` to `0.2.31`
 - Bump `amboso` to `2.1.3`
 
