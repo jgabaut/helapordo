@@ -6,6 +6,8 @@
 
   It uses ncurses to provide text interface.
 
+  A Work-In-Progess build using `raylib` is also available.
+
   Here's a gif of a new game being started.
 
   ![Gif of game screen](https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjZvM2o4cGZrYnp1ZjBqMHg0bjN3ZHNkNGZmMTl3bDRzdXpnc2xidCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3IwUfOkjcxWg2cQuIU/giphy.gif)
@@ -29,14 +31,14 @@
 
   [![GitHub commits since tagged version](https://img.shields.io/github/commits-since/jgabaut/helapordo/1.4.0)](https://github.com/jgabaut/helapordo/commits/master)
 
-  📦 v1.4.20 18/05/2026
+  📦 v1.4.21 05/08/2026
   I try to upload precompiled binaries for the `ncurses` build:
 
-  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.20/helapordo-nc-1.4.20-Linux-x86_64.zip)
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.21/helapordo-nc-1.4.21-Linux-x86_64.zip)
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
   - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.8/helapordo.exe-nc-1.4.8-w64-mingw32-x86_64.zip) (Available = `1.4.8`)
 
-  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.20/helapordo-nc-1.4.20-darwin-arm64.zip) (Available = `1.4.20`)
+  - `darwin-arm64` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.21/helapordo-nc-1.4.21-darwin-arm64.zip) (Available = `1.4.21`)
     - You should always check if the releases page has a newer build for you than the one linked here.
 
   https://github.com/jgabaut/helapordo/releases
