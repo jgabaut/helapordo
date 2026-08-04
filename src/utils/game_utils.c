@@ -1262,9 +1262,6 @@ void pickClass(Fighter *player)
 #ifdef HELAPORDO_CURSES_BUILD
         if (G_EXPERIMENTAL_ON != 1) {
 #endif // HELAPORDO_CURSES_BUILD
-            int res = system("clear");
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "pickClass() system(\"clear\") res was (%i)", res);
             printf("\nPick a class.\n");
             printClasses();
             pick = scanClass();
@@ -1425,9 +1422,6 @@ void pickWincon(Wincon *w)
 {
     int pick = -1;
     do {
-        int res = system("clear");
-        log_tag("debug_log.txt", "[DEBUG]",
-                "pickWincon() system(\"clear\") res was (%i)", res);
         printf("\nPick a win condition.\n");
         printWincons();
         pick = scanWincon();
@@ -3668,9 +3662,6 @@ void quit(Fighter *p, Room *room, loadInfo *load_info, Koliseo_Temp *t_kls)
 #ifdef HELAPORDO_CURSES_BUILD
     endwin();
 #endif
-    int res = system("reset");
-    sprintf(msg, "quit() system(\"reset\") res was (%i)", res);
-    log_tag("debug_log.txt", "[DEBUG]", msg);
     //printf("\n\n\tTHANKS 4 PLAYING\n");
     //FIXME
     //dropping out of the Koliseo scope might render stat pointer invalid.
@@ -3879,7 +3870,7 @@ int display_colorpairs(void)
     //Done checking versions, we check colors
     int status =
         system
-        (" clear; for C in {0..255}; do {     tput setab $C;     echo -n \"$C \"; } ; done ; tput sgr0 ; echo");
+        ("for C in {0..255}; do {     tput setab $C;     echo -n \"$C \"; } ; done ; tput sgr0 ; echo");
     int exitcode = status / 256;
     if (exitcode != 0) {
         log_tag("debug_log.txt", "[DEBUG]", "\"Diplay colors\" failed.\n");
@@ -4113,14 +4104,6 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
                printf("Using:\n");
                printf("  \'animate\' :\n    s4c/animate.h    ");
                S4C_ECHOVERSION();
-               printf("\n  \'anvil\' :\n");
-               int status = system("echo \"    $( anvil -vv 2>/dev/null ) \"");
-               int exitcode = status / 256;
-               if (exitcode != 0) {
-               printf("\033[1;31m[DEBUG]\e[0m    \"anvil -vv\" failed.\n\n    Maybe amboso is not installed globally?\n");
-               exit(exitcode);
-               }
-               exit(exitcode);
              */
 #if 0
 #ifdef HELAPORDO_DEBUG_ACCESS

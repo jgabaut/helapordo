@@ -395,8 +395,6 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
         (char *)NULL,
     };
 
-    //system("clear");
-
     //printf("\n\tYou are now in room %i.\n",index);
     int enemies;
 
@@ -411,7 +409,6 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
     //screenTime(1);
 
-    //system("clear");
     OP_res fightStatus = OP_RES_NO_DMG;
     log_tag("debug_log.txt", "[ROOM]", "New room, index %i, %i enemies",
             room->index, enemies);
@@ -817,12 +814,6 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                             enemies);
                 }
 
-                /*
-                int res = system("clear");
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "handleRoom_Enemies() system(\"clear\") res was (%i)",
-                        res);
-                */
                 continue;	//Check while condition again...
             }			//End check for deaths
 
@@ -985,10 +976,6 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     //Account for oracle gift perk
                     int oracle_perks = player->perks[ORACLE_GIFT]->innerValue;
                     if (oracle_perks > 0) {
-                        int res = system("clear");
-                        log_tag("debug_log.txt", "[DEBUG]",
-                                "handleRoom_Enemies() 2 system(\"clear\") res was (%i)",
-                                res);
                         //blue();
                         //printf("\n\n\t\tYou get a second chance, as the prophecy said.\n");
                         //white();
@@ -1085,12 +1072,6 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                                 "%i enemies left in room %i.", enemies - i - 1,
                                 index);
                         //white();
-                        /*
-                        int res = system("clear");
-                        log_tag("debug_log.txt", "[DEBUG]",
-                                "handleRoom_Enemies() 3 system(\"clear\") res was (%i)",
-                                res);
-                        */
                         fightStatus = OP_RES_NO_DMG;
                         log_tag("debug_log.txt", "[ROOM]",
                                 "Onto next enemy, %i left.", enemies - i);
@@ -1379,8 +1360,6 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
         "Debug",
         (char *)NULL,
     };
-    //system("clear");
-
     //printf("\n\tYou are now in room %i.\n",index);
 
     OP_res fightStatus = OP_RES_NO_DMG;
@@ -1847,10 +1826,6 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 //Account for oracle gift perk
                 int oracle_perks = player->perks[ORACLE_GIFT]->innerValue;
                 if (oracle_perks > 0) {
-                    int res = system("clear");
-                    log_tag("debug_log.txt", "[DEBUG]",
-                            "handleRoom_Boss() system(\"clear\") res was (%i)",
-                            res);
                     //TODO:
                     //Notification for oracle gift
                     //blue();
@@ -1915,10 +1890,6 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 b_death(b);
 
-                int res = system("clear");
-                log_tag("debug_log.txt", "[DEBUG]",
-                        "handleRoom_Boss() 2 system(\"clear\") res was (%i)",
-                        res);
                 fightStatus = OP_RES_NO_DMG;
                 //FIXME: is this causing a crash?
                 //YES, doing this causes the game to crash when trying to load a subsequent enemies room.

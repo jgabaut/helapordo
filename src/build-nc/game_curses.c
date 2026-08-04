@@ -2360,6 +2360,7 @@ void debug_printFoeParty(FoeParty *fp)
     int res = scanf("%*c");
     log_tag("debug_log.txt", "[DEBUG]",
             "debug_printFoeParty() scanf() res was (%i)", res);
+    clear();
     delwin(w);
     endwin();
 }
@@ -3065,9 +3066,6 @@ void handleEquips(Fighter *f, Path *p)
     };
     break;
     case -1: {
-        int res = system("clear");
-        log_tag("debug_log.txt", "[DEBUG]",
-                "handleEquips() system(\"clear\") res was (%i)", res);
         return;
     };
     break;
@@ -4458,17 +4456,13 @@ int hlpd_prep_saveslot_path(char save_path[300], Fighter* player, Path* path, lo
     }
 
     delwin(savepick_menu_win);
+    clear();
+    refresh();
     endwin();
     log_tag("debug_log.txt", "[DEBUG]",
             "Ended window mode for savepick menu");
 
     kls_temp_end(savepick_kls);
-
-    //Flush the terminal
-    int clrres = system("clear");
-    log_tag("debug_log.txt", "[DEBUG]",
-            "gameloop() system(\"clear\") after savepick res was (%i)",
-            clrres);
 
     //By now, we expect load_info->is_new_game to be set to 0 or 1.
     log_tag("debug_log.txt", "[DEBUG]",

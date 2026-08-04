@@ -37,15 +37,8 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
     log_tag("debug_log.txt", "[DEBUG]", msg);
 #endif
 
-    int res = system("clear");
-    sprintf(msg, "debug_generic() system(\"clear\") res was (%i)", res);
-    log_tag("debug_log.txt", "[DEBUG]", msg);
-
     int c = 0, n = -1;
     while (!picked_debug_proc) {
-        int res = system("clear");
-        sprintf(msg, "debug_generic() 2 system(\"clear\") res was (%i)", res);
-        log_tag("debug_log.txt", "[DEBUG]", msg);
         printf("\n\
 	What do you want to do? ('q' to quit)\n\
 		[\n\
@@ -172,14 +165,11 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
         break;
         case '7': {
             picked_debug_proc = 1;
-            int res = system("clear");
-            sprintf(msg, "debug_generic() 3 system(\"clear\") res was (%i)",
-                    res);
             log_tag("debug_log.txt", "[DEBUG]", msg);
             printf("\nPlayer Counters:\n");
             printCounters((Turncounter **) player->counters);
             printf("\nPress Enter to resume game");
-            res = scanf("%*c");
+            int res = scanf("%*c");
             sprintf(msg, "debug_generic() 5 scanf() res was (%i)", res);
             log_tag("debug_log.txt", "[DEBUG]", msg);
         }
@@ -255,7 +245,7 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
              */
             debug_print_roomclass_layout(dbg_floor, stdout);
             printf("\nPress Enter to return to game.\n");
-            res = scanf("%*c");
+            int res = scanf("%*c");
             sprintf(msg, "debug_generic() 8 scanf() res was (%i)", res);
             log_tag("debug_log.txt", "[DEBUG]", msg);
             //free(dbg_floor);
@@ -442,10 +432,6 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
         }
         case 's': {		//Query sprites slideshow
             picked_debug_proc = 1;
-            int res = system("clear");
-            sprintf(msg, "debug_generic() 4 system(\"clear\") res was (%i)",
-                    res);
-            log_tag("debug_log.txt", "[DEBUG]", msg);
             int comm_len = -1;
             int picked_comm = 0;
             char comm[15] = "empty";
@@ -641,10 +627,6 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
         break;
         }			//Close switch on ch[0]
     }				//Close while !picked_debug_proc
-
-    res = system("clear");
-    sprintf(msg, "debug_generic() final system(\"clear\") res was (%i)", res);
-    log_tag("debug_log.txt", "[DEBUG]", msg);
 }
 
 /**
@@ -692,16 +674,8 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
     log_tag("debug_log.txt", "[DEBUG]", msg);
 #endif
 
-    int res = system("clear");
-    sprintf(msg, "debug_enemies_room() system(\"clear\") res was (%i)", res);
-    log_tag("debug_log.txt", "[DEBUG]", msg);
-
     int c = 0, n = -1;
     while (!picked_debug_proc) {
-        int res = system("clear");
-        sprintf(msg, "debug_enemies_room() 2 system(\"clear\") res was (%i)",
-                res);
-        log_tag("debug_log.txt", "[DEBUG]", msg);
         printf("\n\
 	What do you want to do? ('q' to quit)\n\
 		[\n\
@@ -837,17 +811,12 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
         break;
         case '8': {
             picked_debug_proc = 1;
-            int res = system("clear");
-            sprintf(msg,
-                    "debug_enemies_room() 3 system(\"clear\") res was (%i)",
-                    res);
-            log_tag("debug_log.txt", "[DEBUG]", msg);
             printf("\nPlayer Counters:\n");
             printCounters((Turncounter **) player->counters);
             printf("\nEnemy (%s) Counters:\n", stringFromEClass(e->class));
             printCounters((Turncounter **) e->counters);
             printf("\nPress Enter to resume game");
-            res = scanf("%*c");
+            int res = scanf("%*c");
             sprintf(msg, "debug_enemies_room() 5 scanf() res was (%i)",
                     res);
             log_tag("debug_log.txt", "[DEBUG]", msg);
@@ -1090,11 +1059,6 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
         break;
         case 's': {		//Query sprites slideshow
             picked_debug_proc = 1;
-            int res = system("clear");
-            sprintf(msg,
-                    "debug_enemies_room() 4 system(\"clear\") res was (%i)",
-                    res);
-            log_tag("debug_log.txt", "[DEBUG]", msg);
             int comm_len = -1;
             int picked_comm = 0;
             char comm[15] = "empty";

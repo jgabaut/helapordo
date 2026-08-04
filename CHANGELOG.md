@@ -1,3 +1,20 @@
+## [1.4.21] - 2026-08-05
+
+### Changed
+
+- Avoid usage of `system()`
+- Try avoiding `abs()`, `fabsf()` in:
+  - `fight()`
+  - `enemy_attack()`
+  - `boss_fight()`
+  - `boss_attack()`
+- Make `hlpd-sim` buildable for both `ncurses` and `raylib` configs
+- Fix `nc-w64` build
+- Bump `koliseo` to `0.6.4`
+- Bump `s4c` to `0.5.3`
+- Bump `invil` to `0.2.31`
+- Bump `amboso` to `2.1.3`
+
 ## [1.4.20] - 2026-05-18
 
 ### Added

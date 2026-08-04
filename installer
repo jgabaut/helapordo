@@ -216,7 +216,7 @@ installGame() {
             printf " "
         done
 
-        printf "]    %d%%\r\e[0m" $progress
+        printf "]    %d%%\r\033[0m" $progress
 
         sleep 0.2  # Delay to visualize the progress
     done

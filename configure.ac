@@ -1,5 +1,5 @@
 # Define the package name and version
-AC_INIT([helapordo], [1.4.20], [jgabaut@github.com])
+AC_INIT([helapordo], [1.4.21], [jgabaut@github.com])
 
 # Verify automake version and enable foreign option
 AM_INIT_AUTOMAKE([foreign -Wall])
@@ -82,7 +82,7 @@ case "${host_os}" in
             #build_raylib=no
             #build_curses=yes
             AC_SUBST([HELAPORDO_CFLAGS], ["-I/usr/x86_64-w64-mingw32/include -fstack-protector -DWINDOWS_BUILD -DNCURSES_NO_PADDING -DNCURSES_STATIC -DS4C_HAS_ANIMATE -DS4C_HAS_GUI -DS4C_UNCHECKED"])
-            AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lpanelw -lmenuw -lncursesw -static"])
+            AC_SUBST([HELAPORDO_LDFLAGS], ["-L/usr/x86_64-w64-mingw32/lib -lpanelw -lmenuw -lncursesw -static -pthread"])
             AC_SUBST([CCOMP], ["/usr/bin/x86_64-w64-mingw32-gcc"])
             AC_SUBST([OS], ["w64-mingw32"])
             AC_SUBST([TARGET], ["helapordo.exe"])
@@ -193,7 +193,7 @@ AM_CONDITIONAL([USE_DEFAULT_BACKGROUND], [test "$enable_default_background" = "y
 # Set a default version number if not specified externally
 AC_ARG_VAR([VERSION], [Version number])
 if test -z "$VERSION"; then
-  VERSION="1.4.20"
+  VERSION="1.4.21"
 fi
 
 # Output variables to the config.h header
