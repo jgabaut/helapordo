@@ -480,6 +480,172 @@ void debug_print_floor_layout(Floor *floor, FILE *fp)
     }
 }
 
+void debug_print_floor_visible_layout(Floor * floor, FILE * fp)
+{
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            fprintf(fp, "%c ", floor->visible_matrix[x][y] == 1 ? '1' : '0');
+        }
+        fprintf(fp, "\n");
+    }
+}
+
+bool blocks_vision(const Floor *floor, int x, int y)
+{
+    if (x < 0 || x >= FLOOR_MAX_COLS ||
+        y < 0 || y >= FLOOR_MAX_ROWS)
+        return true;
+
+    return floor->floor_layout[x][y] == 0;
+}
+
+void cast_light(Floor *floor, int cx, int cy, int row, float start_slope, float end_slope, int radius, int xx, int xy, int yx, int yy)
+{
+    if (start_slope < end_slope)
+        return;
+
+    float next_start_slope = start_slope;
+
+    for (int distance = row; distance <= radius; ++distance) {
+
+        int dx = -distance - 1;
+        int dy = -distance;
+
+        bool blocked = false;
+
+        while (dx <= 0) {
+
+            dx++;
+
+            int map_x = cx + dx * xx + dy * xy;
+            int map_y = cy + dx * yx + dy * yy;
+
+            float left_slope =
+                (dx - 0.5f) / (dy + 0.5f);
+
+            float right_slope =
+                (dx + 0.5f) / (dy - 0.5f);
+
+            if (start_slope < right_slope)
+                continue;
+
+            if (end_slope > left_slope)
+                break;
+
+            /*
+             * Outside the actual map.
+             */
+            if (map_x < 0 || map_x >= FLOOR_MAX_COLS ||
+                map_y < 0 || map_y >= FLOOR_MAX_ROWS) {
+                continue;
+            }
+
+            /*
+             * Within the circular vision radius.
+             */
+            if (dx * dx + dy * dy <= radius * radius) {
+                floor->visible_matrix[map_x][map_y] = true;
+            }
+
+            bool opaque = blocks_vision(floor, map_x, map_y);
+
+            if (blocked) {
+
+                if (opaque) {
+                    /*
+                     * We're still inside the shadow created
+                     * by the previous wall.
+                     */
+                    next_start_slope = right_slope;
+                    continue;
+                }
+
+                /*
+                 * We've exited the shadow.
+                 */
+                blocked = false;
+                start_slope = next_start_slope;
+
+            } else if (opaque) {
+
+                /*
+                 * A new shadow begins.
+                 */
+                blocked = true;
+
+                cast_light(
+                    floor,
+                    cx,
+                    cy,
+                    distance + 1,
+                    start_slope,
+                    left_slope,
+                    radius,
+                    xx, xy,
+                    yx, yy
+                );
+
+                next_start_slope = right_slope;
+            }
+        }
+
+        if (blocked)
+            break;
+    }
+}
+
+void floor_calculate_fov(Floor *floor, int player_x, int player_y, int radius)
+{
+    memset(
+        floor->visible_matrix,
+        0,
+        sizeof floor->visible_matrix
+    );
+
+    if (player_x < 0 ||
+        player_x >= FLOOR_MAX_COLS ||
+        player_y < 0 ||
+        player_y >= FLOOR_MAX_ROWS)
+        return;
+
+    /*
+     * The player can always see their own tile.
+     */
+    floor->visible_matrix[player_x][player_y] = true;
+
+    /*
+     * 8 octants.
+     */
+    static const int mult[8][4] = {
+        { 1,  0,  0,  1 },
+        { 0,  1,  1,  0 },
+        {-1,  0,  0,  1 },
+        { 0, -1,  1,  0 },
+        {-1,  0,  0, -1 },
+        { 0, -1, -1,  0 },
+        { 1,  0,  0, -1 },
+        { 0,  1, -1,  0 }
+    };
+
+    for (int octant = 0; octant < 8; ++octant) {
+
+        cast_light(
+            floor,
+            player_x,
+            player_y,
+            1,
+            1.0f,
+            0.0f,
+            radius,
+
+            mult[octant][0],
+            mult[octant][1],
+            mult[octant][2],
+            mult[octant][3]
+        );
+    }
+}
+
 #ifdef HELAPORDO_CURSES_BUILD
 /**
  * Takes a Floor pointer and prints its roomClass layout to the passed WINDOW pointer.
@@ -690,17 +856,252 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
        int yShift = 3;
      */
 
-    int xSize = 3;
-    int ySize = 3;
+    //int xSize = 1;
+    //int ySize = 1;
 
     //Center
-    draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, 3);
+    //draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, 3);
+
+    floor_calculate_fov(floor, current_x, current_y, 3);
+
+    for (int i=0; i < FLOOR_MAX_COLS; i++) {
+        for (int j=0; j < FLOOR_MAX_ROWS; j++) {
+            if (floor->visible_matrix[i][j]) {
+                log_tag("debug_log.txt", "[FLOOR]", "floor->visible_matrix is true for [%i][%i].", i, j);
+                wattron(win, COLOR_PAIR(room_color(floor, i, j)));
+                mvwprintw(win, j, i, "%c", room_char(floor, i, j));
+                wattroff(win, COLOR_PAIR(room_color(floor, i, j)));
+                //draw_cell(floor, i, j, win, 0, 0, xSize, ySize, 0);
+            } else {
+                //mvwprintw(win, j, i, "%c", 'x');
+            }
+        }
+    }
+
+    refresh();
+
+    //endwin();
+    //debug_print_floor_visible_layout(floor, stdout);
+    //scanf("%*c");
 
     //Draw player char
-    mvwprintw(win, FLOOR_MAX_COLS / 2 - 1, FLOOR_MAX_ROWS / 2 - 1, "%c", '@');
+    //mvwprintw(win, FLOOR_MAX_COLS / 2 - 1, FLOOR_MAX_ROWS / 2 - 1, "%c", '@');
+    mvwprintw(win, current_y, current_x, "%c", '@');
     wrefresh(win);
 
     refresh();
+}
+
+int room_color(Floor* floor, int cell_x, int cell_y)
+{
+    int isColored = -1;
+    if (floor->floor_layout[cell_x][cell_y] == 0) {
+        if (floor->roomclass_layout[cell_x][cell_y] != WALL) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "room_color(): floor->floor_layout[%i][%i] was (%i).",
+                    cell_x, cell_y, floor->floor_layout[cell_x][cell_y]);
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "room_color(): floor->roomclass_layout[%i][%i] was (%s).",
+                    cell_x, cell_y,
+                    stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        }
+        int isWall = -1;
+        isWall =
+            floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
+        if (isWall > 0) {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_PURPLE;
+            } else {
+                isColored = S4C_PURPLE;
+            }
+#else
+            isColored = S4C_WIN_PURPLE;
+#endif
+        }
+    } else if (floor->floor_layout[cell_x][cell_y] == 1) {
+        switch (floor->roomclass_layout[cell_x][cell_y]) {
+        case WALL: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_BLUE;
+            } else {
+                isColored = S4C_BLUE;
+            }
+#else
+            isColored = S4C_WIN_BLUE;
+#endif
+        }
+        break;
+        case BASIC: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_OLIVE;
+            } else {
+                isColored = S4C_LIGHT_BROWN;
+            }
+#else
+            isColored = S4C_WIN_WHITE;
+#endif
+        }
+        break;
+        case HOME: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_LIGHT_OLIVE;
+            } else {
+                isColored = S4C_WHITE;
+            }
+#else
+            isColored = S4C_WIN_WHITE;
+#endif
+        }
+        break;
+        case BOSS: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_CHERRY;
+            } else {
+                isColored = S4C_RED;
+            }
+#else
+            isColored = S4C_WIN_RED;
+#endif
+        }
+        break;
+        case TREASURE: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_LIGHT_ORANGE;
+            } else {
+                isColored = S4C_ORANGE;
+            }
+#else
+            isColored = S4C_WIN_WHITE_ON_RED;
+#endif
+        }
+        break;
+        case SHOP: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_TEAL;
+            } else {
+                isColored = S4C_MAGENTA;
+            }
+#else
+            isColored = S4C_WIN_WHITE_ON_PURPLE;
+#endif
+        }
+        break;
+        case ENEMIES: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_CYAN;
+            } else {
+                isColored = S4C_CYAN;
+            }
+#else
+            isColored = S4C_WIN_CYAN;
+#endif
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "room_color(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
+                    cell_x, cell_y);
+#ifndef _WIN32
+            isColored = S4C_DARK_GREEN;
+#else
+            isColored = S4C_WIN_WHITE_ON_PURPLE;
+#endif
+        }
+        break;
+        }
+    } else {
+        log_tag("debug_log.txt", "[ERROR]",
+                "room_color(): floor->floor_layout[%i][%i] was (%i).", cell_x,
+                cell_y, floor->floor_layout[cell_x][cell_y]);
+        log_tag("debug_log.txt", "[ERROR]",
+                "room_color(): floor->roomclass_layout[%i][%i] was (%s).",
+                cell_x, cell_y,
+                stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        exit(EXIT_FAILURE);
+    }
+
+    return isColored;
+}
+
+char room_char(Floor* floor, int cell_x, int cell_y)
+{
+    char ch = '?';
+    if (floor->floor_layout[cell_x][cell_y] == 0) {
+        if (floor->roomclass_layout[cell_x][cell_y] != WALL) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "room_char(): floor->floor_layout[%i][%i] was (%i).",
+                    cell_x, cell_y, floor->floor_layout[cell_x][cell_y]);
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "room_char(): floor->roomclass_layout[%i][%i] was (%s).",
+                    cell_x, cell_y,
+                    stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        }
+        int isWall = -1;
+        isWall =
+            floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
+        if (isWall > 0) {
+            ch = '#';
+        } else {
+            ch = '?';
+        }
+    } else if (floor->floor_layout[cell_x][cell_y] == 1) {
+        switch (floor->roomclass_layout[cell_x][cell_y]) {
+        case WALL: {
+            ch = '#';
+        }
+        break;
+        case BASIC: {
+            ch = '.';
+        }
+        break;
+        case HOME: {
+            ch = 'H';
+        }
+        break;
+        case BOSS: {
+            ch = 'B';
+        }
+        break;
+        case TREASURE: {
+            ch = '*';
+        }
+        break;
+        case SHOP: {
+            ch = '$';
+        }
+        break;
+        case ENEMIES: {
+            ch = '^';
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "room_char(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
+                    cell_x, cell_y);
+            ch = '?';
+        }
+        break;
+        }
+    } else {
+        log_tag("debug_log.txt", "[ERROR]",
+                "room_char(): floor->floor_layout[%i][%i] was (%i).", cell_x,
+                cell_y, floor->floor_layout[cell_x][cell_y]);
+        log_tag("debug_log.txt", "[ERROR]",
+                "room_char(): floor->roomclass_layout[%i][%i] was (%s).",
+                cell_x, cell_y,
+                stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        exit(EXIT_FAILURE);
+    }
+
+    return ch;
 }
 
 /**
@@ -734,22 +1135,12 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
         }
         for (int i = 0; i < xSize; i++) {
             for (int j = 0; j < ySize; j++) {
-                char ch = '?';
-                int isWall = -1;
-                int isColored = -1;
+                char ch = room_char(floor, cell_x, cell_y);
+                int isColored = room_color(floor, cell_x, cell_y);
+                int isWall = 0;
                 isWall =
                     floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
                 if (isWall > 0) {
-                    ch = '#';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_DARK_PURPLE;
-                    } else {
-                        isColored = S4C_PURPLE;
-                    }
-#else
-                    isColored = S4C_WIN_PURPLE;
-#endif
                 } else {
                     ch = '?';
                 }
@@ -771,113 +1162,8 @@ void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
     } else if (floor->floor_layout[cell_x][cell_y] == 1) {
         for (int i = 0; i < xSize; i++) {
             for (int j = 0; j < ySize; j++) {
-                char ch = '?';
-                int isColored = -1;
-                switch (floor->roomclass_layout[cell_x][cell_y]) {
-                case WALL: {
-                    ch = '#';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_DARK_BLUE;
-                    } else {
-                        isColored = S4C_BLUE;
-                    }
-#else
-                    isColored = S4C_WIN_BLUE;
-#endif
-                }
-                break;
-                case BASIC: {
-                    ch = '.';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_DARK_OLIVE;
-                    } else {
-                        isColored = S4C_LIGHT_BROWN;
-                    }
-#else
-                    isColored = S4C_WIN_WHITE;
-#endif
-                }
-                break;
-                case HOME: {
-                    ch = 'H';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_LIGHT_OLIVE;
-                    } else {
-                        isColored = S4C_WHITE;
-                    }
-#else
-                    isColored = S4C_WIN_WHITE;
-#endif
-                }
-                break;
-                case BOSS: {
-                    ch = 'B';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_CHERRY;
-                    } else {
-                        isColored = S4C_RED;
-                    }
-#else
-                    isColored = S4C_WIN_RED;
-#endif
-                }
-                break;
-                case TREASURE: {
-                    ch = '*';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_LIGHT_ORANGE;
-                    } else {
-                        isColored = S4C_ORANGE;
-                    }
-#else
-                    isColored = S4C_WIN_WHITE_ON_RED;
-#endif
-                }
-                break;
-                case SHOP: {
-                    ch = '$';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_TEAL;
-                    } else {
-                        isColored = S4C_MAGENTA;
-                    }
-#else
-                    isColored = S4C_WIN_WHITE_ON_PURPLE;
-#endif
-                }
-                break;
-                case ENEMIES: {
-                    ch = '^';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_DARK_CYAN;
-                    } else {
-                        isColored = S4C_CYAN;
-                    }
-#else
-                    isColored = S4C_WIN_CYAN;
-#endif
-                }
-                break;
-                default: {
-                    log_tag("debug_log.txt", "[ERROR]",
-                            "draw_cell(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
-                            cell_x, cell_y);
-                    ch = '?';
-#ifndef _WIN32
-                    isColored = S4C_DARK_GREEN;
-#else
-                    isColored = S4C_WIN_WHITE_ON_PURPLE;
-#endif
-                }
-                break;
-                }
+                char ch = room_char(floor, cell_x, cell_y);
+                int isColored = room_color(floor, cell_x, cell_y);
                 if (isColored >= 0) {
                     wattron(win, COLOR_PAIR(isColored));
                 };

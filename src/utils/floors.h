@@ -31,6 +31,11 @@ void floor_set_room_types(Floor * floor);
 void load_floor_explored(Floor * floor);
 void debug_print_roomclass_layout(Floor * floor, FILE * fp);
 void debug_print_floor_layout(Floor * floor, FILE * fp);
+void debug_print_floor_visible_layout(Floor * floor, FILE * fp);
+
+bool blocks_vision(const Floor *floor, int x, int y);
+void cast_light(Floor *floor, int cx, int cy, int row, float start_slope, float end_slope, int radius, int xx, int xy, int yx, int yy);
+void floor_calculate_fov(Floor *floor, int player_x, int player_y, int radius);
 
 #ifdef HELAPORDO_CURSES_BUILD
 #include "../build-nc/game_curses.h"
@@ -39,6 +44,8 @@ void display_roomclass_layout(Floor * floor, WINDOW * win);
 void display_floor_layout(Floor * floor, WINDOW * win);
 void display_explored_layout(Floor * floor, WINDOW * win);
 
+int room_color(Floor* floor, int cell_x, int cell_y);
+char room_char(Floor* floor, int cell_x, int cell_y);
 void draw_cell(Floor * floor, int cell_x, int cell_y, WINDOW * win,
                int drawcorner_x, int drawcorner_y, int x_size, int y_size,
                int recurse);
