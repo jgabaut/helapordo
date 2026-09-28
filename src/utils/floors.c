@@ -1077,13 +1077,14 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
     int fov_radius = 4;
     floor_calculate_fov(floor, current_x, current_y, fov_radius);
 
+    int cell_size = 3;
+
     int win_h, win_w;
     getmaxyx(win, win_h, win_w);
 
     int center_x = win_w / 2;
     int center_y = win_h / 2;
 
-    // World coordinates visible around the player
     for (int world_x = current_x - fov_radius;
          world_x <= current_x + fov_radius;
          world_x++) {
@@ -1092,7 +1093,6 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
              world_y <= current_y + fov_radius;
              world_y++) {
 
-            // Don't access outside the map
             if (world_x < 0 || world_y < 0 ||
                 world_x >= FLOOR_MAX_COLS ||
                 world_y >= FLOOR_MAX_ROWS) {
@@ -1102,31 +1102,42 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
             if (!floor->visible_matrix[world_x][world_y])
                 continue;
 
-            // Convert world coordinates -> screen coordinates
-            int screen_x = center_x + (world_x - current_x);
-            int screen_y = center_y + (world_y - current_y);
+            int screen_x =
+                center_x + (world_x - current_x) * cell_size;
 
-            // Make sure we're inside the window
-            if (screen_x < 0 || screen_y < 0 ||
-                screen_x >= win_w || screen_y >= win_h) {
-                continue;
-            }
+            int screen_y =
+                center_y + (world_y - current_y) * cell_size;
 
             int color = room_color(floor, world_x, world_y);
 
             wattron(win, COLOR_PAIR(color));
-            mvwaddch(win, screen_y, screen_x,
-                     room_char(floor, world_x, world_y));
+
+            for (int dx = 0; dx < cell_size; dx++) {
+                for (int dy = 0; dy < cell_size; dy++) {
+
+                    int x = screen_x + dx;
+                    int y = screen_y + dy;
+
+                    if (x < 0 || y < 0 ||
+                        x >= win_w || y >= win_h) {
+                        continue;
+                    }
+
+                    mvwaddch(win, y, x, room_char(floor, world_x, world_y));
+                }
+            }
+
             wattroff(win, COLOR_PAIR(color));
         }
     }
 
-    refresh();
+    // Player
+    int player_screen_x = center_x;
+    int player_screen_y = center_y;
 
-    // Draw player at the center of the window
-    mvwaddch(win, center_y, center_x, '@');
-    wrefresh(win);
-
+    int x = player_screen_x + cell_size/2;
+    int y = player_screen_y + cell_size/2;
+    mvwaddch(win, y, x, '@');
     refresh();
 }
 
@@ -1748,44 +1759,47 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
     int fov_radius = 4;
     floor_calculate_fov(floor, current_x, current_y, fov_radius);
 
+    int cell_scale = 3;
+    int cell_size = (int)pixelSize * cell_scale;
+
     int center_x = win->x + win->width / 2;
     int center_y = win->y + win->height / 2;
 
     for (int world_x = current_x - fov_radius;
          world_x <= current_x + fov_radius;
          world_x++) {
+
         for (int world_y = current_y - fov_radius;
              world_y <= current_y + fov_radius;
              world_y++) {
 
+            if (world_x < 0 || world_y < 0 ||
+                world_x >= FLOOR_MAX_COLS ||
+                world_y >= FLOOR_MAX_ROWS) {
+                continue;
+            }
+
             if (!floor->visible_matrix[world_x][world_y])
                 continue;
 
-            // Convert world coordinates to screen coordinates
-            int screen_x = center_x + (world_x - current_x) * (int)pixelSize;
-            int screen_y = center_y + (world_y - current_y) * (int)pixelSize;
+            int screen_x =
+                center_x + (world_x - current_x) * cell_size;
 
-            // Optional: don't draw tiles outside the window
-            if (screen_x + pixelSize < win->x ||
+            int screen_y =
+                center_y + (world_y - current_y) * cell_size;
+
+            if (screen_x + cell_size < win->x ||
                 screen_x >= win->x + win->width ||
-                screen_y + pixelSize < win->y ||
+                screen_y + cell_size < win->y ||
                 screen_y >= win->y + win->height) {
                 continue;
             }
 
-            log_tag(
-                "debug_log.txt",
-                "[FLOOR]",
-                "floor->visible_matrix is true for [%i][%i].",
-                world_x,
-                world_y
-            );
-
             DrawRectangle(
                 screen_x,
                 screen_y,
-                pixelSize,
-                pixelSize,
+                cell_size,
+                cell_size,
                 ColorFromS4CPalette(
                     palette,
                     room_color(floor, world_x, world_y)
@@ -1794,12 +1808,12 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
         }
     }
 
-    // Draw player at the center of the viewport
+    // Player stays centered
     DrawRectangle(
         center_x,
         center_y,
-        pixelSize,
-        pixelSize,
+        cell_size,
+        cell_size,
         ColorFromS4CPalette(palette, S4C_BLUE)
     );
 }
