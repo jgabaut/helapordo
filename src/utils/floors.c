@@ -490,6 +490,18 @@ void debug_print_floor_visible_layout(Floor * floor, FILE * fp)
     }
 }
 
+char roomclass_chars[ROOM_CLASS_MAX+1]
+= {
+    [ENEMIES] = '^',
+    [SHOP] = '$',
+    [BOSS] = 'B',
+    [TREASURE] = '*',
+    [ROADFORK] = '+',
+    [HOME] = 'H',
+    [WALL] = '#',
+    [BASIC] = '.'
+};
+
 int room_color(Floor* floor, int cell_x, int cell_y)
 {
     int isColored = -1;
@@ -651,43 +663,7 @@ char room_char(Floor* floor, int cell_x, int cell_y)
             ch = '?';
         }
     } else if (floor->floor_layout[cell_x][cell_y] == 1) {
-        switch (floor->roomclass_layout[cell_x][cell_y]) {
-        case WALL: {
-            ch = '#';
-        }
-        break;
-        case BASIC: {
-            ch = '.';
-        }
-        break;
-        case HOME: {
-            ch = 'H';
-        }
-        break;
-        case BOSS: {
-            ch = 'B';
-        }
-        break;
-        case TREASURE: {
-            ch = '*';
-        }
-        break;
-        case SHOP: {
-            ch = '$';
-        }
-        break;
-        case ENEMIES: {
-            ch = '^';
-        }
-        break;
-        default: {
-            log_tag("debug_log.txt", "[ERROR]",
-                    "room_char(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
-                    cell_x, cell_y);
-            ch = '?';
-        }
-        break;
-        }
+        ch = roomclass_chars[floor->roomclass_layout[cell_x][cell_y]];
     } else {
         log_tag("debug_log.txt", "[ERROR]",
                 "room_char(): floor->floor_layout[%i][%i] was (%i).", cell_x,
