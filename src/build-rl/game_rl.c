@@ -3152,7 +3152,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
 
         if (G_EXPERIMENTAL_ON != 1) {
             if (current_floor != NULL) {
-                draw_floor_view(current_floor, current_x, current_y, gui_state.gameScreenWidth*0.02f, &floor_r);
+                draw_floor_view(current_floor, current_x, current_y, gui_state.gameScreenWidth*0.01f, &floor_r);
             } else {
                 log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
             }
