@@ -19,7 +19,7 @@
 #ifndef GAME_ROOMS_H_
 #define GAME_ROOMS_H_
 #include "artifacts.h"
-#include "turn_op.h"
+#include "../turn_op/turn_op.h"
 
 void initRoom(Room * r, Fighter * f, int index, roomClass type, int enemyTotal,
               loadInfo * load_info, Koliseo_Temp * t_kls);

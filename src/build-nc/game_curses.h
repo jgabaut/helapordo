@@ -34,7 +34,7 @@
 
 #include <locale.h>
 
-#include "../utils/turn_op.h"
+#include "../turn_op/turn_op.h"
 #include "../animations/game_animations.h"
 
 void plot_line_in_ncurses(int x1, int y1, int x2, int y2);

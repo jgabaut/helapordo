@@ -62,7 +62,7 @@ else
 helapordo_SOURCES =
 endif
 
-helapordo_SOURCES += src/utils/game_utils.c src/notifications/game_notifications.c src/animations/game_animations.c src/utils/game_debug.c src/ser/ser_core.c src/utils/saves.c src/utils/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/main.c src/utils/floors.c sprites4curses/src/s4c.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/palette.c src/bsp/bsp.c src/release_data/release_data.c
+helapordo_SOURCES += src/utils/game_utils.c src/notifications/game_notifications.c src/animations/game_animations.c src/utils/game_debug.c src/ser/ser_core.c src/utils/saves.c src/turn_op/turn_op.c src/utils/rooms.c src/utils/artifacts.c src/main.c src/utils/floors.c sprites4curses/src/s4c.c src/animations/mummy_shuffle.c src/animations/ghost_spell.c src/animations/boar_scream.c src/animations/troll_club.c src/animations/goblin_shoot.c src/animations/zombie_walk.c src/animations/imp_fireball.c src/animations/werewolf_transform.c src/animations/knight_tapis.c src/animations/mage_spark.c src/animations/archer_drop.c src/animations/assassin_poof.c src/animations/crawlingdude_crawl.c src/animations/srwarthog_square.c src/animations/headlessninja_throw.c src/animations/bluetroll_wonder.c src/animations/enter_door.c src/animations/alt_chest_opening.c src/palette.c src/bsp/bsp.c src/release_data/release_data.c
 
 if DEBUG_BUILD
 helapordo_SOURCES += koliseo/src/kls_region.c
@@ -105,7 +105,7 @@ endif
 
 
 if HL_RAYLIB_BUILD
-hlpd_save2l_SOURCES += src/utils/floors.c src/utils/rooms.c src/bsp/bsp.c src/utils/turn_op.c
+hlpd_save2l_SOURCES += src/utils/floors.c src/utils/rooms.c src/bsp/bsp.c src/turn_op/turn_op.c
 endif
 
 ./anvil:
@@ -225,6 +225,7 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/build-rl ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/build-rl
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/core ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/core
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/utils ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/utils
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/turn_op ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/turn_op
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/animations ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/animations
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/ser ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/ser
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/src/bsp ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/src/bsp
@@ -269,6 +270,7 @@ pack: versioncheck
 	install ./src/build-rl/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-rl/
 	install ./src/core/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/core/
 	install ./src/utils/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/utils/
+	install ./src/turn_op/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/turn_op/
 	install ./src/animations/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/animations/
 	install ./src/ser/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/ser/
 	install ./src/bsp/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/bsp/
@@ -313,6 +315,7 @@ clean:
 	-rm src/build-*/*.o
 	-rm src/core/*.o
 	-rm src/utils/*.o
+	-rm src/turn_op/*.o
 	-rm src/animations/*.o
 	-rm src/palette.*
 	-rm src/ser/*.o
@@ -338,6 +341,7 @@ cleanob:
 	-rm src/build-*/*.o
 	-rm src/core/*.o
 	-rm src/utils/*.o
+	-rm src/turn_op/*.o
 	-rm src/ser/*.o
 	-rm src/bsp/*.o
 	-rm src/notifications/*.o
