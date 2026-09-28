@@ -21,7 +21,7 @@
 
 #include "../utils/game_utils.h"
 #include "../core/sprites.h"
-#include "../utils/turn_op.h"
+#include "../turn_op/turn_op.h"
 #include "../animations/game_animations.h"
 #include "../utils/rooms.h"
 #include <raymath.h> // Needed for: Vector2Clamp()

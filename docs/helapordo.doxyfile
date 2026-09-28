@@ -952,6 +952,7 @@ WARN_LOGFILE           =
 INPUT                  = "./src" \
                          "./src/core" \
                          "./src/utils" \
+                         "./src/turn_op" \
                          "./src/build-nc" \
                          "./src/build-rl" \
                          "./src/build-nc-w64" \

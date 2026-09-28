@@ -1172,7 +1172,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (*current_floor == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
             *current_floor = (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
-                             HR_Floor, "Floor", "Floor");
+                HR_Floor, "Floor", "Floor");
 
             // Init dbg_floor
             init_floor_layout(*current_floor);
@@ -3152,7 +3152,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
 
         if (G_EXPERIMENTAL_ON != 1) {
             if (current_floor != NULL) {
-                draw_floor_view(current_floor, current_x, current_y, gui_state.gameScreenWidth*0.02f, &floor_r);
+                draw_floor_view(current_floor, current_x, current_y, gui_state.gameScreenWidth*0.01f, &floor_r);
             } else {
                 log_tag("debug_log.txt", "DEBUG", "%s():    current_floor was NULL.", __func__);
             }

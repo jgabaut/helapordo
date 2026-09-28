@@ -1,3 +1,16 @@
+## [1.4.22] - Unreleased
+
+### Added
+
+- Add `floor_calculate_fov()`
+- Updated floor view to use the new fov, with improved view radius
+
+### Changed
+
+- Bump `s4c` to `0.5.5`
+- Move `utils/turn_op.[hc]` into `turn_op/`
+- Drop `draw_cell()`
+
 ## [1.4.21] - 2026-08-05
 
 ### Changed

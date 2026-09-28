@@ -19,9 +19,9 @@
 #ifndef TURNOP_H_
 #define TURNOP_H_
 
-#include "game_debug.h"
+#include "../utils/game_debug.h"
 #include "../core/game_fight.h"
-#include "saves.h"
+#include "../utils/saves.h"
 #include "../ser/ser_core.h"
 
 OP_res turnOP(turnOption_OP op, turnOP_args * args, Koliseo * kls,

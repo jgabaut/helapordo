@@ -378,12 +378,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 21
+#define HELAPORDO_PATCH_VERSION 22
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.21"
+#define VERSION "1.4.22"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
 
@@ -1833,6 +1833,7 @@ typedef struct Floor {
     Room *rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< Pointer matrix for rooms of this floor.*/
     roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
     int explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
+    bool visible_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS]; /**< Used for visibility in fov.*/
     int explored_area;	   /**< Holds how many cells we explored.*/
     bool from_bsp; /**< Flag for floors generated using bsp.*/
 
