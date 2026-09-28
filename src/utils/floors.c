@@ -1074,7 +1074,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
     //Center
     //draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, 3);
 
-    int fov_radius = 3;
+    int fov_radius = 4;
     floor_calculate_fov(floor, current_x, current_y, fov_radius);
 
     int win_h, win_w;
@@ -1745,7 +1745,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
         exit(EXIT_FAILURE);
     }
 
-    int fov_radius = 3;
+    int fov_radius = 4;
     floor_calculate_fov(floor, current_x, current_y, fov_radius);
 
     int center_x = win->x + win->width / 2;
