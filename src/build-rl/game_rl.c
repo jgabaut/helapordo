@@ -1172,7 +1172,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         if (*current_floor == NULL) {
             log_tag("debug_log.txt", "DEBUG", "%s():    Init for current_floor", __func__);
             *current_floor = (Floor *) KLS_PUSH_T_TYPED(*floor_kls, Floor,
-                             HR_Floor, "Floor", "Floor");
+                HR_Floor, "Floor", "Floor");
 
             // Init dbg_floor
             init_floor_layout(*current_floor);
