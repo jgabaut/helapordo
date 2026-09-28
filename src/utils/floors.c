@@ -1810,10 +1810,10 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
 
     // Player stays centered
     DrawRectangle(
-        center_x,
-        center_y,
-        cell_size,
-        cell_size,
+        center_x + ((int)pixelSize * (cell_scale/2)),
+        center_y + ((int)pixelSize * (cell_scale/2)),
+        (int)pixelSize,
+        (int)pixelSize,
         ColorFromS4CPalette(palette, S4C_BLUE)
     );
 }
