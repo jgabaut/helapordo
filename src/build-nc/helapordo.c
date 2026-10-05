@@ -686,7 +686,11 @@ void gameloop(int argc, char **argv)
             keypad(stdscr, TRUE);
 
             // Create the window
-            floor_win = newwin(23, 24, 1, 2);
+            int floor_win_width = 24;
+            int floor_win_height = 23;
+            int floor_win_y = 1;
+            int floor_win_x = 2;
+            floor_win = newwin(floor_win_height, floor_win_width, floor_win_y, floor_win_x);
             wclear(floor_win);
             wrefresh(floor_win);
             keypad(floor_win, TRUE);
@@ -1164,6 +1168,18 @@ void gameloop(int argc, char **argv)
                 //Draw current FOV
                 draw_floor_view(current_floor, player->floor_x, player->floor_y,
                                 floor_win);
+                WINDOW* hints_win = newwin(10, 20, floor_win_y, floor_win_x + floor_win_width +10);
+                mvwprintw(hints_win, 1, 1, "%s", "Press [m] for Menu");
+                for (int i = 0; i < ROOM_CLASS_MAX; i++) {
+                    //mvwprintw(hints_win, 2 +i, 1, "%c: %s", roomclass_chars[i], stringFromRoom(i));
+                    wattron(hints_win, COLOR_PAIR(roomclass_colors[i]));
+                    wprintw(hints_win, "\n  %c", roomclass_chars[i]);
+                    wattroff(hints_win, COLOR_PAIR(roomclass_colors[i]));
+                    wprintw(hints_win, ": %s", stringFromRoom(i));
+                }
+                box(hints_win, 0, 0);
+                wrefresh(hints_win);
+
                 //Take a step and update screen
                 move_update(gamestate, current_floor, &(player->floor_x),
                             &(player->floor_y), floor_win, path, player,

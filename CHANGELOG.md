@@ -4,6 +4,7 @@
 
 - Add `floor_calculate_fov()`
 - Updated floor view to use the new fov, with improved view radius
+- Add hints to floor view
 
 ### Changed
 

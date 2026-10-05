@@ -502,6 +502,18 @@ char roomclass_chars[ROOM_CLASS_MAX+1]
     [BASIC] = '.'
 };
 
+int roomclass_colors[ROOM_CLASS_MAX+1]
+= {
+    [ENEMIES] = S4C_DARK_CYAN,
+    [SHOP] = S4C_TEAL,
+    [BOSS] = S4C_CHERRY,
+    [TREASURE] = S4C_LIGHT_ORANGE,
+    [ROADFORK] = S4C_GREY,
+    [HOME] = S4C_LIGHT_OLIVE,
+    [WALL] = S4C_DARK_PURPLE,
+    [BASIC] = S4C_DARK_OLIVE,
+};
+
 int room_color(Floor* floor, int cell_x, int cell_y)
 {
     int isColored = -1;
@@ -1021,8 +1033,9 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
         log_tag("debug_log.txt", "[ERROR]", "draw_view():  win was NULL.");
         exit(EXIT_FAILURE);
     }
-    clear();
+    wclear(win);
     refresh();
+    //box(win, 0, 0);
 
     /*
     start_color();
