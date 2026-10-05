@@ -3972,6 +3972,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     //free(args);
     log_tag("debug_log.txt", "[FREE]", "handleRogueMenu():  Freed turnOP_args");
     log_tag("debug_log.txt", "[DEBUG]", "Ended handleRogueMenu()");
+    clear();
     return 0;
 }
 
