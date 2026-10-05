@@ -12,6 +12,7 @@
 
 - Bump `HELAPORDO_BINSAVEFILE_VERSION` to `0.0.8`
 - Bump `s4c` to `0.5.5`
+- Bump `invil` to `0.2.34`
 - Move `utils/turn_op.[hc]` into `turn_op/`
 - Drop `draw_cell()`
 
