@@ -806,6 +806,10 @@ void initPlayerStats(Fighter *player, Path *path, Koliseo *kls)
     s->specialsunlocked = 0;
     s->coinsfound = 0;
     s->bosseskilled = 0;
+    s->unique_enemieskilled = 0;
+    for (int i = 0; i < ENEMYCLASSESMAX + 1; i++) {
+        s->killed_enemies[i] = 0;
+    }
     s->unique_bosseskilled = 0;
     for (int i = 0; i < BOSSCLASSESMAX + 1; i++) {
         s->killed_bosses[i] = 0;

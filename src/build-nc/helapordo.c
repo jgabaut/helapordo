@@ -1168,7 +1168,9 @@ void gameloop(int argc, char **argv)
                 //Draw current FOV
                 draw_floor_view(current_floor, player->floor_x, player->floor_y,
                                 floor_win, game_options.use_3x3_fov);
-                WINDOW* hints_win = newwin(11, 20, floor_win_y, floor_win_x + floor_win_width +10);
+                int hints_win_x = floor_win_x + floor_win_width + 10;
+                int hints_win_height = 11;
+                WINDOW* hints_win = newwin(hints_win_height, 20, floor_win_y, hints_win_x);
                 mvwprintw(hints_win, 1, 1, "%s", "Press [m] for Menu");
                 for (int i = 0; i < ROOM_CLASS_MAX; i++) {
                     //mvwprintw(hints_win, 2 +i, 1, "%c: %s", roomclass_chars[i], stringFromRoom(i));
@@ -1180,6 +1182,19 @@ void gameloop(int argc, char **argv)
                 wprintw(hints_win,"\n  @: %s", player->name);
                 box(hints_win, 0, 0);
                 wrefresh(hints_win);
+
+                WINDOW* stats_win = newwin(hints_win_height, 20, floor_win_y + hints_win_height, hints_win_x);
+                mvwprintw(stats_win, 1, 1, "Floor #%i", current_floor->index+1);
+                mvwprintw(stats_win, 2, 1, "Progress: %i/%i", path->win_condition->current_val, path->win_condition->target_val);
+                mvwprintw(stats_win, 3, 1, "%s %s", player->name, stringFromClass(player->class));
+                mvwprintw(stats_win, 4, 1, "Hp: %i/%i", player->hp, player->totalhp);
+                mvwprintw(stats_win, 5, 1, "Level: %i", player->level);
+                mvwprintw(stats_win, 6, 1, "Xp: %i/%i", player->currentlevelxp, player->totallevelxp);
+                mvwprintw(stats_win, 7, 1, "Coins: %i$", player->balance);
+                mvwprintw(stats_win, 8, 1, "Keys: %i", player->keys_balance);
+                mvwprintw(stats_win, 9, 1, "Bestiary: %i/%i", player->stats->unique_bosseskilled + player->stats->unique_enemieskilled, ENEMYCLASSESMAX + BOSSCLASSESMAX +2);
+                box(stats_win, 0, 0);
+                wrefresh(stats_win);
 
                 //Take a step and update screen
                 move_update(gamestate, current_floor, &(player->floor_x),
