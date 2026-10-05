@@ -531,6 +531,7 @@ int room_color(Floor* floor, int cell_x, int cell_y)
         isWall =
             floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
         if (isWall > 0) {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_DARK_PURPLE;
@@ -540,10 +541,18 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_PURPLE;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_PURPLE;
+            } else {
+                isColored = S4C_PURPLE;
+            }
+#endif
         }
     } else if (floor->floor_layout[cell_x][cell_y] == 1) {
         switch (floor->roomclass_layout[cell_x][cell_y]) {
         case WALL: {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_DARK_BLUE;
@@ -553,9 +562,17 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_BLUE;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_BLUE;
+            } else {
+                isColored = S4C_BLUE;
+            }
+#endif
         }
         break;
         case BASIC: {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_DARK_OLIVE;
@@ -565,9 +582,17 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_WHITE;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_OLIVE;
+            } else {
+                isColored = S4C_LIGHT_BROWN;
+            }
+#endif
         }
         break;
         case HOME: {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_LIGHT_OLIVE;
@@ -577,9 +602,17 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_WHITE;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_LIGHT_OLIVE;
+            } else {
+                isColored = S4C_WHITE;
+            }
+#endif
         }
         break;
         case BOSS: {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_CHERRY;
@@ -589,9 +622,17 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_RED;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_CHERRY;
+            } else {
+                isColored = S4C_RED;
+            }
+#endif
         }
         break;
         case TREASURE: {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_LIGHT_ORANGE;
@@ -601,9 +642,17 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_WHITE_ON_RED;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_LIGHT_ORANGE;
+            } else {
+                isColored = S4C_ORANGE;
+            }
+#endif
         }
         break;
         case SHOP: {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_TEAL;
@@ -613,9 +662,17 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_WHITE_ON_PURPLE;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_TEAL;
+            } else {
+                isColored = S4C_MAGENTA;
+            }
+#endif
         }
         break;
         case ENEMIES: {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_DARK_CYAN;
@@ -625,16 +682,27 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_CYAN;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_CYAN;
+            } else {
+                isColored = S4C_CYAN;
+            }
+#endif
         }
         break;
         default: {
             log_tag("debug_log.txt", "[ERROR]",
                     "room_color(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
                     cell_x, cell_y);
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             isColored = S4C_DARK_GREEN;
 #else
             isColored = S4C_WIN_WHITE_ON_PURPLE;
+#endif
+#else
+            isColored = S4C_DARK_GREEN;
 #endif
         }
         break;

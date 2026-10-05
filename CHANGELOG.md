@@ -1,3 +1,9 @@
+## [1.4.23] - Unreleased
+
+### Changed
+
+- Update `room_color()` to fix `raylib` `mingw32` build
+
 ## [1.4.22] - 2026-10-05
 
 ### Added
