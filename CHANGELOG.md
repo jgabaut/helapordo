@@ -6,9 +6,11 @@
 - Updated floor view to use the new fov, with improved view radius
 - Add hints to floor view
 - Add `use_3x3_fov` to `GameOptions`
+- Add `unique_enemieskilled` to `countStats`
 
 ### Changed
 
+- Bump `HELAPORDO_BINSAVEFILE_VERSION` to `0.0.8`
 - Bump `s4c` to `0.5.5`
 - Move `utils/turn_op.[hc]` into `turn_op/`
 - Drop `draw_cell()`

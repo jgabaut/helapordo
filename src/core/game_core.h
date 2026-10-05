@@ -386,7 +386,7 @@ extern char *G_SEEDED_RUN_ARG;
  */
 #define VERSION "1.4.22"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.8"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -790,6 +790,8 @@ typedef struct {
     int specialsunlocked;     /**< How many special move were unlocked*/
     int coinsfound;	/**< How many coins you found in total*/
     int bosseskilled;	  /**< How many bosses were defeated*/
+    int unique_enemieskilled;     /**< How many unique enemies were defeated*/
+    int killed_enemies[ENEMYCLASSESMAX + 1];   /**< Keeps track of which enemyClass you've killed.*/
     int unique_bosseskilled;	 /**< How many unique bosses were defeated*/
     int killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
     int keysfound;     /**< How many keys you found in total*/

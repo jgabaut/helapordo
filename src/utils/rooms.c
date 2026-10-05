@@ -740,6 +740,10 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 //Update stats
                 player->stats->enemieskilled++;
+                if (!player->stats->killed_enemies[e->class]) {
+                    player->stats->unique_enemieskilled++;
+                    player->stats->killed_enemies[e->class] = true;
+                }
 
                 //Consumable drop, guaranteed on killing a beast
                 if (e->beast || ((hlpd_rand() % 9) - (player->luck / 10) <= 0)) {

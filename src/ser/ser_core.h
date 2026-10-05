@@ -329,6 +329,8 @@ typedef struct SerCountstats {
     int32_t specialsunlocked;     /**< How many special move were unlocked*/
     int32_t coinsfound;	/**< How many coins you found in total*/
     int32_t bosseskilled;	  /**< How many bosses were defeated*/
+    int8_t unique_enemieskilled;	 /**< How many unique enemies were defeated*/
+    int8_t killed_enemies[ENEMYCLASSESMAX + 1];   /**< Keeps track of which enemyClass you've killed.*/
     int8_t unique_bosseskilled;	 /**< How many unique bosses were defeated*/
     int8_t killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
     int32_t keysfound;     /**< How many keys you found in total*/
