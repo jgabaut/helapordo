@@ -49,7 +49,7 @@ void display_roomclass_layout(Floor * floor, WINDOW * win);
 void display_floor_layout(Floor * floor, WINDOW * win);
 void display_explored_layout(Floor * floor, WINDOW * win);
 
-void draw_floor_view(Floor * floor, int current_x, int current_y, WINDOW * win);
+void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win, bool use_3x3_fov);
 
 void move_update(Gamestate * gamestate, Floor * floor, int *current_x,
                  int *current_y, WINDOW * win, Path * path, Fighter * player,

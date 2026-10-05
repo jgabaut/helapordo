@@ -201,6 +201,7 @@ extern HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_S
 typedef struct GameOptions {
     bool use_default_background; //<** Turn on usage of default terminal background */
     bool do_autosave; //<* Turns on autosave */
+    bool use_3x3_fov; //<* Turns on 3x3 fov */
     HLPD_DirectionalKeys_Schema directional_keys_schema; //* Defines the current schema for cardinal directions movement */
 } GameOptions;
 

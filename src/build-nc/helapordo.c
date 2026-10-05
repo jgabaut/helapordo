@@ -1167,7 +1167,7 @@ void gameloop(int argc, char **argv)
 
                 //Draw current FOV
                 draw_floor_view(current_floor, player->floor_x, player->floor_y,
-                                floor_win);
+                                floor_win, game_options.use_3x3_fov);
                 WINDOW* hints_win = newwin(10, 20, floor_win_y, floor_win_x + floor_win_width +10);
                 mvwprintw(hints_win, 1, 1, "%s", "Press [m] for Menu");
                 for (int i = 0; i < ROOM_CLASS_MAX; i++) {

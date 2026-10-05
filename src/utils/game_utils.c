@@ -2271,6 +2271,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->gamemode = gamemode;
     gmst->screen = screen;
     gmst->is_seeded = is_seeded;
+    gmst->options = options;
 }
 
 /**

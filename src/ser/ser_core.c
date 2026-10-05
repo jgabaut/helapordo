@@ -3095,6 +3095,7 @@ bool deser_GameOptions(SerGameOptions* ser, GameOptions* deser)
 
     deser->use_default_background = ser->use_default_background;
     deser->do_autosave = ser->do_autosave;
+    deser->use_3x3_fov = ser->use_3x3_fov;
     deser->directional_keys_schema = ser->directional_keys_schema;
 
     return true;
@@ -3117,6 +3118,7 @@ bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser)
 
     ser->use_default_background = deser->use_default_background;
     ser->do_autosave = deser->do_autosave;
+    ser->use_3x3_fov = deser->use_3x3_fov;
     ser->directional_keys_schema = deser->directional_keys_schema;
 
     return true;

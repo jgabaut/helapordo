@@ -1027,7 +1027,7 @@ void display_explored_layout(Floor *floor, WINDOW *win)
  * @see Floor
  * @see floorClass
  */
-void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
+void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win, bool use_3x3_fov)
 {
     if (win == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "draw_view():  win was NULL.");
@@ -1066,7 +1066,7 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
     int fov_radius = 4;
     floor_calculate_fov(floor, current_x, current_y, fov_radius);
 
-    int cell_size = 3;
+    int cell_size = (use_3x3_fov ? 3 : 1);
 
     int win_h, win_w;
     getmaxyx(win, win_h, win_w);
@@ -1163,7 +1163,7 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
             handleRogueMenu(gamestate, path, player, room, load_info, kls,
                             t_kls);
             //Draw current FOV
-            draw_floor_view(floor, *current_x, *current_y, win);
+            draw_floor_view(floor, *current_x, *current_y, win, gamestate->options->use_3x3_fov);
 #endif
             continue;
         } else if ( c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
@@ -1230,7 +1230,7 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
                 }
                 *current_x = target_x;
                 *current_y = target_y;
-                draw_floor_view(floor, *current_x, *current_y, win);
+                draw_floor_view(floor, *current_x, *current_y, win, gamestate->options->use_3x3_fov);
             } else {
                 picked = 0;
                 log_tag("debug_log.txt", "[DEBUG]",

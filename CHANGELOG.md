@@ -5,6 +5,7 @@
 - Add `floor_calculate_fov()`
 - Updated floor view to use the new fov, with improved view radius
 - Add hints to floor view
+- Add `use_3x3_fov` to `GameOptions`
 
 ### Changed
 

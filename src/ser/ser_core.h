@@ -866,6 +866,8 @@ typedef struct SerGameOptions {
 #endif
     bool use_default_background; //<** Turn on usage of default terminal background */
     bool do_autosave; //<* Turns on autosave */
+    bool use_3x3_fov; //<* Turns on 3x3 fov */
+
     int32_t directional_keys_schema; //* Defines the current schema for cardinal directions movement */
 #ifdef __GNUC__
 } SerGameOptions;
