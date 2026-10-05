@@ -1008,6 +1008,10 @@ bool deser_countStats(SerCountstats* ser, countStats* deser)
     deser->specialsunlocked = ser->specialsunlocked;
     deser->coinsfound = ser->coinsfound;
     deser->bosseskilled = ser->bosseskilled;
+    deser->unique_enemieskilled = ser->unique_enemieskilled;
+    for (size_t i=0; i<ENEMYCLASSESMAX+1; i++) {
+        deser->killed_enemies[i] = ser->killed_enemies[i];
+    }
     deser->unique_bosseskilled = ser->unique_bosseskilled;
     for (size_t i=0; i<BOSSCLASSESMAX+1; i++) {
         deser->killed_bosses[i] = ser->killed_bosses[i];
@@ -1041,6 +1045,10 @@ bool ser_countStats(countStats* deser, SerCountstats* ser)
     ser->specialsunlocked = deser->specialsunlocked;
     ser->coinsfound = deser->coinsfound;
     ser->bosseskilled = deser->bosseskilled;
+    ser->unique_enemieskilled = deser->unique_enemieskilled;
+    for (size_t i=0; i<ENEMYCLASSESMAX+1; i++) {
+        ser->killed_enemies[i] = deser->killed_enemies[i];
+    }
     ser->unique_bosseskilled = deser->unique_bosseskilled;
     for (size_t i=0; i<BOSSCLASSESMAX+1; i++) {
         ser->killed_bosses[i] = deser->killed_bosses[i];
@@ -3095,6 +3103,7 @@ bool deser_GameOptions(SerGameOptions* ser, GameOptions* deser)
 
     deser->use_default_background = ser->use_default_background;
     deser->do_autosave = ser->do_autosave;
+    deser->use_3x3_fov = ser->use_3x3_fov;
     deser->directional_keys_schema = ser->directional_keys_schema;
 
     return true;
@@ -3117,6 +3126,7 @@ bool ser_GameOptions(GameOptions* deser, SerGameOptions* ser)
 
     ser->use_default_background = deser->use_default_background;
     ser->do_autosave = deser->do_autosave;
+    ser->use_3x3_fov = deser->use_3x3_fov;
     ser->directional_keys_schema = deser->directional_keys_schema;
 
     return true;

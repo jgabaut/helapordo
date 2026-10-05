@@ -3972,6 +3972,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
     //free(args);
     log_tag("debug_log.txt", "[FREE]", "handleRogueMenu():  Freed turnOP_args");
     log_tag("debug_log.txt", "[DEBUG]", "Ended handleRogueMenu()");
+    clear();
     return 0;
 }
 
@@ -4038,6 +4039,7 @@ int handleGameOptions(GameOptions * game_options)
 
     const char* default_background_toggle_label = "Default background";
     const char* do_autosave_toggle_label = "Do autosave";
+    const char* use_3x3_fov_label = "Use 3x3 fov";
     const char* directional_keys_schema_label = "<- Directional keys set ->";
 
     bool use_default_bg_is_locked = false;
@@ -4051,6 +4053,7 @@ int handleGameOptions(GameOptions * game_options)
     Toggle toggles[] = {
         {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->use_default_background}, (char*) default_background_toggle_label, use_default_bg_is_locked},
         {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->do_autosave}, (char*) do_autosave_toggle_label, false},
+        {BOOL_TOGGLE, (ToggleState){.bool_state = game_options->use_3x3_fov}, (char*) use_3x3_fov_label, false},
         //{MULTI_STATE_TOGGLE, (ToggleState){.ts_state.current_state = game_options->directional_keys_schema, .ts_state.num_states = HLPD_DIRECTIONALKEYS_SCHEMAS_MAX}, (char*)directional_keys_schema_label, false,stringFrom_HLPD_DirectionalKeys_Schema},
         {MULTI_STATE_TOGGLE, (ToggleState){.ts_state.current_state = game_options->directional_keys_schema, .ts_state.num_states = HLPD_DIRECTIONALKEYS_SCHEMAS_MAX+1}, (char*)directional_keys_schema_label, false,stringFrom_HLPD_DirectionalKeys_Schema},
     };
@@ -4090,7 +4093,7 @@ int handleGameOptions(GameOptions * game_options)
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Pair 0 now is: {fg: %i, bg: %i}", __func__, pair0_fg, pair0_bg);
     }
 
-    HLPD_DirectionalKeys_Schema selected_directional_keys_schema = toggle_menu.toggles[2].state.ts_state.current_state;
+    HLPD_DirectionalKeys_Schema selected_directional_keys_schema = toggle_menu.toggles[3].state.ts_state.current_state;
     if ( game_options->directional_keys_schema != selected_directional_keys_schema) {
         settings_changed = true;
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Current directional keys schema : {%i} [%s]", __func__, game_options->directional_keys_schema, stringFrom_HLPD_DirectionalKeys_Schema(game_options->directional_keys_schema));
@@ -4108,6 +4111,12 @@ int handleGameOptions(GameOptions * game_options)
     if ( game_options->do_autosave != selected_do_autosave) {
         settings_changed = true;
         game_options->do_autosave = selected_do_autosave;
+    }
+
+    bool selected_use_3x3_fov = toggle_menu.toggles[2].state.bool_state;
+    if ( game_options->use_3x3_fov != selected_use_3x3_fov) {
+        settings_changed = true;
+        game_options->use_3x3_fov = selected_use_3x3_fov;
     }
     endwin(); // End ncurses after resetting color pairs ?
     free_ToggleMenu(toggle_menu);

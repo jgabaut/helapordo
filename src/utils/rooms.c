@@ -290,6 +290,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
         }
         free(menu_items);
         delwin(home_win);
+        clear();
         endwin();
         log_tag("debug_log.txt", "[DEBUG]",
                 "Ended window mode for handleRoom_Home()");
@@ -739,6 +740,10 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 //Update stats
                 player->stats->enemieskilled++;
+                if (!player->stats->killed_enemies[e->class]) {
+                    player->stats->unique_enemieskilled++;
+                    player->stats->killed_enemies[e->class] = true;
+                }
 
                 //Consumable drop, guaranteed on killing a beast
                 if (e->beast || ((hlpd_rand() % 9) - (player->luck / 10) <= 0)) {
@@ -779,6 +784,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 //screenTime(1);
 
                 giveXp(player, e);
+                clear();
                 endwin();
 
                 e_death(e);
@@ -971,6 +977,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                             "Ending enemy animation.");
                     log_tag("debug_log.txt", "[ANIMATE]",
                             "Ending fighter animation.");
+                    clear();
                     endwin();
 
                     //Account for oracle gift perk
@@ -996,6 +1003,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                             player_luck);
                     death(player, load_info);
                     //free(room->foes);
+                    clear();
                     endwin();
 
                     //printf("\t\tLuck:  %i Path luck:  %i\n",player_luck,p->luck);
@@ -1045,6 +1053,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     //Win, get xp and free memory from enemy
                     giveXp(player, e);
 
+                    clear();
                     endwin();
                     e_death(e);
 
@@ -1104,6 +1113,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending fighter animation.");
 
+                clear();
                 endwin();
                 //FIXME
                 //Should we ensure death of foe is correctly handled before OP ends?
@@ -1126,6 +1136,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending fighter animation.");
 
+                clear();
                 endwin();
                 turnOP(OP_CONSUMABLE, args, kls, t_kls);
             } else if (choice == EQUIPS) {
@@ -1146,6 +1157,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending fighter animation.");
 
+                clear();
                 endwin();
                 turnOP(OP_EQUIPS, args, kls, t_kls);
             } else if (choice == PERKS) {
@@ -1165,6 +1177,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending fighter animation.");
 
+                clear();
                 endwin();
 
                 turnOP(OP_PERKS, args, kls, t_kls);
@@ -1185,6 +1198,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending fighter animation.");
 
+                clear();
                 endwin();
                 turnOP(OP_STATS, args, kls, t_kls);
             } else if (choice == SAVE) {
@@ -1208,6 +1222,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending fighter animation.");
 
+                clear();
                 endwin();
                 turnOP(OP_DEBUG, args, kls, t_kls);
             } else if (choice == ARTIFACTS) {
@@ -1228,6 +1243,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 log_tag("debug_log.txt", "[ANIMATE]",
                         "Ending fighter animation.");
 
+                clear();
                 endwin();
                 turnOP(OP_ARTIFACTS, args, kls, t_kls);
             } else if (choice == QUIT) {
@@ -1253,6 +1269,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 delwin(my_wins[1]);
                 delwin(my_wins[2]);
                 //free(room->foes);
+                clear();
                 endwin();
                 turnOP(OP_QUIT, args, kls, t_kls);
             }
@@ -1821,6 +1838,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                     free_item(my_items[k]);
                 }
                 free(my_items);
+                clear();
                 endwin();
 
                 //Account for oracle gift perk
@@ -1912,6 +1930,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 free_item(my_items[k]);
             }
             free(my_items);
+            clear();
             endwin();
             turnOP(OP_SPECIAL, args, kls, t_kls);
         } else if (choice == CONSUMABLE) {
@@ -1922,6 +1941,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 free_item(my_items[k]);
             }
             free(my_items);
+            clear();
             endwin();
             turnOP(OP_CONSUMABLE, args, kls, t_kls);
         } else if (choice == EQUIPS) {
@@ -1932,6 +1952,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 free_item(my_items[k]);
             }
             free(my_items);
+            clear();
             endwin();
             turnOP(OP_EQUIPS, args, kls, t_kls);
         } else if (choice == PERKS) {
@@ -1942,6 +1963,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 free_item(my_items[k]);
             }
             free(my_items);
+            clear();
             endwin();
             turnOP(OP_PERKS, args, kls, t_kls);
         } else if (choice == STATS) {
@@ -1952,6 +1974,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 free_item(my_items[k]);
             }
             free(my_items);
+            clear();
             endwin();
             turnOP(OP_STATS, args, kls, t_kls);
         } else if (choice == DEBUG) {
@@ -1966,6 +1989,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 free_item(my_items[k]);
             }
             free(my_items);
+            clear();
             endwin();
             turnOP(OP_DEBUG, args, kls, t_kls);
         } else if (choice == ARTIFACTS) {
@@ -1976,6 +2000,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 free_item(my_items[k]);
             }
             free(my_items);
+            clear();
             endwin();
             turnOP(OP_ARTIFACTS, args, kls, t_kls);
         } else if (choice == QUIT) {
@@ -1986,6 +2011,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 free_item(my_items[k]);
             }
             free(my_items);
+            clear();
             endwin();
             turnOP(OP_QUIT, args, kls, t_kls);
         }
@@ -2407,6 +2433,7 @@ int handleRoom_Shop(Room *room, int roomsDone, Path *path, Fighter *f,
     free(my_items);
     delwin(wins[0]);
     delwin(wins[1]);
+    clear();
     endwin();
 
     return FIGHTRES_NO_DMG;
@@ -2591,6 +2618,7 @@ int handleRoom_Roadfork(Room *room, int *roadFork_value, int roomsDone,
     for (int k = 0; k < n_choices; k++) {
         free_item(my_items[k]);
     }
+    clear();
     endwin();
 
     //FIXME
@@ -3085,6 +3113,7 @@ int handleRoom_Treasure(Room *room, int roomsDone, Path *path, Fighter *f,
     }
     free(my_items);
     delwin(win);
+    clear();
     endwin();
 
     return FIGHTRES_NO_DMG;

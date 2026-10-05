@@ -329,6 +329,8 @@ typedef struct SerCountstats {
     int32_t specialsunlocked;     /**< How many special move were unlocked*/
     int32_t coinsfound;	/**< How many coins you found in total*/
     int32_t bosseskilled;	  /**< How many bosses were defeated*/
+    int8_t unique_enemieskilled;	 /**< How many unique enemies were defeated*/
+    int8_t killed_enemies[ENEMYCLASSESMAX + 1];   /**< Keeps track of which enemyClass you've killed.*/
     int8_t unique_bosseskilled;	 /**< How many unique bosses were defeated*/
     int8_t killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
     int32_t keysfound;     /**< How many keys you found in total*/
@@ -866,6 +868,8 @@ typedef struct SerGameOptions {
 #endif
     bool use_default_background; //<** Turn on usage of default terminal background */
     bool do_autosave; //<* Turns on autosave */
+    bool use_3x3_fov; //<* Turns on 3x3 fov */
+
     int32_t directional_keys_schema; //* Defines the current schema for cardinal directions movement */
 #ifdef __GNUC__
 } SerGameOptions;

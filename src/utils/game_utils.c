@@ -376,6 +376,13 @@ void dbg_countStats(countStats *stats)
             stats->coinsfound);
     log_tag("debug_log.txt", "[countStats]", "Bosses killed:  { %i }",
             stats->bosseskilled);
+    log_tag("debug_log.txt", "[countStats]", "Unique Enemy kills:  { %i }",
+            stats->unique_enemieskilled);
+    for (int i = 0; i < ENEMYCLASSESMAX + 1; i++) {
+        log_tag("debug_log.txt", "[countStats]", "Enemy [%i] { %s }:  { %s }", i,
+                stringFromEClass(i),
+                (stats->killed_enemies[i] == 1 ? "Killed" : "Not Killed"));
+    }
     log_tag("debug_log.txt", "[countStats]", "Unique Boss kills:  { %i }",
             stats->unique_bosseskilled);
     for (int i = 0; i < BOSSCLASSESMAX + 1; i++) {
@@ -2271,6 +2278,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->gamemode = gamemode;
     gmst->screen = screen;
     gmst->is_seeded = is_seeded;
+    gmst->options = options;
 }
 
 /**

@@ -715,6 +715,10 @@ int fight(Fighter *player, Enemy *e, Koliseo *kls, RingaBuf* rb_notifications)
 
         //Update stats
         player->stats->enemieskilled++;
+        if (!player->stats->killed_enemies[e->class]) {
+            player->stats->unique_enemieskilled++;
+            player->stats->killed_enemies[e->class] = true;
+        }
     } else {
         //Apply status effects to enemy
         if (e->status != Normal) {
@@ -1011,6 +1015,10 @@ int enemy_attack(Enemy *e, Fighter *target, Koliseo *kls, RingaBuf* rb_notificat
 
         //Update stats
         target->stats->enemieskilled++;
+        if (!target->stats->killed_enemies[e->class]) {
+            target->stats->unique_enemieskilled++;
+            target->stats->killed_enemies[e->class] = true;
+        }
     } else {
         //Apply status effects to enemy
         if (e->status != Normal) {

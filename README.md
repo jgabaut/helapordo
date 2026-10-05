@@ -31,10 +31,10 @@
 
   [![GitHub commits since tagged version](https://img.shields.io/github/commits-since/jgabaut/helapordo/1.4.0)](https://github.com/jgabaut/helapordo/commits/master)
 
-  📦 v1.4.21 05/08/2026
+  📦 v1.4.22 05/10/2026
   I try to upload precompiled binaries for the `ncurses` build:
 
-  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.21/helapordo-nc-1.4.21-Linux-x86_64.zip)
+  - `x86_64-Linux` : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.22/helapordo-nc-1.4.22-Linux-x86_64.zip)
   - `aarch64-Linux` (from [Termux](https://f-droid.org/packages/com.termux/) on Android).
   - `x86_64-w64-mingw32` (*JUST A DEMO.* Any help with debugging the full game is welcome.) : [download latest](https://github.com/jgabaut/helapordo/releases/download/1.4.8/helapordo.exe-nc-1.4.8-w64-mingw32-x86_64.zip) (Available = `1.4.8`)
 
@@ -89,7 +89,7 @@
 
   - Needed programs, depending on chosen `ANVIL_IMPL`:
     - `gawk` is needed by `amboso` to generate `./src/anvil__helapordo.h`.
-      - `bash >=4` is needed to run `amboso`.
+      - `bash >=4.3` is needed to run `amboso`.
       - Unfortunately, `nawk` and `mawk` are not compatible with `amboso`.
     - If you dont' have those, you can use `invil` to generate `./src/anvil__helapordo.h`.
       - You will need `cargo` to build `invil`.

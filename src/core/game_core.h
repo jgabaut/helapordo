@@ -201,6 +201,7 @@ extern HLPD_DirectionalKeys hlpd_default_directional_keys[HLPD_DIRECTIONALKEYS_S
 typedef struct GameOptions {
     bool use_default_background; //<** Turn on usage of default terminal background */
     bool do_autosave; //<* Turns on autosave */
+    bool use_3x3_fov; //<* Turns on 3x3 fov */
     HLPD_DirectionalKeys_Schema directional_keys_schema; //* Defines the current schema for cardinal directions movement */
 } GameOptions;
 
@@ -378,14 +379,14 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 21
+#define HELAPORDO_PATCH_VERSION 22
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.21"
+#define VERSION "1.4.22"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.7"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.8"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -789,6 +790,8 @@ typedef struct {
     int specialsunlocked;     /**< How many special move were unlocked*/
     int coinsfound;	/**< How many coins you found in total*/
     int bosseskilled;	  /**< How many bosses were defeated*/
+    int unique_enemieskilled;     /**< How many unique enemies were defeated*/
+    int killed_enemies[ENEMYCLASSESMAX + 1];   /**< Keeps track of which enemyClass you've killed.*/
     int unique_bosseskilled;	 /**< How many unique bosses were defeated*/
     int killed_bosses[BOSSCLASSESMAX + 1];   /**< Keeps track of which bossClass you've killed.*/
     int keysfound;     /**< How many keys you found in total*/
@@ -1833,6 +1836,7 @@ typedef struct Floor {
     Room *rooms_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< Pointer matrix for rooms of this floor.*/
     roomClass roomclass_layout[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];	    /**< roomClass matrix for class value for rooms of this floor.*/
     int explored_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS];     /**< Int matrix for explored value for rooms of this floor.*/
+    bool visible_matrix[FLOOR_MAX_COLS][FLOOR_MAX_ROWS]; /**< Used for visibility in fov.*/
     int explored_area;	   /**< Holds how many cells we explored.*/
     bool from_bsp; /**< Flag for floors generated using bsp.*/
 

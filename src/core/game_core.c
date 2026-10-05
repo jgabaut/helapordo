@@ -634,6 +634,7 @@ const wchar_t LEGS_CHAR_ICON = 'L';
 const GameOptions default_GameOptions = {
     .use_default_background = false,
     .do_autosave = true,
+    .use_3x3_fov = true,
     .directional_keys_schema = HLPD_ARROW_KEYS,
 };
 

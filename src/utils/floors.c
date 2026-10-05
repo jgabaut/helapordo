@@ -480,6 +480,372 @@ void debug_print_floor_layout(Floor *floor, FILE *fp)
     }
 }
 
+void debug_print_floor_visible_layout(Floor * floor, FILE * fp)
+{
+    for (int y = 0; y < FLOOR_MAX_ROWS; y++) {
+        for (int x = 0; x < FLOOR_MAX_COLS; x++) {
+            fprintf(fp, "%c ", floor->visible_matrix[x][y] == 1 ? '1' : '0');
+        }
+        fprintf(fp, "\n");
+    }
+}
+
+char roomclass_chars[ROOM_CLASS_MAX+1]
+= {
+    [ENEMIES] = '^',
+    [SHOP] = '$',
+    [BOSS] = 'B',
+    [TREASURE] = '*',
+    [ROADFORK] = '+',
+    [HOME] = 'H',
+    [WALL] = '#',
+    [BASIC] = '.'
+};
+
+int roomclass_colors[ROOM_CLASS_MAX+1]
+= {
+    [ENEMIES] = S4C_DARK_CYAN,
+    [SHOP] = S4C_TEAL,
+    [BOSS] = S4C_CHERRY,
+    [TREASURE] = S4C_LIGHT_ORANGE,
+    [ROADFORK] = S4C_GREY,
+    [HOME] = S4C_LIGHT_OLIVE,
+    [WALL] = S4C_DARK_PURPLE,
+    [BASIC] = S4C_DARK_OLIVE,
+};
+
+int room_color(Floor* floor, int cell_x, int cell_y)
+{
+    int isColored = -1;
+    if (floor->floor_layout[cell_x][cell_y] == 0) {
+        if (floor->roomclass_layout[cell_x][cell_y] != WALL) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "room_color(): floor->floor_layout[%i][%i] was (%i).",
+                    cell_x, cell_y, floor->floor_layout[cell_x][cell_y]);
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "room_color(): floor->roomclass_layout[%i][%i] was (%s).",
+                    cell_x, cell_y,
+                    stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        }
+        int isWall = -1;
+        isWall =
+            floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
+        if (isWall > 0) {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_PURPLE;
+            } else {
+                isColored = S4C_PURPLE;
+            }
+#else
+            isColored = S4C_WIN_PURPLE;
+#endif
+        }
+    } else if (floor->floor_layout[cell_x][cell_y] == 1) {
+        switch (floor->roomclass_layout[cell_x][cell_y]) {
+        case WALL: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_BLUE;
+            } else {
+                isColored = S4C_BLUE;
+            }
+#else
+            isColored = S4C_WIN_BLUE;
+#endif
+        }
+        break;
+        case BASIC: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_OLIVE;
+            } else {
+                isColored = S4C_LIGHT_BROWN;
+            }
+#else
+            isColored = S4C_WIN_WHITE;
+#endif
+        }
+        break;
+        case HOME: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_LIGHT_OLIVE;
+            } else {
+                isColored = S4C_WHITE;
+            }
+#else
+            isColored = S4C_WIN_WHITE;
+#endif
+        }
+        break;
+        case BOSS: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_CHERRY;
+            } else {
+                isColored = S4C_RED;
+            }
+#else
+            isColored = S4C_WIN_RED;
+#endif
+        }
+        break;
+        case TREASURE: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_LIGHT_ORANGE;
+            } else {
+                isColored = S4C_ORANGE;
+            }
+#else
+            isColored = S4C_WIN_WHITE_ON_RED;
+#endif
+        }
+        break;
+        case SHOP: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_TEAL;
+            } else {
+                isColored = S4C_MAGENTA;
+            }
+#else
+            isColored = S4C_WIN_WHITE_ON_PURPLE;
+#endif
+        }
+        break;
+        case ENEMIES: {
+#ifndef _WIN32
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_CYAN;
+            } else {
+                isColored = S4C_CYAN;
+            }
+#else
+            isColored = S4C_WIN_CYAN;
+#endif
+        }
+        break;
+        default: {
+            log_tag("debug_log.txt", "[ERROR]",
+                    "room_color(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
+                    cell_x, cell_y);
+#ifndef _WIN32
+            isColored = S4C_DARK_GREEN;
+#else
+            isColored = S4C_WIN_WHITE_ON_PURPLE;
+#endif
+        }
+        break;
+        }
+    } else {
+        log_tag("debug_log.txt", "[ERROR]",
+                "room_color(): floor->floor_layout[%i][%i] was (%i).", cell_x,
+                cell_y, floor->floor_layout[cell_x][cell_y]);
+        log_tag("debug_log.txt", "[ERROR]",
+                "room_color(): floor->roomclass_layout[%i][%i] was (%s).",
+                cell_x, cell_y,
+                stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        exit(EXIT_FAILURE);
+    }
+
+    return isColored;
+}
+
+char room_char(Floor* floor, int cell_x, int cell_y)
+{
+    char ch = '?';
+    if (floor->floor_layout[cell_x][cell_y] == 0) {
+        if (floor->roomclass_layout[cell_x][cell_y] != WALL) {
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "room_char(): floor->floor_layout[%i][%i] was (%i).",
+                    cell_x, cell_y, floor->floor_layout[cell_x][cell_y]);
+            log_tag("debug_log.txt", "[DEBUG]",
+                    "room_char(): floor->roomclass_layout[%i][%i] was (%s).",
+                    cell_x, cell_y,
+                    stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        }
+        int isWall = -1;
+        isWall =
+            floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
+        if (isWall > 0) {
+            ch = '#';
+        } else {
+            ch = '?';
+        }
+    } else if (floor->floor_layout[cell_x][cell_y] == 1) {
+        ch = roomclass_chars[floor->roomclass_layout[cell_x][cell_y]];
+    } else {
+        log_tag("debug_log.txt", "[ERROR]",
+                "room_char(): floor->floor_layout[%i][%i] was (%i).", cell_x,
+                cell_y, floor->floor_layout[cell_x][cell_y]);
+        log_tag("debug_log.txt", "[ERROR]",
+                "room_char(): floor->roomclass_layout[%i][%i] was (%s).",
+                cell_x, cell_y,
+                stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
+        exit(EXIT_FAILURE);
+    }
+
+    return ch;
+}
+
+bool blocks_vision(const Floor *floor, int x, int y)
+{
+    if (x < 0 || x >= FLOOR_MAX_COLS ||
+        y < 0 || y >= FLOOR_MAX_ROWS)
+        return true;
+
+    return floor->floor_layout[x][y] == 0;
+}
+
+void cast_light(Floor *floor, int cx, int cy, int row, float start_slope, float end_slope, int radius, int xx, int xy, int yx, int yy)
+{
+    if (start_slope < end_slope)
+        return;
+
+    float next_start_slope = start_slope;
+
+    for (int distance = row; distance <= radius; ++distance) {
+
+        int dx = -distance - 1;
+        int dy = -distance;
+
+        bool blocked = false;
+
+        while (dx <= 0) {
+
+            dx++;
+
+            int map_x = cx + dx * xx + dy * xy;
+            int map_y = cy + dx * yx + dy * yy;
+
+            float left_slope =
+                (dx - 0.5f) / (dy + 0.5f);
+
+            float right_slope =
+                (dx + 0.5f) / (dy - 0.5f);
+
+            if (start_slope < right_slope)
+                continue;
+
+            if (end_slope > left_slope)
+                break;
+
+            /*
+             * Outside the actual map.
+             */
+            if (map_x < 0 || map_x >= FLOOR_MAX_COLS ||
+                map_y < 0 || map_y >= FLOOR_MAX_ROWS) {
+                continue;
+            }
+
+            /*
+             * Within the circular vision radius.
+             */
+            if (dx * dx + dy * dy <= radius * radius) {
+                floor->visible_matrix[map_x][map_y] = true;
+            }
+
+            bool opaque = blocks_vision(floor, map_x, map_y);
+
+            if (blocked) {
+
+                if (opaque) {
+                    /*
+                     * We're still inside the shadow created
+                     * by the previous wall.
+                     */
+                    next_start_slope = right_slope;
+                    continue;
+                }
+
+                /*
+                 * We've exited the shadow.
+                 */
+                blocked = false;
+                start_slope = next_start_slope;
+
+            } else if (opaque) {
+
+                /*
+                 * A new shadow begins.
+                 */
+                blocked = true;
+
+                cast_light(
+                    floor,
+                    cx,
+                    cy,
+                    distance + 1,
+                    start_slope,
+                    left_slope,
+                    radius,
+                    xx, xy,
+                    yx, yy
+                );
+
+                next_start_slope = right_slope;
+            }
+        }
+
+        if (blocked)
+            break;
+    }
+}
+
+void floor_calculate_fov(Floor *floor, int player_x, int player_y, int radius)
+{
+    memset(
+        floor->visible_matrix,
+        0,
+        sizeof floor->visible_matrix
+    );
+
+    if (player_x < 0 ||
+        player_x >= FLOOR_MAX_COLS ||
+        player_y < 0 ||
+        player_y >= FLOOR_MAX_ROWS)
+        return;
+
+    /*
+     * The player can always see their own tile.
+     */
+    floor->visible_matrix[player_x][player_y] = true;
+
+    /*
+     * 8 octants.
+     */
+    static const int mult[8][4] = {
+        { 1,  0,  0,  1 },
+        { 0,  1,  1,  0 },
+        {-1,  0,  0,  1 },
+        { 0, -1,  1,  0 },
+        {-1,  0,  0, -1 },
+        { 0, -1, -1,  0 },
+        { 1,  0,  0, -1 },
+        { 0,  1, -1,  0 }
+    };
+
+    for (int octant = 0; octant < 8; ++octant) {
+
+        cast_light(
+            floor,
+            player_x,
+            player_y,
+            1,
+            1.0f,
+            0.0f,
+            radius,
+
+            mult[octant][0],
+            mult[octant][1],
+            mult[octant][2],
+            mult[octant][3]
+        );
+    }
+}
+
 #ifdef HELAPORDO_CURSES_BUILD
 /**
  * Takes a Floor pointer and prints its roomClass layout to the passed WINDOW pointer.
@@ -661,14 +1027,15 @@ void display_explored_layout(Floor *floor, WINDOW *win)
  * @see Floor
  * @see floorClass
  */
-void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
+void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win, bool use_3x3_fov)
 {
     if (win == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "draw_view():  win was NULL.");
         exit(EXIT_FAILURE);
     }
-    clear();
+    wclear(win);
     refresh();
+    //box(win, 0, 0);
 
     /*
     start_color();
@@ -690,227 +1057,77 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, WINDOW *win)
        int yShift = 3;
      */
 
-    int xSize = 3;
-    int ySize = 3;
+    //int xSize = 1;
+    //int ySize = 1;
 
     //Center
-    draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, 3);
+    //draw_cell(floor, current_x, current_y, win, 10, 10, xSize, ySize, 3);
 
-    //Draw player char
-    mvwprintw(win, FLOOR_MAX_COLS / 2 - 1, FLOOR_MAX_ROWS / 2 - 1, "%c", '@');
-    wrefresh(win);
+    int fov_radius = 4;
+    floor_calculate_fov(floor, current_x, current_y, fov_radius);
 
+    int cell_size = (use_3x3_fov ? 3 : 1);
+
+    int win_h, win_w;
+    getmaxyx(win, win_h, win_w);
+
+    int center_x = win_w / 2;
+    int center_y = win_h / 2;
+
+    for (int world_x = current_x - fov_radius;
+         world_x <= current_x + fov_radius;
+         world_x++) {
+
+        for (int world_y = current_y - fov_radius;
+             world_y <= current_y + fov_radius;
+             world_y++) {
+
+            if (world_x < 0 || world_y < 0 ||
+                world_x >= FLOOR_MAX_COLS ||
+                world_y >= FLOOR_MAX_ROWS) {
+                continue;
+            }
+
+            if (!floor->visible_matrix[world_x][world_y])
+                continue;
+
+            int screen_x =
+                center_x + (world_x - current_x) * cell_size;
+
+            int screen_y =
+                center_y + (world_y - current_y) * cell_size;
+
+            int color = room_color(floor, world_x, world_y);
+
+            wattron(win, COLOR_PAIR(color));
+
+            for (int dx = 0; dx < cell_size; dx++) {
+                for (int dy = 0; dy < cell_size; dy++) {
+
+                    int x = screen_x + dx;
+                    int y = screen_y + dy;
+
+                    if (x < 0 || y < 0 ||
+                        x >= win_w || y >= win_h) {
+                        continue;
+                    }
+
+                    mvwaddch(win, y, x, room_char(floor, world_x, world_y));
+                }
+            }
+
+            wattroff(win, COLOR_PAIR(color));
+        }
+    }
+
+    // Player
+    int player_screen_x = center_x;
+    int player_screen_y = center_y;
+
+    int x = player_screen_x + cell_size/2;
+    int y = player_screen_y + cell_size/2;
+    mvwaddch(win, y, x, '@');
     refresh();
-}
-
-/**
- * Takes a Floor pointer and cell x and y position. Draws render to passed WINDOW pointer.
- * @see Floor
- * @see floorClass
- */
-void draw_cell(Floor *floor, int cell_x, int cell_y, WINDOW *win,
-               int drawcorner_x, int drawcorner_y, int x_size, int y_size,
-               int recurse)
-{
-    if (win == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "draw_cell():  win was NULL.");
-        exit(EXIT_FAILURE);
-    }
-    int xShift = 0;
-    int yShift = 0;
-
-    int xSize = x_size;
-    int ySize = y_size;
-
-    if (floor->floor_layout[cell_x][cell_y] == 0) {
-        if (floor->roomclass_layout[cell_x][cell_y] != WALL) {
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "draw_cell(): floor->floor_layout[%i][%i] was (%i).",
-                    cell_x, cell_y, floor->floor_layout[cell_x][cell_y]);
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "draw_cell(): floor->roomclass_layout[%i][%i] was (%s).",
-                    cell_x, cell_y,
-                    stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
-        }
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
-                char ch = '?';
-                int isWall = -1;
-                int isColored = -1;
-                isWall =
-                    floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
-                if (isWall > 0) {
-                    ch = '#';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_DARK_PURPLE;
-                    } else {
-                        isColored = S4C_PURPLE;
-                    }
-#else
-                    isColored = S4C_WIN_PURPLE;
-#endif
-                } else {
-                    ch = '?';
-                }
-                if (isColored >= 0) {
-                    wattron(win, COLOR_PAIR(isColored));
-                };
-                mvwprintw(win, yShift + j + (drawcorner_y),
-                          xShift + i + (drawcorner_x), "%c", ch);
-                if (isColored >= 0) {
-                    wattroff(win, COLOR_PAIR(isColored));
-                    isColored = -1;
-                };
-                if (isWall > 0) {
-                    isWall = -1;
-                    ch = '?';
-                };
-            }
-        }
-    } else if (floor->floor_layout[cell_x][cell_y] == 1) {
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
-                char ch = '?';
-                int isColored = -1;
-                switch (floor->roomclass_layout[cell_x][cell_y]) {
-                case WALL: {
-                    ch = '#';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_DARK_BLUE;
-                    } else {
-                        isColored = S4C_BLUE;
-                    }
-#else
-                    isColored = S4C_WIN_BLUE;
-#endif
-                }
-                break;
-                case BASIC: {
-                    ch = '.';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_DARK_OLIVE;
-                    } else {
-                        isColored = S4C_LIGHT_BROWN;
-                    }
-#else
-                    isColored = S4C_WIN_WHITE;
-#endif
-                }
-                break;
-                case HOME: {
-                    ch = 'H';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_LIGHT_OLIVE;
-                    } else {
-                        isColored = S4C_WHITE;
-                    }
-#else
-                    isColored = S4C_WIN_WHITE;
-#endif
-                }
-                break;
-                case BOSS: {
-                    ch = 'B';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_CHERRY;
-                    } else {
-                        isColored = S4C_RED;
-                    }
-#else
-                    isColored = S4C_WIN_RED;
-#endif
-                }
-                break;
-                case TREASURE: {
-                    ch = '*';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_LIGHT_ORANGE;
-                    } else {
-                        isColored = S4C_ORANGE;
-                    }
-#else
-                    isColored = S4C_WIN_WHITE_ON_RED;
-#endif
-                }
-                break;
-                case SHOP: {
-                    ch = '$';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_TEAL;
-                    } else {
-                        isColored = S4C_MAGENTA;
-                    }
-#else
-                    isColored = S4C_WIN_WHITE_ON_PURPLE;
-#endif
-                }
-                break;
-                case ENEMIES: {
-                    ch = '^';
-#ifndef _WIN32
-                    if (floor->from_bsp) {
-                        isColored = S4C_DARK_CYAN;
-                    } else {
-                        isColored = S4C_CYAN;
-                    }
-#else
-                    isColored = S4C_WIN_CYAN;
-#endif
-                }
-                break;
-                default: {
-                    log_tag("debug_log.txt", "[ERROR]",
-                            "draw_cell(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
-                            cell_x, cell_y);
-                    ch = '?';
-#ifndef _WIN32
-                    isColored = S4C_DARK_GREEN;
-#else
-                    isColored = S4C_WIN_WHITE_ON_PURPLE;
-#endif
-                }
-                break;
-                }
-                if (isColored >= 0) {
-                    wattron(win, COLOR_PAIR(isColored));
-                };
-                mvwprintw(win, yShift + j + (drawcorner_y),
-                          xShift + i + (drawcorner_x), "%c", ch);
-                if (isColored >= 0) {
-                    wattroff(win, COLOR_PAIR(isColored));
-                    isColored = -1;
-                };
-            }
-        }
-        if (recurse > 0 && cell_x < FLOOR_MAX_COLS - 1)
-            draw_cell(floor, cell_x + 1, cell_y, win, drawcorner_x + 3,
-                      drawcorner_y, x_size, y_size, recurse - 1);
-        if (recurse > 0 && cell_x > 0)
-            draw_cell(floor, cell_x - 1, cell_y, win, drawcorner_x - 3,
-                      drawcorner_y, x_size, y_size, recurse - 1);
-        if (recurse > 0 && cell_y < FLOOR_MAX_ROWS - 1)
-            draw_cell(floor, cell_x, cell_y + 1, win, drawcorner_x,
-                      drawcorner_y + 3, x_size, y_size, recurse - 1);
-        if (recurse > 0 && cell_y > 0)
-            draw_cell(floor, cell_x, cell_y - 1, win, drawcorner_x,
-                      drawcorner_y - 3, x_size, y_size, recurse - 1);
-    } else {
-        log_tag("debug_log.txt", "[ERROR]",
-                "draw_cell(): floor->floor_layout[%i][%i] was (%i).", cell_x,
-                cell_y, floor->floor_layout[cell_x][cell_y]);
-        log_tag("debug_log.txt", "[ERROR]",
-                "draw_cell(): floor->roomclass_layout[%i][%i] was (%s).",
-                cell_x, cell_y,
-                stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
-        exit(EXIT_FAILURE);
-    }
 }
 
 /**
@@ -946,7 +1163,7 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
             handleRogueMenu(gamestate, path, player, room, load_info, kls,
                             t_kls);
             //Draw current FOV
-            draw_floor_view(floor, *current_x, *current_y, win);
+            draw_floor_view(floor, *current_x, *current_y, win, gamestate->options->use_3x3_fov);
 #endif
             continue;
         } else if ( c == hlpd_d_keyval(HLPD_KEY_QUIT)) {
@@ -1013,7 +1230,7 @@ void move_update(Gamestate *gamestate, Floor *floor, int *current_x,
                 }
                 *current_x = target_x;
                 *current_y = target_y;
-                draw_floor_view(floor, *current_x, *current_y, win);
+                draw_floor_view(floor, *current_x, *current_y, win, gamestate->options->use_3x3_fov);
             } else {
                 picked = 0;
                 log_tag("debug_log.txt", "[DEBUG]",
@@ -1283,145 +1500,6 @@ void display_explored_layout_with_player(Floor *floor, Rectangle *win, int curre
 }
 
 /**
- * Takes a Floor pointer and cell x and y position. Draws render using the passed Rectangle as reference position.
- * @see Floor
- * @see floorClass
- */
-void draw_cell(Floor *floor, int cell_x, int cell_y, Rectangle *win,
-               int drawcorner_x, int drawcorner_y, int x_size, int y_size, float pixelSize,
-               int recurse)
-{
-    if (win == NULL) {
-        log_tag("debug_log.txt", "[ERROR]", "draw_cell():  win was NULL.");
-        exit(EXIT_FAILURE);
-    }
-    int xSize = x_size;
-    int ySize = y_size;
-
-    if (floor->floor_layout[cell_x][cell_y] == 0) {
-        if (floor->roomclass_layout[cell_x][cell_y] != WALL) {
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "draw_cell(): floor->floor_layout[%i][%i] was (%i).",
-                    cell_x, cell_y, floor->floor_layout[cell_x][cell_y]);
-            log_tag("debug_log.txt", "[DEBUG]",
-                    "draw_cell(): floor->roomclass_layout[%i][%i] was (%s).",
-                    cell_x, cell_y,
-                    stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
-        }
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
-                char ch = '?';
-                int isWall = -1;
-                int isColored = -1;
-                Color color = {0};
-                isWall =
-                    floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
-                if (isWall > 0) {
-                    ch = '#';
-                    isColored = S4C_PURPLE;
-                } else {
-                    ch = '?';
-                }
-                if (isColored >= 0) {
-                    color = ColorFromS4CPalette(palette, isColored);
-                };
-                DrawRectangle(win->x + ((j + drawcorner_x) * ((int)pixelSize) ), win->y + ((i + drawcorner_y) * ((int)pixelSize)), pixelSize, pixelSize, color);
-                if (isColored >= 0) {
-                    isColored = -1;
-                };
-                if (isWall > 0) {
-                    isWall = -1;
-                    ch = '?';
-                };
-                (void) ch;
-            }
-        }
-    } else if (floor->floor_layout[cell_x][cell_y] == 1) {
-        for (int i = 0; i < xSize; i++) {
-            for (int j = 0; j < ySize; j++) {
-                char ch = '?';
-                int isColored = -1;
-                Color color = {0};
-                switch (floor->roomclass_layout[cell_x][cell_y]) {
-                case WALL: {
-                    ch = '#';
-                    isColored = S4C_BLUE;
-                }
-                break;
-                case BASIC: {
-                    ch = '.';
-                    isColored = S4C_LIGHT_BROWN;
-                }
-                break;
-                case HOME: {
-                    ch = 'H';
-                    isColored = S4C_WHITE;
-                }
-                break;
-                case BOSS: {
-                    ch = 'B';
-                    isColored = S4C_RED;
-                }
-                break;
-                case TREASURE: {
-                    ch = '*';
-                    isColored = S4C_ORANGE;
-                }
-                break;
-                case SHOP: {
-                    ch = '$';
-                    isColored = S4C_MAGENTA;
-                }
-                break;
-                case ENEMIES: {
-                    ch = '^';
-                    isColored = S4C_CYAN;
-                }
-                break;
-                default: {
-                    log_tag("debug_log.txt", "[ERROR]",
-                            "draw_cell(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
-                            cell_x, cell_y);
-                    ch = '?';
-                    isColored = S4C_DARK_GREEN;
-                }
-                break;
-                }
-                if (isColored >= 0) {
-                    color = ColorFromS4CPalette(palette, isColored);
-                };
-                DrawRectangle(win->x + ((j + drawcorner_x) * ((int)pixelSize) ), win->y + ((i + drawcorner_y) * ((int)pixelSize)), pixelSize, pixelSize, color);
-                if (isColored >= 0) {
-                    isColored = -1;
-                };
-                (void) ch;
-            }
-        }
-        if (recurse > 0 && cell_x < FLOOR_MAX_COLS - 1)
-            draw_cell(floor, cell_x + 1, cell_y, win, drawcorner_x + x_size,
-                      drawcorner_y, x_size, y_size, pixelSize, recurse - 1);
-        if (recurse > 0 && cell_x > 0)
-            draw_cell(floor, cell_x - 1, cell_y, win, drawcorner_x - x_size,
-                      drawcorner_y, x_size, y_size, pixelSize, recurse - 1);
-        if (recurse > 0 && cell_y < FLOOR_MAX_ROWS - 1)
-            draw_cell(floor, cell_x, cell_y + 1, win, drawcorner_x,
-                      drawcorner_y + y_size, x_size, y_size, pixelSize, recurse - 1);
-        if (recurse > 0 && cell_y > 0)
-            draw_cell(floor, cell_x, cell_y - 1, win, drawcorner_x,
-                      drawcorner_y - y_size, x_size, y_size, pixelSize, recurse - 1);
-    } else {
-        log_tag("debug_log.txt", "[ERROR]",
-                "draw_cell(): floor->floor_layout[%i][%i] was (%i).", cell_x,
-                cell_y, floor->floor_layout[cell_x][cell_y]);
-        log_tag("debug_log.txt", "[ERROR]",
-                "draw_cell(): floor->roomclass_layout[%i][%i] was (%s).",
-                cell_x, cell_y,
-                stringFromRoom(floor->roomclass_layout[cell_x][cell_y]));
-        exit(EXIT_FAILURE);
-    }
-}
-
-/**
  * Takes a Floor pointer and current x and y position. Draws render using the passed Rectangle as reference position.
  * @see Floor
  * @see floorClass
@@ -1432,16 +1510,67 @@ void draw_floor_view(Floor *floor, int current_x, int current_y, float pixelSize
         log_tag("debug_log.txt", "[ERROR]", "draw_view():  win was NULL.");
         exit(EXIT_FAILURE);
     }
-    int xSize = 3;
-    int ySize = 3;
-    int drawcorner_x = 10;
-    int drawcorner_y = 10;
 
-    //Center
-    draw_cell(floor, current_x, current_y, win, drawcorner_x, drawcorner_y, xSize, ySize, pixelSize, 3);
+    int fov_radius = 4;
+    floor_calculate_fov(floor, current_x, current_y, fov_radius);
 
-    //Draw player char
-    DrawRectangle(win->x + (((int)(xSize/2) + drawcorner_x) * (int)pixelSize), win->y + (((int)(ySize/2) + drawcorner_y) * (int)pixelSize), pixelSize, pixelSize, ColorFromS4CPalette(palette, S4C_BLUE));
+    int cell_scale = 3;
+    int cell_size = (int)pixelSize * cell_scale;
+
+    int center_x = win->x + win->width / 2;
+    int center_y = win->y + win->height / 2;
+
+    for (int world_x = current_x - fov_radius;
+         world_x <= current_x + fov_radius;
+         world_x++) {
+
+        for (int world_y = current_y - fov_radius;
+             world_y <= current_y + fov_radius;
+             world_y++) {
+
+            if (world_x < 0 || world_y < 0 ||
+                world_x >= FLOOR_MAX_COLS ||
+                world_y >= FLOOR_MAX_ROWS) {
+                continue;
+            }
+
+            if (!floor->visible_matrix[world_x][world_y])
+                continue;
+
+            int screen_x =
+                center_x + (world_x - current_x) * cell_size;
+
+            int screen_y =
+                center_y + (world_y - current_y) * cell_size;
+
+            if (screen_x + cell_size < win->x ||
+                screen_x >= win->x + win->width ||
+                screen_y + cell_size < win->y ||
+                screen_y >= win->y + win->height) {
+                continue;
+            }
+
+            DrawRectangle(
+                screen_x,
+                screen_y,
+                cell_size,
+                cell_size,
+                ColorFromS4CPalette(
+                    palette,
+                    room_color(floor, world_x, world_y)
+                )
+            );
+        }
+    }
+
+    // Player stays centered
+    DrawRectangle(
+        center_x + ((int)pixelSize * (cell_scale/2)),
+        center_y + ((int)pixelSize * (cell_scale/2)),
+        (int)pixelSize,
+        (int)pixelSize,
+        ColorFromS4CPalette(palette, S4C_BLUE)
+    );
 }
 
 /**
