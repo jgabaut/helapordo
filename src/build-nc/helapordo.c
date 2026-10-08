@@ -556,18 +556,7 @@ void gameloop(int argc, char **argv)
                     "Set load_info->done_loading to 0.");
         }
 
-        char* notifications_buffer = (char*) KLS_PUSH_ARR_TYPED(default_kls, Notification, NOTIFICATIONS_RINGBUFFER_SIZE+1, HR_Notification, "Notification buffer", "Notification");
-
-        size_t ringabuf_size = rb_structsize__();
-        size_t ringabuf_align = rb_structalign__();
-
-#ifndef KOLISEO_HAS_REGION
-        RingaBuf rb_notifications = kls_push_zero_ext(default_kls, ringabuf_size, ringabuf_align, 1);
-#else
-        RingaBuf rb_notifications = kls_push_zero_typed(default_kls, ringabuf_size, ringabuf_align, 1, HR_RingaBuf, "RingaBuf for notifications", "RingaBuf");
-#endif // KOLISEO_HAS_REGION
-
-        rb_notifications = rb_new_arr(rb_notifications, notifications_buffer, Notification, NOTIFICATIONS_RINGBUFFER_SIZE);
+        RingaBuf* rb_notifications = rb_init(default_kls, NOTIFICATIONS_RINGBUFFER_SIZE);
         size_t capacity = rb_get_capacity(rb_notifications);
 
 #ifndef _WIN32
@@ -957,7 +946,7 @@ void gameloop(int argc, char **argv)
                                                roomsDone, path, player,
                                                load_info, enemy_sprites,
                                                fighter_sprites, default_kls,
-                                               gamestate_kls, &rb_notifications);
+                                               gamestate_kls, rb_notifications);
                     } else if (current_room->class == SHOP) {
                         res =
                             handleRoom_Shop(current_room, roomsDone, path,
@@ -969,7 +958,7 @@ void gameloop(int argc, char **argv)
                                             roomsDone, path, player,
                                             load_info, boss_sprites,
                                             fighter_sprites, default_kls,
-                                            gamestate_kls, &rb_notifications);
+                                            gamestate_kls, rb_notifications);
                     } else if (current_room->class == TREASURE) {
                         res =
                             handleRoom_Treasure(current_room, roomsDone,
