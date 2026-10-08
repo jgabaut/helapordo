@@ -3,6 +3,9 @@
 ### Changed
 
 - Update `room_color()` to fix `raylib` `mingw32` build
+- Use `koliseo/templates/ringbuf.h` instead of `ringabuf`
+- Drop `ringabuf`
+- Bump `koliseo` to `0.6.5`
 
 ## [1.4.22] - 2026-10-05
 
