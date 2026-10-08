@@ -527,7 +527,7 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
             //if (!newest_notif->displayed) {
             //wclear(notifications_win);
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from 0 to head: { %" PRIu32 " }", __func__, head);
-            for (int i = 0; i < (head / sizeof(Notification)); i++) {
+            for (int i = 0; i < head; i++) {
                 //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
                 Notification* read_notif = (Notification*) rb_getelem_by_index(rb_notifications, i, &getelem_success);
                 assert(getelem_success);
@@ -557,7 +557,7 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
         //if (!newest_notif->displayed) {
         //wclear(notifications_win);
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Checking up from head+1 { %" PRIu32 " } to size { %" PRIu32 " }, then from 0 to head.", __func__, (head / sizeof(Notification)) +1, capacity / sizeof(Notification));
-        for (size_t i = (head / sizeof(Notification)) +1; i < (capacity / sizeof(Notification)); i++) {
+        for (size_t i = head +1; i < capacity; i++) {
             //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
             Notification* read_notif = (Notification*) rb_getelem_by_index(rb_notifications, i, &getelem_success);
             assert(getelem_success);
@@ -572,7 +572,7 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
             read_notif->displayed = true;
             current_idx++;
         }
-        for (size_t i = 0; i < (head / sizeof(Notification)); i++) {
+        for (size_t i = 0; i < head; i++) {
             //Notification* read_notif = (Notification*) rb_getelem_by_offset(*rb_notifications, i * sizeof(Notification));
             Notification* read_notif = (Notification*) rb_getelem_by_index(rb_notifications, i, &getelem_success);
             assert(getelem_success);

@@ -10,6 +10,3 @@
 [submodule "invil"]
 	path = invil
 	url = https://github.com/jgabaut/invil
-[submodule "ringabuf"]
-	path = ringabuf
-	url = https://github.com/jgabaut/ringabuf.git
