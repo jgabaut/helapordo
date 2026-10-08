@@ -238,6 +238,7 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/amboso ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/amboso
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo/src
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo/templates ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo/templates
 
 	@echo -e "\033[1;32m[TREE] Removing '~/helapordo-local/share/$(PACK_NAME).zip':\033[0m"
 	touch ~/helapordo-local/share/$(PACK_NAME).zip
@@ -258,6 +259,7 @@ pack: versioncheck
 	install ./amboso/LICENSE ~/helapordo-local/share/$(PACK_NAME)/amboso/
 	install ./amboso/README.md ~/helapordo-local/share/$(PACK_NAME)/amboso/
 	install ./koliseo/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/koliseo/src/
+	install ./koliseo/templates/ringbuf.h ~/helapordo-local/share/$(PACK_NAME)/koliseo/templates/
 	install ./koliseo/LICENSE ~/helapordo-local/share/$(PACK_NAME)/koliseo/
 	install ./koliseo/README.md ~/helapordo-local/share/$(PACK_NAME)/koliseo/
 	install ./src/release_data/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/release_data/
