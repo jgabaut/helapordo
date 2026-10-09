@@ -556,7 +556,18 @@ void gameloop(int argc, char **argv)
                     "Set load_info->done_loading to 0.");
         }
 
-        RingaBuf* rb_notifications = rb_init(default_kls, NOTIFICATIONS_RINGBUFFER_SIZE);
+        Notification* notification_buffer = KLS_PUSH_ARR_TYPED(default_kls, Notification, NOTIFICATIONS_RINGBUFFER_SIZE+1, HR_Notification, "Notification buffer", "Notification");
+#ifndef KOLISEO_HAS_REGION
+        RingaBuf* rb_notifications = kls_push_zero_ext(default_kls, sizeof(RingaBuf), KLS_ALIGNOF(RingaBuf), 1);
+#else
+        RingaBuf* rb_notifications = kls_push_zero_typed(default_kls, sizeof(RingaBuf), KLS_ALIGNOF(RingaBuf), 1, HR_RingaBuf, "Ringabuf for notifications", "RingaBuf");
+#endif // KOLISEO_HAS_REGION
+        rb_notifications->head = 0;
+        rb_notifications->tail = 0;
+        rb_notifications->capacity = NOTIFICATIONS_RINGBUFFER_SIZE;
+        rb_notifications->is_full = false;
+        rb_notifications->items = notification_buffer;
+        rb_notifications->allocator.kls = default_kls;
         size_t capacity = rb_get_capacity(rb_notifications);
 
 #ifndef _WIN32
