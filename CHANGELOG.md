@@ -6,6 +6,7 @@
 - Use `koliseo/templates/ringbuf.h` instead of `ringabuf`
 - Drop `ringabuf`
 - Bump `koliseo` to `0.6.5`
+- Move `format` and `installer` to `scripts/`
 
 ## [1.4.22] - 2026-10-05
 

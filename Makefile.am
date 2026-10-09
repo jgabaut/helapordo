@@ -290,7 +290,7 @@ run: helapordo
 
 install: helapordo
 	@echo -en "Installing helapordo $(VERSION):  "
-	./installer "-i" $(VERSION) $(TARGET_INSTALL_DIR) $(SOURCE_INSTALL_DIR) $(STATIC_DIR_NAME) $(SLOT1_DIR_NAME) $(SLOT2_DIR_NAME) $(SLOT3_DIR_NAME) $(INSTALLER_LOG_FILE)
+	./scripts/installer "-i" $(VERSION) $(TARGET_INSTALL_DIR) $(SOURCE_INSTALL_DIR) $(STATIC_DIR_NAME) $(SLOT1_DIR_NAME) $(SLOT2_DIR_NAME) $(SLOT3_DIR_NAME) $(INSTALLER_LOG_FILE)
 	@echo -e "\033[1;33mDone.\033[0m"
 
 do_alias:
