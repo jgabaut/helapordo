@@ -1,5 +1,9 @@
 ## [1.4.23] - Unreleased
 
+### Added
+
+- Add `roomclass_colors_alt` to store alternative room colors
+
 ### Changed
 
 - Update `room_color()` to fix `raylib` `mingw32` build

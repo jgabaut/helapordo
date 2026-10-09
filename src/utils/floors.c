@@ -514,6 +514,18 @@ int roomclass_colors[ROOM_CLASS_MAX+1]
     [BASIC] = S4C_DARK_OLIVE,
 };
 
+int roomclass_colors_alt[ROOM_CLASS_MAX+1]
+= {
+    [ENEMIES] = S4C_CYAN,
+    [SHOP] = S4C_MAGENTA,
+    [BOSS] = S4C_RED,
+    [TREASURE] = S4C_ORANGE,
+    [ROADFORK] = S4C_GREY,
+    [HOME] = S4C_WHITE,
+    [WALL] = S4C_PURPLE,
+    [BASIC] = S4C_LIGHT_BROWN,
+};
+
 int room_color(Floor* floor, int cell_x, int cell_y)
 {
     int isColored = -1;
@@ -550,23 +562,24 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #endif
         }
     } else if (floor->floor_layout[cell_x][cell_y] == 1) {
-        switch (floor->roomclass_layout[cell_x][cell_y]) {
+        roomClass room_class = floor->roomclass_layout[cell_x][cell_y];
+        switch (room_class) {
         case WALL: {
 #ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
-                isColored = S4C_DARK_BLUE;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_BLUE;
+                isColored = roomclass_colors_alt[room_class];
             }
 #else
             isColored = S4C_WIN_BLUE;
 #endif
 #else
             if (floor->from_bsp) {
-                isColored = S4C_DARK_BLUE;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_BLUE;
+                isColored = roomclass_colors_alt[room_class];
             }
 #endif
         }
@@ -575,18 +588,18 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
-                isColored = S4C_DARK_OLIVE;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_LIGHT_BROWN;
+                isColored = roomclass_colors_alt[room_class];
             }
 #else
             isColored = S4C_WIN_WHITE;
 #endif
 #else
             if (floor->from_bsp) {
-                isColored = S4C_DARK_OLIVE;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_LIGHT_BROWN;
+                isColored = roomclass_colors_alt[room_class];
             }
 #endif
         }
@@ -595,18 +608,18 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
-                isColored = S4C_LIGHT_OLIVE;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_WHITE;
+                isColored = roomclass_colors_alt[room_class];
             }
 #else
             isColored = S4C_WIN_WHITE;
 #endif
 #else
             if (floor->from_bsp) {
-                isColored = S4C_LIGHT_OLIVE;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_WHITE;
+                isColored = roomclass_colors_alt[room_class];
             }
 #endif
         }
@@ -615,18 +628,18 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
-                isColored = S4C_CHERRY;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_RED;
+                isColored = roomclass_colors_alt[room_class];
             }
 #else
             isColored = S4C_WIN_RED;
 #endif
 #else
             if (floor->from_bsp) {
-                isColored = S4C_CHERRY;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_RED;
+                isColored = roomclass_colors_alt[room_class];
             }
 #endif
         }
@@ -635,18 +648,18 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
-                isColored = S4C_LIGHT_ORANGE;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_ORANGE;
+                isColored = roomclass_colors_alt[room_class];
             }
 #else
             isColored = S4C_WIN_WHITE_ON_RED;
 #endif
 #else
             if (floor->from_bsp) {
-                isColored = S4C_LIGHT_ORANGE;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_ORANGE;
+                isColored = roomclass_colors_alt[room_class];
             }
 #endif
         }
@@ -655,18 +668,18 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
-                isColored = S4C_TEAL;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_MAGENTA;
+                isColored = roomclass_colors_alt[room_class];
             }
 #else
             isColored = S4C_WIN_WHITE_ON_PURPLE;
 #endif
 #else
             if (floor->from_bsp) {
-                isColored = S4C_TEAL;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_MAGENTA;
+                isColored = roomclass_colors_alt[room_class];
             }
 #endif
         }
@@ -675,18 +688,18 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
-                isColored = S4C_DARK_CYAN;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_CYAN;
+                isColored = roomclass_colors_alt[room_class];
             }
 #else
             isColored = S4C_WIN_CYAN;
 #endif
 #else
             if (floor->from_bsp) {
-                isColored = S4C_DARK_CYAN;
+                isColored = roomclass_colors[room_class];
             } else {
-                isColored = S4C_CYAN;
+                isColored = roomclass_colors_alt[room_class];
             }
 #endif
         }
