@@ -238,8 +238,7 @@ pack: versioncheck
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/amboso ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/amboso
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo
 	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo/src
-	[[ -d ~/helapordo-local/share/$(PACK_NAME)/ringabuf ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/ringabuf
-	[[ -d ~/helapordo-local/share/$(PACK_NAME)/ringabuf/src ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/ringabuf/src
+	[[ -d ~/helapordo-local/share/$(PACK_NAME)/koliseo/templates ]] || mkdir ~/helapordo-local/share/$(PACK_NAME)/koliseo/templates
 
 	@echo -e "\033[1;32m[TREE] Removing '~/helapordo-local/share/$(PACK_NAME).zip':\033[0m"
 	touch ~/helapordo-local/share/$(PACK_NAME).zip
@@ -260,11 +259,9 @@ pack: versioncheck
 	install ./amboso/LICENSE ~/helapordo-local/share/$(PACK_NAME)/amboso/
 	install ./amboso/README.md ~/helapordo-local/share/$(PACK_NAME)/amboso/
 	install ./koliseo/src/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/koliseo/src/
+	install ./koliseo/templates/ringbuf.h ~/helapordo-local/share/$(PACK_NAME)/koliseo/templates/
 	install ./koliseo/LICENSE ~/helapordo-local/share/$(PACK_NAME)/koliseo/
 	install ./koliseo/README.md ~/helapordo-local/share/$(PACK_NAME)/koliseo/
-	install ./ringabuf/src/*.h ~/helapordo-local/share/$(PACK_NAME)/ringabuf/src/
-	install ./ringabuf/LICENSE ~/helapordo-local/share/$(PACK_NAME)/ringabuf/
-	install ./ringabuf/README.md ~/helapordo-local/share/$(PACK_NAME)/ringabuf/
 	install ./src/release_data/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/release_data/
 	install ./src/build-nc/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-nc/
 	install ./src/build-rl/*.{c,h} ~/helapordo-local/share/$(PACK_NAME)/src/build-rl/
@@ -293,7 +290,7 @@ run: helapordo
 
 install: helapordo
 	@echo -en "Installing helapordo $(VERSION):  "
-	./installer "-i" $(VERSION) $(TARGET_INSTALL_DIR) $(SOURCE_INSTALL_DIR) $(STATIC_DIR_NAME) $(SLOT1_DIR_NAME) $(SLOT2_DIR_NAME) $(SLOT3_DIR_NAME) $(INSTALLER_LOG_FILE)
+	./scripts/installer "-i" $(VERSION) $(TARGET_INSTALL_DIR) $(SOURCE_INSTALL_DIR) $(STATIC_DIR_NAME) $(SLOT1_DIR_NAME) $(SLOT2_DIR_NAME) $(SLOT3_DIR_NAME) $(INSTALLER_LOG_FILE)
 	@echo -e "\033[1;33mDone.\033[0m"
 
 do_alias:

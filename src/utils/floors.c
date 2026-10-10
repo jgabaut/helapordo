@@ -514,6 +514,18 @@ int roomclass_colors[ROOM_CLASS_MAX+1]
     [BASIC] = S4C_DARK_OLIVE,
 };
 
+int roomclass_colors_alt[ROOM_CLASS_MAX+1]
+= {
+    [ENEMIES] = S4C_CYAN,
+    [SHOP] = S4C_MAGENTA,
+    [BOSS] = S4C_RED,
+    [TREASURE] = S4C_ORANGE,
+    [ROADFORK] = S4C_GREY,
+    [HOME] = S4C_WHITE,
+    [WALL] = S4C_PURPLE,
+    [BASIC] = S4C_LIGHT_BROWN,
+};
+
 int room_color(Floor* floor, int cell_x, int cell_y)
 {
     int isColored = -1;
@@ -531,6 +543,7 @@ int room_color(Floor* floor, int cell_x, int cell_y)
         isWall =
             floor->roomclass_layout[cell_x][cell_y] == WALL ? 1 : 0;
         if (isWall > 0) {
+#ifdef HELAPORDO_CURSES_BUILD
 #ifndef _WIN32
             if (floor->from_bsp) {
                 isColored = S4C_DARK_PURPLE;
@@ -540,105 +553,69 @@ int room_color(Floor* floor, int cell_x, int cell_y)
 #else
             isColored = S4C_WIN_PURPLE;
 #endif
+#else
+            if (floor->from_bsp) {
+                isColored = S4C_DARK_PURPLE;
+            } else {
+                isColored = S4C_PURPLE;
+            }
+#endif
         }
     } else if (floor->floor_layout[cell_x][cell_y] == 1) {
-        switch (floor->roomclass_layout[cell_x][cell_y]) {
-        case WALL: {
-#ifndef _WIN32
-            if (floor->from_bsp) {
-                isColored = S4C_DARK_BLUE;
-            } else {
-                isColored = S4C_BLUE;
-            }
+        roomClass room_class = floor->roomclass_layout[cell_x][cell_y];
+#ifdef HELAPORDO_RAYLIB_BUILD
+        if (floor->from_bsp) {
+            isColored = roomclass_colors[room_class];
+        } else {
+            isColored = roomclass_colors_alt[room_class];
+        }
 #else
+#ifndef _WIN32
+        if (floor->from_bsp) {
+            isColored = roomclass_colors[room_class];
+        } else {
+            isColored = roomclass_colors_alt[room_class];
+        }
+#else
+        switch (room_class) {
+        case WALL: {
             isColored = S4C_WIN_BLUE;
-#endif
         }
         break;
         case BASIC: {
-#ifndef _WIN32
-            if (floor->from_bsp) {
-                isColored = S4C_DARK_OLIVE;
-            } else {
-                isColored = S4C_LIGHT_BROWN;
-            }
-#else
             isColored = S4C_WIN_WHITE;
-#endif
         }
         break;
         case HOME: {
-#ifndef _WIN32
-            if (floor->from_bsp) {
-                isColored = S4C_LIGHT_OLIVE;
-            } else {
-                isColored = S4C_WHITE;
-            }
-#else
             isColored = S4C_WIN_WHITE;
-#endif
         }
         break;
         case BOSS: {
-#ifndef _WIN32
-            if (floor->from_bsp) {
-                isColored = S4C_CHERRY;
-            } else {
-                isColored = S4C_RED;
-            }
-#else
             isColored = S4C_WIN_RED;
-#endif
         }
         break;
         case TREASURE: {
-#ifndef _WIN32
-            if (floor->from_bsp) {
-                isColored = S4C_LIGHT_ORANGE;
-            } else {
-                isColored = S4C_ORANGE;
-            }
-#else
             isColored = S4C_WIN_WHITE_ON_RED;
-#endif
         }
         break;
         case SHOP: {
-#ifndef _WIN32
-            if (floor->from_bsp) {
-                isColored = S4C_TEAL;
-            } else {
-                isColored = S4C_MAGENTA;
-            }
-#else
             isColored = S4C_WIN_WHITE_ON_PURPLE;
-#endif
         }
         break;
         case ENEMIES: {
-#ifndef _WIN32
-            if (floor->from_bsp) {
-                isColored = S4C_DARK_CYAN;
-            } else {
-                isColored = S4C_CYAN;
-            }
-#else
             isColored = S4C_WIN_CYAN;
-#endif
         }
         break;
         default: {
             log_tag("debug_log.txt", "[ERROR]",
                     "room_color(): tried drawing an invalid cell for floor->roomclass_layout[%i][%i].",
                     cell_x, cell_y);
-#ifndef _WIN32
-            isColored = S4C_DARK_GREEN;
-#else
             isColored = S4C_WIN_WHITE_ON_PURPLE;
-#endif
         }
         break;
         }
+#endif
+#endif
     } else {
         log_tag("debug_log.txt", "[ERROR]",
                 "room_color(): floor->floor_layout[%i][%i] was (%i).", cell_x,

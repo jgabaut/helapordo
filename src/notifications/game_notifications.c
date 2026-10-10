@@ -20,8 +20,7 @@ void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifica
 #else
     log_tag("debug_log.txt", "[DEBUG]", "%s():    pushing {%lli} bytes to ringbuf", __func__, sizeof(notif));
 #endif
-    bool rb_res = rb_push(*rb_notifications, notif);
-
+    bool rb_res = rb_push(rb_notifications, notif);
 
     /* Log ring status buffer, from oldest to newest notification.
     Notification* newest_notif = NULL;
@@ -57,9 +56,9 @@ void enqueue_notification(char *text, int time, int color, RingaBuf* rb_notifica
     */
 
 #ifndef _WIN32
-    if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Capacity: {%li}", __func__, rb_get_head(*rb_notifications), rb_get_tail(*rb_notifications), rb_get_capacity(*rb_notifications));
+    if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Capacity: {%li}", __func__, rb_get_head(rb_notifications), rb_get_tail(rb_notifications), rb_get_capacity(rb_notifications));
 #else
-    if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Size: {%lli}", __func__, rb_get_head(*rb_notifications), rb_get_tail(*rb_notifications), rb_get_capacity(*rb_notifications));
+    if (!rb_res) log_tag("debug_log.txt", "[DEBUG]", "%s():    rb push failed. Head: { %" PRIu32 " } Tail: { %" PRIu32 " } Size: {%lli}", __func__, rb_get_head(rb_notifications), rb_get_tail(rb_notifications), rb_get_capacity(rb_notifications));
 #endif
 
     /*

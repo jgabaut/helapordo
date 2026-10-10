@@ -27,8 +27,6 @@
 #define HELAPORDO_MACHINE "unknown"
 #endif
 
-#include "../../ringabuf/src/ringabuf.h"
-
 #include <sys/stat.h>
 
 #ifdef HELAPORDO_CURSES_BUILD
@@ -379,12 +377,12 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 22
+#define HELAPORDO_PATCH_VERSION 23
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.22"
+#define VERSION "1.4.23"
 
 #define HELAPORDO_BINSAVEFILE_VERSION "0.0.8"
 
@@ -1943,6 +1941,24 @@ typedef struct {
 extern Gamestate* G_GAMESTATE;
 #endif
 
+#define NOTIFICATION_BUFFER_SIZE 200 /**< Defines message buffer size for Notification.*/
+
+/**
+ * Holds text for a notification.
+ */
+typedef struct Notification {
+    char buf[NOTIFICATION_BUFFER_SIZE+1];
+    int8_t color;
+    bool displayed;
+} Notification;
+
+#define NOTIFICATIONS_RINGBUFFER_SIZE 7 /**< Defines the size for notifications ringbuffer. */
+
+#define RINGBUF_T Notification
+#define RINGBUF_NAME RingaBuf
+#define RINGBUF_PREFIX rb_
+#include "../../koliseo/templates/ringbuf.h"
+
 /**
  * The different kinds of turnOption.
  * @see getTurnChoice()
@@ -2221,19 +2237,6 @@ OP_res OP_res_from_fightResult(fightResult fr);
 extern const wchar_t HEAD_CHAR_ICON;
 extern const wchar_t TORSO_CHAR_ICON;
 extern const wchar_t LEGS_CHAR_ICON;
-
-#define NOTIFICATION_BUFFER_SIZE 200 /**< Defines message buffer size for Notification.*/
-
-/**
- * Holds text for a notification.
- */
-typedef struct Notification {
-    char buf[NOTIFICATION_BUFFER_SIZE+1];
-    int8_t color;
-    bool displayed;
-} Notification;
-
-#define NOTIFICATIONS_RINGBUFFER_SIZE 7 /**< Defines the size for notifications ringbuffer. */
 
 void resolve_staticPath(char static_path[500]);
 #endif // GAME_CORE_H

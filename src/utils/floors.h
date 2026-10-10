@@ -35,6 +35,7 @@ void debug_print_floor_visible_layout(Floor * floor, FILE * fp);
 
 extern char roomclass_chars[ROOM_CLASS_MAX+1];
 extern int roomclass_colors[ROOM_CLASS_MAX+1];
+extern int roomclass_colors_alt[ROOM_CLASS_MAX+1];
 int room_color(Floor* floor, int cell_x, int cell_y);
 char room_char(Floor* floor, int cell_x, int cell_y);
 

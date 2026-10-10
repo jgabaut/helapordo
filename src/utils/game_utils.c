@@ -4042,7 +4042,6 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
             s4c_dbg_features();
             printf("  using: koliseo v%s\n", string_koliseo_version());
             kls_dbg_features();
-            printf("  using: ringabuf v%s\n", RINGABUF_API_VERSION_STRING);
 #ifdef HELAPORDO_CURSES_BUILD
             printf("  using: s4c-gui v%s\n", S4C_GUI_API_VERSION_STRING);
             printf("  using: ncurses v%s\n", NCURSES_VERSION);

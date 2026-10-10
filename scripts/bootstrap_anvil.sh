@@ -1,7 +1,7 @@
 #!/bin/sh
 #  SPDX-License-Identifier: GPL-3.0-only
 #  Script to link binary for anvil
-#    Copyright (C) 2023-2024  jgabaut
+#    Copyright (C) 2023-2026  jgabaut
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-script_version="0.2"
+script_version="0.2.1"
 
 print_impls() {
     printf "Impl list:\n"
@@ -73,7 +73,8 @@ if [ "$is_interactive" -eq 0 ] ; then {
         } else {
             printf "[ERROR]    Failed building invil.\n"
             printf "[ERROR]    Fallback to repo_amboso.\n"
-            exit "$("$0" repo_amboso)"
+            "$("$0" repo_amboso)"
+            exit "$?"
         }
         fi
     } elif [ "$impl_q" = "path_anvil" ] ; then {
