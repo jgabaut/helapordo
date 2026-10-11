@@ -3554,6 +3554,10 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
                     }
                 }
                 break;
+                case Creator: {
+                    bs_res = DrawSpriteRect(ttc_wave[current_anim_frame], bs_r, 17, 17, bs_frame_W/17, palette, PALETTE_S4C_H_TOTCOLORS);
+                }
+                break;
                 default: {
                     log_tag("debug_log.txt", "ERROR", "%s():    Unexpected boss_class: {%i}", __func__, boss_class);
                     fprintf(stderr, "[ERROR] [%s()]    Unexpected boss_class: {%i}\n", __func__, boss_class);

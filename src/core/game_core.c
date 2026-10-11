@@ -450,7 +450,8 @@ char *classbossstrings[BOSSCLASSESMAX + 1] = {
     "Headless Ninja",
     "Crawling Dude",
     "Sr. Warthog",
-    "Doppelganger"
+    "Doppelganger",
+    "Creator"
 };
 
 BossBaseStats basebossstats[BOSSCLASSESMAX + 1] = {
@@ -459,7 +460,8 @@ BossBaseStats basebossstats[BOSSCLASSESMAX + 1] = {
     {Headless_Ninja, 65, 19, 16, 9, 1, 18, 65, 0, 8, 5},
     {Crawling_Dude, 76, 13, 32, 7, 1, 18, 76, 0, 8, 5},
     {Sr_Warthog, 58, 17, 21, 10, 1, 18, 58, 0, 8, 5},
-    {Doppelganger, 15, 10, 10, 10, 1, 18, 15, 0, 8, 5}
+    {Doppelganger, 15, 10, 10, 10, 1, 18, 15, 0, 8, 5},
+    {Creator, 45, 13, 16, 10, 1, 18, 90, 0, 8, 5}
 };
 
 char *specialsnamestrings[CLASSESMAX + 1][SPECIALSMAX + 1] = {

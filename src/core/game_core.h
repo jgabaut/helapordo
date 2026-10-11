@@ -377,14 +377,14 @@ extern char *G_SEEDED_RUN_ARG;
 /**
  * Current patch release.
  */
-#define HELAPORDO_PATCH_VERSION 23
+#define HELAPORDO_PATCH_VERSION 24
 
 /**
  * Current version string identifier, with MAJOR.MINOR.PATCH format.
  */
-#define VERSION "1.4.23"
+#define VERSION "1.4.24"
 
-#define HELAPORDO_BINSAVEFILE_VERSION "0.0.8"
+#define HELAPORDO_BINSAVEFILE_VERSION "0.0.9"
 
 /**
  * Defines current API version number from HELAPORDO_MAJOR_VERSION, HELAPORDO_MINOR_VERSION and HELAPORDO_PATCH_VERSION.
@@ -728,13 +728,14 @@ typedef enum {
     Headless_Ninja = 1,
     Crawling_Dude = 2,
     Sr_Warthog = 3,
-    Doppelganger = 4
+    Doppelganger = 4,
+    Creator = 5
 } bossClass;
 
 /** Maximum index of bossClass, so that the size has to add 1 for the 0th index
  * @see bossClass
  */
-#define BOSSCLASSESMAX 4
+#define BOSSCLASSESMAX 5
 
 /**
  * Array with the name strings for bossClass.

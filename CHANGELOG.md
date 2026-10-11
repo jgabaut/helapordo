@@ -1,3 +1,13 @@
+## [1.4.24] - Unreleased
+
+### Added
+
+- Add new `Boss`: `Creator`
+
+### Changed
+
+- Bump `HELAPORDO_BINSAVEFILE_VERSION` to `0.0.9`
+
 ## [1.4.23] - 2026-10-10
 
 ### Added

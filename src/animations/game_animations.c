@@ -235,6 +235,11 @@ void hlpd_load_boss_animations(char boss_sprites[BOSSCLASSESMAX + 1][S4C_MAXFRAM
                                n_load_frames, n_load_rows, n_load_cols);
         }
         break;
+        case Creator: {
+            s4c_copy_animation(ttc_wave, boss_sprites[i],
+                    n_load_frames, n_load_rows, n_load_cols);
+        }
+        break;
         default: {
             log_tag("debug_log.txt", "[ERROR]",
                     "Unexpected boss index while loading animation for boss (%i): [%s]",

@@ -11,7 +11,7 @@ void fail(char* msg, int ex, int val) {
 
 int main(void) {
  int check = -1;
- if ( ! (( check = strcmp(VERSION, "1.4.22") ) == 0)) {
+ if ( ! (( check = strcmp(VERSION, "1.4.24") ) == 0)) {
    fail("VERSION",0,check);
  };
  if ( ! (HLP_MAX_INDEX == 35) ) {
@@ -71,8 +71,8 @@ int main(void) {
  if ( ! (ENEMYCLASSESMAX == 7) ) {
    fail("ENEMYCLASSESMAX",7,ENEMYCLASSESMAX);
  };
- if ( ! (BOSSCLASSESMAX == 4) ) {
-   fail("BOSSCLASSESMAX",4,BOSSCLASSESMAX);
+ if ( ! (BOSSCLASSESMAX == 5) ) {
+   fail("BOSSCLASSESMAX",5,BOSSCLASSESMAX);
  };
  if ( ! (SPECIALSMAX == 3) ) { //num of specials per class (0 inclusive)
    fail("SPECIALSMAX",3,SPECIALSMAX);
@@ -113,8 +113,8 @@ int main(void) {
  if ( ! SAVEHEADER_BUFSIZE == 15 ) {
    fail("SAVEHEADER_BUFSIZE", 15, SAVEHEADER_BUFSIZE);
  };
- if ( ! (sizeof(SerGamestate) == 7915) ) {
-   fail("sizeof(SerGamestate", 7915, sizeof(SerGamestate));
+ if ( ! (sizeof(SerGamestate) == 7917) ) {
+   fail("sizeof(SerGamestate", 7917, sizeof(SerGamestate));
  };
  if ( ! (sizeof(SerSaveHeader) == 68) ) {
    fail("sizeof(SerSaveHeader", 68, sizeof(SerSaveHeader));

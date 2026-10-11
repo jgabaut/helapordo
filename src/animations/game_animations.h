@@ -35,6 +35,7 @@
 #include "srwarthog_square.h"
 #include "headlessninja_throw.h"
 #include "bluetroll_wonder.h"
+#include "ttc_wave.h"
 
 #include "enter_door.h"
 #include "alt_chest_opening.h"
