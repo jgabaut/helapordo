@@ -592,7 +592,7 @@ void hlpd_draw_notifications(RingaBuf* rb_notifications, Rectangle notifications
 }
 
 // void update_GameScreen(float* scale, float gameScreenWidth, float gameScreenHeight, GameScreen* currentScreen, int* framesCounter, Floor** current_floor, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, Vector2* mouse, Vector2* virtualMouse, loadInfo* load_info, int* saveslot_index, char current_save_path[1000])
-void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, Gamestate** gamestate, RingaBuf* rb_notifications, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], bool is_seeded, int* roomsDone, int* enemyTotal)
+void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_path, Fighter** player, Room** current_room, Gamestate** gamestate, RingaBuf* rb_notifications, int* current_x, int* current_y, int logo_sleep, bool* pause_animation, Koliseo_Temp** floor_kls, KLS_Conf temporary_kls_conf, int* current_anim_frame, loadInfo* load_info, int* saveslot_index, char current_save_path[1500], char seed[PATH_SEED_BUFSIZE+1], bool is_seeded, int* roomsDone, int* enemyTotal, int G_DEBUG_ON)
 {
     assert(gui_state != NULL);
     int center_x = FLOOR_MAX_COLS / 2;
@@ -775,7 +775,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 #endif
                     clock_t start_time = clock(); //TODO: get this before?
                     init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
-                                   *player, GAMEMODE);
+                                   *player, GAMEMODE, G_DEBUG_ON);
 
                     *current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor", "Loady Floor");
                     (*gamestate)->current_floor = *current_floor;
@@ -789,7 +789,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                         log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing loading room enemy {%i}", __func__, e_idx);
                         (*current_room)->enemies[e_idx] = KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy, "Enemy", "Loading room enemy");
                         prepareRoomEnemy((*current_room)->enemies[e_idx], 1, 3, 1,
-                                         *floor_kls);
+                                         *floor_kls, (*gamestate)->G_DEBUG_ON);
                     }
 
                     bool force_init = false;
@@ -1039,7 +1039,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
 #endif
                             clock_t start_time = clock(); //TODO: get this before?
                             init_Gamestate(*gamestate, start_time, (*player)->stats, (*game_path)->win_condition, (*game_path),
-                                           *player, GAMEMODE);
+                                           *player, GAMEMODE, G_DEBUG_ON);
 
                             (*gamestate)->current_floor = *current_floor; // Should be NULL here
                             (*gamestate)->current_room = *current_room; // Should be NULL here
@@ -1265,7 +1265,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         gui_state->framesCounter += 1;    // Count frames
 
 #ifdef HELAPORDO_DEBUG_ACCESS
-        if (G_DEBUG_ON == 1) {
+        if ((*gamestate)->G_DEBUG_ON == 1) {
             gui_state->debug_buttons.buttons[BUTTON_DEBUG].on = false;
 
             int debug_button_w = gui_state->gameScreenWidth*0.2f;
@@ -1565,7 +1565,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
                     stringFromRoom(room_type));
 
             initRoom(*current_room, *player, *roomsDone, room_type,
-                     *enemyTotal, load_info, *floor_kls);
+                     *enemyTotal, load_info, *floor_kls, (*gamestate)->G_DEBUG_ON);
             log_tag("debug_log.txt", "[ROOM]",
                     "Init Room #%i:    (%s)\n", *roomsDone,
                     stringFromRoom(room_type));
@@ -1574,7 +1574,7 @@ void update_GameScreen(Gui_State* gui_state, Floor** current_floor, Path** game_
         gui_state->framesCounter += 1;    // Count frames
 
 #ifdef HELAPORDO_DEBUG_ACCESS
-        if (G_DEBUG_ON == 1) {
+        if ((*gamestate)->G_DEBUG_ON == 1) {
             gui_state->debug_buttons.buttons[BUTTON_DEBUG].on = false;
 
             int debug_button_w = gui_state->gameScreenWidth*0.2f;
@@ -3119,7 +3119,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
         DrawText("Arrow keys to move", 110, 190, 20, gui_state.theme.txt_color);
         DrawText("PRESS R to regen floor", 110, 220, 20, gui_state.theme.txt_color);
 #ifdef HELAPORDO_DEBUG_ACCESS
-        if (G_DEBUG_ON == 1) {
+        if (gamestate->G_DEBUG_ON == 1) {
             Gui_Button button = gui_state.debug_buttons.buttons[BUTTON_DEBUG];
             if (button.state == BUTTON_HOVER) {
                 DrawRectangleRec(button.r, RED);
@@ -3759,7 +3759,7 @@ void draw_GameScreen_Texture(RenderTexture2D target_txtr, Gui_State gui_state, i
             break;
             } // End roomClass switch
 #ifdef HELAPORDO_DEBUG_ACCESS
-            if (G_DEBUG_ON == 1) {
+            if (gamestate->G_DEBUG_ON == 1) {
                 Gui_Button button = gui_state.debug_buttons.buttons[BUTTON_DEBUG];
                 if (button.state == BUTTON_HOVER) {
                     DrawRectangleRec(button.r, RED);

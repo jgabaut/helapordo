@@ -58,6 +58,7 @@ void gameloop(int argc, char **argv)
 #else
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
+    int G_DEBUG_ON = 0;
     char path_to_kls_debug_file[600];
     char static_path[500];
     // Set static_path value to the correct static dir path
@@ -89,7 +90,7 @@ void gameloop(int argc, char **argv)
 
     bool is_seeded = false;
 
-    int optTot = hlpd_getopt(argc, argv, whoami);
+    int optTot = hlpd_getopt(argc, argv, whoami, &G_DEBUG_ON);
     if (G_DOTUTORIAL_ON == 1) {
         handleTutorial();
         usage(whoami);
@@ -121,10 +122,10 @@ void gameloop(int argc, char **argv)
         load_info->ptr_to_roomtotalenemies = &loaded_roomtotalenemies;
         load_info->ptr_to_roomindex = &loaded_roomindex;
 
-        hlpd_reset_logfile();
+        hlpd_reset_logfile(G_DEBUG_ON);
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Beginning log. Option total: {%i}", __func__, optTot);
 
-        hlpd_use_forced_flags(whoami);
+        hlpd_use_forced_flags(whoami, G_DEBUG_ON);
         log_tag("debug_log.txt", "[DEBUG]", "%s():    Done using forced room/enemy flags.", __func__);
 
         if (G_USE_DEFAULT_BACKGROUND == 1) {
@@ -364,7 +365,7 @@ void gameloop(int argc, char **argv)
             G_GAMESTATE = gamestate;
 #endif
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                           player, GAMEMODE, gamescreen, &game_options, is_seeded);
+                           player, GAMEMODE, gamescreen, &game_options, is_seeded, G_DEBUG_ON);
 
             current_floor = KLS_PUSH_TYPED(default_kls, Floor, HR_Floor, "Floor",
                                            "Loading floor");
@@ -380,7 +381,7 @@ void gameloop(int argc, char **argv)
                 log_tag("debug_log.txt", "[DEBUG]", "%s():    Preparing loading room enemy {%i}", __func__, e_idx);
                 current_room->enemies[e_idx] = KLS_PUSH_TYPED(default_kls, Enemy, HR_Enemy, "Enemy", "Loading room enemy");
                 prepareRoomEnemy(current_room->enemies[e_idx], 1, 3, 1,
-                                 gamestate_kls);
+                                 gamestate_kls, gamestate->G_DEBUG_ON);
             }
             bool did_exper_init = false;
             SaveHeader* current_saveHeader = prep_saveHeader(static_path, default_kls, false, &did_exper_init, path->current_saveslot->index);
@@ -596,7 +597,7 @@ void gameloop(int argc, char **argv)
             G_GAMESTATE = gamestate;
 #endif
             init_Gamestate(gamestate, start_time, player->stats, path->win_condition, path,
-                           player, GAMEMODE, gamescreen, &game_options, is_seeded);
+                           player, GAMEMODE, gamescreen, &game_options, is_seeded, G_DEBUG_ON);
         }
         if (gamestate->gamemode == Rogue) {
             //Note: different lifetime than gamestate
@@ -856,7 +857,7 @@ void gameloop(int argc, char **argv)
                             stringFromRoom(room_type));
 
                     initRoom(current_room, player, roomsDone, room_type,
-                             enemyTotal, load_info, gamestate_kls);
+                             enemyTotal, load_info, gamestate_kls, gamestate->G_DEBUG_ON);
                     log_tag("debug_log.txt", "[ROOM]",
                             "Init Room #%i:    (%s)\n", roomsDone,
                             stringFromRoom(room_type));

@@ -33,7 +33,6 @@
 Gamestate* G_GAMESTATE = NULL;
 #endif
 
-int G_PRELOAD_ANIMATIONS_ON = 0;
 int G_LOG_ON = 0;
 int G_EXPERIMENTAL_ON = 0;
 int G_FASTQUIT_ON = 0;

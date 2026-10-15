@@ -269,9 +269,10 @@ int test_floors(void)
     loadInfo *load_info = NULL;
     Koliseo *kls = NULL;
     Koliseo_Temp *t_kls = NULL;
+    bool use_3x3_fov = true;
 
     while (dbg_floor->explored_area < dbg_floor->area) {
-        draw_floor_view(dbg_floor, current_x, current_y, test_win);
+        draw_floor_view(dbg_floor, current_x, current_y, test_win, use_3x3_fov);
         wclear(side_win);
         wprintw(side_win, "\n    Explored Area: { %i }",
                 dbg_floor->explored_area);

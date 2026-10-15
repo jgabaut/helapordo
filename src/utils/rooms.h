@@ -22,11 +22,11 @@
 #include "../turn_op/turn_op.h"
 
 void initRoom(Room * r, Fighter * f, int index, roomClass type, int enemyTotal,
-              loadInfo * load_info, Koliseo_Temp * t_kls);
+              loadInfo * load_info, Koliseo_Temp * t_kls, int G_DEBUG_ON);
 void initRoom_Home(Room * r, int roomIndex, Fighter * f, loadInfo * load_info,
                    Koliseo_Temp * t_kls);
 void initRoom_Enemies(Room * r, int roomIndex, int enemyTotal,
-                      loadInfo * load_info, Koliseo_Temp * t_kls);
+                      loadInfo * load_info, Koliseo_Temp * t_kls, int G_DEBUG_ON);
 void initRoom_Shop(Room * r, int roomIndex, Fighter * f, Koliseo_Temp * t_kls);
 void initRoom_Boss(Room * r, int roomIndex, Fighter * f, Koliseo_Temp * t_kls);
 void initRoom_Treasure(Room * r, int roomIndex, Fighter * f,

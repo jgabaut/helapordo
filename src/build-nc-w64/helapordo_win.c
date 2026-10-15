@@ -25,6 +25,7 @@
 void gameloop_Win(int argc, char **argv)
 {
     char *whoami;
+    int G_DEBUG_ON = 0;
     char path_to_kls_debug_file[600];
     char static_path[500];
     // Set static_path value to the correct static dir path

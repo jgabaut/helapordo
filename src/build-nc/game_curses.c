@@ -2178,7 +2178,7 @@ void printLoadout(Fighter *f)
  * @see stringFromFoePartyClass()
  * @param fp The FoeParty pointer whose layout will be displayed.
  */
-void display_printFoeParty(FoeParty *fp)
+void display_printFoeParty(FoeParty *fp, int G_DEBUG_ON)
 {
     WINDOW *wins[4];
     int cells = -1;
@@ -3793,7 +3793,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
         /* Create turn menu items */
         n_choices = ARRAY_SIZE(choices);
         int debug_n_choices = 0;
-        if (G_DEBUG_ON && G_EXPERIMENTAL_ON) {	//We have to include debug menu options
+        if (gmst->G_DEBUG_ON && G_EXPERIMENTAL_ON) {	//We have to include debug menu options
             debug_n_choices = ARRAY_SIZE(debug_choices);
         }
         menu_items =
@@ -3801,7 +3801,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
 
         // Prepare menu items
         for (int k = 0; k < n_choices; k++) {
-            if (G_DEBUG_ON && G_EXPERIMENTAL_ON && k == n_choices - 1) {
+            if (gmst->G_DEBUG_ON && G_EXPERIMENTAL_ON && k == n_choices - 1) {
                 //We skip adding the null string item
             } else {
                 menu_items[k] = new_item(choices[k], choices[k]);
@@ -3810,7 +3810,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
             //set_item_userptr(my_items[i]);
         }
         // Prepare debug items
-        if (G_DEBUG_ON && G_EXPERIMENTAL_ON) {
+        if (gmst->G_DEBUG_ON && G_EXPERIMENTAL_ON) {
             for (int k = 0; k < debug_n_choices; k++) {
                 menu_items[k + n_choices - 1] =
                     new_item(debug_choices[k], debug_choices[k]);
@@ -3953,7 +3953,7 @@ int handleRogueMenu(Gamestate *gmst, Path *p, Fighter *player, Room *room,
         free_menu(rogue_menu);
         log_tag("debug_log.txt", "[FREE]", "Freed Rogue menu");
         int totalChoices = n_choices + debug_n_choices;
-        if (G_DEBUG_ON) {
+        if (gmst->G_DEBUG_ON) {
             totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
         }
         for (int k = 0; k < totalChoices; k++) {

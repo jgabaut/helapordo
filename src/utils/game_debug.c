@@ -188,7 +188,7 @@ void debug_generic(Gamestate *gmst, Fighter *player, Path *p, int roomIndex,
                    p->current_saveslot->save_path);
             printf("\nGS_AUTOSAVE_ON:    %i\n", GS_AUTOSAVE_ON);
             printf("\nG_FASTQUIT_ON:    %i\n", G_FASTQUIT_ON);
-            printf("\nG_DEBUG_ON:    %i\n", G_DEBUG_ON);
+            printf("\nG_DEBUG_ON:    %i\n", gmst->G_DEBUG_ON);
             printf("\nG_LOG_ON:    %i\n", G_LOG_ON);
             printf("\nG_GODMODE_ON:    %i\n", G_GODMODE_ON);
             printf("\nG_EXPERIMENTAL_ON:    %i\n", G_EXPERIMENTAL_ON);
@@ -853,7 +853,7 @@ void debug_enemies_room(Gamestate *gmst, Room *room, Fighter *player, Enemy *e,
                    p->current_saveslot->save_path);
             printf("\nGS_AUTOSAVE_ON:    %i\n", GS_AUTOSAVE_ON);
             printf("\nG_FASTQUIT_ON:    %i\n", G_FASTQUIT_ON);
-            printf("\nG_DEBUG_ON:    %i\n", G_DEBUG_ON);
+            printf("\nG_DEBUG_ON:    %i\n", gmst->G_DEBUG_ON);
             printf("\nG_LOG_ON:    %i\n", G_LOG_ON);
             printf("\nG_GODMODE_ON:    %i\n", G_GODMODE_ON);
             printf("\nG_EXPERIMENTAL_ON:    %i\n", G_EXPERIMENTAL_ON);

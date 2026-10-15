@@ -145,8 +145,6 @@ void initWincon(Wincon *w, Path *p, winconClass class)
 void printGlobVars(void)
 {
     printf("\nGlobal vars:\n");
-    printf("  G_PRELOAD_ANIMATIONS_ON: { %i }\n", G_PRELOAD_ANIMATIONS_ON);
-    printf("  G_DEBUG_ON: { %i }\n", G_DEBUG_ON);
     printf("  G_LOG_ON: { %i }\n", G_LOG_ON);
     printf("  G_EXPERIMENTAL_ON: { %i }\n", G_EXPERIMENTAL_ON);
     printf("  G_FASTQUIT_ON: { %i }\n", G_FASTQUIT_ON);
@@ -2228,9 +2226,10 @@ void test_game_color_pairs(WINDOW *win, int colors_per_row)
  * @param screen The main screen from initscr().
  * @param options The GameOptions for current run.
  * @param is_seeded Denotes if current game was started from a set seed.
+ * @param G_DEBUG_ON Toggles debug mode.
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded)
+                    Path *path, Fighter *player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded, int G_DEBUG_ON)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
@@ -2279,6 +2278,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->screen = screen;
     gmst->is_seeded = is_seeded;
     gmst->options = options;
+    gmst->G_DEBUG_ON = G_DEBUG_ON;
 }
 
 /**
@@ -2930,9 +2930,10 @@ void test_game_color_pairs(Rectangle * win, int colors_per_row)
  * @param path Game Path.
  * @param player Game main player.
  * @param gamemode Picked gamemode.
+ * @param G_DEBUG_ON Toggles debug mode.
  */
 void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Wincon *wincon,
-                    Path *path, Fighter *player, Gamemode gamemode)
+                    Path *path, Fighter *player, Gamemode gamemode, int G_DEBUG_ON)
 {
     if (gmst == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "Gamestate was NULL in %s()",
@@ -2973,6 +2974,7 @@ void init_Gamestate(Gamestate *gmst, clock_t start_time, countStats *stats, Winc
     gmst->path = path;
     gmst->player = player;
     gmst->gamemode = gamemode;
+    gmst->G_DEBUG_ON = G_DEBUG_ON;
 }
 
 turnOP_args *init_turnOP_args(Gamestate *gmst, Fighter *actor, Path *path,
@@ -3783,7 +3785,7 @@ void useConsumable(Fighter *f, Enemy *e, Boss *b, char *string, int isBoss)
     c->qty--;
 }
 
-void hlpd_use_forced_flags(const char* whoami)
+void hlpd_use_forced_flags(const char* whoami, int G_DEBUG_ON)
 {
     if (G_DEBUG_ENEMYTYPE_ON == 1) {
         log_tag("debug_log.txt", "[DEBUG]", "G_DEBUG_ENEMYTYPE_ON == (%i)",
@@ -3893,7 +3895,7 @@ int display_colorpairs(void)
  * @param whoami Name used by the program
  * @return The value of "optind" at the end of the routine.
  */
-int hlpd_getopt(size_t argc, char** argv, const char* whoami)
+int hlpd_getopt(size_t argc, char** argv, const char* whoami, int* G_DEBUG_ON)
 {
     int option;
     while ((option = getopt(argc, argv, "r:E:S:tTGRXQLvdhaVDbjw")) != -1) {
@@ -3922,7 +3924,7 @@ int hlpd_getopt(size_t argc, char** argv, const char* whoami)
         case 'd': {
 #ifndef HELAPORDO_DEBUG_ACCESS
 #else
-            G_DEBUG_ON = 1;
+            *G_DEBUG_ON = 1;
             G_LOG_ON = 1;
 #endif
         }

@@ -1,3 +1,9 @@
+## [1.4.24] - Unreleased
+
+### Changed
+
+- Move `G_DEBUG_ON` into `Gamestate`
+
 ## [1.4.23] - 2026-10-10
 
 ### Added

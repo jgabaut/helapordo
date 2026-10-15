@@ -57,7 +57,7 @@ void initShop(Shop * s, int indexWeight, Fighter * player,
 void initTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
 void prepareChest(Chest * c, Fighter * f, Koliseo_Temp * t_kls);
 void prepareRoomEnemy(Enemy * e, int roomindex, int enemiesInRoom,
-                      int enemyindex, Koliseo_Temp * t_kls);
+                      int enemyindex, Koliseo_Temp * t_kls, int G_DEBUG_ON);
 
 void prepareTreasure(Treasure * t, Fighter * f, Koliseo_Temp * t_kls);
 

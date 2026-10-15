@@ -169,7 +169,7 @@ void dropEquip(Fighter * player, int beast, Koliseo * kls, RingaBuf* rb_notifica
 #ifdef HELAPORDO_CURSES_BUILD
 void test_game_color_pairs(WINDOW * win, int colors_per_row);
 void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
-                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded);
+                    Path * path, Fighter * player, Gamemode gamemode, GameScreen* screen, GameOptions* options, bool is_seeded, int G_DEBUG_ON);
 turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
@@ -191,7 +191,7 @@ void getParams(int argc, char **argv, Fighter * player, Path * path, int optTot,
 #else
 void test_game_color_pairs(Rectangle * win, int colors_per_row);
 void init_Gamestate(Gamestate * gmst, clock_t start_time, countStats * stats, Wincon * wincon,
-                    Path * path, Fighter * player, Gamemode gamemode);
+                    Path * path, Fighter * player, Gamemode gamemode, int G_DEBUG_ON);
 turnOP_args *init_turnOP_args(Gamestate * gmst, Fighter * actor, Path * path,
                               Room * room, loadInfo * load_info, Enemy * enemy,
                               Boss * boss, FILE * save_file,
@@ -223,7 +223,7 @@ void quit(Fighter * p, Room * room, loadInfo * load_info, Koliseo_Temp * t_kls);
 void useConsumable(Fighter * f, Enemy * e, Boss * b, char *string, int isBoss);
 
 #define hlpd_d_keyval(key) ((((key) >= 0) && ((key) <= HLPD_KEYCLASS_MAX)) ? (hlpd_default_keybinds[(key)].val) : -1 )
-void hlpd_use_forced_flags(const char* whoami);
+void hlpd_use_forced_flags(const char* whoami, int G_DEBUG_ON);
 int display_colorpairs(void);
-int hlpd_getopt(size_t argc, char** argv, const char* whoami);
+int hlpd_getopt(size_t argc, char** argv, const char* whoami, int* G_DEBUG_ON);
 #endif

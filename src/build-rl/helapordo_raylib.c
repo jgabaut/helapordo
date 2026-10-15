@@ -47,10 +47,11 @@ void gameloop_rl(int argc, char** argv)
     (whoami = strrchr(argv[0], '\\')) ? ++whoami : (whoami = argv[0]);
 #endif
 
+    int G_DEBUG_ON = 0;
     char seed[PATH_SEED_BUFSIZE+1] = {0};
 
     bool is_seeded = false;
-    int optTot = hlpd_getopt(argc, argv, whoami);
+    int optTot = hlpd_getopt(argc, argv, whoami, &G_DEBUG_ON);
     char player_name[21] = "";
     char class_name[21] = "";
     if (argc >= 2) {
@@ -131,7 +132,7 @@ void gameloop_rl(int argc, char** argv)
 
 #ifndef HELAPORDO_DEBUG_LOG
 #else
-    hlpd_reset_logfile();
+    hlpd_reset_logfile(G_DEBUG_ON);
 #endif
 
     // Parse command-line options

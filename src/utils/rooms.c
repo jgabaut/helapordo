@@ -124,7 +124,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
         /* Create turn menu items */
         n_choices = ARRAY_SIZE(choices);
         int debug_n_choices = 0;
-        if (G_DEBUG_ON) {	//We have to include debug menu options
+        if (gamestate->G_DEBUG_ON) {	//We have to include debug menu options
             debug_n_choices = ARRAY_SIZE(debug_choices);
         }
         menu_items =
@@ -132,7 +132,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
 
         // Prepare menu items
         for (int k = 0; k < n_choices; k++) {
-            if (G_DEBUG_ON && k == n_choices - 1) {
+            if (gamestate->G_DEBUG_ON && k == n_choices - 1) {
                 //We skip adding the null string item
             } else {
                 menu_items[k] = new_item(choices[k], choices[k]);
@@ -141,7 +141,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
             //set_item_userptr(my_items[i]);
         }
         // Prepare debug items
-        if (G_DEBUG_ON) {
+        if (gamestate->G_DEBUG_ON) {
             for (int k = 0; k < debug_n_choices; k++) {
                 menu_items[k + n_choices - 1] =
                     new_item(debug_choices[k], debug_choices[k]);
@@ -281,7 +281,7 @@ int handleRoom_Home(Gamestate *gamestate, Room *room, int index, Path *p,
         free_menu(home_menu);
         log_tag("debug_log.txt", "[FREE]", "Freed home menu");
         int totalChoices = n_choices + debug_n_choices;
-        if (G_DEBUG_ON) {
+        if (gamestate->G_DEBUG_ON) {
             totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
         }
         for (int k = 0; k < totalChoices; k++) {
@@ -535,7 +535,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 /* Create turn menu items */
                 n_choices = ARRAY_SIZE(choices);
-                if (G_DEBUG_ON) {	//We have to include debug menu options
+                if (gamestate->G_DEBUG_ON) {	//We have to include debug menu options
                     debug_n_choices = ARRAY_SIZE(debug_choices);
                 }
                 my_items =
@@ -544,7 +544,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 // Prepare menu items
                 for (int k = 0; k < n_choices; k++) {
-                    if (G_DEBUG_ON && k == n_choices - 1) {
+                    if (gamestate->G_DEBUG_ON && k == n_choices - 1) {
                         //We skip adding the null string item
                     } else {
                         my_items[k] = new_item(choices[k], choices[k]);
@@ -553,7 +553,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     //set_item_userptr(my_items[i]);
                 }
                 // Prepare debug items
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     for (int k = 0; k < debug_n_choices; k++) {
                         my_items[k + n_choices - 1] =
                             new_item(debug_choices[k], debug_choices[k]);
@@ -647,7 +647,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 refresh();
                 /* Create turn menu items */
                 n_choices = ARRAY_SIZE(choices);
-                if (G_DEBUG_ON) {	//We have to include debug menu options
+                if (gamestate->G_DEBUG_ON) {	//We have to include debug menu options
                     debug_n_choices = ARRAY_SIZE(debug_choices);
                 }
                 my_items =
@@ -656,7 +656,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
 
                 // Prepare menu items
                 for (int k = 0; k < n_choices; k++) {
-                    if (G_DEBUG_ON && k == n_choices - 1) {
+                    if (gamestate->G_DEBUG_ON && k == n_choices - 1) {
                         //We skip adding the null string item
                     } else {
                         my_items[k] = new_item(choices[k], choices[k]);
@@ -665,7 +665,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     //set_item_userptr(my_items[i]);
                 }
                 // Prepare debug items
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     for (int k = 0; k < debug_n_choices; k++) {
                         my_items[k + n_choices - 1] =
                             new_item(debug_choices[k], debug_choices[k]);
@@ -796,7 +796,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     clear();
                     refresh();
                     //Display current party info
-                    display_printFoeParty(room->foes);
+                    display_printFoeParty(room->foes, gamestate->G_DEBUG_ON);
                     refresh();
                 }
                 //Go to next battle
@@ -965,7 +965,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     unpost_menu(my_menu);
                     free_menu(my_menu);
                     int totalChoices = n_choices + debug_n_choices;
-                    if (G_DEBUG_ON) {
+                    if (gamestate->G_DEBUG_ON) {
                         totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                     }
                     for (int k = 0; k < totalChoices; k++) {
@@ -1028,7 +1028,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                     unpost_menu(my_menu);
                     free_menu(my_menu);
                     int totalChoices = n_choices + debug_n_choices;
-                    if (G_DEBUG_ON) {
+                    if (gamestate->G_DEBUG_ON) {
                         totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                     }
                     for (int k = 0; k < totalChoices; k++) {
@@ -1064,7 +1064,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                         clear();
                         refresh();
                         //Display current party info
-                        display_printFoeParty(room->foes);
+                        display_printFoeParty(room->foes, gamestate->G_DEBUG_ON);
                         refresh();
                     }
 
@@ -1100,7 +1100,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 unpost_menu(my_menu);
                 free_menu(my_menu);
                 int totalChoices = n_choices + debug_n_choices;
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                 }
                 for (int k = 0; k < totalChoices; k++) {
@@ -1123,7 +1123,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 unpost_menu(my_menu);
                 free_menu(my_menu);
                 int totalChoices = n_choices + debug_n_choices;
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                 }
                 for (int k = 0; k < totalChoices; k++) {
@@ -1144,7 +1144,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 unpost_menu(my_menu);
                 free_menu(my_menu);
                 int totalChoices = n_choices + debug_n_choices;
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                 }
                 for (int k = 0; k < totalChoices; k++) {
@@ -1165,7 +1165,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 unpost_menu(my_menu);
                 free_menu(my_menu);
                 int totalChoices = n_choices + debug_n_choices;
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                 }
                 for (int k = 0; k < totalChoices; k++) {
@@ -1186,7 +1186,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 unpost_menu(my_menu);
                 free_menu(my_menu);
                 int totalChoices = n_choices + debug_n_choices;
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                 }
                 for (int k = 0; k < totalChoices; k++) {
@@ -1209,7 +1209,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 unpost_menu(my_menu);
                 free_menu(my_menu);
                 int totalChoices = n_choices + debug_n_choices;
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                 }
                 for (int k = 0; k < totalChoices; k++) {
@@ -1230,7 +1230,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 unpost_menu(my_menu);
                 free_menu(my_menu);
                 int totalChoices = n_choices + debug_n_choices;
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                 }
                 for (int k = 0; k < totalChoices; k++) {
@@ -1251,7 +1251,7 @@ int handleRoom_Enemies(Gamestate *gamestate, Room *room, int index, Path *p,
                 unpost_menu(my_menu);
                 free_menu(my_menu);
                 int totalChoices = n_choices + debug_n_choices;
-                if (G_DEBUG_ON) {
+                if (gamestate->G_DEBUG_ON) {
                     totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
                 }
                 for (int k = 0; k < totalChoices; k++) {
@@ -1487,7 +1487,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
             /* Create turn menu items */
             n_choices = ARRAY_SIZE(choices);
-            if (G_DEBUG_ON) {	//We have to include debug menu options
+            if (gamestate->G_DEBUG_ON) {	//We have to include debug menu options
                 debug_n_choices = ARRAY_SIZE(debug_choices);
             }
             my_items =
@@ -1495,7 +1495,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
 
             // Prepare menu items
             for (int k = 0; k < n_choices; k++) {
-                if (G_DEBUG_ON && k == n_choices - 1) {
+                if (gamestate->G_DEBUG_ON && k == n_choices - 1) {
                     //We skip adding the null string item
                 } else {
                     my_items[k] = new_item(choices[k], choices[k]);
@@ -1504,7 +1504,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
                 //set_item_userptr(my_items[i]);
             }
             // Prepare debug items
-            if (G_DEBUG_ON) {
+            if (gamestate->G_DEBUG_ON) {
                 for (int k = 0; k < debug_n_choices; k++) {
                     my_items[k + n_choices - 1] =
                         new_item(debug_choices[k], debug_choices[k]);
@@ -1635,7 +1635,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             unpost_menu(my_menu);
             free_menu(my_menu);
             int totalChoices = n_choices + debug_n_choices;
-            if (G_DEBUG_ON) {
+            if (gamestate->G_DEBUG_ON) {
                 totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
             }
             for (int k = 0; k < totalChoices; k++) {
@@ -1982,7 +1982,7 @@ int handleRoom_Boss(Gamestate *gamestate, Room *room, int index, Path *p,
             unpost_menu(my_menu);
             free_menu(my_menu);
             int totalChoices = n_choices + debug_n_choices;
-            if (G_DEBUG_ON) {
+            if (gamestate->G_DEBUG_ON) {
                 totalChoices -= 1;	//We subtract 1 to account for the discarded null choice in the base option set.
             }
             for (int k = 0; k < totalChoices; k++) {
@@ -3236,7 +3236,7 @@ void initRoom_Home(Room *r, int roomIndex, Fighter *f, loadInfo *load_info,
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
-                      loadInfo *load_info, Koliseo_Temp *t_kls)
+                      loadInfo *load_info, Koliseo_Temp *t_kls, int G_DEBUG_ON)
 {
     if (r == NULL) {
         log_tag("debug_log.txt", "[ERROR]", "%s():    Passed Room was NULL.", __func__);
@@ -3307,7 +3307,7 @@ void initRoom_Enemies(Room *r, int roomIndex, int enemyTotal,
                     "Allocated size %lu for room Enemy (%i/%i):", sizeof(Enemy),
                     enemyIndex, enemyTotal);
             Enemy* e = KLS_PUSH_T_TYPED(t_kls, Enemy, HR_Enemy, "Enemy", "Enemy");	//&room_enemies[enemyIndex];
-            prepareRoomEnemy(e, r->index, r->enemyTotal, enemyIndex, t_kls);
+            prepareRoomEnemy(e, r->index, r->enemyTotal, enemyIndex, t_kls, G_DEBUG_ON);
             r->enemies[enemyIndex] = e;
             //Set FoeParty links
             r->foes->enemy_foes[enemyIndex] = e;
@@ -3471,7 +3471,7 @@ void initRoom_Roadfork(Room *r, int roomIndex, Fighter *f, Koliseo_Temp *t_kls)
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void initRoom(Room *r, Fighter *f, int index, roomClass type, int enemyTotal,
-              loadInfo *load_info, Koliseo_Temp *t_kls)
+              loadInfo *load_info, Koliseo_Temp *t_kls, int G_DEBUG_ON)
 {
     //Init room
 
@@ -3509,7 +3509,7 @@ void initRoom(Room *r, Fighter *f, int index, roomClass type, int enemyTotal,
             log_tag("debug_log.txt", "[DEBUG]", "%s():    Using loaded enemy index for enemyTotal.", __func__);
             enemyTotal -= load_info->enemy_index;
         }
-        initRoom_Enemies(r, index, enemyTotal, load_info, t_kls);
+        initRoom_Enemies(r, index, enemyTotal, load_info, t_kls, G_DEBUG_ON);
     }
     break;
     case SHOP: {

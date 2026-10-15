@@ -26,5 +26,5 @@ void log_Win_EnvVars(void);
 #endif // _WIN32
 void log_tag(char *filename, char *header, const char *format, ...);
 void log_OP(turnOption_OP op);
-void hlpd_reset_logfile(void);
+void hlpd_reset_logfile(int G_DEBUG_ON);
 #endif // GAME_LOG_H

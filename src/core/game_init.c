@@ -1727,7 +1727,7 @@ void prepareBoss(Boss *b, Koliseo_Temp *t_kls)
  * @param t_kls The Koliseo_Temp used for allocations.
  */
 void prepareRoomEnemy(Enemy *e, int roomindex, int enemiesInRoom,
-                      int enemyindex, Koliseo_Temp *t_kls)
+                      int enemyindex, Koliseo_Temp *t_kls, int G_DEBUG_ON)
 {
 
     if (e == NULL) {

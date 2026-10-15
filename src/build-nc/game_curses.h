@@ -72,7 +72,7 @@ void updateShopDisplayW_Equip(WINDOW * w, Equip * e);
 void updateShopDisplayW_Consumable(WINDOW * w, Consumable * c);
 
 void debug_printFoeParty(FoeParty * fp);
-void display_printFoeParty(FoeParty * fp);
+void display_printFoeParty(FoeParty * fp, int G_DEBUG_ON);
 void printLoadout(Fighter * f);
 void displayEquipbagMenu(Fighter * f);
 

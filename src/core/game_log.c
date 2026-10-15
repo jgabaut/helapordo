@@ -113,7 +113,7 @@ void log_OP(turnOption_OP op)
             stringFromTurnOP(op));
 }
 
-void hlpd_reset_logfile(void)
+void hlpd_reset_logfile(int G_DEBUG_ON)
 {
 #ifndef HELAPORDO_DEBUG_LOG
 #else
