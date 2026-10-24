@@ -1,3 +1,9 @@
+## [1.4.24] - Unreleased
+
+### Changed
+
+- Bump `s4c` to `0.5.6`
+
 ## [1.4.23] - 2026-10-10
 
 ### Added
