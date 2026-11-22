@@ -3,6 +3,7 @@
 ### Changed
 
 - Bump `s4c` to `0.5.6`
+- Bump `koliseo` to `0.6.6`
 
 ## [1.4.23] - 2026-10-10
 
